@@ -1,0 +1,137 @@
+<project name="XHSI" default="dist" basedir="../">
+	
+	<property name="etc.dir" 				location="etc"/>
+	<property name="dist.dir"   			location="dist"/>
+	<property name="doc.dir"				location="doc"/>
+	
+	<property name="app.src.dir" 			location="app/src/"/>
+	<property name="app.build.dir" 			location="app/bin/"/>
+	<property name="app.dist.dir"			location="app/dist/"/>
+	<property name="app.etc.dir"			location="app/etc/"/>
+		
+	<property name="plugin.src.dir"  		location="plugin/src"/>
+	<property name="plugin.file.mac" 		location="plugin/dist/XHSIPluginMac.xpl"/>
+	<property name="plugin.file.win" 		location="plugin/dist/XHSIPluginWin.xpl"/>
+	
+	<property name="bin.dist.dir" 			location="${dist.dir}/${release.name}-binaries"/>
+	<property name="src.dist.dir" 			location="${dist.dir}/${release.name}-sources"/>
+	
+	<property name="jarfile.name"			value="XHSI.jar"/>
+	
+	<target name="init">
+		<mkdir dir="${app.build.dir}"/>
+		<mkdir dir="${app.dist.dir}"/>
+	</target>
+		
+	<target name="clean">
+		<delete dir="${app.build.dir}"/>
+		<delete dir="${app.dist.dir}"/>
+		<delete dir="${bin.dist.dir}"/>
+		<delete dir="${src.dist.dir}"/>
+	</target>
+	
+	<target name="compile" depends="init">
+		<javac 
+			srcdir="${app.src.dir}" 
+			destdir="${app.build.dir}"/>
+	</target>
+	
+	<target name="run" depends="compile">
+		<java 
+			fork="true"
+			classname="de.georg_gruetter.xhsi.HSI">
+			<classpath>
+				<pathelement location="${app.build.dir}"/>
+				<pathelement path="${java.class.path}"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run-record" depends="compile">
+		<java 
+			fork="true"
+			classname="de.georg_gruetter.xhsi.HSI">
+			<classpath>
+				<pathelement location="${app.build.dir}"/>
+				<pathelement path="${java.class.path}"/>
+			</classpath>
+			<arg line="--record ${app.etc.dir}/test.rec"/>
+		</java>
+	</target>
+	
+	<target name="run-replay" depends="compile">
+		<java 
+			fork="true"
+			classname="de.georg_gruetter.xhsi.HSI">
+			<classpath>
+				<pathelement location="${app.build.dir}"/>
+				<pathelement path="${java.class.path}"/>
+			</classpath>
+			<arg line="--replay ${etc.dir}/test.rec"/>
+		</java>
+	</target>
+
+	<target name="dist" depends="compile">
+		<jar 
+			jarfile="${app.dist.dir}/${jarfile.name}" 
+			basedir="${app.build.dir}" 
+			manifest="${etc.dir}/manifest.mf"/>
+	</target>
+	
+	<target name="create-release" depends="clean,dist">
+		<mkdir dir="${bin.dist.dir}"/>
+		<mkdir dir="${src.dist.dir}"/>
+		
+		<antcall target="create-src-release"/>
+		<antcall target="create-bin-release"/>
+	</target>
+	
+	<target name="create-bin-release">
+		<!-- executables -->
+		<copy file="${app.dist.dir}/${jarfile.name}" todir="${bin.dist.dir}"/>
+		<copy file="${plugin.file.mac}" todir="${bin.dist.dir}"/>
+		<copy file="${plugin.file.win}" todir="${bin.dist.dir}"/>		
+		
+		<!-- readme -->
+		<copy file="${doc.dir}/README" tofile="${bin.dist.dir}/README"/>
+		
+		<!-- zip -->
+		<zip destfile="${bin.dist.dir}/../${release.name}.zip">
+			<fileset dir="${bin.dist.dir}"/>
+		</zip>
+	</target>
+	
+	<target name="create-src-release">	
+		<!-- app sources -->
+		<copy todir="${src.dist.dir}/app/src">
+			<fileset dir="${app.src.dir}">
+				<include name="**/*.java"/> 
+			</fileset>
+		</copy>
+		
+		<!-- plugin sources -->
+		<copy todir="${src.dist.dir}/plugin">
+			<fileset dir="${plugin.src.dir}">
+				<include name="**/*.c"/>
+				<include name="**/*.cpp"/> 
+			</fileset>
+		</copy>
+		
+		<!-- buildfile -->
+		<copy todir="${src.dist.dir}/etc">
+			<fileset dir="${etc.dir}">
+				<include name="**/*.xml"/>
+				<include name="manifest.mf"/> 
+			</fileset>
+		</copy>
+		
+		<!-- readme -->
+		<copy file="${doc.dir}/README" tofile="${src.dist.dir}/README"/>
+		
+		<!-- zip -->
+		<zip destfile="${src.dist.dir}/../${release.name}-sources.zip">
+			<fileset dir="${src.dist.dir}"/>
+		</zip>
+	</target>
+
+</project>
