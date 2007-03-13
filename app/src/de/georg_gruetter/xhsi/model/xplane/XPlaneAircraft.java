@@ -49,8 +49,14 @@ public class XPlaneAircraft implements Aircraft {
 		if (ground_speed() < 5) {
 			return heading();
 		} else {
-			return (sim_data.get_sim_value(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_HPATH) + 
-			        sim_data.get_sim_value(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_MAGVAR));
+			float path = (sim_data.get_sim_value(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_HPATH) + 
+			               sim_data.get_sim_value(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_MAGVAR));
+			if (path < 0)
+				path += 360;
+			else if (path > 360)
+				path -= 360;
+			
+			return path;
 		}
 	}
 	
