@@ -25,8 +25,8 @@
  * Open questions
  * - X-Plane does not seem to remember the Enable/Disable setting for the plugin. Is this a bug?
  */
-#define plugin_version_text "XHSI Plugin 1.0 Beta 4"
-#define plugin_version_id 10004			
+#define plugin_version_text "XHSI Plugin 1.0 Beta 5"
+#define plugin_version_id 10005			
 
 #include <stdio.h>
 #include <string.h>
@@ -296,7 +296,7 @@ PLUGIN_API int XPluginStart(
 	// Todo: store settings in preferences file
 	dest_ip = "127.0.0.1";
 	dest_port = 49001;
-	src_port = 49000;
+	src_port = 49005;
 	sim_data_frames_per_second = 26;
 	fms_data_frames_per_second = 1;
 	time_for_each_sim_data_frame = 1.0/sim_data_frames_per_second;
@@ -308,9 +308,10 @@ PLUGIN_API int XPluginStart(
 		return 0;
 	}
 	#endif
-	
+		
 	// create socket and addresses
-	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	sockfd = socket(PF_INET, SOCK_DGRAM, 0);
+	
 #if IBM	
 	if (sockfd == INVALID_SOCKET) {
 		sprintf(debug_message, "XHSI: failed - Could not open socket! Errorcode: %d\n", WSAGetLastError());
@@ -321,21 +322,7 @@ PLUGIN_API int XPluginStart(
 	}	
 #endif
 	
-	
 	set_addresses();
-
-	// Register plugin. 
-	XPLMRegisterFlightLoopCallback(		
-			SendSimDataFlightLoopCallback,	
-			time_for_each_sim_data_frame,
-			NULL);	
-
-	XPLMRegisterFlightLoopCallback(		
-										SendFMSDataFlightLoopCallback,	
-										time_for_each_fms_data_frame,
-										NULL);	
-				
-	// Build menu
 	createMenu();
 	
 	return 1;
@@ -344,7 +331,6 @@ PLUGIN_API int XPluginStart(
 										
 PLUGIN_API void	XPluginStop(void)
 {
-	XPLMUnregisterFlightLoopCallback(SendSimDataFlightLoopCallback, NULL);	
 	
 	XPLMDestroyMenu(menu_id);
 	if (widget_created == 1) {
@@ -366,10 +352,12 @@ PLUGIN_API void	XPluginStop(void)
 		}
 		socket_open = 0;
 		send_enabled = 0;
-	}			
+	}		
 }
 
 PLUGIN_API void XPluginDisable(void) {
+	XPLMUnregisterFlightLoopCallback(SendSimDataFlightLoopCallback, NULL);	
+	XPLMUnregisterFlightLoopCallback(SendFMSDataFlightLoopCallback, NULL);	
 	XPLMDebugString("XHSI: disabled\n");
 	plugin_enabled = 0;
 	send_enabled = 0;
@@ -380,6 +368,17 @@ PLUGIN_API int XPluginEnable(void)
 	send_enabled = 1;
 	plugin_enabled = 1;
     XPLMDebugString("XHSI: enabled\n");	
+	
+	// Register flight loop callbacks
+	XPLMRegisterFlightLoopCallback(		
+										SendSimDataFlightLoopCallback,	
+										time_for_each_sim_data_frame,
+										NULL);	
+	
+	XPLMRegisterFlightLoopCallback(		
+										SendFMSDataFlightLoopCallback,	
+										time_for_each_fms_data_frame,
+										NULL);	
 	return ensure_socket_bound();
 }
 
