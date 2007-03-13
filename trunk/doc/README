@@ -1,26 +1,18 @@
 XHSI - An extended horizontal situation indicator for X-Plane
 
-Release:      1.0 Beta 4
-Release date: 2007-03-10
+Release:      1.0 Beta 5
+Release date: 2007-03-13
 Author:       Georg Gruetter (gruetter@users.sourceforge.net)
 XHSI home:    http://www.g16g.de/x-plane/
 
 About this release
 ==================
-- bugfixes
-  - UDP receiver now shuts down correctly (no longer blocking)
-- refactoring
-  - reorganized packages
-  - preferences are now managed by dedicated class
-- Status of navigation databases (loaded or not) now displayed in status bar
-- updated log messages of XHSI Plugin
-- XHSI Plugin now publishes its version to XHSI application
-- XHSI Plugin is now enabled per default. Enable and Disable are done via
-  X-Planes plugin admin.
-- added preferences dialog. X-Plane home directory is now settable via a
-  browse functions. 
-- added file and console logging with user settable log levels
-- added "About" dialog
+- Bugfixes
+  - XHSI plugin should now work with XSquawkbox. XHSI now sends on port 49005 instead
+    of 49000. It seems there was a conflict with X-Plane, which uses the latter port
+    for sending UDP data and who knows what else.
+  - heading values now don't exceed 360° or fall below 0 at places with high magnetic
+    deviations.
 
 Note: Please consult the updated Installation and Operation sections in this readme.
 
@@ -74,6 +66,15 @@ Special thanks to Ansorg, Brandon, Elvis, Mark Steele, Mueli and Schleich for th
 
 Release Notes
 =============
+
+1.0 Beta 5 (2007-03-13)
+=======================
+- Bugfixes
+  - XHSI plugin should now work with XSquawkbox. XHSI now sends on port 49005 instead
+    of 49000. It seems there was a conflict with X-Plane, which uses the latter port
+    for sending UDP data and who knows what else.
+  - heading values now don't exceed 360° or fall below 0 at places with high magnetic
+    deviations.
 
 1.0 Beta 4 (2007-03-10)
 =======================

@@ -56,7 +56,7 @@ import de.georg_gruetter.xhsi.util.XHSILogFormatter;
 
 public class HSI implements ActionListener {
 	
-	private static final String RELEASE = "1.0 Beta 4";
+	private static final String RELEASE = "1.0 Beta 5";
 	
 	private static final String MODE_REPLAY = "replay";
 	private static final String MODE_RECEIVE = "receive";
