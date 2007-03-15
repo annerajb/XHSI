@@ -1,34 +1,41 @@
 XHSI - An extended horizontal situation indicator for X-Plane
 
-Release:      1.0 Beta 5
-Release date: 2007-03-13
+Release:      1.0 Beta 6
+Release date: 2007-03-15
 Author:       Georg Gruetter (gruetter@users.sourceforge.net)
-XHSI home:    http://www.g16g.de/x-plane/
+XHSI home:    http://xhsi.sourceforge.net
 
 About this release
 ==================
 - Bugfixes
-  - XHSI plugin should now work with XSquawkbox. XHSI now sends on port 49005 instead
-    of 49000. It seems there was a conflict with X-Plane, which uses the latter port
-    for sending UDP data and who knows what else.
-  - heading values now don't exceed 360° or fall below 0 at places with high magnetic
-    deviations.
+  - Compass rose ticks on right side are now displayed correctly
+  - deflection of VOR/NDB is now calculated relative to horizontal path instead of
+    aircraft heading (which deviates from the horizontal path in case of side winds)
+- Performance and cosmetic UI changes
+  - Adapted color scheme and font sizes to match those found on the original Boeing
+    instrument
+  - Exchanged rounded instrument frame with simple statusbar to increases rendering 
+    performance (about 6%)
+  - Wind direction now shows degree symbol
+- calling the jar with java -jar XHSI.jar --help will display usage information
+- flight session recording now allows to specify recording rate. If specified, will
+  record only every n'th frame to reduce recording file size
 
-Note: Please consult the updated Installation and Operation sections in this readme.
+Note: Please consult the new Operation sections in this readme.
 
 About XHSI
 ==========
-XHSI is an add-on for the X-Plane flight simulator (http://www.x-plane.com). It recreates an Horizontal Situation Indicator (HSI) display used in todays commercial jet airplanes with so called glass cockpits. 
+XHSI is an add-on for the X-Plane flight simulator (http://www.x-plane.com). It recreates an Horizontal Situation Indicator (HSI) display used in todays commercial jet airplanes.
 
-XHSI is a standalone Java application that is driven by X-Plane via network. It can run on the same machine as X-Plane (using the loopback adapter) or can run on another machine to distribute the processing load. Right now, XHSI is young and hence still somewhat ressource hungry. 
+XHSI is a standalone Java application that is driven by X-Plane via network. It can run on the same machine as X-Plane (using the loopback adapter) or can run on another machine to distribute the processing load (XHSI is still young and is somewhat hungry for ressources).
 
 XHSI receives its data from X-Plane with a dedicated plugin XHSIPlugin<OS>.xpl. So far, only Mac (PPC and Intel) and Windows plugins are available. I don't plan on building a Linux version myself but I'll publish the plugin sources and hope someone with Linux will help me out here.
 
 XHSI is free software and is published under the GNU General Public License.
 
-XHSI is still in beta state so a lot of things need to and will be improved and added. If you find bugs or have suggestions, please let me know - I am looking forward to your feedback. You can reach me best under mailto:gruetter@users.sorceforge.net or post a comment on http://www.g16g.de.
+XHSI is still in beta state so a lot of things need to and will be improved and added. If you find bugs or have suggestions, please let me know - I am looking forward to your feedback. XHSI is hosted on SourceForge.net (http://xhsi.sourceforge.net). You would help the project if you would utilize the bug and feature tracking systems and the forums found there.
 
-Updates and release planning information will be available under http://www.g16g.de/x-plane/.
+Check out http://sourceforge.net/projects/xhsi to get updates the the current release. While still in beta state, expect a new release at least once a week.
 
 System requirements
 ===================
@@ -46,26 +53,73 @@ Installation
 
 That's it. 
 
-You can verify the correct installation of the X-Plane plugin in the plugins menu of X-Plane. You should see an entry called XHSI. You can also view the detailed plugin information sheet under "Plugins/Plugin Admin/Plugin Information ". Here you should see the entry "XHSI Plugin 1.0 Beta 1 (Enabled)".
+You can verify the correct installation of the X-Plane plugin in the plugins menu of X-Plane. You should see an entry called XHSI. You can also view the detailed plugin information sheet under "Plugins/Plugin Admin/Plugin Information ". Here you should see the entry "XHSI Plugin 1.0 Beta 6 (Enabled)".
 
 To verify the XHSI appliation runs correctly, double click the XHSI.jar and verify it starts up. If XHSI found your X-Plane installation and imported navigation databases, the statusbar shows the "NAV DB" icon. If XHSI could not load the databases, this icon is crossed out. Update the path in the preferences dialog in this case.
 
 If you still experience problems, activate logging in XHSIs preferences menu. Set the logging level to "Finest". Consult the logfile XHSI.log, that is created in the same directory that XHSI.properties resides in.
 
-Operation
-=========
+Operation: Displaying live data from X-Plane
+============================================
 Once XHSI and the XHSI plugin are installed, you can operate them as follows:
 1. run XHSI on the target machine
 2. run X-Plane. The plugin is enabled and configured to send data to an XHSI instance running on the same machine (destination IP = "127.0.0.1") per default. Edit the destination IP in the plugins preferences menu and click set to control an XHSI instance running on another machine. Enable or disable the plugin via X-Planes Plugin - Enable/Disable menu.
 
 Make sure that UDP traffic from X-Planes machine to the machine running XHSI is not blocked by a firwall. Per default, XHSI uses port 49001.
 
+Operation: Record live data from X-Plane
+========================================
+XHSI can record and replay data streams received by the XHSI plugin to enhance user feedback and to record that perfect landing approach. Record and replay are currently only available via command line. During recording, no flight data is displayed by XHSI - a shortcoming that will be removed in future versions.
+
+To record all data of a flight session to <file> do the following:
+1. run X-Plane
+2. run XHSI from the command line. E. g.:
+     java -jar XHSI.jar --record  /Users/gruetter/temp/my-flight-recording.rec
+3. stop the recording with CTRL+C (I know, not a good solution but it works for now).
+
+Recording all received data frames leads requires a lot of disk space. You can tell XHSI to record only every n'th received data frame to save space. To record every 100th received frame you would call the recorder as follows: 
+     java -jar XHSI.jar --record /Users/gruetter/temp/my-coarse-flight-recording.rec 100
+    
+Operation: Replay recordings
+============================
+To replay a previously recorded flight session enter the following command on the command line:
+
+     java -jar XHSI.jar --replay <filename>
+
+where <filename> is the name of flight recording file.
+
+Display command line usage information
+======================================
+To display command line usage information, call XHSI as follows:
+
+     java -jar XHSI.jar --help
+
+Troubleshooting: Performance
+============================
+XHSI can put a huge load on your system. If you experience bad X-Plane and XHSI performance, try to reduce the rate at which the XPlane plugin sends sim data update to the XHSI application. Open the plugins preferences menu and enter a lower value for Sim data rate. Some users reported substantial performance improvements with data rates around 20 data frames per second. Your mileage may vary.
+
 Credits
 =======
-Special thanks to Ansorg, Brandon, Elvis, Mark Steele, Mueli and Schleich for their encouraging and constructive feedback during the beta phase!
+Special thanks to Ansorg, Brandon, Elvis, Mark Steele, Mueli and Schleich for their encouraging and constructive feedback during the beta phase! 
 
 Release Notes
 =============
+
+1.0 Beta 6 (2007-03-16)
+=======================
+- Bugfixes
+  - Compass rose ticks on right side are now displayed correctly
+  - deflection of VOR/NDB is now calculated relative to horizontal path instead of
+    aircraft heading (which deviates from the horizontal path in case of side winds)
+- Performance and cosmetic UI changes
+  - Adapted color scheme and font sizes to match those found on the original Boeing
+    instrument
+  - Exchanged rounded instrument frame with simple statusbar to increases rendering 
+    performance (about 6%)
+  - Wind direction now shows degree symbol
+- calling the jar with java -jar XHSI.jar --help will display usage information
+- flight session recording now allows to specify recording rate. If specified, will
+  record only every n'th frame to reduce recording file sizes
 
 1.0 Beta 5 (2007-03-13)
 =======================

@@ -25,8 +25,8 @@
  * Open questions
  * - X-Plane does not seem to remember the Enable/Disable setting for the plugin. Is this a bug?
  */
-#define plugin_version_text "XHSI Plugin 1.0 Beta 5"
-#define plugin_version_id 10005			
+#define plugin_version_text "XHSI Plugin 1.0 Beta 6"
+#define plugin_version_id 10006			
 
 #include <stdio.h>
 #include <string.h>

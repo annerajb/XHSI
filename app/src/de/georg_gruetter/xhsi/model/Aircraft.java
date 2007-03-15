@@ -62,6 +62,14 @@ public interface Aircraft {
 	public float horizontal_path();	
 	
 	/**
+	 * Returns the difference between the horizontal_path and the heading
+	 * of the aircraft.
+	 * 
+	 * @return float - difference of horizontal path and heading in degrees
+	 */
+	public float slip();
+	
+	/**
 	 * @return float - roll angle of the aircraft in degrees
 	 */
 	public float roll_angle();		

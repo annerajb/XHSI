@@ -85,10 +85,10 @@ public class RadioLabel extends HSISubcomponent {
 					if (rnav_object instanceof VOR) {
 						if (((VOR) rnav_object).type == VOR.TYPE_NDB) {
 							this.type = "ADF" + radio.get_bank();
-							this.color = Color.CYAN;
+							this.color = hsi_gc.color_lightblue;
 						} else if (((VOR) rnav_object).type == VOR.TYPE_VOR) {
 							this.type = "VOR" + radio.get_bank();
-							this.color = Color.GREEN;
+							this.color = hsi_gc.color_lightgreen;
 						} else {
 							this.type ="Err:Unknown VOR type";
 							this.color = Color.RED;

@@ -24,7 +24,6 @@
 */
 package de.georg_gruetter.xhsi.panel;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
@@ -53,21 +52,21 @@ public class RadioHeadingArrows extends HSISubcomponent {
 		
 		if ((this.selected_nav_radio1 != null) && (this.selected_nav_radio1.receiving())) {
 			if (this.selected_nav_radio1.freq_is_nav() && (this.selected_nav_radio1.freq_is_localizer() == false)) {
-				g2.setColor(Color.GREEN);
-			    draw_nav1_arrow(g2, selected_nav_radio1.get_deflection(),arrow_length,arrow_base_width);			
+				g2.setColor(hsi_gc.color_lightgreen);
+			    draw_nav1_arrow(g2, selected_nav_radio1.get_deflection() + this.aircraft.slip(),arrow_length,arrow_base_width);			
 			} else if (this.selected_nav_radio1.freq_is_adf()) {
-				g2.setColor(Color.CYAN);
-			    draw_nav1_arrow(g2, selected_nav_radio1.get_deflection(),arrow_length,arrow_base_width);			
+				g2.setColor(hsi_gc.color_lightblue);
+			    draw_nav1_arrow(g2, selected_nav_radio1.get_deflection() + this.aircraft.slip(),arrow_length,arrow_base_width);			
 			}
 		}
 		
 		if ((this.selected_nav_radio2 != null) && (this.selected_nav_radio2.receiving())) {
 			if (this.selected_nav_radio2.freq_is_nav() && (this.selected_nav_radio2.freq_is_localizer() == false)) {
-				g2.setColor(Color.GREEN);
-			    draw_nav2_arrow(g2, selected_nav_radio2.get_deflection(),arrow_length,arrow_base_width);			
+				g2.setColor(hsi_gc.color_lightgreen);
+			    draw_nav2_arrow(g2, selected_nav_radio2.get_deflection() + this.aircraft.slip(),arrow_length,arrow_base_width);			
 			} else if (this.selected_nav_radio2.freq_is_adf()) {
-				g2.setColor(Color.CYAN);
-			    draw_nav2_arrow(g2, selected_nav_radio2.get_deflection(),arrow_length,arrow_base_width);			
+				g2.setColor(hsi_gc.color_lightblue);
+			    draw_nav2_arrow(g2, selected_nav_radio2.get_deflection() + this.aircraft.slip(),arrow_length,arrow_base_width);			
 			}
 		}
 	}

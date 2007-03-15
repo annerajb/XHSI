@@ -22,7 +22,6 @@
 package de.georg_gruetter.xhsi.panel;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
@@ -55,7 +54,7 @@ public class APHeading extends HSISubcomponent {
         int heading_bug_width = (int) Math.min(38,40 * hsi_gc.scaling_factor);
         int heading_bug_height = (int) Math.min(14,16 * hsi_gc.scaling_factor);
         
-		g2.setColor(Color.MAGENTA);
+		g2.setColor(hsi_gc.color_magenta);
 	    polyline = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 8);
 	    polyline.moveTo (hsi_gc.plane_position_x - heading_bug_width/2, hsi_gc.rose_y_offset);
 	    polyline.lineTo(hsi_gc.plane_position_x - heading_bug_width/2, hsi_gc.rose_y_offset - heading_bug_height);

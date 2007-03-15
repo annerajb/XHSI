@@ -21,7 +21,6 @@
 */
 package de.georg_gruetter.xhsi.panel;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 
 import de.georg_gruetter.xhsi.model.ModelFactory;
@@ -33,7 +32,9 @@ public class InstrumentFrame extends HSISubcomponent {
 	}
 
 	public void paint(Graphics2D g2) {
-		g2.setColor(Color.DARK_GRAY);
-		g2.fill(hsi_gc.instrument_frame);		
+		//g2.setColor(Color.DARK_GRAY);
+		//g2.fill(hsi_gc.instrument_frame);	
+		g2.clearRect(0,0,hsi_gc.border_right, hsi_gc.panel_size.height);
+		g2.clearRect(hsi_gc.panel_size.width - hsi_gc.border_right, 0, hsi_gc.border_right, hsi_gc.panel_size.height);
 	}
 }
