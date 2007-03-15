@@ -25,8 +25,6 @@ package de.georg_gruetter.xhsi.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import de.georg_gruetter.xhsi.PreferencesObserver;
-
 public class NavigationObjectRepository {
 	
 	private ArrayList vors[][];

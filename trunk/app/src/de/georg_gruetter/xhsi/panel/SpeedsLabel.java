@@ -55,7 +55,7 @@ public class SpeedsLabel extends HSISubcomponent {
 		int tas_label_x = gs_x + three_digits_width + 5;
 		int tas_x = tas_label_x + 2 + hsi_gc.get_text_width(g2, hsi_gc.font_small,"TAS");
 		int wind_dir_x = gs_label_x;
-		int wind_speed_x = wind_dir_x + three_digits_width + 5;
+		int wind_speed_x = wind_dir_x + three_digits_width + 10;
 		
 		int wind_dir_arrow_x = hsi_gc.border_left + (wind_dir_arrow_length / 2) + 5;
 		int wind_dir_arrow_y = hsi_gc.border_top + (2* hsi_gc.line_height_medium) + (wind_dir_arrow_length/2) + 10;
@@ -87,10 +87,12 @@ public class SpeedsLabel extends HSISubcomponent {
 	    		wind_speed_text,
 	    		wind_speed_x,
 	    		hsi_gc.border_top + (int) (line_height_medium * 2)); 
+	    // degree arrow
+	    // Todo: find out how to specify the degree character independent of OS
+	    g2.drawOval(wind_dir_x + three_digits_width + 2, hsi_gc.border_top + (int) (line_height_medium) + 4,5,5);
 	    
 	    // wind direction arrow
 	    if (wind_speed > 4) {
-//		    g2.clearRect(30,60,40,40);
 		    AffineTransform original_at = null;
 		    if (wind_speed > 0) {
 				original_at = g2.getTransform();

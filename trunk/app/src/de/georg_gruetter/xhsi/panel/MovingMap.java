@@ -251,7 +251,7 @@ public class MovingMap extends HSISubcomponent {
 		AffineTransform original_at = g2.getTransform();
 		g2.rotate(Math.toRadians(this.aircraft.horizontal_path() - this.aircraft.magnetic_variation()), x,y);		
 		Graphics g = (Graphics) g2;
-		g.setColor(Color.MAGENTA);
+		g.setColor(hsi_gc.color_lightgreen);
 		g.drawPolygon(x_points_hexagon, y_points_hexagon, 6);
 		g.drawPolygon(x_points_ul_leaf, y_points_ul_leaf, 4);
 		g.drawPolygon(x_points_ur_leaf, y_points_ur_leaf, 4);
@@ -267,7 +267,7 @@ public class MovingMap extends HSISubcomponent {
 		AffineTransform original_at = g2.getTransform();
 		g2.rotate(Math.toRadians(this.aircraft.horizontal_path()  - this.aircraft.magnetic_variation()), x,y);		
 		Graphics g = (Graphics) g2;
-		g.setColor(Color.MAGENTA);
+		g.setColor(hsi_gc.color_lightblue);
 		g.drawPolygon(x_points_hexagon, y_points_hexagon, 6);
 		g.drawString(vor.ilt, x + 10, y + 13);
 		g2.setTransform(original_at);
@@ -291,7 +291,7 @@ public class MovingMap extends HSISubcomponent {
 		
 		AffineTransform original_at = g2.getTransform();
 		g2.rotate(Math.toRadians(this.aircraft.horizontal_path() - this.aircraft.magnetic_variation()), x,y);		
-		g2.setColor(Color.BLUE);
+		g2.setColor(hsi_gc.color_lightblue);
 		g2.drawString(localizer.airport, x - (hsi_gc.get_text_width(g2, hsi_gc.font_small,localizer.airport) / 2), y);
 		g2.setColor(Color.WHITE);
 		g2.drawString(localizer.rwy, x - (hsi_gc.get_text_width(g2, hsi_gc.font_small,localizer.rwy) / 2), y + hsi_gc.line_height_small);
@@ -312,7 +312,7 @@ public class MovingMap extends HSISubcomponent {
 		AffineTransform original_at = g2.getTransform();
 		g2.rotate(Math.toRadians(this.aircraft.horizontal_path()  - this.aircraft.magnetic_variation()), x,y);		
 		Graphics g = (Graphics) g2;
-		g.setColor(Color.BLUE);
+		g.setColor(hsi_gc.color_lightblue);
 		g.drawOval(x-8,y-8,16,16);
 		g.drawString(airport.icao_code, x + 10, y + 13);
 		g2.setTransform(original_at);		
@@ -323,7 +323,7 @@ public class MovingMap extends HSISubcomponent {
 		int y = lat_to_y(entry.lat);
 		
 		if ((next_entry != null) && (next_entry.name.equals("NTFND") == false)) {
-			g2.setColor(Color.RED);
+			g2.setColor(hsi_gc.color_magenta);
 			g2.drawLine(x,y, lon_to_x(next_entry.lon), lat_to_y(next_entry.lat));
 		}
 		
@@ -341,7 +341,7 @@ public class MovingMap extends HSISubcomponent {
 			
 			Graphics g = (Graphics) g2;
 			if (entry.active) {
-				g.setColor(Color.MAGENTA);
+				g.setColor(hsi_gc.color_magenta);
 			} else {
 				g.setColor(Color.WHITE);
 			}

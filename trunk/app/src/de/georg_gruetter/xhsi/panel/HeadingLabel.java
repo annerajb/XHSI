@@ -41,12 +41,12 @@ public class HeadingLabel extends HSISubcomponent {
 	    unrotate(g2);
 	    	    
 	    // TRK and MAG labels	    
-	    g2.setColor(Color.GREEN);
-	    g2.setFont(hsi_gc.font_small);
+	    g2.setColor(hsi_gc.color_lightgreen);
+	    g2.setFont(hsi_gc.font_medium);
 		text = "TRK";
-	    g2.drawString(text , center_x - 45 - hsi_gc.get_text_width(g2, hsi_gc.font_small, text), y-15);
+	    g2.drawString(text , center_x - 45 - hsi_gc.get_text_width(g2, hsi_gc.font_medium, text), y-12);
 		text = "MAG";
-	    g2.drawString(text , center_x + 45, y-15);
+	    g2.drawString(text , center_x + 45, y-12);
 	    
 	    // surrounding box
 	    g2.setColor(Color.WHITE);
@@ -72,15 +72,6 @@ public class HeadingLabel extends HSISubcomponent {
 	    g2.drawLine(
 	    	hsi_gc.plane_position_x, hsi_gc.plane_position_y - (hsi_gc.rose_radius/4) + tick_halfwidth, 
 	    	hsi_gc.plane_position_x, y);
-	    g2.drawLine(
-		    hsi_gc.plane_position_x - tick_halfwidth, hsi_gc.plane_position_y - (hsi_gc.rose_radius / 4),
-		    hsi_gc.plane_position_x + tick_halfwidth, hsi_gc.plane_position_y - (hsi_gc.rose_radius / 4));	    
-	    g2.drawLine(
-	    	hsi_gc.plane_position_x - tick_halfwidth, hsi_gc.plane_position_y - (hsi_gc.rose_radius / 2),
-	    	hsi_gc.plane_position_x + tick_halfwidth, hsi_gc.plane_position_y - (hsi_gc.rose_radius / 2));
-	    g2.drawLine(
-		    hsi_gc.plane_position_x - tick_halfwidth, hsi_gc.plane_position_y - (hsi_gc.rose_radius * 3 / 4),
-		    hsi_gc.plane_position_x + tick_halfwidth, hsi_gc.plane_position_y - (hsi_gc.rose_radius * 3 / 4));
 	    
 	    g2.setFont(hsi_gc.font_medium);
 	    String range_text = "" + this.avionics.map_range()/2; 

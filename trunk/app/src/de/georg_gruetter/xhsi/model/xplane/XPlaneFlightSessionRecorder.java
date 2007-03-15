@@ -29,21 +29,27 @@ import java.io.ObjectOutputStream;
 public class XPlaneFlightSessionRecorder implements XPlaneDataPacketObserver {
 	
 	String filename;
+	int recording_rate;
+	int data_frame_counter;
 	long time_at_begin_of_recording;
 	ObjectOutputStream oos;
 	boolean recording = false;
 	
-	public XPlaneFlightSessionRecorder(String filename) {
+	public XPlaneFlightSessionRecorder(String filename, int recording_rate) {
 		this.filename = filename;
+		this.recording_rate = recording_rate;
 	}
 
 	public void new_sim_data(byte[] data) throws Exception {
 		if (recording) {
-			System.out.print(".");
-
-			byte[] data_clone = new byte[data.length];
-			System.arraycopy(data,0,data_clone,0,data.length);
-			this.oos.writeObject(data_clone);
+			this.data_frame_counter -= 1;
+			if (this.data_frame_counter <= 0) {
+				System.out.print(".");
+				byte[] data_clone = new byte[data.length];
+				System.arraycopy(data,0,data_clone,0,data.length);
+				this.oos.writeObject(data_clone);
+				this.data_frame_counter = this.recording_rate;
+			}
 		}
 	}	
 	
@@ -52,6 +58,7 @@ public class XPlaneFlightSessionRecorder implements XPlaneDataPacketObserver {
 		time_at_begin_of_recording = System.currentTimeMillis();
 		
 		try {
+			this.data_frame_counter = this.recording_rate;
 			this.oos = new ObjectOutputStream(new FileOutputStream(this.filename));
 			this.recording = true;
 		} catch (Exception e) {

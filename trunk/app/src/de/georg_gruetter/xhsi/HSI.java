@@ -56,7 +56,7 @@ import de.georg_gruetter.xhsi.util.XHSILogFormatter;
 
 public class HSI implements ActionListener {
 	
-	private static final String RELEASE = "1.0 Beta 5";
+	private static final String RELEASE = "1.0 Beta 6";
 	
 	private static final String MODE_REPLAY = "replay";
 	private static final String MODE_RECEIVE = "receive";
@@ -95,20 +95,44 @@ public class HSI implements ActionListener {
 		
 		HSIStatus.status = HSIStatus.STATUS_STARTUP;
 		
-        if ((args.length == 2) && (args[0].equals("--record"))) {
+        if ((args.length >= 2) && (args[0].equals("--record"))) {
 			logger.fine("recording flight session to '" + args[1] + "' ...");
-			XPlaneFlightSessionRecorder recorder = new XPlaneFlightSessionRecorder(args[1]);
+			int recording_rate = 1;
+			if (args.length == 3)
+				recording_rate = Integer.parseInt(args[2]);			
+			XPlaneFlightSessionRecorder recorder = new XPlaneFlightSessionRecorder(args[1],recording_rate);
 			XPlaneUDPReceiver udp_receiver = new XPlaneUDPReceiver(49001);
 			udp_receiver.add_reception_observer(recorder);
 			recorder.start();			
 			udp_receiver.start();
-		} else {
-			if ((args.length == 2) && (args[0].equals("--replay"))) {
+		} else if ((args.length == 2) && (args[0].equals("--replay"))) {
 				new HSI(MODE_REPLAY, args[1]);
-			} else {
-				new HSI(MODE_RECEIVE);
-			}
+		} else if ((args.length == 1) && (args[0].equals("--help"))) {
+			display_usage_info();
+		} else if ((args.length == 1) && (args[0].equals("--version"))) {
+			System.out.println("Version of XHSI is " + HSI.RELEASE);
+		} else if (args.length == 0) {
+			new HSI(MODE_RECEIVE);
+		} else {
+			display_usage_info();
 		}
+
+	}
+	
+	public static void display_usage_info() {
+		System.out.println(
+		"Usage: java -jar XHSI.jar [--options]\n\n" +
+		"where options include:\n" +
+		"   --record <filename> [<frame_rate>] to record the current datastream\n" +
+		"                                      received from X-Plane in the file\n" +
+		"                                      <filename>. If <frame_rate>\n" +
+		"                                      is given, records every <frame_rate>'th\n" +
+		"                                      received data frame to save space.\n" +
+		"   --replay <filename>                to replay the recording stored\n" +
+		"                                      in <filename>\n" +
+		"   --version                          to display the version of XHSI\n" +
+		"   --help                             to display this help\n"
+		);
 	}
 	
 	public HSI(String mode, String filename) throws Exception {

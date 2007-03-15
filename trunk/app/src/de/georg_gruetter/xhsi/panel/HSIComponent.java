@@ -36,6 +36,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import de.georg_gruetter.xhsi.HSIStatus;
 import de.georg_gruetter.xhsi.model.ModelFactory;
@@ -46,6 +47,8 @@ public class HSIComponent extends Component implements Observer {
 	private static final long serialVersionUID = 1L;
 	public static boolean COLLECT_PROFILING_INFORMATION = false;
 	public static long NB_OF_PAINTS_BETWEEN_PROFILING_INFO_OUTPUT = 100;
+	private static Logger logger = Logger.getLogger("de.georg_gruetter.xhsi");
+
 	
 	// subcomponents --------------------------------------------------------
 	ArrayList subcomponents = new ArrayList();
@@ -118,15 +121,15 @@ public class HSIComponent extends Component implements Observer {
 		
 		if (HSIComponent.COLLECT_PROFILING_INFORMATION) {
 			if (this.nb_of_paints % HSIComponent.NB_OF_PAINTS_BETWEEN_PROFILING_INFO_OUTPUT == 0) {
-				System.out.println("Paint profiling info");
-				System.out.println("=================================");
+				logger.info("Paint profiling info");
+				logger.info("=[ Paint profile info begin ]=================================");
 				for (int i=0;i<this.subcomponents.size();i++) {
-					System.out.println(this.subcomponents.get(i).toString() + ": " + 
+					logger.info(this.subcomponents.get(i).toString() + ": " + 
 							(this.subcomponent_paint_times[i]/this.nb_of_paints) + "ms " +
 							"(" + ((this.subcomponent_paint_times[i] * 100) / this.total_paint_times) + "%)");
 				}
-				System.out.println("---------------------------------");
-				System.out.println("Total					" + (this.total_paint_times/this.nb_of_paints) + "ms \n");
+				logger.info("Total					" + (this.total_paint_times/this.nb_of_paints) + "ms \n");
+				logger.info("=[ Paint profile info end ]===================================");
 			}
 		}
 	}	

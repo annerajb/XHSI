@@ -41,7 +41,7 @@ public class CompassRose extends HSISubcomponent {
 	
 	public void paint(Graphics2D g2) {		
 		int min_visible_heading = round_to_ten(this.aircraft.horizontal_path() - hsi_gc.half_view_angle);
-		int max_visible_heading = round_to_ten(this.aircraft.horizontal_path() + hsi_gc.half_view_angle) - 5;
+		int max_visible_heading = round_to_ten(this.aircraft.horizontal_path() + hsi_gc.half_view_angle) + 5;
 		double rotation_offset = (-1 * hsi_gc.half_view_angle)  + (min_visible_heading - (this.aircraft.horizontal_path() - hsi_gc.half_view_angle));
 		
 		

@@ -22,6 +22,7 @@
 */
 package de.georg_gruetter.xhsi.panel;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -44,6 +45,10 @@ public class HSIGraphicsConfig implements ComponentListener {
 	public Font font_small;
 	public Font font_medium;
 	public Font font_large;
+	
+	public Color color_lightgreen;
+	public Color color_magenta;
+	public Color color_lightblue;
 
 	public int line_height_small;
 	public int max_char_advance_small;
@@ -79,6 +84,19 @@ public class HSIGraphicsConfig implements ComponentListener {
 	
 	public void init() {
 		this.panel_size = new Dimension(INITIAL_PANEL_WIDTH, INITIAL_PANEL_HEIGHT);
+		float[] hsb_values = new float[3];
+		Color.RGBtoHSB(255,164,235, hsb_values);
+		color_magenta = Color.getHSBColor(hsb_values[0], hsb_values[1], hsb_values[2]);
+
+		Color.RGBtoHSB(0,255,153, hsb_values);
+		color_lightgreen = Color.getHSBColor(hsb_values[0], hsb_values[1], hsb_values[2]);
+
+		Color.RGBtoHSB(98,177,223, hsb_values);
+		color_lightblue = Color.getHSBColor(hsb_values[0], hsb_values[1], hsb_values[2]);	
+		
+		color_lightgreen = Color.GREEN.brighter();
+		color_lightblue = Color.CYAN; //.brighter();
+		color_magenta = Color.MAGENTA.brighter();
 	}
 	
 	public void update_config(Graphics2D g2) {

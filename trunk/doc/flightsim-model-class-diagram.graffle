@@ -28,7 +28,7 @@
 				<integer>14</integer>
 			</dict>
 			<key>ID</key>
-			<integer>33</integer>
+			<integer>32</integer>
 			<key>Labels</key>
 			<array>
 				<dict>
@@ -86,7 +86,7 @@
 				<integer>22</integer>
 			</dict>
 			<key>ID</key>
-			<integer>32</integer>
+			<integer>31</integer>
 			<key>Labels</key>
 			<array>
 				<dict>
@@ -108,6 +108,26 @@
 					<real>0.0</real>
 					<key>Position</key>
 					<real>0.91162538528442383</real>
+				</dict>
+				<dict>
+					<key>Label</key>
+					<dict>
+						<key>Align</key>
+						<integer>0</integer>
+						<key>Text</key>
+						<string>{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fswiss\fcharset77 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 &lt;&lt;provides access to&gt;&gt;}</string>
+					</dict>
+					<key>LabelVisible</key>
+					<string>YES</string>
+					<key>Offset</key>
+					<real>0.0</real>
+					<key>Position</key>
+					<real>0.18135128915309906</real>
 				</dict>
 			</array>
 			<key>Points</key>
@@ -132,7 +152,7 @@
 			<key>Tail</key>
 			<dict>
 				<key>ID</key>
-				<integer>28</integer>
+				<integer>27</integer>
 			</dict>
 		</dict>
 		<dict>
@@ -144,7 +164,7 @@
 				<integer>19</integer>
 			</dict>
 			<key>ID</key>
-			<integer>31</integer>
+			<integer>30</integer>
 			<key>Labels</key>
 			<array>
 				<dict>
@@ -167,11 +187,31 @@
 					<key>Position</key>
 					<real>0.7233002781867981</real>
 				</dict>
+				<dict>
+					<key>Label</key>
+					<dict>
+						<key>Align</key>
+						<integer>0</integer>
+						<key>Text</key>
+						<string>{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fswiss\fcharset77 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 &lt;&lt;provides access to&gt;&gt;}</string>
+					</dict>
+					<key>LabelVisible</key>
+					<string>YES</string>
+					<key>Offset</key>
+					<real>0.0</real>
+					<key>Position</key>
+					<real>0.37319692969322205</real>
+				</dict>
 			</array>
 			<key>Points</key>
 			<array>
-				<string>{1208.2, 212}</string>
-				<string>{1267.85, 295}</string>
+				<string>{1215.85, 226}</string>
+				<string>{1267.17, 295}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -197,10 +237,10 @@
 			<key>Head</key>
 			<dict>
 				<key>ID</key>
-				<integer>28</integer>
+				<integer>27</integer>
 			</dict>
 			<key>ID</key>
-			<integer>30</integer>
+			<integer>29</integer>
 			<key>Labels</key>
 			<array>
 				<dict>
@@ -243,11 +283,31 @@
 					<key>Position</key>
 					<real>0.83816272020339966</real>
 				</dict>
+				<dict>
+					<key>Label</key>
+					<dict>
+						<key>Align</key>
+						<integer>0</integer>
+						<key>Text</key>
+						<string>{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fswiss\fcharset77 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 &lt;&lt;provide access to&gt;&gt;}</string>
+					</dict>
+					<key>LabelVisible</key>
+					<string>YES</string>
+					<key>Offset</key>
+					<real>0.0</real>
+					<key>Position</key>
+					<real>0.52077388763427734</real>
+				</dict>
 			</array>
 			<key>Points</key>
 			<array>
-				<string>{1013.49, 212}</string>
-				<string>{927.148, 279}</string>
+				<string>{1000, 225.938}</string>
+				<string>{929.294, 279}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -273,10 +333,10 @@
 			<key>Head</key>
 			<dict>
 				<key>ID</key>
-				<integer>28</integer>
+				<integer>27</integer>
 			</dict>
 			<key>ID</key>
-			<integer>29</integer>
+			<integer>28</integer>
 			<key>Labels</key>
 			<array>
 				<dict>
@@ -325,6 +385,26 @@
 					<key>Position</key>
 					<real>0.85033786296844482</real>
 				</dict>
+				<dict>
+					<key>Label</key>
+					<dict>
+						<key>Align</key>
+						<integer>0</integer>
+						<key>Text</key>
+						<string>{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fswiss\fcharset77 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 &lt;&lt;provides access to&gt;&gt;}</string>
+					</dict>
+					<key>LabelVisible</key>
+					<string>YES</string>
+					<key>Offset</key>
+					<real>0.0</real>
+					<key>Position</key>
+					<real>0.47274723649024963</real>
+				</dict>
 			</array>
 			<key>Points</key>
 			<array>
@@ -359,7 +439,7 @@
 			<key>Flow</key>
 			<string>Resize</string>
 			<key>ID</key>
-			<integer>28</integer>
+			<integer>27</integer>
 			<key>ListOrientation</key>
 			<string>Vertical</string>
 			<key>Style</key>
@@ -423,31 +503,6 @@ NavigationRadio get_selected_radio2()}</string>
 			</array>
 			<key>TextPlacement</key>
 			<integer>0</integer>
-		</dict>
-		<dict>
-			<key>Class</key>
-			<string>LineGraphic</string>
-			<key>ID</key>
-			<integer>27</integer>
-			<key>Points</key>
-			<array>
-				<string>{2560.4, 217}</string>
-				<string>{2604.86, 284}</string>
-			</array>
-			<key>Style</key>
-			<dict>
-				<key>stroke</key>
-				<dict>
-					<key>HeadArrow</key>
-					<string>0</string>
-					<key>LineType</key>
-					<integer>1</integer>
-					<key>Pattern</key>
-					<integer>1</integer>
-					<key>TailArrow</key>
-					<string>0</string>
-				</dict>
-			</dict>
 		</dict>
 		<dict>
 			<key>Class</key>
@@ -777,7 +832,7 @@ void print_entries()}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{1403, 75}, {344, 124}}</string>
+			<string>{{1349, 60}, {344, 124}}</string>
 			<key>Class</key>
 			<string>MultiTextGraphic</string>
 			<key>FitText</key>
@@ -879,11 +934,31 @@ static float distance(float lat1, float lon1, float lat2, float lon2)}</string>
 					<key>Position</key>
 					<real>0.07350524514913559</real>
 				</dict>
+				<dict>
+					<key>Label</key>
+					<dict>
+						<key>Align</key>
+						<integer>0</integer>
+						<key>Text</key>
+						<string>{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fswiss\fcharset77 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 &lt;&lt;get live data from&gt;&gt;}</string>
+					</dict>
+					<key>LabelVisible</key>
+					<string>YES</string>
+					<key>Offset</key>
+					<real>0.0</real>
+					<key>Position</key>
+					<real>0.85122829675674438</real>
+				</dict>
 			</array>
 			<key>Points</key>
 			<array>
-				<string>{958.548, 776}</string>
-				<string>{1267.7, 349}</string>
+				<string>{983.127, 775}</string>
+				<string>{1269.12, 349}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1004,11 +1079,31 @@ float wind_direction()}</string>
 					<key>Position</key>
 					<real>0.057111755013465881</real>
 				</dict>
+				<dict>
+					<key>Label</key>
+					<dict>
+						<key>Align</key>
+						<integer>0</integer>
+						<key>Text</key>
+						<string>{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fswiss\fcharset77 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 &lt;&lt;get live data from&gt;&gt;}</string>
+					</dict>
+					<key>LabelVisible</key>
+					<string>YES</string>
+					<key>Offset</key>
+					<real>0.0</real>
+					<key>Position</key>
+					<real>0.42525506019592285</real>
+				</dict>
 			</array>
 			<key>Points</key>
 			<array>
-				<string>{946.829, 776}</string>
-				<string>{1110.37, 212}</string>
+				<string>{971.889, 775}</string>
+				<string>{1111.96, 226}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1030,7 +1125,7 @@ float wind_direction()}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{1000, 18}, {277, 194}}</string>
+			<string>{{1000, 18}, {277, 208}}</string>
 			<key>Class</key>
 			<string>MultiTextGraphic</string>
 			<key>FitText</key>
@@ -1093,6 +1188,7 @@ float ground_speed()\
 float true_air_speed()\
 float heading()\
 float horizontal_path()\
+float slip()\
 float roll_angle()\
 float distance_to(NavigationObject)\
 long time_when_arriving_at(NavigationObject)\
@@ -1139,11 +1235,31 @@ float sim_time_zulu()}</string>
 					<key>Position</key>
 					<real>0.89999997615814209</real>
 				</dict>
+				<dict>
+					<key>Label</key>
+					<dict>
+						<key>Align</key>
+						<integer>0</integer>
+						<key>Text</key>
+						<string>{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fswiss\fcharset77 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 &lt;&lt;get live data from&gt;&gt;}</string>
+					</dict>
+					<key>LabelVisible</key>
+					<string>YES</string>
+					<key>Offset</key>
+					<real>0.0</real>
+					<key>Position</key>
+					<real>0.33534470200538635</real>
+				</dict>
 			</array>
 			<key>Points</key>
 			<array>
-				<string>{794.178, 631.5}</string>
-				<string>{916.2, 776}</string>
+				<string>{802.454, 631.5}</string>
+				<string>{939.26, 775}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1214,7 +1330,7 @@ float sim_time_zulu()}</string>
 					<key>LineType</key>
 					<integer>1</integer>
 					<key>TailArrow</key>
-					<string>0</string>
+					<string>FilledDiamond</string>
 				</dict>
 			</dict>
 			<key>Tail</key>
@@ -1336,11 +1452,31 @@ boolean freq_is_adf()}</string>
 					<key>Position</key>
 					<real>0.92249542474746704</real>
 				</dict>
+				<dict>
+					<key>Label</key>
+					<dict>
+						<key>Align</key>
+						<integer>0</integer>
+						<key>Text</key>
+						<string>{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fswiss\fcharset77 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 &lt;&lt;get live data from&gt;&gt;}</string>
+					</dict>
+					<key>LabelVisible</key>
+					<string>YES</string>
+					<key>Offset</key>
+					<real>0.0</real>
+					<key>Position</key>
+					<real>0.60232412815093994</real>
+				</dict>
 			</array>
 			<key>Points</key>
 			<array>
-				<string>{871.737, 377}</string>
-				<string>{934.737, 776}</string>
+				<string>{874.441, 377}</string>
+				<string>{959.247, 775}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1357,12 +1493,12 @@ boolean freq_is_adf()}</string>
 			<key>Tail</key>
 			<dict>
 				<key>ID</key>
-				<integer>28</integer>
+				<integer>27</integer>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{853, 776}, {172, 54}}</string>
+			<string>{{853, 775}, {224, 54}}</string>
 			<key>Class</key>
 			<string>MultiTextGraphic</string>
 			<key>FitText</key>
@@ -1419,7 +1555,7 @@ boolean freq_is_adf()}</string>
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\f0\fs24 \cf0 float get_sim_value(int)}</string>
+\f0\fs24 \cf0 float get_sim_value(sim_variable_id)}</string>
 				</dict>
 			</array>
 			<key>TextPlacement</key>
@@ -2011,7 +2147,7 @@ int range}</string>
 	<key>MagnetsVisible</key>
 	<string>YES</string>
 	<key>ModificationDate</key>
-	<string>2007-02-23 01:58:48 +0100</string>
+	<string>2007-03-15 00:37:59 +0100</string>
 	<key>Modifier</key>
 	<string>Georg Grütter</string>
 	<key>Orientation</key>
@@ -2110,7 +2246,7 @@ int range}</string>
 	PgoJCQkJCTwvYXJyYXk+CgkJCQkJPGtleT5jb20uYXBwbGUucHJpbnQudGlja2V0LmNs
 	aWVudDwva2V5PgoJCQkJCTxzdHJpbmc+Y29tLmFwcGxlLnByaW50aW5nbWFuYWdlcjwv
 	c3RyaW5nPgoJCQkJCTxrZXk+Y29tLmFwcGxlLnByaW50LnRpY2tldC5tb2REYXRlPC9r
-	ZXk+CgkJCQkJPGRhdGU+MjAwNy0wMi0yM1QwMDo1Njo1NFo8L2RhdGU+CgkJCQkJPGtl
+	ZXk+CgkJCQkJPGRhdGU+MjAwNy0wMy0xNFQyMzozMjoxM1o8L2RhdGU+CgkJCQkJPGtl
 	eT5jb20uYXBwbGUucHJpbnQudGlja2V0LnN0YXRlRmxhZzwva2V5PgoJCQkJCTxpbnRl
 	Z2VyPjA8L2ludGVnZXI+CgkJCQk8L2RpY3Q+CgkJCTwvYXJyYXk+CgkJPC9kaWN0PgoJ
 	CTxrZXk+Y29tLmFwcGxlLnByaW50LlBhZ2VGb3JtYXQuUE1BZGp1c3RlZFBhcGVyUmVj
@@ -2124,7 +2260,7 @@ int range}</string>
 	NTE5NTMxMjU8L3JlYWw+CgkJCQkJPC9hcnJheT4KCQkJCQk8a2V5PmNvbS5hcHBsZS5w
 	cmludC50aWNrZXQuY2xpZW50PC9rZXk+CgkJCQkJPHN0cmluZz5jb20uYXBwbGUucHJp
 	bnRpbmdtYW5hZ2VyPC9zdHJpbmc+CgkJCQkJPGtleT5jb20uYXBwbGUucHJpbnQudGlj
-	a2V0Lm1vZERhdGU8L2tleT4KCQkJCQk8ZGF0ZT4yMDA3LTAyLTIzVDAwOjU2OjU0Wjwv
+	a2V0Lm1vZERhdGU8L2tleT4KCQkJCQk8ZGF0ZT4yMDA3LTAzLTE0VDIzOjMyOjEzWjwv
 	ZGF0ZT4KCQkJCQk8a2V5PmNvbS5hcHBsZS5wcmludC50aWNrZXQuc3RhdGVGbGFnPC9r
 	ZXk+CgkJCQkJPGludGVnZXI+MDwvaW50ZWdlcj4KCQkJCTwvZGljdD4KCQkJPC9hcnJh
 	eT4KCQk8L2RpY3Q+CgkJPGtleT5jb20uYXBwbGUucHJpbnQuUGFwZXJJbmZvLlBNQ3Vz
@@ -2231,15 +2367,15 @@ int range}</string>
 		<key>CurrentSheet</key>
 		<string>0</string>
 		<key>Frame</key>
-		<string>{{0, 0}, {1916, 938}}</string>
+		<string>{{20, 32}, {1229, 898}}</string>
 		<key>ShowRuler</key>
 		<false/>
 		<key>ShowStatusBar</key>
 		<true/>
 		<key>VisibleRegion</key>
-		<string>{{161, 0}, {1901, 840}}</string>
+		<string>{{0, 0}, {1618.67, 1066.67}}</string>
 		<key>Zoom</key>
-		<string>1</string>
+		<string>0.75</string>
 	</dict>
 </dict>
 </plist>

@@ -60,6 +60,10 @@ public class XPlaneAircraft implements Aircraft {
 		}
 	}
 	
+	public float slip() {
+		return heading() - horizontal_path();
+	}
+	
 	public float turn_speed() { return sim_data.get_sim_value(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_R); }		// degree per seconds
 	public float roll_angle() { return sim_data.get_sim_value(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_PHI); }		// degree radians
 

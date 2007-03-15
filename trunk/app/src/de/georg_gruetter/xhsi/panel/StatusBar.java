@@ -52,6 +52,9 @@ public class StatusBar extends HSISubcomponent {
 	}
 
 	public void paint(Graphics2D g2) {
+		g2.setColor(Color.DARK_GRAY);
+		g2.fillRect(0, hsi_gc.panel_size.height - hsi_gc.status_bar_height, hsi_gc.panel_size.width, hsi_gc.status_bar_height);
+		
 		g2.setBackground(Color.BLACK);
 
 		// compute nav db text width only once
@@ -70,7 +73,7 @@ public class StatusBar extends HSISubcomponent {
 		
 		draw_data_source(g2);
 		draw_frame_rate(g2);
-		draw_nav_db_status(g2);
+		draw_nav_db_status(g2);		
 	}
 	
 	public void draw_data_source(Graphics2D g2) {

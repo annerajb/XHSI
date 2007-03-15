@@ -57,7 +57,7 @@ public class NextFMSEntryLabel extends HSISubcomponent {
 			int y = hsi_gc.border_top + hsi_gc.line_height_medium;
 					
 			g2.clearRect(x,0,(hsi_gc.max_char_advance_medium * 7),hsi_gc.line_height_medium*3);
-			g2.setColor(Color.MAGENTA);
+			g2.setColor(hsi_gc.color_magenta);
 			g2.setFont(hsi_gc.font_medium);
 			g2.drawString(next_waypoint.name,x,y);
 
