@@ -67,6 +67,7 @@ public class HSI implements ActionListener {
 	
 	private HSIPreferences preferences;
 	private ArrayList running_threads;
+	
 	private HSIComponent hsi_ui;
 	private JFrame hsi_frame;
 	private JFrame preferences_frame;
@@ -290,6 +291,7 @@ public class HSI implements ActionListener {
         
         this.preferences_frame = new PreferencesDialog();
         this.nob_progress_frame = new ProgressDialog(this.hsi_frame);
+
 	}
 	
 	private  JMenuBar createMenu() {

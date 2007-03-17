@@ -1,6 +1,6 @@
 XHSI - An extended horizontal situation indicator for X-Plane
 
-Release:      1.0 Beta 6
+Release:      1.0 Beta 7
 Release date: 2007-03-15
 Author:       Georg Gruetter (gruetter@users.sourceforge.net)
 XHSI home:    http://xhsi.sourceforge.net
@@ -8,19 +8,13 @@ XHSI home:    http://xhsi.sourceforge.net
 About this release
 ==================
 - Bugfixes
-  - Compass rose ticks on right side are now displayed correctly
-  - deflection of VOR/NDB is now calculated relative to horizontal path instead of
-    aircraft heading (which deviates from the horizontal path in case of side winds)
 - Performance and cosmetic UI changes
-  - Adapted color scheme and font sizes to match those found on the original Boeing
-    instrument
-  - Exchanged rounded instrument frame with simple statusbar to increases rendering 
-    performance (about 6%)
-  - Wind direction now shows degree symbol
-- calling the jar with java -jar XHSI.jar --help will display usage information
-- flight session recording now allows to specify recording rate. If specified, will
-  record only every n'th frame to reduce recording file size
+  - small performance improvements 
+    (heading label: 3.2 => 0.8 = -2.5 ms/frame)
+    (compass rose: 6.12 => 3.2 = -2.9 ms/frame)
+    (radio label: 1.13 => 0.5 = -0.63 - ms/frame)
 
+    31=>25 ms = -18% = max 32 fps => max 40 fps
 Note: Please consult the new Operation sections in this readme.
 
 About XHSI
