@@ -10,6 +10,8 @@ import de.georg_gruetter.xhsi.model.ModelFactory;
 public class HeadingLabel extends HSISubcomponent {
 
 	AffineTransform original_at = null;
+	int old_hdg_text_length = 0;
+	float old_hdg_text_width = 0.0f;
 	
 	public HeadingLabel(ModelFactory model_factory, HSIGraphicsConfig hsi_gc) {
 		super(model_factory, hsi_gc);
@@ -18,28 +20,40 @@ public class HeadingLabel extends HSISubcomponent {
 	public void paint(Graphics2D g2) {
 		int y = hsi_gc.border_top + 35;
 		int center_x = this.hsi_gc.plane_position_x;
-		
-		// heading
+	    int triangle_width = (int) (20 * hsi_gc.scaling_factor);
+	    int triangle_height = (int) (triangle_width * 1.5);
+	    
+		int x_points_slip_deviation_tick[] = { center_x, center_x-10, center_x+10 };
+		int y_point_slip_deviation_tick[] = { hsi_gc.rose_y_offset, y, y };
+
+		int x_points_heading_box[] = { center_x-40, center_x-40,center_x+40, center_x+40};
+		int y_points_heading_box[] = { hsi_gc.border_top, y, y, hsi_gc.border_top};
+
+		int x_points_airplane_symbol[] = { center_x, center_x - (triangle_width/2), center_x + (triangle_width/2) };
+	    int y_points_airplane_symbol[] = { hsi_gc.plane_position_y, hsi_gc.plane_position_y + triangle_height, hsi_gc.plane_position_y + triangle_height };
+
+	    // heading
 		float indicated_horizontal_path = aircraft.horizontal_path();		
 		float heading = aircraft.heading();	
+		
 		
 		g2.clearRect(center_x-40,hsi_gc.border_top, 80, y-hsi_gc.border_top);			
 		g2.setColor(Color.white);
 		g2.setFont(hsi_gc.font_large); 
 		String text = "" + (int) Math.round(indicated_horizontal_path);
-	    g2.drawString(text , center_x - (hsi_gc.get_text_width(g2, hsi_gc.font_large, text)/2), y-5);
+		
+		if (text.length() != old_hdg_text_length) {
+			old_hdg_text_width =  hsi_gc.get_text_width(g2, hsi_gc.font_large, text)/2;	
+			old_hdg_text_length = text.length();
+		}
+	    g2.drawString(text , center_x - old_hdg_text_width, y-5);
 	    
 	    // slip deviation tick
 	    rotate(g2, heading - indicated_horizontal_path);
 	    g2.setColor(Color.WHITE);
-	    GeneralPath polyline = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 3);
-	    polyline.moveTo (hsi_gc.plane_position_x, hsi_gc.rose_y_offset);
-	    polyline.lineTo(hsi_gc.plane_position_x - 10, y);
-	    polyline.lineTo(hsi_gc.plane_position_x + 10, y);
-	    polyline.lineTo(hsi_gc.plane_position_x, hsi_gc.rose_y_offset);
-	    g2.draw(polyline);
+	    g2.drawPolygon(x_points_slip_deviation_tick, y_point_slip_deviation_tick,3);
 	    unrotate(g2);
-	    	    
+	  	    
 	    // TRK and MAG labels	    
 	    g2.setColor(hsi_gc.color_lightgreen);
 	    g2.setFont(hsi_gc.font_medium);
@@ -50,22 +64,10 @@ public class HeadingLabel extends HSISubcomponent {
 	    
 	    // surrounding box
 	    g2.setColor(Color.WHITE);
-	    polyline = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 3);
-	    polyline.moveTo (center_x - 40, hsi_gc.border_top);
-	    polyline.lineTo(center_x - 40, y);
-	    polyline.lineTo(center_x + 40, y);
-	    polyline.lineTo(center_x + 40, hsi_gc.border_top);
-	    g2.draw(polyline);
+	    g2.drawPolyline(x_points_heading_box, y_points_heading_box, 4);
 	    
 	    // plane symbol and line to heading box
-	    int triangle_width = (int) (20 * hsi_gc.scaling_factor);
-	    int triangle_height = (int) (triangle_width * 1.5);
-	    polyline = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 4);
-	    polyline.moveTo (hsi_gc.plane_position_x , hsi_gc.plane_position_y);
-	    polyline.lineTo(hsi_gc.plane_position_x - (triangle_width/2), hsi_gc.plane_position_y + triangle_height);
-	    polyline.lineTo(hsi_gc.plane_position_x + (triangle_width/2), hsi_gc.plane_position_y + triangle_height);
-	    polyline.lineTo(hsi_gc.plane_position_x , hsi_gc.plane_position_y);
-	    g2.draw(polyline);
+	    g2.drawPolygon(x_points_airplane_symbol, y_points_airplane_symbol, 3);
 
 	    // distance line with map zoom indication
 	    int tick_halfwidth = (int) (5 * hsi_gc.scaling_factor); 

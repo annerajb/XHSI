@@ -22,6 +22,7 @@
 */
 package de.georg_gruetter.xhsi.panel;
 
+import java.awt.Component;
 import java.awt.Graphics2D;
 
 import de.georg_gruetter.xhsi.model.Aircraft;
@@ -30,13 +31,14 @@ import de.georg_gruetter.xhsi.model.Avionics;
 import de.georg_gruetter.xhsi.model.FMS;
 import de.georg_gruetter.xhsi.model.ModelFactory;
 
-public abstract class HSISubcomponent {
+public abstract class HSISubcomponent extends Component {
 
 	HSIGraphicsConfig hsi_gc;
 	ModelFactory model_factory;
 	Aircraft aircraft;
 	Avionics avionics;
 	AircraftEnvironment aircraft_environment;
+	Component parent_component;
 	FMS fms;
 	
 	public HSISubcomponent(ModelFactory model_factory, HSIGraphicsConfig hsi_gc) {
@@ -46,7 +48,13 @@ public abstract class HSISubcomponent {
 		this.avionics = this.aircraft.get_avionics();
 		this.aircraft_environment = this.aircraft.get_environment();
 		this.fms = this.avionics.get_fms();
+		this.parent_component = null;
 	}	
+	
+	public HSISubcomponent(ModelFactory model_factory, HSIGraphicsConfig hsi_gc, Component parent_component) {
+		this(model_factory, hsi_gc);
+		this.parent_component = parent_component;
+	}
 	
 	public abstract void paint(Graphics2D g2);
 	

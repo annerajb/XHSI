@@ -23,16 +23,23 @@
 */
 package de.georg_gruetter.xhsi.panel;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.georg_gruetter.xhsi.model.Airport;
 import de.georg_gruetter.xhsi.model.CoordinateSystem;
@@ -47,6 +54,8 @@ import de.georg_gruetter.xhsi.model.VOR;
 public class MovingMap extends HSISubcomponent {
 	
 	private static final boolean DRAW_LAT_LON_GRID = false;
+	private BufferedImage fix_image;
+	private BufferedImage vor_image;
 
 	NavigationObjectRepository nor;
 	float pixels_per_deg_lon_at_current_position;
@@ -55,12 +64,16 @@ public class MovingMap extends HSISubcomponent {
 	float dash[] = { 10.0f };
 	Area panel = null;
 
-	public MovingMap(ModelFactory model_factory, HSIGraphicsConfig hsi_gc) {
-		super(model_factory, hsi_gc);
+	public MovingMap(ModelFactory model_factory, HSIGraphicsConfig hsi_gc, Component parent_component) {
+		super(model_factory, hsi_gc, parent_component);
 		this.nor = NavigationObjectRepository.get_instance();
 	}
 
 	public void paint(Graphics2D g2) {
+		
+		if (this.fix_image == null)
+			render_navigation_object_images();
+		
 		drawMap(g2, this.avionics.map_range());
 		
 		// draw range circles
@@ -71,6 +84,27 @@ public class MovingMap extends HSISubcomponent {
 		panel.subtract(hsi_gc.inner_rose_area);
 		g2.setColor(Color.BLACK);
 		g2.fill(panel);
+	}
+	
+	private void render_navigation_object_images() {
+		System.out.println("rendered images");
+        GraphicsConfiguration gc = this.parent_component.getGraphicsConfiguration();
+        this.fix_image = gc.createCompatibleImage(12,12, Transparency.BITMASK);
+        Graphics2D gImg = (Graphics2D)this.fix_image.getGraphics();
+        
+        HashMap rendering_hints = new HashMap();
+		rendering_hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        gImg.setRenderingHints(rendering_hints);
+		gImg.setStroke(new BasicStroke(2.0f));
+        gImg.setComposite(AlphaComposite.Src);
+        gImg.setColor(new Color(0, 0, 0, 0));
+        gImg.fillRect(0, 0, 12,12);
+        
+		int x_points_triangle[] = { 0, 11, 6 };
+		int y_points_triangle[] = { 11, 11, 0  };
+		gImg.setColor(Color.WHITE);
+		gImg.drawPolygon(x_points_triangle, y_points_triangle, 3);
+		gImg.dispose();
 	}
 	
 	/*
@@ -103,7 +137,7 @@ public class MovingMap extends HSISubcomponent {
 				hsi_gc.plane_position_x, 
 				hsi_gc.plane_position_y);
 	    g2.transform(rotate_to_heading);
-		//g2.rotate(Math.toRadians(-1.0f * this.aircraft.horizontal_path()), hsi_gc.plane_position_x, hsi_gc.plane_position_y);
+	    
 		if (DRAW_LAT_LON_GRID) {
 			g2.setColor(Color.GRAY);
 			for (float i=(float)Math.round(lon_aircraft)- 2.0f;i<= (float)Math.round(lon_aircraft) + 2.0f;i+=0.1f) {
@@ -119,8 +153,8 @@ public class MovingMap extends HSISubcomponent {
 				g2.drawString("" + Math.round(i*10)/10.0f + "¡", (int)(hsi_gc.panel_size.height*0.7), lat_to_y(i) -2);
 			}	
 		}		
+
 		g2.setFont(hsi_gc.font_small);
-		
 		for (int lat=(int)lat_min;lat<=(int) lat_max;lat++) {
 			for (int lon=(int)lon_min;lon<=(int)lon_max;lon++) {
 				
@@ -279,10 +313,10 @@ public class MovingMap extends HSISubcomponent {
 		
 		AffineTransform original_at = g2.getTransform();
 		g2.rotate(Math.toRadians(this.aircraft.horizontal_path() - this.aircraft.magnetic_variation()), x,y);		
-		Graphics g = (Graphics) g2;
-		g.setColor(Color.WHITE);
-		g.drawPolygon(x_points_triangle, y_points_triangle, 3);
-		g.drawString(fix.name, x + 10, y + 13);
+		g2.setColor(Color.WHITE);		
+		//g2.drawImage(this.fix_image, x-6,y-6, null);
+		g2.drawPolygon(x_points_triangle, y_points_triangle, 3);
+		g2.drawString(fix.name, x + 10, y + 13);
 		g2.setTransform(original_at);
 	}
 	
@@ -304,7 +338,7 @@ public class MovingMap extends HSISubcomponent {
 		g2.drawLine(x,y+(localizer_extension/3),x,y+localizer_extension);
 		g2.drawLine(x,y-(localizer_extension/3),x,y-localizer_extension);
 		g2.setStroke(original_stroke);
-		g2.setTransform(original_at);			
+		g2.setTransform(original_at);
 
 	}
 	
