@@ -27,8 +27,12 @@ import java.awt.Graphics2D;
 import java.awt.geom.Arc2D;
 
 import de.georg_gruetter.xhsi.model.ModelFactory;
+import de.georg_gruetter.xhsi.util.RunningAverager;
 
 public class PositionTrendVector extends HSISubcomponent {
+
+	private static final long serialVersionUID = 1L;
+	RunningAverager turn_speed_averager = new RunningAverager(40);
 
 	public PositionTrendVector(ModelFactory model_factory, HSIGraphicsConfig hsi_gc) {
 		super(model_factory, hsi_gc);
@@ -38,7 +42,7 @@ public class PositionTrendVector extends HSISubcomponent {
 		if (Math.abs(aircraft.roll_angle()) >= 2) {
 		
 			long  pixels_per_kilometer = hsi_gc.rose_radius / avionics.map_range();
-			float turn_speed = aircraft.turn_speed();						// turn speed in deg/s
+			float turn_speed = turn_speed_averager.running_average(aircraft.turn_speed());						// turn speed in deg/s
 			float ground_speed = aircraft.ground_speed() * 0.51444f;		// ground speed in m/s
 			float turn_radius = turn_radius(turn_speed, ground_speed);		// turn radius in m
 			int map_range = avionics.map_range();

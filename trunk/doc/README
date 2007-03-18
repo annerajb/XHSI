@@ -15,6 +15,9 @@ About this release
     (radio label: 1.13 => 0.5 = -0.63 - ms/frame)
 
     31=>25 ms = -18% = max 32 fps => max 40 fps
+- position trend vector is now less nervous (added running average)
+
+
 Note: Please consult the new Operation sections in this readme.
 
 About XHSI

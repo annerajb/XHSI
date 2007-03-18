@@ -24,6 +24,7 @@ package de.georg_gruetter.xhsi.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 public class NavigationObjectRepository {
 	
@@ -32,6 +33,8 @@ public class NavigationObjectRepository {
 	private ArrayList fixes[][];
 	private ArrayList airports[][];
 	private HashMap frequencies;
+	
+	private static Logger logger = Logger.getLogger("de.georg_gruetter.xhsi");
 	
 	private static NavigationObjectRepository single_instance; 
 	
@@ -134,7 +137,8 @@ public class NavigationObjectRepository {
 		if (nos.isEmpty() == false) {
 			while ((found_rno == false) && (index<nos.size())) {
 				rno = (RadioNavigationObject) nos.get(index);
-				distance = CoordinateSystem.distance(aircraft_lat, aircraft_lon, rno.lat, rno.lon);
+				//logger.fine("find_tuned_nav_object");
+				distance = CoordinateSystem.rough_distance(aircraft_lat, aircraft_lon, rno.lat, rno.lon);
 				if (distance < ((rno.range + 2.0) * 1.85319f)) {	
 					found_rno = true;
 				} else {

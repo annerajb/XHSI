@@ -22,12 +22,9 @@
 */
 package de.georg_gruetter.xhsi.panel;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
@@ -184,14 +181,10 @@ public class RadioLabel extends HSISubcomponent {
 			if ((this.left_radio_box_buf_image == null) ||
 			    (radio1_box_info == null) ||
 				(radio1_box_info.equals(this.selected_nav_radio1) == false)) {
-				this.radio1_box_info = new RadioBoxInfo(this.selected_nav_radio1);
 				
-	            GraphicsConfiguration gc = this.parent_component.getGraphicsConfiguration();
-	            this.left_radio_box_buf_image = gc.createCompatibleImage(100, line_height*3, Transparency.BITMASK);
-	            Graphics2D gImg = (Graphics2D)this.left_radio_box_buf_image.getGraphics();
-	            gImg.setComposite(AlphaComposite.Src);
-	            gImg.setColor(new Color(0, 0, 0, 0));
-	            gImg.fillRect(0, 0, 100, line_height*3);
+				this.radio1_box_info = new RadioBoxInfo(this.selected_nav_radio1);
+	            this.left_radio_box_buf_image = create_buffered_image(100, line_height*3);
+	            Graphics2D gImg = get_graphics(this.left_radio_box_buf_image);
 				draw_radio1_box_info(gImg, line_height, this.radio1_box_info);
 				gImg.dispose();
 			}
@@ -204,12 +197,8 @@ public class RadioLabel extends HSISubcomponent {
 					(radio2_box_info.equals(this.selected_nav_radio2) == false)) {
 					this.radio2_box_info = new RadioBoxInfo(this.selected_nav_radio2);
 					
-		            GraphicsConfiguration gc = this.parent_component.getGraphicsConfiguration();
-		            this.right_radio_box_buf_image = gc.createCompatibleImage(100, line_height*3, Transparency.BITMASK);
-		            Graphics2D gImg = (Graphics2D)this.right_radio_box_buf_image.getGraphics();
-		            gImg.setComposite(AlphaComposite.Src);
-		            gImg.setColor(new Color(0, 0, 0, 0));
-		            gImg.fillRect(0, 0, 100, line_height*3);
+		            this.right_radio_box_buf_image = create_buffered_image(100, line_height*3);
+		            Graphics2D gImg = get_graphics(this.right_radio_box_buf_image);
 					draw_radio2_box_info(gImg, line_height, this.radio2_box_info);
 					gImg.dispose();
 				}

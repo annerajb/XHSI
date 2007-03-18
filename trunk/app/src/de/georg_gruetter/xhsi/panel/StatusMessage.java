@@ -30,6 +30,8 @@ import de.georg_gruetter.xhsi.model.ModelFactory;
 
 public class StatusMessage extends HSISubcomponent {
 
+	private static final long serialVersionUID = 1L;
+
 	private static final int BORDER = 10;
 	
 	private ArrayList status_message_lines;

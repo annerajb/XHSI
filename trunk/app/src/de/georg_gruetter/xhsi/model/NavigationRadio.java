@@ -26,7 +26,7 @@ package de.georg_gruetter.xhsi.model;
 import de.georg_gruetter.xhsi.model.xplane.XPlaneSimDataRepository;
 
 public class NavigationRadio {
-		
+	
 	public static final int RADIO_TYPE_NAV = 0;
 	public static final int RADIO_TYPE_ADF = 1;
 	
@@ -131,7 +131,7 @@ public class NavigationRadio {
 		}
 		if ((this.frequency != current_freq) || 
 			(this.rnav_object == null) ||
-			(this.aircraft.distance_to(this.rnav_object) > this.rnav_object.range)) {
+			(this.aircraft.rough_distance_to(this.rnav_object) > this.rnav_object.range)) {
 			this.frequency = current_freq;
 			this.rnav_object = this.no_repository.find_tuned_nav_object(this.aircraft.lat(), this.aircraft.lon(), current_freq);	
 		}

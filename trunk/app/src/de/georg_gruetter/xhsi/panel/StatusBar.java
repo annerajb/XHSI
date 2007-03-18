@@ -31,6 +31,7 @@ import de.georg_gruetter.xhsi.util.RunningAverager;
 
 public class StatusBar extends HSISubcomponent {
 
+	private static final long serialVersionUID = 1L;
 	long time_of_last_call;
 	float[] last_frame_rates = new float[10];
 	RunningAverager averager = new RunningAverager(100);
