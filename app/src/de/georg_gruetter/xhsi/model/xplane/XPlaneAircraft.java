@@ -70,6 +70,10 @@ public class XPlaneAircraft implements Aircraft {
 	public float distance_to(NavigationObject nav_object) {
 		return CoordinateSystem.distance(lat(), lon(), nav_object.lat, nav_object.lon);
 	}
+	
+	public float rough_distance_to(NavigationObject nav_object) {
+		return CoordinateSystem.rough_distance(lat(), lon(), nav_object.lat, nav_object.lon);		
+	}
 
 	public long time_when_arriving_at(NavigationObject nav_object) {
 		return time_after_distance(distance_to(nav_object));
@@ -94,4 +98,5 @@ public class XPlaneAircraft implements Aircraft {
 	public float magnetic_variation() {
 		return sim_data.get_sim_value(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_MAGVAR);
 	}
+
 }

@@ -89,6 +89,16 @@ public interface Aircraft {
 	public float distance_to(NavigationObject nav_object);
 	
 	/**
+	 * Returns a rough distance between the aircraft and the given navigation
+	 * object in nautical miles. This calculation is less accurate but much
+	 * faster than <code>distance_to</code>. 
+	 * 
+	 * @param nav_object - the navigation object to which the distance should be computed
+	 * @return float - distance to nav_object in nautical miles
+	 */
+	public float rough_distance_to(NavigationObject nav_object);
+	
+	/**
 	 * Returns the zulu time when the aircraft will arive at the given 
 	 * navigation object based on the distance to the aircraft and its
 	 * current ground speed. Note: we assume the aircraft is on a direct 

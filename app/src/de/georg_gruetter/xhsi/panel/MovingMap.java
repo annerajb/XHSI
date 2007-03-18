@@ -52,10 +52,10 @@ import de.georg_gruetter.xhsi.model.NavigationObjectRepository;
 import de.georg_gruetter.xhsi.model.VOR;
 
 public class MovingMap extends HSISubcomponent {
-	
+
+	private static final long serialVersionUID = 1L;
 	private static final boolean DRAW_LAT_LON_GRID = false;
 	private BufferedImage fix_image;
-	private BufferedImage vor_image;
 
 	NavigationObjectRepository nor;
 	float pixels_per_deg_lon_at_current_position;

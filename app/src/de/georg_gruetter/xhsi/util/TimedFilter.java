@@ -1,7 +1,9 @@
 /**
-* InstrumentFrame.java
+* TimedFilter.java
 * 
-* Renders the instrument frame of the HSI.
+* Used to filter out computations that need not to be performed for every
+* displayed frame, such as distance calculations or checks for radio frequency
+* changes.
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * 
@@ -19,24 +21,31 @@
 * License along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package de.georg_gruetter.xhsi.panel;
+package de.georg_gruetter.xhsi.util;
 
-import java.awt.Graphics2D;
+public class TimedFilter {
+	
+	/**
+	 * The time in ms after which the filter times out
+	 */
+	long filter_timeout;
+	
+	/**
+	 * The last time the filter was activated
+	 */
+	long time_of_last_activation;
 
-import de.georg_gruetter.xhsi.model.ModelFactory;
-
-public class InstrumentFrame extends HSISubcomponent {
-
-	private static final long serialVersionUID = 1L;
-
-	public InstrumentFrame(ModelFactory model_factory, HSIGraphicsConfig hsi_gc) {
-		super(model_factory, hsi_gc);
+	public TimedFilter(long filter_timeout) {
+		this.filter_timeout = filter_timeout;
+		this.time_of_last_activation = 0;
 	}
-
-	public void paint(Graphics2D g2) {
-		//g2.setColor(Color.DARK_GRAY);
-		//g2.fill(hsi_gc.instrument_frame);	
-		g2.clearRect(0,0,hsi_gc.border_right, hsi_gc.panel_size.height);
-		g2.clearRect(hsi_gc.panel_size.width - hsi_gc.border_right, 0, hsi_gc.border_right, hsi_gc.panel_size.height);
+	
+	public boolean time_to_perform() {
+		long now = System.currentTimeMillis();
+		if (((now - time_of_last_activation) > filter_timeout) || (time_of_last_activation == 0)) {
+			time_of_last_activation = now;
+			return true;
+		} else
+			return false;
 	}
 }

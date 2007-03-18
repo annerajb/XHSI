@@ -31,7 +31,8 @@ import java.awt.geom.Line2D;
 import de.georg_gruetter.xhsi.model.ModelFactory;
 
 public class APHeading extends HSISubcomponent {
-	
+
+	private static final long serialVersionUID = 1L;
 	float dash[] = { 10.0f };
 	
 	public APHeading(ModelFactory model_factory, HSIGraphicsConfig hsi_gc) {

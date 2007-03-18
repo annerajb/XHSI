@@ -22,8 +22,14 @@
 */
 package de.georg_gruetter.xhsi.panel;
 
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.Transparency;
+import java.awt.image.BufferedImage;
 
 import de.georg_gruetter.xhsi.model.Aircraft;
 import de.georg_gruetter.xhsi.model.AircraftEnvironment;
@@ -60,5 +66,23 @@ public abstract class HSISubcomponent extends Component {
 	
 	public  String toString() {
 		return this.getClass().getName();
+	}
+	
+	protected BufferedImage create_buffered_image(int width, int height) {
+		
+        GraphicsConfiguration gc = this.parent_component.getGraphicsConfiguration();
+        BufferedImage buf_img = gc.createCompatibleImage(width, height, Transparency.BITMASK);		
+        return buf_img;
+	}
+	
+	protected Graphics2D get_graphics(BufferedImage buf_img) {
+        Graphics2D gImg = (Graphics2D)buf_img.getGraphics();
+        gImg.setComposite(AlphaComposite.Src);
+        gImg.setColor(new Color(0, 0, 0, 0));
+        gImg.fillRect(0, 0, buf_img.getWidth(), buf_img.getHeight());
+        gImg.setRenderingHints(hsi_gc.rendering_hints);		
+        gImg.setStroke(new BasicStroke(2.0f));
+
+        return gImg;
 	}
 }

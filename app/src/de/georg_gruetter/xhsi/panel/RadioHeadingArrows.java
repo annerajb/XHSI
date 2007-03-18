@@ -31,7 +31,8 @@ import de.georg_gruetter.xhsi.model.ModelFactory;
 import de.georg_gruetter.xhsi.model.NavigationRadio;
 
 public class RadioHeadingArrows extends HSISubcomponent {
-	
+
+	private static final long serialVersionUID = 1L;
 	NavigationRadio selected_nav_radio1;
 	NavigationRadio selected_nav_radio2;
 	

@@ -33,9 +33,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.logging.Logger;
 
 import de.georg_gruetter.xhsi.HSIStatus;
@@ -45,7 +43,7 @@ import de.georg_gruetter.xhsi.model.Observer;
 public class HSIComponent extends Component implements Observer {
 	
 	private static final long serialVersionUID = 1L;
-	public static boolean COLLECT_PROFILING_INFORMATION = true;
+	public static boolean COLLECT_PROFILING_INFORMATION = false;
 	public static long NB_OF_PAINTS_BETWEEN_PROFILING_INFO_OUTPUT = 100;
 	private static Logger logger = Logger.getLogger("de.georg_gruetter.xhsi");
 
@@ -56,7 +54,6 @@ public class HSIComponent extends Component implements Observer {
 	long total_paint_times = 0;
 	long nb_of_paints = 0;
 	Graphics2D g2;
-	HashMap rendering_hints = new HashMap();
 	HSIGraphicsConfig hsi_gc;
 	ModelFactory model_factory;
 	boolean update_since_last_heartbeat = false;
@@ -69,22 +66,14 @@ public class HSIComponent extends Component implements Observer {
 		subcomponents.add(new MovingMap(model_factory, hsi_gc, this));
 		subcomponents.add(new CompassRose(model_factory, hsi_gc)); 
 		subcomponents.add(new SpeedsLabel(model_factory, hsi_gc));
-		subcomponents.add(new NextFMSEntryLabel(model_factory, hsi_gc));
-		subcomponents.add(new HeadingLabel(model_factory, hsi_gc));
+		subcomponents.add(new NextFMSEntryLabel(model_factory, hsi_gc, this));
+		subcomponents.add(new HeadingLabel(model_factory, hsi_gc, this));
 		subcomponents.add(new APHeading(model_factory, hsi_gc));
 		subcomponents.add(new RadioHeadingArrows(model_factory, hsi_gc));
 		subcomponents.add(new RadioLabel(model_factory, hsi_gc, this));
 		subcomponents.add(new PositionTrendVector(model_factory, hsi_gc));
 		subcomponents.add(new InstrumentFrame(model_factory, hsi_gc));
-		subcomponents.add(new StatusBar(model_factory, hsi_gc));
-		//subcomponents.add(new IntermediateImageTest(model_factory, hsi_gc, this));
-		
-		this.status_message_comp = new StatusMessage(model_factory, hsi_gc);		
-		subcomponents.add(this.status_message_comp);
-		
-		rendering_hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		rendering_hints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);	
-		
+		subcomponents.add(new StatusBar(model_factory, hsi_gc));		
 	}
 	
 	public Dimension getPreferredSize() {
@@ -94,7 +83,7 @@ public class HSIComponent extends Component implements Observer {
 	public void paint(Graphics g) {
 		
 		g2 = (Graphics2D)g;
-		g2.setRenderingHints(rendering_hints);
+		g2.setRenderingHints(hsi_gc.rendering_hints);
 		g2.setStroke(new BasicStroke(2.0f));
 		g2.setBackground(Color.BLACK);
 		

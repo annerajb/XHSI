@@ -26,15 +26,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Arc2D;
-import java.util.logging.Logger;
-
 import de.georg_gruetter.xhsi.model.ModelFactory;
 
 public class CompassRose extends HSISubcomponent {
 	
-	private static Logger logger = Logger.getLogger("de.georg_gruetter.xhsi");
-	
+	private static final long serialVersionUID = 1L;
+
 	private int two_digit_hdg_text_width = 0;
 	private int one_digit_hdg_text_width = 0;
 	private int hdg_text_height = 0;

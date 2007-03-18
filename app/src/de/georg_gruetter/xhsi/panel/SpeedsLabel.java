@@ -32,7 +32,8 @@ import de.georg_gruetter.xhsi.model.ModelFactory;
 
 
 public class SpeedsLabel extends HSISubcomponent {
-	
+
+	private static final long serialVersionUID = 1L;
 	int wind_dir_arrow_x;
 	int wind_dir_arrow_y;
 	int wind_dir_arrow_length = 30;

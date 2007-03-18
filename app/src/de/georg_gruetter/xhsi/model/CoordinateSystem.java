@@ -21,7 +21,11 @@
 */
 package de.georg_gruetter.xhsi.model;
 
+import java.util.logging.Logger;
+
 public class CoordinateSystem {
+	
+	private static Logger logger = Logger.getLogger("de.georg_gruetter.xhsi");
 	
 	public static float km_per_deg_lon(float lat) {
 		return (float) (Math.cos(Math.toRadians(lat)) * 2.0f * Math.PI * (6370.0f/360.0f)); 		
@@ -48,7 +52,7 @@ public class CoordinateSystem {
 	}
 	
 	public static float distance(float lat1, float lon1, float lat2, float lon2) {
-
+		
 		double a1 = Math.toRadians(lat1);
 		double b1 = Math.toRadians(lon1);
 		double a2 = Math.toRadians(lat2);
@@ -60,5 +64,12 @@ public class CoordinateSystem {
 					(Math.cos(a1) * Math.sin(b1) * Math.cos(a2) * Math.sin(b2)) +
 					(Math.sin(a1) * Math.sin(a2))
 				) * 3443.9f);
+	}
+	
+	public static float rough_distance(float lat1, float lon1, float lat2, float lon2) {
+		return (float) Math.sqrt(
+				Math.pow(nm_per_deg_lon(lat1)*(lon1-lon2),2) + 
+				Math.pow(nm_per_deg_lat()*(lat1-lat2),2));		
+		
 	}
 }

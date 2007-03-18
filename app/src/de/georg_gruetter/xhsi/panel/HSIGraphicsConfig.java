@@ -29,12 +29,15 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HSIGraphicsConfig implements ComponentListener {
 	
@@ -54,6 +57,8 @@ public class HSIGraphicsConfig implements ComponentListener {
 	public int max_char_advance_small;
 	public int line_height_medium;
 	public int max_char_advance_medium;
+	public int line_height_large;
+	public int max_char_advance_large;
 	
 	public Dimension panel_size;
 	public int rose_radius;
@@ -76,6 +81,8 @@ public class HSIGraphicsConfig implements ComponentListener {
 	public Area inner_rose_area;
 	public Area instrument_frame;
 	
+	public Map rendering_hints;
+	
 	private boolean resized = true;;
 	
 	public HSIGraphicsConfig(Component root_component) {
@@ -97,6 +104,10 @@ public class HSIGraphicsConfig implements ComponentListener {
 		color_lightgreen = Color.GREEN.brighter();
 		color_lightblue = Color.CYAN; //.brighter();
 		color_magenta = Color.MAGENTA.brighter();
+		
+		this.rendering_hints = new HashMap();
+		this.rendering_hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		this.rendering_hints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);	
 	}
 	
 	public void update_config(Graphics2D g2) {
@@ -114,7 +125,11 @@ public class HSIGraphicsConfig implements ComponentListener {
 			resized = false;
 			
 			// calculate font metrics
-			FontMetrics fm = g2.getFontMetrics(this.font_medium);
+			FontMetrics fm = g2.getFontMetrics(this.font_large);
+			this.line_height_large = fm.getAscent();
+			this.max_char_advance_large = fm.stringWidth("XX") - fm.stringWidth("X");
+
+			fm = g2.getFontMetrics(this.font_medium);
 			this.line_height_medium = fm.getAscent();
 			this.max_char_advance_medium = fm.stringWidth("XX") - fm.stringWidth("X");
 
