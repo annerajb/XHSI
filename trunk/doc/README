@@ -9,13 +9,14 @@ About this release
 ==================
 - Bugfixes
 - Performance and cosmetic UI changes
-  - small performance improvements 
-    (heading label: 3.2 => 0.8 = -2.5 ms/frame)
-    (compass rose: 6.12 => 3.2 = -2.9 ms/frame)
-    (radio label: 1.13 => 0.5 = -0.63 - ms/frame)
-
-    31=>25 ms = -18% = max 32 fps => max 40 fps
-- position trend vector is now less nervous (added running average)
+  - performance improvements (about 20% improvement in frame rate on my Powermac) 
+  - position trend vector is now less nervous (added running average)
+- Changes to FMS route overlay
+  - FMS waypoints are now drawn only once
+  - GPS FMS waypoints are now labeled with "GPS" instead of funny characters. 
+  - T/C - T/D features are disabled - the new Goodway FMS will hopefully help out here
+  - "Empty" fms route waypoints are now ignored (empty = waypoints lat/lon = 0°/0°)
+  
 
 
 Note: Please consult the new Operation sections in this readme.
