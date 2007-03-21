@@ -22,12 +22,15 @@
 package de.georg_gruetter.xhsi.panel;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
 import de.georg_gruetter.xhsi.HSIStatus;
 import de.georg_gruetter.xhsi.model.ModelFactory;
 import de.georg_gruetter.xhsi.model.xplane.XPlaneSimDataRepository;
 import de.georg_gruetter.xhsi.util.RunningAverager;
+import de.georg_gruetter.xhsi.util.TimedFilter;
 
 public class StatusBar extends HSISubcomponent {
 
@@ -35,6 +38,9 @@ public class StatusBar extends HSISubcomponent {
 	long time_of_last_call;
 	float[] last_frame_rates = new float[10];
 	RunningAverager averager = new RunningAverager(100);
+	TimedFilter timed_filter;
+	BufferedImage buf_img;
+	int frame_rate = 0;
 
 	int fps_x;
 	int fps_y;
@@ -47,34 +53,56 @@ public class StatusBar extends HSISubcomponent {
 	int nav_db_status_y;
 	int nav_db_text_width = 0;
 	
-	public StatusBar(ModelFactory model_factory, HSIGraphicsConfig hsi_gc) {
-		super(model_factory, hsi_gc);
+	public StatusBar(ModelFactory model_factory, HSIGraphicsConfig hsi_gc, Component parent_component) {
+		super(model_factory, hsi_gc, parent_component);
 		this.time_of_last_call = System.currentTimeMillis();
+		this.timed_filter = new TimedFilter(1000);
 	}
 
 	public void paint(Graphics2D g2) {
-		g2.setColor(Color.DARK_GRAY);
-		g2.fillRect(0, hsi_gc.panel_size.height - hsi_gc.status_bar_height, hsi_gc.panel_size.width, hsi_gc.status_bar_height);
 		
-		g2.setBackground(Color.BLACK);
-
-		// compute nav db text width only once
-		if (nav_db_text_width == 0) {
-			nav_db_text_width = this.hsi_gc.get_text_width(g2, this.hsi_gc.font_small, "NAV DB");
+		calculate_frame_rate();
+		
+		if (timed_filter.time_to_perform()) {
+			this.buf_img = create_buffered_image(hsi_gc.panel_size.width, hsi_gc.status_bar_height);
+			Graphics2D gImg = get_graphics(this.buf_img);
+			render_status_bar(gImg);
+			gImg.dispose();
 		}
-		fps_x = hsi_gc.border_left + 120;
-		fps_y = hsi_gc.panel_size.height - 25;
-		fps_pixels_per_frame = 2;
 		
-		src_x = hsi_gc.border_left;
-		src_y = hsi_gc.panel_size.height - 25;
+		g2.drawImage(this.buf_img, 0, hsi_gc.panel_size.height - hsi_gc.status_bar_height, null);
+	}
+	
+	private void calculate_frame_rate() {
+		long current_time = System.currentTimeMillis();
+		this.frame_rate = (int) this.averager.running_average(1000.0f/(current_time - this.time_of_last_call));
+		this.time_of_last_call = current_time;
+	}
+	
+	private void render_status_bar(Graphics2D g2) {
 		
-		nav_db_status_x = hsi_gc.panel_size.width - hsi_gc.border_right - nav_db_text_width;
-		nav_db_status_y = hsi_gc.panel_size.height - 25;
-		
-		draw_data_source(g2);
-		draw_frame_rate(g2);
-		draw_nav_db_status(g2);		
+			g2.setColor(Color.DARK_GRAY);
+			g2.fillRect(0, 0, hsi_gc.panel_size.width, hsi_gc.status_bar_height);
+			
+			g2.setBackground(Color.BLACK);
+	
+			// compute nav db text width only once
+			if (nav_db_text_width == 0) {
+				nav_db_text_width = this.hsi_gc.get_text_width(g2, this.hsi_gc.font_small, "NAV DB");
+			}
+			fps_x = hsi_gc.border_left + 120;
+			fps_y = hsi_gc.status_bar_height - 25;
+			fps_pixels_per_frame = 2;
+			
+			src_x = hsi_gc.border_left;
+			src_y = hsi_gc.status_bar_height - 25;
+			
+			nav_db_status_x = hsi_gc.panel_size.width - hsi_gc.border_right - nav_db_text_width;
+			nav_db_status_y = hsi_gc.status_bar_height - 25;
+			
+			draw_data_source(g2);
+			draw_frame_rate(g2);
+			draw_nav_db_status(g2);		
 	}
 	
 	public void draw_data_source(Graphics2D g2) {
@@ -121,8 +149,6 @@ public class StatusBar extends HSISubcomponent {
 	public void draw_frame_rate(Graphics2D g2) {
 		
 		if ((HSIStatus.status == HSIStatus.STATUS_RECEIVING) || (HSIStatus.status == HSIStatus.STATUS_PLAYING_RECORDING)) {
-			long current_time = System.currentTimeMillis();
-			int frame_rate = (int) this.averager.running_average(1000.0f/(current_time - time_of_last_call));
 			g2.setColor(Color.BLACK);
 			g2.setFont(hsi_gc.font_small);
 			
@@ -135,8 +161,8 @@ public class StatusBar extends HSISubcomponent {
 						fps_x + 30 + (i*fps_pixels_per_frame), 
 						fps_y + 15);
 			}
-			if (frame_rate > 40) {
-				frame_rate = 40;
+			if (this.frame_rate > 40) {
+				this.frame_rate = 40;
 				g2.drawString("+", fps_x + 33 + (40*fps_pixels_per_frame), fps_y + 11);
 			}
 			
@@ -146,11 +172,11 @@ public class StatusBar extends HSISubcomponent {
 			g2.drawString("40", fps_x + 25 + (40*fps_pixels_per_frame), fps_y + 23);
 	
 			// draw bar
-			if (frame_rate > 15) {
+			if (this.frame_rate > 15) {
 				g2.setColor(Color.BLACK);
-			} else if (frame_rate > 10) {
+			} else if (this.frame_rate > 10) {
 				g2.setColor(Color.YELLOW);		
-			} else if (frame_rate > 5) {
+			} else if (this.frame_rate > 5) {
 				g2.setColor(Color.ORANGE);			
 			} else {
 				g2.setColor(Color.RED);
@@ -158,11 +184,10 @@ public class StatusBar extends HSISubcomponent {
 			g2.fillRoundRect(
 					fps_x+30,
 					fps_y,
-					(frame_rate * fps_pixels_per_frame),
+					(this.frame_rate * fps_pixels_per_frame),
 					10,
 					4,
 					4);
-			this.time_of_last_call = current_time;
 		}
 	}
 }

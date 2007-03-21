@@ -32,8 +32,12 @@ public class FMSEntry extends NavigationObject {
 		this.type = type;
 		this.altitude = altitude;
 		this.active = active;
+		
+		if (type == 2048) {
+			this.name = "GPS";
+		}
 	}
-	
+		
 	public String toString() {
 		return this.name + " @ (" + this.lat + "¡, " + this.lon + "¡)";
 	}

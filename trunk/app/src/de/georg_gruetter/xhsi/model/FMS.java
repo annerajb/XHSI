@@ -22,12 +22,14 @@
 package de.georg_gruetter.xhsi.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class FMS {
 	// TASK: remove singleton code! Have Avionics create instance of FMS
 	private static FMS single_instance;
-	private FMSEntry next_waypoint = null;;
-	private ArrayList entries;
+	private FMSEntry next_waypoint = null;
+	private ArrayList<FMSEntry> entries;
+	private HashMap<String,FMSEntry> entry_lookup;
 	
 	public static FMS get_instance() {
 		if (FMS.single_instance == null) {
@@ -37,7 +39,8 @@ public class FMS {
 	}
 	
 	private FMS() {
-		this.entries = new ArrayList();
+		this.entries = new ArrayList<FMSEntry>();
+		this.entry_lookup = new HashMap<String,FMSEntry>();
 	}
 
 	/**
@@ -53,6 +56,7 @@ public class FMS {
 	public void clear() {
 		this.next_waypoint = null;
 		this.entries.clear();
+		this.entry_lookup.clear();
 	}
 
 	/**
@@ -62,6 +66,7 @@ public class FMS {
 	 */
 	public void append_entry(FMSEntry entry) {
 		this.entries.add(entry);
+		this.entry_lookup.put(entry.name, entry);
 		if (entry.active) {
 			this.next_waypoint = entry;
 		}
@@ -79,7 +84,11 @@ public class FMS {
 	}
 	
 	public FMSEntry get_entry(int position) {
-		return (FMSEntry) this.entries.get(position);
+		return this.entries.get(position);
+	}
+	
+	public boolean has_entry(String name) {
+		return this.entry_lookup.containsKey(name);
 	}
 	
 	public void print_entries() {
