@@ -73,7 +73,7 @@ public class HSIComponent extends Component implements Observer {
 		subcomponents.add(new RadioLabel(model_factory, hsi_gc, this));
 		subcomponents.add(new PositionTrendVector(model_factory, hsi_gc));
 		subcomponents.add(new InstrumentFrame(model_factory, hsi_gc));
-		subcomponents.add(new StatusBar(model_factory, hsi_gc));		
+		subcomponents.add(new StatusBar(model_factory, hsi_gc, this));		
 	}
 	
 	public Dimension getPreferredSize() {
