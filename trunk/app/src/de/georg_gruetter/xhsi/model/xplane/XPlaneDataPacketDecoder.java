@@ -95,7 +95,9 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
 				float lon = data_stream.readFloat();
 				boolean is_active = (i == active_entry_index);
 		
-				this.fms.append_entry(new FMSEntry(id, type, lat, lon, altitude, is_active));
+			  // do not append empty entries
+				if ((lat != 0.0f) || (lon != 0.0f))
+					this.fms.append_entry(new FMSEntry(id, type, lat, lon, altitude, is_active));
 			}		
 			
 			this.received_fms_packet = true;
