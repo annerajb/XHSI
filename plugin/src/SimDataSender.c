@@ -20,13 +20,8 @@
 * License along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-/*
- * Open questions
- * - X-Plane does not seem to remember the Enable/Disable setting for the plugin. Is this a bug?
- */
-#define plugin_version_text "XHSI Plugin 1.0 Beta 6"
-#define plugin_version_id 10006			
+#define plugin_version_text "XHSI Plugin 1.0 Beta 7"
+#define plugin_version_id 10007	
 
 #include <stdio.h>
 #include <string.h>
@@ -65,6 +60,7 @@
 #define SIM_FLIGHTMODEL_POSITION_PHI 6 			// roll angle
 #define SIM_FLIGHTMODEL_POSITION_R 7 			// rotation rate
 #define SIM_FLIGHTMODEL_POSITION_MAGVAR 8
+#define SIM_FLIGHTMODEL_POSITION_THETA 9
  
 // Radios
 #define SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ 100 
@@ -102,6 +98,7 @@
 #define SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WAYPOINTS 207 
 #define SIM_COCKPIT_SWITCHES_EFIS_SHOWS_VORS 208 
 #define SIM_COCKPIT_SWITCHES_EFIS_SHOWS_NDBS 209 
+#define SIM_COCKPIT_SWITCHES_EFIS_MAP_SUBMODE 210
 
 // Environment
 #define SIM_WEATHER_WIND_SPEED_KT 300 
@@ -123,6 +120,7 @@ XPLMDataRef hpath;
 XPLMDataRef latitude;
 XPLMDataRef longitude;
 XPLMDataRef phi;
+XPLMDataRef theta;
 XPLMDataRef r;
 XPLMDataRef magvar;
 XPLMDataRef nav1_freq_hz;
@@ -159,6 +157,7 @@ XPLMDataRef	efis_shows_airports;
 XPLMDataRef	efis_shows_waypoints;
 XPLMDataRef	efis_shows_vors;
 XPLMDataRef	efis_shows_ndbs;
+XPLMDataRef efis_map_submode;
 XPLMDataRef	wind_speed_kt;
 XPLMDataRef	wind_direction_degt;
 XPLMDataRef zulu_time_sec;
@@ -653,7 +652,7 @@ int Preferences_Widget_Handler(
 void createHSISimDataPacket(void) {
 	
 	strncpy(data_packet.packet_id, "HSID",4);
-	data_packet.nb_of_data_points = htonf(45.0);
+	data_packet.nb_of_data_points = htonf(47.0);
 	
 	data_packet.data_points[0].id = htonf((float) SIM_FLIGHTMODEL_POSITION_GROUNDSPEED);
 	data_packet.data_points[0].value = htonf(XPLMGetDataf(groundspeed));
@@ -755,6 +754,13 @@ void createHSISimDataPacket(void) {
 	
 	data_packet.data_points[44].id = htonf((float) PLUGIN_VERSION_ID);
 	data_packet.data_points[44].value = htonf((float) plugin_version_id);
+	
+	data_packet.data_points[45].id = htonf((float) SIM_COCKPIT_SWITCHES_EFIS_MAP_SUBMODE);
+	data_packet.data_points[45].value = htonf((float) XPLMGetDatai(efis_map_submode));
+	
+	data_packet.data_points[46].id = htonf((float) SIM_FLIGHTMODEL_POSITION_THETA);
+	data_packet.data_points[46].value = htonf(XPLMGetDataf(theta));	
+
 }
 
 void createHSIFMSDataPacket(void) {
@@ -811,8 +817,9 @@ void findDataRefs(void) {
 	latitude = XPLMFindDataRef("sim/flightmodel/position/latitude");	// double
 	longitude = XPLMFindDataRef("sim/flightmodel/position/longitude");	// double
 	phi = XPLMFindDataRef("sim/flightmodel/position/phi");
+	theta = XPLMFindDataRef("sim/flightmodel/position/theta");
 	r = XPLMFindDataRef("sim/flightmodel/position/R");
-		magvar = XPLMFindDataRef("sim/flightmodel/position/magnetic_variation");
+	magvar = XPLMFindDataRef("sim/flightmodel/position/magnetic_variation");
 	
 	nav1_freq_hz = XPLMFindDataRef("sim/cockpit/radios/nav1_freq_hz");  // int
 	nav2_freq_hz = XPLMFindDataRef("sim/cockpit/radios/nav2_freq_hz");	// int
@@ -849,6 +856,7 @@ void findDataRefs(void) {
 	efis_shows_waypoints = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_waypoints");	// int
 	efis_shows_vors = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_VORs");				// int
 	efis_shows_ndbs = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_NDBs");				// int
+	efis_map_submode = XPLMFindDataRef("sim/cockpit/switches/EFIS_map_submode");			// int
 	
 	wind_speed_kt = XPLMFindDataRef("sim/weather/wind_speed_kt");
 	wind_direction_degt = XPLMFindDataRef("sim/weather/wind_direction_degt");
