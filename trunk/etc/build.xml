@@ -16,8 +16,8 @@
 	<property name="bin.dist.dir" 			location="${dist.dir}/${release.name}-binaries"/>
 	<property name="src.dist.dir" 			location="${dist.dir}/${release.name}-sources"/>
 	
-	<property name="jarfile.name"			value="XHSI__B7_SB_V9.jar"/>
-	
+	<property name="jarfile.name"			value="XHSI.jar"/>
+        <property name="release.name"                   value="XHSI-1-0-Beta-7"/>	
 	<target name="init">
 		<mkdir dir="${app.build.dir}"/>
 		<mkdir dir="${app.dist.dir}"/>
