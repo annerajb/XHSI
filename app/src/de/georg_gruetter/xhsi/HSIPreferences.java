@@ -192,7 +192,7 @@ public class HSIPreferences {
 		
 		
 		if (this.preferences.containsKey(PREF_PORT) == false) {
-			this.preferences.setProperty(PREF_PORT,"49001");
+			this.preferences.setProperty(PREF_PORT,"49002");
 			this.unsaved_changes = true;
 		}
 		
@@ -233,9 +233,9 @@ public class HSIPreferences {
 		if (new File(this.preferences.getProperty(PREF_XPLANE_DIR)).exists() == false) {
 			logger.warning("X-Plane home directory not found. will not read navigation data!");
 			HSIStatus.nav_db_status = HSIStatus.STATUS_NAV_DB_NOT_FOUND;
-		} else if ((new File(this.preferences.getProperty(PREF_XPLANE_DIR) + "/Resources/Earth Nav Data/nav.dat").exists() == false) ||
-		            (new File(this.preferences.getProperty(PREF_XPLANE_DIR) + "/Resources/Earth Nav Data/apt.dat").exists() == false) ||
-		            (new File(this.preferences.getProperty(PREF_XPLANE_DIR) + "/Resources/Earth Nav Data/fix.dat").exists() == false)) {
+		} else if ((new File(this.preferences.getProperty(PREF_XPLANE_DIR) + "/Resources/default data/earth_nav.dat").exists() == false) ||
+		            (new File(this.preferences.getProperty(PREF_XPLANE_DIR) + "/Resources/default scenery/default apt dat/Earth nav data/apt.dat").exists() == false) ||
+		            (new File(this.preferences.getProperty(PREF_XPLANE_DIR) + "/Resources/default data/earth_fix.dat").exists() == false)) {
 			logger.warning("One or more of X-Planes earth nav databases (nav.dat, apt.dat, fix.dat) could not be found!");
 			HSIStatus.nav_db_status = HSIStatus.STATUS_NAV_DB_NOT_FOUND;
 		} else {

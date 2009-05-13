@@ -56,7 +56,7 @@ import de.georg_gruetter.xhsi.util.XHSILogFormatter;
 
 public class HSI implements ActionListener {
 	
-	private static final String RELEASE = "1.0 Beta 6";
+	private static final String RELEASE = "1.0 Beta 7 SB_V9";
 	
 	private static final String MODE_REPLAY = "replay";
 	private static final String MODE_RECEIVE = "receive";
@@ -102,7 +102,7 @@ public class HSI implements ActionListener {
 			if (args.length == 3)
 				recording_rate = Integer.parseInt(args[2]);			
 			XPlaneFlightSessionRecorder recorder = new XPlaneFlightSessionRecorder(args[1],recording_rate);
-			XPlaneUDPReceiver udp_receiver = new XPlaneUDPReceiver(49001);
+			XPlaneUDPReceiver udp_receiver = new XPlaneUDPReceiver(49002);
 			udp_receiver.add_reception_observer(recorder);
 			recorder.start();			
 			udp_receiver.start();

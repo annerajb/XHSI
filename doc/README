@@ -1,23 +1,13 @@
 XHSI - An extended horizontal situation indicator for X-Plane
 
-Release:      1.0 Beta 7
-Release date: 2007-03-15
-Author:       Georg Gruetter (gruetter@users.sourceforge.net)
+Release:      1.0 Beta 7 for XPlane V9+
+Release date: 2009-05-13
+Author:       Sandy Barbour 
 XHSI home:    http://xhsi.sourceforge.net
 
 About this release
 ==================
-- Bugfixes
-- Performance and cosmetic UI changes
-  - performance improvements (about 20% improvement in frame rate on my Powermac) 
-  - position trend vector is now less nervous (added running average)
-- Changes to FMS route overlay
-  - FMS waypoints are now drawn only once
-  - GPS FMS waypoints are now labeled with "GPS" instead of funny characters. 
-  - T/C - T/D features are disabled - the new Goodway FMS will hopefully help out here
-  - "Empty" fms route waypoints are now ignored (empty = waypoints lat/lon = 0°/0°)
-  
-
+- Now compatible with XPlane Version 9+  
 
 Note: Please consult the new Operation sections in this readme.
 
@@ -98,10 +88,14 @@ XHSI can put a huge load on your system. If you experience bad X-Plane and XHSI 
 
 Credits
 =======
-Special thanks to Ansorg, Brandon, Elvis, Mark Steele, Mueli and Schleich for their encouraging and constructive feedback during the beta phase! 
+Special thanks to Sandy, Ansorg, Brandon, Elvis, Mark Steele, Mueli and Schleich for their encouraging and constructive feedback during the beta phase! 
 
 Release Notes
 =============
+
+1.0 Beta 7 for X-Plane V9+ (2009-05-13)
+=======================
+- Now compatible with XPlane Version 9+  
 
 1.0 Beta 6 (2007-03-16)
 =======================
