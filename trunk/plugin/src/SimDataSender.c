@@ -20,8 +20,17 @@
 * License along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#define plugin_version_text "XHSI Plugin 1.0 Beta 7"
-#define plugin_version_id 10007	
+
+/*
+ * Open questions
+ * - X-Plane does not seem to remember the Enable/Disable setting for the plugin. Is this a bug?
+ */
+// Sandy Barbour
+// No, Plugin Admin can enable and disable a plugin, but this state is not stored.
+// Sandy Barbour
+
+#define plugin_version_text "XHSI Plugin 1.0 Beta 7 SB V9"
+#define plugin_version_id 10007			
 
 #include <stdio.h>
 #include <string.h>
@@ -38,7 +47,6 @@
 #if IBM
 
 #include <windows.h>
-#include <winsock2.h>
 
 #else
 
@@ -47,6 +55,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 
 #endif
 // Sim value ids ===============================================================
@@ -60,7 +69,6 @@
 #define SIM_FLIGHTMODEL_POSITION_PHI 6 			// roll angle
 #define SIM_FLIGHTMODEL_POSITION_R 7 			// rotation rate
 #define SIM_FLIGHTMODEL_POSITION_MAGVAR 8
-#define SIM_FLIGHTMODEL_POSITION_THETA 9
  
 // Radios
 #define SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ 100 
@@ -98,7 +106,6 @@
 #define SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WAYPOINTS 207 
 #define SIM_COCKPIT_SWITCHES_EFIS_SHOWS_VORS 208 
 #define SIM_COCKPIT_SWITCHES_EFIS_SHOWS_NDBS 209 
-#define SIM_COCKPIT_SWITCHES_EFIS_MAP_SUBMODE 210
 
 // Environment
 #define SIM_WEATHER_WIND_SPEED_KT 300 
@@ -120,7 +127,6 @@ XPLMDataRef hpath;
 XPLMDataRef latitude;
 XPLMDataRef longitude;
 XPLMDataRef phi;
-XPLMDataRef theta;
 XPLMDataRef r;
 XPLMDataRef magvar;
 XPLMDataRef nav1_freq_hz;
@@ -157,7 +163,6 @@ XPLMDataRef	efis_shows_airports;
 XPLMDataRef	efis_shows_waypoints;
 XPLMDataRef	efis_shows_vors;
 XPLMDataRef	efis_shows_ndbs;
-XPLMDataRef efis_map_submode;
 XPLMDataRef	wind_speed_kt;
 XPLMDataRef	wind_direction_degt;
 XPLMDataRef zulu_time_sec;
@@ -182,6 +187,12 @@ float htonf(float x) {
 #else
 #define htonf(x) x;
 #endif
+
+// Sandy Barbour
+// This is because in Xplane V9 there are 500 FMS entries.
+// This will cause the fms_entries size to be larger than can be send using sendto().
+// So force the old Xplane V8 size
+#define MAX_FMS_ENTRIES_ALLOWED 100
 
 // Packet data structures ============================================
 struct hsi_sim_data_point {
@@ -208,7 +219,8 @@ struct xpln_fms_entries {
 	float						nb_of_entries;
 	float						active_entry_index;
 	float						destination_entry_index;
-	struct xpln_fms_entry		entries[99];
+	// Sandy Barbour
+	struct xpln_fms_entry		entries[MAX_FMS_ENTRIES_ALLOWED];
 };
 
 // Socket and packet handling =======================================
@@ -275,7 +287,7 @@ PLUGIN_API int XPluginStart(
 						char *		outSig,
 						char *		outDesc)
 {
-	char* debug_message;
+	char debug_message[256];
 	
 	strcpy(outName, plugin_version_text);
 	strcpy(outSig, "de.georg_gruetter.xhsi.plugin");
@@ -294,7 +306,9 @@ PLUGIN_API int XPluginStart(
 	// Default settings
 	// Todo: store settings in preferences file
 	dest_ip = "127.0.0.1";
-	dest_port = 49001;
+	// Sandy Barbour
+	// Can't use 49001 in V9.
+	dest_port = 49002;
 	src_port = 49005;
 	sim_data_frames_per_second = 26;
 	fms_data_frames_per_second = 1;
@@ -394,7 +408,7 @@ int start_winsock() {
 	WORD version;
 	version = (2<<8)+1;
 	int rc = WSAStartup(version, &wsa);
-	char* debug_message;
+	char debug_message[256];
 	
 	if (rc != 0) {
 		sprintf(debug_message, "XHSI failed: Could not start Winsock! Errorcode: %d\n", WSAGetLastError());
@@ -561,8 +575,10 @@ void CreateExternalHSIPreferencesDialog(int x, int y, int w, int h) {
 							  1, "Port", 0, preferences_widget,
 							  xpWidgetClass_Caption);
 	
+	// Sandy Barbour
+	// Can't use 49001 in V9.
 	receiver_port_textbox_widget = XPCreateWidget(x+245, y-70, x+290, y-80,
-									   1, "49001", 0, preferences_widget,
+									   1, "49002", 0, preferences_widget,
 									   xpWidgetClass_TextField);
 	
 	
@@ -652,7 +668,7 @@ int Preferences_Widget_Handler(
 void createHSISimDataPacket(void) {
 	
 	strncpy(data_packet.packet_id, "HSID",4);
-	data_packet.nb_of_data_points = htonf(47.0);
+	data_packet.nb_of_data_points = htonf(45.0);
 	
 	data_packet.data_points[0].id = htonf((float) SIM_FLIGHTMODEL_POSITION_GROUNDSPEED);
 	data_packet.data_points[0].value = htonf(XPLMGetDataf(groundspeed));
@@ -754,22 +770,22 @@ void createHSISimDataPacket(void) {
 	
 	data_packet.data_points[44].id = htonf((float) PLUGIN_VERSION_ID);
 	data_packet.data_points[44].value = htonf((float) plugin_version_id);
-	
-	data_packet.data_points[45].id = htonf((float) SIM_COCKPIT_SWITCHES_EFIS_MAP_SUBMODE);
-	data_packet.data_points[45].value = htonf((float) XPLMGetDatai(efis_map_submode));
-	
-	data_packet.data_points[46].id = htonf((float) SIM_FLIGHTMODEL_POSITION_THETA);
-	data_packet.data_points[46].value = htonf(XPLMGetDataf(theta));	
-
 }
 
 void createHSIFMSDataPacket(void) {
-	char id[80];
+	char id[256];
 	long altitude;
 	float lat;
 	float lon;
 	int toc_tod_flag = 0;
-	long nb_of_fms_entries = XPLMCountFMSEntries();
+
+	// Sandy Barbour
+	// This is because in Xplane V9 there are 500 FMS entries.
+	// This will cause the fms_entries size to be larger than can be send using sendto().
+	// So force the old Xplane V8 size
+	// long nb_of_fms_entries = XPLMCountFMSEntries();
+	long nb_of_fms_entries = MAX_FMS_ENTRIES_ALLOWED;
+
 	long i;
 	fms_entries.nb_of_entries = htonf((float)nb_of_fms_entries);
 	
@@ -817,9 +833,8 @@ void findDataRefs(void) {
 	latitude = XPLMFindDataRef("sim/flightmodel/position/latitude");	// double
 	longitude = XPLMFindDataRef("sim/flightmodel/position/longitude");	// double
 	phi = XPLMFindDataRef("sim/flightmodel/position/phi");
-	theta = XPLMFindDataRef("sim/flightmodel/position/theta");
 	r = XPLMFindDataRef("sim/flightmodel/position/R");
-	magvar = XPLMFindDataRef("sim/flightmodel/position/magnetic_variation");
+		magvar = XPLMFindDataRef("sim/flightmodel/position/magnetic_variation");
 	
 	nav1_freq_hz = XPLMFindDataRef("sim/cockpit/radios/nav1_freq_hz");  // int
 	nav2_freq_hz = XPLMFindDataRef("sim/cockpit/radios/nav2_freq_hz");	// int
@@ -850,13 +865,12 @@ void findDataRefs(void) {
 	efis_map_range_selector = XPLMFindDataRef("sim/cockpit/switches/EFIS_map_range_selector");	// int	
 	efis_dme_1_selector = XPLMFindDataRef("sim/cockpit/switches/EFIS_dme_1_selector");		// int
 	efis_dme_2_selector = XPLMFindDataRef("sim/cockpit/switches/EFIS_dme_2_selector");		// int
-	efis_shows_weather = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_weather");		// int
+	efis_shows_weather = XPLMFindDataRef("sim/cockpit/switches/EFIFS_shows_weather");		// int
 	efis_shows_tcas = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_tcas");				// int
 	efis_shows_airports = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_airports");		// int
 	efis_shows_waypoints = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_waypoints");	// int
 	efis_shows_vors = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_VORs");				// int
 	efis_shows_ndbs = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_NDBs");				// int
-	efis_map_submode = XPLMFindDataRef("sim/cockpit/switches/EFIS_map_submode");			// int
 	
 	wind_speed_kt = XPLMFindDataRef("sim/weather/wind_speed_kt");
 	wind_direction_degt = XPLMFindDataRef("sim/weather/wind_direction_degt");
