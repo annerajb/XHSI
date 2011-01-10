@@ -1,0 +1,114 @@
+/**
+* FMS.java
+* 
+* Model class for a flight management system (FMS)
+* 
+* Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
+* 
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2 
+* of the License, or (at your option) any later version.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU Lesser General Public
+* License along with this library; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+package net.sourceforge.xhsi.model;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public class FMS {
+    // TASK: remove singleton code! Have Avionics create instance of FMS
+    private static FMS single_instance;
+    private FMSEntry next_waypoint = null;
+    private FMSEntry displayed_waypoint = null;
+    private ArrayList<FMSEntry> entries;
+    private HashMap<String,FMSEntry> entry_lookup;
+
+    public static FMS get_instance() {
+        if (FMS.single_instance == null) {
+            FMS.single_instance = new FMS();
+        }
+        return FMS.single_instance;
+    }
+
+    private FMS() {
+        this.entries = new ArrayList<FMSEntry>();
+        this.entry_lookup = new HashMap<String,FMSEntry>();
+    }
+
+    /**
+     * @return boolean - true if FMS contains entries, false, otherwise
+     */
+    public boolean is_active() {
+        return (this.entries.isEmpty() == false);
+    }
+
+    /**
+     * Deletes all FMS entries
+     */
+    public void clear() {
+        this.next_waypoint = null;
+        this.displayed_waypoint = null;
+        this.entries.clear();
+        this.entry_lookup.clear();
+    }
+
+    /**
+     * Appends entry to the current list of entries
+     *
+     * @param entry - the entry to be appended
+     */
+    public void append_entry(FMSEntry entry) {
+        this.entries.add(entry);
+        this.entry_lookup.put(entry.name, entry);
+        if (entry.active) {
+            this.next_waypoint = entry;
+        }
+        if (entry.displayed) {
+            this.displayed_waypoint = entry;
+        }
+    }
+
+    /**
+     * @return FMSEntry - the currently selected waypoint in the FMS
+     */
+    public FMSEntry get_next_waypoint() {
+        return this.next_waypoint;
+    }
+
+    /**
+     * @return FMSEntry - the currently displayed waypoint in the FMS
+     */
+    public FMSEntry get_displayed_waypoint() {
+        return this.displayed_waypoint;
+    }
+
+    public int get_nb_of_entries() {
+        return this.entries.size();
+    }
+
+    public FMSEntry get_entry(int position) {
+        return this.entries.get(position);
+    }
+
+    public boolean has_entry(String name) {
+        return this.entry_lookup.containsKey(name);
+    }
+
+    public void print_entries() {
+        System.out.println("==================================");
+        System.out.println("FMS Entries:");
+        for (int i=0;i<this.entries.size();i++) {
+            System.out.println("#" + i + ": " + ((FMSEntry)this.entries.get(i)).toString());
+        }
+    }
+
+}
