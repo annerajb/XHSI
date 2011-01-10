@@ -1,0 +1,58 @@
+CC=gcc
+
+CFLAGS	 = -Wall -O2
+
+# Adapt to your X-Plane SDK location
+CFLAGS	+= -I ../SDK/CHeaders/XPLM -I../SDK/CHeaders/Widgets
+
+# Adapt to your OS
+CFLAGS	+= -DIBM=0 -DAPL=0 -DLIN=1
+
+# Don't export all functions
+CFLAGS += -fvisibility=hidden
+
+## Compile an universal plugin for Mac OS X
+#CFLAGS	+= -arch ppc -arch i386
+
+LDFLAGS = -s -O2
+
+## Link an universal plugin for Mac OS X
+#LDFLAGS	+= -arch ppc -arch i386
+
+## Linker flags for Mac OS X
+#PLUGINLDFLAGS+= -flat_namespace -undefined suppress -dynamiclib
+
+# Linker flags for Linux
+PLUGINLDFLAGS = -m32 -rdynamic -nodefaultlibs -shared
+
+SRC = commands.c
+SRC += datarefs.c
+SRC += net.c
+SRC += packets.c
+SRC += plugin.c
+SRC += receiver.c
+SRC += sender.c
+SRC += settings.c
+SRC += ui.c
+
+
+OBJS=$(SRC:.c=.o)
+
+all: XHSI_plugin
+XHSI_plugin: lin.xpl
+
+main: $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS)
+
+lin.xpl: $(OBJS)
+	$(CC) $(LDFLAGS) $(PLUGINLDFLAGS) -o $@ $(OBJS)
+
+# Activate the next line to copy your plugin directly into X-Plane
+# Adjust for your path.
+#	 cp $@ '/Applications/X-Plane94/Aircraft/.../plugins/.../$@'
+
+$(OBJS): %.o: %.c
+	$(CC) $(CFLAGS) -c $<
+
+clean:
+	rm -f *.o *.xpl
