@@ -310,7 +310,7 @@ public class XPlaneNavigationObjectBuilder implements PreferencesObserver {
         String airport_icao_code = "";
         String airport_name = "";
         boolean current_airport_saved = true;
-        ArrayList runways = new ArrayList();
+        ArrayList<Runway> runways = new ArrayList<Runway>();
         float width;
         int surface;
         String rwy_num1;
@@ -377,7 +377,7 @@ public class XPlaneNavigationObjectBuilder implements PreferencesObserver {
                             airport_icao_code = line.substring(15, 19);
                             airport_name = line.substring(20);
                             current_airport_saved = false;
-                            runways = new ArrayList();
+                            runways = new ArrayList<Runway>();
                             arp_lat = 0;
                             arp_lon = 0;
                             longest = 0;

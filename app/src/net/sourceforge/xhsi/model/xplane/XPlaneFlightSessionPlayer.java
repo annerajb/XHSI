@@ -34,12 +34,12 @@ public class XPlaneFlightSessionPlayer extends StoppableThread {
 
     String filename;
     ObjectInputStream ois;
-    ArrayList sim_data_observers;
+    ArrayList<XPlaneDataPacketObserver> sim_data_observers;
     long delay_between_packets;
 
     public XPlaneFlightSessionPlayer(String filename, long delay_between_packets) {
         this.filename = filename;
-        this.sim_data_observers = new ArrayList();
+        this.sim_data_observers = new ArrayList<XPlaneDataPacketObserver>();
         this.delay_between_packets = delay_between_packets;
         this.keep_running = true;
     }

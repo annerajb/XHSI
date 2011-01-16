@@ -42,7 +42,11 @@ import net.sourceforge.xhsi.model.TCAS;
 
 public abstract class NDSubcomponent extends Component {
 
-    NDGraphicsConfig nd_gc;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -4014573030015543420L;
+	NDGraphicsConfig nd_gc;
     ModelFactory model_factory;
     Aircraft aircraft;
     Avionics avionics;
