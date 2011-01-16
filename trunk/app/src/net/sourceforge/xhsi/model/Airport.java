@@ -28,10 +28,10 @@ import java.util.ArrayList;
 public class Airport extends NavigationObject {
 
 	public String icao_code;
-        public ArrayList runways;
+        public ArrayList<Runway> runways;
         public float longest;
 	
-	public Airport(String name, String icao_code, float lat, float lon, ArrayList runways, float longest) {
+	public Airport(String name, String icao_code, float lat, float lon, ArrayList<Runway> runways, float longest) {
 		super(name, lat, lon);
 		this.icao_code = icao_code;
                 this.runways = runways;

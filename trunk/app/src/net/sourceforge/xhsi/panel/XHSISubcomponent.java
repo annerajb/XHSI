@@ -41,7 +41,11 @@ import net.sourceforge.xhsi.model.TCAS;
 
 public abstract class XHSISubcomponent extends Component {
 
-    XHSIGraphicsConfig xhsi_gc;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7388082214510907043L;
+	XHSIGraphicsConfig xhsi_gc;
     ModelFactory model_factory;
     Aircraft aircraft;
     Avionics avionics;

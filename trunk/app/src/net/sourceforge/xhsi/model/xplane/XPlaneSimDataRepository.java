@@ -154,7 +154,7 @@ public class XPlaneSimDataRepository {
     String[] sim_values_string = new String[512];
 
     long updates = 0;
-    ArrayList observers;
+    ArrayList<Observer> observers;
     public static boolean source_is_recording = false;
 
     private static XPlaneSimDataRepository single_instance;
@@ -167,7 +167,7 @@ public class XPlaneSimDataRepository {
     }
 
     private XPlaneSimDataRepository() {
-        observers = new ArrayList();
+        observers = new ArrayList<Observer>();
         for (int i=0; i<512; i++) {
             sim_values_string[i] = "";
         }

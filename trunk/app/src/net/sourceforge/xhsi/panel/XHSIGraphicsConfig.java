@@ -32,6 +32,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.RenderingHints.Key;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.Area;
@@ -83,7 +84,7 @@ public class XHSIGraphicsConfig implements ComponentListener {
     public int max_char_advance_large;
 
     public Dimension panel_size;
-    public Map rendering_hints;
+    public Map<Key, Object> rendering_hints;
 
     private boolean resized = false;
     public boolean reconfig = true;
@@ -103,7 +104,7 @@ public class XHSIGraphicsConfig implements ComponentListener {
 
         background_color = Color.WHITE;
 
-        this.rendering_hints = new HashMap();
+        this.rendering_hints = new HashMap<Key, Object>();
         this.rendering_hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         this.rendering_hints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         // VALUE_TEXT_ANTIALIAS_LCD_HRGB uses sub-pixel anti-aliasing, and is supposed to looks better than VALUE_TEXT_ANTIALIAS_ON on modern LCD dispalys

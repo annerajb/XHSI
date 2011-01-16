@@ -36,7 +36,7 @@ public class XPlaneUDPReceiver extends StoppableThread {
 
     DatagramSocket datagram_socket;
     byte[] receive_buffer;
-    ArrayList reception_observers;
+    ArrayList<XPlaneDataPacketObserver> reception_observers;
     boolean has_reception;
     boolean sender_known;
     //XPlaneUDPSender udp_sender = null;
@@ -49,7 +49,7 @@ public class XPlaneUDPReceiver extends StoppableThread {
         this.receive_buffer = new byte[5000];
         this.datagram_socket = new DatagramSocket(listen_port);
         this.datagram_socket.setSoTimeout(1000);
-        this.reception_observers = new ArrayList();
+        this.reception_observers = new ArrayList<XPlaneDataPacketObserver>();
         this.keep_running = true;
         this.has_reception = true;
         this.sender_known = false;

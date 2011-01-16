@@ -34,13 +34,13 @@ public class StatusMessage extends NDSubcomponent {
 
 	private static final int BORDER = 10;
 	
-	private ArrayList status_message_lines;
+	private ArrayList<String> status_message_lines;
 	private int message_width;
 	private int message_height;
 	
 	public StatusMessage(ModelFactory model_factory, NDGraphicsConfig hsi_gc) {
 		super(model_factory, hsi_gc);
-		this.status_message_lines = new ArrayList();
+		this.status_message_lines = new ArrayList<String>();
 		this.message_width = 0;
 	}
 

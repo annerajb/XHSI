@@ -33,6 +33,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.RenderingHints.Key;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.Area;
@@ -245,7 +246,7 @@ public class NDGraphicsConfig implements ComponentListener {
     public Area instrument_frame;
     public RoundRectangle2D inner_round_rect;
     public Area instrument_outer_frame;
-    public Map rendering_hints;
+    public Map<Key, Object> rendering_hints;
 
     private int map_mode;
     private int map_submode;
@@ -295,7 +296,7 @@ public class NDGraphicsConfig implements ComponentListener {
                 panel_size.width/2, panel_size.height/2 , color_irongray.brighter().brighter(),
                 true);
 
-        this.rendering_hints = new HashMap();
+        this.rendering_hints = new HashMap<Key, Object>();
         this.rendering_hints.put(RenderingHints.KEY_ANTIALIASING, preferences.get_anti_alias() ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
         this.rendering_hints.put(RenderingHints.KEY_TEXT_ANTIALIASING, preferences.get_anti_alias() ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
         // VALUE_TEXT_ANTIALIAS_LCD_HRGB uses sub-pixel anti-aliasing, and is supposed to looks better than VALUE_TEXT_ANTIALIAS_ON on modern LCD dispalys
