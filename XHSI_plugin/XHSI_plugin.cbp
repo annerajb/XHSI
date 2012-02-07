@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="XHSI_plugin" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\Debug\win.xpl" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj\Debug\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin\Release\win.xpl" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj\Release\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-DIBM=1" />
+			<Add directory="..\SDK\CHeaders\XPLM" />
+			<Add directory="..\SDK\CHeaders\Widgets" />
+		</Compiler>
+		<Linker>
+			<Add library="..\SDK\Libraries\Win\XPLM.lib" />
+			<Add library="..\SDK\Libraries\Win\XPWidgets.lib" />
+			<Add library="..\Microsoft SDKs\Windows\v6.0A\Lib\WS2_32.Lib" />
+		</Linker>
+		<Unit filename="commands.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="commands.h" />
+		<Unit filename="datarefs.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="datarefs.h" />
+		<Unit filename="datarefs_cl30.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="datarefs_cl30.h" />
+		<Unit filename="datarefs_ufmc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="datarefs_ufmc.h" />
+		<Unit filename="datarefs_x737.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="datarefs_x737.h" />
+		<Unit filename="endianess.h" />
+		<Unit filename="globals.h" />
+		<Unit filename="ids.h" />
+		<Unit filename="net.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="net.h" />
+		<Unit filename="packets.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="packets.h" />
+		<Unit filename="plugin.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="plugin.h" />
+		<Unit filename="pluginWin.cpp" />
+		<Unit filename="receiver.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="receiver.h" />
+		<Unit filename="sender.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sender.h" />
+		<Unit filename="settings.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="settings.h" />
+		<Unit filename="structs.h" />
+		<Unit filename="ui.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ui.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
