@@ -64,7 +64,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 
 public class XHSI implements ActionListener {
 
-    private static final String RELEASE = "1.0";
+    private static final String RELEASE = "1.0.1";
 
     private static final String MODE_REPLAY = "replay";
     private static final String MODE_LIVE = "live";
