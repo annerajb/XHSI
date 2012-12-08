@@ -51,7 +51,8 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
 //    private String NAV_file = "/Resources/default data/earth_nav.dat";
 //    private String FIX_file = "/Resources/default data/earth_fix.dat";
 //    private String AWY_file = "/Resources/default data/earth_awy.dat";
-    private String APT_file = "/Resources/default scenery/default apt dat/Earth nav data/apt.dat";
+    private String APT_file = "/apt.dat";
+    private String APT_xplane = "/Resources/default scenery/default apt dat/Earth nav data" + "/apt.dat";
     private String pathname_to_aptnav;
     private TaxiChart taxi_chart;
     private String requested_chart;
@@ -107,8 +108,12 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
 
     private void read_apt(String icao) throws Exception {
 
-        logger.fine("Reading NAV database ( " + this.pathname_to_aptnav + this.APT_file + " )");
-        File file = new File( this.pathname_to_aptnav + this.APT_file );
+        File file;
+        if ( new File( this.pathname_to_aptnav + this.APT_xplane ).exists() ) {
+            file = new File( this.pathname_to_aptnav + this.APT_xplane );
+        } else {
+            file = new File( this.pathname_to_aptnav + this.APT_file );
+        }
         BufferedReader reader = new BufferedReader( new FileReader( file ));
         String line;
         long line_number = 0;

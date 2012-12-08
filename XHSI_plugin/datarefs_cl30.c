@@ -30,6 +30,9 @@ XPLMDataRef cl30_vref;
 XPLMDataRef cl30_refspds;
 XPLMDataRef cl30_mast_warn;
 XPLMDataRef cl30_mast_caut;
+XPLMDataRef cl30_carets;
+XPLMDataRef cl30_to_n1;
+XPLMDataRef cl30_clb_n1;
 
 
 
@@ -62,6 +65,10 @@ void findCL30DataRefs(void) {
 
             cl30_mast_warn = XPLMFindDataRef("sim/custom/xap/mast_warn");
             cl30_mast_caut = XPLMFindDataRef("sim/custom/xap/mast_caut");
+
+            cl30_carets = XPLMFindDataRef("sim/custom/xap/carets");
+            cl30_to_n1 = XPLMFindDataRef("sim/custom/xap/TO_n1");
+            cl30_clb_n1 = XPLMFindDataRef("sim/custom/xap/CLB_n1");
 
 //            cl30_ = XPLMFindDataRef("");
 //            cl30_ = XPLMFindDataRef("");

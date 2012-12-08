@@ -182,8 +182,10 @@ public class VSI extends PFDSubcomponent {
             g2.setFont(pfd_gc.font_m);
 //            g2.drawString("" + ap_vv, pfd_gc.vsi_left, (up_down == 1) ? t_y - pfd_gc.line_height_m*2 : b_y + pfd_gc.line_height_m*3);
             String ap_vv_str = "" + ap_vv;
-            g2.clearRect(pfd_gc.vsi_left - pfd_gc.digit_width_m/2 - pfd_gc.digit_width_m/3, pfd_gc.tape_top - pfd_gc.tape_width/6 - pfd_gc.line_height_m*7/8, pfd_gc.get_text_width(g2, pfd_gc.font_m, ap_vv_str) + pfd_gc.digit_width_m*2/3, pfd_gc.line_height_m);
-            g2.drawString(ap_vv_str, pfd_gc.vsi_left - pfd_gc.digit_width_m/2, pfd_gc.tape_top - pfd_gc.tape_width/6);
+            // int ap_vv_y = pfd_gc.tape_top - pfd_gc.tape_width/6;
+            int ap_vv_y = pfd_gc.vsi_top - pfd_gc.line_height_xl - pfd_gc.tape_width/6;
+            g2.clearRect(pfd_gc.vsi_left - pfd_gc.digit_width_m/2 - pfd_gc.digit_width_m/3, ap_vv_y - pfd_gc.line_height_m*7/8, pfd_gc.get_text_width(g2, pfd_gc.font_m, ap_vv_str) + pfd_gc.digit_width_m*2/3, pfd_gc.line_height_m);
+            g2.drawString(ap_vv_str, pfd_gc.vsi_left - pfd_gc.digit_width_m/2, ap_vv_y);
         }
 
 

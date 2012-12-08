@@ -178,6 +178,38 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
 
 
+    public float get_radio_freq(int radio_num) {
+
+        if ( radio_num == RADIO_NAV1 )
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ);
+        else if ( radio_num == RADIO_NAV2 )
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ);
+        else if ( radio_num == RADIO_ADF1 )
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_ADF1_FREQ_HZ);
+        else if ( radio_num == RADIO_ADF2 )
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_ADF2_FREQ_HZ);
+        else if ( radio_num == RADIO_COM1 )
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_COM1_FREQ_HZ);
+        else if ( radio_num == RADIO_COM2 )
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_COM2_FREQ_HZ);
+        else if ( radio_num == RADIO_NAV1_STDBY )
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_NAV1_STDBY_FREQ_HZ);
+        else if ( radio_num == RADIO_NAV2_STDBY )
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_NAV2_STDBY_FREQ_HZ);
+        else if ( radio_num == RADIO_ADF1_STDBY )
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_ADF1_STDBY_FREQ_HZ);
+        else if ( radio_num == RADIO_ADF2_STDBY )
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_ADF2_STDBY_FREQ_HZ);
+        else if ( radio_num == RADIO_COM1_STDBY )
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_COM1_STDBY_FREQ_HZ);
+        else if ( radio_num == RADIO_COM2_STDBY )
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_COM2_STDBY_FREQ_HZ);
+        else
+            return 0.0f;
+
+    }
+
+
     public NavigationRadio get_gps_radio() {
 
         return this.gps_radio;
@@ -751,6 +783,12 @@ public class XPlaneAvionics implements Avionics, Observer {
         } else {
             return xhsi_settings.xpdr;
         }
+
+    }
+
+    public int transponder_code() {
+
+        return (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_TRANSPONDER_CODE);
 
     }
 

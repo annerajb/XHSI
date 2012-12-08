@@ -96,6 +96,7 @@ public class XHSIPreferences {
     public static final String PREF_PFD_DRAW_HSI = "pfd.draw.hsi";
     public static final String PREF_SINGLE_CUE_FD = "single.cue.fd";
     public static final String PREF_DRAW_AOA = "draw.aoa";
+    public static final String PREF_PFD_DRAW_RADIOS = "pfd.draw.radios";
 
     // EICAS options
     public static final String PREF_EICAS_PRIMARY_ONLY = "eicas.primary.only";
@@ -203,7 +204,7 @@ public class XHSIPreferences {
     public static final String ENGINE_TYPE_N1 = "N1";
 //    public static final String ENGINE_TYPE_EPR = "EPR";
     public static final String ENGINE_TYPE_TRQ = "TRQ";
-//    public static final String ENGINE_TYPE_MAP = "MAP";
+    public static final String ENGINE_TYPE_MAP = "MAP";
     
     
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
@@ -664,6 +665,14 @@ public class XHSIPreferences {
         return get_preference(PREF_DRAW_AOA).equalsIgnoreCase("true");
     }
 
+    /**
+     * @return            - Draw Radios
+     *
+     */
+    public boolean get_pfd_draw_radios() {
+        return get_preference(PREF_PFD_DRAW_RADIOS).equalsIgnoreCase("true");
+    }
+
 
     // EICAS
 
@@ -1027,6 +1036,11 @@ public class XHSIPreferences {
             this.unsaved_changes = true;
         }
 
+        if ( ! this.preferences.containsKey(PREF_PFD_DRAW_RADIOS) ) {
+            this.preferences.setProperty(PREF_PFD_DRAW_RADIOS, "false");
+            this.unsaved_changes = true;
+        }
+
         // EICAS
         
         if ( ! this.preferences.containsKey(PREF_EICAS_PRIMARY_ONLY) ) {
@@ -1079,10 +1093,17 @@ public class XHSIPreferences {
         if (new File(this.preferences.getProperty(PREF_APTNAV_DIR)).exists() == false) {
             logger.warning("AptNav Resources directory not found. Will not read navigation data!");
             XHSIStatus.nav_db_status = XHSIStatus.STATUS_NAV_DB_NOT_FOUND;
-        } else if ((new File(this.preferences.getProperty(PREF_APTNAV_DIR) + "/Resources/default data/earth_nav.dat").exists() == false) ||
-                    (new File(this.preferences.getProperty(PREF_APTNAV_DIR) + "/Resources/default scenery/default apt dat/Earth nav data/apt.dat").exists() == false) ||
-                    (new File(this.preferences.getProperty(PREF_APTNAV_DIR) + "/Resources/default data/earth_fix.dat").exists() == false) ||
-                    (new File(this.preferences.getProperty(PREF_APTNAV_DIR) + "/Resources/default data/earth_awy.dat").exists() == false)) {
+        } else if (
+                ! ( new File(this.preferences.getProperty(PREF_APTNAV_DIR) + "/Resources/default data/earth_nav.dat").exists() ||
+                    new File(this.preferences.getProperty(PREF_APTNAV_DIR) + "/earth_nav.dat").exists() ) ||
+                ! ( new File(this.preferences.getProperty(PREF_APTNAV_DIR) + "/Resources/default data/earth_fix.dat").exists() ||
+                    new File(this.preferences.getProperty(PREF_APTNAV_DIR) + "/earth_fix.dat").exists() ) ||
+                ! ( new File(this.preferences.getProperty(PREF_APTNAV_DIR) + "/Resources/default data/earth_awy.dat").exists() ||
+                    new File(this.preferences.getProperty(PREF_APTNAV_DIR) + "/earth_awy.dat").exists() ) ||
+                ! ( new File(this.preferences.getProperty(PREF_APTNAV_DIR) + "/Resources/default scenery/default apt dat/Earth nav data/apt.dat").exists() ||
+                    new File(this.preferences.getProperty(PREF_APTNAV_DIR) + "/apt.dat").exists() )
+                )
+        {
             logger.warning("One or more of the navigation databases (NAV, APT, FIX, AWY) could not be found!");
             XHSIStatus.nav_db_status = XHSIStatus.STATUS_NAV_DB_NOT_FOUND;
         } else {

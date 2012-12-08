@@ -47,10 +47,14 @@ import net.sourceforge.xhsi.model.Runway;
 
 public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserver {
 
-    private String NAV_file = "/Resources/default data/earth_nav.dat";
-    private String FIX_file = "/Resources/default data/earth_fix.dat";
-    private String AWY_file = "/Resources/default data/earth_awy.dat";
-    private String APT_file = "/Resources/default scenery/default apt dat/Earth nav data/apt.dat";
+    private String NAV_file = "/earth_nav.dat";
+    private String NAV_xplane = "/Resources/default data" + "/earth_nav.dat";
+    private String FIX_file = "/earth_fix.dat";
+    private String FIX_xplane = "/Resources/default data" + "/earth_fix.dat";
+    private String AWY_file = "/earth_awy.dat";
+    private String AWY_xplane = "/Resources/default data" + "/earth_awy.dat";
+    private String APT_file = "/apt.dat";
+    private String APT_xplane = "/Resources/default scenery/default apt dat/Earth nav data" + "/apt.dat";
     private String pathname_to_aptnav;
     private NavigationObjectRepository nor;
     private ProgressObserver progressObserver;
@@ -110,8 +114,14 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
 
     public void read_apt_table() throws Exception {
 
-        logger.fine("Reading NAV database ( " + this.pathname_to_aptnav + this.APT_file + " )");
-        File file = new File( this.pathname_to_aptnav + this.APT_file );
+        File file;
+        if ( new File( this.pathname_to_aptnav + this.APT_xplane ).exists() ) {
+            logger.fine("Reading APT database ( " + this.pathname_to_aptnav + this.APT_xplane + " )");
+            file = new File( this.pathname_to_aptnav + this.APT_xplane );
+        } else {
+            logger.fine("Reading APT database ( " + this.pathname_to_aptnav + this.APT_file + " )");
+            file = new File( this.pathname_to_aptnav + this.APT_file );
+        }
         BufferedReader reader = new BufferedReader( new FileReader( file ));
         String line;
         long line_number = 0;
@@ -267,8 +277,14 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
 
     public void read_nav_table() throws Exception {
 
-        logger.fine("Reading NAV database ( " + this.pathname_to_aptnav + this.NAV_file + " )");
-        File file = new File( this.pathname_to_aptnav + this.NAV_file );
+        File file;
+        if ( new File( this.pathname_to_aptnav + this.NAV_xplane ).exists() ) {
+            logger.fine("Reading NAV database ( " + this.pathname_to_aptnav + this.NAV_xplane + " )");
+            file = new File( this.pathname_to_aptnav + this.NAV_xplane );
+        } else {
+            logger.fine("Reading NAV database ( " + this.pathname_to_aptnav + this.NAV_file + " )");
+            file = new File( this.pathname_to_aptnav + this.NAV_file );
+        }
         BufferedReader reader = new BufferedReader( new FileReader( file ));
         String line;
         int info_type;
@@ -411,8 +427,14 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
 
     public void read_fix_table() throws Exception {
 
-        logger.fine("Reading NAV database ( " + this.pathname_to_aptnav + this.FIX_file + " )");
-        File file = new File( this.pathname_to_aptnav + this.FIX_file );
+        File file;
+        if ( new File( this.pathname_to_aptnav + this.FIX_xplane ).exists() ) {
+            logger.fine("Reading FIX database ( " + this.pathname_to_aptnav + this.FIX_xplane + " )");
+            file = new File( this.pathname_to_aptnav + this.FIX_xplane );
+        } else {
+            logger.fine("Reading FIX database ( " + this.pathname_to_aptnav + this.FIX_file + " )");
+            file = new File( this.pathname_to_aptnav + this.FIX_file );
+        }
         BufferedReader reader = new BufferedReader( new FileReader( file ));
         String line;
         String[] tokens;
@@ -451,8 +473,14 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
 
     public void read_awy_table() throws Exception {
 
-        logger.fine("Reading NAV database ( " + this.pathname_to_aptnav + this.AWY_file + " )");
-        File file = new File( this.pathname_to_aptnav + this.AWY_file );
+        File file;
+        if ( new File( this.pathname_to_aptnav + this.AWY_xplane ).exists() ) {
+            logger.fine("Reading AWY database ( " + this.pathname_to_aptnav + this.AWY_xplane + " )");
+            file = new File( this.pathname_to_aptnav + this.AWY_xplane );
+        } else {
+            logger.fine("Reading AWY database ( " + this.pathname_to_aptnav + this.AWY_file + " )");
+            file = new File( this.pathname_to_aptnav + this.AWY_file );
+        }
         BufferedReader reader = new BufferedReader( new FileReader( file ));
         String line;
         String[] tokens;

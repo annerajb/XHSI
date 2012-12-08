@@ -136,11 +136,12 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox draw_aoa_checkbox;
     private JCheckBox pfd_hsi_checkbox;
     private JCheckBox colored_hsi_course_checkbox;
+    private JCheckBox draw_radios_checkbox;
 
     private JCheckBox draw_eicas_primary_checkbox;
     private JComboBox engine_count_combobox;
     private JComboBox engine_type_combobox;
-    private String engine_types[] = { XHSIPreferences.ENGINE_TYPE_N1, /*XHSIPreferences.ENGINE_TYPE_EPR,*/ XHSIPreferences.ENGINE_TYPE_TRQ /*, XHSIPreferences.ENGINE_TYPE_MAP*/ };
+    private String engine_types[] = { XHSIPreferences.ENGINE_TYPE_N1, /*XHSIPreferences.ENGINE_TYPE_EPR,*/ XHSIPreferences.ENGINE_TYPE_TRQ, XHSIPreferences.ENGINE_TYPE_MAP };
     private JComboBox fuel_unit_combobox;
     private String fuel_units[] = { XHSIPreferences.FUEL_KG, XHSIPreferences.FUEL_LBS, XHSIPreferences.FUEL_USG, XHSIPreferences.FUEL_LTR };
 
@@ -323,6 +324,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.draw_aoa_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_DRAW_AOA).equalsIgnoreCase("true"));
 
         this.pfd_hsi_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_HSI).equalsIgnoreCase("true"));
+
+        this.draw_radios_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_RADIOS).equalsIgnoreCase("true"));
 
 
         // EICAS Options (4)
@@ -1033,6 +1036,21 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         dialog_line++;
         dialog_line++;
 
+        // Draw Radios
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        pfd_options_panel.add(new JLabel("Draw Radio frequencies", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.draw_radios_checkbox = new JCheckBox("  (window aspect ratio must be 4/3 or wider)");
+        pfd_options_panel.add(this.draw_radios_checkbox, cons);
+        dialog_line++;
+        dialog_line++;
+
 //        // A reminder
 //        cons.gridx = 2;
 //        cons.gridwidth = 1;
@@ -1304,9 +1322,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.anchor = GridBagConstraints.WEST;
         this.engine_type_combobox = new JComboBox();
         this.engine_type_combobox.addItem(XHSIPreferences.ENGINE_TYPE_N1);
-//        this.engine_type_combobox.addItem(XHSIPreferences.ENGINE_TYPE_EGT);
+//        this.engine_type_combobox.addItem(XHSIPreferences.ENGINE_TYPE_EPR);
         this.engine_type_combobox.addItem(XHSIPreferences.ENGINE_TYPE_TRQ);
-//        this.engine_type_combobox.addItem(XHSIPreferences.ENGINE_TYPE_MAP);
+        this.engine_type_combobox.addItem(XHSIPreferences.ENGINE_TYPE_MAP);
         this.engine_type_combobox.addActionListener(this);
         eicas_options_panel.add(this.engine_type_combobox, cons);
         dialog_line++;
@@ -1673,6 +1691,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
             if ( this.pfd_hsi_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_HSI).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_PFD_DRAW_HSI, this.pfd_hsi_checkbox.isSelected()?"true":"false");
+
+            if ( this.draw_radios_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_RADIOS).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_PFD_DRAW_RADIOS, this.draw_radios_checkbox.isSelected()?"true":"false");
 
 
             // EICAS options

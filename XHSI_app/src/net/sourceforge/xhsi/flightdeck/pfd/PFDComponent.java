@@ -93,6 +93,8 @@ public class PFDComponent extends Component implements Observer, PreferencesObse
         subcomponents.add(new VSI(model_factory, pfd_gc, this));
         subcomponents.add(new FMA(model_factory, pfd_gc, this));
         subcomponents.add(new HSI(model_factory, pfd_gc, this));
+        subcomponents.add(new Radios(model_factory, pfd_gc, this));
+        subcomponents.add(new PFDFail(model_factory, pfd_gc, this));
         subcomponents.add(new PFDInstrumentFrame(model_factory, pfd_gc));
 
         this.repaint();

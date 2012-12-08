@@ -121,10 +121,20 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT2_RADIOS_INDICATORS_MIDDLE_MARKER_LIT = 134;
     public static final int SIM_COCKPIT2_RADIOS_INDICATORS_INNER_MARKER_LIT = 135;
 
+    public static final int SIM_COCKPIT_RADIOS_NAV1_STDBY_FREQ_HZ = 136;
+    public static final int SIM_COCKPIT_RADIOS_NAV2_STDBY_FREQ_HZ = 137;
+    public static final int SIM_COCKPIT_RADIOS_ADF1_STDBY_FREQ_HZ = 138;
+    public static final int SIM_COCKPIT_RADIOS_ADF2_STDBY_FREQ_HZ = 139;
+
     public static final int SIM_COCKPIT2_RADIOS_INDICATORS_NAV1_NAV_ID = 10140;
     public static final int SIM_COCKPIT2_RADIOS_INDICATORS_NAV2_NAV_ID = 10141;
     public static final int SIM_COCKPIT2_RADIOS_INDICATORS_ADF1_NAV_ID = 10142;
     public static final int SIM_COCKPIT2_RADIOS_INDICATORS_ADF2_NAV_ID = 10143;
+
+    public static final int SIM_COCKPIT_RADIOS_COM1_FREQ_HZ = 144;
+    public static final int SIM_COCKPIT_RADIOS_COM1_STDBY_FREQ_HZ = 145;
+    public static final int SIM_COCKPIT_RADIOS_COM2_FREQ_HZ = 146;
+    public static final int SIM_COCKPIT_RADIOS_COM2_STDBY_FREQ_HZ = 147;
 
 
     // AP
@@ -156,6 +166,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
 
     // Transponder
     public static final int SIM_COCKPIT_RADIOS_TRANSPONDER_MODE = 180; // 0=OFF, 1=STDBY, 2=ON, 3=TEST
+    public static final int SIM_COCKPIT_RADIOS_TRANSPONDER_CODE = 181;
 
 
     // EFIS
@@ -346,6 +357,10 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     // CL30 ANNUN
     public static final int CL30_MAST_WARN = 858;
     public static final int CL30_MAST_CAUT = 859;
+    // CL30 Thrust Mode
+    public static final int CL30_CARETS = 860;
+    public static final int CL30_TO_N1 = 861;
+    public static final int CL30_CLB_N1 = 862;
     
 
     // Plugin Version

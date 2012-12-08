@@ -147,6 +147,8 @@ public class GearStatus extends AnnunSubcomponent {
 
     private void drawTricycle(Graphics2D g2) {
 
+        g2.setStroke(new BasicStroke(3.0f * annun_gc.grow_scaling_factor));
+
         drawTrikeWheel(g2, WHEEL.Nose, this.aircraft.get_gear(0));
         drawTrikeWheel(g2, WHEEL.Left, this.aircraft.get_gear(1));
         drawTrikeWheel(g2, WHEEL.Right, this.aircraft.get_gear(2));
@@ -198,7 +200,7 @@ public class GearStatus extends AnnunSubcomponent {
             }
 
             g2.setColor(annun_gc.instrument_background_color);
-            g2.fillRect(w_x, w_y, w_w, w_h);
+            g2.fillRect(w_x+2, w_y+2, w_w-4, w_h-4);
 
             if ( ( ! annun_gc.powered ) || (lowered == 0.0f) ) {
                 g2.setColor(annun_gc.instrument_background_color.brighter());
@@ -207,7 +209,7 @@ public class GearStatus extends AnnunSubcomponent {
             } else {
                 g2.setColor(annun_gc.color_amber);
             }
-            g2.drawRect(w_x, w_y, w_w, w_h);
+            g2.drawRect(w_x+2, w_y+2, w_w-4, w_h-4);
             g2.setFont(annun_gc.font_l);
             g2.drawString(w1_str, w1_x, w1_y);
             g2.drawString(w2_str, w2_x, w2_y);

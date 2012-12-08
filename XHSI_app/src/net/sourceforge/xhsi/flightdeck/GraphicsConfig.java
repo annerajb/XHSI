@@ -520,6 +520,10 @@ public class GraphicsConfig implements ComponentListener {
             nav_needle_color = color_mediumviolet;
             deviation_scale_color = Color.LIGHT_GRAY;
             markings_color = Color.WHITE;
+//                float hsb[] = new float[3];
+//                Color.RGBtoHSB(markings_color.getRed(), markings_color.getGreen(), markings_color.getBlue(), hsb);
+//                hsb[2] *= 0.25f;
+//                markings_color = Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
             dim_markings_color = Color.LIGHT_GRAY;
             range_arc_color = Color.GRAY.darker();
             dim_label_color = Color.DARK_GRAY;

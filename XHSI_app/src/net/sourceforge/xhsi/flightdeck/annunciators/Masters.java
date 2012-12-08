@@ -103,9 +103,9 @@ public class Masters extends AnnunSubcomponent {
             float on_blue = (float)on_color.getBlue() / 255.0f;
 
             blend_color = new Color(
-                    off_red + (on_red - off_red) * blend,
-                    off_green + (on_green - off_green) * blend,
-                    off_blue + (on_blue - off_blue) * blend
+                    Math.min( 1.0f, off_red + (on_red - off_red) * blend ),
+                    Math.min( 1.0f, off_green + (on_green - off_green) * blend ),
+                    Math.min( 1.0f, off_blue + (on_blue - off_blue) * blend )
                     );
             
         }

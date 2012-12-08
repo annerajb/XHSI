@@ -535,9 +535,9 @@ public interface Aircraft {
     
     
     /**
-     * @return int Thrust Mode : 0: ---, 1: TO, 2: R-TO, 3: R- CLB, 4: CLB, 4: CRZ, 6: GA, 7:CON, 8: MAX.
+     * @return String Thrust Mode : 0: ---, 1: TO, 2: R-TO, 3: R- CLB, 4: CLB, 4: CRZ, 6: GA, 7:CON, 8: MAX.
      */
-    public int get_thrust_mode();
+    public String get_thrust_mode();
 
 
     /**

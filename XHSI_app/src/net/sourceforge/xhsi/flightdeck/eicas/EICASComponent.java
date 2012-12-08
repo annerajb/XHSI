@@ -91,6 +91,7 @@ public class EICASComponent extends Component implements Observer, PreferencesOb
         subcomponents.add(new Hydraulics(model_factory, eicas_gc, this));
         subcomponents.add(new Fuel(model_factory, eicas_gc, this));
         subcomponents.add(new SubPanelLines(model_factory, eicas_gc, this));
+        subcomponents.add(new EICASFail(model_factory, eicas_gc, this));
         subcomponents.add(new EICASInstrumentFrame(model_factory, eicas_gc));
 
         this.repaint();

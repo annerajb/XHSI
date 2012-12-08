@@ -321,6 +321,15 @@ int createAvionicsPacket(void) {
 	i++;
 
 
+    if ( x737_ready ) {
+
+        sim_packet.sim_data_points[i].id = custom_htonl((long) X737_STBY_PWR);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(x737_stby_pwr));
+        i++;
+
+    }
+
+
 	sim_packet.sim_data_points[i].id = custom_htonl((long) SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ);
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(nav1_freq_hz));
 	i++;
@@ -431,6 +440,19 @@ int createAvionicsPacket(void) {
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(inner_marker));
 	i++;
 
+	sim_packet.sim_data_points[i].id = custom_htonl((long) SIM_COCKPIT_RADIOS_NAV1_STDBY_FREQ_HZ);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(nav1_stdby_freq_hz));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htonl((long) SIM_COCKPIT_RADIOS_NAV2_STDBY_FREQ_HZ);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(nav2_stdby_freq_hz));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htonl((long) SIM_COCKPIT_RADIOS_ADF1_STDBY_FREQ_HZ);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(adf1_stdby_freq_hz));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htonl((long) SIM_COCKPIT_RADIOS_ADF2_STDBY_FREQ_HZ);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(adf2_stdby_freq_hz));
+	i++;
+
 	sim_packet.sim_data_points[i].id = custom_htonl((long) SIM_COCKPIT2_RADIOS_INDICATORS_NAV1_NAV_ID);
 	XPLMGetDatab(nav1_id, nav_id_bytes, 0, 4);
     strncpy( (char *)&sim_packet.sim_data_points[i].value, nav_id_bytes, 4 );
@@ -448,9 +470,25 @@ int createAvionicsPacket(void) {
     strncpy( (char *)&sim_packet.sim_data_points[i].value, nav_id_bytes, 4 );
 	i++;
 
+	sim_packet.sim_data_points[i].id = custom_htonl((long) SIM_COCKPIT_RADIOS_COM1_FREQ_HZ);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(com1_freq_hz));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htonl((long) SIM_COCKPIT_RADIOS_COM1_STDBY_FREQ_HZ);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(com1_stdby_freq_hz));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htonl((long) SIM_COCKPIT_RADIOS_COM2_FREQ_HZ);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(com2_freq_hz));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htonl((long) SIM_COCKPIT_RADIOS_COM2_STDBY_FREQ_HZ);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(com2_stdby_freq_hz));
+	i++;
+
 
 	sim_packet.sim_data_points[i].id = custom_htonl((long) SIM_COCKPIT_RADIOS_TRANSPONDER_MODE);
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(transponder_mode));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htonl((long) SIM_COCKPIT_RADIOS_TRANSPONDER_CODE);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(transponder_code));
 	i++;
 
 
@@ -1040,6 +1078,21 @@ int createEnginesPacket(void) {
     }
 
 
+    if ( cl30_ready ) {
+
+        sim_packet.sim_data_points[i].id = custom_htonl((long) CL30_CARETS);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(cl30_carets));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htonl((long) CL30_TO_N1);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(cl30_to_n1));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htonl((long) CL30_CLB_N1);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(cl30_clb_n1));
+        i++;
+
+    }
+
+
 	// now we know the number of datapoints
 	sim_packet.nb_of_sim_data_points = custom_htonl( (long) i );
 
@@ -1277,7 +1330,7 @@ int createTcasPacket(void) {
         tcas_packet.mp_total = custom_htonl( (long)total );
         tcas_packet.mp_active = custom_htonl( (long)active );
 
-        tcas_packet.radar_altitude = custom_htonf( (float)XPLMGetDatad(agl) * 3.28084f );
+        tcas_packet.radar_altitude = custom_htonf( (float)XPLMGetDataf(agl) * 3.28084f );
 
         tcas_packet.tcas_entries[0].latitude = custom_htonf( (float)XPLMGetDatad(latitude) );
         tcas_packet.tcas_entries[0].longitude = custom_htonf( (float)XPLMGetDatad(longitude) );

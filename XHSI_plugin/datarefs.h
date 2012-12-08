@@ -75,11 +75,21 @@ extern XPLMDataRef  outer_marker;
 extern XPLMDataRef  middle_marker;
 extern XPLMDataRef  inner_marker;
 
+extern XPLMDataRef  nav1_stdby_freq_hz;
+extern XPLMDataRef  nav2_stdby_freq_hz;
+extern XPLMDataRef  adf1_stdby_freq_hz;
+extern XPLMDataRef  adf2_stdby_freq_hz;
+
 extern XPLMDataRef  nav1_id;
 extern XPLMDataRef  nav2_id;
 extern XPLMDataRef  adf1_id;
 extern XPLMDataRef  adf2_id;
-extern XPLMDataRef  gps_id;
+//extern XPLMDataRef  gps_id;
+
+extern XPLMDataRef  com1_freq_hz;
+extern XPLMDataRef  com1_stdby_freq_hz;
+extern XPLMDataRef  com2_freq_hz;
+extern XPLMDataRef  com2_stdby_freq_hz;
 
 extern XPLMDataRef  autopilot_state;
 extern XPLMDataRef  autopilot_vertical_velocity;
@@ -108,6 +118,7 @@ extern XPLMDataRef  autopilot_backcourse_status;
 
 
 extern XPLMDataRef	transponder_mode;
+extern XPLMDataRef	transponder_code;
 
 
 extern XPLMDataRef	efis_map_range_selector;

@@ -94,6 +94,14 @@ public class TCAS {
      */
     public void new_data_start(int max, int act, float agl_alt, float lat, float lon, float msl_alt) {
 
+//        logger.warning("new TCAS");
+//        logger.warning("max="+max);
+//        logger.warning("act="+act);
+//        logger.warning("agl="+agl_alt);
+//        logger.warning("lat="+lat);
+//        logger.warning("lon="+agl_alt);
+//        logger.warning("msl="+msl_alt);
+        
         total = max;
         active = act;
 
