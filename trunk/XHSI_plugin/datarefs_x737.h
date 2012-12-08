@@ -45,6 +45,9 @@ extern XPLMDataRef x737_N1_phase;
 extern XPLMDataRef x737_N1_limit_eng1;
 extern XPLMDataRef x737_N1_limit_eng2;
 
+// x737/systems/electrics/...
+extern XPLMDataRef x737_stby_pwr;
+
 //extern XPLMDataRef x737_;
 //extern XPLMDataRef x737_;
 //extern XPLMDataRef x737_;

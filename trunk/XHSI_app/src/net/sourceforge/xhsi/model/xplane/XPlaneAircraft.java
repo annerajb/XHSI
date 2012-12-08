@@ -42,6 +42,9 @@ public class XPlaneAircraft implements Aircraft {
     private float fuel_capacity;
     private float max_fuel_flow;
 
+    private static String x737_thrust_modes[] = { "---", "TO", "R-TO", "R-CLB", "CLB", "CRZ", "G/A", "CON", "MAX" };
+    private static String cl30_thrust_modes[] = { "---", "CRZ", "CLB", "TO", "APR" };
+
 
     public XPlaneAircraft(ModelFactory sim_model) {
         this.sim_data = sim_model.get_repository_instance();
@@ -466,6 +469,16 @@ public class XPlaneAircraft implements Aircraft {
             } else {
                 ref = 0.0f;
             }
+        } else if ( this.avionics.is_cl30() ) {
+            int cl_caret = (int) sim_data.get_sim_float(XPlaneSimDataRepository.CL30_CARETS);
+            if ( cl_caret == 2 ) {
+                // should be : ref = sim_data.get_sim_float(XPlaneSimDataRepository.CL30_CLB_N1);
+                ref = sim_data.get_sim_float(XPlaneSimDataRepository.CL30_TO_N1);
+            } else if ( cl_caret == 3 ) {
+                ref = sim_data.get_sim_float(XPlaneSimDataRepository.CL30_TO_N1);
+            } else {
+                ref = 0.0f;
+            }
         } else if ( this.avionics.has_ufmc() ) {
             if ( engine == 0 ) {
                 ref = sim_data.get_sim_float(XPlaneSimDataRepository.UFMC_N1_1);
@@ -484,14 +497,14 @@ public class XPlaneAircraft implements Aircraft {
         return ref;
     }
 
-    public int get_thrust_mode() {
-
-        // 0: ---, 1: TO, 2: R-TO, 3: R- CLB, 4: CLB, 4: CRZ, 6: GA, 7:CON, 8: MAX.
+    public String get_thrust_mode() {
 
         if ( this.avionics.is_x737() ) {
-            return (int) sim_data.get_sim_float(XPlaneSimDataRepository.X737_N1_PHASE);
+            return XPlaneAircraft.x737_thrust_modes[ (int) sim_data.get_sim_float(XPlaneSimDataRepository.X737_N1_PHASE) ];
+        } else if ( ( this.avionics.is_cl30() ) && ( this.reverser_position(0) == 0.0f ) ) {
+            return XPlaneAircraft.cl30_thrust_modes[ (int) sim_data.get_sim_float(XPlaneSimDataRepository.CL30_CARETS) ];
         } else {
-            return 0;
+            return "";
         }
 
     }

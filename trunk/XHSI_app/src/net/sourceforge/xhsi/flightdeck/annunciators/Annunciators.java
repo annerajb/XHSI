@@ -74,8 +74,9 @@ public class Annunciators extends AnnunSubcomponent {
 
     private void drawAnnunciators(Graphics2D g2) {
 
-        Color off_color = annun_gc.instrument_background_color.brighter().brighter();
+        Color off_color = annun_gc.instrument_background_color.brighter();
         Color annun_color;
+        g2.setStroke(new BasicStroke(3.0f * annun_gc.grow_scaling_factor));
 
         draw1Annun(g2, 0, 0, "STALL", ( this.aircraft.stall_warning() && this.aircraft.battery() ) ? annun_gc.warning_color : off_color);
 
@@ -110,7 +111,7 @@ public class Annunciators extends AnnunSubcomponent {
             float speed_brake = this.aircraft.get_speed_brake();
             if ( speed_brake > 0.51f ) {
                 annun_color = annun_gc.caution_color;
-            } else if ( speed_brake > 0.01f ) {
+            } else if ( ( ( ! this.avionics.is_cl30() ) && ( speed_brake > 0.01f ) ) || ( ( this.avionics.is_cl30() ) && ( speed_brake > 0.033f ) ) ) {
                 annun_color = annun_gc.unusual_color;
             } else if ( this.aircraft.speed_brake_armed() ) {
                 annun_color = annun_gc.normal_color;
@@ -191,7 +192,7 @@ public class Annunciators extends AnnunSubcomponent {
             } else {
                 g2.setColor(annun_gc.instrument_background_color.brighter());
             }
-            g2.drawRect(a_x, a_y, a_w, a_h);
+            g2.drawRect(a_x+1, a_y+1, a_w-2, a_h-2);
             g2.setFont(annun_gc.font_m);
             g2.drawString(annun_str, a1_x, a1_y);
 

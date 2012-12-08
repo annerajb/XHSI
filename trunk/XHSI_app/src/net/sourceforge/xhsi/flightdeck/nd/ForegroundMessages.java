@@ -212,11 +212,11 @@ public class ForegroundMessages extends NDSubcomponent {
 
             boolean tcas_on = ( (this.avionics.transponder_mode() >= Avionics.XPDR_TA) || this.preferences.get_tcas_always_on() );
 
-            if ( tcas_on && (this.avionics.get_tcas().ra || this.avionics.get_tcas().ta) ) {
+            if ( tcas_on && ( this.avionics.get_tcas().ra || this.avionics.get_tcas().ta ) ) {
                 g2.setFont(nd_gc.font_large);
                 String message_str = "TRAFFIC";
                 int traffic_width = g2.getFontMetrics(nd_gc.font_large).stringWidth(message_str);
-                g2.setColor(nd_gc.background_color);
+                // g2.setColor(nd_gc.background_color);
                 // g2.fillRect(nd_gc.right_label_x - traffic_width - 4 - 40, nd_gc.right_label_tcas_y - nd_gc.line_height_large + 3, traffic_width + 6, nd_gc.line_height_large);
                 if (this.avionics.get_tcas().ra) {
                     g2.setColor(nd_gc.warning_color);

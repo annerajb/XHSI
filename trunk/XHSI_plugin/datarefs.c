@@ -128,11 +128,21 @@ XPLMDataRef  outer_marker;
 XPLMDataRef  middle_marker;
 XPLMDataRef  inner_marker;
 
+XPLMDataRef  nav1_stdby_freq_hz;
+XPLMDataRef  nav2_stdby_freq_hz;
+XPLMDataRef  adf1_stdby_freq_hz;
+XPLMDataRef  adf2_stdby_freq_hz;
+
 XPLMDataRef  nav1_id;
 XPLMDataRef  nav2_id;
 XPLMDataRef  adf1_id;
 XPLMDataRef  adf2_id;
-XPLMDataRef  gps_id;
+//XPLMDataRef  gps_id;
+
+XPLMDataRef  com1_freq_hz;
+XPLMDataRef  com1_stdby_freq_hz;
+XPLMDataRef  com2_freq_hz;
+XPLMDataRef  com2_stdby_freq_hz;
 
 XPLMDataRef  autopilot_state;
 XPLMDataRef  autopilot_vertical_velocity;
@@ -161,6 +171,8 @@ XPLMDataRef  autopilot_backcourse_status;
 
 
 XPLMDataRef  transponder_mode;
+XPLMDataRef  transponder_code;
+
 
 XPLMDataRef	 efis_map_range_selector;
 XPLMDataRef	 efis_dme_1_selector;
@@ -1015,12 +1027,21 @@ void findDataRefs(void) {
     middle_marker = XPLMFindDataRef("sim/cockpit2/radios/indicators/middle_marker_lit");
     inner_marker = XPLMFindDataRef("sim/cockpit2/radios/indicators/inner_marker_lit");
 
+	nav1_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/nav1_stdby_freq_hz");  // int
+	nav2_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/nav2_stdby_freq_hz");	// int
+	adf1_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/adf1_stdby_freq_hz");  // int
+	adf2_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/adf2_stdby_freq_hz");  // int
+
 	nav1_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/nav1_nav_id");
 	nav2_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/nav2_nav_id");
 	adf1_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/adf1_nav_id");
 	adf2_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/adf2_nav_id");
-	gps_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/gps_nav_id");
+	//gps_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/gps_nav_id");
 
+	com1_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com1_freq_hz");  // int
+	com1_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com1_stdby_freq_hz");  // int
+	com2_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com2_freq_hz");  // int
+	com2_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com2_stdby_freq_hz");  // int
 
 	// AP
 	autopilot_state = XPLMFindDataRef("sim/cockpit/autopilot/autopilot_state");
@@ -1051,6 +1072,7 @@ void findDataRefs(void) {
 
 	// Transponder
 	transponder_mode = XPLMFindDataRef("sim/cockpit/radios/transponder_mode");	// int
+	transponder_code = XPLMFindDataRef("sim/cockpit/radios/transponder_code");	// int
 
 
 	// EFIS

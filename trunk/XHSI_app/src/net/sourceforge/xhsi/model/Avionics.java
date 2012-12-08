@@ -54,6 +54,19 @@ public interface Avionics {
     public static final int MFD_MODE_FPLN = 2;
     public static final int MFD_MODE_EICAS = 3;
 
+    public static final int RADIO_NAV1 = 1;
+    public static final int RADIO_NAV2 = 2;
+    public static final int RADIO_ADF1 = 3;
+    public static final int RADIO_ADF2 = 4;
+    public static final int RADIO_COM1 = 5;
+    public static final int RADIO_COM2 = 6;
+    public static final int RADIO_NAV1_STDBY = -1;
+    public static final int RADIO_NAV2_STDBY = -2;
+    public static final int RADIO_ADF1_STDBY = -3;
+    public static final int RADIO_ADF2_STDBY = -4;
+    public static final int RADIO_COM1_STDBY = -5;
+    public static final int RADIO_COM2_STDBY = -6;
+
     
     /**
      * @return boolean - do we have avionics power?
@@ -154,6 +167,11 @@ public interface Avionics {
      * @return NavigationRadio - model class representing the NAV radio
      */
     public NavigationRadio get_nav_radio(int bank);
+
+    /**
+     * @return int - adf frequency
+     */
+    public float get_radio_freq(int radio_num);
 
     /**
      * @return NavigationRadio - model class representing the GPS
@@ -429,7 +447,12 @@ public interface Avionics {
      */
     public int transponder_mode();
 
-    
+    /**
+     * @return int - transponder code
+     */
+    public int transponder_code();
+
+
     /**
      * @return boolean - receiving CL30 data
      */

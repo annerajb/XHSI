@@ -102,6 +102,11 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int aoa_x;
     public int aoa_y;
     public int aoa_r;
+    public int radios_top;
+    public int radios_width;
+    public int navradios_left;
+    public int comradios_left;
+    public int radios_height;
 
 
 
@@ -183,6 +188,11 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             aoa_r = ra_r;
             aoa_x = ra_x;
             aoa_y = ra_high_y;
+            radios_top = fma_top;
+            radios_width = instrument_size * 125 / 1000;
+            navradios_left = this.panel_rect.x + this.panel_rect.width/2 - instrument_size/2 - (instrument_size * 30 / 1000) - radios_width;
+            comradios_left = this.panel_rect.x + this.panel_rect.width/2 + instrument_size/2 + (instrument_size * 30 / 1000);
+            radios_height = instrument_size * 420 / 1000;
 
 
 //            // clear the flags

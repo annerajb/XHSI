@@ -101,6 +101,7 @@ public class NDComponent extends Component implements Observer, PreferencesObser
         subcomponents.add(new RadioHeadingArrows(model_factory, nd_gc));
         subcomponents.add(new RadioLabel(model_factory, nd_gc, this));
         subcomponents.add(new RefSourceLabel(model_factory, nd_gc, this));
+        subcomponents.add(new NDFail(model_factory, nd_gc, this));
         subcomponents.add(new NDInstrumentFrame(model_factory, nd_gc));
 
         this.repaint();

@@ -85,9 +85,9 @@ public class RadioLabel extends NDSubcomponent {
         public String type;
         public String id;
         public String dme;
-//        public int radial;
+        public int radial;
         public int obs;
-//        public String radial_text;
+        public String radial_text;
         public String obs_text;
         public Color color;
         public boolean draw_arrow;
@@ -110,7 +110,7 @@ public class RadioLabel extends NDSubcomponent {
                 this.is_adf = radio.freq_is_adf();
 
                 this.receiving = radio.receiving();
-//                this.radial_text = "";
+                this.radial_text = "";
                 this.obs = Math.round( (radio.get_bank()==1) ? radio.avionics.nav1_obs() : radio.avionics.nav2_obs() );
                 this.obs_text = "CRS " + degrees_formatter.format( this.obs );
 
@@ -150,9 +150,8 @@ public class RadioLabel extends NDSubcomponent {
                         } else if (((RadioNavBeacon) rnav_object).type == RadioNavBeacon.TYPE_VOR) {
                             this.type = "VOR " + radio.get_bank();
                             this.color = nd_gc.tuned_vor_color;
-                            // currect radial; not used
-                            //this.radial = Math.round(radio.get_radial());
-                            //this.radial_text = "R " + RadioLabel.degrees_formatter.format( this.radial );
+                            this.radial = Math.round(radio.get_radial());
+                            this.radial_text = "R " + RadioLabel.degrees_formatter.format( this.radial );
                         } else if (((RadioNavBeacon) rnav_object).type == RadioNavBeacon.TYPE_STANDALONE_DME) {
                             this.type = "DME " + radio.get_bank();
                             this.color = nd_gc.tuned_vor_color;
@@ -218,27 +217,29 @@ public class RadioLabel extends NDSubcomponent {
 
         public boolean equals(NavigationRadio radio) {
             // retrun true if nothing has changed since last visit
-            if ( nd_gc.reconfigured ) {
-                return false;
-            } else {
-                if (radio != null) {
-                    // a radio is selected with the EFIS control panel
-                    return ( ( this.rnav_object == radio.get_radio_nav_object() ) &&
-                             ( this.frequency == radio.get_frequency( )) &&
-                             ( this.receiving == radio.receiving() ) &&
-                             ( this.obs == Math.round( (radio.get_bank()==1) ? radio.avionics.nav1_obs() : radio.avionics.nav2_obs() ) ) &&
+            // Pfff..., why bother with all these if's; just recalculate...
+            return false;
+//            if ( nd_gc.reconfigured ) {
+//                return false;
+//            } else {
+//                if (radio != null) {
+//                    // a radio is selected with the EFIS control panel
+//                    return ( ( this.rnav_object == radio.get_radio_nav_object() ) &&
+//                             ( this.frequency == radio.get_frequency( )) &&
+//                             ( this.receiving == radio.receiving() ) &&
+//                             ( this.obs == Math.round( (radio.get_bank()==1) ? radio.avionics.nav1_obs() : radio.avionics.nav2_obs() ) ) &&
 //                             ( this.radial == Math.round(radio.get_radial()) ) &&
-                             ( this.distance_by_10 == ((int) (radio.get_distance() * 10)) ) &&
-                             ( ! nd_gc.reconfigured )
-                            );
-                } else {
-                    return ( ( this.rnav_object == null ) &&
-                             ( this.frequency == 0.0f ) &&
-                             ( this.receiving == false ) &&
-                             ( ! nd_gc.reconfigured )
-                             );
-                }
-            }
+//                             ( this.distance_by_10 == ((int) (radio.get_distance() * 10)) ) &&
+//                             ( ! nd_gc.reconfigured )
+//                            );
+//                } else {
+//                    return ( ( this.rnav_object == null ) &&
+//                             ( this.frequency == 0.0f ) &&
+//                             ( this.receiving == false ) &&
+//                             ( ! nd_gc.reconfigured )
+//                             );
+//                }
+//            }
         }
 
     }
@@ -315,14 +316,16 @@ public class RadioLabel extends NDSubcomponent {
         g2.drawString(radio_box_info.type, text_x, line_1);
         g2.setFont(nd_gc.font_medium);
         g2.drawString(radio_box_info.id, text_x, line_2);
-        if (radio_box_info.dme.equals("") == false) {
+        if ( ! radio_box_info.dme.equals("") ) {
             g2.setFont(nd_gc.font_small);
             g2.drawString(radio_box_info.dme, dme_text_width + text_x, line_3);
             g2.drawString("DME", text_x, line_3);
         }
         // g2.setFont(nd_gc.font_tiny);
-//        g2.drawString(radio_box_info.radial_text, text_x, line_4);
-        g2.drawString(radio_box_info.obs_text, text_x, line_4);
+        if ( this.avionics.efis_shows_pos() )
+            g2.drawString(radio_box_info.radial_text, text_x, line_4);
+        else
+            g2.drawString(radio_box_info.obs_text, text_x, line_4);
         if ( ! nd_gc.mode_plan && ( ! avionics.efis_shows_pos() || ( nd_gc.mode_classic_hsi ) ) ) {
             Stroke original_stroke = g2.getStroke();
             g2.setStroke(new BasicStroke(1.0f));

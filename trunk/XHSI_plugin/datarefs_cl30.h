@@ -12,6 +12,9 @@ extern XPLMDataRef cl30_vref;
 extern XPLMDataRef cl30_refspds;
 extern XPLMDataRef cl30_mast_warn;
 extern XPLMDataRef cl30_mast_caut;
+extern XPLMDataRef cl30_carets;
+extern XPLMDataRef cl30_to_n1;
+extern XPLMDataRef cl30_clb_n1;
 //extern XPLMDataRef cl30_;
 
 

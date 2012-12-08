@@ -63,6 +63,9 @@ XPLMDataRef x737_N1_phase;
 XPLMDataRef x737_N1_limit_eng1;
 XPLMDataRef x737_N1_limit_eng2;
 
+// x737/systems/electrics/...
+XPLMDataRef x737_stby_pwr;
+
 
 
 int x737_ready = 0;
@@ -120,6 +123,8 @@ void findX737DataRefs(void) {
             x737_N1_phase = XPLMFindDataRef("x737/systems/eec/N1_phase");
             x737_N1_limit_eng1 = XPLMFindDataRef("x737/systems/eec/N1_limit_eng1");
             x737_N1_limit_eng2 = XPLMFindDataRef("x737/systems/eec/N1_limit_eng2");
+
+            x737_stby_pwr = XPLMFindDataRef("x737/systems/electrics/stbyPwrAuto");
 
 //             = XPLMFindDataRef("");
 //             = XPLMFindDataRef("");

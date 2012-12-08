@@ -52,8 +52,6 @@ public class DivText extends EICASSubcomponent {
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
-    private static String thrust_modes[] = { "---", "TO", "R-TO", "R-CLB", "CLB", "CRZ", "G/A", "CON", "MAX" };
-
 
     public DivText(ModelFactory model_factory, EICASGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
@@ -109,14 +107,12 @@ public class DivText extends EICASSubcomponent {
 
     private void drawThrustMode(Graphics2D g2) {
 
-        int t_m = this.aircraft.get_thrust_mode();
-
         int y1 = eicas_gc.divtext_y;
         int x1 = eicas_gc.thrustmode_x;
 
         g2.setColor(eicas_gc.color_lime);
         g2.setFont(eicas_gc.font_xl);
-        g2.drawString(thrust_modes[t_m], x1, y1);
+        g2.drawString(this.aircraft.get_thrust_mode(), x1, y1);
 
     }
 
