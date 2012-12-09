@@ -525,7 +525,7 @@ public class GraphicsConfig implements ComponentListener {
 //                hsb[2] *= 0.25f;
 //                markings_color = Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
             dim_markings_color = Color.LIGHT_GRAY;
-            range_arc_color = Color.GRAY.darker();
+            range_arc_color = Color.GRAY; // was: Color.GRAY.darker()
             dim_label_color = Color.DARK_GRAY;
             normal_color = color_lime;
             unusual_color = color_deepskyblue;

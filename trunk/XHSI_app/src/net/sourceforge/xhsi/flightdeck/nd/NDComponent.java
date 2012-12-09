@@ -85,8 +85,8 @@ public class NDComponent extends Component implements Observer, PreferencesObser
         nd_gc.reconfig = true;
 
         addComponentListener(nd_gc);
-        subcomponents.add(new CDI(model_factory, nd_gc, this));
         subcomponents.add(new MovingMap(model_factory, nd_gc, this));
+        subcomponents.add(new CDI(model_factory, nd_gc, this));
         subcomponents.add(new AltitudeRangeArc(model_factory, nd_gc, this));
         subcomponents.add(new CDUFixHolding(model_factory, nd_gc, this));
         subcomponents.add(new PositionTrendVector(model_factory, nd_gc));
