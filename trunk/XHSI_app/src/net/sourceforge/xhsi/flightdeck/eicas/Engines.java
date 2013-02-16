@@ -349,8 +349,8 @@ if ( ref_n1 <= 1.0f ) {
         AffineTransform original_at = g2.getTransform();
         scalePen(g2);
 
-        float n1_value = this.aircraft.get_N1(pos);
-        float n1_dial = Math.min(n1_value, 110.0f) / 100.0f;
+        float n1_value = this.aircraft.get_MPR(pos);
+        float n1_dial = Math.min(n1_value, 44.0f) / 40.0f;
         String n1_str = one_decimal_format.format(n1_value);
 
         int n1_y = eicas_gc.dial_n1_y;
@@ -368,10 +368,10 @@ if ( ref_n1 <= 1.0f ) {
         g2.fillArc(prim_dial_x[pos]-n1_r, n1_y-n1_r, 2*n1_r, 2*n1_r, 0, -Math.round(n1_dial*200.0f));
 
         g2.setColor(eicas_gc.dim_markings_color);
-        for (int i=0; i<=10; i++) {
-            g2.drawLine(prim_dial_x[pos]+n1_r*14/16, n1_y, prim_dial_x[pos]+n1_r-1, n1_y);
-            g2.rotate(Math.toRadians(20), prim_dial_x[pos], n1_y);
-        }
+//        for (int i=0; i<=10; i++) {
+//            g2.drawLine(prim_dial_x[pos]+n1_r*14/16, n1_y, prim_dial_x[pos]+n1_r-1, n1_y);
+//            g2.rotate(Math.toRadians(20), prim_dial_x[pos], n1_y);
+//        }
         g2.setTransform(original_at);
         g2.drawArc(prim_dial_x[pos]-n1_r, n1_y-n1_r, 2*n1_r, 2*n1_r, 0, -200);
         g2.setColor(eicas_gc.caution_color);

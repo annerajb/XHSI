@@ -67,6 +67,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_SUBMODE_NAV = "Mode NAV";
     public static final String ACTION_SUBMODE_PLN = "Mode PLN";
     public static final String ACTION_MODE_CENTERED = "CTR";
+    public static final String ACTION_ZOOMIN = "Zoom In";
 
     public static final String LABEL_SUBMODE_APP = "  APP";
     public static final String LABEL_SUBMODE_VOR = "  VOR";
@@ -74,6 +75,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String LABEL_SUBMODE_NAV = "  NAV";
     public static final String LABEL_SUBMODE_PLN = "  PLN";
     public static final String LABEL_MODE_CENTERED = "  CTR";
+    public static final String LABEL_ZOOMIN = "Zoom in (\u00F7100)";
 
     public static final String LABEL_SUBMODE_ROSE_ILS = "ROSE ILS";
     public static final String LABEL_SUBMODE_ROSE_VOR = "ROSE VOR";
@@ -139,7 +141,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public float dme2_radius = 0.0f;
     public int map_mode = Avionics.EFIS_MAP_MAP;
     public int map_centered = Avionics.EFIS_MAP_EXPANDED;
-    public int range = 40;
+    public int map_range = 40;
+    public boolean map_zoomin;
     public boolean show_arpt = true;
     public boolean show_wpt = true;
     public boolean show_vor = true;
@@ -185,6 +188,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JRadioButtonMenuItem radio_button_submode_nav;
     private JRadioButtonMenuItem radio_button_submode_pln;
     private JCheckBoxMenuItem checkbox_mode_centered;
+    private JCheckBoxMenuItem checkbox_map_zoomin;
 
     private JRadioButtonMenuItem[] radio_button_range = new JRadioButtonMenuItem[7];
 
@@ -563,6 +567,16 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             radio_button_range[i] = radio_button_menu_item;
         }
 
+        xhsi_range_menu.addSeparator();
+
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.LABEL_ZOOMIN);
+        checkbox_menu_item.setToolTipText("Zoom in (\u00F7100)");
+        checkbox_menu_item.setActionCommand(XHSISettings.ACTION_ZOOMIN);
+        checkbox_menu_item.addActionListener(this);
+        xhsi_range_menu.add(checkbox_menu_item);
+        // keep a reference
+        this.checkbox_map_zoomin = checkbox_menu_item;
+
         // add the "Range" menu to the menubar
         menu_bar.add(xhsi_range_menu);
 
@@ -932,10 +946,14 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             mfd_mode = Avionics.MFD_MODE_EICAS;
             this.avionics.set_mfd_mode(mfd_mode);
 
+        } else if (command.equals(XHSISettings.ACTION_ZOOMIN)) {
+            map_zoomin = this.checkbox_map_zoomin.isSelected();
+            this.avionics.set_zoomin(map_zoomin);
+
         } else for (int i=0; i<this.range_list.length; i++) {
             if (command.equals(this.range_list[i])) {
                 // Range override
-                range = Integer.parseInt(command);
+                map_range = Integer.parseInt(command);
                 this.avionics.set_range_index(i);
             }
         }

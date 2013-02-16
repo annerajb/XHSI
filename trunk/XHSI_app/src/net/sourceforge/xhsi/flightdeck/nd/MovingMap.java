@@ -3,7 +3,7 @@
 * 
 * Renders all elements of the moving map display: fixes, VORs, NDBs, 
 * Airports, Localizers and the programmed FMS route if any. This component
-* also renders the range marker rings.
+* also renders the map_range marker rings.
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
@@ -84,6 +84,8 @@ public class MovingMap extends NDSubcomponent {
 
     NavigationObjectRepository nor;
 
+    String active_chart_str;
+
     float map_up;
     float center_lon;
     float center_lat;
@@ -120,8 +122,9 @@ public class MovingMap extends NDSubcomponent {
             // if (this.fix_image == null)
             //    render_navigation_object_images();
 
-            // taxichart not in plan mode and only when ARPT is on
-            if ( ( ! nd_gc.mode_plan ) && ( nd_gc.mode_fullmap && avionics.efis_shows_arpt() ) )
+            this.active_chart_str = null;
+            // taxichart not in plan mode ( ! nd_gc.mode_plan ) and only in zoomedin full map
+            if ( nd_gc.map_zoomin && nd_gc.mode_fullmap )
                 drawChart(g2);
 
             // draw the scale rings before drawing the map
@@ -135,9 +138,11 @@ public class MovingMap extends NDSubcomponent {
 
         // area to display debug info...
         //// hdef_dot, course, deflection (=dir_degt)
-        //int hdef_y = 110;
-        //g2.setColor(Color.YELLOW);
-        //g2.setFont(nd_gc.font_small);
+//        int hdef_y = 110;
+//        g2.setColor(Color.YELLOW);
+//        g2.setFont(nd_gc.font_small);
+//        XHSISettings xhsi_settings = XHSISettings.get_instance();
+//        g2.drawString("" + (xhsi_settings.map_zoomin ? "TRUE" : "FALSE"), nd_gc.border_left+5, hdef_y);
         //// radio1
         //g2.drawString("" + this.avionics.gps_fromto(), nd_gc.border_left+5, hdef_y);
         //g2.drawString("" + ((float) Math.round(this.avionics.gps_hdef_dot()*10000.0f))/10000.0f, nd_gc.border_left+5, hdef_y+nd_gc.line_height_small);
@@ -212,10 +217,6 @@ public class MovingMap extends NDSubcomponent {
             if ( taxi.ready && ! taxi.icao.equals(nearest_arpt_str) /*&& (XHSIStatus.nav_db_status.equals(XHSIStatus.STATUS_NAV_DB_LOADED))*/ ) {
 
                 // we need to load another airport chart
-
-//logger.warning("I have "+taxi.icao);
-//logger.warning("I request "+nearest_arpt_str+" ("+nearest_arpt_str.length()+" char)");
-                // redundant: taxi.ready = false;
                 try {
                     AptNavXP900DatTaxiChartBuilder cb = new AptNavXP900DatTaxiChartBuilder(this.preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR));
                     cb.get_chart(nearest_arpt_str);
@@ -225,29 +226,42 @@ public class MovingMap extends NDSubcomponent {
 
             } else if ( taxi.ready && (taxi.airport!=null) && taxi.airport.icao_code.equals(nearest_arpt_str) ) {
 
+                this.active_chart_str = nearest_arpt_str;
+
+                // OK, we can draw the nearest airport
                 float chart_lon_scale;
                 float chart_lat_scale;
                 float chart_metric_scale;
 
-                int map_width = nd_gc.panel_rect.width;
-                int map_height = nd_gc.panel_rect.height;
-                int map_size_px = Math.min(map_width, map_height);
+//                int map_width = nd_gc.panel_rect.width;
+//                int map_height = nd_gc.panel_rect.height;
+//                int map_size_px = Math.min(map_width, map_height);
 
-                Point map_c;
+                // double true_heading = Math.toRadians( this.aircraft.heading() - this.aircraft.magnetic_variation() );
 
+                // rotate to TRUE! aircraft heading or track, or North
                 AffineTransform original_at = g2.getTransform();
-
-                double true_heading = Math.toRadians( this.aircraft.heading() - this.aircraft.magnetic_variation() );
-
-                map_c = new Point( nd_gc.map_center_x, nd_gc.map_center_y );
-                if ( this.avionics.map_submode() != Avionics.EFIS_MAP_PLN ) {
-                    // not totally correct...
-                    g2.rotate( -true_heading,  map_c.x, map_c.y );
+                if ( nd_gc.hdg_up ) {
+                    // HDG UP
+                    this.map_up = this.aircraft.heading() - this.aircraft.magnetic_variation();
+                } else if ( nd_gc.trk_up ) {
+                    // TRK UP
+                    this.map_up = this.aircraft.track() - this.aircraft.magnetic_variation();
+                } else {
+                    // North UP
+                    this.map_up = 0.0f;
                 }
+                g2.transform( AffineTransform.getRotateInstance(
+                        Math.toRadians(-1.0f * this.map_up),
+                        nd_gc.map_center_x,
+                        nd_gc.map_center_y)
+                );
+
+                Point map_c = new Point( nd_gc.map_center_x, nd_gc.map_center_y );
 
                 float map_range = (float)this.avionics.map_range() / 100.0f;
 
-                chart_lat_scale = map_size_px / map_range * 60.0f;
+                chart_lat_scale = nd_gc.mode_centered ? nd_gc.rose_radius * 2.0f / map_range * 60.0f : nd_gc.rose_radius / map_range * 60.0f;
                 chart_lon_scale = chart_lat_scale * taxi.lon_scale;
                 chart_metric_scale = chart_lat_scale / 60.0f / 1851.851f;
 
@@ -433,6 +447,7 @@ public class MovingMap extends NDSubcomponent {
         }
         
         this.pixels_per_nm = (float)nd_gc.rose_radius / radius_scale; // float for better precision
+        if ( nd_gc.map_zoomin ) this.pixels_per_nm *= 100.0f;
 
         // determine max and min lat/lon in viewport to only draw those
         // elements that can be displayed
@@ -447,7 +462,9 @@ public class MovingMap extends NDSubcomponent {
 
         // pixels per degree
         this.pixels_per_deg_lat = nd_gc.rose_radius / delta_lat;
+        if ( nd_gc.map_zoomin ) this.pixels_per_deg_lat *= 100.0f;
         this.pixels_per_deg_lon = nd_gc.rose_radius / delta_lon;
+        if ( nd_gc.map_zoomin ) this.pixels_per_deg_lon *= 100.0f;
 
         // rotate to TRUE! aircraft heading or track, or North
         AffineTransform original_at = g2.getTransform();
@@ -492,7 +509,7 @@ public class MovingMap extends NDSubcomponent {
             for (int lat=(int)lat_min; lat<=(int) lat_max; lat++) {
                 for (int lon=(int)lon_min; lon<=(int)lon_max; lon++) {
 
-                    if ( avionics.efis_shows_arpt() && (nd_gc.map_range <= 20) && this.preferences.get_draw_runways() ) {
+                    if ( avionics.efis_shows_arpt() && ((nd_gc.map_range <= 20)||nd_gc.map_zoomin) && this.preferences.get_draw_runways() ) {
                         draw_nav_objects(
                                 g2,
                                 NavigationObject.NO_TYPE_RUNWAY,
@@ -500,7 +517,7 @@ public class MovingMap extends NDSubcomponent {
                             );
                     }
 
-                    if ( avionics.efis_shows_wpt() && (nd_gc.map_range <= 40) ) {
+                    if ( avionics.efis_shows_wpt() && ((nd_gc.map_range <= 40)||nd_gc.map_zoomin) ) {
                         draw_nav_objects(
                                 g2,
                                 NavigationObject.NO_TYPE_FIX,
@@ -508,7 +525,7 @@ public class MovingMap extends NDSubcomponent {
                             );
                     }
 
-                    if ( avionics.efis_shows_ndb() && (nd_gc.map_range <= 80) ) {
+                    if ( avionics.efis_shows_ndb() && ((nd_gc.map_range <= 80)||nd_gc.map_zoomin) ) {
                         draw_nav_objects(
                                 g2,
                                 NavigationObject.NO_TYPE_NDB,
@@ -516,7 +533,7 @@ public class MovingMap extends NDSubcomponent {
                             );
                     }
 
-                    if ( avionics.efis_shows_vor() && (nd_gc.map_range <= 80) ) {
+                    if ( avionics.efis_shows_vor() && ((nd_gc.map_range <= 80)||nd_gc.map_zoomin) ) {
                         draw_nav_objects(
                                 g2,
                                 NavigationObject.NO_TYPE_VOR,
@@ -524,7 +541,7 @@ public class MovingMap extends NDSubcomponent {
                             );
                     }
 
-                    if ( avionics.efis_shows_arpt() && (nd_gc.map_range <= 160) ) {
+                    if ( avionics.efis_shows_arpt() && ((nd_gc.map_range <= 160)||nd_gc.map_zoomin) ) {
                         draw_nav_objects(
                                 g2,
                                 NavigationObject.NO_TYPE_AIRPORT,
@@ -538,7 +555,7 @@ public class MovingMap extends NDSubcomponent {
 
         if ( nd_gc.mode_fullmap || ( nd_gc.mode_map /*&& this.avionics.efis_shows_pos()*/ ) ) {
 
-            // whatever the map range, draw the tuned VORs and NDBs
+            // whatever the map map_range, draw the tuned VORs and NDBs
             // NAV1 or ADF1
             RadioNavBeacon nav1 = this.avionics.get_tuned_navaid(1);
             if (nav1 != null) {
@@ -587,7 +604,7 @@ public class MovingMap extends NDSubcomponent {
 
         }
 
-        // whatever the map range, draw the tuned (and selected) Localizer
+        // whatever the map map_range, draw the tuned (and selected) Localizer
         NavigationRadio nav_radio = null;
         Localizer loc_obj = null;
         Localizer twin_loc_obj = null;
@@ -619,7 +636,7 @@ public class MovingMap extends NDSubcomponent {
                 }
                 drawLocalizer(g2, lon_to_x(loc_obj.lon), lat_to_y(loc_obj.lat), loc_obj, 1, selected, loc_receiving, false, loc_dme_radius);
 //                if ( nd_gc.mode_fullmap ) {
-//                    // whatever the map range, we draw the airport of this localizer
+//                    // whatever the map map_range, we draw the airport of this localizer
 //                    ARPT dest_arpt = (ARPT)nor.get_airport(((Localizer) loc_obj).airport, loc_obj.lat, loc_obj.lon);
 //                    if ( dest_arpt != null ) drawAirport(g2, lon_to_x(dest_arpt.lon), lat_to_y(dest_arpt.lat), dest_arpt, ((Localizer) loc_obj).rwy);
 //                }
@@ -649,7 +666,7 @@ public class MovingMap extends NDSubcomponent {
                 }
                 drawLocalizer(g2, lon_to_x(loc_obj.lon), lat_to_y(loc_obj.lat), (Localizer) loc_obj, 2, selected, loc_receiving, false, loc_dme_radius);
 //                if ( nd_gc.mode_fullmap ) {
-//                    // whatever the map range, we draw the airport of this localizer
+//                    // whatever the map map_range, we draw the airport of this localizer
 //                    ARPT dest_arpt = (ARPT)nor.get_airport(((Localizer) loc_obj).airport, loc_obj.lat, loc_obj.lon);
 //                    if ( dest_arpt != null ) drawAirport(g2, lon_to_x(dest_arpt.lon), lat_to_y(dest_arpt.lat), dest_arpt, ((Localizer) loc_obj).rwy);
 //                }
@@ -1031,7 +1048,7 @@ public class MovingMap extends NDSubcomponent {
         else
             g2.setColor(nd_gc.term_wpt_color);
         g2.drawPolygon(x_points_triangle, y_points_triangle, 3);
-        if ( (fix.on_awy) || (nd_gc.map_range <= 20) ) {
+        if ( (fix.on_awy) || (nd_gc.map_range <= 20) || nd_gc.map_zoomin ) {
             g2.drawString(fix.name, x + 11, y + 13);
         }
         g2.setTransform(original_at);
@@ -1047,7 +1064,7 @@ public class MovingMap extends NDSubcomponent {
         int rwy_backcourse = (int) (0.2f*this.pixels_per_nm);
         int rwy_halfwidth = (int) (0.2f*this.pixels_per_nm);
         // SmartCockpit.com says the line extends to 14.2NM,
-        // but we use the range that we got from NavigationObjectRepository find_tuned_nav_object
+        // but we use the map_range that we got from NavigationObjectRepository find_tuned_nav_object
         int localizer_extension = (int) (localizer.range * this.pixels_per_nm);
 
         int dme_x = 0;
@@ -1088,9 +1105,9 @@ public class MovingMap extends NDSubcomponent {
         g2.rotate(Math.toRadians(localizer.bearing - this.map_up), x, y);
         g2.setStroke(new BasicStroke(stroke_width));
 
-        if ( nd_gc.map_range < 160 ) {
+        if ( ( nd_gc.map_range < 160 ) || nd_gc.map_zoomin ) {
 
-            if ( nd_gc.map_range < 40 ) {
+            if ( ( nd_gc.map_range < 40 ) || nd_gc.map_zoomin ) {
                 // the exact location of the Localizer
                 g2.drawOval(x-4, y-4, 8, 8);
             }
@@ -1104,14 +1121,14 @@ public class MovingMap extends NDSubcomponent {
             g2.drawLine(x, y+rwy_frontcourse, x, y+localizer_extension);
 
             g2.setTransform(original_at);
-            if ( localizer.has_dme && ( nd_gc.map_range < 40 ) ) {
+            if ( localizer.has_dme && ( ( nd_gc.map_range < 40 ) || nd_gc.map_zoomin ) ) {
                 // the exact location of the DME
                 g2.rotate(Math.toRadians(this.map_up), dme_x, dme_y);
                 g2.setStroke(new BasicStroke(stroke_width));
                 g2.drawRect(dme_x-3, dme_y-3, 6, 6);
             }
         } else {
-            // just short line for the localizer when map range >= 160
+            // just short line for the localizer when map map_range >= 160
             g2.drawLine(x, y, x, y+60);
         }
 
@@ -1146,24 +1163,32 @@ public class MovingMap extends NDSubcomponent {
 
 
     private void drawRunway(Graphics2D g2, int x, int y, Runway runway) {
-        Graphics g = (Graphics) g2;
-        AffineTransform original_at = g2.getTransform();
-        g2.rotate( Math.toRadians( (double) 0 ), x, y );
-        Stroke original_stroke = g2.getStroke();
-        g2.setStroke(new BasicStroke(runway.width / 10.0f * nd_gc.scaling_factor));
-        if ( (runway.surface==Runway.RWY_ASPHALT) || (runway.surface==Runway.RWY_CONCRETE) )
-            g.setColor(nd_gc.hard_color);
-        else if (runway.surface==Runway.RWY_GRASS)
-            g.setColor(nd_gc.grass_color);
-        else if ( (runway.surface==Runway.RWY_DIRT) || (runway.surface==Runway.RWY_GRAVEL) || (runway.surface==Runway.RWY_DRY_LAKEBED) )
-            g.setColor(nd_gc.sand_color);
-        else if (runway.surface==Runway.RWY_SNOW)
-            g.setColor(nd_gc.snow_color);
-        else
-            g.setColor(nd_gc.hard_color);
-        g.drawLine(lon_to_x(runway.lon1), lat_to_y(runway.lat1), lon_to_x(runway.lon2), lat_to_y(runway.lat2));
-        g2.setStroke(original_stroke);
-        g2.setTransform(original_at);
+
+        if ( ! runway.name.equals(this.active_chart_str)) {
+
+            // OK, this runway is not part of an already drawn airport chart
+
+            Graphics g = (Graphics) g2;
+            AffineTransform original_at = g2.getTransform();
+            g2.rotate( Math.toRadians( (double) 0 ), x, y );
+            Stroke original_stroke = g2.getStroke();
+            g2.setStroke(new BasicStroke(runway.width / 10.0f * nd_gc.scaling_factor));
+            if ( (runway.surface==Runway.RWY_ASPHALT) || (runway.surface==Runway.RWY_CONCRETE) )
+                g.setColor(nd_gc.hard_color);
+            else if (runway.surface==Runway.RWY_GRASS)
+                g.setColor(nd_gc.grass_color);
+            else if ( (runway.surface==Runway.RWY_DIRT) || (runway.surface==Runway.RWY_GRAVEL) || (runway.surface==Runway.RWY_DRY_LAKEBED) )
+                g.setColor(nd_gc.sand_color);
+            else if (runway.surface==Runway.RWY_SNOW)
+                g.setColor(nd_gc.snow_color);
+            else
+                g.setColor(nd_gc.hard_color);
+            g.drawLine(lon_to_x(runway.lon1), lat_to_y(runway.lat1), lon_to_x(runway.lon2), lat_to_y(runway.lat2));
+            g2.setStroke(original_stroke);
+            g2.setTransform(original_at);
+
+        }
+
     }
 
 

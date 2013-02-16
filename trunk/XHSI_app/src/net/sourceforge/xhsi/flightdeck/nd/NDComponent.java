@@ -130,7 +130,7 @@ public class NDComponent extends Component implements Observer, PreferencesObser
         g2.setBackground(nd_gc.background_color);
 
         // send Graphics object to nd_gc to recompute positions, if necessary because the panel has been resized or a mode setting has been changed
-        nd_gc.update_config( g2, this.avionics.map_mode(), this.avionics.map_submode(), this.avionics.map_range(), this.avionics.power() );
+        nd_gc.update_config( g2, this.avionics.map_mode(), this.avionics.map_submode(), this.avionics.map_range(), this.avionics.map_closeup(), this.avionics.power() );
 
         // rotate the display
         XHSIPreferences.Orientation orientation = XHSIPreferences.get_instance().get_panel_orientation( this.nd_gc.display_unit );

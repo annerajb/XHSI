@@ -85,7 +85,7 @@ public class XPlaneUDPSender {
                 logger.finest("byte_array.length = " + byte_array.length);
                 //DatagramPacket packet = new DatagramPacket(byte_array, byte_array_stream.size(), InetAddress.getLocalHost(), 49019);
                 DatagramPacket packet = new DatagramPacket(byte_array, byte_array_stream.size(), this.destination_address, this.destination_port);
-                this.datagram_socket = new DatagramSocket();
+                // this.datagram_socket = new DatagramSocket(); no, we already have an open socket...
                 this.datagram_socket.send(packet);
                 logger.info("Datapoint packet sent!");
             } catch (IOException ioe) {

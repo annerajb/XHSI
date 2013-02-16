@@ -54,7 +54,7 @@ public class PositionTrendVector extends NDSubcomponent {
         // update a running average, even when not drawn
         float turn_speed = turn_speed_averager.running_average(aircraft.turn_speed()); // turn speed in deg/s
 
-        if ( nd_gc.powered && ! ( nd_gc.mode_plan || nd_gc.mode_classic_hsi ) ) {
+        if ( ! nd_gc.map_zoomin && nd_gc.powered && ! ( nd_gc.mode_plan || nd_gc.mode_classic_hsi ) ) {
             // not in PLAN, APP CTR, VOR CTR
 
             AffineTransform original_at = g2.getTransform();

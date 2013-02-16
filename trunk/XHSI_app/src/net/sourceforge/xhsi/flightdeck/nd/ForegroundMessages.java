@@ -78,7 +78,7 @@ public class ForegroundMessages extends NDSubcomponent {
                 label_str = "ARPT";
                 g2.setColor(nd_gc.background_color);
                 g2.fillRect(nd_gc.left_label_x - 10, nd_gc.left_label_arpt_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 10 + 2, nd_gc.line_height_small + 3);
-                if ( (nd_gc.map_range <= 160) && nd_gc.mode_fullmap ) {
+                if ( ( (nd_gc.map_range <= 160) || nd_gc.map_zoomin ) && nd_gc.mode_fullmap ) {
                     g2.setColor(nd_gc.arpt_color);
                 } else {
                     g2.setColor(nd_gc.dim_label_color);
@@ -90,7 +90,7 @@ public class ForegroundMessages extends NDSubcomponent {
                 label_str = "WPT";
                 g2.setColor(nd_gc.background_color);
                 g2.fillRect(nd_gc.left_label_x - 10, nd_gc.left_label_wpt_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 10 + 2, nd_gc.line_height_small + 3);
-                if ( (nd_gc.map_range <= 40) && nd_gc.mode_fullmap ) {
+                if ( ( (nd_gc.map_range <= 40) || nd_gc.map_zoomin ) && nd_gc.mode_fullmap ) {
                     g2.setColor(nd_gc.wpt_color);
                 } else {
                     g2.setColor(nd_gc.dim_label_color);
@@ -102,7 +102,7 @@ public class ForegroundMessages extends NDSubcomponent {
                 label_str = "VOR";
                 g2.setColor(nd_gc.background_color);
                 g2.fillRect(nd_gc.left_label_x - 10, nd_gc.left_label_vor_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 10 + 2, nd_gc.line_height_small + 3);
-                if ( (nd_gc.map_range <= 80) && nd_gc.mode_fullmap ) {
+                if ( ( (nd_gc.map_range <= 80) || nd_gc.map_zoomin ) && nd_gc.mode_fullmap ) {
                     g2.setColor(nd_gc.navaid_color);
                 } else {
                     g2.setColor(nd_gc.dim_label_color);
@@ -114,7 +114,7 @@ public class ForegroundMessages extends NDSubcomponent {
                 label_str = "NDB";
                 g2.setColor(nd_gc.background_color);
                 g2.fillRect(nd_gc.left_label_x - 10, nd_gc.left_label_ndb_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 10 + 2, nd_gc.line_height_small + 3);
-                if ( (nd_gc.map_range <= 80) && nd_gc.mode_fullmap ) {
+                if ( ( (nd_gc.map_range <= 80) || nd_gc.map_zoomin ) && nd_gc.mode_fullmap ) {
                     g2.setColor(nd_gc.navaid_color);
                 } else {
                     g2.setColor(nd_gc.dim_label_color);
