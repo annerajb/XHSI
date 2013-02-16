@@ -185,6 +185,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_EFIS_PILOT_STA = 212;
     public static final int XHSI_EFIS_PILOT_DATA = 213;
     public static final int XHSI_EFIS_PILOT_POS = 214;
+    public static final int XHSI_EFIS_PILOT_MAP_ZOOMIN = 215;
 
 
     // Copilot EFIS
@@ -203,6 +204,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_EFIS_COPILOT_STA = 262;
     public static final int XHSI_EFIS_COPILOT_DATA = 263;
     public static final int XHSI_EFIS_COPILOT_POS = 264;
+    public static final int XHSI_EFIS_COPILOT_MAP_ZOOMIN = 265;
 
 
     // MFD
@@ -288,6 +290,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_AIRCRAFT_CONTROLS_ACF_RSC_REDLINE_PRP = 569;
     public static final int SIM_COCKPIT2_ENGINE_INDICATORS_PROP_SPEED_RPM_ = 570;
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_PROPMODE_ = 580;
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_MPR_ = 590;
 
 
     // UFMC

@@ -101,6 +101,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public boolean mode_plan;
     public boolean trk_up;
     public int map_range;
+    public boolean map_zoomin;
 
     public float max_range;
 
@@ -119,13 +120,14 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 //    }
 
 
-    public void update_config(Graphics2D g2, int mode, int submode, int range, boolean power) {
+    public void update_config(Graphics2D g2, int mode, int submode, int range, boolean closeup, boolean power) {
 
         if (this.resized
                 || this.reconfig
                 || (this.map_mode != mode)
                 || (this.map_submode != submode)
                 || (this.map_range != range)
+                || (this.map_zoomin != closeup)
                 || (this.powered != power)
             ) {
             // one of the settings has been changed
@@ -139,6 +141,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             this.map_mode = mode;
             this.map_submode = submode;
             this.map_range = range;
+            this.map_zoomin = closeup;
 
             // set some booleans for easy checking
             if ( preferences.get_airbus_modes() ) {
@@ -191,6 +194,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
                 this.rose_radius = this.map_center_y - this.rose_y_offset;
             }
             this.pixels_per_nm = (float)this.rose_radius / this.max_range; // float for better precision
+            if ( closeup ) this.pixels_per_nm *= 100.0f;
 
 
             // labels at the left

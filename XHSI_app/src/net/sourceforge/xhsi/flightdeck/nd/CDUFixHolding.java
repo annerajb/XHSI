@@ -146,7 +146,7 @@ public class CDUFixHolding extends NDSubcomponent {
 
         // search for the holding fix in the current lat/lon cell first
         holding_fix = this.nor.get_navobj(xhsi_settings.holding_fix, this.center_lat, this.center_lon);
-        // if not found in the current cell, search the cells that are in the map range
+        // if not found in the current cell, search the cells that are in the map map_range
         if ( holding_fix == null ) {
             for (int lat=(int)lat_min; lat<=(int) lat_max; lat++) {
                 for (int lon=(int)lon_min; lon<=(int)lon_max; lon++) {
@@ -259,7 +259,7 @@ public class CDUFixHolding extends NDSubcomponent {
 
         // search for the cdu fix in the current lat/lon cell first
         cdu_fix = this.nor.get_navobj(xhsi_settings.cdu_fix, this.center_lat, this.center_lon);
-        // if not found in the current cell, search the cells that are in the map range
+        // if not found in the current cell, search the cells that are in the map map_range
         if ( cdu_fix == null ) {
             for (int lat=(int)lat_min; lat<=(int) lat_max; lat++) {
                 for (int lon=(int)lon_min; lon<=(int)lon_max; lon++) {

@@ -661,6 +661,12 @@ public interface Aircraft {
 
 
     /**
+     * @return float - Engine MPR
+     */
+    public float get_MPR(int engine);
+
+
+    /**
      * @return String - Nearest airport
      */
     public String get_nearest_arpt();

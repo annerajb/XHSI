@@ -1160,12 +1160,12 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         nd_options_panel.add(this.plan_aircraft_center_checkbox, cons);
         dialog_line++;
 
-        // Draw map symbols only inside the compass rose
+        // Draw map only inside the compass rose
         cons.gridx = 0;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
-        nd_options_panel.add(new JLabel("Draw map symbols only inside the compass rose", JLabel.TRAILING), cons);
+        nd_options_panel.add(new JLabel("Draw map only inside the compass rose", JLabel.TRAILING), cons);
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;

@@ -247,7 +247,7 @@ public class XPlaneAvionics implements Avionics, Observer {
         radio = get_nav_radio(bank);
         if ( (radio != null)
                 && (radio.freq_is_nav())
-                //&& (radio.receiving()) // nope, can be out of range
+                //&& (radio.receiving()) // nope, can be out of map_range
             ) {
             rnav_object = radio.get_radio_nav_object();
             if ((rnav_object != null) && (rnav_object instanceof Localizer)) {
@@ -311,7 +311,20 @@ public class XPlaneAvionics implements Avionics, Observer {
         } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
             return EFIS_MAP_RANGE[ (int) sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MAP_RANGE) ];
         } else {
-            return xhsi_settings.range;
+            return xhsi_settings.map_range;
+        }
+
+    }
+
+
+    public boolean map_closeup() {
+
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+            return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_MAP_ZOOMIN) == 1.0f;
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+            return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MAP_ZOOMIN) == 1.0f;
+        } else {
+            return xhsi_settings.map_zoomin;
         }
 
     }
@@ -962,6 +975,17 @@ public class XPlaneAvionics implements Avionics, Observer {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_DME_2_SELECTOR, (float) new_radio2 );
         } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_RADIO2, (float) new_radio2 );
+        }
+
+    }
+
+
+    public void set_zoomin(boolean new_zoomin) {
+
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_MAP_ZOOMIN, new_zoomin ? 1.0f : 0.0f );
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MAP_ZOOMIN, new_zoomin ? 1.0f : 0.0f );
         }
 
     }

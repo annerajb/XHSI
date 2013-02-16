@@ -333,7 +333,7 @@ public class HoldingDialog extends JDialog implements ActionListener {
 //            try {
 //                int radial = Integer.parseInt(this.radial.getText());
 //                if ((radial < 0) || (radial > 360)) {
-//                    field_validation_errors +="Radial outside of range (0-360)!\n";
+//                    field_validation_errors +="Radial outside of map_range (0-360)!\n";
 //                }
 //            } catch (NumberFormatException nf) {
 //                field_validation_errors += "Radial contains non-numeric characters!\n";
@@ -345,7 +345,7 @@ public class HoldingDialog extends JDialog implements ActionListener {
 //            try {
 //                Float distance = Float.parseFloat(this.distance.getText());
 //                if ((distance < 0.0f) || (distance > 99.9f)) {
-//                    field_validation_errors +="Distance outside of range (0-99.9)!\n";
+//                    field_validation_errors +="Distance outside of map_range (0-99.9)!\n";
 //                }
 //            } catch (NumberFormatException nf) {
 //                field_validation_errors += "Distance contains non-numeric characters!\n";

@@ -99,6 +99,11 @@ public interface Avionics {
     public int map_range();
 
     /**
+     * @return boolean - map is close-up
+     */
+    public boolean map_closeup();
+
+    /**
      * @return int - map mode CENTERED or EXPANDED
      */
     public int map_mode();
@@ -493,6 +498,8 @@ public interface Avionics {
     public void set_radio1(int new_radio1);
 
     public void set_radio2(int new_radio2);
+
+    public void set_zoomin(boolean new_closeup);
 
     public void set_submode(int new_submode);
 
