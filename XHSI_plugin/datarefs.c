@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 
 #define XPLM200 1
@@ -29,6 +30,7 @@ XPLMDataRef  efis_pilot_shows_data;
 XPLMDataRef  efis_pilot_shows_pos;
 XPLMDataRef  efis_pilot_da_bug;
 XPLMDataRef  efis_pilot_mins_mode;
+XPLMDataRef  efis_pilot_map_zoomin;
 
 // custom datarefs - copilot
 XPLMDataRef  efis_copilot_map_range_selector;
@@ -48,6 +50,7 @@ XPLMDataRef  efis_copilot_map_submode;
 XPLMDataRef  copilot_hsi_selector;
 XPLMDataRef  efis_copilot_da_bug;
 XPLMDataRef  efis_copilot_mins_mode;
+XPLMDataRef  efis_copilot_map_zoomin;
 
 // custom datarefs - MFD
 XPLMDataRef  mfd_mode;
@@ -266,6 +269,8 @@ XPLMDataRef  engine_itt_c;
 XPLMDataRef  prop_rpm_max;
 XPLMDataRef  prop_rpm;
 XPLMDataRef  prop_mode;
+// Piston
+XPLMDataRef  piston_mpr;
 
 
 //// TCAS
@@ -334,6 +339,17 @@ int     getPilotMinsMode(void* inRefcon)
 void	setPilotMinsMode(void* inRefcon, int inValue)
 {
       pilot_mins_mode = inValue;
+}
+
+// xhsi/efis/map_zoomin
+int pilot_map_zoomin;
+int     getPilotMapRange100(void* inRefcon)
+{
+     return pilot_map_zoomin;
+}
+void	setPilotMapRange100(void* inRefcon, int inValue)
+{
+      pilot_map_zoomin = inValue;
 }
 
 
@@ -515,6 +531,17 @@ void	setCopilotMinsMode(void* inRefcon, int inValue)
       copilot_mins_mode = inValue;
 }
 
+// xhsi/efis_copilot/map_zoomin
+int copilot_map_zoomin;
+int     getCopilotMapRange100(void* inRefcon)
+{
+     return copilot_map_zoomin;
+}
+void	setCopilotMapRange100(void* inRefcon, int inValue)
+{
+      copilot_map_zoomin = inValue;
+}
+
 
 // xhsi/mfd/mode
 int mfd_display_mode;
@@ -531,6 +558,8 @@ void	setEFBMode(void* inRefcon, int inValue)
 
 
 void registerPilotDataRefs(void) {
+
+    XPLMDebugString("XHSI: registering custom pilot DataRefs\n");
 
     // xhsi/efis/sta
     efis_pilot_shows_stas = XPLMRegisterDataAccessor("xhsi/efis/sta",
@@ -572,12 +601,22 @@ void registerPilotDataRefs(void) {
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
+    // xhsi/efis/map_zoomin
+    efis_pilot_map_zoomin = XPLMRegisterDataAccessor("xhsi/efis/map_zoomin",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                                   // Writable
+                                        getPilotMapRange100, setPilotMapRange100,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+
     XPLMDebugString("XHSI: custom pilot DataRefs registered\n");
 
 }
 
 
 void registerCopilotDataRefs(void) {
+
+    XPLMDebugString("XHSI: registering custom copilot DataRefs\n");
 
     // xhsi/efis_copilot/map_range
     efis_copilot_map_range_selector = XPLMRegisterDataAccessor("xhsi/efis_copilot/map_range",
@@ -705,12 +744,22 @@ void registerCopilotDataRefs(void) {
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
+    // xhsi/efis_copilot/map_zoomin
+    efis_copilot_map_zoomin = XPLMRegisterDataAccessor("xhsi/efis_copilot/map_zoomin",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                                   // Writable
+                                        getCopilotMapRange100, setCopilotMapRange100,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+
     XPLMDebugString("XHSI: custom copilot DataRefs registered\n");
 
 }
 
 
 void registerMFDDataRefs(void) {
+
+    XPLMDebugString("XHSI: registering custom EFB DataRefs\n");
 
     // xhsi/mfd/mode
     mfd_mode = XPLMRegisterDataAccessor("xhsi/mfd/mode",
@@ -720,7 +769,7 @@ void registerMFDDataRefs(void) {
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    XPLMDebugString("XHSI: EFB DataRefs registered\n");
+    XPLMDebugString("XHSI: custom EFB DataRefs registered\n");
 
 }
 
@@ -731,6 +780,8 @@ float initPilotCallback(
 									float	inElapsedTimeSinceLastFlightLoop,
 									int		inCounter,
 									void *	inRefcon) {
+
+    XPLMDebugString("XHSI: initializing custom pilot DataRefs\n");
 
     // set reasonable defaults for the pilot's ND
 
@@ -759,9 +810,16 @@ float initPilotCallback(
     // mins is radio
     XPLMSetDatai(efis_pilot_mins_mode, 0);
 
+    // xhsi/efis/map_zoomin
+    efis_pilot_map_zoomin = XPLMFindDataRef ("xhsi/efis/map_zoomin");
+    // normal scale
+    XPLMSetDatai(efis_pilot_map_zoomin, 0);
+
+
     XPLMDebugString("XHSI: custom pilot DataRefs initialized\n");
 
     return 0.0f;
+
 }
 
 
@@ -770,6 +828,8 @@ float initCopilotCallback(
 									float	inElapsedTimeSinceLastFlightLoop,
 									int		inCounter,
 									void *	inRefcon) {
+
+    XPLMDebugString("XHSI: initializing custom copilot DataRefs\n");
 
     // set reasonable defaults for the copilot's ND
 
@@ -853,6 +913,11 @@ float initCopilotCallback(
     // mins is baro
     XPLMSetDatai(efis_copilot_mins_mode, 1);
 
+    // xhsi/efis_copilot/map_zoomin
+    efis_copilot_map_zoomin = XPLMFindDataRef ("xhsi/efis_copilot/map_zoomin");
+    // scale * 100
+    XPLMSetDatai(efis_copilot_map_zoomin, 1);
+
 
     XPLMDebugString("XHSI: custom copilot DataRefs initialized\n");
 
@@ -876,6 +941,9 @@ void unregisterPilotDataRefs(void) {
 
     // xhsi/efis/mins_mode
     XPLMUnregisterDataAccessor(efis_pilot_mins_mode);
+
+    // xhsi/efis/map_zoomin
+    XPLMUnregisterDataAccessor(efis_pilot_map_zoomin);
 
 }
 
@@ -930,6 +998,9 @@ void unregisterCopilotDataRefs(void) {
     // xhsi/efis_copilot/mins_mode
     XPLMUnregisterDataAccessor(efis_copilot_mins_mode);
 
+    // xhsi/efis_copilot/map_zoomin
+    XPLMUnregisterDataAccessor(efis_copilot_map_zoomin);
+
 }
 
 void unregisterMFDDataRefs(void) {
@@ -942,6 +1013,8 @@ void unregisterMFDDataRefs(void) {
 
 
 void findDataRefs(void) {
+
+    XPLMDebugString("XHSI: referencing standard DataRefs\n");
 
 	// Aircraft position
 	groundspeed = XPLMFindDataRef("sim/flightmodel/position/groundspeed");
@@ -1174,6 +1247,8 @@ void findDataRefs(void) {
     prop_rpm = XPLMFindDataRef("sim/cockpit2/engine/indicators/prop_speed_rpm");
     prop_rpm_max = XPLMFindDataRef("sim/aircraft/controls/acf_RSC_redline_prp");
     prop_mode = XPLMFindDataRef("sim/flightmodel/engine/ENGN_propmode");
+    // Piston
+    piston_mpr = XPLMFindDataRef("sim/flightmodel/engine/ENGN_MPR");
 
 
 //	// TCAS
@@ -1194,6 +1269,8 @@ void findDataRefs(void) {
 		sprintf(buf, "sim/multiplayer/position/plane%d_z", i);
 		multiplayer_z[i] = XPLMFindDataRef(buf);
 	}
+
+    XPLMDebugString("XHSI: standard DataRefs referenced\n");
 
 }
 
@@ -1278,6 +1355,10 @@ void writeDataRef(int id, float value) {
             XPLMSetDatai(efis_map_submode, (int)value);
             break;
 
+        case XHSI_EFIS_PILOT_MAP_ZOOMIN :
+            XPLMSetDatai(efis_pilot_map_zoomin, (int)value);
+            break;
+
 
         // copilot
 
@@ -1332,6 +1413,13 @@ void writeDataRef(int id, float value) {
         case XHSI_EFIS_COPILOT_MAP_MODE :
             XPLMSetDatai(efis_copilot_map_submode , (int)value);
             break;
+
+        case XHSI_EFIS_COPILOT_MAP_ZOOMIN :
+            XPLMSetDatai(efis_copilot_map_zoomin, (int)value);
+            break;
+
+
+        // MFD
 
         case XHSI_MFD_MODE :
             XPLMSetDatai(mfd_mode , (int)value);

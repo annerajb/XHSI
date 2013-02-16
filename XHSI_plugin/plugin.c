@@ -47,6 +47,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
+
+// mingw-64 demands that winsock2.h is loaded before windows.h
+#if IBM
+#include <winsock2.h>
+#endif
 
 #define XPLM200 1
 
@@ -58,7 +64,6 @@
 #include "XPLMMenus.h"
 #include "XPWidgets.h"
 #include "XPStandardWidgets.h"
-
 
 #include "globals.h"
 
@@ -74,7 +79,7 @@
 #include "sender.h"
 #include "receiver.h"
 #include "commands.h"
-//#include "display.h"
+
 
 
 
@@ -113,12 +118,6 @@ PLUGIN_API int XPluginStart(
 	// read config file or use defaults
 	initSettings();
 
-    if (openSocket() == 0) {
-        return 0;
-    }
-
-	setAddresses();
-
 	createUI();
 
 	return 1;
@@ -141,7 +140,21 @@ PLUGIN_API int XPluginEnable(void) {
 //XPLMDebugString("\n");
 	xhsi_send_enabled = 1;
 	xhsi_plugin_enabled = 1;
-    XPLMDebugString("XHSI: enabled\n");
+
+    XPLMDebugString("XHSI: enabling...\n");
+
+    if (openSocket() == 0) {
+        return 0;
+    }
+
+	setAddresses();
+
+    bindSocket();
+
+    nonBlocking();
+
+
+    XPLMDebugString("XHSI: registering flightloop callbacks\n");
 
 	// register flight loop callbacks
 	XPLMRegisterFlightLoopCallback(
@@ -176,17 +189,17 @@ PLUGIN_API int XPluginEnable(void) {
 
 	XPLMRegisterFlightLoopCallback(
 							receiveCallback,
-							recv_delay,
+							recv_delay * 100.0f,
 							NULL);
 
 	// initialize custom X-Plane datarefs
 	XPLMRegisterFlightLoopCallback(
 							initPilotCallback,
-							1.0f,
+							1.5f,
 							NULL);
 	XPLMRegisterFlightLoopCallback(
 							initCopilotCallback,
-							1.0f,
+							2.5f,
 							NULL);
 
     // UFMC
@@ -207,8 +220,9 @@ PLUGIN_API int XPluginEnable(void) {
 							5.0f,
 							NULL);
 
+    XPLMDebugString("XHSI: flightloop callbacks registered\n");
 
-	return bindSocket();
+	return 1;
 
 }
 
@@ -222,6 +236,10 @@ PLUGIN_API void XPluginReceiveMessage(
 
 
 PLUGIN_API void XPluginDisable(void) {
+
+	XPLMDebugString("XHSI: disabling...\n");
+
+    XPLMDebugString("XHSI: unregistering flightloop callbacks\n");
 
 	XPLMUnregisterFlightLoopCallback(sendADCCallback, NULL);
 	XPLMUnregisterFlightLoopCallback(sendAvionicsCallback, NULL);
@@ -239,7 +257,12 @@ PLUGIN_API void XPluginDisable(void) {
 	XPLMUnregisterFlightLoopCallback(checkX737Callback, NULL);
 	XPLMUnregisterFlightLoopCallback(checkCL30Callback, NULL);
 
+    XPLMDebugString("XHSI: flightloop callbacks unregistered\n");
+
+	closeSocket();
+
 	XPLMDebugString("XHSI: disabled\n");
+
 	xhsi_plugin_enabled = 0;
 	xhsi_send_enabled = 0;
 
@@ -257,7 +280,6 @@ PLUGIN_API void	XPluginStop(void) {
  	unregisterMFDDataRefs();
 
 	destroyUI();
-	closeSocket();
 
 }
 

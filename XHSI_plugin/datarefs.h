@@ -216,6 +216,8 @@ extern XPLMDataRef  engine_itt_c;
 extern XPLMDataRef  prop_rpm_max;
 extern XPLMDataRef  prop_rpm;
 extern XPLMDataRef  prop_mode;
+// Piston
+extern XPLMDataRef  piston_mpr;
 
 
 //// TCAS
@@ -230,6 +232,7 @@ extern XPLMDataRef	efis_pilot_shows_data;
 extern XPLMDataRef	efis_pilot_shows_pos;
 extern XPLMDataRef  efis_pilot_da_bug;
 extern XPLMDataRef  efis_pilot_mins_mode;
+extern XPLMDataRef  efis_pilot_map_zoomin;
 
 
 // custom datarefs - copilot
@@ -250,6 +253,7 @@ extern XPLMDataRef	efis_copilot_map_submode;
 extern XPLMDataRef	copilot_hsi_selector;
 extern XPLMDataRef  efis_copilot_da_bug;
 extern XPLMDataRef  efis_copilot_mins_mode;
+extern XPLMDataRef  efis_copilot_map_zoomin;
 
 
 // custom datarefs - MFD

@@ -11,6 +11,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
+
+// mingw-64 demands that winsock2.h is loaded before windows.h
+#if IBM
+#include <winsock2.h>
+#endif
 
 #include "XPLMProcessing.h"
 #include "XPLMDataAccess.h"
@@ -38,32 +44,54 @@ float receiveCallback(
                    void *	inRefcon) {
 
 	int packet_size;
-	//int addr_len;
+//#if IBM
+//	int addr_len;
+//#else
+//    socklen_t addr_len;
+//#endif
+	int last_errno;
 	char debug_message[256];
 
 	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open) {
 
-        if ( pollReceive() ) {
+//        if ( pollReceive() ) {
 
-            //addr_len = sizeof(orig_sockaddr);
-            //packet_size = recvfrom(sockfd, (char *)&efis_packet, sizeof(struct CommandPacket), 0, (struct sockaddr *) &orig_sockaddr, &addr_len);
-            packet_size = recv(sockfd, (char *)&efis_packet, sizeof(struct CommandPacket), 0);
+            // recvfrom needs for know where to listen
+            //addr_len = sizeof(recv_sockaddr);
+            //packet_size = recvfrom(sockfd, (char *)&efis_packet, sizeof(struct IncomingPacket), 0, (struct sockaddr *) &recv_sockaddr, &addr_len);
+            // on the other hand, our socket is already bound to a port
+            packet_size = recv(sockfd, (char *)&efis_packet, sizeof(struct IncomingPacket), 0);
             if ( packet_size < 0) {
+
+                last_errno = GET_ERRNO;
+#if IBM
+                if ( last_errno == WSAEWOULDBLOCK ) {
+#else
+                if ( last_errno == EWOULDBLOCK ) {
+#endif
+                    return recv_delay;
+                }
+
                 XPLMDebugString("XHSI: caught error while receiving packet! ");
-                sprintf(debug_message, "errno: %d (", GET_ERRNO);
+                sprintf(debug_message, "errno: %d (", last_errno);
                 XPLMDebugString(debug_message);
-                XPLMDebugString((char * const) strerror(GET_ERRNO));
+                XPLMDebugString((char * const) strerror(last_errno));
                 XPLMDebugString(")\n");
-                return 10.0f;
-            } else {
-                XPLMDebugString("XHSI: packet received\n");
-                decodeCommandPacket();
+                return 5.0f;
+
+            } else if ( packet_size == 0 ) {
                 return recv_delay;
+            } else {
+
+                XPLMDebugString("XHSI: packet received\n");
+                decodeIncomingPacket();
+                return recv_delay;
+
             }
 
-        } else {
-            return recv_delay;
-        }
+//        } else {
+//            return recv_delay;
+//        }
 
     } else {
 		return 1.0f;

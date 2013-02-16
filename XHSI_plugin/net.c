@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #if IBM
 #include <winsock2.h>
@@ -12,6 +13,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <fcntl.h>
 #endif
 
 
@@ -47,7 +49,6 @@ SOCKET sockfd;
 int sockfd;
 #endif
 struct sockaddr_in recv_sockaddr, dest_sockaddr[NUM_DEST];
-//struct sockaddr    orig_sockaddr;
 
 // define local vars
 int xhsi_socket_open;
@@ -79,30 +80,44 @@ int startWinsock() {
 
 int openSocket() {
 
+    XPLMDebugString("XHSI: opening socket\n");
+
 	char debug_message[256];
 
-	#if IBM
+#if IBM
+
 	if ( startWinsock() == 0 ) {
 	    XPLMDebugString("XHSI: start winsock failed\n");
 		return 0;
 	}
-	#endif
 
 	// create socket
 	//sockfd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	sockfd = socket(PF_INET, SOCK_DGRAM, 0);
 
-    #if IBM
 	if ( sockfd == INVALID_SOCKET ) {
-    #else
+		sprintf(debug_message, "XHSI: failed - could not open socket! errno: %d\n", GET_ERRNO);
+		XPLMDebugString(debug_message);
+		return 0;
+	} else {
+		XPLMDebugString("XHSI: socket opened\n");
+	}
+
+#else
+
+	// create socket
+	//sockfd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	sockfd = socket(PF_INET, SOCK_DGRAM, 0);
+
 	if ( sockfd < 0 ) {
-    #endif
 		sprintf(debug_message, "XHSI: failed - could not open socket! errno: %d\n", GET_ERRNO);
 		XPLMDebugString(debug_message);
 		return 0;
 	} else {
 		XPLMDebugString("XHSI: socket created\n");
 	}
+
+#endif
 
     return 1;
 
@@ -146,22 +161,25 @@ void setAddresses() {
 void closeSocket() {
 
 	if ( xhsi_socket_open ) {
-        #if IBM
+
+        XPLMDebugString("XHSI: closing socket\n");
+#if IBM
 		if ( closesocket(sockfd) == -1 ) {
-        #else
-	    if ( close(sockfd) == -1 ) {
-        #endif
+#else
+		if ( close(sockfd) == -1 ) {
+#endif
 			XPLMDebugString("XHSI: failed - caught error while closing socket! (");
 			XPLMDebugString((char * const) strerror(GET_ERRNO));
 			XPLMDebugString(")\n");
 		} else {
 			XPLMDebugString("XHSI: socket closed\n");
 		}
-        #if IBM
+#if IBM
         WSACleanup();
-        #endif
+#endif
 		xhsi_socket_open = 0;
 		xhsi_send_enabled = 0;
+
 	}
 
 }
@@ -170,6 +188,8 @@ void closeSocket() {
 int bindSocket() {
 
 	if ( ! xhsi_socket_open ) {
+
+		XPLMDebugString("XHSI: binding socket\n");
 
 //        // doesn't seem to help...
 //        #if IBM
@@ -190,7 +210,7 @@ int bindSocket() {
 			xhsi_socket_open = 0;
 			return -1;
 		} else {
-			XPLMDebugString("XHSI: socket bound!\n");
+			XPLMDebugString("XHSI: socket bound\n");
 			xhsi_socket_open = 1;
 			return 1;
 		}
@@ -202,29 +222,61 @@ int bindSocket() {
 }
 
 
-int pollReceive() {
+int nonBlocking() {
 
-    int             res;
-    fd_set          sready;
-    struct timeval  nowait;
+    XPLMDebugString("XHSI: setting socket to non-blocking\n");
 
-    FD_ZERO(&sready);
-    FD_SET((unsigned int)sockfd, &sready);
-    nowait.tv_sec = 0;    // specify how many seconds you would like to wait for timeout
-    nowait.tv_usec = 0;   // how many microseconds? If both is zero, select will return immediately
+#if IBM
 
-    res = select(sockfd+1, &sready, NULL, NULL, &nowait);
-    if( FD_ISSET(sockfd, &sready) )
-        return 1;
-    else
+    DWORD nonBlocking = 1;
+    if ( ioctlsocket( sockfd, FIONBIO, &nonBlocking ) != 0 )
+    {
+        XPLMDebugString("XHSI: failed to set socket non-blocking!\n");
         return 0;
+    }
+
+#else
+
+    int nonBlocking = 1;
+    if ( fcntl( sockfd, F_SETFL, O_NONBLOCK, nonBlocking ) == -1 )
+    {
+        XPLMDebugString("XHSI: failed to set socket non-blocking!\n");
+        return 0;
+    }
+#endif
+
+    XPLMDebugString("XHSI: socket set to non-blocking\n");
+
+    return 1;
+
 }
 
 
-void resetSocket() {
-    closeSocket();
-    openSocket();
-    setAddresses();
-    bindSocket();
-}
+//int pollReceive() {
+//
+//    // int             res;
+//    fd_set          sready;
+//    struct timeval  nowait;
+//
+//    FD_ZERO(&sready);
+//    FD_SET((unsigned int)sockfd, &sready);
+//    nowait.tv_sec = 0;    // specify how many seconds you would like to wait for timeout
+//    nowait.tv_usec = 0;   // how many microseconds? If both is zero, select will return immediately
+//
+//    // res = select(etc...
+//    select(sockfd+1, &sready, NULL, NULL, &nowait);
+//    if( FD_ISSET(sockfd, &sready) )
+//        return 1;
+//    else
+//        return 0;
+//}
+
+
+//void resetSocket() {
+//    closeSocket();
+//    openSocket();
+//    setAddresses();
+//    bindSocket();
+//    nonBlocking();
+//}
 

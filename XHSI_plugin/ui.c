@@ -7,6 +7,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
+
+// mingw-64 demands that winsock2.h is loaded before windows.h
+#if IBM
+#include <winsock2.h>
+#endif
 
 #include "XPLMProcessing.h"
 #include "XPLMDataAccess.h"
@@ -26,7 +32,7 @@
 
 // Menu items
 #define MENU_ITEM_SETTINGS 0
-#define MENU_ITEM_RESET 1
+//#define MENU_ITEM_RESET 1
 
 
 
@@ -94,11 +100,11 @@ void setWidgetValues() {
 
 
 // define the handler before it is used
-int settingsDialogHandler(
+XPWidgetFunc_t settingsDialogHandler(
 							   XPWidgetMessage		inMessage,
 							   XPWidgetID			inWidget,
-							   long					inParam1,
-							   long					inParam2) {
+							   intptr_t				inParam1,
+							   intptr_t				inParam2) {
 
 	char buffer[256];
 	int i;
@@ -112,7 +118,7 @@ int settingsDialogHandler(
 
 	if (inMessage == xpMsg_PushButtonPressed) {
 
-		if (inParam1 == (long)default_local_button) {
+		if (inParam1 == (intptr_t)default_local_button) {
 			// Default Local button pressed, set the first destination to local with default port 49020
 
 			XPSetWidgetProperty(dest_enable_checkbox[0], xpProperty_ButtonState, 1);
@@ -120,9 +126,9 @@ int settingsDialogHandler(
 			sprintf(buffer, "%d", DEFAULT_DEST_PORT);
 			XPSetWidgetDescriptor(dest_port_textbox[0], buffer);
 
-			return 1;
+			return (XPWidgetFunc_t)1;
 
-		} else if (inParam1 == (long)set_button) {
+		} else if (inParam1 == (intptr_t)set_button) {
 			// Set button pressed
 
 			for (i=0; i<NUM_DEST; i++) {
@@ -160,12 +166,12 @@ int settingsDialogHandler(
 			setAddresses();
 			bindSocket();
 			closeDialog();
-			return 1;
+			return (XPWidgetFunc_t)1;
 
-		} else if (inParam1 == (long)cancel_button) {
+		} else if (inParam1 == (intptr_t)cancel_button) {
 			// Cancel button pressed
 			closeDialog();
-			return 1;
+			return (XPWidgetFunc_t)1;
 		}
 
 	}
@@ -378,7 +384,7 @@ void createSettingsDialog(int x, int y) {
 								  xpWidgetClass_Button);
 	XPSetWidgetProperty(set_button, xpProperty_ButtonType, xpPushButton);
 
-	XPAddWidgetCallback(settings_dialog, settingsDialogHandler);
+	XPAddWidgetCallback(settings_dialog, (XPWidgetFunc_t)settingsDialogHandler);
 
 }
 
@@ -395,7 +401,7 @@ void destroyDialog() {
 
 void menuHandler(void * mRef, void * iRef) {
 
-	int item_num = (int) iRef;
+	intptr_t item_num = (intptr_t) iRef;
 
 	if (item_num == MENU_ITEM_SETTINGS) {
 		if (xhsi_dialog_created == 0) {
@@ -417,12 +423,16 @@ void menuHandler(void * mRef, void * iRef) {
 
 void createUI() {
 
+    XPLMDebugString("XHSI: creating UI\n");
+
 	menu_item = XPLMAppendMenuItem(XPLMFindPluginsMenu(), "XHSI", NULL, 1);
 	menu_id = XPLMCreateMenu("XHSI", XPLMFindPluginsMenu(), menu_item, menuHandler, NULL);
 	XPLMAppendMenuItem(menu_id, "Settings", (void *) MENU_ITEM_SETTINGS, 1);
 //    #if IBM
 //    XPLMAppendMenuItem(menu_id, "Reset net", (void *) MENU_ITEM_RESET, 1);
 //    #endif
+
+    XPLMDebugString("XHSI: UI created\n");
 
 }
 

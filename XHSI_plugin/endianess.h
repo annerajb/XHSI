@@ -11,8 +11,8 @@ float custom_htonf(float x) {
     s2[3] = s1[0];
 	return r;
 }
-long custom_htonl(long x) {
-	long r;
+int custom_htoni(int x) {
+	int r;
     unsigned char *s1 = (unsigned char *) &x;
     unsigned char *s2 = (unsigned char *) &r;
     s2[0] = s1[3];
@@ -31,8 +31,8 @@ float custom_ntohf(float x) {
     s2[3] = s1[0];
 	return r;
 }
-long custom_ntohl(long x) {
-	long r;
+int custom_ntohi(int x) {
+	int r;
     unsigned char *s1 = (unsigned char *) &x;
     unsigned char *s2 = (unsigned char *) &r;
     s2[0] = s1[3];
@@ -43,8 +43,8 @@ long custom_ntohl(long x) {
 }
 #else
 #define custom_htonf(x) x;
-#define custom_htonl(x) x;
+#define custom_htoni(x) x;
 #define custom_ntohf(x) x;
-#define custom_ntohl(x) x;
+#define custom_ntohi(x) x;
 #endif
 

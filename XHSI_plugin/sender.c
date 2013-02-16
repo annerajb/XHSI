@@ -11,7 +11,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
+// mingw-64 demands that winsock2.h is loaded before windows.h
+#if IBM
+#include <winsock2.h>
+#endif
 
 #include "XPLMProcessing.h"
 #include "XPLMDataAccess.h"
@@ -194,7 +199,7 @@ float sendFmsCallback(
 
         for (j=0; j<=last_pack; j++) {
 
-            // packet size : char[4] + float + float + long + long + long + ( # * ( long + char[8] + float + float + float ) )
+            // packet size : char[4] + float + float + int + int + int + ( # * ( int + char[8] + float + float + float ) )
             // packet size : 24 + # * 24;
             if ( j == last_pack ) {
                 packet_size = 24 + ( waypoint_count % MAX_FMS_ENTRIES_ALLOWED ) * 24;

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "XPLMProcessing.h"
 #include "XPLMDataAccess.h"
@@ -41,6 +42,8 @@ float               tcas_data_delay;
 
 void defaultSettings() {
 
+    XPLMDebugString("XHSI: defining default settings\n");
+
 	int i;
 
 	for (i=0; i<NUM_DEST; i++) {
@@ -54,18 +57,22 @@ void defaultSettings() {
 
 	adc_data_rate = 15;
 	adc_data_delay = 1.0f / (float)adc_data_rate;
-	avionics_data_delay = adc_data_delay * 3.0f;
-	engines_data_delay = adc_data_delay * 5.0f;
-	static_data_delay = adc_data_delay * 15.0f;
+	avionics_data_delay = adc_data_delay * 2.0f;
+	engines_data_delay = adc_data_delay * 3.0f;
+	static_data_delay = adc_data_delay * 5.0f;
 	fms_data_rate = 2;
 	fms_data_delay = 1.0f / (float)fms_data_rate;
 	tcas_data_rate = 5;
 	tcas_data_delay = 1.0f / (float)tcas_data_rate;
 
+    XPLMDebugString("XHSI: default settings defined\n");
+
 }
 
 
 void readConfig() {
+
+    XPLMDebugString("XHSI: reading settings file\n");
 
 	FILE	*cfg_file;
 	char	cfg_line[120];
@@ -136,6 +143,9 @@ void readConfig() {
 		}
 		fclose(cfg_file);
 	}
+
+    XPLMDebugString("XHSI: settings file read\n");
+
 }
 
 
