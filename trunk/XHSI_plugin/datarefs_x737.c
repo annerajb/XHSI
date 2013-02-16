@@ -2,18 +2,19 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 
 #define XPLM200 1
 
-#include "XPLMProcessing.h"
+//#include "XPLMProcessing.h"
 #include "XPLMDataAccess.h"
 #include "XPLMUtilities.h"
-#include "XPLMNavigation.h"
-#include "XPLMDisplay.h"
-#include "XPLMMenus.h"
-#include "XPWidgets.h"
-#include "XPStandardWidgets.h"
+//#include "XPLMNavigation.h"
+//#include "XPLMDisplay.h"
+//#include "XPLMMenus.h"
+//#include "XPWidgets.h"
+//#include "XPStandardWidgets.h"
 
 
 
@@ -84,6 +85,8 @@ void findX737DataRefs(void) {
         if ( x737_ready == 0 ) {
 
             x737_ready = 1;
+
+            XPLMDebugString("XHSI: registering EADT x737 DataRefs\n");
 
             x737_fdA_status = XPLMFindDataRef("x737/systems/afds/fdA_status");
             x737_fdB_status = XPLMFindDataRef("x737/systems/afds/fdB_status");

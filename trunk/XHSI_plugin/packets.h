@@ -8,10 +8,10 @@ int	 	createFmsPackets(void);
 int 	createTcasPacket(void);
 
 // command packet decode function
-void decodeCommandPacket(void);
+void decodeIncomingPacket(void);
 
 // The data packets
 extern struct SimDataPacket     sim_packet;
 extern struct FmsDataPacket		fms_packet[10];
 extern struct TcasDataPacket	tcas_packet;
-extern struct CommandPacket     efis_packet;
+extern struct IncomingPacket    efis_packet;

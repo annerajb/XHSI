@@ -11,20 +11,20 @@
 
 // Packet data structures
 struct SimDataPoint {
-	long	id;
+	int	id;
 	float	value;
 };
 
 struct SimDataPacket {
 	char				packet_id[4];
-	long				nb_of_sim_data_points;
+	int				nb_of_sim_data_points;
 	struct SimDataPoint sim_data_points[150];
 };
 
 struct FmsEntry {
-	long    type;
+	int     type;
 	char	id[8];
-	long	altitude;
+	int 	altitude;
 	float	lat;
 	float	lon;
 };
@@ -33,9 +33,9 @@ struct FmsDataPacket {
 	char				packet_id[4];
 	float               ete_for_active;
 	float               groundspeed;
-	long				nb_of_entries;
-	long				displayed_entry_index;
-	long				active_entry_index;
+	int 				nb_of_entries;
+	int 				displayed_entry_index;
+	int 				active_entry_index;
 	struct FmsEntry     entries[MAX_FMS_ENTRIES_ALLOWED];
 };
 
@@ -47,15 +47,15 @@ struct TcasDataPoint {
 
 struct TcasDataPacket {
 	char					packet_id[4];
-	long                    mp_total;
-	long                    mp_active;
+	int                     mp_total;
+	int                     mp_active;
 	float                   radar_altitude;
 	/*float					reference_altitude;*/
 	struct	TcasDataPoint   tcas_entries[NUM_TCAS];
 };
 
-struct CommandPacket {
-	long				nb_of_command_points;
-	struct SimDataPoint command_points[100];
+struct IncomingPacket {
+	int                     nb_of_data_points;
+	struct  SimDataPoint    data_points[100];
 };
 

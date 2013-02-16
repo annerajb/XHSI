@@ -13,32 +13,71 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="..\SDK\CHeaders\XPLM" />
+					<Add directory="..\SDK\CHeaders\Widgets" />
 				</Compiler>
+				<Linker>
+					<Add library="..\SDK\Libraries\Win\XPLM.lib" />
+					<Add library="..\SDK\Libraries\Win\XPWidgets.lib" />
+					<Add library="..\Microsoft SDKs\Windows\v6.0A\Lib\WS2_32.Lib" />
+				</Linker>
 			</Target>
-			<Target title="Release">
+			<Target title="Release_32">
+				<Option output="bin\Release\32\win.xpl" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj\Release\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="..\SDK\CHeaders\XPLM" />
+					<Add directory="..\SDK\CHeaders\Widgets" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="..\SDK\Libraries\Win\XPLM.lib" />
+					<Add library="..\SDK\Libraries\Win\XPWidgets.lib" />
+					<Add library="..\Microsoft SDKs\Windows\v7.1\Lib\WS2_32.Lib" />
+				</Linker>
+			</Target>
+			<Target title="Release_64">
+				<Option output="bin\Release\64\win.xpl" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj\Release\" />
+				<Option type="3" />
+				<Option compiler="mingw_w64" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="..\SDK\CHeaders\XPLM" />
+					<Add directory="..\SDK\CHeaders\Widgets" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="..\SDK\Libraries\Win\XPLM_64.lib" />
+					<Add library="..\SDK\Libraries\Win\XPWidgets_64.lib" />
+					<Add library="..\Microsoft SDKs\Windows\v7.1\Lib\x64\WS2_32.Lib" />
+				</Linker>
+			</Target>
+			<Target title="Release_V9">
 				<Option output="bin\Release\win.xpl" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj\Release\" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="..\SDK201\CHeaders\XPLM" />
+					<Add directory="..\SDK201\CHeaders\Widgets" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add library="..\SDK201\Libraries\Win\XPLM.lib" />
+					<Add library="..\SDK201\Libraries\Win\XPWidgets.lib" />
+					<Add library="..\Microsoft SDKs\Windows\v6.0A\Lib\WS2_32.Lib" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-DIBM=1" />
-			<Add directory="..\SDK\CHeaders\XPLM" />
-			<Add directory="..\SDK\CHeaders\Widgets" />
 		</Compiler>
-		<Linker>
-			<Add library="..\SDK\Libraries\Win\XPLM.lib" />
-			<Add library="..\SDK\Libraries\Win\XPWidgets.lib" />
-			<Add library="..\Microsoft SDKs\Windows\v6.0A\Lib\WS2_32.Lib" />
-		</Linker>
 		<Unit filename="commands.c">
 			<Option compilerVar="CC" />
 		</Unit>

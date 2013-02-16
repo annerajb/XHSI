@@ -2,18 +2,19 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 
 #define XPLM200 1
 
-#include "XPLMProcessing.h"
+//#include "XPLMProcessing.h"
 #include "XPLMDataAccess.h"
 #include "XPLMUtilities.h"
-#include "XPLMNavigation.h"
-#include "XPLMDisplay.h"
-#include "XPLMMenus.h"
-#include "XPWidgets.h"
-#include "XPStandardWidgets.h"
+//#include "XPLMNavigation.h"
+//#include "XPLMDisplay.h"
+//#include "XPLMMenus.h"
+//#include "XPWidgets.h"
+//#include "XPStandardWidgets.h"
 
 
 
@@ -53,6 +54,8 @@ void findCL30DataRefs(void) {
         if ( cl30_ready == 0 ) {
 
             cl30_ready = 1;
+
+            XPLMDebugString("XHSI: registering DDenn Design Bombardier Challenger 300 DataRefs\n");
 
             cl30_v1 = XPLMFindDataRef("sim/custom/xap/refspds_v1");
             cl30_vr = XPLMFindDataRef("sim/custom/xap/refspds_vr");

@@ -2,13 +2,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 
 #define XPLM200 1
 
 //#include "XPLMProcessing.h"
 #include "XPLMDataAccess.h"
-//#include "XPLMUtilities.h"
+#include "XPLMUtilities.h"
 //#include "XPLMNavigation.h"
 //#include "XPLMDisplay.h"
 //#include "XPLMMenus.h"
@@ -49,6 +50,8 @@ void findUFMCDataRefs(void) {
         if ( ufmc_ready == 0 ) {
 
             ufmc_ready = 1;
+
+            XPLMDebugString("XHSI: registering FJCC UFMC/X737FMC DataRefs\n");
 
             ufmc_v1 = XPLMFindDataRef("FJCC/UFMC/V1");
             ufmc_vr = XPLMFindDataRef("FJCC/UFMC/Vr");

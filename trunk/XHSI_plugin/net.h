@@ -1,6 +1,6 @@
 
 #if IBM
-#include "winsock2.h"
+#include <winsock2.h>
 #else
 #include <sys/socket.h>
 #include <sys/errno.h>
@@ -23,7 +23,6 @@ extern SOCKET sockfd;
 extern int sockfd;
 #endif
 extern struct sockaddr_in recv_sockaddr, dest_sockaddr[];
-//extern struct sockaddr    orig_sockaddr;
 
 // socket stuff
 void setAddresses();
@@ -34,6 +33,8 @@ int bindSocket();
 
 void closeSocket();
 
-int pollReceive();
+//int pollReceive();
 
-void resetSocket();
+int nonBlocking();
+
+//void resetSocket();
