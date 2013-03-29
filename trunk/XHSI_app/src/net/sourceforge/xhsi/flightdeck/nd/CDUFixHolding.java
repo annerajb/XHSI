@@ -108,6 +108,13 @@ public class CDUFixHolding extends NDSubcomponent {
             this.pixels_per_deg_lat = nd_gc.rose_radius / delta_lat;
             this.pixels_per_deg_lon = nd_gc.rose_radius / delta_lon;
 
+            // 100 times bigger?
+            if ( nd_gc.map_zoomin ) {
+                this.pixels_per_nm *= 100.0f;
+                this.pixels_per_deg_lat *= 100.0f;
+                this.pixels_per_deg_lon *= 100.0f;
+            }
+
             if ( nd_gc.hdg_up ) {
                 // HDG UP
                 map_up = this.aircraft.heading() - this.aircraft.magnetic_variation();
@@ -146,9 +153,9 @@ public class CDUFixHolding extends NDSubcomponent {
 
         // search for the holding fix in the current lat/lon cell first
         holding_fix = this.nor.get_navobj(xhsi_settings.holding_fix, this.center_lat, this.center_lon);
-        // if not found in the current cell, search the cells that are in the map map_range
+        // if not found in the current cell, search the cells that are in the map range
         if ( holding_fix == null ) {
-            for (int lat=(int)lat_min; lat<=(int) lat_max; lat++) {
+            for (int lat=(int)lat_min; lat<=(int)lat_max; lat++) {
                 for (int lon=(int)lon_min; lon<=(int)lon_max; lon++) {
                     if (xhsi_settings.draw_holding && ( holding_fix == null) ) {
                         holding_fix = this.nor.get_navobj(xhsi_settings.holding_fix, (float)lat, (float)lon);

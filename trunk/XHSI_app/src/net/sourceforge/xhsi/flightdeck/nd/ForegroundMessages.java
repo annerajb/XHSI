@@ -77,7 +77,7 @@ public class ForegroundMessages extends NDSubcomponent {
             if ( this.avionics.efis_shows_arpt() ) {
                 label_str = "ARPT";
                 g2.setColor(nd_gc.background_color);
-                g2.fillRect(nd_gc.left_label_x - 10, nd_gc.left_label_arpt_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 10 + 2, nd_gc.line_height_small + 3);
+                g2.fillRect(nd_gc.left_label_x - 2, nd_gc.left_label_arpt_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 2 + 2, nd_gc.line_height_small + 3);
                 if ( ( (nd_gc.map_range <= 160) || nd_gc.map_zoomin ) && nd_gc.mode_fullmap ) {
                     g2.setColor(nd_gc.arpt_color);
                 } else {
@@ -89,7 +89,7 @@ public class ForegroundMessages extends NDSubcomponent {
             if ( this.avionics.efis_shows_wpt() ) {
                 label_str = "WPT";
                 g2.setColor(nd_gc.background_color);
-                g2.fillRect(nd_gc.left_label_x - 10, nd_gc.left_label_wpt_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 10 + 2, nd_gc.line_height_small + 3);
+                g2.fillRect(nd_gc.left_label_x - 2, nd_gc.left_label_wpt_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 2 + 2, nd_gc.line_height_small + 3);
                 if ( ( (nd_gc.map_range <= 40) || nd_gc.map_zoomin ) && nd_gc.mode_fullmap ) {
                     g2.setColor(nd_gc.wpt_color);
                 } else {
@@ -101,7 +101,7 @@ public class ForegroundMessages extends NDSubcomponent {
             if ( this.avionics.efis_shows_vor() ) {
                 label_str = "VOR";
                 g2.setColor(nd_gc.background_color);
-                g2.fillRect(nd_gc.left_label_x - 10, nd_gc.left_label_vor_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 10 + 2, nd_gc.line_height_small + 3);
+                g2.fillRect(nd_gc.left_label_x - 2, nd_gc.left_label_vor_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 2 + 2, nd_gc.line_height_small + 3);
                 if ( ( (nd_gc.map_range <= 80) || nd_gc.map_zoomin ) && nd_gc.mode_fullmap ) {
                     g2.setColor(nd_gc.navaid_color);
                 } else {
@@ -113,7 +113,7 @@ public class ForegroundMessages extends NDSubcomponent {
             if ( this.avionics.efis_shows_ndb() ) {
                 label_str = "NDB";
                 g2.setColor(nd_gc.background_color);
-                g2.fillRect(nd_gc.left_label_x - 10, nd_gc.left_label_ndb_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 10 + 2, nd_gc.line_height_small + 3);
+                g2.fillRect(nd_gc.left_label_x - 2, nd_gc.left_label_ndb_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 2 + 2, nd_gc.line_height_small + 3);
                 if ( ( (nd_gc.map_range <= 80) || nd_gc.map_zoomin ) && nd_gc.mode_fullmap ) {
                     g2.setColor(nd_gc.navaid_color);
                 } else {
@@ -126,7 +126,7 @@ public class ForegroundMessages extends NDSubcomponent {
             if ( this.avionics.efis_shows_pos() ) {
                 label_str = "POS";
                 g2.setColor(nd_gc.background_color);
-                g2.fillRect(nd_gc.left_label_x - 10, nd_gc.left_label_pos_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 10 + 2, nd_gc.line_height_small + 3);
+                g2.fillRect(nd_gc.left_label_x - 2, nd_gc.left_label_pos_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 2 + 2, nd_gc.line_height_small + 3);
                 if ( ! nd_gc.mode_plan ) {
                     g2.setColor(nd_gc.pos_label_color);
                 } else {
@@ -138,7 +138,7 @@ public class ForegroundMessages extends NDSubcomponent {
             if ( this.avionics.efis_shows_data() ) {
                 label_str = "DATA";
                 g2.setColor(nd_gc.background_color);
-                g2.fillRect(nd_gc.left_label_x - 10, nd_gc.left_label_data_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 10 + 2, nd_gc.line_height_small + 3);
+                g2.fillRect(nd_gc.left_label_x - 2, nd_gc.left_label_data_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 2 + 2, nd_gc.line_height_small + 3);
                 if ( this.fms.is_active() && ( nd_gc.mode_fullmap || ( this.avionics.hsi_source() == Avionics.HSI_SOURCE_GPS ) ) ) {
                     g2.setColor(nd_gc.data_label_color);
                 } else {
@@ -150,7 +150,7 @@ public class ForegroundMessages extends NDSubcomponent {
             if ( ! nd_gc.mode_plan && tcas_on && this.avionics.efis_shows_tfc() ) {
                 label_str = "TFC";
                 g2.setColor(nd_gc.background_color);
-                g2.fillRect(nd_gc.left_label_x - 10, nd_gc.left_label_tfc_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 10 + 2, nd_gc.line_height_small + 3);
+                g2.fillRect(nd_gc.left_label_x - 2, nd_gc.left_label_tfc_y - nd_gc.line_height_small + 1, g2.getFontMetrics(nd_gc.font_small).stringWidth(label_str) + 2 + 2, nd_gc.line_height_small + 3);
                 g2.setColor(nd_gc.tcas_label_color);
                 g2.drawString(label_str, nd_gc.left_label_x, nd_gc.left_label_tfc_y);
             }
@@ -160,7 +160,7 @@ public class ForegroundMessages extends NDSubcomponent {
         // TA ONLY or TCAS OFF
         label_str = tcas_on ? "TA ONLY" : "TCAS OFF";
         g2.setColor(nd_gc.background_color);
-        g2.fillRect(nd_gc.left_label_x - 10, nd_gc.left_label_taonly_y - nd_gc.line_height_tiny + 1, g2.getFontMetrics(nd_gc.font_tiny).stringWidth(label_str) + 10 + 2, nd_gc.line_height_tiny + 2);
+        g2.fillRect(nd_gc.left_label_x - 2, nd_gc.left_label_taonly_y - nd_gc.line_height_tiny + 1, g2.getFontMetrics(nd_gc.font_tiny).stringWidth(label_str) + 2 + 2, nd_gc.line_height_tiny + 2);
         if ( tcas_on )
             g2.setColor(nd_gc.tcas_label_color);
         else
@@ -172,28 +172,28 @@ public class ForegroundMessages extends NDSubcomponent {
         if ( this.avionics.transponder_mode() == Avionics.XPDR_OFF ) {
             label_str = "XPDR OFF";
             g2.setColor(nd_gc.background_color);
-            g2.fillRect(nd_gc.left_label_x - 10, nd_gc.left_label_xpdr_y - nd_gc.line_height_tiny + 1, g2.getFontMetrics(nd_gc.font_tiny).stringWidth(label_str) + 10 + 2, nd_gc.line_height_tiny + 2);
+            g2.fillRect(nd_gc.left_label_x - 2, nd_gc.left_label_xpdr_y - nd_gc.line_height_tiny + 1, g2.getFontMetrics(nd_gc.font_tiny).stringWidth(label_str) + 2 + 2, nd_gc.line_height_tiny + 2);
             g2.setColor(nd_gc.caution_color);
         } else if ( this.avionics.transponder_mode() == Avionics.XPDR_STBY ) {
             label_str = "XPDR STBY";
             g2.setColor(nd_gc.background_color);
-            g2.fillRect(nd_gc.left_label_x - 10, nd_gc.left_label_xpdr_y - nd_gc.line_height_tiny + 1, g2.getFontMetrics(nd_gc.font_tiny).stringWidth(label_str) + 10 + 2, nd_gc.line_height_tiny + 2);
+            g2.fillRect(nd_gc.left_label_x - 2, nd_gc.left_label_xpdr_y - nd_gc.line_height_tiny + 1, g2.getFontMetrics(nd_gc.font_tiny).stringWidth(label_str) + 2 + 2, nd_gc.line_height_tiny + 2);
             g2.setColor(nd_gc.caution_color);
         } else if ( this.avionics.transponder_mode() == Avionics.XPDR_ON ) {
             label_str = "XPDR ON";
             g2.setColor(nd_gc.background_color);
-            g2.fillRect(nd_gc.left_label_x - 10, nd_gc.left_label_xpdr_y - nd_gc.line_height_tiny + 1, g2.getFontMetrics(nd_gc.font_tiny).stringWidth(label_str) + 10 + 2, nd_gc.line_height_tiny + 2);
+            g2.fillRect(nd_gc.left_label_x - 2, nd_gc.left_label_xpdr_y - nd_gc.line_height_tiny + 1, g2.getFontMetrics(nd_gc.font_tiny).stringWidth(label_str) + 2 + 2, nd_gc.line_height_tiny + 2);
             g2.setColor(nd_gc.unusual_color);
 // no, dark cockpit concept ...
 //        } else if ( this.avionics.transponder_mode() == Avionics.XPDR_TA ) {
 //            message_str = "XPDR TA";
 //            g2.setColor(nd_gc.background_color);
-//            g2.fillRect(nd_gc.left_label_x - 10, nd_gc.left_label_xpdr_y - nd_gc.line_height_tiny + 1, g2.getFontMetrics(nd_gc.font_tiny).stringWidth(message_str) + 10 + 2, nd_gc.line_height_tiny + 2);
+//            g2.fillRect(nd_gc.left_label_x - 2, nd_gc.left_label_xpdr_y - nd_gc.line_height_tiny + 1, g2.getFontMetrics(nd_gc.font_tiny).stringWidth(message_str) + 2 + 2, nd_gc.line_height_tiny + 2);
 //            g2.setColor(nd_gc.normal_color);
 //        } else if ( this.avionics.transponder_mode() == Avionics.XPDR_TARA ) {
 //            message_str = "XPDR TA/RA";
 //            g2.setColor(nd_gc.background_color);
-//            g2.fillRect(nd_gc.left_label_x - 10, nd_gc.left_label_xpdr_y - nd_gc.line_height_tiny + 1, g2.getFontMetrics(nd_gc.font_tiny).stringWidth(message_str) + 10 + 2, nd_gc.line_height_tiny + 2);
+//            g2.fillRect(nd_gc.left_label_x - 2, nd_gc.left_label_xpdr_y - nd_gc.line_height_tiny + 1, g2.getFontMetrics(nd_gc.font_tiny).stringWidth(message_str) + 2 + 2, nd_gc.line_height_tiny + 2);
 //            g2.setColor(nd_gc.normal_color);
         }
         if ( this.avionics.transponder_mode() < Avionics.XPDR_TA ) {

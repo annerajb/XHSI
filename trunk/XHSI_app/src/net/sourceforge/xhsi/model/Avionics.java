@@ -101,7 +101,7 @@ public interface Avionics {
     /**
      * @return boolean - map is close-up
      */
-    public boolean map_closeup();
+    public boolean map_zoomin();
 
     /**
      * @return int - map mode CENTERED or EXPANDED

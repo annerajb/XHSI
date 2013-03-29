@@ -295,9 +295,7 @@ public class XPlaneAvionics implements Avionics, Observer {
         } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
             return (int) sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MAP_RANGE);
         } else {
-            // map_range_index() is only used by XHSISettings.update() when there is an update from X-Plane
-            // so we never should get here...
-            return 9999;
+            return xhsi_settings.map_range_index;
         }
 
     }
@@ -317,7 +315,7 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
 
 
-    public boolean map_closeup() {
+    public boolean map_zoomin() {
 
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
             return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_MAP_ZOOMIN) == 1.0f;

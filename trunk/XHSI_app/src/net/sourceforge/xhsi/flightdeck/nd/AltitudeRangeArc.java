@@ -74,6 +74,7 @@ public class AltitudeRangeArc extends NDSubcomponent {
 
                     // keep the width +/- constant
                     float arc = ARC * nd_gc.max_range / distance;
+                    if ( nd_gc.map_zoomin ) arc /= 100.0f;
                     // but never more than 45 degs
                     if ( arc > 45.0f ) arc = 45.0f;
 
