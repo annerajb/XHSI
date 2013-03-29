@@ -3,7 +3,7 @@
 * 
 * Prints information about the destination airport
 * 
-* Copyright (C) 2011  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2011-2013  Marc Rogiers (marrog.123@gmail.com)
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -39,6 +39,7 @@ import java.text.DecimalFormatSymbols;
 
 import java.util.logging.Logger;
 
+import net.sourceforge.xhsi.XHSIPreferences;
 //import net.sourceforge.xhsi.XHSISettings;
 
 import net.sourceforge.xhsi.model.Airport;
@@ -157,7 +158,28 @@ public class DestinationAirport extends MFDSubcomponent {
 
         if ( ! dest_arpt_str.equals("") ) {
 
-            g2.setColor(mfd_gc.efb_color);
+            boolean daylight;
+            if ( this.preferences.get_preference(XHSIPreferences.PREF_TAXICHART_COLOR).equals(XHSIPreferences.TAXICHART_COLOR_AUTO) ) {
+                daylight = ! this.aircraft.cockpit_lights();
+            } else if ( this.preferences.get_preference(XHSIPreferences.PREF_TAXICHART_COLOR).equals(XHSIPreferences.TAXICHART_COLOR_DAY) ) {
+                daylight = true;
+            } else {
+                daylight = false;
+            }
+            Color text = daylight ? mfd_gc.background_color : mfd_gc.efb_color;
+            Color paper = daylight ? Color.WHITE : mfd_gc.background_color;
+            Color field = daylight ? mfd_gc.color_verypalegreen : mfd_gc.color_verydarkgreen; // Color.GREEN.darker().darker().darker().darker().darker(); // mfd_gc.color_lavender; //new Color(0xF0F0F0);
+            Color taxi_ramp = mfd_gc.hard_color;
+            Color hard_rwy = daylight ? mfd_gc.background_color : Color.WHITE;
+            g2.setColor(paper);
+            g2.fillRect(mfd_gc.panel_rect.x, mfd_gc.panel_rect.y, mfd_gc.panel_rect.width, mfd_gc.panel_rect.height);
+            g2.setColor(text);
+
+        
+            int chart_x;
+            int chart_w;
+            int chart_y;
+            int chart_h;
 
             int arpt_size = Math.min(mfd_gc.panel_rect.width, mfd_gc.panel_rect.height);
             int arpt_x = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*15/16 - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, dest_arpt_str);
@@ -170,60 +192,72 @@ public class DestinationAirport extends MFDSubcomponent {
 
             if ( airport != null ) {
                 g2.setFont(mfd_gc.font_xl);
-                arpt_x = mfd_gc.panel_rect.x + arpt_size/16;
+                arpt_x = mfd_gc.panel_rect.x + arpt_size/32;
                 g2.drawString(airport.name, arpt_x, arpt_y);
 //                g2.drawLine(efb_gc.panel_rect.x + efb_gc.panel_rect.width*1/16, arpt_y + efb_gc.line_height_m/2, efb_gc.panel_rect.x + efb_gc.panel_rect.width*15/16, arpt_y + efb_gc.line_height_m/2);
-                g2.drawLine(arpt_x, arpt_y + mfd_gc.line_height_m/2, mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*15/16, arpt_y + mfd_gc.line_height_m/2);
-                g2.setFont(mfd_gc.font_s);
-                arpt_y += mfd_gc.line_height_s*5/3;
+                g2.drawLine(arpt_x, arpt_y + mfd_gc.line_height_m/2, mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*31/32, arpt_y + mfd_gc.line_height_m/2);
+                chart_y = arpt_y + mfd_gc.line_height_m;
+                g2.setFont(mfd_gc.font_xs);
+                arpt_y += mfd_gc.line_height_xs*7/3;
                 String elev_str = "elev: " + airport.elev + "ft";
-                g2.drawString(elev_str, mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*15/16 - mfd_gc.get_text_width(g2, mfd_gc.font_s, elev_str), arpt_y);
+                //g2.drawString(elev_str, mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*31/32 - mfd_gc.get_text_width(g2, mfd_gc.font_s, elev_str), arpt_y);
+                g2.drawString(elev_str, arpt_x + arpt_size*3/32, arpt_y);
 
-                arpt_y += mfd_gc.line_height_s*1/2;
+                //arpt_y += mfd_gc.line_height_s*1/2;
                 if ( ! airport.runways.isEmpty() ) {
                     for (int i=0; i<airport.runways.size(); i++) {
                         Runway rwy = (Runway)(airport.runways.get(i));
-                        g2.setFont(mfd_gc.font_l);
-                        arpt_y += mfd_gc.line_height_l*3/2;
-                        g2.drawString(rwy.rwy_num1 + "/" + rwy.rwy_num2, arpt_x + arpt_size*3/64, arpt_y);
-//                        g2.drawString(Math.round(rwy.length) + "m", arpt_x + arpt_size*7/32, arpt_y);
-                        g2.drawString(Math.round(rwy.length) + "x" + Math.round(rwy.width) + "m", arpt_x + arpt_size*14/64, arpt_y);
-//                        g2.drawString(Math.round(rwy.length/0.3048f) + "ft", arpt_x + arpt_size*11/32, arpt_y);
-                        g2.drawString(Math.round(rwy.length/0.3048f) + "x" + Math.round(rwy.width/0.3048f) + "ft", arpt_x + arpt_size*28/64, arpt_y);
-//                        g2.drawString(surfaces[rwy.surface], arpt_x + arpt_size*16/32, arpt_y);
-                        g2.drawString(surfaces[rwy.surface], arpt_x + arpt_size*44/64, arpt_y);
+                        g2.setFont(mfd_gc.font_m);
+                        arpt_y += mfd_gc.line_height_m*3/2;
+                        g2.drawString(rwy.rwy_num1 + "/" + rwy.rwy_num2, arpt_x, arpt_y);
+                        g2.setFont(mfd_gc.font_xs);
+                        String soft_field = ( (rwy.surface!=Runway.RWY_ASPHALT) && (rwy.surface!=Runway.RWY_CONCRETE) ) ? "(S) " : " ";
+                        if ( this.preferences.get_preference(XHSIPreferences.PREF_RWY_LEN_UNITS).equals("meters") ) {
+                            g2.drawString(soft_field + Math.round(rwy.length) + "x" + Math.round(rwy.width) + "m", arpt_x + arpt_size*9/64, arpt_y);
+                        }
+                        if ( this.preferences.get_preference(XHSIPreferences.PREF_RWY_LEN_UNITS).equals("feet") ) {
+                            g2.drawString(soft_field + Math.round(rwy.length/0.3048f) + "x" + Math.round(rwy.width/0.3048f) + "ft", arpt_x + arpt_size*9/64, arpt_y);
+                        }
                         if ( ! rwy.localizers.isEmpty() ) {
+                            arpt_y += mfd_gc.line_height_s*1/4;
+                            g2.setFont(mfd_gc.font_xs);
                             for (int l=0; l<rwy.localizers.size(); l++) {
                                 Localizer loc = rwy.localizers.get(l);
-                                g2.setFont(mfd_gc.font_m);
-                                arpt_y += mfd_gc.line_height_m*3/2;
-                                g2.drawString(loc.rwy, arpt_x + arpt_size*6/64, arpt_y);
-                                g2.drawString(loc.ilt, arpt_x + arpt_size*11/64, arpt_y);
-                                g2.drawString(freq_format.format(loc.frequency), arpt_x + arpt_size*17/64, arpt_y);
-                                g2.drawString(loc.description, arpt_x + arpt_size*26/64, arpt_y);
+                                arpt_y += mfd_gc.line_height_s*5/4;
+                                g2.drawString("- " + loc.description.substring(0, 3) + " " + loc.rwy, arpt_x + arpt_size*0/64, arpt_y);
+                                g2.drawString("- " + loc.ilt, arpt_x + arpt_size*15/128, arpt_y);
+                                g2.drawString("- " + freq_format.format(loc.frequency), arpt_x + arpt_size*25/128, arpt_y);
                             }
                         }
                     }
                 }
+                chart_x = arpt_x + arpt_size*20/64;
+                chart_w = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*31/32 - chart_x;
 
-                arpt_y += mfd_gc.line_height_m;
+                arpt_y = mfd_gc.panel_rect.y + mfd_gc.panel_rect.height*62/64;
+                int radios = airport.com_radios.size();
+                int lines = ( radios + 2 ) / 3;
                 if ( ! airport.com_radios.isEmpty() ) {
-                    boolean column_right = false;
-                    int com_x;
+                    arpt_y -= (lines-1)*mfd_gc.line_height_xs*5/4;
+                    int com_y = arpt_y;
                     for (int c=0; c<airport.com_radios.size(); c++) {
                         ComRadio com_radio = airport.com_radios.get(c);
-                        g2.setFont(mfd_gc.font_m);
-                        if ( column_right ) {
-                            com_x = arpt_x + mfd_gc.panel_rect.width/2;
-                        } else {
-                            com_x = arpt_x + mfd_gc.panel_rect.width/32;
-                            arpt_y += mfd_gc.line_height_m*3/2;
-                        }
-                        g2.drawString(freq_format.format(com_radio.frequency) + "  " + com_radio.callsign, com_x, arpt_y);
-                        column_right = ! column_right;
+                        int com_x = mfd_gc.panel_rect.x + (c%3)*mfd_gc.panel_rect.width/3;
+                        g2.setFont(mfd_gc.font_xs);
+                        g2.setColor(paper);
+                        g2.fillRect(com_x, com_y - mfd_gc.line_height_xs, mfd_gc.panel_rect.width/3, mfd_gc.line_height_xs);
+                        g2.setColor(text);
+                        g2.drawString("  " + freq_format.format(com_radio.frequency), com_x, com_y);
+                        g2.setFont(mfd_gc.font_xxs);
+com_radio.callsign = "1234567980123456789012345";
+                        g2.drawString("- " + com_radio.callsign, com_x + arpt_size*7/64, com_y);
+                        if ( (c%3) == 2 ) com_y += mfd_gc.line_height_xs*5/4;
                     }
                 }
+                chart_h = arpt_y -mfd_gc.line_height_l - chart_y;
 
+                g2.drawRect(chart_x, chart_y, chart_w, chart_h);
+                
             }
 
         }

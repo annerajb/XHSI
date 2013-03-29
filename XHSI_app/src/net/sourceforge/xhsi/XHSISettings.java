@@ -142,6 +142,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public int map_mode = Avionics.EFIS_MAP_MAP;
     public int map_centered = Avionics.EFIS_MAP_EXPANDED;
     public int map_range = 40;
+    public int map_range_index = 2;
     public boolean map_zoomin;
     public boolean show_arpt = true;
     public boolean show_wpt = true;
@@ -954,6 +955,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             if (command.equals(this.range_list[i])) {
                 // Range override
                 map_range = Integer.parseInt(command);
+                map_range_index = i;
                 this.avionics.set_range_index(i);
             }
         }
@@ -995,6 +997,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         for (int i=0; i<this.range_list.length; i++) {
             this.radio_button_range[i].setSelected(  new_range_index == i );
         }
+        this.checkbox_map_zoomin.setSelected( avionics.map_zoomin() );
 
         this.checkbox_symbols_show_arpt.setSelected( avionics.efis_shows_arpt() );
         this.checkbox_symbols_show_wpt.setSelected( avionics.efis_shows_wpt() );

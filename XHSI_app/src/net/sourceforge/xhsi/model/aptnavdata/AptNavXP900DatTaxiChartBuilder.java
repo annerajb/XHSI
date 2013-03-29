@@ -118,19 +118,25 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
         String line;
         long line_number = 0;
 
+        String[] tokens;
         int info_type;
 
         this.taxi_chart.new_chart(icao);
 
         boolean arpt_hit = false;
         while ( ! arpt_hit && ( (line = reader.readLine()) != null ) ) {
-            
-            if ( ( line.length() > 19 ) 
-                    && ( Integer.parseInt(line.substring(0, 3).trim()) == 1 ) 
-                    && ( line.substring(15, 19).trim().equalsIgnoreCase(icao) ) ) {
-                arpt_hit = true;
-//logger.warning("Found "+icao+" line 1  "+line.substring(20));
+
+            tokens = line.split("\\s+",6);
+//            if ( ( line.length() > 19 )
+//                    && ( Integer.parseInt(line.substring(0, 3).trim()) == 1 )
+//                    && ( line.substring(15, 19).trim().equalsIgnoreCase(icao) ) ) {
+//                arpt_hit = true;
+            if ( line.startsWith("1 ") ) {
+                tokens = line.split("\\s+",6);
+                arpt_hit = tokens[4].equalsIgnoreCase(icao);
+                //if (arpt_hit) logger.warning("Found "+icao+" line 1  "+line.substring(20));
             }
+
         }
         
         if ( ! arpt_hit ) {
@@ -147,7 +153,8 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
 //                if ( (line_number > 2) && ( ! line.equals("99") ) ) {
                     try {
 
-                        info_type = Integer.parseInt(line.substring(0, 3).trim());
+                        tokens = line.split("\\s+",6);
+                        info_type = Integer.parseInt(tokens[0]);
 //logger.warning("Info type : "+ info_type);
                         if (info_type == 1) {
 
@@ -164,7 +171,7 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
 //logger.warning("hdg: "+Float.parseFloat(line.substring(35, 41).trim()));
 //logger.warning("len: "+Integer.parseInt(line.substring(42, 47).trim()));
 //logger.warning("wid: "+Integer.parseInt(line.substring(56, 61).trim()));
-                            // a new taxiway or ramp in APT810 format
+                            // a new taxiway or ramp in old APT810 format
                             this.taxi_chart.new_segment( Float.parseFloat(line.substring(4, 16).trim()),
                                     Float.parseFloat(line.substring(17, 30).trim()),
                                     Float.parseFloat(line.substring(35, 41).trim()),
@@ -175,7 +182,8 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
                         } else if (info_type == 110) {
 
                             // a new taxiway or ramp
-                            this.taxi_chart.new_pavement( Integer.parseInt(line.substring(5, 7).trim()), line.substring(20).trim() );
+                            //this.taxi_chart.new_pavement( Integer.parseInt(line.substring(5, 7).trim()), line.substring(20).trim() );
+                            this.taxi_chart.new_pavement( Integer.parseInt(tokens[1]), line.substring(20).trim() );
 
                         } else if (info_type == 120) {
 
@@ -188,18 +196,21 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
                         } else if ( (info_type == 111) || (info_type == 113) ) {
 
                             // a node
-                            this.taxi_chart.new_node( Float.parseFloat(line.substring(4, 16).trim()),
-                                    Float.parseFloat(line.substring(17, 30).trim()) );
+                            //this.taxi_chart.new_node( Float.parseFloat(line.substring(4, 16).trim()),
+                            //        Float.parseFloat(line.substring(17, 30).trim()) );
+                            this.taxi_chart.new_node( Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]) );
 
                             if (info_type == 113) this.taxi_chart.close_loop();
 
                         } else if ( (info_type == 112) || (info_type == 114) ) {
 
                             // a node with bezier control point
-                            this.taxi_chart.new_bezier_node( Float.parseFloat(line.substring(4, 16).trim()),
-                                    Float.parseFloat(line.substring(17, 30).trim()),
-                                    Float.parseFloat(line.substring(31, 43).trim()),
-                                    Float.parseFloat(line.substring(44, 57).trim()) );
+                            //this.taxi_chart.new_bezier_node( Float.parseFloat(line.substring(4, 16).trim()),
+                            //        Float.parseFloat(line.substring(17, 30).trim()),
+                            //        Float.parseFloat(line.substring(31, 43).trim()),
+                            //        Float.parseFloat(line.substring(44, 57).trim()) );
+                            this.taxi_chart.new_bezier_node( Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]),
+                                    Float.parseFloat(tokens[3]), Float.parseFloat(tokens[4]) );
 
                             if (info_type == 114) this.taxi_chart.close_loop();
 

@@ -209,16 +209,25 @@ public class HeadingLabel extends NDSubcomponent {
                 // a label at half the range
                 g2.setFont(nd_gc.font_medium);
                 int range = nd_gc.map_range;
+                String ctr_ranges[] = {"2.5", "5", "10", "20", "40", "80", "160"};
+                String exp_ranges[] = {"5", "10", "20", "40", "80", "160", "320"};
+                String zoomin_ctr_ranges[] = {"0.025", "0.05", "0.10", "0.20", "0.40", "0.80", "1.60"};
+                String zoomin_exp_ranges[] = {"0.05", "0.10", "0.20", "0.40", "0.80", "1.60", "3.20"};
+                String range_text;
+                int range_index = this.avionics.map_range_index();
                 if ( nd_gc.mode_centered ) {
-                    range /= 2;
+                    if ( nd_gc.map_zoomin ) {
+                       range_text = zoomin_ctr_ranges[range_index];
+                    } else {
+                       range_text = ctr_ranges[range_index];
+                    }
+                } else {
+                    if ( nd_gc.map_zoomin ) {
+                        range_text = zoomin_exp_ranges[range_index];
+                    } else {
+                        range_text = exp_ranges[range_index];
+                    }
                 }
-                String range_text = "";
-                if (range == 2)
-                    range_text += "1.25";
-                else if (range == 5)
-                    range_text += "2.5";
-                else
-                    range_text += range/2;
                 g2.drawString(
                     range_text,
                     nd_gc.map_center_x - nd_gc.get_text_width(g2, nd_gc.font_medium, range_text) - 4,

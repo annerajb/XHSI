@@ -219,6 +219,7 @@ public class MovingMap extends NDSubcomponent {
                 // we need to load another airport chart
                 try {
                     AptNavXP900DatTaxiChartBuilder cb = new AptNavXP900DatTaxiChartBuilder(this.preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR));
+                    logger.warning("\nRequesting "+nearest_arpt_str);
                     cb.get_chart(nearest_arpt_str);
                 } catch (Exception e) {
                     logger.warning("\nProblem requesting TaxiChartBuilder "+nearest_arpt_str);
@@ -393,11 +394,33 @@ public class MovingMap extends NDSubcomponent {
                                 g2.setColor(nd_gc.hard_color.darker());
                             Stroke original_stroke = g2.getStroke();
                             g2.setStroke(new BasicStroke(rwy0.width * chart_metric_scale, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-                            g2.drawLine( map_c.x + (int)((rwy0.lon1 - acf_lon)*chart_lon_scale),
-                                map_c.y - (int)((rwy0.lat1 - acf_lat)*chart_lat_scale),
-                                map_c.x + (int)((rwy0.lon2 - acf_lon)*chart_lon_scale),
-                                map_c.y - (int)((rwy0.lat2 - acf_lat)*chart_lat_scale));
+                            int x1 = map_c.x + (int)((rwy0.lon1 - acf_lon)*chart_lon_scale);
+                            int y1 = map_c.y - (int)((rwy0.lat1 - acf_lat)*chart_lat_scale);
+                            int x2 = map_c.x + (int)((rwy0.lon2 - acf_lon)*chart_lon_scale);
+                            int y2 = map_c.y - (int)((rwy0.lat2 - acf_lat)*chart_lat_scale);
+                            g2.drawLine( x1, y1, x2, y2);
                             g2.setStroke(original_stroke);
+                            if ( avionics.efis_shows_arpt() ) {
+                                g2.setFont(nd_gc.font_small);
+                                AffineTransform current_at = g2.getTransform();
+                                g2.rotate( Math.toRadians( this.map_up ), x1, y1 );
+                                int h0 = nd_gc.line_height_small;
+                                int w1 = nd_gc.get_text_width(g2, nd_gc.font_small, rwy0.rwy_num1);
+                                x1 -= w1 / 2;
+                                y1 += h0 / 2;
+                                g2.clearRect(x1 - 2, y1 - h0 - 2, w1 + 4, h0 + 4);
+                                g2.drawRect(x1 - 2, y1 - h0 - 2, w1 + 4, h0 + 4);
+                                g2.drawString(rwy0.rwy_num1, x1, y1 - 2);
+                                g2.setTransform(current_at);
+                                g2.rotate( Math.toRadians( this.map_up ), x2, y2 );
+                                int w2 = nd_gc.get_text_width(g2, nd_gc.font_small, rwy0.rwy_num2);
+                                x2 -= w2 / 2;
+                                y2 += h0 / 2;
+                                g2.clearRect(x2 - 2, y2 - h0 - 2, w2 + 4, h0 + 4);
+                                g2.drawRect(x2 - 2, y2 - h0 - 2, w2 + 4, h0 + 4);
+                                g2.drawString(rwy0.rwy_num2, x2, y2 - 2);
+                                g2.setTransform(current_at);
+                            }
                         }
                     }
 
@@ -408,11 +431,33 @@ public class MovingMap extends NDSubcomponent {
                             g2.setColor(hard_rwy);
                             Stroke original_stroke = g2.getStroke();
                             g2.setStroke(new BasicStroke(rwy0.width * chart_metric_scale, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-                            g2.drawLine( map_c.x + (int)((rwy0.lon1 - acf_lon)*chart_lon_scale),
-                                map_c.y - (int)((rwy0.lat1 - acf_lat)*chart_lat_scale),
-                                map_c.x + (int)((rwy0.lon2 - acf_lon)*chart_lon_scale),
-                                map_c.y - (int)((rwy0.lat2 - acf_lat)*chart_lat_scale));
+                            int x1 = map_c.x + (int)((rwy0.lon1 - acf_lon)*chart_lon_scale);
+                            int y1 = map_c.y - (int)((rwy0.lat1 - acf_lat)*chart_lat_scale);
+                            int x2 = map_c.x + (int)((rwy0.lon2 - acf_lon)*chart_lon_scale);
+                            int y2 = map_c.y - (int)((rwy0.lat2 - acf_lat)*chart_lat_scale);
+                            g2.drawLine( x1, y1, x2, y2);
                             g2.setStroke(original_stroke);
+                            if ( avionics.efis_shows_arpt() ) {
+                                g2.setFont(nd_gc.font_small);
+                                AffineTransform current_at = g2.getTransform();
+                                g2.rotate( Math.toRadians( this.map_up ), x1, y1 );
+                                int h0 = nd_gc.line_height_small;
+                                int w1 = nd_gc.get_text_width(g2, nd_gc.font_small, rwy0.rwy_num1);
+                                x1 -= w1 / 2;
+                                y1 += h0 / 2;
+                                g2.clearRect(x1 - 2, y1 - h0 - 2, w1 + 4, h0 + 4);
+                                g2.drawRect(x1 - 2, y1 - h0 - 2, w1 + 4, h0 + 4);
+                                g2.drawString(rwy0.rwy_num1, x1, y1 - 2);
+                                g2.setTransform(current_at);
+                                g2.rotate( Math.toRadians( this.map_up ), x2, y2 );
+                                int w2 = nd_gc.get_text_width(g2, nd_gc.font_small, rwy0.rwy_num2);
+                                x2 -= w2 / 2;
+                                y2 += h0 / 2;
+                                g2.clearRect(x2 - 2, y2 - h0 - 2, w2 + 4, h0 + 4);
+                                g2.drawRect(x2 - 2, y2 - h0 - 2, w2 + 4, h0 + 4);
+                                g2.drawString(rwy0.rwy_num2, x2, y2 - 2);
+                                g2.setTransform(current_at);
+                            }
                         }
                     }
 
@@ -1113,8 +1158,10 @@ public class MovingMap extends NDSubcomponent {
             }
 
             // Boeing style: the localizer centerline and two short paralel lines representing the runway
-            g2.drawLine(x-rwy_halfwidth, y-rwy_backcourse, x-rwy_halfwidth, y+rwy_frontcourse);
-            g2.drawLine(x+rwy_halfwidth, y-rwy_backcourse, x+rwy_halfwidth, y+rwy_frontcourse);
+            if ( ! nd_gc.map_zoomin ) {
+                g2.drawLine(x-rwy_halfwidth, y-rwy_backcourse, x-rwy_halfwidth, y+rwy_frontcourse);
+                g2.drawLine(x+rwy_halfwidth, y-rwy_backcourse, x+rwy_halfwidth, y+rwy_frontcourse);
+            }
             g2.setStroke(new BasicStroke(stroke_width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?shortdashes_1:shortdashes_2, 0.0f));
             g2.drawLine(x, y-rwy_backcourse, x, y-localizer_extension/2);
             g2.setStroke(new BasicStroke(stroke_width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));

@@ -120,14 +120,14 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 //    }
 
 
-    public void update_config(Graphics2D g2, int mode, int submode, int range, boolean closeup, boolean power) {
+    public void update_config(Graphics2D g2, int mode, int submode, int range, boolean zoomin, boolean power) {
 
         if (this.resized
                 || this.reconfig
                 || (this.map_mode != mode)
                 || (this.map_submode != submode)
                 || (this.map_range != range)
-                || (this.map_zoomin != closeup)
+                || (this.map_zoomin != zoomin)
                 || (this.powered != power)
             ) {
             // one of the settings has been changed
@@ -141,7 +141,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             this.map_mode = mode;
             this.map_submode = submode;
             this.map_range = range;
-            this.map_zoomin = closeup;
+            this.map_zoomin = zoomin;
 
             // set some booleans for easy checking
             if ( preferences.get_airbus_modes() ) {
@@ -194,7 +194,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
                 this.rose_radius = this.map_center_y - this.rose_y_offset;
             }
             this.pixels_per_nm = (float)this.rose_radius / this.max_range; // float for better precision
-            if ( closeup ) this.pixels_per_nm *= 100.0f;
+            if ( zoomin ) this.pixels_per_nm *= 100.0f;
 
 
             // labels at the left
@@ -239,7 +239,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
                 half_view_angle = (float) (90.0f - Math.toDegrees(Math.acos((1.0f * this.frame_size.width) / (2.0f * (this.rose_radius - this.big_tick_length)))));
             }
 
-            rose_thickness = 3;
+            rose_thickness = 1;
             this.inner_rose_area = new Area(new Ellipse2D.Float(
                     map_center_x - rose_radius + rose_thickness,
                     map_center_y - rose_radius + rose_thickness,

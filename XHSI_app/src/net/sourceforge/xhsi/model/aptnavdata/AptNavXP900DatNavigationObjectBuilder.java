@@ -126,6 +126,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
         String line;
         long line_number = 0;
         int info_type;
+        String[] tokens;
         String airport_icao_code = "";
         String airport_name = "";
         boolean current_airport_saved = true;
@@ -163,12 +164,18 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                 line = line.trim();
                 if ((line_number > 2) && ( ! line.equals("99") ) ) {
                     try {
-                        info_type = Integer.parseInt(line.substring(0, 3).trim());
+                        //info_type = Integer.parseInt(line.substring(0, 3).trim());
+                        tokens = line.split("\\s+",6);
+                        info_type = Integer.parseInt(tokens[0]);
                         if (info_type == 1) {
                             // hold it, save the previous airport before proceeding with this one...
                             if ( ! current_airport_saved ) {
                                 // position of the ARP (Aerodrome Reference Point)
-                                if (hard_rwy_count == 1) {
+                                if (tower) {
+                                    // ARP = tower position
+                                    arp_lat = lat;
+                                    arp_lon = lon;
+                                } else if (hard_rwy_count == 1) {
                                     // ARP = the center of the one and only hard runway
                                     arp_lat = hard_lat_sum;
                                     arp_lon = hard_lon_sum;
@@ -176,11 +183,6 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                                     // ARP = the center of the one and only non-hard runway
                                     arp_lat = lat_sum;
                                     arp_lon = lon_sum;
-                                } else if (tower) {
-                                    // several runways, but there is a tower position
-                                    // ARP = tower position
-                                    arp_lat = lat;
-                                    arp_lon = lon;
                                 } else if (hard_rwy_count > 1) {
                                     // no tower, but several hard runways
                                     // ARP = center of all hard runways
@@ -195,9 +197,12 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                                 nor.add_nav_object(new Airport(airport_name, airport_icao_code, arp_lat, arp_lon, runways, longest, elev, comms));
                             }
                             // process the new airport header
-                            airport_icao_code = line.substring(15, 19);
-                            airport_name = line.substring(20);
-                            elev = Integer.parseInt(line.substring(5, 10).trim());
+                            //elev = Integer.parseInt(line.substring(5, 10).trim());
+                            elev = Integer.parseInt(tokens[1]);
+                            //airport_icao_code = line.substring(15, 19);
+                            airport_icao_code = tokens[4];
+                            //airport_name = line.substring(20);
+                            airport_name = tokens[5];
                             current_airport_saved = false;
                             runways = new ArrayList();
                             arp_lat = 0;
