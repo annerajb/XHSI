@@ -104,18 +104,18 @@ public class TaxiChart {
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
-    private static TaxiChart single_instance;
-
-    public static TaxiChart get_instance() {
-        if (TaxiChart.single_instance == null) {
-            TaxiChart.single_instance = new TaxiChart();
-        }
-        return TaxiChart.single_instance;
-    }
+//    private static TaxiChart single_instance;
+//
+//    public static TaxiChart get_instance() {
+//        if (TaxiChart.single_instance == null) {
+//            TaxiChart.single_instance = new TaxiChart();
+//        }
+//        return TaxiChart.single_instance;
+//    }
 
 
     
-    private TaxiChart() {
+    public TaxiChart() {
         init();
     }
 
@@ -276,6 +276,13 @@ logger.warning("Failed to find "+ icao);
 
         } else {
 
+            if ( ! this.segments.isEmpty() ) {
+                for (int i=0; i<this.segments.size(); i++) {
+                    Segment taxiway = this.segments.get(i);
+                    update_minmax( taxiway.lat, taxiway.lon);
+                }
+            }
+
             if ( ! this.pavements.isEmpty() ) {
                 for (int i=0; i<this.pavements.size(); i++) {
                     Pavement taxiramp = this.pavements.get(i);
@@ -286,12 +293,10 @@ logger.warning("Failed to find "+ icao);
                 }
             }
 
-//logger.warning("runways : "+ this.airport.runways.size());
             if ( this.airport != null ) {
                 if ( ! this.airport.runways.isEmpty() ) {
                     for (int r=0; r<this.airport.runways.size(); r++) {
                         Runway rwy0 = this.airport.runways.get(r);
-//logger.warning("rwy" + r + " " + rwy0.lat1 + "/" + rwy0.lon1 + " " + rwy0.lat2 + "/" + rwy0.lon2);
                         update_minmax( rwy0.lat1, rwy0.lon1);
                         update_minmax( rwy0.lat2, rwy0.lon2);
                     }

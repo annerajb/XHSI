@@ -107,7 +107,9 @@ public class MovingMap extends NDSubcomponent {
     
     Area panel = null;
 
+    private static TaxiChart taxi = new TaxiChart();
 
+    
     public MovingMap(ModelFactory model_factory, NDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
         this.nor = NavigationObjectRepository.get_instance();
@@ -200,8 +202,6 @@ public class MovingMap extends NDSubcomponent {
 
     private void drawChart(Graphics2D g2) {
 
-        TaxiChart taxi = TaxiChart.get_instance();
-
         String nearest_arpt_str = this.aircraft.get_nearest_arpt();
 
         Color paper = nd_gc.background_color;
@@ -218,7 +218,7 @@ public class MovingMap extends NDSubcomponent {
 
                 // we need to load another airport chart
                 try {
-                    AptNavXP900DatTaxiChartBuilder cb = new AptNavXP900DatTaxiChartBuilder(this.preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR));
+                    AptNavXP900DatTaxiChartBuilder cb = new AptNavXP900DatTaxiChartBuilder(this.taxi, this.preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR));
                     logger.warning("\nRequesting "+nearest_arpt_str);
                     cb.get_chart(nearest_arpt_str);
                 } catch (Exception e) {

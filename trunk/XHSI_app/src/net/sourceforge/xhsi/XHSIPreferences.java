@@ -106,7 +106,7 @@ public class XHSIPreferences {
 
     // MFD options
     public static final String PREF_MFD_MODE = "mfd.mode";
-    public static final String PREF_TAXICHART_COLOR = "taxichart.color";
+    public static final String PREF_ARPT_DIAGRAM_COLOR = "arpt.diagram.color";
 
 
     // constants
@@ -149,10 +149,10 @@ public class XHSIPreferences {
     public static final String MFD_MODE_FPLN = "fpln";
     public static final String MFD_MODE_LOWER_EICAS = "lower_eicas";
 
-    // for PREF_TAXI_CHART_COLOR
-    public static final String TAXICHART_COLOR_AUTO = "auto";
-    public static final String TAXICHART_COLOR_DAY = "day";
-    public static final String TAXICHART_COLOR_NIGHT = "night";
+    // for PREF_ARPT_DIAGRAM_COLOR
+    public static final String ARPT_DIAGRAM_COLOR_AUTO = "auto";
+    public static final String ARPT_DIAGRAM_COLOR_DAY = "day";
+    public static final String ARPT_DIAGRAM_COLOR_NIGHT = "night";
 
 
     public static enum Orientation {
@@ -1070,8 +1070,8 @@ public class XHSIPreferences {
             this.unsaved_changes = true;
         }
 
-        if ( ! this.preferences.containsKey(PREF_TAXICHART_COLOR) ) {
-            this.preferences.setProperty(PREF_TAXICHART_COLOR, TAXICHART_COLOR_AUTO);
+        if ( ! this.preferences.containsKey(PREF_ARPT_DIAGRAM_COLOR) ) {
+            this.preferences.setProperty(PREF_ARPT_DIAGRAM_COLOR, ARPT_DIAGRAM_COLOR_AUTO);
             this.unsaved_changes = true;
         }
 
