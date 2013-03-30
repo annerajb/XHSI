@@ -65,6 +65,8 @@ public class AirportChart extends MFDSubcomponent {
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
+    private static TaxiChart taxi = new TaxiChart();
+
 
     public AirportChart(ModelFactory model_factory, MFDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
@@ -82,15 +84,31 @@ public class AirportChart extends MFDSubcomponent {
 
     private void drawChart(Graphics2D g2) {
 
-        TaxiChart taxi = TaxiChart.get_instance();
-
         String nearest_arpt_str = this.aircraft.get_nearest_arpt();
-//nearest_arpt_str = "LOWI";
+//nearest_arpt_str = "EBGB";
+//Localizer dest_loc = null;
+//int hsi_source = this.avionics.hsi_source();
+//// try NAV1 first by default
+//int bank = 1;
+//if ( hsi_source == Avionics.HSI_SOURCE_NAV2 ) {
+//    // when NAV2 is our reference source, try that first
+//    bank = 2;
+//}
+//dest_loc = this.avionics.get_tuned_localizer(bank);
+//if ( dest_loc == null ) {
+//    // try the other one now
+//    // (3-bank) to switch from 1 to 2 or from 2 to 1
+//    dest_loc = this.avionics.get_tuned_localizer(3 - bank);
+//}
+//if ( dest_loc != null ) {
+//    // we are tuned to a Localizer, now fetch the airport that goes with it
+//    nearest_arpt_str = dest_loc.airport;
+//}
 
         boolean daylight;
-        if ( this.preferences.get_preference(XHSIPreferences.PREF_TAXICHART_COLOR).equals(XHSIPreferences.TAXICHART_COLOR_AUTO) ) {
+        if ( this.preferences.get_preference(XHSIPreferences.PREF_ARPT_DIAGRAM_COLOR).equals(XHSIPreferences.ARPT_DIAGRAM_COLOR_AUTO) ) {
             daylight = ! this.aircraft.cockpit_lights();
-        } else if ( this.preferences.get_preference(XHSIPreferences.PREF_TAXICHART_COLOR).equals(XHSIPreferences.TAXICHART_COLOR_DAY) ) {
+        } else if ( this.preferences.get_preference(XHSIPreferences.PREF_ARPT_DIAGRAM_COLOR).equals(XHSIPreferences.ARPT_DIAGRAM_COLOR_DAY) ) {
             daylight = true;
         } else {
             daylight = false;
@@ -114,7 +132,8 @@ public class AirportChart extends MFDSubcomponent {
 //logger.warning("I request "+nearest_arpt_str+" ("+nearest_arpt_str.length()+" char)");
                 // redundant: taxi.ready = false;
                 try {
-                    AptNavXP900DatTaxiChartBuilder cb = new AptNavXP900DatTaxiChartBuilder(this.preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR));
+                    AptNavXP900DatTaxiChartBuilder cb = new AptNavXP900DatTaxiChartBuilder(taxi, this.preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR));
+                    logger.warning("\nRequesting "+nearest_arpt_str);
                     cb.get_chart(nearest_arpt_str);
                 } catch (Exception e) {
                     logger.warning("\nProblem requesting TaxiChartBuilder "+nearest_arpt_str);

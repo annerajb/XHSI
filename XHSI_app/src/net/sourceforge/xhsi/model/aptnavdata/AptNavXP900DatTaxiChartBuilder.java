@@ -64,10 +64,11 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
 
-    public AptNavXP900DatTaxiChartBuilder(String pathname_to_aptnav) throws Exception {
+    public AptNavXP900DatTaxiChartBuilder(TaxiChart taxi, String pathname_to_aptnav) throws Exception {
         this.pathname_to_aptnav = pathname_to_aptnav;
 //        this.nor = NavigationObjectRepository.get_instance();
-        this.taxi_chart = TaxiChart.get_instance();
+        //this.taxi_chart = TaxiChart.get_instance();
+        this.taxi_chart = taxi;
 //        this.progressObserver = null;
     }
 

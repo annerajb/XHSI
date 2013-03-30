@@ -6,7 +6,7 @@
  * The menu options with associated global settings to override the sim settings
  *
  * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
- * Copyright (C) 2011  Marc Rogiers (marrog.123@gmail.com)
+ * Copyright (C) 2011-2013  Marc Rogiers (marrog.123@gmail.com)
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -80,7 +80,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 5 Alpha 19";
+    private static final String RELEASE = "2.0 Beta 5 Alpha 20";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }

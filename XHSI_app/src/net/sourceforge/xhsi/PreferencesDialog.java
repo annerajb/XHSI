@@ -147,8 +147,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
     private JComboBox mfd_mode_combobox;
     private String mfd_modes[] = { XHSIPreferences.MFD_MODE_SWITCHABLE, XHSIPreferences.MFD_MODE_TAXI_CHART, XHSIPreferences.MFD_MODE_ARPT_INFO , XHSIPreferences.MFD_MODE_FPLN, XHSIPreferences.MFD_MODE_LOWER_EICAS };
-    private JComboBox taxichart_color_combobox;
-    private String taxichart_colors[] = { XHSIPreferences.TAXICHART_COLOR_AUTO, XHSIPreferences.TAXICHART_COLOR_DAY, XHSIPreferences.TAXICHART_COLOR_NIGHT };
+    private JComboBox arpt_diagram_color_combobox;
+    private String arpt_diagram_colors[] = { XHSIPreferences.ARPT_DIAGRAM_COLOR_AUTO, XHSIPreferences.ARPT_DIAGRAM_COLOR_DAY, XHSIPreferences.ARPT_DIAGRAM_COLOR_NIGHT };
 
 
     private ArrayList<XHSIInstrument> flightdeck;
@@ -358,10 +358,10 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             }
         }
 
-        String taxichart = preferences.get_preference(XHSIPreferences.PREF_TAXICHART_COLOR);
-        for (int i=0; i<taxichart_colors.length; i++) {
-            if ( taxichart.equals( taxichart_colors[i] ) ) {
-                this.taxichart_color_combobox.setSelectedIndex(i);
+        String taxichart = preferences.get_preference(XHSIPreferences.PREF_ARPT_DIAGRAM_COLOR);
+        for (int i=0; i<arpt_diagram_colors.length; i++) {
+            if ( taxichart.equals( arpt_diagram_colors[i] ) ) {
+                this.arpt_diagram_color_combobox.setSelectedIndex(i);
             }
         }
 
@@ -1396,22 +1396,22 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         dialog_line++;
         dialog_line++;
 
-        // TaxiChart colors
+        // Airport Diagram colors
         cons.gridx = 0;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
-        mfd_options_panel.add(new JLabel("Taxi Chart day/night colors", JLabel.TRAILING), cons);
+        mfd_options_panel.add(new JLabel("Airport Diagram day/night colors", JLabel.TRAILING), cons);
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
-        this.taxichart_color_combobox = new JComboBox();
-        this.taxichart_color_combobox.addItem("Auto");
-        this.taxichart_color_combobox.addItem("Day");
-        this.taxichart_color_combobox.addItem("Night");
-        this.taxichart_color_combobox.addActionListener(this);
-        mfd_options_panel.add(this.taxichart_color_combobox, cons);
+        this.arpt_diagram_color_combobox = new JComboBox();
+        this.arpt_diagram_color_combobox.addItem("Auto");
+        this.arpt_diagram_color_combobox.addItem("Day");
+        this.arpt_diagram_color_combobox.addItem("Night");
+        this.arpt_diagram_color_combobox.addActionListener(this);
+        mfd_options_panel.add(this.arpt_diagram_color_combobox, cons);
         dialog_line++;
         dialog_line++;
 
@@ -1716,8 +1716,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             if ( ! mfd_modes[this.mfd_mode_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_MFD_MODE)) )
                 this.preferences.set_preference(XHSIPreferences.PREF_MFD_MODE, mfd_modes[this.mfd_mode_combobox.getSelectedIndex()]);
 
-            if ( ! taxichart_colors[this.taxichart_color_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_TAXICHART_COLOR)) )
-                this.preferences.set_preference(XHSIPreferences.PREF_TAXICHART_COLOR, taxichart_colors[this.taxichart_color_combobox.getSelectedIndex()]);
+            if ( ! arpt_diagram_colors[this.arpt_diagram_color_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_ARPT_DIAGRAM_COLOR)) )
+                this.preferences.set_preference(XHSIPreferences.PREF_ARPT_DIAGRAM_COLOR, arpt_diagram_colors[this.arpt_diagram_color_combobox.getSelectedIndex()]);
 
 
         }
