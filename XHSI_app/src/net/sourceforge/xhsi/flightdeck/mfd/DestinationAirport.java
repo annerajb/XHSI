@@ -207,7 +207,7 @@ public class DestinationAirport extends MFDSubcomponent {
 
                 g2.setFont(mfd_gc.font_xl);
                 arpt_x = mfd_gc.panel_rect.x + arpt_size/32;
-                g2.drawString(airport.name, arpt_x, arpt_y);
+                g2.drawString(airport.name, mfd_gc.panel_rect.x + mfd_gc.panel_rect.width/16, arpt_y);
 //                g2.drawLine(mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*1/16, arpt_y + mfd_gc.line_height_m/2, mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*15/16, arpt_y + mfd_gc.line_height_m/2);
                 g2.drawLine(arpt_x, arpt_y + mfd_gc.line_height_m/2, mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*31/32, arpt_y + mfd_gc.line_height_m/2);
                 chart_y = arpt_y + mfd_gc.line_height_m/2;
@@ -456,21 +456,49 @@ public class DestinationAirport extends MFDSubcomponent {
                         for (int i=0; i<taxi.airport.runways.size(); i++) {
                             Runway rwy0 = taxi.airport.runways.get(i);
                             if ( (rwy0.surface!=Runway.RWY_ASPHALT) && (rwy0.surface!=Runway.RWY_CONCRETE) ) {
+                                Color rwy_color;
                                 if (rwy0.surface==Runway.RWY_GRASS)
-                                    g2.setColor(mfd_gc.grass_color);
+                                    rwy_color = mfd_gc.grass_color;
                                 else if ( (rwy0.surface==Runway.RWY_DIRT) || (rwy0.surface==Runway.RWY_GRAVEL) || (rwy0.surface==Runway.RWY_DRY_LAKEBED) )
-                                    g2.setColor(mfd_gc.sand_color);
+                                    rwy_color = mfd_gc.sand_color;
                                 else if (rwy0.surface==Runway.RWY_SNOW)
-                                    g2.setColor(mfd_gc.snow_color);
+                                    rwy_color = mfd_gc.snow_color;
                                 else
-                                    g2.setColor(mfd_gc.hard_color.darker());
+                                    rwy_color = mfd_gc.hard_color.darker();
+                                g2.setColor(rwy_color);
                                 Stroke original_stroke = g2.getStroke();
                                 g2.setStroke(new BasicStroke(rwy0.width * chart_metric_scale, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-                                g2.drawLine( map_c.x + (int)((rwy0.lon1 - arpt_center_lon)*chart_lon_scale),
-                                    map_c.y - (int)((rwy0.lat1 - arpt_center_lat)*chart_lat_scale),
-                                    map_c.x + (int)((rwy0.lon2 - arpt_center_lon)*chart_lon_scale),
-                                    map_c.y - (int)((rwy0.lat2 - arpt_center_lat)*chart_lat_scale));
+                                int x1 = map_c.x + (int)((rwy0.lon1 - arpt_center_lon)*chart_lon_scale);
+                                int y1 = map_c.y - (int)((rwy0.lat1 - arpt_center_lat)*chart_lat_scale);
+                                int x2 = map_c.x + (int)((rwy0.lon2 - arpt_center_lon)*chart_lon_scale);
+                                int y2 = map_c.y - (int)((rwy0.lat2 - arpt_center_lat)*chart_lat_scale);
+                                g2.drawLine( x1, y1, x2, y2);
                                 g2.setStroke(original_stroke);
+                                //if ( avionics.efis_shows_arpt() ) {
+                                g2.setFont(mfd_gc.font_xs);
+                                //AffineTransform current_at = g2.getTransform();
+                                //g2.rotate( Math.toRadians( this.map_up ), x1, y1 );
+                                int h0 = mfd_gc.line_height_xs;
+                                int w1 = mfd_gc.get_text_width(g2, mfd_gc.font_xs, rwy0.rwy_num1);
+                                x1 -= w1 / 2;
+                                y1 += h0 / 2;
+                                g2.setColor(paper);
+                                g2.fillRect(x1 - 4, y1 - h0 - 3, w1 + 8, h0 + 6);
+                                g2.setColor(rwy_color);
+                                g2.drawRect(x1 - 4, y1 - h0 - 3, w1 + 8, h0 + 6);
+                                g2.drawString(rwy0.rwy_num1, x1, y1 - 2);
+                                //g2.setTransform(current_at);
+                                //g2.rotate( Math.toRadians( this.map_up ), x2, y2 );
+                                int w2 = mfd_gc.get_text_width(g2, mfd_gc.font_xs, rwy0.rwy_num2);
+                                x2 -= w2 / 2;
+                                y2 += h0 / 2;
+                                g2.setColor(paper);
+                                g2.fillRect(x2 - 4, y2 - h0 - 3, w2 + 8, h0 + 6);
+                                g2.setColor(rwy_color);
+                                g2.drawRect(x2 - 4, y2 - h0 - 3, w2 + 8, h0 + 6);
+                                g2.drawString(rwy0.rwy_num2, x2, y2 - 2);
+                                //g2.setTransform(current_at);
+                                //}
                             }
                         }
 
@@ -481,17 +509,45 @@ public class DestinationAirport extends MFDSubcomponent {
                                 g2.setColor(hard_rwy);
                                 Stroke original_stroke = g2.getStroke();
                                 g2.setStroke(new BasicStroke(rwy0.width * chart_metric_scale, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-                                g2.drawLine( map_c.x + (int)((rwy0.lon1 - arpt_center_lon)*chart_lon_scale),
-                                    map_c.y - (int)((rwy0.lat1 - arpt_center_lat)*chart_lat_scale),
-                                    map_c.x + (int)((rwy0.lon2 - arpt_center_lon)*chart_lon_scale),
-                                    map_c.y - (int)((rwy0.lat2 - arpt_center_lat)*chart_lat_scale));
+                                int x1 = map_c.x + (int)((rwy0.lon1 - arpt_center_lon)*chart_lon_scale);
+                                int y1 = map_c.y - (int)((rwy0.lat1 - arpt_center_lat)*chart_lat_scale);
+                                int x2 = map_c.x + (int)((rwy0.lon2 - arpt_center_lon)*chart_lon_scale);
+                                int y2 = map_c.y - (int)((rwy0.lat2 - arpt_center_lat)*chart_lat_scale);
+                                g2.drawLine( x1, y1, x2, y2);
                                 g2.setStroke(original_stroke);
+                                //if ( avionics.efis_shows_arpt() ) {
+                                g2.setFont(mfd_gc.font_xs);
+                                //AffineTransform current_at = g2.getTransform();
+                                //g2.rotate( Math.toRadians( this.map_up ), x1, y1 );
+                                int h0 = mfd_gc.line_height_xs;
+                                int w1 = mfd_gc.get_text_width(g2, mfd_gc.font_xs, rwy0.rwy_num1);
+                                x1 -= w1 / 2;
+                                y1 += h0 / 2;
+                                g2.setColor(paper);
+                                g2.fillRect(x1 - 4, y1 - h0 - 3, w1 + 8, h0 + 6);
+                                g2.setColor(hard_rwy);
+                                g2.drawRect(x1 - 4, y1 - h0 - 3, w1 + 8, h0 + 6);
+                                g2.drawString(rwy0.rwy_num1, x1, y1 - 2);
+                                //g2.setTransform(current_at);
+                                //g2.rotate( Math.toRadians( this.map_up ), x2, y2 );
+                                int w2 = mfd_gc.get_text_width(g2, mfd_gc.font_xs, rwy0.rwy_num2);
+                                x2 -= w2 / 2;
+                                y2 += h0 / 2;
+                                g2.setColor(paper);
+                                g2.fillRect(x2 - 4, y2 - h0 - 3, w2 + 8, h0 + 6);
+                                g2.setColor(hard_rwy);
+                                g2.drawRect(x2 - 4, y2 - h0 - 3, w2 + 8, h0 + 6);
+                                g2.drawString(rwy0.rwy_num2, x2, y2 - 2);
+                                //g2.setTransform(current_at);
+                                //}
                             }
                         }
 
                     }
 
                     // moving aircraft symbol
+                    Shape original_clipshape = g2.getClip();
+                    g2.clipRect(chart_x, chart_y, chart_w, chart_h);
                     int px = map_c.x + (int)((acf_lon - arpt_center_lon)*chart_lon_scale);
                     int py = map_c.y - (int)((acf_lat - arpt_center_lat)*chart_lat_scale);
                     float ps = 1.5f * mfd_gc.grow_scaling_factor;
@@ -546,6 +602,7 @@ public class DestinationAirport extends MFDSubcomponent {
                     g2.setColor(Color.MAGENTA.darker());
                     g2.drawPolygon(plan_x, plan_y, 20);
                     g2.setTransform(original_at);
+                    g2.setClip(original_clipshape);
                 }
 
             }

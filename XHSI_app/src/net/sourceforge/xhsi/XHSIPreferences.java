@@ -89,6 +89,7 @@ public class XHSIPreferences {
     public static final String PREF_PLAN_AIRCRAFT_CENTER = "plan.aircraft.center";
     public static final String PREF_DRAW_INSIDE_ROSE = "draw.inside.rose";
     public static final String PREF_COLORED_HSI_COURSE = "pfd.colored.hsi.course";
+    public static final String PREF_DRAW_BEZIER_PAVEMENTS = "draw.bezier.pavements";
 
     // PFD options
     public static final String PREF_HORIZON_STYLE = "horizon.style";
@@ -590,6 +591,14 @@ public class XHSIPreferences {
         return get_preference(PREF_COLORED_HSI_COURSE).equalsIgnoreCase("true");
     }
 
+    /**
+     * @return            - draw the pavements using bezier curves
+     *
+     */
+    public boolean get_draw_bezier_pavements() {
+        return get_preference(PREF_DRAW_BEZIER_PAVEMENTS).equalsIgnoreCase("true");
+    }
+
 
     // PFD
 
@@ -1006,6 +1015,11 @@ public class XHSIPreferences {
 
         if ( ! this.preferences.containsKey(PREF_COLORED_HSI_COURSE) ) {
             this.preferences.setProperty(PREF_COLORED_HSI_COURSE, "true");
+            this.unsaved_changes = true;
+        }
+
+        if ( ! this.preferences.containsKey(PREF_DRAW_BEZIER_PAVEMENTS) ) {
+            this.preferences.setProperty(PREF_DRAW_BEZIER_PAVEMENTS, "false");
             this.unsaved_changes = true;
         }
 
