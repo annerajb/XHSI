@@ -127,17 +127,6 @@ PLUGIN_API int XPluginStart(
 
 PLUGIN_API int XPluginEnable(void) {
 
-//char nav_id_bytes[10];
-//strcpy(nav_id_bytes, "    ");
-//XPLMGetDatab(nav1_id, nav_id_bytes, 0, 4);
-//XPLMDebugString("XHSI: NAV1_ID = ");
-//XPLMDebugString(nav_id_bytes);
-//XPLMDebugString(" len=");
-//int i;
-//i = strlen(nav_id_bytes);
-//sprintf(nav_id_bytes, "%d", i);
-//XPLMDebugString(nav_id_bytes);
-//XPLMDebugString("\n");
 	xhsi_send_enabled = 1;
 	xhsi_plugin_enabled = 1;
 
@@ -159,65 +148,65 @@ PLUGIN_API int XPluginEnable(void) {
 	// register flight loop callbacks
 	XPLMRegisterFlightLoopCallback(
 							sendADCCallback,
-							adc_data_delay,
+							-1.0f,
 							NULL);
 
 	XPLMRegisterFlightLoopCallback(
 							sendAvionicsCallback,
-							avionics_data_delay,
+							-1.0f,
 							NULL);
 
 	XPLMRegisterFlightLoopCallback(
 							sendStaticCallback,
-							static_data_delay,
+							-1.0f,
 							NULL);
 
 	XPLMRegisterFlightLoopCallback(
 							sendEnginesCallback,
-							engines_data_delay,
+							-1.0f,
 							NULL);
 
 	XPLMRegisterFlightLoopCallback(
 							sendFmsCallback,
-							fms_data_delay,
+							-1.0f,
 							NULL);
 
 	XPLMRegisterFlightLoopCallback(
 							sendTcasCallback,
-							tcas_data_delay,
+							-1.0f,
 							NULL);
 
 	XPLMRegisterFlightLoopCallback(
 							receiveCallback,
-							recv_delay * 100.0f,
+							-100.0f,
 							NULL);
 
 	// initialize custom X-Plane datarefs
 	XPLMRegisterFlightLoopCallback(
 							initPilotCallback,
-							1.5f,
+							-1.0f,
 							NULL);
 	XPLMRegisterFlightLoopCallback(
 							initCopilotCallback,
-							2.5f,
+							-1.0f,
 							NULL);
 
     // UFMC
     XPLMRegisterFlightLoopCallback(
 							checkUFMCCallback,
-							5.0f,
+							-1.0f,
 							NULL);
 
     // X737
     XPLMRegisterFlightLoopCallback(
 							checkX737Callback,
-							5.0f,
+							-1.0f,
 							NULL);
 
     // CL30
     XPLMRegisterFlightLoopCallback(
 							checkCL30Callback,
-							5.0f,
+							-1.0f,
 							NULL);
 
     XPLMDebugString("XHSI: flightloop callbacks registered\n");

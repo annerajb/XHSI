@@ -43,8 +43,8 @@
 #define MODE_CENTERED 0
 #define MODE_EXPANDED 1
 
-//#define CLOSEUP_OFF 0
-//#define CLOSEUP_ON 1
+//#define ZOOMIN_OFF 0
+//#define ZOOMIN_ON 1
 
 #define RANGE_10 0
 #define RANGE_20 1
@@ -102,6 +102,25 @@ XPLMCommandRef range_down;
 XPLMCommandRef range_up;
 XPLMCommandRef range_cycle;
 XPLMCommandRef range_shuttle;
+
+XPLMCommandRef ext_range_0_10;
+XPLMCommandRef ext_range_0_20;
+XPLMCommandRef ext_range_0_40;
+XPLMCommandRef ext_range_0_80;
+XPLMCommandRef ext_range_1_60;
+XPLMCommandRef ext_range_3_20;
+XPLMCommandRef ext_range_6_40;
+XPLMCommandRef ext_range_010;
+XPLMCommandRef ext_range_020;
+XPLMCommandRef ext_range_040;
+XPLMCommandRef ext_range_080;
+XPLMCommandRef ext_range_160;
+XPLMCommandRef ext_range_320;
+XPLMCommandRef ext_range_640;
+XPLMCommandRef ext_range_down;
+XPLMCommandRef ext_range_up;
+XPLMCommandRef ext_range_cycle;
+XPLMCommandRef ext_range_shuttle;
 
 XPLMCommandRef zoomin_on;
 XPLMCommandRef zoomin_off;
@@ -356,6 +375,100 @@ XPLMCommandCallback_f range_handler(XPLMCommandRef inCommand, XPLMCommandPhase i
             }
         }
         XPLMSetDatai(efis_map_range_selector, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+// ext range
+XPLMCommandCallback_f ext_range_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    static int shuttle_up = 1;
+
+    if (inPhase == xplm_CommandBegin)
+    {
+        intptr_t i = (intptr_t)inRefcon;
+        intptr_t z = XPLMGetDatai(efis_pilot_map_zoomin);
+        if ( i == DOWN )
+        {
+            i = XPLMGetDatai(efis_map_range_selector) - 1;
+            if (i<0)
+            {
+                if ( z )
+                {
+                    i = 0;
+                }
+                else
+                {
+                    i = 6;
+                    z = 1;
+                }
+            }
+        }
+        else if ( i == UP )
+        {
+            i = XPLMGetDatai(efis_map_range_selector) + 1;
+            if (i>6)
+            {
+                if ( ! z )
+                {
+                    i = 6;
+                }
+                else
+                {
+                    i = 0;
+                    z = 0;
+                }
+            }
+        }
+        else if ( i == CYCLE )
+        {
+            i = XPLMGetDatai(efis_map_range_selector) + 1;
+            if (i>6)
+            {
+                i = 0;
+                z = !z;
+            }
+        }
+        else if ( i == SHUTTLE )
+        {
+            i = XPLMGetDatai(efis_map_range_selector) + (shuttle_up ? +1 : -1);
+            if (i>6)
+            {
+                if ( z )
+                {
+                    i = 0;
+                    z = ! z;
+                }
+                else
+                {
+                    i = 5;
+                    shuttle_up = 0;
+                }
+            }
+            else if (i<0)
+            {
+                if ( z )
+                {
+                    i = 1;
+                    shuttle_up = 1;
+                }
+                else
+                {
+                    i = 6;
+                    z = ! z;;
+                }
+            }
+        }
+        if (i>=1100)
+        {
+            z = 1;
+        }
+        else if (i>=1000)
+        {
+            z = 0;
+        }
+        XPLMSetDatai(efis_map_range_selector, i % 10);
+        XPLMSetDatai(efis_pilot_map_zoomin, z);
     }
     return (XPLMCommandCallback_f)1;
 }
@@ -1328,6 +1441,44 @@ void registerCommands(void) {
     range_shuttle = XPLMCreateCommand("xhsi/efis/range_shuttle", "Shuttle back and forth through EFIS map ranges");
     XPLMRegisterCommandHandler(range_shuttle, (XPLMCommandCallback_f)range_handler, 1, (void *) SHUTTLE);
 
+    // ext range
+    ext_range_0_10 = XPLMCreateCommand("xhsi/efis/ext_range_0.10", "EFIS map range 0.10");
+    XPLMRegisterCommandHandler(ext_range_0_10, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_10 + 1100);
+    ext_range_0_20 = XPLMCreateCommand("xhsi/efis/ext_range_0.20", "EFIS map range 0.20");
+    XPLMRegisterCommandHandler(ext_range_0_20, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_20 + 1100);
+    ext_range_0_40 = XPLMCreateCommand("xhsi/efis/ext_range_0.40", "EFIS map range 0.40");
+    XPLMRegisterCommandHandler(ext_range_0_40, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_40 + 1100);
+    ext_range_0_80 = XPLMCreateCommand("xhsi/efis/ext_range_0.80", "EFIS map range 0.80");
+    XPLMRegisterCommandHandler(ext_range_0_80, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_80 + 1100);
+    ext_range_1_60 = XPLMCreateCommand("xhsi/efis/ext_range_1.60", "EFIS map range 1.60");
+    XPLMRegisterCommandHandler(ext_range_1_60, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_160 + 1100);
+    ext_range_3_20 = XPLMCreateCommand("xhsi/efis/ext_range_3.20", "EFIS map range 3.20");
+    XPLMRegisterCommandHandler(ext_range_3_20, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_320 + 1100);
+    ext_range_6_40 = XPLMCreateCommand("xhsi/efis/ext_range_6.40", "EFIS map range 6.40");
+    XPLMRegisterCommandHandler(ext_range_6_40, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_640 + 1100);
+    ext_range_010 = XPLMCreateCommand("xhsi/efis/ext_range_010", "EFIS map range 10");
+    XPLMRegisterCommandHandler(ext_range_010, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_10 + 1000);
+    ext_range_020 = XPLMCreateCommand("xhsi/efis/ext_range_020", "EFIS map range 20");
+    XPLMRegisterCommandHandler(ext_range_020, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_20 + 1000);
+    ext_range_040 = XPLMCreateCommand("xhsi/efis/ext_range_040", "EFIS map range 40");
+    XPLMRegisterCommandHandler(ext_range_040, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_40 + 1000);
+    ext_range_080 = XPLMCreateCommand("xhsi/efis/ext_range_080", "EFIS map range 80");
+    XPLMRegisterCommandHandler(ext_range_080, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_80 + 1000);
+    ext_range_160 = XPLMCreateCommand("xhsi/efis/ext_range_160", "EFIS map range 160");
+    XPLMRegisterCommandHandler(ext_range_160, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_160 + 1000);
+    ext_range_320 = XPLMCreateCommand("xhsi/efis/ext_range_320", "EFIS map range 320");
+    XPLMRegisterCommandHandler(ext_range_320, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_320 + 1000);
+    ext_range_640 = XPLMCreateCommand("xhsi/efis/ext_range_640", "EFIS map range 640");
+    XPLMRegisterCommandHandler(ext_range_640, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_640 + 1000);
+    ext_range_down = XPLMCreateCommand("xhsi/efis/ext_range_down", "Decrease extended EFIS map range");
+    XPLMRegisterCommandHandler(ext_range_down, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) DOWN);
+    ext_range_up = XPLMCreateCommand("xhsi/efis/ext_range_up", "Increase extended EFIS map range");
+    XPLMRegisterCommandHandler(ext_range_up, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) UP);
+    ext_range_cycle = XPLMCreateCommand("xhsi/efis/ext_range_cycle", "Cycle through EFIS map ranges");
+    XPLMRegisterCommandHandler(ext_range_cycle, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) CYCLE);
+    ext_range_shuttle = XPLMCreateCommand("xhsi/efis/ext_range_shuttle", "Shuttle back and forth through EFIS map ranges");
+    XPLMRegisterCommandHandler(ext_range_shuttle, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) SHUTTLE);
+
     // radio1
     radio1_adf = XPLMCreateCommand("xhsi/efis/radio1_adf", "EFIS radio1 ADF");
     XPLMRegisterCommandHandler(radio1_adf, (XPLMCommandCallback_f)radio1_handler, 1, (void *) RADIO_ADF);
@@ -1728,6 +1879,26 @@ void unregisterCommands(void) {
     XPLMUnregisterCommandHandler(range_up, (XPLMCommandCallback_f)range_handler, 1, (void *) UP);
     XPLMUnregisterCommandHandler(range_cycle, (XPLMCommandCallback_f)range_handler, 1, (void *) CYCLE);
     XPLMUnregisterCommandHandler(range_shuttle, (XPLMCommandCallback_f)range_handler, 1, (void *) SHUTTLE);
+
+    // ext range
+    XPLMUnregisterCommandHandler(ext_range_0_10, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_10 + 1100);
+    XPLMUnregisterCommandHandler(ext_range_0_20, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_20 + 1100);
+    XPLMUnregisterCommandHandler(ext_range_0_40, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_40 + 1100);
+    XPLMUnregisterCommandHandler(ext_range_0_80, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_80 + 1100);
+    XPLMUnregisterCommandHandler(ext_range_1_60, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_160 + 1100);
+    XPLMUnregisterCommandHandler(ext_range_3_20, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_320 + 1100);
+    XPLMUnregisterCommandHandler(ext_range_6_40, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_640 + 1100);
+    XPLMUnregisterCommandHandler(ext_range_010, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_10 + 1000);
+    XPLMUnregisterCommandHandler(ext_range_020, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_20 + 1000);
+    XPLMUnregisterCommandHandler(ext_range_040, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_40 + 1000);
+    XPLMUnregisterCommandHandler(ext_range_080, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_80 + 1000);
+    XPLMUnregisterCommandHandler(ext_range_160, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_160 + 1000);
+    XPLMUnregisterCommandHandler(ext_range_320, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_320 + 1000);
+    XPLMUnregisterCommandHandler(ext_range_640, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) RANGE_640 + 1000);
+    XPLMUnregisterCommandHandler(ext_range_down, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) DOWN);
+    XPLMUnregisterCommandHandler(ext_range_up, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) UP);
+    XPLMUnregisterCommandHandler(ext_range_cycle, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) CYCLE);
+    XPLMUnregisterCommandHandler(ext_range_shuttle, (XPLMCommandCallback_f)ext_range_handler, 1, (void *) SHUTTLE);
 
     // mode
     XPLMUnregisterCommandHandler(mode_app, (XPLMCommandCallback_f)mode_handler, 1, (void *) MODE_APP);

@@ -40,6 +40,11 @@
 #define GET_ERRNO errno
 #endif
 
+#if IBM
+#if !defined(SIO_UDP_CONNRESET)
+#define SIO_UDP_CONNRESET _WSAIOW(IOC_VENDOR,12)
+#endif
+#endif
 
 
 // define global vars
@@ -191,18 +196,6 @@ int bindSocket() {
 
 		XPLMDebugString("XHSI: binding socket\n");
 
-//        // doesn't seem to help...
-//        #if IBM
-//            // Set the re-use address option
-//            int optval = 1;
-//            int optresult = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR,
-//                         (char *) &optval, sizeof (optval));
-//            if (optresult == SOCKET_ERROR) {
-//                XPLMDebugString("XHSI: setsockopt for SO_REUSEADDR failed!\n");
-//                //WSAGetLastError();
-//            }
-//        #endif
-
 		if (bind(sockfd, (struct sockaddr*)&recv_sockaddr, sizeof(struct sockaddr_in)) == -1) {
 			XPLMDebugString("XHSI: caught error while binding socket (");
 			XPLMDebugString((char * const) strerror(GET_ERRNO));
@@ -234,6 +227,13 @@ int nonBlocking() {
         XPLMDebugString("XHSI: failed to set socket non-blocking!\n");
         return 0;
     }
+    // see http://support.microsoft.com/?kbid=263823
+    DWORD dwBytesReturned = 0;
+    BOOL bNewBehavior = FALSE;
+    if ( WSAIoctl(sockfd, SIO_UDP_CONNRESET, &bNewBehavior, sizeof(bNewBehavior), 0, 0, &dwBytesReturned, 0, 0) == SOCKET_ERROR )
+    {
+        XPLMDebugString("XHSI: Unable to ignore ICMP_Unreachable!\n");
+    }
 
 #else
 
@@ -250,33 +250,4 @@ int nonBlocking() {
     return 1;
 
 }
-
-
-//int pollReceive() {
-//
-//    // int             res;
-//    fd_set          sready;
-//    struct timeval  nowait;
-//
-//    FD_ZERO(&sready);
-//    FD_SET((unsigned int)sockfd, &sready);
-//    nowait.tv_sec = 0;    // specify how many seconds you would like to wait for timeout
-//    nowait.tv_usec = 0;   // how many microseconds? If both is zero, select will return immediately
-//
-//    // res = select(etc...
-//    select(sockfd+1, &sready, NULL, NULL, &nowait);
-//    if( FD_ISSET(sockfd, &sready) )
-//        return 1;
-//    else
-//        return 0;
-//}
-
-
-//void resetSocket() {
-//    closeSocket();
-//    openSocket();
-//    setAddresses();
-//    bindSocket();
-//    nonBlocking();
-//}
 
