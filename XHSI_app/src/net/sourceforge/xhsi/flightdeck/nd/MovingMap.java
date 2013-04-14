@@ -270,8 +270,9 @@ public class MovingMap extends NDSubcomponent {
                 float acf_lat = this.aircraft.lat();
                 float acf_lon = this.aircraft.lon();
 
-                if ( this.avionics.map_mode() == Avionics.EFIS_MAP_EXPANDED ) {
-                }
+// huh?
+//                if ( this.avionics.map_mode() == Avionics.EFIS_MAP_EXPANDED ) {
+//                }
 
                 if ( taxi.border != null ) {
 
@@ -294,18 +295,48 @@ public class MovingMap extends NDSubcomponent {
                         // Bezier
 
                         Path2D taxishape = new Path2D.Float();
+                        TaxiChart.Node last_node = null;
                         for (int h=0; h<taxi.border.nodes.size(); h++) {
                             TaxiChart.Node node1 = taxi.border.nodes.get(h);
                             if ( h == 0 ) {
-                                taxishape.moveTo(map_c.x + ((node1.lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.lat - acf_lat)*chart_lat_scale));
+                                taxishape.moveTo(
+                                        map_c.x + ((node1.lon - acf_lon)*chart_lon_scale),
+                                        map_c.y - ((node1.lat - acf_lat)*chart_lat_scale)
+                                    );
+                                last_node = node1;
                             } else {
-                                if ( node1.bezier_node ) {
-                                    //taxishape.quadTo(map_c.x + ((node1.bz_lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.bz_lat - acf_lat)*chart_lat_scale), map_c.x + ((node1.lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.lat - acf_lat)*chart_lat_scale));
-                                    taxishape.lineTo(map_c.x + ((node1.bz_lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.bz_lat - acf_lat)*chart_lat_scale));
-                                    taxishape.lineTo(map_c.x + ((node1.lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.lat - acf_lat)*chart_lat_scale));
-                                } else {
-                                    taxishape.lineTo(map_c.x + ((node1.lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.lat - acf_lat)*chart_lat_scale));
+
+                                if ( ( node1.lat != last_node.lat ) || ( node1.lon != last_node.lon ) ) {
+
+                                    // this node is different from the previous, so we can draw ... something
+
+                                    if ( node1.cubic_bezier ) {
+                                        taxishape.curveTo(
+                                                map_c.x + ((node1.quad_lon - acf_lon)*chart_lon_scale),
+                                                map_c.y - ((node1.quad_lat - acf_lat)*chart_lat_scale),
+                                                map_c.x + ((node1.cubic_lon - acf_lon)*chart_lon_scale),
+                                                map_c.y - ((node1.cubic_lat - acf_lat)*chart_lat_scale),
+                                                map_c.x + ((node1.lon - acf_lon)*chart_lon_scale),
+                                                map_c.y - ((node1.lat - acf_lat)*chart_lat_scale)
+                                            );
+                                    } else if ( node1.quad_bezier ) {
+                                        taxishape.quadTo(
+                                                map_c.x + ((node1.quad_lon - acf_lon)*chart_lon_scale),
+                                                map_c.y - ((node1.quad_lat - acf_lat)*chart_lat_scale),
+                                                map_c.x + ((node1.lon - acf_lon)*chart_lon_scale),
+                                                map_c.y - ((node1.lat - acf_lat)*chart_lat_scale)
+                                            );
+                                    } else {
+                                        taxishape.lineTo(
+                                                map_c.x + ((node1.lon - acf_lon)*chart_lon_scale),
+                                                map_c.y - ((node1.lat - acf_lat)*chart_lat_scale)
+                                            );
+                                    }
+
+                                    last_node = node1;
+
                                 }
+
                             }
                         }
                         taxishape.closePath();
@@ -320,17 +351,74 @@ public class MovingMap extends NDSubcomponent {
                         for (int k=0; k<taxi.border.holes.size(); k++) {
 
                             TaxiChart.Pavement hole1 = taxi.border.holes.get(k);
-                            int poly_x[] = new int[hole1.nodes.size()];
-                            int poly_y[] = new int[hole1.nodes.size()];
-                            for (int l=0; l<hole1.nodes.size(); l++) {
-                                TaxiChart.Node node1 = hole1.nodes.get(l);
-                                poly_x[l] = map_c.x + (int)((node1.lon - acf_lon)*chart_lon_scale);
-                                poly_y[l] = map_c.y - (int)((node1.lat - acf_lat)*chart_lat_scale);
-                            }
-                            g2.setColor(paper);
-                            g2.fillPolygon(poly_x, poly_y, hole1.nodes.size());
-                            g2.drawPolygon(poly_x, poly_y, hole1.nodes.size());
+                            if ( ! this.preferences.get_draw_bezier_pavements() ) {
 
+                                int poly_x[] = new int[hole1.nodes.size()];
+                                int poly_y[] = new int[hole1.nodes.size()];
+                                for (int l=0; l<hole1.nodes.size(); l++) {
+                                    TaxiChart.Node node1 = hole1.nodes.get(l);
+                                    poly_x[l] = map_c.x + (int)((node1.lon - acf_lon)*chart_lon_scale);
+                                    poly_y[l] = map_c.y - (int)((node1.lat - acf_lat)*chart_lat_scale);
+                                }
+                                g2.setColor(paper);
+                                g2.fillPolygon(poly_x, poly_y, hole1.nodes.size());
+                                g2.drawPolygon(poly_x, poly_y, hole1.nodes.size());
+
+                            } else {
+
+                                // Bezier
+                                Path2D taxishape = new Path2D.Float();
+                                TaxiChart.Node last_node = null;
+                                for (int h=0; h<hole1.nodes.size(); h++) {
+
+                                    TaxiChart.Node node1 = hole1.nodes.get(h);
+                                    if ( h == 0 ) {
+                                        taxishape.moveTo(
+                                                map_c.x + ((node1.lon - acf_lon)*chart_lon_scale),
+                                                map_c.y - ((node1.lat - acf_lat)*chart_lat_scale)
+                                            );
+                                        last_node = node1;
+                                    } else {
+
+                                        if ( ( node1.lat != last_node.lat ) || ( node1.lon != last_node.lon ) ) {
+
+                                            // this node is different from the previous, so we can draw ... something
+
+                                            if ( node1.cubic_bezier ) {
+                                                taxishape.curveTo(
+                                                        map_c.x + ((node1.quad_lon - acf_lon)*chart_lon_scale),
+                                                        map_c.y - ((node1.quad_lat - acf_lat)*chart_lat_scale),
+                                                        map_c.x + ((node1.cubic_lon - acf_lon)*chart_lon_scale),
+                                                        map_c.y - ((node1.cubic_lat - acf_lat)*chart_lat_scale),
+                                                        map_c.x + ((node1.lon - acf_lon)*chart_lon_scale),
+                                                        map_c.y - ((node1.lat - acf_lat)*chart_lat_scale)
+                                                    );
+                                            } else if ( node1.quad_bezier ) {
+                                                taxishape.quadTo(
+                                                        map_c.x + ((node1.quad_lon - acf_lon)*chart_lon_scale),
+                                                        map_c.y - ((node1.quad_lat - acf_lat)*chart_lat_scale),
+                                                        map_c.x + ((node1.lon - acf_lon)*chart_lon_scale),
+                                                        map_c.y - ((node1.lat - acf_lat)*chart_lat_scale)
+                                                    );
+                                            } else {
+                                                taxishape.lineTo(
+                                                        map_c.x + ((node1.lon - acf_lon)*chart_lon_scale),
+                                                        map_c.y - ((node1.lat - acf_lat)*chart_lat_scale)
+                                                    );
+                                            }
+
+                                            last_node = node1;
+
+                                        }
+
+                                    }
+                                }
+                                taxishape.closePath();
+                                g2.setColor(paper);
+                                g2.fill(taxishape);
+                                g2.draw(taxishape);
+
+                            }
                         } // list of holes
 
                     } // ! empty list of holes
@@ -361,58 +449,56 @@ public class MovingMap extends NDSubcomponent {
 
                             // Bezier
                             Path2D taxishape = new Path2D.Float();
-                            float first_x = 0;
-                            float first_y = 0;
-                            boolean bz_next = false;
-                            float bz_x = 0;
-                            float bz_y = 0;
+                            TaxiChart.Node last_node = null;
                             for (int h=0; h<ramp1.nodes.size(); h++) {
+
                                 TaxiChart.Node node1 = ramp1.nodes.get(h);
                                 if ( h == 0 ) {
-                                    first_x = map_c.x + ((node1.lon - acf_lon)*chart_lon_scale);
-                                    first_y = map_c.y - ((node1.lat - acf_lat)*chart_lat_scale);
-                                    g2.setColor(nd_gc.warning_color);
-                                    if (ramp1.name.equals("Bus Road")) g2.setColor(Color.WHITE);
-                                    g2.setFont(nd_gc.font_large);
-                                    g2.drawString(Integer.toString(h), first_x+6, first_y);
-                                    taxishape.moveTo(first_x, first_y);
+                                    taxishape.moveTo(
+                                            map_c.x + ((node1.lon - acf_lon)*chart_lon_scale),
+                                            map_c.y - ((node1.lat - acf_lat)*chart_lat_scale)
+                                        );
+                                    last_node = node1;
                                 } else {
-                                    if ( node1.bezier_node ) {
-                                        bz_next = true;
-                                        bz_x = map_c.x + ((node1.bz_lon - acf_lon)*chart_lon_scale);
-                                        bz_y = map_c.y - ((node1.bz_lat - acf_lat)*chart_lat_scale);
-                                        //taxishape.quadTo(map_c.x + ((node1.bz_lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.bz_lat - acf_lat)*chart_lat_scale), map_c.x + ((node1.lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.lat - acf_lat)*chart_lat_scale));
-                                        //taxishape.lineTo(map_c.x + ((node1.lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.lat - acf_lat)*chart_lat_scale));
-                                        //taxishape.lineTo(map_c.x + ((node1.bz_lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.bz_lat - acf_lat)*chart_lat_scale));
-                                        g2.setColor(nd_gc.warning_color);
-                                        if (ramp1.name.equals("Bus Road")) g2.setColor(Color.WHITE);
-                                        g2.drawOval(map_c.x + (int)((node1.bz_lon - acf_lon)*chart_lon_scale) - 4, map_c.y - (int)((node1.bz_lat - acf_lat)*chart_lat_scale) - 4, 8, 8);
-                                        g2.drawString(Integer.toString(h), bz_x+6+2*h, bz_y);
-                                        g2.drawRect(map_c.x + (int)((node1.lon - acf_lon)*chart_lon_scale) - 6, map_c.y - (int)((node1.lat - acf_lat)*chart_lat_scale) - 6, 12, 12);
-                                    } else {
-                                        if ( bz_next ) {
-                                            taxishape.quadTo(bz_x, bz_y, map_c.x + ((node1.lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.lat - acf_lat)*chart_lat_scale));
-                                            bz_next = false;
+
+                                    if ( ( node1.lat != last_node.lat ) || ( node1.lon != last_node.lon ) ) {
+
+                                        // this node is different from the previous, so we can draw ... something
+
+                                        if ( node1.cubic_bezier ) {
+                                            taxishape.curveTo(
+                                                    map_c.x + ((node1.quad_lon - acf_lon)*chart_lon_scale),
+                                                    map_c.y - ((node1.quad_lat - acf_lat)*chart_lat_scale),
+                                                    map_c.x + ((node1.cubic_lon - acf_lon)*chart_lon_scale),
+                                                    map_c.y - ((node1.cubic_lat - acf_lat)*chart_lat_scale),
+                                                    map_c.x + ((node1.lon - acf_lon)*chart_lon_scale),
+                                                    map_c.y - ((node1.lat - acf_lat)*chart_lat_scale)
+                                                );
+                                        } else if ( node1.quad_bezier ) {
+                                            taxishape.quadTo(
+                                                    map_c.x + ((node1.quad_lon - acf_lon)*chart_lon_scale),
+                                                    map_c.y - ((node1.quad_lat - acf_lat)*chart_lat_scale),
+                                                    map_c.x + ((node1.lon - acf_lon)*chart_lon_scale),
+                                                    map_c.y - ((node1.lat - acf_lat)*chart_lat_scale)
+                                                );
                                         } else {
-                                            taxishape.lineTo(map_c.x + ((node1.lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.lat - acf_lat)*chart_lat_scale));
+                                            taxishape.lineTo(
+                                                    map_c.x + ((node1.lon - acf_lon)*chart_lon_scale),
+                                                    map_c.y - ((node1.lat - acf_lat)*chart_lat_scale)
+                                                );
                                         }
-                                        g2.setColor(nd_gc.warning_color);
-                                        if (ramp1.name.equals("Bus Road")) g2.setColor(Color.WHITE);
-                                        g2.drawLine(map_c.x + (int)((node1.lon - acf_lon)*chart_lon_scale) - 4, map_c.y - (int)((node1.lat - acf_lat)*chart_lat_scale) - 4, map_c.x + (int)((node1.lon - acf_lon)*chart_lon_scale) + 4, map_c.y - (int)((node1.lat - acf_lat)*chart_lat_scale) + 4);
-                                        g2.drawLine(map_c.x + (int)((node1.lon - acf_lon)*chart_lon_scale) + 4, map_c.y - (int)((node1.lat - acf_lat)*chart_lat_scale) - 4, map_c.x + (int)((node1.lon - acf_lon)*chart_lon_scale) - 4, map_c.y - (int)((node1.lat - acf_lat)*chart_lat_scale) + 4);
+
+                                        // remember this node
+                                        last_node = node1;
+
                                     }
-                                    g2.setColor(nd_gc.warning_color);
-                                    if (ramp1.name.equals("Bus Road")) g2.setColor(Color.WHITE);
-                                    g2.drawString(Integer.toString(h), map_c.x + (int)((node1.lon - acf_lon)*chart_lon_scale)+6+2*h, map_c.y - (int)((node1.lat - acf_lat)*chart_lat_scale));
+
                                 }
-                            }
-                            if ( bz_next ) {
-                                taxishape.quadTo(bz_x, bz_y, first_x, first_y);
+
                             }
                             taxishape.closePath();
                             g2.setColor(taxi_ramp);
-                            if (ramp1.name.equals("Bus Road")) g2.setColor(Color.WHITE);
-                            //g2.fill(taxishape);
+                            g2.fill(taxishape);
                             g2.draw(taxishape);
 
                         }
@@ -444,53 +530,50 @@ public class MovingMap extends NDSubcomponent {
 
                                     // Bezier
                                     Path2D taxishape = new Path2D.Float();
-                                    float first_x = 0;
-                                    float first_y = 0;
-                                    float prev_x = 0;
-                                    float prev_y = 0;
-                                    boolean bz_next = false;
-                                    float bz_x = 0;
-                                    float bz_y = 0;
+                                    TaxiChart.Node last_node = null;
                                     for (int h=0; h<hole1.nodes.size(); h++) {
+
                                         TaxiChart.Node node1 = hole1.nodes.get(h);
                                         if ( h == 0 ) {
-                                            first_x = map_c.x + ((node1.lon - acf_lon)*chart_lon_scale);
-                                            prev_x = first_x;
-                                            first_y = map_c.y - ((node1.lat - acf_lat)*chart_lat_scale);
-                                            prev_x = first_y;
-                                            g2.setColor(nd_gc.caution_color);
-                                            g2.setFont(nd_gc.font_large);
-                                            g2.drawString(Integer.toString(h), first_x+6, first_y);
-                                            taxishape.moveTo(first_x, first_y);
+                                            taxishape.moveTo(
+                                                    map_c.x + ((node1.lon - acf_lon)*chart_lon_scale),
+                                                    map_c.y - ((node1.lat - acf_lat)*chart_lat_scale)
+                                                );
+                                            last_node = node1;
                                         } else {
-                                            if ( node1.bezier_node ) {
-                                                //bz_next = true;
-                                                bz_x = map_c.x + ((node1.bz_lon - acf_lon)*chart_lon_scale);
-                                                bz_y = map_c.y - ((node1.bz_lat - acf_lat)*chart_lat_scale);
-                                                taxishape.quadTo(map_c.x + ((node1.bz_lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.bz_lat - acf_lat)*chart_lat_scale), map_c.x + ((node1.lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.lat - acf_lat)*chart_lat_scale));
-                                                //taxishape.lineTo(map_c.x + ((node1.lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.lat - acf_lat)*chart_lat_scale));
-                                                //taxishape.lineTo(map_c.x + ((node1.bz_lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.bz_lat - acf_lat)*chart_lat_scale));
-                                                g2.setColor(nd_gc.caution_color);
-                                                g2.drawOval(map_c.x + (int)((node1.bz_lon - acf_lon)*chart_lon_scale) - 4, map_c.y - (int)((node1.bz_lat - acf_lat)*chart_lat_scale) - 4, 8, 8);
-                                                g2.drawString(Integer.toString(h), map_c.x + (int)((node1.bz_lon - acf_lon)*chart_lon_scale) + 6 +2*h, map_c.y - (int)((node1.bz_lat - acf_lat)*chart_lat_scale));
-                                                g2.drawRect(map_c.x + (int)((node1.lon - acf_lon)*chart_lon_scale) - 6, map_c.y - (int)((node1.lat - acf_lat)*chart_lat_scale) - 6, 12, 12);
-                                            } else {
-                                                if ( bz_next ) {
-                                                    taxishape.quadTo(bz_x, bz_y, map_c.x + ((node1.lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.lat - acf_lat)*chart_lat_scale));
-                                                    bz_next = false;
+
+                                            if ( ( node1.lat != last_node.lat ) || ( node1.lon != last_node.lon ) ) {
+
+                                                // this node is different from the previous, so we can draw ... something
+
+                                                if ( node1.cubic_bezier ) {
+                                                    taxishape.curveTo(
+                                                            map_c.x + ((node1.quad_lon - acf_lon)*chart_lon_scale),
+                                                            map_c.y - ((node1.quad_lat - acf_lat)*chart_lat_scale),
+                                                            map_c.x + ((node1.cubic_lon - acf_lon)*chart_lon_scale),
+                                                            map_c.y - ((node1.cubic_lat - acf_lat)*chart_lat_scale),
+                                                            map_c.x + ((node1.lon - acf_lon)*chart_lon_scale),
+                                                            map_c.y - ((node1.lat - acf_lat)*chart_lat_scale)
+                                                        );
+                                                } else if ( node1.quad_bezier ) {
+                                                    taxishape.quadTo(
+                                                            map_c.x + ((node1.quad_lon - acf_lon)*chart_lon_scale),
+                                                            map_c.y - ((node1.quad_lat - acf_lat)*chart_lat_scale),
+                                                            map_c.x + ((node1.lon - acf_lon)*chart_lon_scale),
+                                                            map_c.y - ((node1.lat - acf_lat)*chart_lat_scale)
+                                                        );
                                                 } else {
-                                                    taxishape.lineTo(map_c.x + ((node1.lon - acf_lon)*chart_lon_scale), map_c.y - ((node1.lat - acf_lat)*chart_lat_scale));
+                                                    taxishape.lineTo(
+                                                            map_c.x + ((node1.lon - acf_lon)*chart_lon_scale),
+                                                            map_c.y - ((node1.lat - acf_lat)*chart_lat_scale)
+                                                        );
                                                 }
-                                                g2.setColor(nd_gc.caution_color);
-                                                g2.drawLine(map_c.x + (int)((node1.lon - acf_lon)*chart_lon_scale) - 4, map_c.y - (int)((node1.lat - acf_lat)*chart_lat_scale) - 4, map_c.x + (int)((node1.lon - acf_lon)*chart_lon_scale) + 4, map_c.y - (int)((node1.lat - acf_lat)*chart_lat_scale) + 4);
-                                                g2.drawLine(map_c.x + (int)((node1.lon - acf_lon)*chart_lon_scale) + 4, map_c.y - (int)((node1.lat - acf_lat)*chart_lat_scale) - 4, map_c.x + (int)((node1.lon - acf_lon)*chart_lon_scale) - 4, map_c.y - (int)((node1.lat - acf_lat)*chart_lat_scale) + 4);
+
+                                                last_node = node1;
+
                                             }
-                                            g2.setColor(nd_gc.caution_color);
-                                            g2.drawString(Integer.toString(h), map_c.x + (int)((node1.lon - acf_lon)*chart_lon_scale) + 6 + 2*h, map_c.y - (int)((node1.lat - acf_lat)*chart_lat_scale));
+
                                         }
-                                    }
-                                    if ( bz_next ) {
-                                        taxishape.quadTo(bz_x, bz_y, first_x, first_y);
                                     }
                                     taxishape.closePath();
                                     if ( taxi.border == null ) {
@@ -498,8 +581,7 @@ public class MovingMap extends NDSubcomponent {
                                     } else {
                                         g2.setColor(field);
                                     }
-                                    g2.setColor(nd_gc.caution_color);
-                                    //g2.fill(taxishape);
+                                    g2.fill(taxishape);
                                     g2.draw(taxishape);
 
                                 }

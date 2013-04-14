@@ -194,12 +194,12 @@ public class AirportChart extends MFDSubcomponent {
 //        //                                    node1 = hole1.nodes.get(l);
 //        //                                }
 //        //                                TaxiChart.Node node1 = hole1.nodes.get(l-1);
-//        //                                if ( node1.bezier_node && false ) {
+//        //                                if ( node1.quad_bezier && false ) {
 //        //                                    QuadCurve2D bezier = new QuadCurve2D.Float();
 //        //                                    bezier.setCurve( topleft.x + ((node1.lon-taxi.west_lon)*chart_lon_scale),
 //        //                                        topleft.y + ((taxi.north_lat - node1.lat)*chart_lat_scale),
-//        //                                        topleft.x + ((node1.bz_lon-taxi.west_lon)*chart_lon_scale),
-//        //                                        topleft.y + ((taxi.north_lat - node1.bz_lat)*chart_lat_scale),
+//        //                                        topleft.x + ((node1.quad_lon-taxi.west_lon)*chart_lon_scale),
+//        //                                        topleft.y + ((taxi.north_lat - node1.quad_lat)*chart_lat_scale),
 //        //                                        topleft.x + ((node1.lon-taxi.west_lon)*chart_lon_scale),
 //        //                                        topleft.y + ((taxi.north_lat - node1.lat)*chart_lat_scale));
 //        //                                    g2.draw(bezier);
@@ -240,12 +240,12 @@ public class AirportChart extends MFDSubcomponent {
 //        //                            node1 = ramp1.nodes.get(h);
 //        //                        }
 //        //                        TaxiChart.Node node1 = ramp1.nodes.get(h-1);
-//        //                        if ( node1.bezier_node && false ) {
+//        //                        if ( node1.quad_bezier && false ) {
 //        //                            QuadCurve2D bezier = new QuadCurve2D.Float();
 //        //                            bezier.setCurve( topleft.x + ((node1.lon-taxi.west_lon)*chart_lon_scale),
 //        //                                topleft.y + ((taxi.north_lat - node1.lat)*chart_lat_scale),
-//        //                                topleft.x + ((node1.bz_lon-taxi.west_lon)*chart_lon_scale),
-//        //                                topleft.y + ((taxi.north_lat - node1.bz_lat)*chart_lat_scale),
+//        //                                topleft.x + ((node1.quad_lon-taxi.west_lon)*chart_lon_scale),
+//        //                                topleft.y + ((taxi.north_lat - node1.quad_lat)*chart_lat_scale),
 //        //                                topleft.x + ((node1.lon-taxi.west_lon)*chart_lon_scale),
 //        //                                topleft.y + ((taxi.north_lat - node1.lat)*chart_lat_scale));
 //        //                            g2.draw(bezier);
@@ -276,12 +276,12 @@ public class AirportChart extends MFDSubcomponent {
 //        //                                    node1 = hole1.nodes.get(l);
 //        //                                }
 //        //                                TaxiChart.Node node1 = hole1.nodes.get(l-1);
-//        //                                if ( node1.bezier_node && false ) {
+//        //                                if ( node1.quad_bezier && false ) {
 //        //                                    QuadCurve2D bezier = new QuadCurve2D.Float();
 //        //                                    bezier.setCurve( topleft.x + ((node1.lon-taxi.west_lon)*chart_lon_scale),
 //        //                                        topleft.y + ((taxi.north_lat - node1.lat)*chart_lat_scale),
-//        //                                        topleft.x + ((node1.bz_lon-taxi.west_lon)*chart_lon_scale),
-//        //                                        topleft.y + ((taxi.north_lat - node1.bz_lat)*chart_lat_scale),
+//        //                                        topleft.x + ((node1.quad_lon-taxi.west_lon)*chart_lon_scale),
+//        //                                        topleft.y + ((taxi.north_lat - node1.quad_lat)*chart_lat_scale),
 //        //                                        topleft.x + ((node1.lon-taxi.west_lon)*chart_lon_scale),
 //        //                                        topleft.y + ((taxi.north_lat - node1.lat)*chart_lat_scale));
 //        //                                    g2.draw(bezier);
