@@ -183,11 +183,11 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
                         } else if (info_type == 110) {
 
                             // a new taxiway or ramp
-                            //this.taxi_chart.new_pavement( Integer.parseInt(line.substring(5, 7).trim()), line.substring(20).trim() );
                             this.taxi_chart.new_pavement( Integer.parseInt(tokens[1]), line.substring(20).trim() );
 
                         } else if (info_type == 120) {
 
+                            // a new "Lineair feature" means that our pavement is complete
                             this.taxi_chart.close_pavement();
 
                         } else if (info_type == 130) {
@@ -197,8 +197,6 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
                         } else if ( (info_type == 111) || (info_type == 113) ) {
 
                             // a node
-                            //this.taxi_chart.new_node( Float.parseFloat(line.substring(4, 16).trim()),
-                            //        Float.parseFloat(line.substring(17, 30).trim()) );
                             this.taxi_chart.new_node( Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]) );
 
                             if (info_type == 113) this.taxi_chart.close_loop();
@@ -206,10 +204,6 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
                         } else if ( (info_type == 112) || (info_type == 114) ) {
 
                             // a node with bezier control point
-                            //this.taxi_chart.new_bezier_node( Float.parseFloat(line.substring(4, 16).trim()),
-                            //        Float.parseFloat(line.substring(17, 30).trim()),
-                            //        Float.parseFloat(line.substring(31, 43).trim()),
-                            //        Float.parseFloat(line.substring(44, 57).trim()) );
                             this.taxi_chart.new_bezier_node( Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]),
                                     Float.parseFloat(tokens[3]), Float.parseFloat(tokens[4]) );
 

@@ -50,20 +50,35 @@ public class TaxiChart {
     public class Node {
         public float lat;
         public float lon;
-        public boolean bezier_node;
-        public float bz_lat;
-        public float bz_lon;
+        public boolean quad_bezier;
+        public float quad_lat;
+        public float quad_lon;
+        public boolean cubic_bezier;
+        public float cubic_lat;
+        public float cubic_lon;
         public Node(float n_lat, float n_lon) {
             this.lat = n_lat;
             this.lon = n_lon;
-            bezier_node = false;
+            this.quad_bezier = false;
+            this.cubic_bezier = false;
         }
         public Node(float n_lat, float n_lon, float cp_lat, float cp_lon) {
             this.lat = n_lat;
             this.lon = n_lon;
-            this.bz_lat = cp_lat;
-            this.bz_lon = cp_lon;
-            bezier_node = true;
+            this.quad_lat = cp_lat;
+            this.quad_lon = cp_lon;
+            this.quad_bezier = true;
+            this.cubic_bezier = false;
+        }
+        public Node(float n_lat, float n_lon, float cp1_lat, float cp1_lon, float cp2_lat, float cp2_lon) {
+            this.lat = n_lat;
+            this.lon = n_lon;
+            this.quad_lat = cp1_lat;
+            this.quad_lon = cp1_lon;
+            this.cubic_lat = cp2_lat;
+            this.cubic_lon = cp2_lon;
+            this.quad_bezier = true;
+            this.cubic_bezier = true;
         }
     }
     
@@ -97,7 +112,12 @@ public class TaxiChart {
     private Pavement current_pavement;
     private Pavement current_loop;
     private boolean loop_is_open;
-    
+
+    private boolean has_next_cp;
+    private float next_cp_lat;
+    private float next_cp_lon;
+    private Node first_node;
+
     public ArrayList<Pavement> pavements;
     public Pavement border;
     public ArrayList<Segment> segments;
@@ -158,6 +178,7 @@ public class TaxiChart {
         this.current_pavement.name = apron;
         this.current_loop = this.current_pavement;
         this.loop_is_open = true;
+        this.has_next_cp = false;
 //logger.warning("New Pavement:"+sfc);
 
     }
@@ -165,10 +186,12 @@ public class TaxiChart {
 
     public void new_border() {
 
+        // the airport border has the same structure as a pavement
         this.current_pavement = new Pavement();
         this.border = this.current_pavement;
         this.current_loop = this.current_pavement;
         this.loop_is_open = true;
+        this.has_next_cp = false;
 //logger.warning("New Border");
 
     }
@@ -183,8 +206,31 @@ public class TaxiChart {
                 this.loop_is_open = true;
                 this.current_loop = new Pavement();
                 this.current_pavement.holes.add(current_loop);
+                this.has_next_cp = false;
             }
-            this.current_loop.nodes.add( new Node(new_lat, new_lon) );
+
+            Node new_node;
+
+            if ( this.has_next_cp ) {
+
+                // the previous node defined a control point that we must use now
+                new_node = new Node(new_lat, new_lon, this.next_cp_lat, this.next_cp_lon);
+                this.has_next_cp = false;
+
+            } else {
+
+                // just a direct line
+                new_node = new Node(new_lat, new_lon);
+
+            }
+            if ( this.current_loop.nodes.isEmpty() ) {
+                // this will be our first node of the loop
+                // remember it, to be added at the end
+                this.first_node = new_node;
+            }
+            this.current_loop.nodes.add( new_node );
+
+            this.has_next_cp = false;
 //logger.warning("New Node: lat="+new_lat+" lon="+new_lon);
 
         }
@@ -201,8 +247,39 @@ public class TaxiChart {
                 this.loop_is_open = true;
                 this.current_loop = new Pavement();
                 this.current_pavement.holes.add(current_loop);
+                this.has_next_cp = false;
             }
-            this.current_loop.nodes.add( new Node(new_lat, new_lon, new_cp_lat, new_cp_lon) );
+
+            // to get from the previous node to this one, we need the mirror of the control point
+            float mirror_cp_lat = 2 * new_lat - new_cp_lat;
+            float mirror_cp_lon = 2 * new_lon - new_cp_lon;
+
+            Node new_node;
+
+            if ( this.has_next_cp ) {
+
+                // we already had a control point
+                // that means we have a cubic curve to get to this node
+                new_node = new Node(new_lat, new_lon, this.next_cp_lat, this.next_cp_lon, mirror_cp_lat, mirror_cp_lon);
+
+            } else {
+
+                // quadratic curve to get to this node
+                new_node = new Node(new_lat, new_lon, mirror_cp_lat, mirror_cp_lon);
+
+            }
+            if ( this.current_loop.nodes.isEmpty() ) {
+                // this will be our first node of the loop
+                // remember it, to be added at the end
+                this.first_node = new_node;
+            }
+            this.current_loop.nodes.add( new_node );
+
+            // remember this control point for the next node
+            this.has_next_cp = true;
+            this.next_cp_lat = new_cp_lat;
+            this.next_cp_lon = new_cp_lon;
+
 //logger.warning("New Bezier Node: lat="+new_lat+" lon="+new_lon + " / lat="+new_cp_lat+" lon="+new_cp_lon);
         
         }
@@ -221,6 +298,18 @@ public class TaxiChart {
 
 
     public void close_loop() {
+
+        // we repeat the first node at the end
+        if ( this.has_next_cp ) {
+            // we have a control point to go back to the first node
+            if ( this.first_node.quad_bezier ) {
+                // hmmm, we have a problem; the first node has already a control point
+logger.warning("Double cp: lat="+this.first_node.lat+" lon="+this.first_node.lon);
+            } else {
+                // add the first node again, but now with a control point
+                this.current_loop.nodes.add( new Node(this.first_node.lat, this.first_node.lon, this.next_cp_lat, this.next_cp_lon) );
+            }
+        }
 
         this.current_loop = null;
         this.loop_is_open = false;
