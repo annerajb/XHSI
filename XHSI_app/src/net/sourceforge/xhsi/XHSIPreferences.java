@@ -70,6 +70,7 @@ public class XHSIPreferences {
     public static final String PREF_BORDER_COLOR = "border.color";
     public static final String PREF_USE_MORE_COLOR = "use.more.color";
     public static final String PREF_BOLD_FONTS = "bold.fonts";
+    public static final String PREF_DRAW_BEZIER_PAVEMENTS = "draw.bezier.pavements";
 
     // Avionics Options
     public static final String PREF_USE_POWER = "use.avionics.power";
@@ -89,7 +90,6 @@ public class XHSIPreferences {
     public static final String PREF_PLAN_AIRCRAFT_CENTER = "plan.aircraft.center";
     public static final String PREF_DRAW_INSIDE_ROSE = "draw.inside.rose";
     public static final String PREF_COLORED_HSI_COURSE = "pfd.colored.hsi.course";
-    public static final String PREF_DRAW_BEZIER_PAVEMENTS = "draw.bezier.pavements";
 
     // PFD options
     public static final String PREF_HORIZON_STYLE = "horizon.style";
@@ -107,7 +107,7 @@ public class XHSIPreferences {
 
     // MFD options
     public static final String PREF_MFD_MODE = "mfd.mode";
-    public static final String PREF_ARPT_DIAGRAM_COLOR = "arpt.diagram.color";
+    public static final String PREF_ARPT_CHART_COLOR = "arpt.diagram.color";
 
 
     // constants
@@ -145,12 +145,12 @@ public class XHSIPreferences {
 
     // for PREF_MFD_MODE
     public static final String MFD_MODE_SWITCHABLE = "switchable";
-    public static final String MFD_MODE_TAXI_CHART = "taxi_chart";
-    public static final String MFD_MODE_ARPT_INFO = "artp_info";
+    //public static final String MFD_MODE_TAXI_CHART = "taxi_chart";
+    public static final String MFD_MODE_ARPT_CHART = "artp_chart";
     public static final String MFD_MODE_FPLN = "fpln";
     public static final String MFD_MODE_LOWER_EICAS = "lower_eicas";
 
-    // for PREF_ARPT_DIAGRAM_COLOR
+    // for PREF_ARPT_CHART_COLOR
     public static final String ARPT_DIAGRAM_COLOR_AUTO = "auto";
     public static final String ARPT_DIAGRAM_COLOR_DAY = "day";
     public static final String ARPT_DIAGRAM_COLOR_NIGHT = "night";
@@ -425,7 +425,7 @@ public class XHSIPreferences {
 
 
     /**
-     * @return            - ant-aliasing or not
+     * @return            - anti-aliasing or not
      *
      */
     public boolean get_anti_alias() {
@@ -457,6 +457,15 @@ public class XHSIPreferences {
      */
     public String get_border_color() {
         return get_preference(PREF_BORDER_COLOR);
+    }
+
+
+    /**
+     * @return            - draw the pavements using bezier curves
+     *
+     */
+    public boolean get_draw_bezier_pavements() {
+        return get_preference(PREF_DRAW_BEZIER_PAVEMENTS).equalsIgnoreCase("true");
     }
 
 
@@ -590,15 +599,6 @@ public class XHSIPreferences {
     public boolean get_draw_colored_hsi_course() {
         return get_preference(PREF_COLORED_HSI_COURSE).equalsIgnoreCase("true");
     }
-
-    /**
-     * @return            - draw the pavements using bezier curves
-     *
-     */
-    public boolean get_draw_bezier_pavements() {
-        return get_preference(PREF_DRAW_BEZIER_PAVEMENTS).equalsIgnoreCase("true");
-    }
-
 
     // PFD
 
@@ -939,6 +939,11 @@ public class XHSIPreferences {
             this.unsaved_changes = true;
         }
 
+        if ( ! this.preferences.containsKey(PREF_DRAW_BEZIER_PAVEMENTS) ) {
+            this.preferences.setProperty(PREF_DRAW_BEZIER_PAVEMENTS, "true");
+            this.unsaved_changes = true;
+        }
+
         // Avionics
 
         if ( ! this.preferences.containsKey(PREF_USE_POWER) ) {
@@ -1009,17 +1014,12 @@ public class XHSIPreferences {
         }
 
         if ( ! this.preferences.containsKey(PREF_DRAW_INSIDE_ROSE) ) {
-            this.preferences.setProperty(PREF_DRAW_INSIDE_ROSE, "true");
+            this.preferences.setProperty(PREF_DRAW_INSIDE_ROSE, "false");
             this.unsaved_changes = true;
         }
 
         if ( ! this.preferences.containsKey(PREF_COLORED_HSI_COURSE) ) {
             this.preferences.setProperty(PREF_COLORED_HSI_COURSE, "true");
-            this.unsaved_changes = true;
-        }
-
-        if ( ! this.preferences.containsKey(PREF_DRAW_BEZIER_PAVEMENTS) ) {
-            this.preferences.setProperty(PREF_DRAW_BEZIER_PAVEMENTS, "false");
             this.unsaved_changes = true;
         }
 
@@ -1084,8 +1084,8 @@ public class XHSIPreferences {
             this.unsaved_changes = true;
         }
 
-        if ( ! this.preferences.containsKey(PREF_ARPT_DIAGRAM_COLOR) ) {
-            this.preferences.setProperty(PREF_ARPT_DIAGRAM_COLOR, ARPT_DIAGRAM_COLOR_AUTO);
+        if ( ! this.preferences.containsKey(PREF_ARPT_CHART_COLOR) ) {
+            this.preferences.setProperty(PREF_ARPT_CHART_COLOR, ARPT_DIAGRAM_COLOR_AUTO);
             this.unsaved_changes = true;
         }
 

@@ -303,8 +303,8 @@ public class TaxiChart {
         if ( this.has_next_cp ) {
             // we have a control point to go back to the first node
             if ( this.first_node.quad_bezier ) {
-                // hmmm, we have a problem; the first node has already a control point
-logger.warning("Double cp: lat="+this.first_node.lat+" lon="+this.first_node.lon);
+                // add the first node again, but now with 2 control points
+                this.current_loop.nodes.add( new Node(this.first_node.lat, this.first_node.lon, this.next_cp_lat, this.next_cp_lon, this.first_node.quad_lat, this.first_node.quad_lon ) );
             } else {
                 // add the first node again, but now with a control point
                 this.current_loop.nodes.add( new Node(this.first_node.lat, this.first_node.lon, this.next_cp_lat, this.next_cp_lon) );

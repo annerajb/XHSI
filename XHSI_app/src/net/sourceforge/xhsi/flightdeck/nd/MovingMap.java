@@ -175,6 +175,11 @@ public class MovingMap extends NDSubcomponent {
 //        hdef_y += nd_gc.line_height_small;
 //        g2.drawString("MAGVAR ", nd_gc.border_left+5, hdef_y);
 //        g2.drawString(" = " + this.aircraft.magnetic_variation(), nd_gc.border_left+62, hdef_y);
+//        int hdef_y = 200;
+//        g2.setColor(Color.YELLOW);
+//        g2.setFont(nd_gc.font_small);
+//        g2.drawString("MFD : " + this.avionics.get_mfd_mode(), nd_gc.border_left+5, hdef_y);
+//        g2.drawString(" = " + this.aircraft.heading(), nd_gc.border_left+62, hdef_y);
 
     }
 
@@ -218,6 +223,7 @@ public class MovingMap extends NDSubcomponent {
             if ( taxi.ready && ! taxi.icao.equals(nearest_arpt_str) /*&& (XHSIStatus.nav_db_status.equals(XHSIStatus.STATUS_NAV_DB_LOADED))*/ ) {
 
                 // we need to load another airport chart
+                this.active_chart_str = null;
                 try {
                     AptNavXP900DatTaxiChartBuilder cb = new AptNavXP900DatTaxiChartBuilder(this.taxi, this.preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR));
                     logger.warning("\nRequesting "+nearest_arpt_str);
@@ -1452,9 +1458,9 @@ public class MovingMap extends NDSubcomponent {
 
     private void drawRunway(Graphics2D g2, int x, int y, Runway runway) {
 
-        if ( ! runway.name.equals(this.active_chart_str)) {
+        if ( ! runway.name.equals(this.active_chart_str) ) {
 
-            // OK, this runway is not part of an already drawn airport chart
+            //OK, this runway is not part of an already drawn airport chart
 
             Graphics g = (Graphics) g2;
             AffineTransform original_at = g2.getTransform();

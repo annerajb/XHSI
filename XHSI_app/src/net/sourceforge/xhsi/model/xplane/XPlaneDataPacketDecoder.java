@@ -115,12 +115,10 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
         // identify the packet type (identified by the first four bytes)
         String packet_type = new String(sim_data, 0, 4).trim();
 
-        if ( packet_type.equals("SIMD")
-                || packet_type.equals("ADCD")
+        if ( packet_type.equals("ADCD")
                 || packet_type.equals("AVIO")
                 || packet_type.equals("ENGI")
                 || packet_type.equals("STAT") ) {
-            // SIMD for backward compatibility
 
             // Air Data Computer or Avionics or Engines or Static data packet
 
@@ -148,6 +146,7 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
                     // Float
                     float_data = anti_jitter(data_point_id, data_stream.readFloat());
                     this.xplane_data_repository.store_sim_float(data_point_id, float_data);
+                    logger.finest("ID:"+data_point_id+"="+float_data);
                 }
             }
 //this.xplane_data_repository.store_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_OVERFLOW_ACF_NUM_TANKS, 3.0f);
@@ -161,150 +160,20 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
 
             // logger.warning("" + this.xplane_data_repository.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_LATITUDE) + ";" + this.xplane_data_repository.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_LONGITUDE));
 
-            if (this.received_adc_packet == false) {
+            if ( (this.received_adc_packet == false) && packet_type.equals("ADCD") ) {
                 logger.warning("Receiving from XHSI_plugin version " + decode_plugin_version(this.xplane_data_repository.get_sim_float(XPlaneSimDataRepository.PLUGIN_VERSION_ID)));
-                logger.fine("... SIMD packet contains " + nb_of_data_points + " sim data values");
+                logger.fine("... ADCD packet contains " + nb_of_data_points + " sim data values");
+                this.received_adc_packet = true;
             }
 
-            this.received_adc_packet = true;
-
-            if ( packet_type.equals("SIMD") || packet_type.equals("ADCD") ) {
-                // SIMD for backward compatibility
+            if ( packet_type.equals("ADCD") ) {
+                logger.fine("Ticking updates");
                 this.xplane_data_repository.tick_updates();
+                logger.fine("Updates ticked");
             }
 
-//        } else if (packet_type.equals("FMSR")) {
-//
-//            // FMS route data packet
-//            // new packet format with 4-byte integers ( XHSI_plugin 1.0 Beta 10 or later )
-//
-//            if (this.received_fms_packet == false)
-//                logger.fine("Received first FMSR packet");
-//            logger.finest("Receiving FMSR packet");
-//
-//            DataInputStream data_stream = new DataInputStream(new ByteArrayInputStream(sim_data));
-//            data_stream.skipBytes(4);    // skip the bytes containing the packet type id
-//
-//            this.fms.clear();
-//
-//            float ete_for_active = data_stream.readFloat(); // min
-//            float groundspeed = data_stream.readFloat() * 1.9438445f; // kts
-////float ete_for_active = 9.0f; // min
-////float groundspeed = 100.0f; // kts
-//
-//            int nb_of_entries = data_stream.readInt();
-//
-//            if (this.received_fms_packet == false)
-//                logger.fine("... FMSR packet contains " + nb_of_entries + " FMS entries");
-//
-//            int displayed_entry_index = data_stream.readInt();
-//            int active_entry_index = data_stream.readInt();
-//
-//            boolean beyond_active = false;
-//            float last_lat = 0;
-//            float last_lon = 0;
-//            // define these once, outside the for-loop
-//            int type;
-//            int altitude;
-//            float lat;
-//            float lon;
-//            boolean is_displayed;
-//            boolean is_active;
-//            float leg_dist;
-//            float total_ete = 0.0f;
-//
-//            FMSEntry prev_fms_entry = null;
-//            boolean prev_level = false;
-//            boolean prev_climbing = false;
-//            boolean prev_descending = false;
-//            FMSEntry new_fms_entry;
-//            boolean level = false;
-//            boolean climbing = false;
-//            boolean descending = false;
-//
-//            for (int i=0; i<nb_of_entries; i++) {
-//                type = data_stream.readInt();
-//                String id = new String(sim_data, 24+(i*24)+4, 8).trim();
-////String id = new String(sim_data, 16+(i*24)+4, 8).trim();
-//                // packet_char4 + ete_float + groundspeed_float + nb_int + displayed_int + active_int + ( i * ( type_int + id_char8 + alt_float + lat_float + lon_float) ) + type_int
-//                data_stream.skipBytes(8);
-//                //altitude = data_stream.readFloat();
-//                altitude = data_stream.readInt();
-//                lat = data_stream.readFloat();
-//                lon = data_stream.readFloat();
-//                // do not append empty entries
-//                if ((lat != 0.0f) || (lon != 0.0f)) {
-//
-//                    is_displayed = (i == displayed_entry_index);
-//                    is_active = (i == active_entry_index);
-//
-//                    if ( groundspeed > 33.33f ) {
-//                        if ( beyond_active ) {
-//                            leg_dist = CoordinateSystem.rough_distance(lat, lon, last_lat, last_lon);
-//                            total_ete += leg_dist / groundspeed * 60.0f;
-//                            last_lat = lat;
-//                            last_lon = lon;
-//                        }
-//                        if ( is_active ) {
-//                            beyond_active = true;
-//                            total_ete = ete_for_active;
-//                            last_lat = lat;
-//                            last_lon = lon;
-//                        }
-//                    } else {
-//                        total_ete = 0.0f;
-//                    }
-//
-//                    new_fms_entry = new FMSEntry(id, type, lat, lon, altitude, total_ete, is_active, is_displayed);
-//                    this.fms.append_entry(new_fms_entry);
-//
-//                    // climbing, descending or level flight?
-//                    climbing = false;
-//                    descending = false;
-//                    level = false;
-//                    if ( prev_fms_entry != null ) {
-//                        if ( ( new_fms_entry.altitude > prev_fms_entry.altitude ) && ( prev_fms_entry.altitude != 0 ) ) {
-//                            climbing = true;
-//                        } else if ( ( new_fms_entry.altitude < prev_fms_entry.altitude ) && ( new_fms_entry.altitude != 0 ) ) {
-//                            descending = true;
-//                        } else {
-//                            level = true;
-//                        }
-//                    }
-//
-//                    // a Lat/Lon waypoint climbing or descending through 10000ft?
-//                    if ( ( new_fms_entry.type == 2048 ) && ( new_fms_entry.altitude == 10000 ) ) {
-//                        if ( climbing ) {
-//                            new_fms_entry.name = "ACCEL";
-//                        } else if ( descending ) {
-//                            new_fms_entry.name = "DECEL";
-//                        }
-//                    }
-//
-//                    // now can we know if the previous Lat/Lon waypoint was a T/C, T/D, E/D or S/C
-//                    if ( ( prev_fms_entry != null ) && ( prev_fms_entry.type == 2048 ) ) {
-//                        if ( prev_climbing && level ) {
-//                            prev_fms_entry.name = "T/C";
-//                        } else if ( prev_level && descending ) {
-//                            prev_fms_entry.name = "T/D";
-//                        } else if ( prev_descending && level ) {
-//                            prev_fms_entry.name = "E/D";
-//                        } else if ( prev_level && climbing ) {
-//                            prev_fms_entry.name = "S/C";
-//                        }
-//                    }
-//
-//                    prev_fms_entry = new_fms_entry;
-//                    prev_level = level;
-//                    prev_descending = descending;
-//                    prev_climbing = climbing;
-//
-//                }
-//            }
-//
-//            this.received_fms_packet = true;
             
-        } else if ( packet_type.startsWith("FMC") || packet_type.equals("FMSR") ) {
+        } else if ( packet_type.startsWith("FMC") ) {
 
             // 1 out of 10 FMCx route data packets
             

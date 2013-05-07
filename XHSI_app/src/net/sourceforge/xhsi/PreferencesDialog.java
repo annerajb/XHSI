@@ -110,6 +110,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JComboBox rwy_units_combobox;
     private String units[] = { "meters", "feet" };
     private JCheckBox draw_rwy_checkbox;
+    private JCheckBox draw_bezier_pavements_checkbox;
     private JCheckBox airbus_modes_checkbox;
     private JCheckBox draw_range_arcs_checkbox;
     private JCheckBox use_more_color_checkbox;
@@ -146,9 +147,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private String fuel_units[] = { XHSIPreferences.FUEL_KG, XHSIPreferences.FUEL_LBS, XHSIPreferences.FUEL_USG, XHSIPreferences.FUEL_LTR };
 
     private JComboBox mfd_mode_combobox;
-    private String mfd_modes[] = { XHSIPreferences.MFD_MODE_SWITCHABLE, XHSIPreferences.MFD_MODE_TAXI_CHART, XHSIPreferences.MFD_MODE_ARPT_INFO , XHSIPreferences.MFD_MODE_FPLN, XHSIPreferences.MFD_MODE_LOWER_EICAS };
-    private JComboBox arpt_diagram_color_combobox;
-    private String arpt_diagram_colors[] = { XHSIPreferences.ARPT_DIAGRAM_COLOR_AUTO, XHSIPreferences.ARPT_DIAGRAM_COLOR_DAY, XHSIPreferences.ARPT_DIAGRAM_COLOR_NIGHT };
+    private String mfd_modes[] = { XHSIPreferences.MFD_MODE_SWITCHABLE, /*XHSIPreferences.MFD_MODE_TAXI_CHART,*/ XHSIPreferences.MFD_MODE_ARPT_CHART , XHSIPreferences.MFD_MODE_FPLN, XHSIPreferences.MFD_MODE_LOWER_EICAS };
+    private JComboBox arpt_chart_color_combobox;
+    private String arpt_chart_colors[] = { XHSIPreferences.ARPT_DIAGRAM_COLOR_AUTO, XHSIPreferences.ARPT_DIAGRAM_COLOR_DAY, XHSIPreferences.ARPT_DIAGRAM_COLOR_NIGHT };
 
 
     private ArrayList<XHSIInstrument> flightdeck;
@@ -228,6 +229,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
                 this.border_color_combobox.setSelectedIndex(i);
             }
         }
+
+        this.draw_bezier_pavements_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_DRAW_BEZIER_PAVEMENTS).equalsIgnoreCase("true"));
 
 
         // WINDOWS
@@ -358,10 +361,10 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             }
         }
 
-        String taxichart = preferences.get_preference(XHSIPreferences.PREF_ARPT_DIAGRAM_COLOR);
-        for (int i=0; i<arpt_diagram_colors.length; i++) {
-            if ( taxichart.equals( arpt_diagram_colors[i] ) ) {
-                this.arpt_diagram_color_combobox.setSelectedIndex(i);
+        String taxichart = preferences.get_preference(XHSIPreferences.PREF_ARPT_CHART_COLOR);
+        for (int i=0; i<arpt_chart_colors.length; i++) {
+            if ( taxichart.equals( arpt_chart_colors[i] ) ) {
+                this.arpt_chart_color_combobox.setSelectedIndex(i);
             }
         }
 
@@ -850,6 +853,20 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.anchor = GridBagConstraints.WEST;
         this.anti_alias_checkbox = new JCheckBox();
         graphics_panel.add(this.anti_alias_checkbox, cons);
+        dialog_line++;
+
+        // Bezier curves for the pavements
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        graphics_panel.add(new JLabel("Draw taxiways and aprons using bezier curves", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.draw_bezier_pavements_checkbox = new JCheckBox();
+        graphics_panel.add(this.draw_bezier_pavements_checkbox, cons);
         dialog_line++;
 
 //        // A reminder
@@ -1387,8 +1404,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.anchor = GridBagConstraints.WEST;
         this.mfd_mode_combobox = new JComboBox();
         this.mfd_mode_combobox.addItem("Switchable");
-        this.mfd_mode_combobox.addItem("Taxi Chart");
-        this.mfd_mode_combobox.addItem("Airport Info");
+        //this.mfd_mode_combobox.addItem("Taxi Chart");
+        this.mfd_mode_combobox.addItem("Airport Chart");
         this.mfd_mode_combobox.addItem("Flight Plan");
         this.mfd_mode_combobox.addItem("Lower EICAS");
         this.mfd_mode_combobox.addActionListener(this);
@@ -1406,12 +1423,12 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
-        this.arpt_diagram_color_combobox = new JComboBox();
-        this.arpt_diagram_color_combobox.addItem("Auto");
-        this.arpt_diagram_color_combobox.addItem("Day");
-        this.arpt_diagram_color_combobox.addItem("Night");
-        this.arpt_diagram_color_combobox.addActionListener(this);
-        mfd_options_panel.add(this.arpt_diagram_color_combobox, cons);
+        this.arpt_chart_color_combobox = new JComboBox();
+        this.arpt_chart_color_combobox.addItem("Auto");
+        this.arpt_chart_color_combobox.addItem("Day");
+        this.arpt_chart_color_combobox.addItem("Night");
+        this.arpt_chart_color_combobox.addActionListener(this);
+        mfd_options_panel.add(this.arpt_chart_color_combobox, cons);
         dialog_line++;
         dialog_line++;
 
@@ -1589,6 +1606,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             if ( ! bordercolors[this.border_color_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_BORDER_COLOR)) )
                 this.preferences.set_preference(XHSIPreferences.PREF_BORDER_COLOR, bordercolors[this.border_color_combobox.getSelectedIndex()]);
 
+            if ( this.draw_bezier_pavements_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_DRAW_BEZIER_PAVEMENTS).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_DRAW_BEZIER_PAVEMENTS, this.draw_bezier_pavements_checkbox.isSelected()?"true":"false");
+
 
             // WINDOWS
 
@@ -1716,8 +1736,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             if ( ! mfd_modes[this.mfd_mode_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_MFD_MODE)) )
                 this.preferences.set_preference(XHSIPreferences.PREF_MFD_MODE, mfd_modes[this.mfd_mode_combobox.getSelectedIndex()]);
 
-            if ( ! arpt_diagram_colors[this.arpt_diagram_color_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_ARPT_DIAGRAM_COLOR)) )
-                this.preferences.set_preference(XHSIPreferences.PREF_ARPT_DIAGRAM_COLOR, arpt_diagram_colors[this.arpt_diagram_color_combobox.getSelectedIndex()]);
+            if ( ! arpt_chart_colors[this.arpt_chart_color_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_ARPT_CHART_COLOR)) )
+                this.preferences.set_preference(XHSIPreferences.PREF_ARPT_CHART_COLOR, arpt_chart_colors[this.arpt_chart_color_combobox.getSelectedIndex()]);
 
 
         }

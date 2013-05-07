@@ -190,6 +190,10 @@ PLUGIN_API int XPluginEnable(void) {
 							initCopilotCallback,
 							-1.0f,
 							NULL);
+	XPLMRegisterFlightLoopCallback(
+							initMFDCallback,
+							-1.0f,
+							NULL);
 
     // UFMC
     XPLMRegisterFlightLoopCallback(
@@ -241,6 +245,7 @@ PLUGIN_API void XPluginDisable(void) {
 
 	XPLMUnregisterFlightLoopCallback(initPilotCallback, NULL);
 	XPLMUnregisterFlightLoopCallback(initCopilotCallback, NULL);
+	XPLMUnregisterFlightLoopCallback(initMFDCallback, NULL);
 
 	XPLMUnregisterFlightLoopCallback(checkUFMCCallback, NULL);
 	XPLMUnregisterFlightLoopCallback(checkX737Callback, NULL);

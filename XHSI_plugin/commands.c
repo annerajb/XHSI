@@ -65,10 +65,10 @@
 #define MINS_RADIO 0
 #define MINS_BARO 1
 
-#define MFD_TAXI 0
-#define MFD_ARPT 1
-#define MFD_FPLN 2
-#define MFD_EICAS 3
+//#define MFD_TAXI 0
+#define MFD_ARPT 0
+#define MFD_FPLN 1
+#define MFD_EICAS 2
 
 
 XPLMCommandRef mode_app;
@@ -301,7 +301,7 @@ XPLMCommandRef chr_reset;
 XPLMCommandRef timer_start_stop;
 XPLMCommandRef timer_reset;
 
-XPLMCommandRef mfd_mode_taxi;
+//XPLMCommandRef mfd_mode_taxi;
 XPLMCommandRef mfd_mode_arpt;
 XPLMCommandRef mfd_mode_fpln;
 XPLMCommandRef mfd_mode_eicas;
@@ -1300,12 +1300,12 @@ XPLMCommandCallback_f mfd_handler(XPLMCommandRef inCommand, XPLMCommandPhase inP
         else if ( i == UP )
         {
             i = XPLMGetDatai(mfd_mode) + 1;
-            if (i>3) i = 3;
+            if (i>2) i = 2;
         }
         else if ( i == CYCLE )
         {
             i = XPLMGetDatai(mfd_mode) + 1;
-            if (i>3) i = 0;
+            if (i>2) i = 0;
         }
         XPLMSetDatai(mfd_mode, i);
     }
@@ -1807,11 +1807,11 @@ void registerCommands(void) {
 
 
     // MFD mode
-    mfd_mode_taxi = XPLMCreateCommand("xhsi/mfd/mode_taxi", "MFD mode Taxi Chart");
-    XPLMRegisterCommandHandler(mfd_mode_taxi, (XPLMCommandCallback_f)mfd_handler, 1, (void *) MFD_TAXI);
-    mfd_mode_arpt = XPLMCreateCommand("xhsi/mfd/mode_arpt", "MFD mode Airport Info");
+//    mfd_mode_taxi = XPLMCreateCommand("xhsi/mfd/mode_taxi", "MFD mode Taxi Chart");
+//    XPLMRegisterCommandHandler(mfd_mode_taxi, (XPLMCommandCallback_f)mfd_handler, 1, (void *) MFD_TAXI);
+    mfd_mode_arpt = XPLMCreateCommand("xhsi/mfd/mode_arpt", "MFD mode Airport Chart");
     XPLMRegisterCommandHandler(mfd_mode_arpt, (XPLMCommandCallback_f)mfd_handler, 1, (void *) MFD_ARPT);
-    mfd_mode_fpln = XPLMCreateCommand("xhsi/mfd/mode_cdu", "MFD mode Flight Plan");
+    mfd_mode_fpln = XPLMCreateCommand("xhsi/mfd/mode_fpln", "MFD mode Flight Plan");
     XPLMRegisterCommandHandler(mfd_mode_fpln, (XPLMCommandCallback_f)mfd_handler, 1, (void *) MFD_FPLN);
     mfd_mode_eicas = XPLMCreateCommand("xhsi/mfd/mode_eicas", "MFD mode Lower EICAS");
     XPLMRegisterCommandHandler(mfd_mode_eicas, (XPLMCommandCallback_f)mfd_handler, 1, (void *) MFD_EICAS);
@@ -2097,7 +2097,7 @@ void unregisterCommands(void) {
 
 
     // MFD mode
-    XPLMUnregisterCommandHandler(mfd_mode_taxi, (XPLMCommandCallback_f)mfd_handler, 1, (void *) MFD_TAXI);
+//    XPLMUnregisterCommandHandler(mfd_mode_taxi, (XPLMCommandCallback_f)mfd_handler, 1, (void *) MFD_TAXI);
     XPLMUnregisterCommandHandler(mfd_mode_arpt, (XPLMCommandCallback_f)mfd_handler, 1, (void *) MFD_ARPT);
     XPLMUnregisterCommandHandler(mfd_mode_fpln, (XPLMCommandCallback_f)mfd_handler, 1, (void *) MFD_FPLN);
     XPLMUnregisterCommandHandler(mfd_mode_eicas, (XPLMCommandCallback_f)mfd_handler, 1, (void *) MFD_EICAS);

@@ -49,10 +49,10 @@ public interface Avionics {
     public static final int XPDR_TA = 3;
     public static final int XPDR_TARA = 4;
 
-    public static final int MFD_MODE_TAXI = 0;
-    public static final int MFD_MODE_ARPT = 1;
-    public static final int MFD_MODE_FPLN = 2;
-    public static final int MFD_MODE_EICAS = 3;
+    //public static final int MFD_MODE_TAXI = 0;
+    public static final int MFD_MODE_ARPT = 0;
+    public static final int MFD_MODE_FPLN = 1;
+    public static final int MFD_MODE_EICAS = 2;
 
     public static final int RADIO_NAV1 = 1;
     public static final int RADIO_NAV2 = 2;
@@ -280,7 +280,7 @@ public interface Avionics {
 
 
     /**
-     * @return int - MFD mode (0=taxi, 1=arpt, 2=fpln, 3=eicas)
+     * @return int - MFD mode (0=arpt, 1=fpln, 2=eicas)
      */
     public int get_mfd_mode();
 
