@@ -85,7 +85,7 @@ public class MFDComponent extends Component implements Observer, PreferencesObse
         mfd_gc.reconfig = true;
 
         addComponentListener(mfd_gc);
-        subcomponents.add(new AirportChart(model_factory, mfd_gc, this));
+        //subcomponents.add(new AirportChart(model_factory, mfd_gc, this));
         subcomponents.add(new DestinationAirport(model_factory, mfd_gc, this));
         subcomponents.add(new FMSRoute(model_factory, mfd_gc, this));
         subcomponents.add(new LowerEicas(model_factory, mfd_gc, this));

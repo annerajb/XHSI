@@ -508,14 +508,14 @@ public class XPlaneAvionics implements Avionics, Observer {
         } else {
             if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_SWITCHABLE)) {
                 return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_MFD_MODE);
-            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_TAXI_CHART)) {
-                return 0;
-            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_ARPT_INFO)) {
-                return 1;
+//            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_TAXI_CHART)) {
+//                return 0;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_ARPT_CHART)) {
+                return Avionics.MFD_MODE_ARPT;
             } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_FPLN)) {
-                return 2;
+                return Avionics.MFD_MODE_FPLN;
             } else {
-                return 3;
+                return Avionics.MFD_MODE_EICAS;
             }
         }
 

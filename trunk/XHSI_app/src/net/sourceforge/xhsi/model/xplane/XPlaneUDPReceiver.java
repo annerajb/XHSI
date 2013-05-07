@@ -97,8 +97,10 @@ public class XPlaneUDPReceiver extends StoppableThread {
                     logger.warning("No UDP reception");
                     this.has_reception = false;
                 }
+            } catch(IOException ioe) {
+                logger.warning("Caught I/O error while waiting for UDP packets! (" + ioe.toString() + ")");
             } catch(Exception e) {
-                logger.warning("Caught error while waiting for UDP packets! (" + e.toString() + ")");
+                logger.warning("Caught error while waiting for UDP packets! (" + e.toString() + " / " + e.getMessage() + ")");
             }
         }
         logger.fine("X-Plane receiver stopped");

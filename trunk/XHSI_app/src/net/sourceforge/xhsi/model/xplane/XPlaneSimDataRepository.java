@@ -26,11 +26,14 @@
 package net.sourceforge.xhsi.model.xplane;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.model.Observer;
 import net.sourceforge.xhsi.model.SimDataRepository;
 
 public class XPlaneSimDataRepository implements SimDataRepository {
+
+    private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     // Aircraft position
     public static final int SIM_FLIGHTMODEL_POSITION_GROUNDSPEED = 0;
@@ -432,6 +435,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public void tick_updates() {
         this.updates += 1;
         for (int i=0; i<this.observers.size(); i++) {
+            logger.fine("Updating observer "+i);
             ((Observer) this.observers.get(i)).update();
         }
     }

@@ -125,13 +125,14 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_SET_FUEL_CAPACITY = "Set capacity ...";
     public static final String ACTION_RESET_MAX_FF = "Reset max FF";
 
-    public static final String ACTION_MFD_TAXI_CHART = "Taxi Chart";
-    public static final String ACTION_MFD_ARPT_INFO = "Airport Info";
+//    public static final String ACTION_MFD_TAXI_CHART = "Taxi Chart";
+    public static final String ACTION_MFD_ARPT_CHART = "Airport Chart";
     public static final String ACTION_MFD_FPLN = "Flight Plan";
     public static final String ACTION_MFD_LOWER_EICAS = "Lower EICAS";
             
             
     private String range_list[] = { "10", "20", "40", "80", "160", "320", "640" };
+    private String zoomin_range_list[] = { "0.10", "0.20", "0.40", "0.80", "1.60", "3.20", "6.40" };
 
 
     public int source = Avionics.HSI_SOURCE_NAV1;
@@ -189,9 +190,9 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JRadioButtonMenuItem radio_button_submode_nav;
     private JRadioButtonMenuItem radio_button_submode_pln;
     private JCheckBoxMenuItem checkbox_mode_centered;
-    private JCheckBoxMenuItem checkbox_map_zoomin;
+//    private JCheckBoxMenuItem checkbox_map_zoomin;
 
-    private JRadioButtonMenuItem[] radio_button_range = new JRadioButtonMenuItem[7];
+    private JRadioButtonMenuItem[] radio_button_range = new JRadioButtonMenuItem[14];
 
     private JCheckBoxMenuItem checkbox_symbols_show_arpt;
     private JCheckBoxMenuItem checkbox_symbols_show_wpt;
@@ -222,8 +223,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private FixDialog fix_dialog;
     private FuelDialog fuel_dialog;
 
+//    private JRadioButtonMenuItem radio_button_mfd_taxi;
     private JRadioButtonMenuItem radio_button_mfd_arpt;
-    private JRadioButtonMenuItem radio_button_mfd_taxi;
     private JRadioButtonMenuItem radio_button_mfd_eicas;
     private JRadioButtonMenuItem radio_button_mfd_fpln;
 
@@ -555,14 +556,11 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
         ButtonGroup range_group = new ButtonGroup();
 
-        for (int i=0; i<this.range_list.length; i++) {
-            radio_button_menu_item = new JRadioButtonMenuItem( this.range_list[i] );
-            radio_button_menu_item.setToolTipText(this.range_list[i] + " NM");
+        for (int i=0; i<this.zoomin_range_list.length; i++) {
+            radio_button_menu_item = new JRadioButtonMenuItem( this.zoomin_range_list[i] );
+            radio_button_menu_item.setToolTipText(this.zoomin_range_list[i] + " NM");
             radio_button_menu_item.addActionListener(this);
-            if ( i==2 )
-                radio_button_menu_item.setSelected(true);
-            else
-                radio_button_menu_item.setSelected(false);
+            radio_button_menu_item.setSelected(false);
             range_group.add(radio_button_menu_item);
             xhsi_range_menu.add(radio_button_menu_item);
             radio_button_range[i] = radio_button_menu_item;
@@ -570,13 +568,29 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
         xhsi_range_menu.addSeparator();
 
-        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.LABEL_ZOOMIN);
-        checkbox_menu_item.setToolTipText("Zoom in (\u00F7100)");
-        checkbox_menu_item.setActionCommand(XHSISettings.ACTION_ZOOMIN);
-        checkbox_menu_item.addActionListener(this);
-        xhsi_range_menu.add(checkbox_menu_item);
-        // keep a reference
-        this.checkbox_map_zoomin = checkbox_menu_item;
+        for (int i=0; i<this.range_list.length; i++) {
+            radio_button_menu_item = new JRadioButtonMenuItem( this.range_list[i] );
+            radio_button_menu_item.setToolTipText(this.range_list[i] + " NM");
+            radio_button_menu_item.addActionListener(this);
+            if ( i==this.map_range_index )
+                // initial default
+                radio_button_menu_item.setSelected(true);
+            else
+                radio_button_menu_item.setSelected(false);
+            range_group.add(radio_button_menu_item);
+            xhsi_range_menu.add(radio_button_menu_item);
+            radio_button_range[i+7] = radio_button_menu_item;
+        }
+
+//        xhsi_range_menu.addSeparator();
+//
+//        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.LABEL_ZOOMIN);
+//        checkbox_menu_item.setToolTipText("Zoom in (\u00F7100)");
+//        checkbox_menu_item.setActionCommand(XHSISettings.ACTION_ZOOMIN);
+//        checkbox_menu_item.addActionListener(this);
+//        xhsi_range_menu.add(checkbox_menu_item);
+//        // keep a reference
+//        this.checkbox_map_zoomin = checkbox_menu_item;
 
         // add the "Range" menu to the menubar
         menu_bar.add(xhsi_range_menu);
@@ -732,17 +746,17 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
         ButtonGroup mfd_group = new ButtonGroup();
 
-        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_TAXI_CHART);
-        radio_button_menu_item.setToolTipText("Airport Taxi Chart");
-        radio_button_menu_item.addActionListener(this);
-        radio_button_menu_item.setSelected(false);
-        mfd_group.add(radio_button_menu_item);
-        xhsi_mfd_menu.add(radio_button_menu_item);
-        // keep a reference
-        this.radio_button_mfd_taxi = radio_button_menu_item;
+//        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_TAXI_CHART);
+//        radio_button_menu_item.setToolTipText("Airport Taxi Chart");
+//        radio_button_menu_item.addActionListener(this);
+//        radio_button_menu_item.setSelected(false);
+//        mfd_group.add(radio_button_menu_item);
+//        xhsi_mfd_menu.add(radio_button_menu_item);
+//        // keep a reference
+//        this.radio_button_mfd_taxi = radio_button_menu_item;
 
-        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_ARPT_INFO);
-        radio_button_menu_item.setToolTipText("Airport RWY, ILS & COMM information");
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_ARPT_CHART);
+        radio_button_menu_item.setToolTipText("Airport Chart");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(true);
         mfd_group.add(radio_button_menu_item);
@@ -934,10 +948,10 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         } else if (command.equals(XHSISettings.ACTION_RESET_MAX_FF)) {
             this.avionics.get_aircraft().reset_max_FF();
 
-        } else if (command.equals(XHSISettings.ACTION_MFD_TAXI_CHART)) {
-            mfd_mode = Avionics.MFD_MODE_TAXI;
-            this.avionics.set_mfd_mode(mfd_mode);
-        } else if (command.equals(XHSISettings.ACTION_MFD_ARPT_INFO)) {
+//        } else if (command.equals(XHSISettings.ACTION_MFD_TAXI_CHART)) {
+//            mfd_mode = Avionics.MFD_MODE_TAXI;
+//            this.avionics.set_mfd_mode(mfd_mode);
+        } else if (command.equals(XHSISettings.ACTION_MFD_ARPT_CHART)) {
             mfd_mode = Avionics.MFD_MODE_ARPT;
             this.avionics.set_mfd_mode(mfd_mode);
         } else if (command.equals(XHSISettings.ACTION_MFD_FPLN)) {
@@ -947,17 +961,33 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             mfd_mode = Avionics.MFD_MODE_EICAS;
             this.avionics.set_mfd_mode(mfd_mode);
 
-        } else if (command.equals(XHSISettings.ACTION_ZOOMIN)) {
-            map_zoomin = this.checkbox_map_zoomin.isSelected();
-            this.avionics.set_zoomin(map_zoomin);
+//        } else if (command.equals(XHSISettings.ACTION_ZOOMIN)) {
+//            map_zoomin = this.checkbox_map_zoomin.isSelected();
+//            this.avionics.set_zoomin(map_zoomin);
 
-        } else for (int i=0; i<this.range_list.length; i++) {
-            if (command.equals(this.range_list[i])) {
-                // Range override
-                map_range = Integer.parseInt(command);
-                map_range_index = i;
-                this.avionics.set_range_index(i);
+        } else {
+            for (int i=0; i<this.range_list.length; i++) {
+                if (command.equals(this.range_list[i])) {
+                    // Range override
+                    map_range = Integer.parseInt(command);
+                    map_range_index = i;
+                    this.avionics.set_range_index(i);
+                    map_zoomin = false;
+                    this.avionics.set_zoomin(map_zoomin);
+                }
             }
+            for (int i=0; i<this.zoomin_range_list.length; i++) {
+                if (command.equals(this.zoomin_range_list[i])) {
+                    // Range override
+                    // A trick: use the standard range list, but with map_zoomin set to true
+                    map_range = Integer.parseInt(this.range_list[i]);
+                    map_range_index = i;
+                    this.avionics.set_range_index(i);
+                    map_zoomin = true;
+                    this.avionics.set_zoomin(map_zoomin);
+                }
+            }
+
         }
 
     }
@@ -994,10 +1024,22 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.checkbox_mode_centered.setSelected( avionics.map_mode() == Avionics.EFIS_MAP_CENTERED );
 
         int new_range_index = avionics.map_range_index();
-        for (int i=0; i<this.range_list.length; i++) {
-            this.radio_button_range[i].setSelected(  new_range_index == i );
+        if ( avionics.map_zoomin() ) {
+            for (int i=0; i<this.zoomin_range_list.length; i++) {
+                this.radio_button_range[i].setSelected(  new_range_index == i );
+            }
+            for (int i=0; i<this.range_list.length; i++) {
+                this.radio_button_range[i+7].setSelected(  false );
+            }
+        } else {
+            for (int i=0; i<this.zoomin_range_list.length; i++) {
+                this.radio_button_range[i].setSelected(  false );
+            }
+            for (int i=0; i<this.range_list.length; i++) {
+                this.radio_button_range[i+7].setSelected(  new_range_index == i );
+            }
         }
-        this.checkbox_map_zoomin.setSelected( avionics.map_zoomin() );
+//        this.checkbox_map_zoomin.setSelected( avionics.map_zoomin() );
 
         this.checkbox_symbols_show_arpt.setSelected( avionics.efis_shows_arpt() );
         this.checkbox_symbols_show_wpt.setSelected( avionics.efis_shows_wpt() );
@@ -1015,7 +1057,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_xpdr_tara.setSelected( new_xpdr == Avionics.XPDR_TARA );
 
         int new_mfd_mode = avionics.get_mfd_mode();
-        this.radio_button_mfd_taxi.setSelected( new_mfd_mode == Avionics.MFD_MODE_TAXI );
+//        this.radio_button_mfd_taxi.setSelected( new_mfd_mode == Avionics.MFD_MODE_TAXI );
         this.radio_button_mfd_arpt.setSelected( new_mfd_mode == Avionics.MFD_MODE_ARPT );
         this.radio_button_mfd_fpln.setSelected( new_mfd_mode == Avionics.MFD_MODE_FPLN );
         this.radio_button_mfd_eicas.setSelected( new_mfd_mode == Avionics.MFD_MODE_EICAS );

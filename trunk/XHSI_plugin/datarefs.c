@@ -545,11 +545,11 @@ void	setCopilotMapRange100(void* inRefcon, int inValue)
 
 // xhsi/mfd/mode
 int mfd_display_mode;
-int     getEFBMode(void* inRefcon)
+int     getMFDMode(void* inRefcon)
 {
      return mfd_display_mode;
 }
-void	setEFBMode(void* inRefcon, int inValue)
+void	setMFDMode(void* inRefcon, int inValue)
 {
       mfd_display_mode = inValue;
 }
@@ -759,17 +759,17 @@ void registerCopilotDataRefs(void) {
 
 void registerMFDDataRefs(void) {
 
-    XPLMDebugString("XHSI: registering custom EFB DataRefs\n");
+    XPLMDebugString("XHSI: registering custom MFD DataRefs\n");
 
     // xhsi/mfd/mode
     mfd_mode = XPLMRegisterDataAccessor("xhsi/mfd/mode",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
-                                        getEFBMode, setEFBMode,      // Integer accessors
+                                        getMFDMode, setMFDMode,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    XPLMDebugString("XHSI: custom EFB DataRefs registered\n");
+    XPLMDebugString("XHSI: custom MFD DataRefs registered\n");
 
 }
 
@@ -922,6 +922,29 @@ float initCopilotCallback(
     XPLMDebugString("XHSI: custom copilot DataRefs initialized\n");
 
     return 0.0f;
+}
+
+
+float initMFDCallback(
+									float	inElapsedSinceLastCall,
+									float	inElapsedTimeSinceLastFlightLoop,
+									int		inCounter,
+									void *	inRefcon) {
+
+    XPLMDebugString("XHSI: initializing custom MFD DataRefs\n");
+
+    // set a default for the LFD mode
+
+//    // xhsi/mfd/mode
+//    mfd_mode = XPLMFindDataRef ("xhsi/mfd/mode");
+    // mode 0 = Airport Chart / 1 = Flight Plan / 2 = Lower EICAS
+    XPLMSetDatai(mfd_mode, 0);
+
+
+    XPLMDebugString("XHSI: custom MFD DataRefs initialized\n");
+
+    return 0.0f;
+
 }
 
 

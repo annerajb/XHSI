@@ -172,9 +172,9 @@ public class DestinationAirport extends MFDSubcomponent {
         if ( ! dest_arpt_str.equals("") ) {
 
             boolean daylight;
-            if ( this.preferences.get_preference(XHSIPreferences.PREF_ARPT_DIAGRAM_COLOR).equals(XHSIPreferences.ARPT_DIAGRAM_COLOR_AUTO) ) {
+            if ( this.preferences.get_preference(XHSIPreferences.PREF_ARPT_CHART_COLOR).equals(XHSIPreferences.ARPT_DIAGRAM_COLOR_AUTO) ) {
                 daylight = ! this.aircraft.cockpit_lights();
-            } else if ( this.preferences.get_preference(XHSIPreferences.PREF_ARPT_DIAGRAM_COLOR).equals(XHSIPreferences.ARPT_DIAGRAM_COLOR_DAY) ) {
+            } else if ( this.preferences.get_preference(XHSIPreferences.PREF_ARPT_CHART_COLOR).equals(XHSIPreferences.ARPT_DIAGRAM_COLOR_DAY) ) {
                 daylight = true;
             } else {
                 daylight = false;
