@@ -184,6 +184,10 @@ public class EICASComponent extends Component implements Observer, PreferencesOb
         this.update_since_last_heartbeat = true;
     }
 
+    public void heartbeat() {
+        repaint();
+    }
+
 
 //    public void heartbeat() {
 //        if (this.update_since_last_heartbeat == false) {

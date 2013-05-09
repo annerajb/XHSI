@@ -195,6 +195,10 @@ public class NDComponent extends Component implements Observer, PreferencesObser
         this.update_since_last_heartbeat = true;
     }
 
+    public void heartbeat() {
+        repaint();
+    }
+
 
 //    public void heartbeat() {
 //        if (this.update_since_last_heartbeat == false) {

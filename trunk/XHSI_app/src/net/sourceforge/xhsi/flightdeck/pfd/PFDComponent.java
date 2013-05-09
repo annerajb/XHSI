@@ -188,6 +188,9 @@ public class PFDComponent extends Component implements Observer, PreferencesObse
         this.update_since_last_heartbeat = true;
     }
 
+    public void heartbeat() {
+        repaint();
+    }
 
 //    public void heartbeat() {
 //        if (this.update_since_last_heartbeat == false) {

@@ -80,7 +80,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 5 Alpha 26";
+    private static final String RELEASE = "2.0 Beta 5 Alpha 27";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -290,6 +290,11 @@ public class XHSI implements ActionListener {
         // create user interface
         create_UI();
 
+        PFDComponent pfd_ui = null;
+        NDComponent nd_ui = null;
+        EICASComponent eicas_ui = null;
+        MFDComponent mfd_ui = null;
+
         // some preferences require a reconfiguration
         for (int i=0; i<instruments.size(); i++) {
             switch (instruments.get(i).get_index()) {
@@ -300,7 +305,7 @@ public class XHSI implements ActionListener {
                     break;
                 case XHSIInstrument.PFD_ID :
                     // PFD
-                    PFDComponent pfd_ui = (PFDComponent)instruments.get(i).components;
+                    pfd_ui = (PFDComponent)instruments.get(i).components;
                     this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_BOLD_FONTS);
                     this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_USE_MORE_COLOR);
                     this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_ANTI_ALIAS);
@@ -310,7 +315,7 @@ public class XHSI implements ActionListener {
                     break;
                 case XHSIInstrument.ND_ID :
                     // ND
-                    NDComponent nd_ui = (NDComponent)instruments.get(i).components;
+                    nd_ui = (NDComponent)instruments.get(i).components;
                     this.preferences.add_subsciption(nd_ui, XHSIPreferences.PREF_BOLD_FONTS);
                     this.preferences.add_subsciption(nd_ui, XHSIPreferences.PREF_USE_MORE_COLOR);
                     this.preferences.add_subsciption(nd_ui, XHSIPreferences.PREF_ANTI_ALIAS);
@@ -322,7 +327,7 @@ public class XHSI implements ActionListener {
                     break;
                 case XHSIInstrument.EICAS_ID :
                     // EICAS
-                    EICASComponent eicas_ui = (EICASComponent)instruments.get(i).components;
+                    eicas_ui = (EICASComponent)instruments.get(i).components;
                     this.preferences.add_subsciption(eicas_ui, XHSIPreferences.PREF_BOLD_FONTS);
                     this.preferences.add_subsciption(eicas_ui, XHSIPreferences.PREF_USE_MORE_COLOR);
                     this.preferences.add_subsciption(eicas_ui, XHSIPreferences.PREF_ANTI_ALIAS);
@@ -331,12 +336,12 @@ public class XHSI implements ActionListener {
                     break;
                 case XHSIInstrument.MFD_ID :
                     // EFB
-                    MFDComponent efb_ui = (MFDComponent)instruments.get(i).components;
-                    this.preferences.add_subsciption(efb_ui, XHSIPreferences.PREF_BOLD_FONTS);
-                    this.preferences.add_subsciption(efb_ui, XHSIPreferences.PREF_USE_MORE_COLOR);
-                    this.preferences.add_subsciption(efb_ui, XHSIPreferences.PREF_ANTI_ALIAS);
-                    this.preferences.add_subsciption(efb_ui, XHSIPreferences.PREF_DU_PREPEND);
-                    this.preferences.add_subsciption(efb_ui, XHSIPreferences.PREF_USE_POWER);
+                    mfd_ui = (MFDComponent)instruments.get(i).components;
+                    this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_BOLD_FONTS);
+                    this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_USE_MORE_COLOR);
+                    this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_ANTI_ALIAS);
+                    this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_DU_PREPEND);
+                    this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_USE_POWER);
                     break;
                 case XHSIInstrument.ANNUN_ID :
                     // Annunciators
@@ -375,7 +380,7 @@ public class XHSI implements ActionListener {
 //taxi.get_chart("YMML");
         
         // add components update watchdog
-        UIHeartbeat ui_heartbeat = new UIHeartbeat(this.xhsi_ui, 1000);
+        UIHeartbeat ui_heartbeat = new UIHeartbeat(this.xhsi_ui, pfd_ui, nd_ui, eicas_ui, mfd_ui, 1000);
         ui_heartbeat.start();
         this.running_threads.add(ui_heartbeat);
 
@@ -714,7 +719,8 @@ public class XHSI implements ActionListener {
                     "  PFD - Primary Flight Display\n" +
                     "  ND - Navigation Display\n" +
                     "  EICAS - Engine Instruments\n" +
-                    "  EFB - (simple) Electronic Flight Bag\n" +
+                    "  MFD - Airport Chart / Flight Plan / Lower EICAS\n" +
+                    "  Clock / Chronometer\n" +
                     "  Annunciators - Gear, Flaps, etc...\n" +
                     "\n" +
                     "http://xhsi.sourceforge.net\n" +
@@ -722,7 +728,7 @@ public class XHSI implements ActionListener {
                     "Main contributors:\n" +
                     "2007-2009 Georg Gruetter\n" +
                     "2009 Sandy Barbour\n" +
-                    "2009-2011 Marc Rogiers\n" +
+                    "2009-2013 Marc Rogiers\n" +
                     "\n" +
                     "running on " + this.ip_host,
                     "About XHSI",
