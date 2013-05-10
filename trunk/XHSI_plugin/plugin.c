@@ -79,6 +79,7 @@
 #include "sender.h"
 #include "receiver.h"
 #include "commands.h"
+#include "xfmc.h"
 
 
 
@@ -106,6 +107,7 @@ PLUGIN_API int XPluginStart(
 
 	// Find the datarefs we want to send and receive
 	findDataRefs();
+	findXfmcDataRefs();
 
 	// Register custom X-Plane datarefs
 	registerPilotDataRefs();
@@ -213,6 +215,13 @@ PLUGIN_API int XPluginEnable(void) {
 							-1.0f,
 							NULL);
 
+    // X-FMC
+    XPLMRegisterFlightLoopCallback(
+                           sendXfmcCallback,
+                           -1.0f,
+                           NULL);
+
+
     XPLMDebugString("XHSI: flightloop callbacks registered\n");
 
 	return 1;
@@ -250,6 +259,8 @@ PLUGIN_API void XPluginDisable(void) {
 	XPLMUnregisterFlightLoopCallback(checkUFMCCallback, NULL);
 	XPLMUnregisterFlightLoopCallback(checkX737Callback, NULL);
 	XPLMUnregisterFlightLoopCallback(checkCL30Callback, NULL);
+
+    XPLMUnregisterFlightLoopCallback(sendXfmcCallback, NULL);
 
     XPLMDebugString("XHSI: flightloop callbacks unregistered\n");
 
