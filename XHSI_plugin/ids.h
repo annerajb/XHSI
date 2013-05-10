@@ -103,6 +103,7 @@
 #define SIM_COCKPIT_RADIOS_COM1_STDBY_FREQ_HZ 145
 #define SIM_COCKPIT_RADIOS_COM2_FREQ_HZ 146
 #define SIM_COCKPIT_RADIOS_COM2_STDBY_FREQ_HZ 147
+#define SIM_COCKPIT_RADIOS_STDBY_FLIP 148 // for incoming commands only
 
 
 // AP
@@ -271,6 +272,10 @@
 #define UFMC_N1_2 706
 #define UFMC_N1_3 707
 #define UFMC_N1_4 708
+
+
+//XFMC
+#define XFMC_KEYPATH 750
 
 
 // X737

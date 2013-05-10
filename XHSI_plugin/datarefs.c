@@ -17,9 +17,11 @@
 #include "XPStandardWidgets.h"
 
 
+#include "commands.h"
 #include "globals.h"
 #include "structs.h"
 #include "ids.h"
+#include "xfmc.h"
 
 
 // variables that will contain references to be used by XPLMGetData...
@@ -1455,6 +1457,88 @@ void writeDataRef(int id, float value) {
             XPLMSetDataf(autopilot_heading_mag, value);
             break;
 
+
+        // X-FMC
+        case XFMC_KEYPATH :
+            XPLMSetDatai(xfmc_keypath_ref, (int)value);
+            break;
+
+
+        // radio freqs
+        // COM
+        case SIM_COCKPIT_RADIOS_COM1_FREQ_HZ :
+            XPLMSetDatai(com1_freq_hz, (int)value);
+            break;
+
+        case SIM_COCKPIT_RADIOS_COM1_STDBY_FREQ_HZ :
+            XPLMSetDatai(com1_stdby_freq_hz, (int)value);
+            break;
+
+        case SIM_COCKPIT_RADIOS_COM2_FREQ_HZ :
+            XPLMSetDatai(com2_freq_hz, (int)value);
+            break;
+
+        case SIM_COCKPIT_RADIOS_COM2_STDBY_FREQ_HZ :
+            XPLMSetDatai(com2_stdby_freq_hz, (int)value);
+            break;
+
+        // NAV
+        case SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ :
+            XPLMSetDatai(nav1_freq_hz, (int)value);
+            break;
+
+        case SIM_COCKPIT_RADIOS_NAV1_STDBY_FREQ_HZ :
+            XPLMSetDatai(nav1_stdby_freq_hz, (int)value);
+            break;
+
+        case SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ :
+            XPLMSetDatai(nav2_freq_hz, (int)value);
+            break;
+
+        case SIM_COCKPIT_RADIOS_NAV2_STDBY_FREQ_HZ :
+            XPLMSetDatai(nav2_stdby_freq_hz, (int)value);
+            break;
+
+        // ADF
+        case SIM_COCKPIT_RADIOS_ADF1_FREQ_HZ :
+            XPLMSetDatai(adf1_freq_hz, (int)value);
+            break;
+
+        case SIM_COCKPIT_RADIOS_ADF1_STDBY_FREQ_HZ :
+            XPLMSetDatai(adf1_stdby_freq_hz, (int)value);
+            break;
+
+        case SIM_COCKPIT_RADIOS_ADF2_FREQ_HZ :
+            XPLMSetDatai(adf2_freq_hz, (int)value);
+            break;
+
+        case SIM_COCKPIT_RADIOS_ADF2_STDBY_FREQ_HZ :
+            XPLMSetDatai(adf2_stdby_freq_hz, (int)value);
+            break;
+
+        // FLIPS (special case; don't set datarefs but trigger commands...)
+        case SIM_COCKPIT_RADIOS_STDBY_FLIP :
+            switch ((int)value) {
+                case 1 :
+                    XPLMCommandOnce(nav1_standy_flip);
+                    break;
+                case 2 :
+                    XPLMCommandOnce(nav2_standy_flip);
+                    break;
+                case 3 :
+                    XPLMCommandOnce(com1_standy_flip);
+                    break;
+                case 4 :
+                    XPLMCommandOnce(com2_standy_flip);
+                    break;
+                case 5 :
+                    XPLMCommandOnce(adf1_standy_flip);
+                    break;
+                case 6 :
+                    XPLMCommandOnce(adf2_standy_flip);
+                    break;
+            }
+            break;
 
     }
 

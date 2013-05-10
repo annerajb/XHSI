@@ -98,6 +98,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="datarefs_x737.h" />
+		<Unit filename="endianess.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="endianess.h" />
 		<Unit filename="globals.h" />
 		<Unit filename="ids.h" />
@@ -131,6 +134,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="ui.h" />
+		<Unit filename="xfmc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="xfmc.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />
