@@ -56,7 +56,7 @@ public class MFDFail extends MFDSubcomponent {
 
 
     public void paint(Graphics2D g2) {
-        if ( mfd_gc.powered && XHSIStatus.status.equals(XHSIStatus.STATUS_NO_RECEPTION) ) {
+        if ( XHSIStatus.status.equals(XHSIStatus.STATUS_NO_RECEPTION) ) {
             drawFailCross(g2);
         }
     }

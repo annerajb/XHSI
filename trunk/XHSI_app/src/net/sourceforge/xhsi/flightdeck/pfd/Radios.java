@@ -80,6 +80,7 @@ public class Radios extends PFDSubcomponent {
         format_symbols.setDecimalSeparator('.');
         navcom_format.setDecimalFormatSymbols(format_symbols);
         DecimalFormat adf_format = new DecimalFormat("000");
+        DecimalFormat xpdr_format = new DecimalFormat("0000");
 
         int line_1_l = pfd_gc.radios_top + pfd_gc.line_height_m * 5 / 4;
         int line_1_a = line_1_l + pfd_gc.line_height_l;
@@ -101,7 +102,8 @@ public class Radios extends PFDSubcomponent {
         Shape original_clipshape = g2.getClip();
 
 
-        // tape Nav & ADF
+
+        // tape NAV & ADF
         pfd_gc.setTransparent(g2, this.preferences.get_draw_colorgradient_horizon());
         g2.setColor(pfd_gc.instrument_background_color);
         g2.fillRect(pfd_gc.navradios_left - 1, pfd_gc.radios_top - 1, pfd_gc.radios_width + 2, pfd_gc.radios_height + 2);
@@ -149,7 +151,7 @@ public class Radios extends PFDSubcomponent {
         g2.setClip(original_clipshape);
 
 
-        // tape
+        // tape COM & XPDR
         pfd_gc.setTransparent(g2, this.preferences.get_draw_colorgradient_horizon());
         g2.setColor(pfd_gc.instrument_background_color);
         g2.fillRect(pfd_gc.comradios_left - 1, pfd_gc.radios_top - 1, pfd_gc.radios_width + 2, pfd_gc.radios_height + 2);
@@ -179,10 +181,9 @@ public class Radios extends PFDSubcomponent {
         g2.setFont(pfd_gc.font_m);
         g2.drawString("XPDR", pfd_gc.comradios_left + pfd_gc.digit_width_l/2, line_3_l);
         g2.setFont(pfd_gc.font_s);
-        g2.drawString(""+this.avionics.transponder_code(), pfd_gc.comradios_left + pfd_gc.digit_width_l, line_3_a);
+        g2.drawString(xpdr_format.format(this.avionics.transponder_code()), pfd_gc.comradios_left + pfd_gc.digit_width_l, line_3_a);
         g2.setColor(pfd_gc.dim_markings_color);
         g2.drawString(xpdr_mode[this.avionics.transponder_mode()], pfd_gc.comradios_left + pfd_gc.digit_width_l, line_3_s);
-
 
         g2.setClip(original_clipshape);
 

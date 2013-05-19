@@ -108,7 +108,7 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
 
         // these vars will be re-used several times, so define them here and not in a for-loop
         int data_point_id;
-        //int int_data;
+        int int_data;
         float float_data;
         String string_data;
 
@@ -137,10 +137,10 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
                     string_data = new String(sim_data, 8+(i*8)+4, 4).trim();
                     data_stream.skipBytes(4);
                     this.xplane_data_repository.store_sim_string(data_point_id, string_data);
-// We will see about integer sim_data values later...
-//                } else if ( data_point_id >= 1000 ) {
-//                    // Int
-//                    int_data = data_stream.readInt();
+                } else if ( data_point_id >= 5000 ) {
+                    // Int
+                    int_data = data_stream.readInt();
+                    //logger.warning("INT:"+data_point_id+"="+int_data);
 //                    this.xplane_data_repository.store_sim_int(data_point_id, int_data);
                 } else {
                     // Float

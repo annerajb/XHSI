@@ -142,6 +142,8 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
         float length;
         float lat = 0;
         float lon = 0;
+        float tower_lat = 0;
+        float tower_lon = 0;
         float arp_lat = 0;
         float arp_lon = 0;
         float longest = 0;
@@ -173,8 +175,8 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                                 // position of the ARP (Aerodrome Reference Point)
                                 if (tower) {
                                     // ARP = tower position
-                                    arp_lat = lat;
-                                    arp_lon = lon;
+                                    arp_lat = tower_lat;
+                                    arp_lon = tower_lon;
                                 } else if (hard_rwy_count == 1) {
                                     // ARP = the center of the one and only hard runway
                                     arp_lat = hard_lat_sum;
@@ -220,23 +222,31 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                         } else if (info_type == 100) {
                             // a runway
                             //if (airport_icao_code.equals("LOWI")) logger.warning("<" + airport_icao_code + "> " + line);
-                            width = Float.parseFloat(line.substring(5, 11));
-                            surface = Integer.parseInt(line.substring(13, 15).trim());
-                            rwy_num1 = line.substring(31, 34).trim();
-                            thr1_lat = Float.parseFloat(line.substring(35, 47));
-                            thr1_lon = Float.parseFloat(line.substring(48, 61));
-                            rwy_num2 = line.substring(87, 90).trim();
-                            thr2_lat = Float.parseFloat(line.substring(91, 103));
-                            thr2_lon = Float.parseFloat(line.substring(104, 117));
+//                            width = Float.parseFloat(line.substring(5, 11));
+//                            surface = Integer.parseInt(line.substring(13, 15).trim());
+//                            rwy_num1 = line.substring(31, 34).trim();
+//                            thr1_lat = Float.parseFloat(line.substring(35, 47));
+//                            thr1_lon = Float.parseFloat(line.substring(48, 61));
+//                            rwy_num2 = line.substring(87, 90).trim();
+//                            thr2_lat = Float.parseFloat(line.substring(91, 103));
+//                            thr2_lon = Float.parseFloat(line.substring(104, 117));
+                            // we need more tokens
+                            tokens = line.split("\\s+",26);
+                            width = Float.parseFloat(tokens[1]);
+                            surface = Integer.parseInt(tokens[2]);
+                            rwy_num1 = tokens[8];
+                            thr1_lat = Float.parseFloat(tokens[9]);
+                            thr1_lon = Float.parseFloat(tokens[10]);
+                            rwy_num2 = tokens[17];
+                            thr2_lat = Float.parseFloat(tokens[18]);
+                            thr2_lon = Float.parseFloat(tokens[19]);
                             length = CoordinateSystem.rough_distance(thr1_lat, thr1_lon, thr2_lat, thr2_lon) * 1851.852f; // meters!
                             lat = ( thr1_lat + thr2_lat ) / 2;
                             lon = ( thr1_lon + thr2_lon ) / 2;
-//if ( XHSIPreferences.get_instance().get_draw_runways() ) {
-                                Runway new_rwy = new Runway(airport_icao_code, length, width, surface, rwy_num1, thr1_lat, thr1_lon, rwy_num2, thr2_lat, thr2_lon);
-                                nor.add_nav_object(new_rwy);
-                                //runways.add( nor.get_runway(airport_icao_code, lat, lon) );
-                                runways.add(new_rwy);
-//}
+                            Runway new_rwy = new Runway(airport_icao_code, length, width, surface, rwy_num1, thr1_lat, thr1_lon, rwy_num2, thr2_lat, thr2_lon);
+                            nor.add_nav_object(new_rwy);
+                            //runways.add( nor.get_runway(airport_icao_code, lat, lon) );
+                            runways.add(new_rwy);
                             // find the longest runway for this airport
                             if (length > longest) longest = length;
                             // calculate an average of all threshold lats and lons to define the ARP
@@ -253,16 +263,44 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                         } else if (info_type == 14) {
                             // if defined in the file, the tower position can be used as the ARP
                             tower = true;
-                            lat = Float.parseFloat(line.substring(4, 16));
-                            lon = Float.parseFloat(line.substring(17, 30));
+                            // we already have enough tokens tokens = line.split("\\s+",3);
+                            tower_lat = Float.parseFloat(tokens[1]);
+                            tower_lon = Float.parseFloat(tokens[2]);
                         } else if ( (info_type >= 50) && (info_type < 60) ) {
                             // COM Radio
-                            comms.add(new ComRadio(airport_icao_code, line.substring(9), (float)Float.parseFloat(line.substring(3, 8)) / 100.0f));
+                            // we need the name, which can include spaces, in the third token
+                            tokens = line.split("\\s+",3);
+                            comms.add(new ComRadio(airport_icao_code, tokens.length==3?tokens[2]:"", (float)Float.parseFloat(tokens[1]) / 100.0f));
                         } else if ((info_type == 99) && (current_airport_saved == false)) {
                             // end of file, save the last airport
-                            if ( ! current_airport_saved )
+                            if ( ! current_airport_saved ) {
+                                // position of the ARP (Aerodrome Reference Point)
+                                if (tower) {
+                                    // ARP = tower position
+                                    arp_lat = tower_lat;
+                                    arp_lon = tower_lon;
+                                } else if (hard_rwy_count == 1) {
+                                    // ARP = the center of the one and only hard runway
+                                    arp_lat = hard_lat_sum;
+                                    arp_lon = hard_lon_sum;
+                                } else if (rwy_count == 1) {
+                                    // ARP = the center of the one and only non-hard runway
+                                    arp_lat = lat_sum;
+                                    arp_lon = lon_sum;
+                                } else if (hard_rwy_count > 1) {
+                                    // no tower, but several hard runways
+                                    // ARP = center of all hard runways
+                                    arp_lat = hard_lat_sum / hard_rwy_count;
+                                    arp_lon = hard_lon_sum / hard_rwy_count;
+                                } else {
+                                    // no hard runways and no tower
+                                    // ARP = center of all non-hard runways
+                                    arp_lat = lat_sum / rwy_count;
+                                    arp_lon = lon_sum / rwy_count;
+                                }
                                 nor.add_nav_object(new Airport(airport_name, airport_icao_code, lat, lon, runways, longest, elev, comms));
-                            current_airport_saved = true;
+                                current_airport_saved = true;
+                            }
                         }
                     } catch (Exception e) {
                         logger.warning("\nParse error in " +file.getName() + ":" + line_number + "(" + e + ") " + line);
@@ -312,17 +350,18 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                 line = line.trim();
 
                 if ( (line_number == 2) && (line.length() >= 32) ) {
-                    // the version info is on line 2
+                    // the version info is on line 2, hopefully in a fixed location
                     XHSIStatus.nav_db_cycle = line.substring(25, 32);
                 } else if ( (line_number > 2)  && ( ! line.equals("99") ) ) {
                     try {
                         
-                        info_type = Integer.parseInt(line.substring(0, 2).trim());
+                        tokens = line.split("\\s+",9);
+                        info_type = Integer.parseInt(tokens[0]);
                         
                         if ( (info_type ==2) || (info_type == 3) || (info_type == 13) ) {
                             
                             // 2=NDB, 3=VOR (VOR, VOR-DME, VORTAC) 13=DME (Standalone DME, TACAN)
-                            tokens = line.split("\\s+",9);
+                            // tokens = line.split("\\s+",9);
                             nor.add_nav_object(new RadioNavBeacon(
                                     tokens[8], // name
                                     tokens[7], // ident
@@ -361,7 +400,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                                     Float.parseFloat(tokens[6]), // bearing, true degrees
                                     tokens[8], // ICAO
                                     tokens[9], // RWY,
-                                    line.substring(72),
+                                    tokens[10],
                                     has_a_twin,
                                     twin_ilt
                                 );

@@ -243,7 +243,14 @@ public class SpeedTape extends PFDSubcomponent {
             }
             if ( landing ) {
                 float vref = this.avionics.ufmc_vref();
-                if ( vref > 0.0f ) drawVspeed(g2, vref, ias, "REF");
+                if ( vref > 0.0f ) {
+                    drawVspeed(g2, vref, ias, "REF");
+                } else {
+                    vref = this.avionics.ufmc_vf30();
+                    if ( vref > 0.0f ) drawVspeed(g2, vref, ias, "F30");
+                    vref = this.avionics.ufmc_vf40();
+                    if ( vref > 0.0f ) drawVspeed(g2, vref, ias, "F40");
+                }
             }
             
         } else if ( this.avionics.is_cl30() ) {

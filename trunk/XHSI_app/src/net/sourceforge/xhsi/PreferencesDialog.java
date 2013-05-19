@@ -656,7 +656,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             this.panel_active_checkbox[i] = new JCheckBox();
             this.panel_active_checkbox[i].setActionCommand("drawtoggle");
             this.panel_active_checkbox[i].addActionListener(this);
-            this.panel_active_checkbox[i].setToolTipText("Display the " + descr + "instrument");
+            this.panel_active_checkbox[i].setToolTipText("Display the " + descr);
             sub_panel.add(this.panel_active_checkbox[i], subcons);
             subdialog_column++;
 

@@ -66,7 +66,10 @@ public class XPlaneAircraft implements Aircraft {
                 ! XHSIPreferences.get_instance().get_use_power() ) {
             return true;
         } else {
-            return ( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_ELECTRICAL_BATTERY_ON) != 0.0f );
+            if ( this.avionics.is_x737() )
+               return ( sim_data.get_sim_float(XPlaneSimDataRepository.X737_PFD_PWR) != 0.0f );
+            else
+               return ( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_ELECTRICAL_BATTERY_ON) != 0.0f );
         }
     }
 

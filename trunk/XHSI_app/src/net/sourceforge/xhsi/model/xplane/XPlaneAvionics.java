@@ -266,7 +266,10 @@ public class XPlaneAvionics implements Avionics, Observer {
                 ! XHSIPreferences.get_instance().get_use_power() ) {
             return true;
         } else {
-            return ( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_ELECTRICAL_AVIONICS_ON) != 0.0f );
+            if ( is_x737() )
+                return ( sim_data.get_sim_float(XPlaneSimDataRepository.X737_PFD_PWR) != 0.0f );
+            else
+                return ( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_ELECTRICAL_AVIONICS_ON) != 0.0f );
         }
 
     }
@@ -790,7 +793,7 @@ public class XPlaneAvionics implements Avionics, Observer {
 
         //return (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_TRANSPONDER_MODE);
         if ( ! xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
-            return (int) (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_TRANSPONDER_MODE));
+            return (int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_TRANSPONDER_MODE);
         } else {
             return xhsi_settings.xpdr;
         }
@@ -799,7 +802,7 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     public int transponder_code() {
 
-        return (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_TRANSPONDER_CODE);
+        return (int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_TRANSPONDER_CODE);
 
     }
 
@@ -876,25 +879,25 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
 
     public int cl30_refspds() {
-        return (int) sim_data.get_sim_float(XPlaneSimDataRepository.CL30_REFSPDS);
+        return (int)sim_data.get_sim_float(XPlaneSimDataRepository.CL30_REFSPDS);
     }
     public int cl30_v1() {
-        return (int) sim_data.get_sim_float(XPlaneSimDataRepository.CL30_V1);
+        return (int)sim_data.get_sim_float(XPlaneSimDataRepository.CL30_V1);
     }
     public int cl30_vr() {
-        return (int) sim_data.get_sim_float(XPlaneSimDataRepository.CL30_VR);
+        return (int)sim_data.get_sim_float(XPlaneSimDataRepository.CL30_VR);
     }
     public int cl30_v2() {
-        return (int) sim_data.get_sim_float(XPlaneSimDataRepository.CL30_V2);
+        return (int)sim_data.get_sim_float(XPlaneSimDataRepository.CL30_V2);
     }
     public int cl30_vt() {
-        return (int) sim_data.get_sim_float(XPlaneSimDataRepository.CL30_VT);
+        return (int)sim_data.get_sim_float(XPlaneSimDataRepository.CL30_VT);
     }
     public int cl30_vga() {
-        return (int) sim_data.get_sim_float(XPlaneSimDataRepository.CL30_VGA);
+        return (int)sim_data.get_sim_float(XPlaneSimDataRepository.CL30_VGA);
     }
     public int cl30_vref() {
-        return (int) sim_data.get_sim_float(XPlaneSimDataRepository.CL30_VREF);
+        return (int)sim_data.get_sim_float(XPlaneSimDataRepository.CL30_VREF);
     }
     
     
@@ -922,6 +925,12 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
     public float ufmc_vref() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.UFMC_VREF);
+    }
+    public float ufmc_vf30() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.UFMC_VF30);
+    }
+    public float ufmc_vf40() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.UFMC_VF40);
     }
     
 

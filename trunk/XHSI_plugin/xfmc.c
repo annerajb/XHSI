@@ -1,5 +1,11 @@
 #include <stdio.h>
 
+// mingw-64 demands that winsock2.h is loaded before windows.h
+#if IBM
+#include <winsock2.h>
+#endif
+
+
 #include "XPLMDataAccess.h"
 #include "XPLMUtilities.h"
 
@@ -9,6 +15,7 @@
 #include "globals.h"
 #include "settings.h"
 #include "net.h"
+
 
 XPLMDataRef xfmc_panel_lines_ref[NUM_XFMC_LINES];
 XPLMDataRef xfmc_keypath_ref;

@@ -144,8 +144,10 @@ public class ClockDial extends ClockSubcomponent {
             
             int timer = (int)chr_time;
             int mins = timer / 60;
-            String timer_str = "" + mins;
-            int timer_x = clock_x + clock_gc.digit_width_zl*2 - clock_gc.get_text_width(g2, clock_gc.font_zl, timer_str);
+            int secs = timer % 60;
+            String timer_str = (mins==0?"":mins) + ":" + hms_formatter.format(secs);
+//            int timer_x = clock_x + clock_gc.digit_width_zl*2 - clock_gc.get_text_width(g2, clock_gc.font_zl, timer_str);
+            int timer_x = clock_x + clock_gc.get_text_width(g2, clock_gc.font_zl, "99:99")/2 - clock_gc.get_text_width(g2, clock_gc.font_zl, timer_str);
             int timer_y = clock_y + clock_gc.line_height_zl*38/100 + clock_gc.line_height_zl*3/4;
             g2.setFont(clock_gc.font_zl);
             g2.drawString(timer_str, timer_x, timer_y);
@@ -156,7 +158,6 @@ public class ClockDial extends ClockSubcomponent {
             g2.setFont(clock_gc.font_xxl);
             g2.drawString("CHR", timer_x, timer_y);
             
-            int secs = timer % 60;
             AffineTransform original_at = g2.getTransform();
             g2.rotate(Math.toRadians(secs*6), clock_x, clock_y);
             Stroke original_stroke = g2.getStroke();

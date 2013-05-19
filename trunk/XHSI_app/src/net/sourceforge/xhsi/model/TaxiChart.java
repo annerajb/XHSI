@@ -86,7 +86,7 @@ public class TaxiChart {
     public class Pavement {
         
         public int surface;
-        public String name;
+        // public String name;
         public ArrayList<Node> nodes;
         public ArrayList<Pavement> holes;
         
@@ -170,12 +170,12 @@ public class TaxiChart {
     }
 
     
-    public void new_pavement(int sfc, String apron) {
+    public void new_pavement(int sfc) {
 
         this.current_pavement = new Pavement();
         this.pavements.add(current_pavement);
         this.current_pavement.surface = sfc;
-        this.current_pavement.name = apron;
+        // this.current_pavement.name = apron;
         this.current_loop = this.current_pavement;
         this.loop_is_open = true;
         this.has_next_cp = false;

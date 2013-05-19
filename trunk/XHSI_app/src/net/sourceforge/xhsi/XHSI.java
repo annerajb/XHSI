@@ -53,7 +53,7 @@ import javax.swing.JOptionPane;
 import net.sourceforge.xhsi.model.ModelFactory;
 
 import net.sourceforge.xhsi.model.aptnavdata.AptNavXP900DatNavigationObjectBuilder;
-import net.sourceforge.xhsi.model.aptnavdata.AptNavXP900DatTaxiChartBuilder;
+//import net.sourceforge.xhsi.model.aptnavdata.AptNavXP900DatTaxiChartBuilder;
 
 import net.sourceforge.xhsi.model.xplane.XPlaneDataPacketDecoder;
 import net.sourceforge.xhsi.model.xplane.XPlaneFlightSessionPlayer;
@@ -80,7 +80,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 5 Alpha 27";
+    private static final String RELEASE = "2.0 Beta 5 Alpha 29";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }

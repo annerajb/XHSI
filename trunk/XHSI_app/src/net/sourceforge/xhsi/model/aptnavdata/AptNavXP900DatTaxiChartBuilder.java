@@ -26,23 +26,23 @@ package net.sourceforge.xhsi.model.aptnavdata;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSIPreferences;
-import net.sourceforge.xhsi.XHSIStatus;
-import net.sourceforge.xhsi.PreferencesObserver;
-import net.sourceforge.xhsi.ProgressObserver;
+//import net.sourceforge.xhsi.XHSIStatus;
+//import net.sourceforge.xhsi.PreferencesObserver;
+//import net.sourceforge.xhsi.ProgressObserver;
 
-import net.sourceforge.xhsi.model.Airport;
-import net.sourceforge.xhsi.model.ComRadio;
-import net.sourceforge.xhsi.model.CoordinateSystem;
-import net.sourceforge.xhsi.model.Fix;
-import net.sourceforge.xhsi.model.Localizer;
-import net.sourceforge.xhsi.model.NavigationObjectRepository;
-import net.sourceforge.xhsi.model.RadioNavigationObject;
-import net.sourceforge.xhsi.model.RadioNavBeacon;
-import net.sourceforge.xhsi.model.Runway;
+//import net.sourceforge.xhsi.model.Airport;
+//import net.sourceforge.xhsi.model.ComRadio;
+//import net.sourceforge.xhsi.model.CoordinateSystem;
+//import net.sourceforge.xhsi.model.Fix;
+//import net.sourceforge.xhsi.model.Localizer;
+//import net.sourceforge.xhsi.model.NavigationObjectRepository;
+//import net.sourceforge.xhsi.model.RadioNavigationObject;
+//import net.sourceforge.xhsi.model.RadioNavBeacon;
+//import net.sourceforge.xhsi.model.Runway;
 import net.sourceforge.xhsi.model.TaxiChart;
 
 
@@ -127,15 +127,9 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
         boolean arpt_hit = false;
         while ( ! arpt_hit && ( (line = reader.readLine()) != null ) ) {
 
-            tokens = line.split("\\s+",6);
-//            if ( ( line.length() > 19 )
-//                    && ( Integer.parseInt(line.substring(0, 3).trim()) == 1 )
-//                    && ( line.substring(15, 19).trim().equalsIgnoreCase(icao) ) ) {
-//                arpt_hit = true;
             if ( line.startsWith("1 ") ) {
                 tokens = line.split("\\s+",6);
                 arpt_hit = tokens[4].equalsIgnoreCase(icao);
-                //if (arpt_hit) logger.warning("Found "+icao+" line 1  "+line.substring(20));
             }
 
         }
@@ -151,76 +145,76 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
             if ( line.length() > 0 ) {
 
                 line = line.trim();
-//                if ( (line_number > 2) && ( ! line.equals("99") ) ) {
-                    try {
 
-                        tokens = line.split("\\s+",6);
-                        info_type = Integer.parseInt(tokens[0]);
+                try {
+
+                    tokens = line.split("\\s+",6);
+                    info_type = Integer.parseInt(tokens[0]);
 //logger.warning("Info type : "+ info_type);
-                        if (info_type == 1) {
+                    if (info_type == 1) {
 
-                            // we got to a new airport header; close and exit...
+                        // we got to a new airport header; close and exit...
 //logger.warning("Must have reached the end of "+icao);
-                            this.taxi_chart.close_chart();
-                            arpt_hit = false;
+                        this.taxi_chart.close_chart();
+                        arpt_hit = false;
 
-                        } else if (info_type == 10) {
+                    } else if (info_type == 10) {
 
-//logger.warning("Line type 10");
-//logger.warning("lat: "+Float.parseFloat(line.substring(04, 16).trim()));
-//logger.warning("lon: "+Float.parseFloat(line.substring(17, 30).trim()));
-//logger.warning("hdg: "+Float.parseFloat(line.substring(35, 41).trim()));
-//logger.warning("len: "+Integer.parseInt(line.substring(42, 47).trim()));
-//logger.warning("wid: "+Integer.parseInt(line.substring(56, 61).trim()));
-                            // a new taxiway or ramp in old APT810 format
-                            this.taxi_chart.new_segment( Float.parseFloat(line.substring(4, 16).trim()),
-                                    Float.parseFloat(line.substring(17, 30).trim()),
-                                    Float.parseFloat(line.substring(35, 41).trim()),
-                                    Integer.parseInt(line.substring(42, 47).trim()),
-                                    Integer.parseInt(line.substring(56, 61).trim())
-                                    );
+                        // a new taxiway or ramp in old APT810 format
+//                            this.taxi_chart.new_segment( Float.parseFloat(line.substring(4, 16).trim()),
+//                                    Float.parseFloat(line.substring(17, 30).trim()),
+//                                    Float.parseFloat(line.substring(35, 41).trim()),
+//                                    Integer.parseInt(line.substring(42, 47).trim()),
+//                                    Integer.parseInt(line.substring(56, 61).trim())
+//                                    );
+                        this.taxi_chart.new_segment( Float.parseFloat(tokens[1]),
+                                Float.parseFloat(tokens[2]),
+                                Float.parseFloat(tokens[3]),
+                                Integer.parseInt(tokens[4]),
+                                Integer.parseInt(tokens[5])
+                                );
 
-                        } else if (info_type == 110) {
+                    } else if (info_type == 110) {
 
-                            // a new taxiway or ramp
-                            this.taxi_chart.new_pavement( Integer.parseInt(tokens[1]), line.substring(20).trim() );
+                        // a new taxiway or ramp
+                        this.taxi_chart.new_pavement( Integer.parseInt(tokens[1]) );
 
-                        } else if (info_type == 120) {
+                    } else if (info_type == 120) {
 
-                            // a new "Lineair feature" means that our pavement is complete
-                            this.taxi_chart.close_pavement();
+                        // a new "Lineair feature" means that our pavement is complete
+                        this.taxi_chart.close_pavement();
+                        // for the rest, we don't use this
 
-                        } else if (info_type == 130) {
+                    } else if (info_type == 130) {
 
-                            this.taxi_chart.new_border();
+                        this.taxi_chart.new_border();
 
-                        } else if ( (info_type == 111) || (info_type == 113) ) {
+                    } else if ( (info_type == 111) || (info_type == 113) ) {
 
-                            // a node
-                            this.taxi_chart.new_node( Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]) );
+                        // a node
+                        this.taxi_chart.new_node( Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]) );
 
-                            if (info_type == 113) this.taxi_chart.close_loop();
+                        if (info_type == 113) this.taxi_chart.close_loop();
 
-                        } else if ( (info_type == 112) || (info_type == 114) ) {
+                    } else if ( (info_type == 112) || (info_type == 114) ) {
 
-                            // a node with bezier control point
-                            this.taxi_chart.new_bezier_node( Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]),
-                                    Float.parseFloat(tokens[3]), Float.parseFloat(tokens[4]) );
+                        // a node with bezier control point
+                        this.taxi_chart.new_bezier_node( Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]),
+                                Float.parseFloat(tokens[3]), Float.parseFloat(tokens[4]) );
 
-                            if (info_type == 114) this.taxi_chart.close_loop();
+                        if (info_type == 114) this.taxi_chart.close_loop();
 
-                        } else if (info_type == 99) {
+                    } else if (info_type == 99) {
 
-                            // end of file; close and exit
-                            this.taxi_chart.close_chart();
-                            arpt_hit = false;
+                        // end of file; close and exit
+                        this.taxi_chart.close_chart();
+                        arpt_hit = false;
 
-                        }
-
-                    } catch (Exception e) {
-                        logger.warning("\nParse error in " +file.getName() + ":" + line_number + "(" + e + ") " + line);
                     }
-//                }
+
+                } catch (Exception e) {
+                    logger.warning("\nParse error in " +file.getName() + ":" + line_number + "(" + e + ") " + line);
+                }
 
             } // line !isEmpty
 
@@ -231,27 +225,6 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
         }
 
     }
-
-
-//    public void preference_changed(String key) {
-//
-//        logger.finest("Preference changed");
-//        if (key.equals(XHSIPreferences.PREF_APTNAV_DIR)) {
-//            // reload navigation databases
-//            this.pathname_to_aptnav = XHSIPreferences.get_instance().get_preference(XHSIPreferences.PREF_APTNAV_DIR);
-//            if (XHSIStatus.nav_db_status.equals(XHSIStatus.STATUS_NAV_DB_NOT_FOUND) == false) {
-//                try {
-//                    logger.fine("Reload navigation tables");
-//                    read_all_tables();
-//                } catch (Exception e) {
-//                    logger.warning("Could not read navigation tables! (" + e.toString() + ")");
-//                }
-//            } else {
-//                logger.warning("Could not find AptNav Resources! (Status:" + XHSIStatus.nav_db_status + ")");
-//            }
-//        }
-//
-//    }
 
 
 }
