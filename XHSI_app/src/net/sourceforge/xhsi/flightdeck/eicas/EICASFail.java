@@ -56,7 +56,7 @@ public class EICASFail extends EICASSubcomponent {
 
 
     public void paint(Graphics2D g2) {
-        if ( eicas_gc.powered && XHSIStatus.status.equals(XHSIStatus.STATUS_NO_RECEPTION) ) {
+        if ( XHSIStatus.status.equals(XHSIStatus.STATUS_NO_RECEPTION) ) {
             drawFailCross(g2);
         }
     }

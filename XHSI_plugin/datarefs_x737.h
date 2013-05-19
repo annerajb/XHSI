@@ -36,6 +36,7 @@ extern XPLMDataRef x737_LNAV_mode;
 extern XPLMDataRef x737_HDG_mode;
 extern XPLMDataRef x737_VORLOC_mode;
 extern XPLMDataRef x737_N1_mode;
+extern XPLMDataRef x737_PFD_pwr;
 
 // x737/systems/athr/...
 extern XPLMDataRef x737_ATHR_armed;

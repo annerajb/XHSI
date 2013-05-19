@@ -34,14 +34,12 @@ public interface SimDataRepository {
 
     public void store_sim_float(int id, float value);
 
-// We will see about integer sim_data values later...
 //    public void store_sim_int(int id, int value);
 
     public void store_sim_string(int id, String value);
 
     public float get_sim_float(int id);
 
-// We will see about integer sim_data values later...
 //    public int get_sim_int(int id);
 
     public String get_sim_string(int id);

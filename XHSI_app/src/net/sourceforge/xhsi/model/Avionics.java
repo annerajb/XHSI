@@ -484,6 +484,8 @@ public interface Avionics {
     public float ufmc_vr();
     public float ufmc_v2();
     public float ufmc_vref();
+    public float ufmc_vf30();
+    public float ufmc_vf40();
     
     
 

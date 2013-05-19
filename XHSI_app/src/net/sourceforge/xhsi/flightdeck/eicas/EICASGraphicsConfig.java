@@ -102,7 +102,7 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
 //    }
 
 
-    public void update_config(Graphics2D g2, int mode, int submode, int range, boolean power) {
+    public void update_config(Graphics2D g2, boolean power) {
 
         if (this.resized
                 || this.reconfig

@@ -55,6 +55,7 @@ XPLMDataRef x737_LNAV_mode;
 XPLMDataRef x737_HDG_mode;
 XPLMDataRef x737_VORLOC_mode;
 XPLMDataRef x737_N1_mode;
+XPLMDataRef x737_PFD_pwr;
 
 // x737/systems/athr/...
 XPLMDataRef x737_ATHR_armed;
@@ -128,13 +129,7 @@ void findX737DataRefs(void) {
             x737_N1_limit_eng2 = XPLMFindDataRef("x737/systems/eec/N1_limit_eng2");
 
             x737_stby_pwr = XPLMFindDataRef("x737/systems/electrics/stbyPwrAuto");
-
-//             = XPLMFindDataRef("");
-//             = XPLMFindDataRef("");
-//             = XPLMFindDataRef("");
-//             = XPLMFindDataRef("");
-//             = XPLMFindDataRef("");
-//             = XPLMFindDataRef("");
+            x737_PFD_pwr = XPLMFindDataRef("x737/systems/PFD/PFD_A_powered");
 
         }
 

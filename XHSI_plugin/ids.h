@@ -18,7 +18,7 @@
 #define SIM_FLIGHTMODEL_POSITION_ALPHA 13       // aoa
 #define SIM_FLIGHTMODEL_POSITION_BETA 14        // yaw ( = slip or drift ? )
 #define SIM_FLIGHTMODEL_FAILURES_ONGROUND_ANY 15 // It was misplaced and is not really a failure, you can use that to indicate when the wheels are on the ground
-#define XHSI_FLIGHTMODEL_POSITION_NEAREST_ARPT 10016
+#define XHSI_FLIGHTMODEL_POSITION_NEAREST_ARPT 10016 // Special case : 4 char
 
 
 // Instruments
@@ -226,6 +226,7 @@
 
 
 // Fuel, engines, etc...
+// ids that end with an underscore represent arrays of up to 8 floats
 #define SIM_AIRCRAFT_OVERFLOW_ACF_NUM_TANKS 400
 #define SIM_AIRCRAFT_ENGINE_ACF_NUM_ENGINES 401
 #define SIM_COCKPIT2_ANNUNCIATORS_REVERSER_DEPLOYED 402
@@ -260,18 +261,21 @@
 #define SIM_FLIGHTMODEL_ENGINE_ENGN_PROPMODE_ 580
 #define SIM_FLIGHTMODEL_ENGINE_ENGN_MPR_ 590
 
+
 // UFMC
 #define UFMC_STATUS 700
 // UFMC REF
 #define UFMC_V1 701
 #define UFMC_VR 702
 #define UFMC_V2 703
-#define UFMC_VREF 704
+#define UFMC_VREF 704 // superceded by UFMC_F30 and UFMC_F40
+#define UFMC_VF30 705
+#define UFMC_VF40 706
 // UFMC N1
-#define UFMC_N1_1 705
-#define UFMC_N1_2 706
-#define UFMC_N1_3 707
-#define UFMC_N1_4 708
+#define UFMC_N1_1 707
+#define UFMC_N1_2 708
+#define UFMC_N1_3 709
+#define UFMC_N1_4 710
 
 
 //XFMC
@@ -317,6 +321,7 @@
 #define X737_N1_LIMIT_ENG1 833
 #define X737_N1_LIMIT_ENG2 834
 #define X737_STBY_PWR 835
+#define X737_PFD_PWR 836
 
 
 // CL30

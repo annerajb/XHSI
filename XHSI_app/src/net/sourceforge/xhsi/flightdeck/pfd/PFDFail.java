@@ -56,7 +56,7 @@ public class PFDFail extends PFDSubcomponent {
 
 
     public void paint(Graphics2D g2) {
-        if ( pfd_gc.powered && XHSIStatus.status.equals(XHSIStatus.STATUS_NO_RECEPTION) ) {
+        if ( XHSIStatus.status.equals(XHSIStatus.STATUS_NO_RECEPTION) ) {
             drawFailCross(g2);
         }
     }

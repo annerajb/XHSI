@@ -37,6 +37,20 @@ int max_packet_size = 0;
 char msg[200];
 
 
+float fake_float(int integer) {
+
+    float fake;
+    unsigned char *s1 = (unsigned char *) &integer;
+    unsigned char *s2 = (unsigned char *) &fake;
+    s2[0] = s1[0];
+    s2[1] = s1[1];
+    s2[2] = s1[2];
+    s2[3] = s1[3];
+
+    return fake;
+}
+
+
 void decodeIncomingPacket(void) {
 
     int i, nb;
@@ -327,6 +341,9 @@ int createAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(X737_STBY_PWR);
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(x737_stby_pwr));
         i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(X737_PFD_PWR);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(x737_PFD_pwr));
+        i++;
 
     }
 
@@ -486,10 +503,10 @@ int createAvionicsPacket(void) {
 
 
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_RADIOS_TRANSPONDER_MODE);
-	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(transponder_mode));
+	sim_packet.sim_data_points[i].value =  custom_htonf((float) XPLMGetDatai(transponder_mode));
 	i++;
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_RADIOS_TRANSPONDER_CODE);
-	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(transponder_code));
+	sim_packet.sim_data_points[i].value =  custom_htonf((float) XPLMGetDatai(transponder_code));
 	i++;
 
 
@@ -701,6 +718,12 @@ int createAvionicsPacket(void) {
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(UFMC_VREF);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(ufmc_vref));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(UFMC_VF30);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(ufmc_vf30));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(UFMC_VF40);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(ufmc_vf40));
         i++;
 
     }

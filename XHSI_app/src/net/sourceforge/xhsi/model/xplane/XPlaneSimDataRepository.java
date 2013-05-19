@@ -303,11 +303,13 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int UFMC_VR = 702;
     public static final int UFMC_V2 = 703;
     public static final int UFMC_VREF = 704;
+    public static final int UFMC_VF30 = 705;
+    public static final int UFMC_VF40 = 706;
     // UFMC N1
-    public static final int UFMC_N1_1 = 705;
-    public static final int UFMC_N1_2 = 706;
-    public static final int UFMC_N1_3 = 707;
-    public static final int UFMC_N1_4 = 708;
+    public static final int UFMC_N1_1 = 707;
+    public static final int UFMC_N1_2 = 708;
+    public static final int UFMC_N1_3 = 709;
+    public static final int UFMC_N1_4 = 710;
 
 
     // X737
@@ -348,6 +350,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int X737_N1_PHASE = 832;
     public static final int X737_N1_LIMIT_ENG1 = 833;
     public static final int X737_N1_LIMIT_ENG2 = 834;
+    public static final int X737_STBY_PWR = 835;
+    public static final int X737_PFD_PWR = 836;
 
     
     // CL30
@@ -375,7 +379,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
 
     // array with sim data for all sim data points defined above
     float[] sim_values_float = new float[1000];
-    //int[] sim_values_int = new int[1000];
+    int[] sim_values_int = new int[1000];
     String[] sim_values_string = new String[1000];
 
     long updates = 0;
@@ -410,9 +414,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
         sim_values_float[id] = value;
     }
 
-// We will see about integer sim_data values later...
 //    public void store_sim_int(int id, int value) {
-//        sim_values_int[id % 1000] = value;
+//        sim_values_int[id % 5000] = value;
 //    }
 
     public void store_sim_string(int id, String value) {
@@ -423,9 +426,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
         return sim_values_float[id];
     }
 
-// We will see about integer sim_data values later...
 //    public int get_sim_int(int id) {
-//        return sim_values_int[id % 1000];
+//        return sim_values_int[id % 5000];
 //    }
 
     public String get_sim_string(int id) {
