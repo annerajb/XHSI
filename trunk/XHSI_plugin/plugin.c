@@ -221,6 +221,12 @@ PLUGIN_API int XPluginEnable(void) {
                            -1.0f,
                            NULL);
 
+    // Notify DataRefEditor of our custom DataRefs
+    XPLMRegisterFlightLoopCallback(
+                           notifyDataRefEditorCallback,
+                           -1.0f,
+                           NULL);
+
 
     XPLMDebugString("XHSI: flightloop callbacks registered\n");
 
