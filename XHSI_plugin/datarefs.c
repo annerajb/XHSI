@@ -13,6 +13,7 @@
 #include "XPLMNavigation.h"
 #include "XPLMDisplay.h"
 #include "XPLMMenus.h"
+#include "XPLMPlugin.h"
 #include "XPWidgets.h"
 #include "XPStandardWidgets.h"
 
@@ -22,6 +23,9 @@
 #include "structs.h"
 #include "ids.h"
 #include "xfmc.h"
+
+
+#define MSG_ADD_DATAREF 0x01000000           //  Add dataref to DRE message
 
 
 // variables that will contain references to be used by XPLMGetData...
@@ -770,8 +774,49 @@ void registerMFDDataRefs(void) {
                                         getMFDMode, setMFDMode,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
-
     XPLMDebugString("XHSI: custom MFD DataRefs registered\n");
+
+}
+
+
+
+float notifyDataRefEditorCallback(
+									float	inElapsedSinceLastCall,
+									float	inElapsedTimeSinceLastFlightLoop,
+									int		inCounter,
+									void *	inRefcon) {
+
+    XPLMPluginID PluginID = XPLMFindPluginBySignature("xplanesdk.examples.DataRefEditor");
+    if (PluginID != XPLM_NO_PLUGIN_ID)
+    {
+        XPLMDebugString("XHSI: notifying DataRefEditor\n");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis/sta");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis/data");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis/pos");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis/da_bug");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis/mins_mode");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis/map_zoomin");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/map_range");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/radio1");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/radio2");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/tfc");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/arpt");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/wpt");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/vor");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/ndb");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/sta");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/data");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/pos");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/map_ctr");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/map_mode");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/hsi_source");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/da_bug");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/mins_mode");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/map_zoomin");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/mode");
+    }
+
+    return 0.0f;
 
 }
 

@@ -274,6 +274,8 @@ void    registerPilotDataRefs(void);
 void    registerCopilotDataRefs(void);
 void    registerMFDDataRefs(void);
 
+float   notifyDataRefEditorCallback(float, float, int, void *);
+
 float   initPilotCallback(float, float, int, void *);
 float   initCopilotCallback(float, float, int, void *);
 float   initMFDCallback(float, float, int, void *);
