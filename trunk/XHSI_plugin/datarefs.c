@@ -292,7 +292,7 @@ XPLMDataRef  multiplayer_z[NUM_TCAS];
 
 // custom datarefs for pilot
 
-// xhsi/efis/sta
+// xhsi/nd_pilot/sta
 int pilot_sta;
 int     getPilotSTA(void* inRefcon)
 {
@@ -303,7 +303,7 @@ void	setPilotSTA(void* inRefcon, int inValue)
       pilot_sta = inValue;
 }
 
-// xhsi/efis/data
+// xhsi/nd_pilot/data
 int pilot_data;
 int     getPilotDATA(void* inRefcon)
 {
@@ -314,7 +314,7 @@ void	setPilotDATA(void* inRefcon, int inValue)
       pilot_data = inValue;
 }
 
-// xhsi/efis/pos
+// xhsi/nd_pilot/pos
 int pilot_pos;
 int     getPilotPOS(void* inRefcon)
 {
@@ -325,7 +325,7 @@ void	setPilotPOS(void* inRefcon, int inValue)
       pilot_pos = inValue;
 }
 
-// xhsi/efis/da_bug
+// xhsi/pfd_pilot/da_bug
 int pilot_da_bug;
 int     getPilotDAbug(void* inRefcon)
 {
@@ -336,7 +336,7 @@ void	setPilotDAbug(void* inRefcon, int inValue)
       pilot_da_bug = inValue;
 }
 
-// xhsi/efis/mins_mode
+// xhsi/pfd_pilot/mins_mode
 int pilot_mins_mode;
 int     getPilotMinsMode(void* inRefcon)
 {
@@ -347,7 +347,7 @@ void	setPilotMinsMode(void* inRefcon, int inValue)
       pilot_mins_mode = inValue;
 }
 
-// xhsi/efis/map_zoomin
+// xhsi/nd_pilot/map_zoomin
 int pilot_map_zoomin;
 int     getPilotMapRange100(void* inRefcon)
 {
@@ -361,7 +361,7 @@ void	setPilotMapRange100(void* inRefcon, int inValue)
 
 // custom datarefs for copilot
 
-// xhsi/efis_copilot/map_range
+// xhsi/nd_copilot/map_range
 int copilot_map_range;
 int     getCopilotMapRange(void* inRefcon)
 {
@@ -372,7 +372,7 @@ void	setCopilotMapRange(void* inRefcon, int inValue)
       copilot_map_range = inValue;
 }
 
-// xhsi/efis_copilot/radio1
+// xhsi/nd_copilot/radio1
 int copilot_radio1;
 int     getCopilotRadio1(void* inRefcon)
 {
@@ -383,7 +383,7 @@ void	setCopilotRadio1(void* inRefcon, int inValue)
       copilot_radio1 = inValue;
 }
 
-// xhsi/efis_copilot/radio2
+// xhsi/nd_copilot/radio2
 int copilot_radio2;
 int     getCopilotRadio2(void* inRefcon)
 {
@@ -394,7 +394,7 @@ void	setCopilotRadio2(void* inRefcon, int inValue)
       copilot_radio2 = inValue;
 }
 
-// xhsi/efis_copilot/tfc
+// xhsi/nd_copilot/tfc
 int copilot_tfc;
 int     getCopilotTFC(void* inRefcon)
 {
@@ -405,7 +405,7 @@ void	setCopilotTFC(void* inRefcon, int inValue)
       copilot_tfc = inValue;
 }
 
-// xhsi/efis_copilot/arpt
+// xhsi/nd_copilot/arpt
 int copilot_arpt;
 int     getCopilotARPT(void* inRefcon)
 {
@@ -416,7 +416,7 @@ void	setCopilotARPT(void* inRefcon, int inValue)
       copilot_arpt = inValue;
 }
 
-// xhsi/efis_copilot/wpt
+// xhsi/nd_copilot/wpt
 int copilot_wpt;
 int     getCopilotWPT(void* inRefcon)
 {
@@ -427,7 +427,7 @@ void	setCopilotWPT(void* inRefcon, int inValue)
       copilot_wpt = inValue;
 }
 
-// xhsi/efis_copilot/vor
+// xhsi/nd_copilot/vor
 int copilot_vor;
 int     getCopilotVOR(void* inRefcon)
 {
@@ -438,7 +438,7 @@ void	setCopilotVOR(void* inRefcon, int inValue)
       copilot_vor = inValue;
 }
 
-// xhsi/efis_copilot/ndb
+// xhsi/nd_copilot/ndb
 int copilot_ndb;
 int     getCopilotNDB(void* inRefcon)
 {
@@ -449,7 +449,7 @@ void	setCopilotNDB(void* inRefcon, int inValue)
       copilot_ndb = inValue;
 }
 
-// xhsi/efis_copilot/sta
+// xhsi/nd_copilot/sta
 int copilot_sta;
 int     getCopilotSTA(void* inRefcon)
 {
@@ -460,7 +460,7 @@ void	setCopilotSTA(void* inRefcon, int inValue)
       copilot_sta = inValue;
 }
 
-// xhsi/efis_copilot/data
+// xhsi/nd_copilot/data
 int copilot_data;
 int     getCopilotDATA(void* inRefcon)
 {
@@ -471,7 +471,7 @@ void	setCopilotDATA(void* inRefcon, int inValue)
       copilot_data = inValue;
 }
 
-// xhsi/efis_copilot/pos
+// xhsi/nd_copilot/pos
 int copilot_pos;
 int     getCopilotPOS(void* inRefcon)
 {
@@ -482,7 +482,7 @@ void	setCopilotPOS(void* inRefcon, int inValue)
       copilot_pos = inValue;
 }
 
-// xhsi/efis_copilot/map_ctr
+// xhsi/nd_copilot/map_ctr
 int copilot_map_ctr;
 int     getCopilotMapCTR(void* inRefcon)
 {
@@ -493,7 +493,7 @@ void	setCopilotMapCTR(void* inRefcon, int inValue)
       copilot_map_ctr = inValue;
 }
 
-// xhsi/efis_copilot/map_mode
+// xhsi/nd_copilot/map_mode
 int copilot_map_mode;
 int     getCopilotMapMode(void* inRefcon)
 {
@@ -504,7 +504,7 @@ void	setCopilotMapMode(void* inRefcon, int inValue)
       copilot_map_mode = inValue;
 }
 
-// xhsi/efis_copilot/hsi_source
+// xhsi/nd_copilot/nav_source
 int copilot_hsi_source;
 int     getCopilotHSISource(void* inRefcon)
 {
@@ -515,7 +515,7 @@ void	setCopilotHSISource(void* inRefcon, int inValue)
       copilot_hsi_source = inValue;
 }
 
-// xhsi/efis_copilot/da_bug
+// xhsi/pfd_copilot/da_bug
 int copilot_da_bug;
 int     getCopilotDAbug(void* inRefcon)
 {
@@ -526,7 +526,7 @@ void	setCopilotDAbug(void* inRefcon, int inValue)
       copilot_da_bug = inValue;
 }
 
-// xhsi/efis_copilot/mins_mode
+// xhsi/pfd_copilot/mins_mode
 int copilot_mins_mode;
 int     getCopilotMinsMode(void* inRefcon)
 {
@@ -537,7 +537,7 @@ void	setCopilotMinsMode(void* inRefcon, int inValue)
       copilot_mins_mode = inValue;
 }
 
-// xhsi/efis_copilot/map_zoomin
+// xhsi/nd_copilot/map_zoomin
 int copilot_map_zoomin;
 int     getCopilotMapRange100(void* inRefcon)
 {
@@ -567,48 +567,48 @@ void registerPilotDataRefs(void) {
 
     XPLMDebugString("XHSI: registering custom pilot DataRefs\n");
 
-    // xhsi/efis/sta
-    efis_pilot_shows_stas = XPLMRegisterDataAccessor("xhsi/efis/sta",
+    // xhsi/nd_pilot/sta
+    efis_pilot_shows_stas = XPLMRegisterDataAccessor("xhsi/nd_pilot/sta",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getPilotSTA, setPilotSTA,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis/data
-    efis_pilot_shows_data = XPLMRegisterDataAccessor("xhsi/efis/data",
+    // xhsi/nd_pilot/data
+    efis_pilot_shows_data = XPLMRegisterDataAccessor("xhsi/nd_pilot/data",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getPilotDATA, setPilotDATA,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis/pos
-    efis_pilot_shows_pos = XPLMRegisterDataAccessor("xhsi/efis/pos",
+    // xhsi/nd_pilot/pos
+    efis_pilot_shows_pos = XPLMRegisterDataAccessor("xhsi/nd_pilot/pos",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getPilotPOS, setPilotPOS,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis/da_bug
-    efis_pilot_da_bug = XPLMRegisterDataAccessor("xhsi/efis/da_bug",
+    // xhsi/pfd_pilot/da_bug
+    efis_pilot_da_bug = XPLMRegisterDataAccessor("xhsi/pfd_pilot/da_bug",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getPilotDAbug, setPilotDAbug,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis/mins_mode
-    efis_pilot_mins_mode = XPLMRegisterDataAccessor("xhsi/efis/mins_mode",
+    // xhsi/pfd_pilot/mins_mode
+    efis_pilot_mins_mode = XPLMRegisterDataAccessor("xhsi/pfd_pilot/mins_mode",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getPilotMinsMode, setPilotMinsMode,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis/map_zoomin
-    efis_pilot_map_zoomin = XPLMRegisterDataAccessor("xhsi/efis/map_zoomin",
+    // xhsi/nd_pilot/map_zoomin
+    efis_pilot_map_zoomin = XPLMRegisterDataAccessor("xhsi/nd_pilot/map_zoomin",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getPilotMapRange100, setPilotMapRange100,      // Integer accessors
@@ -624,134 +624,134 @@ void registerCopilotDataRefs(void) {
 
     XPLMDebugString("XHSI: registering custom copilot DataRefs\n");
 
-    // xhsi/efis_copilot/map_range
-    efis_copilot_map_range_selector = XPLMRegisterDataAccessor("xhsi/efis_copilot/map_range",
+    // xhsi/nd_copilot/map_range
+    efis_copilot_map_range_selector = XPLMRegisterDataAccessor("xhsi/nd_copilot/map_range",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotMapRange, setCopilotMapRange,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
-    // xhsi/efis_copilot/radio1
-    efis_copilot_dme_1_selector = XPLMRegisterDataAccessor("xhsi/efis_copilot/radio1",
+    // xhsi/nd_copilot/radio1
+    efis_copilot_dme_1_selector = XPLMRegisterDataAccessor("xhsi/nd_copilot/radio1",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotRadio1, setCopilotRadio1,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
-    // xhsi/efis_copilot/radio2
-    efis_copilot_dme_2_selector = XPLMRegisterDataAccessor("xhsi/efis_copilot/radio2",
+    // xhsi/nd_copilot/radio2
+    efis_copilot_dme_2_selector = XPLMRegisterDataAccessor("xhsi/nd_copilot/radio2",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotRadio2, setCopilotRadio2,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis_copilot/tfc
-    efis_copilot_shows_tcas = XPLMRegisterDataAccessor("xhsi/efis_copilot/tfc",
+    // xhsi/nd_copilot/tfc
+    efis_copilot_shows_tcas = XPLMRegisterDataAccessor("xhsi/nd_copilot/tfc",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotTFC, setCopilotTFC,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis_copilot/arpt
-    efis_copilot_shows_airports = XPLMRegisterDataAccessor("xhsi/efis_copilot/arpt",
+    // xhsi/nd_copilot/arpt
+    efis_copilot_shows_airports = XPLMRegisterDataAccessor("xhsi/nd_copilot/arpt",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotARPT, setCopilotARPT,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis_copilot/wpt
-    efis_copilot_shows_waypoints = XPLMRegisterDataAccessor("xhsi/efis_copilot/wpt",
+    // xhsi/nd_copilot/wpt
+    efis_copilot_shows_waypoints = XPLMRegisterDataAccessor("xhsi/nd_copilot/wpt",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotWPT, setCopilotWPT,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis_copilot/vor
-    efis_copilot_shows_vors = XPLMRegisterDataAccessor("xhsi/efis_copilot/vor",
+    // xhsi/nd_copilot/vor
+    efis_copilot_shows_vors = XPLMRegisterDataAccessor("xhsi/nd_copilot/vor",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotVOR, setCopilotVOR,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis_copilot/ndb
-    efis_copilot_shows_ndbs = XPLMRegisterDataAccessor("xhsi/efis_copilot/ndb",
+    // xhsi/nd_copilot/ndb
+    efis_copilot_shows_ndbs = XPLMRegisterDataAccessor("xhsi/nd_copilot/ndb",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotNDB, setCopilotNDB,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis_copilot/sta
-    efis_copilot_shows_stas = XPLMRegisterDataAccessor("xhsi/efis_copilot/sta",
+    // xhsi/nd_copilot/sta
+    efis_copilot_shows_stas = XPLMRegisterDataAccessor("xhsi/nd_copilot/sta",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotSTA, setCopilotSTA,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis_copilot/data
-    efis_copilot_shows_data = XPLMRegisterDataAccessor("xhsi/efis_copilot/data",
+    // xhsi/nd_copilot/data
+    efis_copilot_shows_data = XPLMRegisterDataAccessor("xhsi/nd_copilot/data",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotDATA, setCopilotDATA,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis_copilot/pos
-    efis_copilot_shows_pos = XPLMRegisterDataAccessor("xhsi/efis_copilot/pos",
+    // xhsi/nd_copilot/pos
+    efis_copilot_shows_pos = XPLMRegisterDataAccessor("xhsi/nd_copilot/pos",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotPOS, setCopilotPOS,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis_copilot/map_ctr
-    efis_copilot_map_mode = XPLMRegisterDataAccessor("xhsi/efis_copilot/map_ctr",
+    // xhsi/nd_copilot/map_ctr
+    efis_copilot_map_mode = XPLMRegisterDataAccessor("xhsi/nd_copilot/map_ctr",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotMapCTR, setCopilotMapCTR,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis_copilot/map_mode
-    efis_copilot_map_submode = XPLMRegisterDataAccessor("xhsi/efis_copilot/map_mode",
+    // xhsi/nd_copilot/map_mode
+    efis_copilot_map_submode = XPLMRegisterDataAccessor("xhsi/nd_copilot/map_mode",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotMapMode, setCopilotMapMode,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis_copilot/hsi_source
-    copilot_hsi_selector = XPLMRegisterDataAccessor("xhsi/efis_copilot/hsi_source",
+    // xhsi/nd_copilot/nav_source
+    copilot_hsi_selector = XPLMRegisterDataAccessor("xhsi/nd_copilot/nav_source",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotHSISource, setCopilotHSISource,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis_copilot/da_bug
-    efis_copilot_da_bug = XPLMRegisterDataAccessor("xhsi/efis_copilot/da_bug",
+    // xhsi/pfd_copilot/da_bug
+    efis_copilot_da_bug = XPLMRegisterDataAccessor("xhsi/pfd_copilot/da_bug",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotDAbug, setCopilotDAbug,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis_copilot/mins_mode
-    efis_copilot_mins_mode = XPLMRegisterDataAccessor("xhsi/efis_copilot/mins_mode",
+    // xhsi/pfd_copilot/mins_mode
+    efis_copilot_mins_mode = XPLMRegisterDataAccessor("xhsi/pfd_copilot/mins_mode",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotMinsMode, setCopilotMinsMode,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
-    // xhsi/efis_copilot/map_zoomin
-    efis_copilot_map_zoomin = XPLMRegisterDataAccessor("xhsi/efis_copilot/map_zoomin",
+    // xhsi/nd_copilot/map_zoomin
+    efis_copilot_map_zoomin = XPLMRegisterDataAccessor("xhsi/nd_copilot/map_zoomin",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotMapRange100, setCopilotMapRange100,      // Integer accessors
@@ -790,29 +790,29 @@ float notifyDataRefEditorCallback(
     if (PluginID != XPLM_NO_PLUGIN_ID)
     {
         XPLMDebugString("XHSI: notifying DataRefEditor\n");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis/sta");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis/data");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis/pos");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis/da_bug");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis/mins_mode");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis/map_zoomin");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/map_range");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/radio1");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/radio2");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/tfc");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/arpt");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/wpt");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/vor");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/ndb");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/sta");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/data");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/pos");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/map_ctr");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/map_mode");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/hsi_source");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/da_bug");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/mins_mode");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/efis_copilot/map_zoomin");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/sta");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/data");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/pos");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_pilot/da_bug");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_pilot/mins_mode");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/map_zoomin");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/map_range");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/radio1");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/radio2");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/tfc");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/arpt");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/wpt");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/vor");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/ndb");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/sta");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/data");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/pos");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/map_ctr");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/map_mode");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/nav_source");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/da_bug");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/mins_mode");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/map_zoomin");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/mode");
     }
 
@@ -832,33 +832,33 @@ float initPilotCallback(
 
     // set reasonable defaults for the pilot's ND
 
-    // xhsi/efis/sta
-    efis_pilot_shows_stas = XPLMFindDataRef ("xhsi/efis/sta");
+    // xhsi/nd_pilot/sta
+    efis_pilot_shows_stas = XPLMFindDataRef ("xhsi/nd_pilot/sta");
     // STA on
     XPLMSetDatai(efis_pilot_shows_stas, 1);
 
-    // xhsi/efis/data
-    efis_pilot_shows_data = XPLMFindDataRef ("xhsi/efis/data");
+    // xhsi/nd_pilot/data
+    efis_pilot_shows_data = XPLMFindDataRef ("xhsi/nd_pilot/data");
     // DATA on
     XPLMSetDatai(efis_pilot_shows_data, 1);
 
-    // xhsi/efis/pos
-    efis_pilot_shows_pos = XPLMFindDataRef ("xhsi/efis/pos");
+    // xhsi/nd_pilot/pos
+    efis_pilot_shows_pos = XPLMFindDataRef ("xhsi/nd_pilot/pos");
     // POS off
     XPLMSetDatai(efis_pilot_shows_pos, 0);
 
-    // xhsi/efis/da_bug
-    efis_pilot_da_bug = XPLMFindDataRef ("xhsi/efis/da_bug");
+    // xhsi/pfd_pilot/da_bug
+    efis_pilot_da_bug = XPLMFindDataRef ("xhsi/pfd_pilot/da_bug");
     // just a default DA
     XPLMSetDatai(efis_pilot_da_bug, 0);
 
-    // xhsi/efis/mins_mode
-    efis_pilot_mins_mode = XPLMFindDataRef ("xhsi/efis/mins_mode");
+    // xhsi/pfd_pilot/mins_mode
+    efis_pilot_mins_mode = XPLMFindDataRef ("xhsi/pfd_pilot/mins_mode");
     // mins is radio
     XPLMSetDatai(efis_pilot_mins_mode, 0);
 
-    // xhsi/efis/map_zoomin
-    efis_pilot_map_zoomin = XPLMFindDataRef ("xhsi/efis/map_zoomin");
+    // xhsi/nd_pilot/map_zoomin
+    efis_pilot_map_zoomin = XPLMFindDataRef ("xhsi/nd_pilot/map_zoomin");
     // normal scale
     XPLMSetDatai(efis_pilot_map_zoomin, 0);
 
@@ -880,88 +880,88 @@ float initCopilotCallback(
 
     // set reasonable defaults for the copilot's ND
 
-    // xhsi/efis_copilot/map_range
-    efis_copilot_map_range_selector = XPLMFindDataRef ("xhsi/efis_copilot/map_range");
+    // xhsi/nd_copilot/map_range
+    efis_copilot_map_range_selector = XPLMFindDataRef ("xhsi/nd_copilot/map_range");
     // map range 40
     XPLMSetDatai(efis_copilot_map_range_selector, 2);
 
-    // xhsi/efis_copilot/radio1
-    efis_copilot_dme_1_selector = XPLMFindDataRef ("xhsi/efis_copilot/radio1");
+    // xhsi/nd_copilot/radio1
+    efis_copilot_dme_1_selector = XPLMFindDataRef ("xhsi/nd_copilot/radio1");
     // radio1 : NAV1
     XPLMSetDatai(efis_copilot_dme_1_selector, 2);
 
-    // xhsi/efis_copilot/radio2
-    efis_copilot_dme_2_selector = XPLMFindDataRef ("xhsi/efis_copilot/radio2");
+    // xhsi/nd_copilot/radio2
+    efis_copilot_dme_2_selector = XPLMFindDataRef ("xhsi/nd_copilot/radio2");
     // radio2 : NAV2
     XPLMSetDatai(efis_copilot_dme_2_selector, 2);
 
-    // xhsi/efis_copilot/tfc
-    efis_copilot_shows_tcas = XPLMFindDataRef ("xhsi/efis_copilot/tfc");
+    // xhsi/nd_copilot/tfc
+    efis_copilot_shows_tcas = XPLMFindDataRef ("xhsi/nd_copilot/tfc");
     // TFC on
     XPLMSetDatai(efis_copilot_shows_tcas, 1);
 
-    // xhsi/efis_copilot/arpt
-    efis_copilot_shows_airports = XPLMFindDataRef ("xhsi/efis_copilot/arpt");
+    // xhsi/nd_copilot/arpt
+    efis_copilot_shows_airports = XPLMFindDataRef ("xhsi/nd_copilot/arpt");
     // ARPT on
     XPLMSetDatai(efis_copilot_shows_airports, 1);
 
-    // xhsi/efis_copilot/wpt
-    efis_copilot_shows_waypoints = XPLMFindDataRef ("xhsi/efis_copilot/wpt");
+    // xhsi/nd_copilot/wpt
+    efis_copilot_shows_waypoints = XPLMFindDataRef ("xhsi/nd_copilot/wpt");
     // WPT on
     XPLMSetDatai(efis_copilot_shows_waypoints, 1);
 
-    // xhsi/efis_copilot/vor
-    efis_copilot_shows_vors = XPLMFindDataRef ("xhsi/efis_copilot/vor");
+    // xhsi/nd_copilot/vor
+    efis_copilot_shows_vors = XPLMFindDataRef ("xhsi/nd_copilot/vor");
     // VOR on
     XPLMSetDatai(efis_copilot_shows_vors, 1);
 
-    // xhsi/efis_copilot/ndb
-    efis_copilot_shows_ndbs = XPLMFindDataRef ("xhsi/efis_copilot/ndb");
+    // xhsi/nd_copilot/ndb
+    efis_copilot_shows_ndbs = XPLMFindDataRef ("xhsi/nd_copilot/ndb");
     // NDB on
     XPLMSetDatai(efis_copilot_shows_ndbs, 1);
 
-    // xhsi/efis_copilot/sta
-    efis_copilot_shows_stas = XPLMFindDataRef ("xhsi/efis_copilot/sta");
+    // xhsi/nd_copilot/sta
+    efis_copilot_shows_stas = XPLMFindDataRef ("xhsi/nd_copilot/sta");
     // STA on
     XPLMSetDatai(efis_copilot_shows_stas, 1);
 
-    // xhsi/efis_copilot/data
-    efis_copilot_shows_data = XPLMFindDataRef ("xhsi/efis_copilot/data");
+    // xhsi/nd_copilot/data
+    efis_copilot_shows_data = XPLMFindDataRef ("xhsi/nd_copilot/data");
     // DATA on
     XPLMSetDatai(efis_copilot_shows_data, 1);
 
-    // xhsi/efis_copilot/pos
-    efis_copilot_shows_pos = XPLMFindDataRef ("xhsi/efis_copilot/pos");
+    // xhsi/nd_copilot/pos
+    efis_copilot_shows_pos = XPLMFindDataRef ("xhsi/nd_copilot/pos");
     // POS off
     XPLMSetDatai(efis_copilot_shows_pos, 0);
 
-    // xhsi/efis_copilot/map_ctr
-    efis_copilot_map_mode = XPLMFindDataRef ("xhsi/efis_copilot/map_ctr");
+    // xhsi/nd_copilot/map_ctr
+    efis_copilot_map_mode = XPLMFindDataRef ("xhsi/nd_copilot/map_ctr");
     // CTR on ! (just to be a little different from the pilot's ND default)
     XPLMSetDatai(efis_copilot_map_mode, 0);
 
-    // xhsi/efis_copilot/map_mode
-    efis_copilot_map_submode = XPLMFindDataRef ("xhsi/efis_copilot/map_mode");
+    // xhsi/nd_copilot/map_mode
+    efis_copilot_map_submode = XPLMFindDataRef ("xhsi/nd_copilot/map_mode");
     // mode MAP
     XPLMSetDatai(efis_copilot_map_submode, 2);
 
-    // xhsi/efis_copilot/hsi_source
-    copilot_hsi_selector = XPLMFindDataRef ("xhsi/efis_copilot/hsi_source");
+    // xhsi/nd_copilot/nav_source
+    copilot_hsi_selector = XPLMFindDataRef ("xhsi/nd_copilot/nav_source");
     // HSI source : NAV2 !
     XPLMSetDatai(copilot_hsi_selector, 1);
 
-    // xhsi/efis_copilot/da_bug
-    efis_copilot_da_bug = XPLMFindDataRef ("xhsi/efis_copilot/da_bug");
+    // xhsi/pfd_copilot/da_bug
+    efis_copilot_da_bug = XPLMFindDataRef ("xhsi/pfd_copilot/da_bug");
     // just a default DA
     XPLMSetDatai(efis_copilot_da_bug, 1000);
 
-    // xhsi/efis_copilot/mins_mode
-    efis_copilot_mins_mode = XPLMFindDataRef ("xhsi/efis_copilot/mins_mode");
+    // xhsi/pfd_copilot/mins_mode
+    efis_copilot_mins_mode = XPLMFindDataRef ("xhsi/pfd_copilot/mins_mode");
     // mins is baro
     XPLMSetDatai(efis_copilot_mins_mode, 1);
 
-    // xhsi/efis_copilot/map_zoomin
-    efis_copilot_map_zoomin = XPLMFindDataRef ("xhsi/efis_copilot/map_zoomin");
+    // xhsi/nd_copilot/map_zoomin
+    efis_copilot_map_zoomin = XPLMFindDataRef ("xhsi/nd_copilot/map_zoomin");
     // scale * 100
     XPLMSetDatai(efis_copilot_map_zoomin, 1);
 
@@ -997,22 +997,22 @@ float initMFDCallback(
 
 void unregisterPilotDataRefs(void) {
 
-    // xhsi/efis/sta
+    // xhsi/nd_pilot/sta
     XPLMUnregisterDataAccessor(efis_pilot_shows_stas);
 
-    // xhsi/efis/data
+    // xhsi/nd_pilot/data
     XPLMUnregisterDataAccessor(efis_pilot_shows_data);
 
-    // xhsi/efis/pos
+    // xhsi/nd_pilot/pos
     XPLMUnregisterDataAccessor(efis_pilot_shows_pos);
 
-    // xhsi/efis/da_bug
+    // xhsi/pfd_pilot/da_bug
     XPLMUnregisterDataAccessor(efis_pilot_da_bug);
 
-    // xhsi/efis/mins_mode
+    // xhsi/pfd_pilot/mins_mode
     XPLMUnregisterDataAccessor(efis_pilot_mins_mode);
 
-    // xhsi/efis/map_zoomin
+    // xhsi/nd_pilot/map_zoomin
     XPLMUnregisterDataAccessor(efis_pilot_map_zoomin);
 
 }
@@ -1020,55 +1020,55 @@ void unregisterPilotDataRefs(void) {
 
 void unregisterCopilotDataRefs(void) {
 
-    // xhsi/efis_copilot/map_range
+    // xhsi/nd_copilot/map_range
     XPLMUnregisterDataAccessor(efis_copilot_map_range_selector);
 
-    // xhsi/efis_copilot/radio1
+    // xhsi/nd_copilot/radio1
     XPLMUnregisterDataAccessor(efis_copilot_dme_1_selector);
 
-    // xhsi/efis_copilot/radio2
+    // xhsi/nd_copilot/radio2
     XPLMUnregisterDataAccessor(efis_copilot_dme_2_selector);
 
-    // xhsi/efis_copilot/tfc
+    // xhsi/nd_copilot/tfc
     XPLMUnregisterDataAccessor(efis_copilot_shows_tcas);
 
-    // xhsi/efis_copilot/arpt
+    // xhsi/nd_copilot/arpt
     XPLMUnregisterDataAccessor(efis_copilot_shows_airports);
 
-    // xhsi/efis_copilot/wpt
+    // xhsi/nd_copilot/wpt
     XPLMUnregisterDataAccessor(efis_copilot_shows_waypoints);
 
-    // xhsi/efis_copilot/vor
+    // xhsi/nd_copilot/vor
     XPLMUnregisterDataAccessor(efis_copilot_shows_vors);
 
-    // xhsi/efis_copilot/ndb
+    // xhsi/nd_copilot/ndb
     XPLMUnregisterDataAccessor(efis_copilot_shows_ndbs);
 
-    // xhsi/efis_copilot/sta
+    // xhsi/nd_copilot/sta
     XPLMUnregisterDataAccessor(efis_copilot_shows_stas);
 
-    // xhsi/efis_copilot/data
+    // xhsi/nd_copilot/data
     XPLMUnregisterDataAccessor(efis_copilot_shows_data);
 
-    // xhsi/efis_copilot/pos
+    // xhsi/nd_copilot/pos
     XPLMUnregisterDataAccessor(efis_copilot_shows_pos);
 
-    // xhsi/efis_copilot/map_ctr
+    // xhsi/nd_copilot/map_ctr
     XPLMUnregisterDataAccessor(efis_copilot_map_mode);
 
-    // xhsi/efis_copilot/map_mode
+    // xhsi/nd_copilot/map_mode
     XPLMUnregisterDataAccessor(efis_copilot_map_submode);
 
-    // xhsi/efis_copilot/hsi_source
+    // xhsi/nd_copilot/nav_source
     XPLMUnregisterDataAccessor(copilot_hsi_selector);
 
-    // xhsi/efis_copilot/da_bug
+    // xhsi/pfd_copilot/da_bug
     XPLMUnregisterDataAccessor(efis_copilot_da_bug);
 
-    // xhsi/efis_copilot/mins_mode
+    // xhsi/pfd_copilot/mins_mode
     XPLMUnregisterDataAccessor(efis_copilot_mins_mode);
 
-    // xhsi/efis_copilot/map_zoomin
+    // xhsi/nd_copilot/map_zoomin
     XPLMUnregisterDataAccessor(efis_copilot_map_zoomin);
 
 }

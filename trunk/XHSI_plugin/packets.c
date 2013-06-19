@@ -1222,7 +1222,7 @@ int createStaticPacket(void) {
 
 int createFmsPackets(void) {
 
-	char id[256];
+	char nav_id[256];
 	int altitude;
 	float lat;
 	float lon;
@@ -1238,16 +1238,20 @@ int createFmsPackets(void) {
 
 	 // the entry number in the FMS
 	int cur_entry;
-	// the entry number in the packet that we send
+
+	// the same, but counting only non-zero entries
 	// at the end, it should be equal to the number of non-zero entries
 	int cur_waypoint = 0;
+
+	// the entry number in the packet that we send
+	int cur_packpoint = 0;
 
 	XPLMNavType type;
 	XPLMNavRef outRef;
 
     int i;
 
-    int cur_pack;
+    int cur_pack = 0;
 
     // the actual number of waypoints, not counting zero'd waypoints
 	total_waypoints = XPLMCountFMSEntries();
@@ -1255,7 +1259,7 @@ int createFmsPackets(void) {
 	if (total_waypoints > 0) {
 
 
-//sprintf(msg, "XHSI: FMC: nb=%ld\n", total_waypoints);
+//sprintf(msg, "XHSI: FMC: nb=%d\n", total_waypoints);
 //XPLMDebugString(msg);
 
 		displayed_entry = XPLMGetDisplayedFMSEntry();
@@ -1268,7 +1272,7 @@ int createFmsPackets(void) {
              && cur_waypoint < total_waypoints
              && cur_entry < MAX_FMS_ENTRIES_POSSIBLE ) {
 
-//sprintf(msg, " %ld ", cur_entry);
+//sprintf(msg, " %d ", cur_entry);
 //XPLMDebugString(msg);
 
             cur_pack = (int)cur_waypoint / 50;
@@ -1276,7 +1280,7 @@ int createFmsPackets(void) {
 			XPLMGetFMSEntryInfo(
                     cur_entry,
                     &type,
-                    id,
+                    nav_id,
                     &outRef,
                     &altitude,
                     &lat,
@@ -1295,15 +1299,18 @@ int createFmsPackets(void) {
 					active_waypoint = cur_waypoint;
 				}
 
-				fms_packet[cur_pack].entries[cur_waypoint].type = custom_htoni( (int)type );
+                cur_packpoint = cur_waypoint % 50;
+
+				fms_packet[cur_pack].entries[cur_packpoint].type = custom_htoni( (int)type );
 				if (type == xplm_Nav_LatLon) {
-					strncpy(fms_packet[cur_pack].entries[cur_waypoint].id, "Lat/Lon", sizeof(fms_packet[cur_pack].entries[cur_waypoint].id));
+					strncpy(fms_packet[cur_pack].entries[cur_packpoint].id, "Lat/Lon", sizeof(fms_packet[cur_pack].entries[cur_packpoint].id));
 				} else {
-					strncpy(fms_packet[cur_pack].entries[cur_waypoint].id, id, sizeof(fms_packet[cur_pack].entries[cur_waypoint].id));
+					strncpy(fms_packet[cur_pack].entries[cur_packpoint].id, nav_id, sizeof(fms_packet[cur_pack].entries[cur_packpoint].id));
 				}
-				fms_packet[cur_pack].entries[cur_waypoint].altitude = custom_htoni(altitude);
-				fms_packet[cur_pack].entries[cur_waypoint].lat = custom_htonf(lat);
-				fms_packet[cur_pack].entries[cur_waypoint].lon = custom_htonf(lon);
+				fms_packet[cur_pack].entries[cur_packpoint].altitude = custom_htoni(altitude);
+				fms_packet[cur_pack].entries[cur_packpoint].lat = custom_htonf(lat);
+				fms_packet[cur_pack].entries[cur_packpoint].lon = custom_htonf(lon);
+
 				// get ready for the next waypoint
 				cur_waypoint++;
 				// at the end, cur_waypoint will be the same as total_waypoints
@@ -1311,24 +1318,27 @@ int createFmsPackets(void) {
 			cur_entry++;
 		}
 //XPLMDebugString("\n");
-//sprintf(msg, "XHSI: FMC: last=%ld\n", cur_entry);
+//sprintf(msg, "XHSI: FMC: last=%d\n", cur_entry);
 //XPLMDebugString(msg);
-//sprintf(msg, "XHSI: FMC: count=%ld\n", cur_waypoint);
+//sprintf(msg, "XHSI: FMC: count=%d\n", cur_waypoint);
 //XPLMDebugString(msg);
 
 	}
 
-//    if ( cur_waypoint != total_waypoints ) {
-//        sprintf(msg, "XHSI: FMC: error count: %ld %ld\n", cur_waypoint, total_waypoints);
-//        XPLMDebugString(msg);
-//    }
+    if ( cur_waypoint != total_waypoints ) {
+        sprintf(msg, "XHSI: FMC: error count: %d %d\n", cur_waypoint, total_waypoints);
+        XPLMDebugString(msg);
+    }
 
     ete = XPLMGetDataf(gps_dme_time_secs);
     gs = XPLMGetDataf(groundspeed);
 
-    for (i = 0; i <= ((total_waypoints-1)/MAX_FMS_ENTRIES_POSSIBLE); i++) {
+//    for (i = 0; i <= ((total_waypoints-1)/MAX_FMS_ENTRIES_POSSIBLE); i++) {
+    for (i = 0; i <= cur_pack; i++) {
 		strncpy(fms_packet[i].packet_id, "FMC", 3);
 		fms_packet[i].packet_id[3] = '0' + (unsigned char)i;
+//sprintf(msg, "XHSI: filling %c%c%c%c \n",fms_packet[i].packet_id[0],fms_packet[i].packet_id[1],fms_packet[i].packet_id[2],fms_packet[i].packet_id[3]);
+//XPLMDebugString(msg);
 		fms_packet[i].ete_for_active = custom_htonf( ete );
 		fms_packet[i].groundspeed = custom_htonf( gs );
         fms_packet[i].nb_of_entries = custom_htoni( total_waypoints );
