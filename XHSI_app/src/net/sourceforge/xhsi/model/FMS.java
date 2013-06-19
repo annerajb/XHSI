@@ -51,12 +51,15 @@ public class FMS {
 
 
     private FMS() {
-        this.entries = new FMSEntry[500];
+
 //        this.entries = new ArrayList<FMSEntry>();
 //        this.entry_lookup = new HashMap<String,FMSEntry>();
 //        this.active = false;
+
         init();
+
     }
+
 
     /**
      * @return boolean - true if FMS contains entries, false, otherwise
@@ -66,10 +69,17 @@ public class FMS {
         return (this.count > 0 );
     }
 
+
     /**
      * Prepare for loading new FMS entries
      */
     public void init() {
+
+        this.entries = new FMSEntry[500];
+        for ( int i = 0; i < 500; i++ ) {
+            this.entries[ i ] = new FMSEntry();
+        }
+
         this.active_waypoint = null;
         this.displayed_waypoint = null;
         this.count = 0;
@@ -77,6 +87,7 @@ public class FMS {
 //        this.entry_lookup.clear();
 //        this.active = false;
     }
+
 
 //    /**
 //     * Appends entry to the current list of entries
@@ -95,6 +106,26 @@ public class FMS {
 //    }
 
     
+    /**
+     * Notify that an entry has been modified
+     *
+     * @param idx - the entry index
+     */
+    public void update_entry(int idx) {
+
+        if (this.entries[idx].active) {
+            this.active_waypoint = this.entries[idx];
+        }
+        if (this.entries[idx].displayed) {
+            this.displayed_waypoint = this.entries[idx];
+        }
+
+        // this entry can already be used, even if we don't have the final count
+        this.count = Math.max(idx + 1, this.count);
+
+    }
+
+
     /**
      * Adds an entry to the current array of entries
      *

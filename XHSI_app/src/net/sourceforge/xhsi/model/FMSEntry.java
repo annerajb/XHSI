@@ -38,6 +38,19 @@ public class FMSEntry extends NavigationObject {
     public boolean active;
     public boolean displayed;
 
+
+    public FMSEntry() {
+        super("", 0.0f, 0.0f);
+        this.index = 0;
+        this.type = 0;
+        this.altitude = 0;
+        this.leg_dist = 0.0f;
+        this.total_ete = 0.0f;
+        this.active = false;
+        this.displayed = false;
+    }
+
+
     public FMSEntry(int index, String name, int type, float lat, float lon, int altitude, float leg_dist, float total_ete, boolean active, boolean displayed) {
         super(name, lat, lon);
         this.index = index;
@@ -53,7 +66,9 @@ public class FMSEntry extends NavigationObject {
 //        }
     }
 
+    
     public String toString() {
         return this.name + " @ (" + this.lat + "\u00B0, " + this.lon + "\u00B0)";
     }
+
 }

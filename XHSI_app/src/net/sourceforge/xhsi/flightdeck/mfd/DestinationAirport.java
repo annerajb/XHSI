@@ -1,7 +1,8 @@
 /**
 * DestinationAirport.java
 * 
-* Prints information about the destination airport
+* raws the airport chart and shows runway, LOC/ILS and COMM info
+* of the destination airport
 * 
 * Copyright (C) 2011-2013  Marc Rogiers (marrog.123@gmail.com)
 * 
@@ -149,11 +150,19 @@ public class DestinationAirport extends MFDSubcomponent {
 
         String dest_arpt_str = "";
 
-        // are we tuned to a localizer?
-        dest_arpt_str = get_nav_dest();
+        if ( this.aircraft.on_ground() ) {
+            // when we are on the ground, take the nearest airport
+            // (which is the airport that we are really at in 99.99% of the cases)
+            dest_arpt_str = this.aircraft.get_nearest_arpt();
+        }
 
         if ( dest_arpt_str.equals("") ) {
-            // if not, is there a destination airport in the FMS?
+            // if not, get the airport of the LOC/ILS that we are we tuned to
+            dest_arpt_str = get_nav_dest();
+        }
+
+        if ( dest_arpt_str.equals("") ) {
+            // if not, the destination airport in the FMS
             dest_arpt_str = get_fms_dest();
         }
 
