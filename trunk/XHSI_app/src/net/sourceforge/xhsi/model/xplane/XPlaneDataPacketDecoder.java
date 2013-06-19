@@ -108,7 +108,7 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
 
         // these vars will be re-used several times, so define them here and not in a for-loop
         int data_point_id;
-        int int_data;
+        // int int_data;
         float float_data;
         String string_data;
 
@@ -137,10 +137,10 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
                     string_data = new String(sim_data, 8+(i*8)+4, 4).trim();
                     data_stream.skipBytes(4);
                     this.xplane_data_repository.store_sim_string(data_point_id, string_data);
-                } else if ( data_point_id >= 5000 ) {
-                    // Int
-                    int_data = data_stream.readInt();
-                    //logger.warning("INT:"+data_point_id+"="+int_data);
+//                } else if ( data_point_id >= 5000 ) {
+//                    // Int
+//                    int_data = data_stream.readInt();
+//                    //logger.warning("INT:"+data_point_id+"="+int_data);
 //                    this.xplane_data_repository.store_sim_int(data_point_id, int_data);
                 } else {
                     // Float
@@ -178,21 +178,21 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
             // 1 out of 10 FMCx route data packets
             
             int offset = Character.digit( packet_type.charAt(3), 10 ) * 50;
-            if ( packet_type.equals("FMSR") ) offset = 0;
-//logger.warning("Receiving " + packet_type + " packet (" + Integer.toString(offset) + ")");
+//            if ( packet_type.equals("FMSR") ) offset = 0;
 
             if (this.received_fms_packet == false)
                 logger.fine("Received first FMCx packet");
-            logger.finest("Receiving FMCx packet");
+            logger.finest("Receiving " + packet_type);
 
             DataInputStream data_stream = new DataInputStream(new ByteArrayInputStream(sim_data));
             data_stream.skipBytes(4);    // skip the bytes containing the packet type id
 
             if ( offset == 0 ) {
-                this.fms.init();
+// No, we will re-use the existing FMS instance
+//                this.fms.init();
                 beyond_active = false;
-                last_lat = 0;
-                last_lon = 0;
+                last_lat = 0.0f;
+                last_lon = 0.0f;
                 total_ete = 0.0f;
                 prev_fms_entry = null;
                 prev_level = false;
@@ -208,8 +208,8 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
             int nb_of_entries = data_stream.readInt();
 
             if (this.received_fms_packet == false)
-                logger.fine("... FMS contains " + nb_of_entries + " FMS entries");
-//logger.warning("... FMS contains " + nb_of_entries + " FMS entries");
+                logger.fine("... FMCx contains " + nb_of_entries + " FMS entries");
+            logger.finest("... FMC" + packet_type.charAt(3) + " contains " + nb_of_entries + " FMS entries");
 
             int displayed_entry_index = data_stream.readInt();
             int active_entry_index = data_stream.readInt();
@@ -227,7 +227,7 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
             boolean climbing = false;
             boolean descending = false;
 
-            int packet_entries = ( nb_of_entries-offset > 50 ) ? 50 : nb_of_entries-offset;
+            int packet_entries = ( nb_of_entries - offset > 50 ) ? 50 : nb_of_entries - offset;
 //logger.warning("... we will read " + packet_entries + " FMS entries");
 
             for (int i=0; i<packet_entries; i++) {
@@ -268,9 +268,25 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
                         total_ete = 0.0f;
                     }
 
-                    new_fms_entry = new FMSEntry(offset + i, id, type, lat, lon, altitude, leg_dist, total_ete, is_active, is_displayed);
-//logger.warning("FMS ["+i+"] : "+id+" leg="+leg_dist);
-                    this.fms.add_entry(new_fms_entry, offset + i);
+                    logger.finest("FMC [" + (offset+i) + "] : " + id + " leg=" + leg_dist);
+
+                    //new_fms_entry = new FMSEntry(offset + i, id, type, lat, lon, altitude, leg_dist, total_ete, is_active, is_displayed);
+                    // No, we will re-use the existing FMSEntry[offset + i]
+                    new_fms_entry = this.fms.get_entry(offset + i);
+
+                    new_fms_entry.index = offset + i;
+                    new_fms_entry.name = id;
+                    new_fms_entry.type = type;
+                    new_fms_entry.lat = lat;
+                    new_fms_entry.lon = lon;
+                    new_fms_entry.altitude = altitude;
+                    new_fms_entry.leg_dist = leg_dist;
+                    new_fms_entry.total_ete = total_ete;
+                    new_fms_entry.active = is_active;
+                    new_fms_entry.displayed = is_displayed;
+                    this.fms.update_entry( offset + i );
+
+                    //this.fms.add_entry(new_fms_entry, offset + i);
 
                     // was this the active waypoint?
                     if ( is_active ) {
