@@ -35,6 +35,8 @@
 #include "packets.h"
 #include "net.h"
 
+char msg[200];
+
 
 
 float sendADCCallback(
@@ -206,6 +208,8 @@ float sendFmsCallback(
             } else {
                 packet_size = 24 + ( MAX_FMS_ENTRIES_ALLOWED ) * 24;
             }
+sprintf(msg, "XHSI: sending %c%c%c%c \n",fms_packet[j].packet_id[0],fms_packet[j].packet_id[1],fms_packet[j].packet_id[2],fms_packet[j].packet_id[3]);
+XPLMDebugString(msg);
 
             for (i=0; i<NUM_DEST; i++) {
                 if (dest_enable[i]) {
