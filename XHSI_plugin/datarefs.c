@@ -177,6 +177,7 @@ XPLMDataRef  autopilot_toga_lateral_status;
 XPLMDataRef  autopilot_roll_status;
 XPLMDataRef  autopilot_pitch_status;
 XPLMDataRef  autopilot_backcourse_status;
+XPLMDataRef  autopilot_heading_roll_mode;
 
 
 XPLMDataRef  transponder_mode;
@@ -1496,10 +1497,103 @@ void writeDataRef(int id, float value) {
             break;
 
 
-        // AP HDG
+        // AP
+
+        case SIM_COCKPIT_AUTOPILOT_HEADING_ROLL_MODE :
+            XPLMSetDatai(autopilot_heading_roll_mode, (int)value);
+            break;
 
         case SIM_COCKPIT_AUTOPILOT_HEADING_MAG :
             XPLMSetDataf(autopilot_heading_mag, value);
+            break;
+
+        case SIM_COCKPIT_AUTOPILOT_AIRSPEED :
+            XPLMSetDataf(autopilot_airspeed, value);
+            break;
+
+        case SIM_COCKPIT_AUTOPILOT_ALTITUDE :
+            XPLMSetDataf(autopilot_altitude, value);
+            break;
+
+        case SIM_COCKPIT_AUTOPILOT_VERTICAL_VELOCITY :
+            XPLMSetDataf(autopilot_vertical_velocity, value);
+            break;
+
+        case SIM_COCKPIT2_GAUGES_ACTUATORS_BAROMETER_SETTING_IN_HG_PILOT :
+            XPLMSetDataf(baro_pilot, value);
+            break;
+
+
+       // MCP (and other) buttons (special case; don't set datarefs but trigger commands...)
+        case SIM_COCKPIT_AUTOPILOT_KEY_PRESS :
+             switch ((int)value) {
+                // MCP buttons
+                case 1 : //ismach
+                    XPLMSetDatai(autopilot_airspeed_is_mach, !XPLMGetDatai(autopilot_airspeed_is_mach));
+                    break;
+                case 2 : //athr
+                    XPLMCommandOnce(sim_autopilot_fdir_servos_toggle);
+                    break;
+                case 3 :
+                    XPLMCommandOnce(sim_autopilot_autothrottle_toggle);
+                    break;
+                case 4 :
+                    XPLMCommandOnce(sim_autopilot_level_change);
+                    break;
+                case 5 :
+                    XPLMCommandOnce(sim_autopilot_heading);
+                    break;
+                case 6 :
+                    XPLMCommandOnce(sim_autopilot_vertical_speed);
+                    break;
+                case 7 :
+                    XPLMCommandOnce(sim_autopilot_nav);
+                    break;
+                case 8 :
+                    XPLMCommandOnce(sim_autopilot_approach);
+                    break;
+                case 9 :
+                    XPLMCommandOnce(sim_autopilot_glide_slope);
+                    break;
+                case 10 :
+                    XPLMCommandOnce(sim_autopilot_back_course);
+                    break;
+                case 11 :
+                    XPLMCommandOnce(sim_autopilot_altitude_hold);
+                    break;
+                // lights
+                case 20 :
+                    XPLMCommandOnce(sim_lights_nav_lights_toggle);
+                    break;
+                case 21 :
+                    XPLMCommandOnce(sim_lights_beacon_lights_toggle);
+                    break;
+                case 22 :
+                    XPLMCommandOnce(sim_lights_taxi_lights_toggle);
+                    break;
+                case 23 :
+                    XPLMCommandOnce(sim_lights_strobe_lights_toggle);
+                    break;
+                case 24 :
+                    XPLMCommandOnce(sim_lights_landing_lights_toggle);
+                    break;
+                //  flight_controls
+                case 30 :
+                    XPLMCommandOnce(sim_flight_controls_landing_gear_toggle);
+                    break;
+                case 31 :
+                    XPLMCommandOnce(sim_flight_controls_flaps_down);
+                    break;
+                case 32 :
+                    XPLMCommandOnce(sim_flight_controls_flaps_up);
+                    break;
+                case 33 :
+                    XPLMCommandOnce(sim_flight_controls_speed_brakes_down_one);
+                    break;
+                case 34 :
+                    XPLMCommandOnce(sim_flight_controls_speed_brakes_up_one);
+                    break;
+            }
             break;
 
 
@@ -1561,7 +1655,7 @@ void writeDataRef(int id, float value) {
             XPLMSetDatai(adf2_stdby_freq_hz, (int)value);
             break;
 
-        // FLIPS (special case; don't set datarefs but trigger commands...)
+        // flips radios (special case; don't set datarefs but trigger commands...)
         case SIM_COCKPIT_RADIOS_STDBY_FLIP :
             switch ((int)value) {
                 case 1 :

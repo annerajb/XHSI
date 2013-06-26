@@ -700,6 +700,9 @@ int createAvionicsPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_AUTOPILOT_BACKCOURSE_STATUS);
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(autopilot_backcourse_status));
 	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_AUTOPILOT_HEADING_ROLL_MODE);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(autopilot_heading_roll_mode));
+	i++;
 
 
     sim_packet.sim_data_points[i].id = custom_htoni(UFMC_STATUS);

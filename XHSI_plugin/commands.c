@@ -329,12 +329,41 @@ XPLMCommandRef mfd_mode_up;
 XPLMCommandRef mfd_mode_cycle;
 
 
+// for an RTU
 XPLMCommandRef nav1_standy_flip;
 XPLMCommandRef nav2_standy_flip;
 XPLMCommandRef com1_standy_flip;
 XPLMCommandRef com2_standy_flip;
 XPLMCommandRef adf1_standy_flip;
 XPLMCommandRef adf2_standy_flip;
+
+
+// for an MCP
+XPLMCommandRef sim_autopilot_fdir_servos_toggle;
+XPLMCommandRef sim_autopilot_autothrottle_toggle;
+XPLMCommandRef sim_autopilot_level_change;
+XPLMCommandRef sim_autopilot_heading;
+XPLMCommandRef sim_autopilot_vertical_speed;
+XPLMCommandRef sim_autopilot_nav;
+XPLMCommandRef sim_autopilot_approach;
+XPLMCommandRef sim_autopilot_glide_slope;
+XPLMCommandRef sim_autopilot_back_course;
+XPLMCommandRef sim_autopilot_altitude_hold;
+
+// lights
+XPLMCommandRef sim_lights_nav_lights_toggle;
+XPLMCommandRef sim_lights_beacon_lights_toggle;
+XPLMCommandRef sim_lights_taxi_lights_toggle;
+XPLMCommandRef sim_lights_strobe_lights_toggle;
+XPLMCommandRef sim_lights_landing_lights_toggle;
+
+// flaps, gear and speedbrake
+XPLMCommandRef sim_flight_controls_flaps_down;
+XPLMCommandRef sim_flight_controls_flaps_up;
+XPLMCommandRef sim_flight_controls_landing_gear_toggle;
+XPLMCommandRef sim_flight_controls_speed_brakes_down_one;
+XPLMCommandRef sim_flight_controls_speed_brakes_up_one;
+
 
 
 char debug_string[80];
@@ -1503,8 +1532,8 @@ void registerCommands(void) {
     XPLMRegisterCommandHandler(source_down, (XPLMCommandCallback_f)source_handler, 1, (void *) DOWN);
     source_up = XPLMCreateCommand("xhsi/nd_pilot/source_up", "Next NAV source");
     XPLMRegisterCommandHandler(source_up, (XPLMCommandCallback_f)source_handler, 1, (void *) UP);
-    // source_cycle = XPLMCreateCommand("xhsi/nd_pilot/source_cycle", "Cycle through NAV sources");
-    // XPLMRegisterCommandHandler(source_cycle, (XPLMCommandCallback_f)source_handler, 1, (void *) CYCLE);
+    source_cycle = XPLMCreateCommand("xhsi/nd_pilot/source_cycle", "Cycle through NAV sources");
+    XPLMRegisterCommandHandler(source_cycle, (XPLMCommandCallback_f)source_handler, 1, (void *) CYCLE);
 
     // mode
     mode_app = XPLMCreateCommand("xhsi/nd_pilot/mode_app", "ND mode APP");
@@ -1708,18 +1737,18 @@ void registerCommands(void) {
 
 
 
-    // xhsi/nd_b737_classic_pilot/...
+    // xhsi/nd_b737classic_pilot/...
 
     // B737-Classic modes
-    b737cl_mode_fullvorils = XPLMCreateCommand("xhsi/nd_b737_classic_pilot/mode_fullvorils", "B737-Classic mode FULL VOR/ILS");
+    b737cl_mode_fullvorils = XPLMCreateCommand("xhsi/nd_b737classic_pilot/mode_fullvorils", "B737-Classic mode FULL VOR/ILS");
     XPLMRegisterCommandHandler(b737cl_mode_fullvorils, (XPLMCommandCallback_f)b737cl_mode_handler, 1, (void *) B737CL_FULL_VOR_ILS);
-    b737cl_mode_expvorils = XPLMCreateCommand("xhsi/nd_b737_classic_pilot/mode_expvorils", "B737-Classic mode EXP VOR/ILS");
+    b737cl_mode_expvorils = XPLMCreateCommand("xhsi/nd_b737classic_pilot/mode_expvorils", "B737-Classic mode EXP VOR/ILS");
     XPLMRegisterCommandHandler(b737cl_mode_expvorils, (XPLMCommandCallback_f)b737cl_mode_handler, 1, (void *) B737CL_EXP_VOR_ILS);
-    b737cl_mode_map = XPLMCreateCommand("xhsi/nd_b737_classic_pilot/mode_map", "B737-Classic mode MAP");
+    b737cl_mode_map = XPLMCreateCommand("xhsi/nd_b737classic_pilot/mode_map", "B737-Classic mode MAP");
     XPLMRegisterCommandHandler(b737cl_mode_map, (XPLMCommandCallback_f)b737cl_mode_handler, 1, (void *) B737CL_MAP);
-    b737cl_mode_ctrmap = XPLMCreateCommand("xhsi/nd_b737_classic_pilot/mode_ctrmap", "B737-Classic mode CTR MAP");
+    b737cl_mode_ctrmap = XPLMCreateCommand("xhsi/nd_b737classic_pilot/mode_ctrmap", "B737-Classic mode CTR MAP");
     XPLMRegisterCommandHandler(b737cl_mode_ctrmap, (XPLMCommandCallback_f)b737cl_mode_handler, 1, (void *) B737CL_CTR_MAP);
-    b737cl_mode_plan = XPLMCreateCommand("xhsi/nd_b737_classic_pilot/mode_plan", "B737-Classic mode PLAN");
+    b737cl_mode_plan = XPLMCreateCommand("xhsi/nd_b737classic_pilot/mode_plan", "B737-Classic mode PLAN");
     XPLMRegisterCommandHandler(b737cl_mode_plan, (XPLMCommandCallback_f)b737cl_mode_handler, 1, (void *) B737CL_PLAN);
 
 
@@ -1779,6 +1808,8 @@ void registerCommands(void) {
     XPLMRegisterCommandHandler(copilot_mode_up, (XPLMCommandCallback_f)copilot_mode_handler, 1, (void *) UP);
     copilot_mode_cycle = XPLMCreateCommand("xhsi/nd_copilot/mode_cycle", "Cycle through ND modes - copilot");
     XPLMRegisterCommandHandler(copilot_mode_cycle, (XPLMCommandCallback_f)copilot_mode_handler, 1, (void *) CYCLE);
+    copilot_mode_shuttle = XPLMCreateCommand("xhsi/nd_copilot/mode_shuttle", "Shuttle back and forth through ND modes - copilot");
+    XPLMRegisterCommandHandler(copilot_mode_shuttle, (XPLMCommandCallback_f)copilot_mode_handler, 1, (void *) SHUTTLE);
 
     // copilot ctr
     copilot_ctr_toggle = XPLMCreateCommand("xhsi/nd_copilot/mode_ctr_toggle", "Toggle ND map CTR - copilot");
@@ -1960,18 +1991,18 @@ void registerCommands(void) {
     XPLMRegisterCommandHandler(copilot_ext_range_shuttle, (XPLMCommandCallback_f)copilot_ext_range_handler, 1, (void *) SHUTTLE);
 
 
-    // xhsi/nd_b737_classic_copilot/...
+    // xhsi/nd_b737classic_copilot/...
 
     // copilot B737-Classic modes
-    b737cl_copilot_mode_fullvorils = XPLMCreateCommand("xhsi/nd_b737_classic_copilot/mode_fullvorils", "B737-Classic mode FULL VOR/ILS - copilot");
+    b737cl_copilot_mode_fullvorils = XPLMCreateCommand("xhsi/nd_b737classic_copilot/mode_fullvorils", "B737-Classic mode FULL VOR/ILS - copilot");
     XPLMRegisterCommandHandler(b737cl_copilot_mode_fullvorils, (XPLMCommandCallback_f)b737cl_copilot_mode_handler, 1, (void *) B737CL_FULL_VOR_ILS);
-    b737cl_copilot_mode_expvorils = XPLMCreateCommand("xhsi/nd_b737_classic_copilot/mode_expvorils", "B737-Classic mode EXP VOR/ILS - copilot");
+    b737cl_copilot_mode_expvorils = XPLMCreateCommand("xhsi/nd_b737classic_copilot/mode_expvorils", "B737-Classic mode EXP VOR/ILS - copilot");
     XPLMRegisterCommandHandler(b737cl_copilot_mode_expvorils, (XPLMCommandCallback_f)b737cl_copilot_mode_handler, 1, (void *) B737CL_EXP_VOR_ILS);
-    b737cl_copilot_mode_map = XPLMCreateCommand("xhsi/nd_b737_classic_copilot/mode_map", "B737-Classic mode MAP - copilot");
+    b737cl_copilot_mode_map = XPLMCreateCommand("xhsi/nd_b737classic_copilot/mode_map", "B737-Classic mode MAP - copilot");
     XPLMRegisterCommandHandler(b737cl_copilot_mode_map, (XPLMCommandCallback_f)b737cl_copilot_mode_handler, 1, (void *) B737CL_MAP);
-    b737cl_copilot_mode_ctrmap = XPLMCreateCommand("xhsi/nd_b737_classic_copilot/mode_ctrmap", "B737-Classic mode CTR MAP - copilot");
+    b737cl_copilot_mode_ctrmap = XPLMCreateCommand("xhsi/nd_b737classic_copilot/mode_ctrmap", "B737-Classic mode CTR MAP - copilot");
     XPLMRegisterCommandHandler(b737cl_copilot_mode_ctrmap, (XPLMCommandCallback_f)b737cl_copilot_mode_handler, 1, (void *) B737CL_CTR_MAP);
-    b737cl_copilot_mode_plan = XPLMCreateCommand("xhsi/nd_b737_classic_copilot/mode_plan", "B737-Classic mode PLAN - copilot");
+    b737cl_copilot_mode_plan = XPLMCreateCommand("xhsi/nd_b737classic_copilot/mode_plan", "B737-Classic mode PLAN - copilot");
     XPLMRegisterCommandHandler(b737cl_copilot_mode_plan, (XPLMCommandCallback_f)b737cl_copilot_mode_handler, 1, (void *) B737CL_PLAN);
 
 
@@ -2040,10 +2071,9 @@ void registerCommands(void) {
 
 
 
-    // special case: use these existing commands
+    // special case: use these existing commands to control the chronometer
     timer_start_stop = XPLMFindCommand("sim/instruments/timer_start_stop");
     timer_reset = XPLMFindCommand("sim/instruments/timer_reset");
-
 
 
     // special case: use these existing commands to flip active/standby radios
@@ -2054,6 +2084,35 @@ void registerCommands(void) {
     com2_standy_flip = XPLMFindCommand("sim/radios/com2_standy_flip");
     adf1_standy_flip = XPLMFindCommand("sim/radios/adf1_standy_flip");
     adf2_standy_flip = XPLMFindCommand("sim/radios/adf2_standy_flip");
+
+
+    // special case: use these existing commands for an MCP
+    sim_autopilot_fdir_servos_toggle = XPLMFindCommand("sim/autopilot/fdir_servos_toggle");
+    sim_autopilot_autothrottle_toggle = XPLMFindCommand("sim/autopilot/autothrottle_toggle");
+    sim_autopilot_level_change = XPLMFindCommand("sim/autopilot/level_change");
+    sim_autopilot_heading = XPLMFindCommand("sim/autopilot/heading");
+    sim_autopilot_vertical_speed = XPLMFindCommand("sim/autopilot/vertical_speed");
+    sim_autopilot_nav = XPLMFindCommand("sim/autopilot/NAV");
+    sim_autopilot_approach = XPLMFindCommand("sim/autopilot/approach");
+    sim_autopilot_glide_slope = XPLMFindCommand("sim/autopilot/glide_slope");
+    sim_autopilot_back_course = XPLMFindCommand("sim/autopilot/back_course");
+    sim_autopilot_altitude_hold = XPLMFindCommand("sim/autopilot/altitude_hold");
+
+
+    // special case: use these existing commands for lights
+    sim_lights_nav_lights_toggle = XPLMFindCommand("sim/lights/nav_lights_toggle");
+    sim_lights_beacon_lights_toggle = XPLMFindCommand("sim/lights/beacon_lights_toggle");
+    sim_lights_taxi_lights_toggle = XPLMFindCommand("sim/lights/taxi_lights_toggle");
+    sim_lights_strobe_lights_toggle = XPLMFindCommand("sim/lights/strobe_lights_toggle");
+    sim_lights_landing_lights_toggle = XPLMFindCommand("sim/lights/landing_lights_toggle");
+
+    // special case: use these existing commands for flaps, gear and speedbrake
+    sim_flight_controls_flaps_down = XPLMFindCommand("sim/flight_controls/flaps_down");
+    sim_flight_controls_flaps_up = XPLMFindCommand("sim/flight_controls/flaps_up");
+    sim_flight_controls_landing_gear_toggle = XPLMFindCommand("sim/flight_controls/landing_gear_toggle");
+    sim_flight_controls_speed_brakes_down_one = XPLMFindCommand("sim/flight_controls/speed_brakes_down_one");
+    sim_flight_controls_speed_brakes_up_one = XPLMFindCommand("sim/flight_controls/speed_brakes_up_one");
+
 
 
     XPLMDebugString("XHSI: custom commands created\n");
