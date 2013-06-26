@@ -1690,11 +1690,11 @@ void registerCommands(void) {
     // xhsi/nd_ext_range_pilot/...
 
     // zoomin
-    zoomin_toggle = XPLMCreateCommand("xhsi/nd_ext_range_pilot/mode_zoomin_toggle", "Toggle ND map zoom");
+    zoomin_toggle = XPLMCreateCommand("xhsi/nd_ext_range_pilot/zoomin_toggle", "Toggle ND map zoom");
     XPLMRegisterCommandHandler(zoomin_toggle, (XPLMCommandCallback_f)zoomin_handler, 1, (void *) TOGGLE);
-    zoomin_on = XPLMCreateCommand("xhsi/nd_ext_range_pilot/mode_zoomin_on", "ND map range zoom in x100");
+    zoomin_on = XPLMCreateCommand("xhsi/nd_ext_range_pilot/zoomin_on", "ND map range zoom in x100");
     XPLMRegisterCommandHandler(zoomin_on, (XPLMCommandCallback_f)zoomin_handler, 1, (void *) ON);
-    zoomin_off = XPLMCreateCommand("xhsi/nd_ext_range_pilot/mode_zoomin_off", "ND map range normal");
+    zoomin_off = XPLMCreateCommand("xhsi/nd_ext_range_pilot/zoomin_off", "ND map range normal");
     XPLMRegisterCommandHandler(zoomin_off, (XPLMCommandCallback_f)zoomin_handler, 1, (void *) OFF);
 
     // ext range
@@ -1945,11 +1945,11 @@ void registerCommands(void) {
     // xhsi/nd_ext_range_copilot/...
 
     // copilot zoomin
-    copilot_zoomin_toggle = XPLMCreateCommand("xhsi/nd_ext_range_copilot/mode_zoomin_toggle", "Toggle ND map zoom - copilot");
+    copilot_zoomin_toggle = XPLMCreateCommand("xhsi/nd_ext_range_copilot/zoomin_toggle", "Toggle ND map zoom - copilot");
     XPLMRegisterCommandHandler(copilot_zoomin_toggle, (XPLMCommandCallback_f)copilot_zoomin_handler, 1, (void *) TOGGLE);
-    copilot_zoomin_on = XPLMCreateCommand("xhsi/nd_ext_range_copilot/mode_zoomin_on", "ND map range zoom in x100 - copilot");
+    copilot_zoomin_on = XPLMCreateCommand("xhsi/nd_ext_range_copilot/zoomin_on", "ND map range zoom in x100 - copilot");
     XPLMRegisterCommandHandler(copilot_zoomin_on, (XPLMCommandCallback_f)copilot_zoomin_handler, 1, (void *) ON);
-    copilot_zoomin_off = XPLMCreateCommand("xhsi/nd_ext_range_copilot/mode_zoomin_off", "ND map range normal - copilot");
+    copilot_zoomin_off = XPLMCreateCommand("xhsi/nd_ext_range_copilot/zoomin_off", "ND map range normal - copilot");
     XPLMRegisterCommandHandler(copilot_zoomin_off, (XPLMCommandCallback_f)copilot_zoomin_handler, 1, (void *) OFF);
 
     // copilot ext range
