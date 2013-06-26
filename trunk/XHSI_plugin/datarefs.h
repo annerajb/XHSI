@@ -115,6 +115,7 @@ extern XPLMDataRef  autopilot_toga_lateral_status;
 extern XPLMDataRef  autopilot_roll_status;
 extern XPLMDataRef  autopilot_pitch_status;
 extern XPLMDataRef  autopilot_backcourse_status;
+extern XPLMDataRef  autopilot_heading_roll_mode;
 
 
 extern XPLMDataRef	transponder_mode;

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 // mingw-64 demands that winsock2.h is loaded before windows.h
 #if IBM
