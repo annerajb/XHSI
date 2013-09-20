@@ -35,7 +35,7 @@
 #include "packets.h"
 #include "net.h"
 
-char msg[200];
+//char pack_msg[200];
 
 
 
@@ -93,6 +93,10 @@ float sendAvionicsCallback(
 
 	int i;
 	int packet_size;
+	int res;
+#if IBM
+	char msg[80];
+#endif
 
 	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open) {
 
@@ -100,11 +104,21 @@ float sendAvionicsCallback(
 
 		for (i=0; i<NUM_DEST; i++) {
 			if (dest_enable[i]) {
-				if ( sendto(sockfd, (const char*)&sim_packet, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr)) == -1 ) {
+				res = sendto(sockfd, (const char*)&sim_packet, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr));
+#if IBM
+				if ( res == SOCKET_ERROR ) {
+					XPLMDebugString("XHSI: caught error while sending AVIO packet! (");
+                    sprintf(msg, "%d", WSAGetLastError());
+					XPLMDebugString(msg);
+					XPLMDebugString(")\n");
+				}
+#else
+				if ( res < 0 ) {
 					XPLMDebugString("XHSI: caught error while sending AVIO packet! (");
 					XPLMDebugString((char * const) strerror(GET_ERRNO));
 					XPLMDebugString(")\n");
 				}
+#endif
 			}
 		}
 
@@ -125,6 +139,10 @@ float sendEnginesCallback(
 
 	int i;
 	int packet_size;
+	int res;
+#if IBM
+	char msg[80];
+#endif
 
 	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open) {
 
@@ -132,11 +150,21 @@ float sendEnginesCallback(
 
 		for (i=0; i<NUM_DEST; i++) {
 			if (dest_enable[i]) {
-				if ( sendto(sockfd, (const char*)&sim_packet, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr)) == -1 ) {
+				res = sendto(sockfd, (const char*)&sim_packet, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr));
+#if IBM
+				if ( res == SOCKET_ERROR ) {
+					XPLMDebugString("XHSI: caught error while sending ENGI packet! (");
+                    sprintf(msg, "%d", WSAGetLastError());
+					XPLMDebugString(msg);
+					XPLMDebugString(")\n");
+				}
+#else
+				if ( res < 0 ) {
 					XPLMDebugString("XHSI: caught error while sending ENGI packet! (");
 					XPLMDebugString((char * const) strerror(GET_ERRNO));
 					XPLMDebugString(")\n");
 				}
+#endif
 			}
 		}
 
@@ -157,6 +185,10 @@ float sendStaticCallback(
 
 	int i;
 	int packet_size;
+	int res;
+#if IBM
+	char msg[80];
+#endif
 
 	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open) {
 
@@ -164,11 +196,21 @@ float sendStaticCallback(
 
 		for (i=0; i<NUM_DEST; i++) {
 			if (dest_enable[i]) {
-				if ( sendto(sockfd, (const char*)&sim_packet, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr)) == -1 ) {
+				res = sendto(sockfd, (const char*)&sim_packet, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr));
+#if IBM
+				if ( res == SOCKET_ERROR ) {
+					XPLMDebugString("XHSI: caught error while sending STAT packet! (");
+                    sprintf(msg, "%d", WSAGetLastError());
+					XPLMDebugString(msg);
+					XPLMDebugString(")\n");
+				}
+#else
+				if ( res < 0 ) {
 					XPLMDebugString("XHSI: caught error while sending STAT packet! (");
 					XPLMDebugString((char * const) strerror(GET_ERRNO));
 					XPLMDebugString(")\n");
 				}
+#endif
 			}
 		}
 
@@ -192,6 +234,10 @@ float sendFmsCallback(
 	int waypoint_count;
 	int packet_size;
 	int last_pack;
+	int res;
+#if IBM
+	char msg[80];
+#endif
 
 
 	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open)  {
@@ -208,16 +254,26 @@ float sendFmsCallback(
             } else {
                 packet_size = 24 + ( MAX_FMS_ENTRIES_ALLOWED ) * 24;
             }
-sprintf(msg, "XHSI: sending %c%c%c%c \n",fms_packet[j].packet_id[0],fms_packet[j].packet_id[1],fms_packet[j].packet_id[2],fms_packet[j].packet_id[3]);
-XPLMDebugString(msg);
+//sprintf(pack_msg, "XHSI: sending %c%c%c%c \n",fms_packet[j].packet_id[0],fms_packet[j].packet_id[1],fms_packet[j].packet_id[2],fms_packet[j].packet_id[3]);
+//XPLMDebugString(pack_msg);
 
             for (i=0; i<NUM_DEST; i++) {
                 if (dest_enable[i]) {
-                    if (sendto(sockfd, (const char*)&fms_packet[j], packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr)) == -1) {
+                    res = sendto(sockfd, (const char*)&fms_packet[j], packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr));
+#if IBM
+                    if ( res == SOCKET_ERROR ) {
+                        XPLMDebugString("XHSI: caught error while sending FMCx packet! (");
+                        sprintf(msg, "%d", WSAGetLastError());
+                        XPLMDebugString(msg);
+                        XPLMDebugString(")\n");
+                    }
+#else
+                    if ( res < 0 ) {
                         XPLMDebugString("XHSI: caught error while sending FMCx packet! (");
                         XPLMDebugString((char * const) strerror(GET_ERRNO));
                         XPLMDebugString(")\n");
                     }
+#endif
                 }
             }
 
@@ -240,6 +296,10 @@ float sendTcasCallback(
 
 	int i;
 	int packet_size;
+	int res;
+#if IBM
+	char msg[80];
+#endif
 
 	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open)  {
 
@@ -248,11 +308,21 @@ float sendTcasCallback(
         if ( packet_size > 0 ) {
             for (i=0; i<NUM_DEST; i++) {
                 if (dest_enable[i]) {
-                    if (sendto(sockfd, (const char*)&tcas_packet, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr)) == -1) {
+                    res = sendto(sockfd, (const char*)&tcas_packet, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr));
+#if IBM
+                    if ( res == SOCKET_ERROR ) {
+                        XPLMDebugString("XHSI: caught error while sending TCAS packet! (");
+                        sprintf(msg, "%d", WSAGetLastError());
+                        XPLMDebugString(msg);
+                        XPLMDebugString(")\n");
+                    }
+#else
+                    if ( res < 0 ) {
                         XPLMDebugString("XHSI: caught error while sending TCAS packet! (");
                         XPLMDebugString((char * const) strerror(GET_ERRNO));
                         XPLMDebugString(")\n");
                     }
+#endif
                 }
             }
             return tcas_data_delay;

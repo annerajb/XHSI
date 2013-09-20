@@ -42,9 +42,9 @@ float               tcas_data_delay;
 
 void defaultSettings() {
 
-    XPLMDebugString("XHSI: defining default settings\n");
-
 	int i;
+
+    XPLMDebugString("XHSI: defining default settings\n");
 
 	for (i=0; i<NUM_DEST; i++) {
 		dest_enable[i] = i==0 ? 1 : 0;
@@ -72,8 +72,6 @@ void defaultSettings() {
 
 void readConfig() {
 
-    XPLMDebugString("XHSI: reading settings file\n");
-
 	FILE	*cfg_file;
 	char	cfg_line[120];
 	char	param[40];
@@ -81,6 +79,8 @@ void readConfig() {
 	char	s_value[80];
 	int		d_value;
 	int i;
+
+    XPLMDebugString("XHSI: reading settings file\n");
 
 	cfg_file = fopen(CFG_FILE, "r");
 	if (cfg_file != NULL) {

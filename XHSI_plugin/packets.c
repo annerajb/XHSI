@@ -308,7 +308,7 @@ int createADCPacket(void) {
 	packet_size = 8 + i * 8;
 	if ( packet_size > max_packet_size) {
         max_packet_size = packet_size;
-        sprintf(msg, "XHSI: max packet size (ADCD): %d\n", max_packet_size);
+        sprintf(msg, "XHSI: max packet size so far (ADCD): %d\n", max_packet_size);
         XPLMDebugString(msg);
     }
 	return packet_size;
@@ -874,7 +874,7 @@ int createAvionicsPacket(void) {
 	packet_size = 8 + i * 8;
 	if ( packet_size > max_packet_size) {
         max_packet_size = packet_size;
-        sprintf(msg, "XHSI: max packet size (AVIO): %d\n", max_packet_size);
+        sprintf(msg, "XHSI: max packet size so far (AVIO): %d\n", max_packet_size);
         XPLMDebugString(msg);
     }
 	return packet_size;
@@ -1141,7 +1141,7 @@ int createEnginesPacket(void) {
 	packet_size = 8 + i * 8;
 	if ( packet_size > max_packet_size) {
         max_packet_size = packet_size;
-        sprintf(msg, "XHSI: max packet size (ENGI): %d\n", max_packet_size);
+        sprintf(msg, "XHSI: max packet size so far (ENGI): %d\n", max_packet_size);
         XPLMDebugString(msg);
     }
 	return packet_size;
@@ -1215,7 +1215,7 @@ int createStaticPacket(void) {
 	packet_size = 8 + i * 8;
 	if ( packet_size > max_packet_size) {
         max_packet_size = packet_size;
-        sprintf(msg, "XHSI: max packet size (STAT): %d\n", max_packet_size);
+        sprintf(msg, "XHSI: max packet size so far (STAT): %d\n", max_packet_size);
         XPLMDebugString(msg);
     }
 	return packet_size;
@@ -1328,7 +1328,7 @@ int createFmsPackets(void) {
 
 	}
 
-    if ( cur_waypoint != total_waypoints ) {
+    if ( ( total_waypoints ) && ( cur_waypoint != total_waypoints ) ) {
         sprintf(msg, "XHSI: FMC: error count: %d %d\n", cur_waypoint, total_waypoints);
         XPLMDebugString(msg);
     }

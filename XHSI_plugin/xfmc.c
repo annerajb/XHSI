@@ -44,17 +44,20 @@ void findXfmcDataRefs(void) {
 
 
 int createXfmcPacket(void) {
+
+   int i;
+
    strncpy(xfmcPacket.packet_id, "XFMC", 4);
    xfmcPacket.nb_of_lines = custom_htoni( NUM_XFMC_LINES);
    xfmcPacket.status = custom_htoni(XPLMGetDatai(xfmc_status_ref));
-   int i;
    for(i=0; i<NUM_XFMC_LINES; i++){
      xfmcPacket.lines[i].lineno = custom_htoni(i);
      XPLMGetDatab(xfmc_panel_lines_ref[i],xfmcPacket.lines[i].linestr,0,sizeof(xfmcPacket.lines[i].linestr));
-     xfmcPacket.lines[i].len = custom_htoni(strlen(xfmcPacket.lines[i].linestr));
+     xfmcPacket.lines[i].len = custom_htoni((int)strlen(xfmcPacket.lines[i].linestr));
    }
 
   return 4 + 4 + 4 + 14 * 88;
+
 }
 
 
@@ -67,6 +70,7 @@ float sendXfmcCallback(
 
 	int i;
 	int packet_size;
+
 
 	xfmc_delay = fms_data_delay;
 

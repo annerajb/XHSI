@@ -53,7 +53,7 @@ void findUFMCDataRefs(void) {
 
             ufmc_ready = 1;
 
-            XPLMDebugString("XHSI: registering FJCC UFMC/X737FMC DataRefs\n");
+            XPLMDebugString("XHSI: finding FJCC UFMC/X737FMC DataRefs\n");
 
             ufmc_v1 = XPLMFindDataRef("FJCC/UFMC/V1");
             ufmc_vr = XPLMFindDataRef("FJCC/UFMC/Vr");
