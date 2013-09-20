@@ -1085,6 +1085,10 @@ void unregisterMFDDataRefs(void) {
 
 void findDataRefs(void) {
 
+	int 		i;
+	char		buf[100];
+
+
     XPLMDebugString("XHSI: referencing standard DataRefs\n");
 
 	// Aircraft position
@@ -1328,8 +1332,6 @@ void findDataRefs(void) {
 //	relative_altitude_mtrs = XPLMFindDataRef("sim/cockpit2/tcas/indicators/relative_altitude_mtrs");
 
     // Multiplayer
-	int 		i;
-	char		buf[100];
 	for (i=1; i<NUM_TCAS; i++) {
 		sprintf(buf, "sim/multiplayer/position/plane%d_x", i);
 		multiplayer_x[i] = XPLMFindDataRef(buf);

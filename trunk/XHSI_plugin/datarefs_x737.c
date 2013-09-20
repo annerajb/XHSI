@@ -87,7 +87,7 @@ void findX737DataRefs(void) {
 
             x737_ready = 1;
 
-            XPLMDebugString("XHSI: registering EADT x737 DataRefs\n");
+            XPLMDebugString("XHSI: finding EADT x737 DataRefs\n");
 
             x737_fdA_status = XPLMFindDataRef("x737/systems/afds/fdA_status");
             x737_fdB_status = XPLMFindDataRef("x737/systems/afds/fdB_status");

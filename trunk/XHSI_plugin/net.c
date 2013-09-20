@@ -85,9 +85,9 @@ int startWinsock() {
 
 int openSocket() {
 
-    XPLMDebugString("XHSI: opening socket\n");
-
 	char debug_message[256];
+
+    XPLMDebugString("XHSI: opening socket\n");
 
 #if IBM
 
@@ -217,19 +217,25 @@ int bindSocket() {
 
 int nonBlocking() {
 
+#if IBM
+    DWORD nonBlocking = 1;
+    DWORD dwBytesReturned = 0;
+    BOOL bNewBehavior = FALSE;
+#else
+    int nonBlocking = 1;
+#endif
+
+
     XPLMDebugString("XHSI: setting socket to non-blocking\n");
 
 #if IBM
 
-    DWORD nonBlocking = 1;
     if ( ioctlsocket( sockfd, FIONBIO, &nonBlocking ) != 0 )
     {
         XPLMDebugString("XHSI: failed to set socket non-blocking!\n");
         return 0;
     }
     // see http://support.microsoft.com/?kbid=263823
-    DWORD dwBytesReturned = 0;
-    BOOL bNewBehavior = FALSE;
     if ( WSAIoctl(sockfd, SIO_UDP_CONNRESET, &bNewBehavior, sizeof(bNewBehavior), 0, 0, &dwBytesReturned, 0, 0) == SOCKET_ERROR )
     {
         XPLMDebugString("XHSI: Unable to ignore ICMP_Unreachable!\n");
@@ -237,12 +243,12 @@ int nonBlocking() {
 
 #else
 
-    int nonBlocking = 1;
     if ( fcntl( sockfd, F_SETFL, O_NONBLOCK, nonBlocking ) == -1 )
     {
         XPLMDebugString("XHSI: failed to set socket non-blocking!\n");
         return 0;
     }
+
 #endif
 
     XPLMDebugString("XHSI: socket set to non-blocking\n");
