@@ -7,15 +7,15 @@ extern struct XfmcLinesDataPacket xfmcPacket;
 
 
 struct XFmcDisplayLine {
-	long lineno;
-	long len;
+	int lineno;
+	int len;
 	char linestr[80];
 };
 
 struct XfmcLinesDataPacket {
     char packet_id[4];
-	long nb_of_lines;
-	long status;
+	int nb_of_lines;
+	int status;
 	struct XFmcDisplayLine lines[NUM_XFMC_LINES];
 };
 

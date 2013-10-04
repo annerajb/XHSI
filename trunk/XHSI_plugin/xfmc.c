@@ -8,15 +8,19 @@
 
 
 #include "XPLMDataAccess.h"
+#include "XPLMPlugin.h"
 #include "XPLMUtilities.h"
 
 #include "xfmc.h"
+
 #include "endianess.h"
 #include "plugin.h"
 #include "globals.h"
 #include "settings.h"
 #include "net.h"
 
+
+XPLMPluginID xfmcPluginId = XPLM_NO_PLUGIN_ID;
 
 XPLMDataRef xfmc_panel_lines_ref[NUM_XFMC_LINES];
 XPLMDataRef xfmc_keypath_ref;
@@ -26,20 +30,27 @@ struct XfmcLinesDataPacket xfmcPacket;
 
 float xfmc_delay;
 
+
 void findXfmcDataRefs(void) {
-	int 		i;
-	char		buf[100];
+    int         i;
+    char        buf[100];
 
-	xfmc_panel_lines_ref[0] = XPLMFindDataRef("xfmc/Upper");
+    xfmcPluginId = XPLMFindPluginBySignature("klm-va.com");
+    if(xfmcPluginId != XPLM_NO_PLUGIN_ID) {
+        sprintf(buf, "XHSI: XFMC plugin found\n");
+        XPLMDebugString(buf);
 
-	for (i=1; i<NUM_XFMC_LINES-1; i++) {
-		sprintf(buf, "xfmc/Panel_%d", i);
-		xfmc_panel_lines_ref[i] = XPLMFindDataRef(buf);
-	}
+        xfmc_panel_lines_ref[0] = XPLMFindDataRef("xfmc/Upper");
 
-	xfmc_panel_lines_ref[13] = XPLMFindDataRef("xfmc/Scratch");
-	xfmc_keypath_ref = XPLMFindDataRef("xfmc/Keypath");
-	xfmc_status_ref = XPLMFindDataRef("xfmc/Status");
+        for (i=1; i<NUM_XFMC_LINES-1; i++) {
+            sprintf(buf, "xfmc/Panel_%d", i);
+            xfmc_panel_lines_ref[i] = XPLMFindDataRef(buf);
+        }
+
+        xfmc_panel_lines_ref[13] = XPLMFindDataRef("xfmc/Scratch");
+        xfmc_keypath_ref = XPLMFindDataRef("xfmc/Keypath");
+        xfmc_status_ref = XPLMFindDataRef("xfmc/Status");
+    }
 }
 
 
@@ -74,7 +85,7 @@ float sendXfmcCallback(
 
 	xfmc_delay = fms_data_delay;
 
-	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open)  {
+	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open && (xfmcPluginId != XPLM_NO_PLUGIN_ID))  {
 
 		packet_size = createXfmcPacket();
 

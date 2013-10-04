@@ -133,7 +133,7 @@ XPWidgetFunc_t settingsDialogHandler(
 
 			for (i=0; i<NUM_DEST; i++) {
 
-				dest_enable[i] = XPGetWidgetProperty(dest_enable_checkbox[i], xpProperty_ButtonState, NULL);
+				dest_enable[i] = (int)XPGetWidgetProperty(dest_enable_checkbox[i], xpProperty_ButtonState, NULL);
 
 				XPGetWidgetDescriptor(dest_ip_textbox[i], dest_ip[i], 20);
 

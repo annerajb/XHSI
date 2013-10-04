@@ -336,6 +336,7 @@ XPLMCommandRef com1_standy_flip;
 XPLMCommandRef com2_standy_flip;
 XPLMCommandRef adf1_standy_flip;
 XPLMCommandRef adf2_standy_flip;
+XPLMCommandRef sim_transponder_transponder_ident;
 
 
 // for an MCP
@@ -443,7 +444,7 @@ XPLMCommandCallback_f ext_range_handler(XPLMCommandRef inCommand, XPLMCommandPha
     if (inPhase == xplm_CommandBegin)
     {
         int i = (int)((intptr_t)inRefcon);
-        intptr_t z = XPLMGetDatai(efis_pilot_map_zoomin);
+        int z = XPLMGetDatai(efis_pilot_map_zoomin);
         if ( i == DOWN )
         {
             i = XPLMGetDatai(efis_map_range_selector) - 1;
@@ -975,7 +976,7 @@ XPLMCommandCallback_f copilot_ext_range_handler(XPLMCommandRef inCommand, XPLMCo
     if (inPhase == xplm_CommandBegin)
     {
         int i = (int)((intptr_t)inRefcon);
-        intptr_t z = XPLMGetDatai(efis_copilot_map_zoomin);
+        int z = XPLMGetDatai(efis_copilot_map_zoomin);
         if ( i == DOWN )
         {
             i = XPLMGetDatai(efis_copilot_map_range_selector) - 1;
@@ -2083,7 +2084,7 @@ void registerCommands(void) {
     com2_standy_flip = XPLMFindCommand("sim/radios/com2_standy_flip");
     adf1_standy_flip = XPLMFindCommand("sim/radios/adf1_standy_flip");
     adf2_standy_flip = XPLMFindCommand("sim/radios/adf2_standy_flip");
-
+	sim_transponder_transponder_ident = XPLMFindCommand("sim/transponder/transponder_ident");
 
     // special case: use these existing commands for an MCP
     sim_autopilot_fdir_servos_toggle = XPLMFindCommand("sim/autopilot/fdir_servos_toggle");
