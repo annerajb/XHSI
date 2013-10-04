@@ -1362,6 +1362,10 @@ void writeDataRef(int id, float value) {
             XPLMSetDatai(transponder_mode, (int)value);
             break;
 
+        case SIM_COCKPIT_RADIOS_TRANSPONDER_CODE :
+            XPLMSetDatai(transponder_code, (int)value);
+            break;
+
 
         // OBS
 
@@ -1677,6 +1681,9 @@ void writeDataRef(int id, float value) {
                     break;
                 case 6 :
                     XPLMCommandOnce(adf2_standy_flip);
+                    break;
+                case 7 :
+					XPLMCommandOnce(sim_transponder_transponder_ident);
                     break;
             }
             break;

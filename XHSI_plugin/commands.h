@@ -6,6 +6,7 @@ extern XPLMCommandRef com1_standy_flip;
 extern XPLMCommandRef com2_standy_flip;
 extern XPLMCommandRef adf1_standy_flip;
 extern XPLMCommandRef adf2_standy_flip;
+extern XPLMCommandRef sim_transponder_transponder_ident;
 
 extern XPLMCommandRef sim_autopilot_fdir_servos_toggle;
 extern XPLMCommandRef sim_autopilot_autothrottle_toggle;

@@ -57,9 +57,9 @@ void defaultSettings() {
 
 	adc_data_rate = 15;
 	adc_data_delay = 1.0f / (float)adc_data_rate;
-	avionics_data_delay = adc_data_delay * 2.0f;
-	engines_data_delay = adc_data_delay * 3.0f;
-	static_data_delay = adc_data_delay * 5.0f;
+	avionics_data_delay = adc_data_delay * 1.5f;
+	engines_data_delay = adc_data_delay * 2.0f;
+	static_data_delay = adc_data_delay * 4.0f;
 	fms_data_rate = 2;
 	fms_data_delay = 1.0f / (float)fms_data_rate;
 	tcas_data_rate = 5;
