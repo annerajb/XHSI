@@ -98,6 +98,14 @@ XPLMDataRef  avionics_on;
 XPLMDataRef  battery_on;
 XPLMDataRef  cockpit_lights_on;
 
+XPLMDataRef  beacon_lights_on;
+XPLMDataRef  landing_lights_on;
+XPLMDataRef  nav_lights_on;
+XPLMDataRef  strobe_lights_on;
+XPLMDataRef  taxi_light_on;
+
+XPLMDataRef  pitot_heat_on;
+
 XPLMDataRef  nav1_freq_hz;
 XPLMDataRef  nav2_freq_hz;
 XPLMDataRef  adf1_freq_hz;
@@ -1132,6 +1140,14 @@ void findDataRefs(void) {
     battery_on = XPLMFindDataRef("sim/cockpit/electrical/battery_on");
     cockpit_lights_on = XPLMFindDataRef("sim/cockpit/electrical/cockpit_lights_on");
 
+	// Lights
+    beacon_lights_on = XPLMFindDataRef("sim/cockpit/electrical/beacon_lights_on");
+    landing_lights_on = XPLMFindDataRef("sim/cockpit/electrical/landing_lights_on");
+    nav_lights_on = XPLMFindDataRef("sim/cockpit/electrical/nav_lights_on");
+    strobe_lights_on = XPLMFindDataRef("sim/cockpit/electrical/strobe_lights_on");
+    taxi_light_on = XPLMFindDataRef("sim/cockpit/electrical/taxi_light_on");
+
+    pitot_heat_on = XPLMFindDataRef("sim/cockpit/switches/pitot_heat_on");
 
 	// Radios
 	nav1_freq_hz = XPLMFindDataRef("sim/cockpit/radios/nav1_freq_hz");  // int
@@ -1216,6 +1232,7 @@ void findDataRefs(void) {
     autopilot_roll_status = XPLMFindDataRef("sim/cockpit2/autopilot/roll_status");
     autopilot_pitch_status = XPLMFindDataRef("sim/cockpit2/autopilot/pitch_status");
     autopilot_backcourse_status = XPLMFindDataRef("sim/cockpit2/autopilot/backcourse_status");
+	autopilot_heading_roll_mode = XPLMFindDataRef("sim/cockpit/autopilot/heading_roll_mode");
 
 
 	// Transponder
@@ -1416,7 +1433,11 @@ void writeDataRef(int id, float value) {
             XPLMSetDatai(efis_shows_ndbs, (int)value);
             break;
 
-        case XHSI_EFIS_PILOT_DATA :
+        case SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WEATHER :
+            XPLMSetDatai(efis_shows_weather, (int)value);
+            break;
+
+		case XHSI_EFIS_PILOT_DATA :
             XPLMSetDatai(efis_pilot_shows_data, (int)value);
             break;
 
@@ -1535,7 +1556,7 @@ void writeDataRef(int id, float value) {
              switch ((int)value) {
                 // MCP buttons
                 case 1 : //ismach
-                    XPLMSetDatai(autopilot_airspeed_is_mach, !XPLMGetDatai(autopilot_airspeed_is_mach));
+                    XPLMSetDatai(autopilot_airspeed_is_mach, ! XPLMGetDatai(autopilot_airspeed_is_mach));
                     break;
                 case 2 : //athr
                     XPLMCommandOnce(sim_autopilot_fdir_servos_toggle);
@@ -1598,6 +1619,10 @@ void writeDataRef(int id, float value) {
                     break;
                 case 34 :
                     XPLMCommandOnce(sim_flight_controls_speed_brakes_up_one);
+                    break;
+				// pitot heat
+                case 35 :
+                    XPLMSetDatai(pitot_heat_on, ! XPLMGetDatai(pitot_heat_on));
                     break;
             }
             break;
