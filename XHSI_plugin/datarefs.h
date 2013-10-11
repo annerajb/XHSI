@@ -36,6 +36,14 @@ extern XPLMDataRef  avionics_on;
 extern XPLMDataRef  battery_on;
 extern XPLMDataRef  cockpit_lights_on;
 
+extern XPLMDataRef  beacon_lights_on;
+extern XPLMDataRef  landing_lights_on;
+extern XPLMDataRef  nav_lights_on;
+extern XPLMDataRef  strobe_lights_on;
+extern XPLMDataRef  taxi_light_on;
+
+extern XPLMDataRef  pitot_heat_on;
+
 extern XPLMDataRef  nav1_freq_hz;
 extern XPLMDataRef  nav2_freq_hz;
 extern XPLMDataRef  adf1_freq_hz;

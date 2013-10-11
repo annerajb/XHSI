@@ -210,7 +210,7 @@
 #define SIM_COCKPIT2_ANNUNCIATORS_GEAR_UNSAFE 353
 #define XHSI_AIRCRAFT_GEAR_COUNT 354 // Calculated from sim/aircraft/parts/acf_gear_type int[10]
 #define SIM_COCKPIT2_CONTROLS_PARKING_BRAKE_RATIO 355
-//#define XHSI_FREE_FOR_FUTURE_USE 356
+#define SIM_COCKPIT_LIGHTS 356 // bit-fields: taxi_light_on/strobe_lights_on/nav_lights_on/landing_lights_on/beacon_lights_on
 #define SIM_COCKPIT2_CONTROLS_FLAP_RATIO 357 // this is supposed to be the handle location
 #define SIM_COCKPIT2_CONTROLS_FLAP_HANDLE_DEPLOY_RATIO 358 // this is supposed to be the indicator
 #define SIM_AIRCRAFT_CONTROLS_ACF_FLAP_DETENTS 359

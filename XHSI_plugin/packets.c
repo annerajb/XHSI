@@ -237,6 +237,14 @@ int createADCPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_PARKING_BRAKE_RATIO);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(parkbrake_ratio));
 	i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_LIGHTS);
+    sim_packet.sim_data_points[i].value = custom_htonf((float)
+        (XPLMGetDatai(beacon_lights_on) +
+        XPLMGetDatai(landing_lights_on) * 2 +
+        XPLMGetDatai(nav_lights_on) * 4 +
+        XPLMGetDatai(strobe_lights_on) * 8 +
+        XPLMGetDatai(taxi_light_on) * 16));
+    i++;
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_FLAP_RATIO);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(flap_deploy));
 	i++;
@@ -1326,12 +1334,12 @@ int createFmsPackets(void) {
 //sprintf(msg, "XHSI: FMC: count=%d\n", cur_waypoint);
 //XPLMDebugString(msg);
 
-	}
+//    if ( ( total_waypoints > 1 ) && ( cur_waypoint != total_waypoints ) ) {
+//        sprintf(msg, "XHSI: FMC: error count: %d %d\n", cur_waypoint, total_waypoints);
+//        XPLMDebugString(msg);
+//    }
 
-    if ( ( total_waypoints ) && ( cur_waypoint != total_waypoints ) ) {
-        sprintf(msg, "XHSI: FMC: error count: %d %d\n", cur_waypoint, total_waypoints);
-        XPLMDebugString(msg);
-    }
+	}
 
     ete = XPLMGetDataf(gps_dme_time_secs);
     gs = XPLMGetDataf(groundspeed);
