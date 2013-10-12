@@ -52,7 +52,7 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
 //    private String FIX_file = "/Resources/default data/earth_fix.dat";
 //    private String AWY_file = "/Resources/default data/earth_awy.dat";
     private String APT_file = "/apt.dat";
-    private String APT_xplane = "/Resources/default scenery/default apt dat/Earth nav data" + "/apt.dat";
+    private String APT_xplane = "/Resources/default scenery/default apt dat/Earth nav data/apt.dat";
     private String pathname_to_aptnav;
     private TaxiChart taxi_chart;
     private String requested_chart;
@@ -64,8 +64,8 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
 
-    public AptNavXP900DatTaxiChartBuilder(TaxiChart taxi, String pathname_to_aptnav) throws Exception {
-        this.pathname_to_aptnav = pathname_to_aptnav;
+    public AptNavXP900DatTaxiChartBuilder(TaxiChart taxi) throws Exception {
+        this.pathname_to_aptnav = XHSIPreferences.get_instance().get_preference(XHSIPreferences.PREF_APTNAV_DIR);
 //        this.nor = NavigationObjectRepository.get_instance();
         //this.taxi_chart = TaxiChart.get_instance();
         this.taxi_chart = taxi;
@@ -99,48 +99,98 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
     public void run() {
 
         try {
-            read_apt(this.requested_chart);
+            search_arpt(this.requested_chart);
         } catch (Exception e) {
-            logger.warning("\nProblem loading AirportChart "+this.requested_chart);
+            logger.warning("Problem loading AirportChart "+this.requested_chart);
         }
 
     }
 
 
-    private void read_apt(String icao) throws Exception {
+    private void search_arpt(String icao) throws Exception {
+        
+        this.taxi_chart.new_chart(icao);
 
-        File file;
-        if ( new File( this.pathname_to_aptnav + this.APT_xplane ).exists() ) {
-            file = new File( this.pathname_to_aptnav + this.APT_xplane );
-        } else {
-            file = new File( this.pathname_to_aptnav + this.APT_file );
+        boolean chart_found = false;
+        
+        File scenery_packs_ini = new File( this.pathname_to_aptnav + "/Custom Scenery/scenery_packs.ini");
+        if ( scenery_packs_ini.exists() ) {
+//logger.warning("Found: " + scenery_packs_ini.getPath());
+            // There is an ini-file that defines the load order of custom scenery
+            BufferedReader reader = new BufferedReader( new FileReader( scenery_packs_ini ));
+            String line;
+            String[] tokens;
+
+            while ( ( (line = reader.readLine()) != null ) && ! chart_found ) {
+                tokens = line.split("\\s+", 2);
+                if ( (tokens.length == 2) && tokens[0].equals("SCENERY_PACK") ) {
+                    File custom_apt_dat = new File( this.pathname_to_aptnav + "/" + tokens[1] + "/Earth nav data/apt.dat" );
+                    if ( custom_apt_dat.exists() ) {
+                        
+                        // We have a custom apt.dat
+                        logger.warning("Custom scenery " + custom_apt_dat.getPath());
+                        
+                        chart_found = read_apt_file(custom_apt_dat, icao);
+                        if (chart_found) logger.warning("Found " + icao + " in custom scenery " + tokens[1]);
+                        
+                    } // else logger.warning("No custom apt.dat found at " + custom_apt_dat.getPath());
+                }
+            }
+            
+            if (reader != null) {
+                reader.close();
+            }
+
         }
-        BufferedReader reader = new BufferedReader( new FileReader( file ));
+
+        if ( ! chart_found ) {
+            
+            // it's not in the custom scenery apt.dat files; try in the default apt.dat
+            
+            File default_apt_dat;
+            if ( new File( this.pathname_to_aptnav + this.APT_xplane ).exists() ) {
+                default_apt_dat = new File( this.pathname_to_aptnav + this.APT_xplane );
+            } else {
+                default_apt_dat = new File( this.pathname_to_aptnav + this.APT_file );
+            }
+logger.warning("Searching in the default apt.dat at " + default_apt_dat.getPath());
+            chart_found = read_apt_file(default_apt_dat, icao);
+        
+            if ( ! chart_found ) {
+
+                // send a message that we could't find the airport
+                this.taxi_chart.not_found();
+
+            }
+
+        }
+
+    }
+    
+    
+    private boolean read_apt_file(File current_file, String icao) throws Exception {
+
+        BufferedReader reader = new BufferedReader( new FileReader( current_file ));
         String line;
         long line_number = 0;
 
         String[] tokens;
         int info_type;
 
-        this.taxi_chart.new_chart(icao);
-
         boolean arpt_hit = false;
+        boolean finish = false;
+        
         while ( ! arpt_hit && ( (line = reader.readLine()) != null ) ) {
 
             if ( line.startsWith("1 ") ) {
                 tokens = line.split("\\s+",6);
                 arpt_hit = tokens[4].equalsIgnoreCase(icao);
+if (arpt_hit) logger.warning("Found " + icao + " in " + current_file.getPath());
             }
 
         }
         
-        if ( ! arpt_hit ) {
-
-            this.taxi_chart.not_found();
-
-        }
-
-        while ( arpt_hit && ( (line = reader.readLine()) != null ) ) {
+        while ( arpt_hit && ( (line = reader.readLine()) != null ) && ! finish ) {
 
             if ( line.length() > 0 ) {
 
@@ -148,7 +198,7 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
 
                 try {
 
-                    tokens = line.split("\\s+",6);
+                    tokens = line.split("\\s+",10);
                     info_type = Integer.parseInt(tokens[0]);
 //logger.warning("Info type : "+ info_type);
                     if (info_type == 1) {
@@ -156,22 +206,17 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
                         // we got to a new airport header; close and exit...
 //logger.warning("Must have reached the end of "+icao);
                         this.taxi_chart.close_chart();
-                        arpt_hit = false;
+                        finish = true;
 
                     } else if (info_type == 10) {
 
                         // a new taxiway or ramp in old APT810 format
-//                            this.taxi_chart.new_segment( Float.parseFloat(line.substring(4, 16).trim()),
-//                                    Float.parseFloat(line.substring(17, 30).trim()),
-//                                    Float.parseFloat(line.substring(35, 41).trim()),
-//                                    Integer.parseInt(line.substring(42, 47).trim()),
-//                                    Integer.parseInt(line.substring(56, 61).trim())
-//                                    );
+//logger.warning("ARPT "+icao+" segemnt type 10 : "+tokens[1]+" "+tokens[2]+" "+tokens[4]+" "+tokens[5]+" "+tokens[8]);
                         this.taxi_chart.new_segment( Float.parseFloat(tokens[1]),
                                 Float.parseFloat(tokens[2]),
-                                Float.parseFloat(tokens[3]),
-                                Integer.parseInt(tokens[4]),
-                                Integer.parseInt(tokens[5])
+                                Float.parseFloat(tokens[4]),
+                                Integer.parseInt(tokens[5]),
+                                Integer.parseInt(tokens[8])
                                 );
 
                     } else if (info_type == 110) {
@@ -208,12 +253,12 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
 
                         // end of file; close and exit
                         this.taxi_chart.close_chart();
-                        arpt_hit = false;
+                        finish = true;
 
                     }
 
                 } catch (Exception e) {
-                    logger.warning("\nParse error in " +file.getName() + ":" + line_number + "(" + e + ") " + line);
+                    logger.warning("Parse error in " +current_file.getName() + ":" + line_number + "(" + e + ") " + line);
                 }
 
             } // line !isEmpty
@@ -223,6 +268,8 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
         if (reader != null) {
             reader.close();
         }
+        
+        return arpt_hit;
 
     }
 

@@ -225,7 +225,7 @@ public class MovingMap extends NDSubcomponent {
                 // we need to load another airport chart
                 this.active_chart_str = null;
                 try {
-                    AptNavXP900DatTaxiChartBuilder cb = new AptNavXP900DatTaxiChartBuilder(this.taxi, this.preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR));
+                    AptNavXP900DatTaxiChartBuilder cb = new AptNavXP900DatTaxiChartBuilder(this.taxi);
                     logger.warning("\nRequesting "+nearest_arpt_str);
                     cb.get_chart(nearest_arpt_str);
                 } catch (Exception e) {

@@ -292,11 +292,11 @@ public class DestinationAirport extends MFDSubcomponent {
     //logger.warning("I request "+dest_arpt_str+" ("+dest_arpt_str.length()+" char)");
                     // redundant: taxi.ready = false;
                     try {
-                        AptNavXP900DatTaxiChartBuilder cb = new AptNavXP900DatTaxiChartBuilder(taxi, this.preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR));
-                        logger.warning("\nRequesting "+dest_arpt_str);
+                        AptNavXP900DatTaxiChartBuilder cb = new AptNavXP900DatTaxiChartBuilder(taxi);
+                        logger.warning("Requesting "+dest_arpt_str);
                         cb.get_chart(dest_arpt_str);
                     } catch (Exception e) {
-                        logger.warning("\nProblem requesting TaxiChartBuilder "+dest_arpt_str);
+                        logger.warning("Exception encountered when requesting TaxiChartBuilder "+dest_arpt_str);
                     }
 
                 } else if ( taxi.ready && (taxi.airport!=null) && taxi.airport.icao_code.equals(dest_arpt_str) ) {

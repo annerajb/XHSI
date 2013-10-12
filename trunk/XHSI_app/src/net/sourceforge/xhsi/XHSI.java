@@ -34,6 +34,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.lang.Runtime;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.logging.ConsoleHandler;
@@ -80,7 +81,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 5";
+    private static final String RELEASE = "2.0 Beta 6 Alpha 2";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -130,6 +131,11 @@ public class XHSI implements ActionListener {
 
         logger.config("XHSI " + XHSI.RELEASE + " started");
 
+        Runtime java_run = Runtime.getRuntime();
+        logger.config("Free  Memory: " + (java_run.freeMemory()/1024/1024) + "M");
+        logger.config("Total Memory: " + (java_run.totalMemory()/1024/1024) + "M");
+        logger.config("Max  Memory: " + (java_run.maxMemory()/1024/1024) + "M");
+        
         XHSIStatus.status = XHSIStatus.STATUS_STARTUP;
 
         if ((args.length >= 2) && (args[0].equals("--record"))) {
