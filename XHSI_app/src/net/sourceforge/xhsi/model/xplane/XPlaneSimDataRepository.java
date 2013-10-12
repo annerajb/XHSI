@@ -138,6 +138,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT_RADIOS_COM1_STDBY_FREQ_HZ = 145;
     public static final int SIM_COCKPIT_RADIOS_COM2_FREQ_HZ = 146;
     public static final int SIM_COCKPIT_RADIOS_COM2_STDBY_FREQ_HZ = 147;
+    public static final int SIM_COCKPIT_RADIOS_STDBY_FLIP = 148; // to send commands to the plugin
 
 
     // AP
@@ -165,6 +166,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT2_AUTOPILOT_ROLL_STATUS = 171;
     public static final int SIM_COCKPIT2_AUTOPILOT_PITCH_STATUS = 172;
     public static final int SIM_COCKPIT2_AUTOPILOT_BACKCOURSE_STATUS = 173;
+    public static final int SIM_COCKPIT_AUTOPILOT_KEY_PRESS = 174; // to send commands to the plugin
+    public static final int SIM_COCKPIT_AUTOPILOT_HEADING_ROLL_MODE = 175;
 
 
     // Transponder
@@ -245,7 +248,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT2_ANNUNCIATORS_GEAR_UNSAFE = 353;
     public static final int XHSI_AIRCRAFT_GEAR_COUNT = 354; // Calculated from sim/aircraft/parts/acf_gear_type int[10]
     public static final int SIM_COCKPIT2_CONTROLS_PARKING_BRAKE_RATIO = 355;
-    //public static final int XHSI_FREE_FOR_FUTURE_USE = 356;
+    public static final int SIM_COCKPIT_LIGHTS = 356; // bit-fields: taxi_light_on/strobe_lights_on/nav_lights_on/landing_lights_on/beacon_lights_on
     public static final int SIM_COCKPIT2_CONTROLS_FLAP_RATIO = 357; // this is supposed to be the handle location
     public static final int SIM_COCKPIT2_CONTROLS_FLAP_HANDLE_DEPLOY_RATIO = 358; // this is supposed to be the indicator
     public static final int SIM_AIRCRAFT_CONTROLS_ACF_FLAP_DETENTS = 359;
@@ -286,6 +289,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO2 = 532;
     public static final int SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_1 = 533;
     public static final int SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_2 = 534;
+    // 535, 536, 537, 538 : free
     public static final int SIM_AIRCRAFT_CONTROLS_ACF_TRQ_MAX_ENG = 539;
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_TRQ_ = 540;
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_ITT_ = 550;
@@ -312,6 +316,10 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int UFMC_N1_4 = 710;
 
 
+    //XFMC
+    public static final int XFMC_KEYPATH = 750; // to send commands to the plugin
+
+    
     // X737
     public static final int X737_STATUS = 800;
     // X737 AP
