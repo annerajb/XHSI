@@ -488,6 +488,9 @@ public interface Avionics {
     public float ufmc_vf40();
     
     
+    public int engine_type();
+
+
 
     //    public void set_power(boolean new_power);
 

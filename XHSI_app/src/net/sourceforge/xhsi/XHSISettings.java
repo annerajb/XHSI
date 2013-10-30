@@ -121,8 +121,13 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_FIX_HIDE = "Hide CDU fix";
     public static final String ACTION_FIX_SHOW = "Define CDU fix ...";
 
-    public static final String ACTION_ESTIMATE_FUEL_CAPACITY = "Estimate capacity";
-    public static final String ACTION_SET_FUEL_CAPACITY = "Set capacity ...";
+    public static final String ACTION_ENGINE_TYPE_N1 = "N1";    
+//    public static final String ACTION_ENGINE_TYPE_EPR = "EPR";    
+    public static final String ACTION_ENGINE_TYPE_TRQ = "TRQ";
+    public static final String ACTION_ENGINE_TYPE_MAP = "MAP";
+
+    public static final String ACTION_ESTIMATE_FUEL_CAPACITY = "Estimate fuel capacity";
+    public static final String ACTION_SET_FUEL_CAPACITY = "Set fuel capacity ...";
     public static final String ACTION_RESET_MAX_FF = "Reset max FF";
 
 //    public static final String ACTION_MFD_TAXI_CHART = "Taxi Chart";
@@ -130,6 +135,10 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_MFD_FPLN = "Flight Plan";
     public static final String ACTION_MFD_LOWER_EICAS = "Lower EICAS";
             
+    public static final int ENGINE_TYPE_N1 = 0;
+//    public static final int ENGINE_TYPE_EPR = 1;
+    public static final int ENGINE_TYPE_TRQ = 2;
+    public static final int ENGINE_TYPE_MAP = 3;
             
     private String range_list[] = { "10", "20", "40", "80", "160", "320", "640" };
     private String zoomin_range_list[] = { "0.10", "0.20", "0.40", "0.80", "1.60", "3.20", "6.40" };
@@ -166,6 +175,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public int cdu_fix_radial = 0;
     public float cdu_fix_dist = 1.0f;
 
+    public int engine_type;
+    
     public int xpdr = Avionics.XPDR_TA;
 //    public FUEL_UNITS fuel_units = FUEL_UNITS.KG;
     
@@ -717,28 +728,70 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         menu_bar.add(hsi_fix_menu);
 
 
-        // define the "Fuel" menu
-        JMenu xhsi_fuel_menu = new JMenu("Fuel");
+        // define the "EICAS" menu
+        JMenu xhsi_eicas_menu = new JMenu("EICAS");
+
+        engine_type = 0;
+        if ( XHSIPreferences.get_instance().get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_MAP) )
+            engine_type = XHSISettings.ENGINE_TYPE_MAP;
+        else if ( XHSIPreferences.get_instance().get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_TRQ) )
+            engine_type = XHSISettings.ENGINE_TYPE_TRQ;
+//        else if ( XHSIPreferences.get_instance().get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_EPR) )
+//            eicas_type = XHSISettings.EICAS_TYPE_EPR;
+        else
+            engine_type = XHSISettings.ENGINE_TYPE_N1;
+        
+        ButtonGroup eicas_group = new ButtonGroup();
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_ENGINE_TYPE_N1);
+        radio_button_menu_item.setToolTipText("Engine type N1/EGT/...");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(engine_type == XHSISettings.ENGINE_TYPE_N1);
+        xhsi_eicas_menu.add(radio_button_menu_item);
+        eicas_group.add(radio_button_menu_item);
+
+//        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_EICAS_EPR);
+//        radio_button_menu_item.setToolTipText("Engine type EPR/...");
+//        radio_button_menu_item.addActionListener(this);
+//        radio_button_menu_item.setSelected(eicas_type == XHSISettings.EICAS_TYPE_EPR);
+//        xhsi_eicas_menu.add(radio_button_menu_item);
+//        eicas_group.add(radio_button_menu_item);
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_ENGINE_TYPE_TRQ);
+        radio_button_menu_item.setToolTipText("Engine type TRQ/ITT/PROP/...");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(engine_type == XHSISettings.ENGINE_TYPE_TRQ);
+        xhsi_eicas_menu.add(radio_button_menu_item);
+        eicas_group.add(radio_button_menu_item);
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_ENGINE_TYPE_MAP);
+        radio_button_menu_item.setToolTipText("Engine type MAP/RPM/FF/..");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(engine_type == XHSISettings.ENGINE_TYPE_MAP);
+        xhsi_eicas_menu.add(radio_button_menu_item);
+        eicas_group.add(radio_button_menu_item);
+
+        xhsi_eicas_menu.addSeparator();
 
         menu_item = new JMenuItem(XHSISettings.ACTION_ESTIMATE_FUEL_CAPACITY);
         menu_item.setToolTipText("Estimate the aircraft's total fuel capacity");
         menu_item.addActionListener(this);
-        xhsi_fuel_menu.add(menu_item);
+        xhsi_eicas_menu.add(menu_item);
 
         menu_item = new JMenuItem(XHSISettings.ACTION_SET_FUEL_CAPACITY);
         menu_item.setToolTipText("Set the aircraft's total fuel capacity manually");
         menu_item.addActionListener(this);
-        xhsi_fuel_menu.add(menu_item);
+        xhsi_eicas_menu.add(menu_item);
 
-        xhsi_fuel_menu.addSeparator();
+        xhsi_eicas_menu.addSeparator();
 
         menu_item = new JMenuItem(XHSISettings.ACTION_RESET_MAX_FF);
         menu_item.setToolTipText("Reset the range of the Fuel Flow dials");
         menu_item.addActionListener(this);
-        xhsi_fuel_menu.add(menu_item);
+        xhsi_eicas_menu.add(menu_item);
 
         // add the "Fuel" menu to the menubar
-        menu_bar.add(xhsi_fuel_menu);
+        menu_bar.add(xhsi_eicas_menu);
 
 
         // define the "MFD" menu
@@ -932,6 +985,19 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             this.fix_dialog.setLocation(this.main_frame.getX()+this.main_frame.getWidth()/2-this.fix_dialog.getWidth()/2, this.main_frame.getY()+150);
             this.fix_dialog.setVisible(true);
             this.fix_dialog.pack();
+
+        } else if (command.equals(XHSISettings.ACTION_ENGINE_TYPE_N1)) {
+            engine_type = XHSISettings.ENGINE_TYPE_N1;
+//            this.avionics.set_engine_type(engine_type);
+//        } else if (command.equals(XHSISettings.ACTION_ENGINE_TYPE_EPR)) {
+//            engine_type = XHSISettings.ENGINE_TYPE_EPR;
+////            this.avionics.set_engine_type(engine_type);
+        } else if (command.equals(XHSISettings.ACTION_ENGINE_TYPE_TRQ)) {
+            engine_type = XHSISettings.ENGINE_TYPE_TRQ;
+//            this.avionics.set_engine_type(engine_type);
+        } else if (command.equals(XHSISettings.ACTION_ENGINE_TYPE_MAP)) {
+            engine_type = XHSISettings.ENGINE_TYPE_MAP;
+//            this.avionics.set_engine_type(engine_type);
 
         } else if (command.equals(XHSISettings.ACTION_ESTIMATE_FUEL_CAPACITY)) {
             // Estimate total fuel capacity

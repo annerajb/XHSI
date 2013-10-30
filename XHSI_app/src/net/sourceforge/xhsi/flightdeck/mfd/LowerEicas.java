@@ -23,34 +23,34 @@ package net.sourceforge.xhsi.flightdeck.mfd;
 
 import java.awt.BasicStroke;
 //import java.awt.Color;
-import java.awt.Color;
+//import java.awt.Color;
 import java.awt.Component;
-import java.awt.GradientPaint;
+//import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-import java.awt.Shape;
+//import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
+//import java.awt.geom.Area;
+//import java.awt.geom.Rectangle2D;
+//import java.awt.geom.RoundRectangle2D;
 //import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
 import java.util.logging.Logger;
 
-import net.sourceforge.xhsi.XHSIPreferences;
+//import net.sourceforge.xhsi.XHSIPreferences;
 import net.sourceforge.xhsi.XHSISettings;
 
-import net.sourceforge.xhsi.model.Airport;
+//import net.sourceforge.xhsi.model.Airport;
 import net.sourceforge.xhsi.model.Avionics;
-import net.sourceforge.xhsi.model.ComRadio;
-import net.sourceforge.xhsi.model.FMS;
-import net.sourceforge.xhsi.model.FMSEntry;
-import net.sourceforge.xhsi.model.Localizer;
+//import net.sourceforge.xhsi.model.ComRadio;
+//import net.sourceforge.xhsi.model.FMS;
+//import net.sourceforge.xhsi.model.FMSEntry;
+//import net.sourceforge.xhsi.model.Localizer;
 import net.sourceforge.xhsi.model.ModelFactory;
-import net.sourceforge.xhsi.model.NavigationObjectRepository;
-import net.sourceforge.xhsi.model.Runway;
+//import net.sourceforge.xhsi.model.NavigationObjectRepository;
+//import net.sourceforge.xhsi.model.Runway;
 
 
 
@@ -94,7 +94,8 @@ public class LowerEicas extends MFDSubcomponent {
             
             this.inhibit = ( this.aircraft.agl_m() < 1000.0f / 3.28084f );
 
-            boolean turboprop = this.preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_TRQ);
+//            boolean turboprop = this.preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_TRQ);
+            boolean turboprop = ( this.avionics.engine_type() == XHSISettings.ENGINE_TYPE_TRQ );
             
             int num_eng = this.aircraft.num_engines();
 //num_eng = 4;
