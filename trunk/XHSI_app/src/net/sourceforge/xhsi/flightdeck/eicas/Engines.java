@@ -88,9 +88,11 @@ public class Engines extends EICASSubcomponent {
             this.inhibit = ( this.aircraft.agl_m() < 1000.0f / 3.28084f );
 //inhibit = false;
 
-            boolean piston = this.preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_MAP);
+//            boolean piston = this.preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_MAP);
+            boolean piston = ( this.avionics.engine_type() == XHSISettings.ENGINE_TYPE_MAP );
 
-            boolean turboprop = this.preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_TRQ);
+//            boolean turboprop = this.preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_TRQ);
+            boolean turboprop = ( this.avionics.engine_type() == XHSISettings.ENGINE_TYPE_TRQ );
             
             int num_eng = this.aircraft.num_engines();
 //num_eng = 1;
@@ -104,6 +106,7 @@ public class Engines extends EICASSubcomponent {
 
                 for (int i=0; i<num_eng; i++) {
 //                    prim_dial_x[i] = eicas_gc.panel_rect.x + eicas_gc.dials_width*50/100/cols + i*eicas_gc.dials_width/cols;
+                    // for later: change the order: MAP/RPM/FF/EGT
                     drawMAP(g2, i, num_eng);
                     drawEGT(g2, i, num_eng);
                     drawPROP(g2, i, num_eng);
@@ -265,12 +268,28 @@ public class Engines extends EICASSubcomponent {
         }
         g2.fillArc(prim_dial_x[pos]-n1_r, n1_y-n1_r, 2*n1_r, 2*n1_r, 0, -Math.round(n1_dial*200.0f));
 
+        // scale markings every 10%
         g2.setColor(eicas_gc.dim_markings_color);
         for (int i=0; i<=10; i++) {
             g2.drawLine(prim_dial_x[pos]+n1_r*14/16, n1_y, prim_dial_x[pos]+n1_r-1, n1_y);
             g2.rotate(Math.toRadians(20), prim_dial_x[pos], n1_y);
         }
         g2.setTransform(original_at);
+        
+        // scale numbers 2, 4, 6, 8 and 10
+        if ( num <= 4 ) {
+            g2.setFont(eicas_gc.font_xs);
+            int n1_digit_x;
+            int n1_digit_y;
+            int n1_digit_angle = 40;
+            for (int i=2; i<=10; i+=2) {
+                n1_digit_x = prim_dial_x[pos] + (int)(Math.cos(Math.toRadians(n1_digit_angle))*n1_r*11/16);
+                n1_digit_y = n1_y + (int)(Math.sin(Math.toRadians(n1_digit_angle))*n1_r*11/16);
+                g2.drawString(Integer.toString(i), n1_digit_x - eicas_gc.digit_width_xs/2, n1_digit_y+eicas_gc.line_height_xs*3/8);
+                n1_digit_angle += 40;
+            }
+        }
+
         g2.drawArc(prim_dial_x[pos]-n1_r, n1_y-n1_r, 2*n1_r, 2*n1_r, 0, -200);
         g2.setColor(eicas_gc.caution_color);
         g2.drawArc(prim_dial_x[pos]-n1_r, n1_y-n1_r, 2*n1_r, 2*n1_r, -200, -20);
@@ -368,10 +387,10 @@ if ( ref_n1 <= 1.0f ) {
         g2.fillArc(prim_dial_x[pos]-n1_r, n1_y-n1_r, 2*n1_r, 2*n1_r, 0, -Math.round(n1_dial*200.0f));
 
         g2.setColor(eicas_gc.dim_markings_color);
-//        for (int i=0; i<=10; i++) {
-//            g2.drawLine(prim_dial_x[pos]+n1_r*14/16, n1_y, prim_dial_x[pos]+n1_r-1, n1_y);
-//            g2.rotate(Math.toRadians(20), prim_dial_x[pos], n1_y);
-//        }
+        for (int i=0; i<=10; i++) {
+            g2.drawLine(prim_dial_x[pos]+n1_r*14/16, n1_y, prim_dial_x[pos]+n1_r-1, n1_y);
+            g2.rotate(Math.toRadians(20), prim_dial_x[pos], n1_y);
+        }
         g2.setTransform(original_at);
         g2.drawArc(prim_dial_x[pos]-n1_r, n1_y-n1_r, 2*n1_r, 2*n1_r, 0, -200);
         g2.setColor(eicas_gc.caution_color);

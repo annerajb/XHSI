@@ -43,6 +43,7 @@ import java.awt.geom.Path2D;
 //import java.awt.geom.Rectangle2D;
 //import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 //import java.util.HashMap;
@@ -81,6 +82,9 @@ public class MovingMap extends NDSubcomponent {
     private static final boolean DRAW_LAT_LON_GRID = false;
     // private BufferedImage fix_image;
 
+    public static DecimalFormat vor_freq_formatter;
+    public static DecimalFormat ndb_freq_formatter;
+
     int tfc_size = 7;
 
     NavigationObjectRepository nor;
@@ -112,8 +116,16 @@ public class MovingMap extends NDSubcomponent {
 
     
     public MovingMap(ModelFactory model_factory, NDGraphicsConfig hsi_gc, Component parent_component) {
+        
         super(model_factory, hsi_gc, parent_component);
         this.nor = NavigationObjectRepository.get_instance();
+
+        MovingMap.vor_freq_formatter = new DecimalFormat(" 000.00");
+        MovingMap.ndb_freq_formatter = new DecimalFormat(" 000");
+        DecimalFormatSymbols symbols = vor_freq_formatter.getDecimalFormatSymbols();
+        symbols.setDecimalSeparator('.');
+        MovingMap.vor_freq_formatter.setDecimalFormatSymbols(symbols);
+
     }
 
 
@@ -1199,7 +1211,12 @@ public class MovingMap extends NDSubcomponent {
         else
             g.setColor(nd_gc.navaid_color);
         g.drawPolygon(x_points_hexagon, y_points_hexagon, 6);
+        g2.setFont(nd_gc.font_small);
         g.drawString(vor.ilt, x + 11, y + 13);
+        if ( this.avionics.efis_shows_data() && /* option to display VOR & NDB frequencies */ true ) {
+            g2.setFont(nd_gc.font_tiny);
+            g.drawString(MovingMap.vor_freq_formatter.format(vor.frequency), x + 11, y + 13 + nd_gc.line_height_tiny);
+        }
         if ( ( bank > 0 ) && ! avionics.efis_shows_pos() ) {
             // the selected course and reciprocal
             g2.setTransform(original_at);
@@ -1243,7 +1260,12 @@ public class MovingMap extends NDSubcomponent {
         g.drawPolygon(x_points_ul_leaf, y_points_ul_leaf, 4);
         g.drawPolygon(x_points_ur_leaf, y_points_ur_leaf, 4);
         g.drawPolygon(x_points_b_leaf, y_points_b_leaf, 4);
+        g2.setFont(nd_gc.font_small);
         g.drawString(vordme.ilt, x + 11, y + 13);
+        if ( this.avionics.efis_shows_data() && /* option to display VOR & NDB frequencies */ true ) {
+            g2.setFont(nd_gc.font_tiny);
+            g.drawString(MovingMap.vor_freq_formatter.format(vordme.frequency), x + 11, y + 13 + nd_gc.line_height_tiny);
+        }
         if ( bank > 0 ) {
             Stroke original_stroke = g2.getStroke();
             if ( ! avionics.efis_shows_pos() ) {
@@ -1282,7 +1304,12 @@ public class MovingMap extends NDSubcomponent {
         else
             g.setColor(nd_gc.navaid_color);
         g.drawPolygon(x_points, y_points, 12);
+        g2.setFont(nd_gc.font_small);
         g.drawString(dme.ilt, x + 11, y + 13);
+        if ( this.avionics.efis_shows_data() && /* option to display VOR & NDB frequencies */ true ) {
+            g2.setFont(nd_gc.font_tiny);
+            g.drawString(MovingMap.vor_freq_formatter.format(dme.frequency), x + 11, y + 13 + nd_gc.line_height_tiny);
+        }
         if ( bank > 0 ) {
             Stroke original_stroke = g2.getStroke();
             //g2.setStroke(new BasicStroke(1.0f*nd_gc.grow_scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, longdashes, 0.0f));
@@ -1321,7 +1348,12 @@ public class MovingMap extends NDSubcomponent {
         g2.drawOval(x-10, y-10, 20, 20);
 
         g2.setStroke(original_stroke);
+        g2.setFont(nd_gc.font_small);
         g.drawString(ndb.ilt, x + 11, y + 13);
+        if ( this.avionics.efis_shows_data() && /* option to display VOR & NDB frequencies */ true ) {
+            g2.setFont(nd_gc.font_tiny);
+            g.drawString(MovingMap.ndb_freq_formatter.format(ndb.frequency), x + 11, y + 13 + nd_gc.line_height_tiny);
+        }
         g2.setTransform(original_at);
 
     }
@@ -1341,6 +1373,7 @@ public class MovingMap extends NDSubcomponent {
             g2.setColor(nd_gc.term_wpt_color);
         g2.drawPolygon(x_points_triangle, y_points_triangle, 3);
         if ( (fix.on_awy) || (nd_gc.map_range <= 20) || nd_gc.map_zoomin ) {
+            g2.setFont(nd_gc.font_small);
             g2.drawString(fix.name, x + 11, y + 13);
         }
         g2.setTransform(original_at);
@@ -1392,6 +1425,10 @@ public class MovingMap extends NDSubcomponent {
         }
         g2.setFont(nd_gc.font_small);
         g2.drawString(localizer.ilt, x - 11 - nd_gc.get_text_width(g2, nd_gc.font_small, localizer.ilt), y + y_offset);
+        if ( this.avionics.efis_shows_data() && /* option to display VOR & NDB frequencies */ true ) {
+            g2.setFont(nd_gc.font_tiny);
+            g2.drawString(MovingMap.vor_freq_formatter.format(localizer.frequency), x - 11 - nd_gc.get_text_width(g2, nd_gc.font_tiny, " 000.00 "), y + y_offset + nd_gc.line_height_tiny);
+        }
 
         Stroke original_stroke = g2.getStroke();
         g2.rotate(Math.toRadians(localizer.bearing - this.map_up), x, y);

@@ -934,6 +934,14 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
     
 
+    public int engine_type() {
+
+        return xhsi_settings.engine_type;
+
+    }
+
+
+
 //    public void set_power(boolean new_power){
 //        if ( ! xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
 //            udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT2_SWITCHES_AVIONICS_ON, new_power ? 1.0f : 0.0f );
