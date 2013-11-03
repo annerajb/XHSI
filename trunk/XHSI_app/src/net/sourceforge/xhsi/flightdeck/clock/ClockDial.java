@@ -74,34 +74,40 @@ public class ClockDial extends ClockSubcomponent {
         
         drawDial(g2);
         if ( this.aircraft.battery() ) {
-            draw_utc(g2);
+            draw_time(g2);
             draw_timer(g2);
         }
         
     }
 
 
-    public void draw_utc(Graphics2D g2) {
+    public void draw_time(Graphics2D g2) {
 
         DecimalFormat hms_formatter = new DecimalFormat("00");
 
         g2.setColor(clock_gc.clock_color);
 
-        int utc_time = (int)this.aircraft.sim_time_zulu();
-        int hh = utc_time / 3600;
-        int mm = ( utc_time / 60 ) % 60;
-        int ss = utc_time % 60;
-        String utc_str = hms_formatter.format(hh) + ":" + hms_formatter.format(mm); // + ":" + hms_formatter.format(ss);
+        int current_time = this.avionics.clock_shows_utc() ? (int)this.aircraft.sim_time_zulu() : (int)this.aircraft.sim_time_local();
+        int hh = current_time / 3600;
+        int mm = ( current_time / 60 ) % 60;
+        int ss = current_time % 60;
+        String current_time_str = hms_formatter.format(hh) + ":" + hms_formatter.format(mm); // + ":" + hms_formatter.format(ss);
 
-        int utc_x = clock_x - clock_gc.get_text_width(g2, clock_gc.font_zl, utc_str)/2;
-        int utc_y = clock_y + clock_gc.line_height_zl*38/100 - clock_gc.line_height_zl*3/4;
+        int current_time_x = clock_x - clock_gc.get_text_width(g2, clock_gc.font_zl, current_time_str)/2;
+        int current_time_y = clock_y + clock_gc.line_height_zl*38/100 - clock_gc.line_height_zl*3/4;
         g2.setFont(clock_gc.font_zl);
-        g2.drawString(utc_str, utc_x, utc_y);
+        g2.drawString(current_time_str, current_time_x, current_time_y);
 
         g2.setFont(clock_gc.font_xxl);
-        utc_x = clock_x - clock_gc.get_text_width(g2, clock_gc.font_xxl, "UTC")/2;
-        utc_y -= clock_gc.line_height_zl*8/10 + clock_gc.line_height_xxl/2;
-        g2.drawString("UTC", utc_x, utc_y);
+//        utc_x = clock_x - clock_gc.get_text_width(g2, clock_gc.font_xxl, "UTC")/2;
+        current_time_y -= clock_gc.line_height_zl*8/10 + clock_gc.line_height_xxl/2;
+        if ( this.avionics.clock_shows_utc() ) {
+            current_time_x = clock_x - clock_gc.get_text_width(g2, clock_gc.font_xxl, "UTC") - clock_gc.digit_width_xxl;
+            g2.drawString("UTC", current_time_x, current_time_y);
+        } else {
+            current_time_x = clock_x + clock_gc.digit_width_xxl;
+            g2.drawString("LT", current_time_x, current_time_y);
+        }
 
 //// test
 //AffineTransform original_at = g2.getTransform();

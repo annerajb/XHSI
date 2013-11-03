@@ -806,6 +806,10 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     }
 
+    public boolean clock_shows_utc() {
+        return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CLOCK_TIMER_MODE) == 0.0f );
+    }
+
     public float nav1_obs() { 
         float obs = normalize( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_NAV1_OBS_DEGM) );
         float crs = normalize( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_NAV1_COURSE_DEGM) );
@@ -1039,11 +1043,18 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
 
 
-    public void set_xpdr(int new_xpdr) {
+    public void set_xpdr_mode(int new_xpdr_mode) {
 
         if ( ! xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
-            udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_TRANSPONDER_MODE, (float) new_xpdr );
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_TRANSPONDER_MODE, (float) new_xpdr_mode );
         }
+
+    }
+
+
+    public void set_clock_mode(int new_clock_mode) {
+
+        udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT2_CLOCK_TIMER_MODE, (float) new_clock_mode );
 
     }
 

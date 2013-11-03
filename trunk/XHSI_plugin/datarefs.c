@@ -214,6 +214,7 @@ XPLMDataRef  sound_speed;
 XPLMDataRef  timer_is_running;
 XPLMDataRef  elapsed_time_sec;
 XPLMDataRef  flight_time_sec;
+XPLMDataRef  clock_timer_mode;
 
 XPLMDataRef  acf_vso;
 XPLMDataRef  acf_vs;
@@ -1265,6 +1266,7 @@ void findDataRefs(void) {
     timer_is_running = XPLMFindDataRef("sim/time/timer_is_running_sec");
     elapsed_time_sec = XPLMFindDataRef("sim/time/timer_elapsed_time_sec");
     flight_time_sec = XPLMFindDataRef("sim/time/total_flight_time_sec");
+	clock_timer_mode = XPLMFindDataRef("sim/cockpit2/clock_timer/timer_mode");
 
 
     // Aircraft constants
@@ -1372,6 +1374,13 @@ void writeDataRef(int id, float value) {
     XPLMDebugString(info_string);
 
     switch (id) {
+
+		// clock
+
+		case SIM_COCKPIT2_CLOCK_TIMER_MODE :
+			XPLMSetDatai(clock_timer_mode, (int)value);
+            break;
+
 
         // transponder
 

@@ -215,7 +215,7 @@ public interface Aircraft {
     public float rough_distance_to(NavigationObject nav_object);
 
     /**
-     * Returns the EET to arive at the given
+     * Returns the EET to arrive at the given
      * navigation object based on the distance to the aircraft and its
      * current ground speed. Note: we assume the aircraft is on a direct
      * course to nav_object. I do not consider the actual closing speed.
@@ -268,10 +268,10 @@ public interface Aircraft {
     public float sim_time_zulu();
 
     /**
-     * @return boolean - timer is running (used for the CHR)
+     * @return float - simulator local time in seconds
      */
-    public boolean timer_is_running();
-    
+    public float sim_time_local();
+
     /**
      * @return float - elapsed time (used for the CHR)
      */
@@ -281,6 +281,11 @@ public interface Aircraft {
      * @return float - total flight time (used for the ET)
      */
     public float total_flight_time();
+
+//    /**
+//     * @return boolean - timer is running (used for the CHR)
+//     */
+//    public boolean timer_is_running();
 
     /**
      * @return Avionics - reference to avionics model of this aircraft

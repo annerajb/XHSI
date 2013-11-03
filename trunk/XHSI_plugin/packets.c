@@ -209,6 +209,9 @@ int createADCPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_TIME_TOTAL_FLIGHT_TIME_SEC);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(flight_time_sec));
 	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CLOCK_TIMER_MODE);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(clock_timer_mode));
+	i++;
 
 
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_ANNUNCIATORS_MASTER_CAUTION );

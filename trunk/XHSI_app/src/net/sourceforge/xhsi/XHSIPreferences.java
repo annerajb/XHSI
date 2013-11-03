@@ -90,6 +90,7 @@ public class XHSIPreferences {
     public static final String PREF_PLAN_AIRCRAFT_CENTER = "plan.aircraft.center";
     public static final String PREF_DRAW_INSIDE_ROSE = "draw.inside.rose";
     public static final String PREF_COLORED_HSI_COURSE = "pfd.colored.hsi.course";
+    public static final String PREF_ND_NAVAID_FREQ = "nd.navaid.frequencies";
 
     // PFD options
     public static final String PREF_HORIZON_STYLE = "horizon.style";
@@ -107,7 +108,8 @@ public class XHSIPreferences {
 
     // MFD options
     public static final String PREF_MFD_MODE = "mfd.mode";
-    public static final String PREF_ARPT_CHART_COLOR = "arpt.diagram.color";
+    public static final String PREF_ARPT_CHART_COLOR = "arpt.chart.color";
+    public static final String PREF_ARPT_CHART_NAV_DEST = "arpt.chart.nav.dest";
 
 
     // constants
@@ -600,6 +602,15 @@ public class XHSIPreferences {
         return get_preference(PREF_COLORED_HSI_COURSE).equalsIgnoreCase("true");
     }
 
+    /**
+     * @return            - Display the navaid frequencies on the map when DATA is on
+     *
+     */
+    public boolean get_nd_navaid_frequencies() {
+        return get_preference(PREF_ND_NAVAID_FREQ).equalsIgnoreCase("true");
+    }
+
+    
     // PFD
 
     /**
@@ -716,6 +727,17 @@ public class XHSIPreferences {
             fuel_multiplier = FUEL_UNITS.LTR.get_multiplier();
         }
         return fuel_multiplier;
+    }
+
+
+    // MFD
+    
+    /**
+     * @return            - Airport chart displays airport that is set as NAV destination
+     *
+     */
+    public boolean get_arpt_chart_nav_dest() {
+        return get_preference(PREF_ARPT_CHART_NAV_DEST).equalsIgnoreCase("true");
     }
 
 
@@ -1023,6 +1045,12 @@ public class XHSIPreferences {
             this.unsaved_changes = true;
         }
 
+        if ( ! this.preferences.containsKey(PREF_ND_NAVAID_FREQ) ) {
+            this.preferences.setProperty(PREF_ND_NAVAID_FREQ, "false");
+            this.unsaved_changes = true;
+        }
+
+        
         // PFD
 
         if ( ! this.preferences.containsKey(PREF_HORIZON_STYLE) ) {
@@ -1055,6 +1083,7 @@ public class XHSIPreferences {
             this.unsaved_changes = true;
         }
 
+        
         // EICAS
         
         if ( ! this.preferences.containsKey(PREF_EICAS_PRIMARY_ONLY) ) {
@@ -1077,6 +1106,7 @@ public class XHSIPreferences {
             this.unsaved_changes = true;
         }
 
+        
         // MFD
 
         if ( ! this.preferences.containsKey(PREF_MFD_MODE) ) {
@@ -1088,6 +1118,12 @@ public class XHSIPreferences {
             this.preferences.setProperty(PREF_ARPT_CHART_COLOR, ARPT_DIAGRAM_COLOR_AUTO);
             this.unsaved_changes = true;
         }
+
+        if ( ! this.preferences.containsKey(PREF_ARPT_CHART_NAV_DEST) ) {
+            this.preferences.setProperty(PREF_ARPT_CHART_NAV_DEST, "true");
+            this.unsaved_changes = true;
+        }
+
 
         if (this.unsaved_changes) {
             store_preferences();

@@ -108,21 +108,19 @@ public class DestinationAirport extends MFDSubcomponent {
 
         Localizer dest_loc = null;
         int hsi_source = this.avionics.hsi_source();
-        // try NAV1 first by default
-        int bank = 1;
-        if ( hsi_source == Avionics.HSI_SOURCE_NAV2 ) {
-            // when NAV2 is our reference source, try that first
+        int bank = 0;
+        // use the bank that is our reference source
+        if ( hsi_source == Avionics.HSI_SOURCE_NAV1 ) {
+            bank = 1;
+        } else if ( hsi_source == Avionics.HSI_SOURCE_NAV2 ) {
             bank = 2;
         }
-        dest_loc = this.avionics.get_tuned_localizer(bank);
-        if ( dest_loc == null ) {
-            // try the other one now
-            // (3-bank) to switch from 1 to 2 or from 2 to 1
-            dest_loc = this.avionics.get_tuned_localizer(3 - bank);
-        }
-        if ( dest_loc != null ) {
-            // we are tuned to a Localizer, now fetch the airport that goes with it
-            dest_str = dest_loc.airport;
+        if ( bank > 0 ) {
+            dest_loc = this.avionics.get_tuned_localizer(bank);
+            if ( dest_loc != null ) {
+                // we are tuned to a Localizer, now fetch the airport that goes with it
+                dest_str = dest_loc.airport;
+            }
         }
 
         return dest_str;
@@ -136,9 +134,11 @@ public class DestinationAirport extends MFDSubcomponent {
 
         String dest_str = "";
 
-        FMSEntry last_wpt = this.avionics.get_fms().get_last_waypoint();
-         if ( ( last_wpt != null ) && ( last_wpt.type == FMSEntry.ARPT ) ) {
-            dest_str = last_wpt.name;
+        if ( this.avionics.hsi_source() == Avionics.HSI_SOURCE_GPS ) {
+            FMSEntry last_wpt = this.avionics.get_fms().get_last_waypoint();
+            if ( ( last_wpt != null ) && ( last_wpt.type == FMSEntry.ARPT ) ) {
+                dest_str = last_wpt.name;
+            }
         }
 
         return dest_str;
@@ -150,14 +150,14 @@ public class DestinationAirport extends MFDSubcomponent {
 
         String dest_arpt_str = "";
 
-        if ( this.aircraft.on_ground() ) {
+        if ( this.aircraft.on_ground() || ! this.preferences.get_arpt_chart_nav_dest() ) {
             // when we are on the ground, take the nearest airport
             // (which is the airport that we are really at in 99.99% of the cases)
             dest_arpt_str = this.aircraft.get_nearest_arpt();
         }
 
         if ( dest_arpt_str.equals("") ) {
-            // if not, get the airport of the LOC/ILS that we are we tuned to
+            // if not, get the airport of the LOC/ILS that we are we tuned to, and selected as NAV source
             dest_arpt_str = get_nav_dest();
         }
 
