@@ -153,6 +153,7 @@ extern XPLMDataRef  sound_speed;
 extern XPLMDataRef  timer_is_running;
 extern XPLMDataRef  elapsed_time_sec;
 extern XPLMDataRef  flight_time_sec;
+extern XPLMDataRef  clock_timer_mode;
 
 
 extern XPLMDataRef  acf_vso;

@@ -232,9 +232,13 @@ public class XPlaneAircraft implements Aircraft {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_TIME_ZULU_TIME_SEC);
     }
 
-    public boolean timer_is_running() {
-        return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_TIME_TIMER_IS_RUNNING_SEC) != 0.0f );
+    public float sim_time_local() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_TIME_LOCAL_TIME_SEC);
     }
+
+//    public boolean timer_is_running() {
+//        return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_TIME_TIMER_IS_RUNNING_SEC) != 0.0f );
+//    }
     
     public float timer_elapsed_time() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_TIME_TIMER_ELAPSED_TIME_SEC);
@@ -244,7 +248,7 @@ public class XPlaneAircraft implements Aircraft {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_TIME_TOTAL_FLIGHT_TIME_SEC);
     }
 
-
+    
     public float magnetic_variation() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_MAGVAR);
     }

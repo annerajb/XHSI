@@ -1213,7 +1213,7 @@ public class MovingMap extends NDSubcomponent {
         g.drawPolygon(x_points_hexagon, y_points_hexagon, 6);
         g2.setFont(nd_gc.font_small);
         g.drawString(vor.ilt, x + 11, y + 13);
-        if ( this.avionics.efis_shows_data() && /* option to display VOR & NDB frequencies */ true ) {
+        if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
             g2.setFont(nd_gc.font_tiny);
             g.drawString(MovingMap.vor_freq_formatter.format(vor.frequency), x + 11, y + 13 + nd_gc.line_height_tiny);
         }
@@ -1262,7 +1262,7 @@ public class MovingMap extends NDSubcomponent {
         g.drawPolygon(x_points_b_leaf, y_points_b_leaf, 4);
         g2.setFont(nd_gc.font_small);
         g.drawString(vordme.ilt, x + 11, y + 13);
-        if ( this.avionics.efis_shows_data() && /* option to display VOR & NDB frequencies */ true ) {
+        if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
             g2.setFont(nd_gc.font_tiny);
             g.drawString(MovingMap.vor_freq_formatter.format(vordme.frequency), x + 11, y + 13 + nd_gc.line_height_tiny);
         }
@@ -1306,7 +1306,7 @@ public class MovingMap extends NDSubcomponent {
         g.drawPolygon(x_points, y_points, 12);
         g2.setFont(nd_gc.font_small);
         g.drawString(dme.ilt, x + 11, y + 13);
-        if ( this.avionics.efis_shows_data() && /* option to display VOR & NDB frequencies */ true ) {
+        if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
             g2.setFont(nd_gc.font_tiny);
             g.drawString(MovingMap.vor_freq_formatter.format(dme.frequency), x + 11, y + 13 + nd_gc.line_height_tiny);
         }
@@ -1350,7 +1350,7 @@ public class MovingMap extends NDSubcomponent {
         g2.setStroke(original_stroke);
         g2.setFont(nd_gc.font_small);
         g.drawString(ndb.ilt, x + 11, y + 13);
-        if ( this.avionics.efis_shows_data() && /* option to display VOR & NDB frequencies */ true ) {
+        if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
             g2.setFont(nd_gc.font_tiny);
             g.drawString(MovingMap.ndb_freq_formatter.format(ndb.frequency), x + 11, y + 13 + nd_gc.line_height_tiny);
         }
@@ -1425,7 +1425,7 @@ public class MovingMap extends NDSubcomponent {
         }
         g2.setFont(nd_gc.font_small);
         g2.drawString(localizer.ilt, x - 11 - nd_gc.get_text_width(g2, nd_gc.font_small, localizer.ilt), y + y_offset);
-        if ( this.avionics.efis_shows_data() && /* option to display VOR & NDB frequencies */ true ) {
+        if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
             g2.setFont(nd_gc.font_tiny);
             g2.drawString(MovingMap.vor_freq_formatter.format(localizer.frequency), x - 11 - nd_gc.get_text_width(g2, nd_gc.font_tiny, " 000.00 "), y + y_offset + nd_gc.line_height_tiny);
         }
@@ -1486,6 +1486,7 @@ public class MovingMap extends NDSubcomponent {
             g2.setColor(nd_gc.arpt_color);
             g2.drawOval(x-10, y-10, 20, 20); // with a thicker line and somewhat bigger symbol than the navaids...
             g2.setStroke(original_stroke);
+            g2.setFont(nd_gc.font_small);
             g2.drawString(airport.icao_code, x + 11, y + 13);
             g2.drawString(runway, x + 11, y + 13 + nd_gc.line_height_small);
             g2.setTransform(original_at);
@@ -1583,6 +1584,7 @@ public class MovingMap extends NDSubcomponent {
                         g2.setColor(nd_gc.fmc_ll_other_color);
                     }
                     g2.drawOval(x-6, y-6, 12, 12);
+                    g2.setFont(nd_gc.font_small);
                     g2.drawString(entry.name, x + 11, y + label_y);
                     label_y += nd_gc.line_height_tiny;
                 }
@@ -1596,6 +1598,7 @@ public class MovingMap extends NDSubcomponent {
                     g2.setColor(nd_gc.fmc_other_color);
                 }
                 g2.drawPolygon(x_points_star, y_points_star, 9);
+                g2.setFont(nd_gc.font_small);
                 g2.drawString(entry.name, x + 11, y + label_y);
                 label_y += nd_gc.line_height_tiny;
             }
@@ -1621,7 +1624,7 @@ public class MovingMap extends NDSubcomponent {
                     String eta_text = "" + eta_hours_formatter.format(hours_at_arrival) + eta_minutes_formatter.format(minutes_at_arrival) + "z";
                     g2.drawString(eta_text, x + 10, y + label_y);
                 }
-                g2.setFont(nd_gc.font_small);
+//                g2.setFont(nd_gc.font_small);
             }
 
             g2.setTransform(original_at);

@@ -121,6 +121,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox plan_aircraft_center_checkbox;
     private JCheckBox draw_inside_rose_checkbox;
     private JCheckBox bold_fonts_checkbox;
+    private JCheckBox nd_navaid_frequencies;
+    private JCheckBox arpt_chart_nav_dest;
 
     private int du_pos_x[] = new int[MAX_WINS];
     private int du_pos_y[] = new int[MAX_WINS];
@@ -274,7 +276,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.hsi_source_combobox.setSelectedIndex( preferences.get_hsi_source() );
 
 
-        // ND Options (11)
+        // ND Options (12)
 
         this.min_rwy_textfield.setText(preferences.get_preference(XHSIPreferences.PREF_MIN_RWY_LEN));
 
@@ -304,6 +306,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.draw_inside_rose_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_DRAW_INSIDE_ROSE).equalsIgnoreCase("true"));
 
         this.colored_hsi_course_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_COLORED_HSI_COURSE).equalsIgnoreCase("true"));
+
+        this.nd_navaid_frequencies.setSelected(preferences.get_preference(XHSIPreferences.PREF_ND_NAVAID_FREQ).equalsIgnoreCase("true"));
 
 
         // PFD Options (3)
@@ -352,7 +356,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         }
 
 
-        // MFD Options (2)
+        // MFD Options (3)
 
         String mfd_mode = preferences.get_preference(XHSIPreferences.PREF_MFD_MODE);
         for (int i=0; i<mfd_modes.length; i++) {
@@ -367,6 +371,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
                 this.arpt_chart_color_combobox.setSelectedIndex(i);
             }
         }
+
+        this.arpt_chart_nav_dest.setSelected(preferences.get_preference(XHSIPreferences.PREF_ARPT_CHART_NAV_DEST).equalsIgnoreCase("true"));
 
 
     }
@@ -1263,6 +1269,20 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         dialog_line++;
         dialog_line++;
 
+        // Display navaid frequencies when DATA is on
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        nd_options_panel.add(new JLabel("Display navaid frequencies on the map", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.nd_navaid_frequencies = new JCheckBox("  (when DATA is selected)");
+        nd_options_panel.add(this.nd_navaid_frequencies, cons);
+        dialog_line++;
+
 //        // A reminder
 //        cons.gridx = 2;
 //        cons.gridwidth = 1;
@@ -1430,6 +1450,20 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.arpt_chart_color_combobox.addActionListener(this);
         mfd_options_panel.add(this.arpt_chart_color_combobox, cons);
         dialog_line++;
+        dialog_line++;
+
+        // Display airport that is set as NAV destination
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        mfd_options_panel.add(new JLabel("Display airport that is set as NAV destination", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.arpt_chart_nav_dest = new JCheckBox("  (otherwise the nearest airport)");
+        mfd_options_panel.add(this.arpt_chart_nav_dest, cons);
         dialog_line++;
 
         return mfd_options_panel;
@@ -1694,6 +1728,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             if ( this.colored_hsi_course_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_COLORED_HSI_COURSE).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_COLORED_HSI_COURSE, this.colored_hsi_course_checkbox.isSelected()?"true":"false");
 
+            if ( this.nd_navaid_frequencies.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_ND_NAVAID_FREQ).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_ND_NAVAID_FREQ, this.nd_navaid_frequencies.isSelected()?"true":"false");
+
 
             // PFD options
 
@@ -1738,6 +1775,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
             if ( ! arpt_chart_colors[this.arpt_chart_color_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_ARPT_CHART_COLOR)) )
                 this.preferences.set_preference(XHSIPreferences.PREF_ARPT_CHART_COLOR, arpt_chart_colors[this.arpt_chart_color_combobox.getSelectedIndex()]);
+
+            if ( this.arpt_chart_nav_dest.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_ARPT_CHART_NAV_DEST).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_ARPT_CHART_NAV_DEST, this.arpt_chart_nav_dest.isSelected()?"true":"false");
 
 
         }

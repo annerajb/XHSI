@@ -130,11 +130,13 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_SET_FUEL_CAPACITY = "Set fuel capacity ...";
     public static final String ACTION_RESET_MAX_FF = "Reset max FF";
 
-//    public static final String ACTION_MFD_TAXI_CHART = "Taxi Chart";
     public static final String ACTION_MFD_ARPT_CHART = "Airport Chart";
     public static final String ACTION_MFD_FPLN = "Flight Plan";
     public static final String ACTION_MFD_LOWER_EICAS = "Lower EICAS";
-            
+    
+    public static final String ACTION_CLOCK_UTC = "UTC";
+    public static final String ACTION_CLOCK_LT = "Local Time";
+
     public static final int ENGINE_TYPE_N1 = 0;
 //    public static final int ENGINE_TYPE_EPR = 1;
     public static final int ENGINE_TYPE_TRQ = 2;
@@ -181,6 +183,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 //    public FUEL_UNITS fuel_units = FUEL_UNITS.KG;
     
     public int mfd_mode = 0;
+
+    public int clock_mode = 0;
 
 
     private JRadioButtonMenuItem radio_button_source_nav1;
@@ -238,6 +242,9 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JRadioButtonMenuItem radio_button_mfd_arpt;
     private JRadioButtonMenuItem radio_button_mfd_eicas;
     private JRadioButtonMenuItem radio_button_mfd_fpln;
+
+    private JRadioButtonMenuItem radio_button_clock_utc;
+    private JRadioButtonMenuItem radio_button_clock_lt;
 
     
     private static XHSISettings single_instance = null;
@@ -799,15 +806,6 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
         ButtonGroup mfd_group = new ButtonGroup();
 
-//        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_TAXI_CHART);
-//        radio_button_menu_item.setToolTipText("Airport Taxi Chart");
-//        radio_button_menu_item.addActionListener(this);
-//        radio_button_menu_item.setSelected(false);
-//        mfd_group.add(radio_button_menu_item);
-//        xhsi_mfd_menu.add(radio_button_menu_item);
-//        // keep a reference
-//        this.radio_button_mfd_taxi = radio_button_menu_item;
-
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_ARPT_CHART);
         radio_button_menu_item.setToolTipText("Airport Chart");
         radio_button_menu_item.addActionListener(this);
@@ -839,6 +837,33 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
         // add the "MFD" menu to the menubar
         menu_bar.add(xhsi_mfd_menu);
+
+
+        // define the "Clock" menu
+        JMenu xhsi_clock_menu = new JMenu("Clock");
+
+        ButtonGroup clock_group = new ButtonGroup();
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_CLOCK_UTC);
+        radio_button_menu_item.setToolTipText("Clock shows UTC");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(true);
+        clock_group.add(radio_button_menu_item);
+        xhsi_clock_menu.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_clock_utc = radio_button_menu_item;
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_CLOCK_LT);
+        radio_button_menu_item.setToolTipText("Clock shows Local Time");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
+        clock_group.add(radio_button_menu_item);
+        xhsi_clock_menu.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_clock_lt = radio_button_menu_item;
+
+        // add the "Source" menu to the menubar
+        menu_bar.add(xhsi_clock_menu);
 
 
     }
@@ -954,19 +979,19 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
         } else if (command.equals(XHSISettings.ACTION_XPDR_OFF)) {
             xpdr = Avionics.XPDR_OFF;
-            this.avionics.set_xpdr(xpdr);
+            this.avionics.set_xpdr_mode(xpdr);
         } else if (command.equals(XHSISettings.ACTION_XPDR_STBY)) {
             xpdr = Avionics.XPDR_STBY;
-            this.avionics.set_xpdr(xpdr);
+            this.avionics.set_xpdr_mode(xpdr);
         } else if (command.equals(XHSISettings.ACTION_XPDR_ON)) {
             xpdr = Avionics.XPDR_ON;
-            this.avionics.set_xpdr(xpdr);
+            this.avionics.set_xpdr_mode(xpdr);
         } else if (command.equals(XHSISettings.ACTION_XPDR_TA)) {
             xpdr = Avionics.XPDR_TA;
-            this.avionics.set_xpdr(xpdr);
+            this.avionics.set_xpdr_mode(xpdr);
         } else if (command.equals(XHSISettings.ACTION_XPDR_TARA)) {
             xpdr = Avionics.XPDR_TARA;
-            this.avionics.set_xpdr(xpdr);
+            this.avionics.set_xpdr_mode(xpdr);
 
         } else if (command.equals(XHSISettings.ACTION_HOLDING_HIDE)) {
             // Hide Holding pattern
@@ -1014,9 +1039,6 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         } else if (command.equals(XHSISettings.ACTION_RESET_MAX_FF)) {
             this.avionics.get_aircraft().reset_max_FF();
 
-//        } else if (command.equals(XHSISettings.ACTION_MFD_TAXI_CHART)) {
-//            mfd_mode = Avionics.MFD_MODE_TAXI;
-//            this.avionics.set_mfd_mode(mfd_mode);
         } else if (command.equals(XHSISettings.ACTION_MFD_ARPT_CHART)) {
             mfd_mode = Avionics.MFD_MODE_ARPT;
             this.avionics.set_mfd_mode(mfd_mode);
@@ -1027,9 +1049,12 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             mfd_mode = Avionics.MFD_MODE_EICAS;
             this.avionics.set_mfd_mode(mfd_mode);
 
-//        } else if (command.equals(XHSISettings.ACTION_ZOOMIN)) {
-//            map_zoomin = this.checkbox_map_zoomin.isSelected();
-//            this.avionics.set_zoomin(map_zoomin);
+        } else if (command.equals(XHSISettings.ACTION_CLOCK_UTC)) {
+            clock_mode = Avionics.CLOCK_MODE_UTC;
+            this.avionics.set_clock_mode(clock_mode);
+        } else if (command.equals(XHSISettings.ACTION_CLOCK_LT)) {
+            clock_mode = Avionics.CLOCK_MODE_LT;
+            this.avionics.set_clock_mode(clock_mode);
 
         } else {
             for (int i=0; i<this.range_list.length; i++) {
@@ -1123,10 +1148,13 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_xpdr_tara.setSelected( new_xpdr == Avionics.XPDR_TARA );
 
         int new_mfd_mode = avionics.get_mfd_mode();
-//        this.radio_button_mfd_taxi.setSelected( new_mfd_mode == Avionics.MFD_MODE_TAXI );
         this.radio_button_mfd_arpt.setSelected( new_mfd_mode == Avionics.MFD_MODE_ARPT );
         this.radio_button_mfd_fpln.setSelected( new_mfd_mode == Avionics.MFD_MODE_FPLN );
         this.radio_button_mfd_eicas.setSelected( new_mfd_mode == Avionics.MFD_MODE_EICAS );
+
+        boolean new_clock_mode = avionics.clock_shows_utc();
+        this.radio_button_clock_utc.setSelected(new_clock_mode);
+        this.radio_button_clock_lt.setSelected(!new_clock_mode);
 
     }
 

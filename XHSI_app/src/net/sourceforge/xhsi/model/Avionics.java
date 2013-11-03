@@ -49,7 +49,9 @@ public interface Avionics {
     public static final int XPDR_TA = 3;
     public static final int XPDR_TARA = 4;
 
-    //public static final int MFD_MODE_TAXI = 0;
+    public static final int CLOCK_MODE_UTC = 0;
+    public static final int CLOCK_MODE_LT = 1;
+
     public static final int MFD_MODE_ARPT = 0;
     public static final int MFD_MODE_FPLN = 1;
     public static final int MFD_MODE_EICAS = 2;
@@ -457,6 +459,11 @@ public interface Avionics {
      */
     public int transponder_code();
 
+    /**
+     * @return boolean - clock show UTC
+     */
+    public boolean clock_shows_utc();
+    
 
     /**
      * @return boolean - receiving CL30 data
@@ -512,7 +519,9 @@ public interface Avionics {
 
     public void set_range_index(int new_range_index);
 
-    public void set_xpdr(int new_xpdr);
+    public void set_xpdr_mode(int new_xpdr_mode);
+
+    public void set_clock_mode(int new_clock_mode);
 
     public void set_show_arpt(boolean new_arpt);
 
