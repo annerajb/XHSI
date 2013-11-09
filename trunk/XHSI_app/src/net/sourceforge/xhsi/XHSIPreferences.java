@@ -104,7 +104,7 @@ public class XHSIPreferences {
     public static final String PREF_EICAS_PRIMARY_ONLY = "eicas.primary.only";
     public static final String PREF_OVERRIDE_ENGINE_COUNT = "override.engine.count";
     public static final String PREF_FUEL_UNITS = "fuel.units";
-    public static final String PREF_ENGINE_TYPE = "engine.type";
+    public static final String PREF_ENGINE_TYPE = "eicas.engine.type";
 
     // MFD options
     public static final String PREF_MFD_MODE = "mfd.mode";
@@ -204,6 +204,7 @@ public class XHSIPreferences {
     }
 
     // for PREF_ENGINE_TYPE
+    public static final String ENGINE_TYPE_SWITCHABLE = "switchable";
     public static final String ENGINE_TYPE_N1 = "N1";
 //    public static final String ENGINE_TYPE_EPR = "EPR";
     public static final String ENGINE_TYPE_TRQ = "TRQ";
@@ -1102,7 +1103,7 @@ public class XHSIPreferences {
         }
 
         if ( ! this.preferences.containsKey(PREF_ENGINE_TYPE) ) {
-            this.preferences.setProperty(PREF_ENGINE_TYPE, ENGINE_TYPE_N1);
+            this.preferences.setProperty(PREF_ENGINE_TYPE, ENGINE_TYPE_SWITCHABLE);
             this.unsaved_changes = true;
         }
 

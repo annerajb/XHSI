@@ -40,6 +40,7 @@ extern XPLMDataRef x737_PFD_pwr;
 
 // x737/systems/athr/...
 extern XPLMDataRef x737_ATHR_armed;
+extern XPLMDataRef x737_lvlchange;
 
 // x737/systems/eec/...
 extern XPLMDataRef x737_N1_phase;
@@ -48,6 +49,24 @@ extern XPLMDataRef x737_N1_limit_eng2;
 
 // x737/systems/electrics/...
 extern XPLMDataRef x737_stby_pwr;
+
+//mcp st
+
+extern XPLMDataRef x737_MCPSPD_spd;
+extern XPLMDataRef x737_HDG_magnhdg;
+extern XPLMDataRef x737_ALTHLD_baroalt;
+extern XPLMDataRef x737_VS_vvi;
+
+extern XPLMDataRef x737_left_fixed_land_light_switch;
+extern XPLMDataRef x737_right_fixed_land_light_switch;
+extern XPLMDataRef x737_left_retr_land_light_switch;
+extern XPLMDataRef x737_rigth_retr_land_light_switch;
+extern XPLMDataRef x737_taxi_light_switch;
+extern XPLMDataRef x737_left_turnoff_light_switch;
+extern XPLMDataRef x737_right_turnoff_light_switch;
+extern XPLMDataRef x737_position_light_switch;
+extern XPLMDataRef x737_beacon_light_switch;
+
 
 //extern XPLMDataRef x737_;
 //extern XPLMDataRef x737_;

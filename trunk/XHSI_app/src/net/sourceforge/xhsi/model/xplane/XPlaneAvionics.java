@@ -525,6 +525,29 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
 
 
+    public int get_engine_type() {
+
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
+            return xhsi_settings.engine_type;
+        } else {
+            if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_SWITCHABLE)) {
+                return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_ENGINE_TYPE);
+//            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_TAXI_CHART)) {
+//                return 0;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_N1)) {
+                return XHSISettings.ENGINE_TYPE_N1;
+//            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_EPR)) {
+//                return XHSISettings.ENGINE_TYPE_EPR;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_TRQ)) {
+                return XHSISettings.ENGINE_TYPE_TRQ;
+            } else {
+                return XHSISettings.ENGINE_TYPE_MAP;
+            }
+        }
+
+    }
+
+
     public int autopilot_state() { return (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_AUTOPILOT_STATE);    }
 
     public float autopilot_vv() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_VERTICAL_VELOCITY);    }
@@ -936,13 +959,6 @@ public class XPlaneAvionics implements Avionics, Observer {
     public float ufmc_vf40() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.UFMC_VF40);
     }
-    
-
-    public int engine_type() {
-
-        return xhsi_settings.engine_type;
-
-    }
 
 
 
@@ -1140,6 +1156,15 @@ public class XPlaneAvionics implements Avionics, Observer {
 
         if ( ! xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_MFD_MODE, (float) new_mode );
+        }
+
+    }
+
+
+    public void set_engine_type(int new_type) {
+
+        if ( ! xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_ENGINE_TYPE, (float) new_type );
         }
 
     }

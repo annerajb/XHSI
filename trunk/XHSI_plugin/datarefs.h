@@ -266,6 +266,10 @@ extern XPLMDataRef  efis_copilot_mins_mode;
 extern XPLMDataRef  efis_copilot_map_zoomin;
 
 
+// custom datarefs - EICAS
+extern XPLMDataRef  engine_type;
+
+
 // custom datarefs - MFD
 extern XPLMDataRef  mfd_mode;
 
@@ -282,16 +286,19 @@ void	findDataRefs(void);
 
 void    registerPilotDataRefs(void);
 void    registerCopilotDataRefs(void);
+void    registerEICASDataRefs(void);
 void    registerMFDDataRefs(void);
 
 float   notifyDataRefEditorCallback(float, float, int, void *);
 
 float   initPilotCallback(float, float, int, void *);
 float   initCopilotCallback(float, float, int, void *);
+float   initEICASCallback(float, float, int, void *);
 float   initMFDCallback(float, float, int, void *);
 
 void    unregisterPilotDataRefs(void);
 void    unregisterCopilotDataRefs(void);
+void    unregisterEICASDataRefs(void);
 void    unregisterMFDDataRefs(void);
 
 void    writeDataRef(int, float);

@@ -286,6 +286,11 @@ public interface Avionics {
      */
     public int get_mfd_mode();
 
+    
+    /**
+     * @return int - Engine type (0=N1, 1=EPR, 2=TRQ, 3=MAP)
+     */
+    public int get_engine_type();
 
     /**
      * TODO: constants for autopilot states need to be defined
@@ -493,10 +498,6 @@ public interface Avionics {
     public float ufmc_vref();
     public float ufmc_vf30();
     public float ufmc_vf40();
-    
-    
-    public int engine_type();
-
 
 
     //    public void set_power(boolean new_power);
@@ -517,6 +518,8 @@ public interface Avionics {
 
     public void set_mode(int new_mode);
 
+    public void set_engine_type(int new_type);
+    
     public void set_range_index(int new_range_index);
 
     public void set_xpdr_mode(int new_xpdr_mode);

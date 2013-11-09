@@ -144,7 +144,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox draw_eicas_primary_checkbox;
     private JComboBox engine_count_combobox;
     private JComboBox engine_type_combobox;
-    private String engine_types[] = { XHSIPreferences.ENGINE_TYPE_N1, /*XHSIPreferences.ENGINE_TYPE_EPR,*/ XHSIPreferences.ENGINE_TYPE_TRQ, XHSIPreferences.ENGINE_TYPE_MAP };
+    private String engine_types[] = { XHSIPreferences.ENGINE_TYPE_SWITCHABLE, XHSIPreferences.ENGINE_TYPE_N1, /*XHSIPreferences.ENGINE_TYPE_EPR,*/ XHSIPreferences.ENGINE_TYPE_TRQ, XHSIPreferences.ENGINE_TYPE_MAP };
     private JComboBox fuel_unit_combobox;
     private String fuel_units[] = { XHSIPreferences.FUEL_KG, XHSIPreferences.FUEL_LBS, XHSIPreferences.FUEL_USG, XHSIPreferences.FUEL_LTR };
 
@@ -1352,12 +1352,13 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
-        eicas_options_panel.add(new JLabel("Initial engine type", JLabel.TRAILING), cons);
+        eicas_options_panel.add(new JLabel("Engine type", JLabel.TRAILING), cons);
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
         this.engine_type_combobox = new JComboBox();
+        this.engine_type_combobox.addItem("Switchable");
         this.engine_type_combobox.addItem(XHSIPreferences.ENGINE_TYPE_N1);
 //        this.engine_type_combobox.addItem(XHSIPreferences.ENGINE_TYPE_EPR);
         this.engine_type_combobox.addItem(XHSIPreferences.ENGINE_TYPE_TRQ);

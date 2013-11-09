@@ -23,7 +23,7 @@
 #include "structs.h"
 #include "ids.h"
 #include "xfmc.h"
-
+#include "datarefs_x737.h"
 
 #define MSG_ADD_DATAREF 0x01000000           //  Add dataref to DRE message
 
@@ -57,6 +57,9 @@ XPLMDataRef  copilot_hsi_selector;
 XPLMDataRef  efis_copilot_da_bug;
 XPLMDataRef  efis_copilot_mins_mode;
 XPLMDataRef  efis_copilot_map_zoomin;
+
+// custom datarefs - EICAS
+XPLMDataRef  engine_type;
 
 // custom datarefs - MFD
 XPLMDataRef  mfd_mode;
@@ -559,6 +562,18 @@ void	setCopilotMapRange100(void* inRefcon, int inValue)
 }
 
 
+// xhsi/eicas/engine_type
+int eicas_engine_type;
+int     getEICASMode(void* inRefcon)
+{
+     return eicas_engine_type;
+}
+void	setEICASMode(void* inRefcon, int inValue)
+{
+      eicas_engine_type = inValue;
+}
+
+
 // xhsi/mfd/mode
 int mfd_display_mode;
 int     getMFDMode(void* inRefcon)
@@ -773,6 +788,22 @@ void registerCopilotDataRefs(void) {
 }
 
 
+void registerEICASDataRefs(void) {
+
+    XPLMDebugString("XHSI: registering custom EICAS DataRefs\n");
+
+    // xhsi/eicas/engine_type
+    engine_type = XPLMRegisterDataAccessor("xhsi/eicas/engine_type",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                                   // Writable
+                                        getEICASMode, setEICASMode,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    XPLMDebugString("XHSI: custom EICAS DataRefs registered\n");
+
+}
+
+
 void registerMFDDataRefs(void) {
 
     XPLMDebugString("XHSI: registering custom MFD DataRefs\n");
@@ -824,6 +855,7 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/mins_mode");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/map_zoomin");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/mode");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/engine_type");
     }
 
     return 0.0f;
@@ -982,6 +1014,29 @@ float initCopilotCallback(
 }
 
 
+float initEICASCallback(
+									float	inElapsedSinceLastCall,
+									float	inElapsedTimeSinceLastFlightLoop,
+									int		inCounter,
+									void *	inRefcon) {
+
+    XPLMDebugString("XHSI: initializing custom EICAS DataRefs\n");
+
+    // set a default for the LFD mode
+
+//    // xhsi/eicas/engine_type
+//    engine_type = XPLMFindDataRef ("xhsi/eicas/engine_type");
+    // type 0 = N1 / 1 = EPR / 2 = TRQ / 3 = MAP
+    XPLMSetDatai(engine_type, 0);
+
+
+    XPLMDebugString("XHSI: custom EICAS DataRefs initialized\n");
+
+    return 0.0f;
+
+}
+
+
 float initMFDCallback(
 									float	inElapsedSinceLastCall,
 									float	inElapsedTimeSinceLastFlightLoop,
@@ -1080,6 +1135,13 @@ void unregisterCopilotDataRefs(void) {
 
     // xhsi/nd_copilot/map_zoomin
     XPLMUnregisterDataAccessor(efis_copilot_map_zoomin);
+
+}
+
+void unregisterEICASDataRefs(void) {
+
+    // xhsi/eicas/engine_type
+    XPLMUnregisterDataAccessor(engine_type);
 
 }
 
@@ -1526,6 +1588,13 @@ void writeDataRef(int id, float value) {
             break;
 
 
+        // EICAS
+
+        case XHSI_ENGINE_TYPE :
+            XPLMSetDatai(engine_type , (int)value);
+            break;
+
+
         // MFD
 
         case XHSI_MFD_MODE :
@@ -1540,19 +1609,35 @@ void writeDataRef(int id, float value) {
             break;
 
         case SIM_COCKPIT_AUTOPILOT_HEADING_MAG :
-            XPLMSetDataf(autopilot_heading_mag, value);
+            if(x737_ready){
+                XPLMSetDataf(x737_HDG_magnhdg, value);
+            } else {
+                XPLMSetDataf(autopilot_heading_mag, value);
+            }
             break;
 
         case SIM_COCKPIT_AUTOPILOT_AIRSPEED :
-            XPLMSetDataf(autopilot_airspeed, value);
+            if(x737_ready){
+                XPLMSetDataf(x737_MCPSPD_spd, value);
+            } else {
+                XPLMSetDataf(autopilot_airspeed, value);
+            }
             break;
 
         case SIM_COCKPIT_AUTOPILOT_ALTITUDE :
-            XPLMSetDataf(autopilot_altitude, value);
+            if(x737_ready){
+                XPLMSetDataf(x737_ALTHLD_baroalt, value);
+            } else {
+                XPLMSetDataf(autopilot_altitude, value);
+            }
             break;
 
         case SIM_COCKPIT_AUTOPILOT_VERTICAL_VELOCITY :
-            XPLMSetDataf(autopilot_vertical_velocity, value);
+            if(x737_ready){
+                XPLMSetDataf(x737_VS_vvi, value);
+            } else {
+                XPLMSetDataf(autopilot_vertical_velocity, value);
+            }
             break;
 
         case SIM_COCKPIT2_GAUGES_ACTUATORS_BAROMETER_SETTING_IN_HG_PILOT :
@@ -1568,25 +1653,58 @@ void writeDataRef(int id, float value) {
                     XPLMSetDatai(autopilot_airspeed_is_mach, ! XPLMGetDatai(autopilot_airspeed_is_mach));
                     break;
                 case 2 : //athr
-                    XPLMCommandOnce(sim_autopilot_fdir_servos_toggle);
+                    if(x737_ready){
+                        XPLMCommandOnce(x737_cmda_toggle);
+                    } else {
+                        XPLMCommandOnce(sim_autopilot_fdir_servos_toggle);
+                    }
                     break;
                 case 3 :
-                    XPLMCommandOnce(sim_autopilot_autothrottle_toggle);
+                    if(x737_ready){
+                        XPLMCommandOnce(x737_mcpspd_toggle);
+                    } else {
+                        XPLMCommandOnce(sim_autopilot_autothrottle_toggle);
+                    }
                     break;
                 case 4 :
-                    XPLMCommandOnce(sim_autopilot_level_change);
+                    if(x737_ready){
+                        XPLMCommandOnce(x737_lvlchange_toggle);
+                    } else {
+                        XPLMCommandOnce(sim_autopilot_level_change);
+                    }
                     break;
                 case 5 :
-                    XPLMCommandOnce(sim_autopilot_heading);
+                    if(x737_ready){
+                        XPLMCommandOnce(x737_hdgsel_toggle);
+                    } else {
+                        XPLMCommandOnce(sim_autopilot_heading);
+                    }
                     break;
                 case 6 :
-                    XPLMCommandOnce(sim_autopilot_vertical_speed);
+                    if(x737_ready){
+                        XPLMCommandOnce(x737_vs_toggle);
+                    } else {
+                        XPLMCommandOnce(sim_autopilot_vertical_speed);
+                    }
                     break;
                 case 7 :
-                    XPLMCommandOnce(sim_autopilot_nav);
+                    if(x737_ready){
+                        int navsrc = XPLMGetDatai(hsi_selector);
+                        if(navsrc == 2){
+                            XPLMCommandOnce(x737_lnav_toggle);
+                        } else {
+                            XPLMCommandOnce(x737_vorloc_toggle);
+                        }
+                    } else {
+                        XPLMCommandOnce(sim_autopilot_nav);
+                    }
                     break;
                 case 8 :
-                    XPLMCommandOnce(sim_autopilot_approach);
+                    if(x737_ready){
+                        XPLMCommandOnce(x737_app_toggle);
+                    } else {
+                        XPLMCommandOnce(sim_autopilot_approach);
+                    }
                     break;
                 case 9 :
                     XPLMCommandOnce(sim_autopilot_glide_slope);
@@ -1595,23 +1713,57 @@ void writeDataRef(int id, float value) {
                     XPLMCommandOnce(sim_autopilot_back_course);
                     break;
                 case 11 :
-                    XPLMCommandOnce(sim_autopilot_altitude_hold);
+                    if(x737_ready){
+                        XPLMCommandOnce(x737_althld_toggle);
+                    } else {
+                        XPLMCommandOnce(sim_autopilot_altitude_hold);
+                    }
                     break;
                 // lights
                 case 20 :
-                    XPLMCommandOnce(sim_lights_nav_lights_toggle);
+                    if(x737_ready){
+                        int posLightOld = XPLMGetDatai(x737_position_light_switch);
+                        int posLightNew = (posLightOld == 1) || (posLightOld == -1) ? 0 : 1;
+                        XPLMSetDatai(x737_position_light_switch, posLightNew);
+                    } else {
+                        XPLMCommandOnce(sim_lights_nav_lights_toggle);
+                    }
                     break;
                 case 21 :
-                    XPLMCommandOnce(sim_lights_beacon_lights_toggle);
+                    if(x737_ready){
+                        XPLMSetDatai(x737_beacon_light_switch, !XPLMGetDatai(x737_beacon_light_switch));
+                    } else {
+                        XPLMCommandOnce(sim_lights_beacon_lights_toggle);
+                    }
                     break;
                 case 22 :
-                    XPLMCommandOnce(sim_lights_taxi_lights_toggle);
+                    if(x737_ready){
+                        int v = !XPLMGetDatai(x737_taxi_light_switch);
+                        XPLMSetDatai(x737_taxi_light_switch, v);
+                        XPLMSetDatai(x737_left_turnoff_light_switch, v);
+                        XPLMSetDatai(x737_right_turnoff_light_switch, v);
+                    } else {
+                        XPLMCommandOnce(sim_lights_taxi_lights_toggle);
+                    }
                     break;
                 case 23 :
-                    XPLMCommandOnce(sim_lights_strobe_lights_toggle);
+                    if(x737_ready){
+                        XPLMSetDatai(x737_position_light_switch, XPLMGetDatai(x737_position_light_switch) == -1 ? 0 : -1);
+                    } else {
+                        XPLMCommandOnce(sim_lights_strobe_lights_toggle);
+                    }
                     break;
                 case 24 :
-                    XPLMCommandOnce(sim_lights_landing_lights_toggle);
+                    if(x737_ready){
+                        int v = !XPLMGetDatai(x737_left_fixed_land_light_switch);
+                        XPLMSetDatai(x737_left_fixed_land_light_switch, v);
+                        XPLMSetDatai(x737_right_fixed_land_light_switch, v);
+                        XPLMSetDatai(x737_left_retr_land_light_switch, v * 2);
+                        XPLMSetDatai(x737_rigth_retr_land_light_switch, v * 2);
+                        XPLMSetDatai(landing_lights_on, v);
+                    } else {
+                        XPLMCommandOnce(sim_lights_landing_lights_toggle);
+                    }
                     break;
                 //  flight_controls
                 case 30 :

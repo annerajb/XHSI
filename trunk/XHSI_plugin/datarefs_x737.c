@@ -17,6 +17,7 @@
 //#include "XPStandardWidgets.h"
 
 
+#include "commands.h"
 
 // DataRefs for the X737
 
@@ -59,6 +60,7 @@ XPLMDataRef x737_PFD_pwr;
 
 // x737/systems/athr/...
 XPLMDataRef x737_ATHR_armed;
+XPLMDataRef x737_lvlchange;
 
 // x737/systems/eec/...
 XPLMDataRef x737_N1_phase;
@@ -68,7 +70,21 @@ XPLMDataRef x737_N1_limit_eng2;
 // x737/systems/electrics/...
 XPLMDataRef x737_stby_pwr;
 
+//mcp set
+XPLMDataRef x737_MCPSPD_spd;
+XPLMDataRef x737_HDG_magnhdg;
+XPLMDataRef x737_ALTHLD_baroalt;
+XPLMDataRef x737_VS_vvi;
 
+XPLMDataRef x737_left_fixed_land_light_switch;
+XPLMDataRef x737_right_fixed_land_light_switch;
+XPLMDataRef x737_left_retr_land_light_switch;
+XPLMDataRef x737_rigth_retr_land_light_switch;
+XPLMDataRef x737_taxi_light_switch;
+XPLMDataRef x737_left_turnoff_light_switch;
+XPLMDataRef x737_right_turnoff_light_switch;
+XPLMDataRef x737_position_light_switch;
+XPLMDataRef x737_beacon_light_switch;
 
 int x737_ready = 0;
 
@@ -123,6 +139,7 @@ void findX737DataRefs(void) {
             x737_N1_mode = XPLMFindDataRef("x737/systems/PFD/PFD_N1_mode_on");
 
             x737_ATHR_armed = XPLMFindDataRef("x737/systems/athr/athr_armed");
+            x737_lvlchange = XPLMFindDataRef("x737/systems/afds/LVLCHG");
 
             x737_N1_phase = XPLMFindDataRef("x737/systems/eec/N1_phase");
             x737_N1_limit_eng1 = XPLMFindDataRef("x737/systems/eec/N1_limit_eng1");
@@ -130,6 +147,33 @@ void findX737DataRefs(void) {
 
             x737_stby_pwr = XPLMFindDataRef("x737/systems/electrics/stbyPwrAuto");
             x737_PFD_pwr = XPLMFindDataRef("x737/systems/PFD/PFD_A_powered");
+
+
+            //mcp and lights
+            x737_MCPSPD_spd = XPLMFindDataRef("x737/systems/athr/MCPSPD_spd");
+            x737_HDG_magnhdg = XPLMFindDataRef("x737/systems/afds/HDG_magnhdg");
+            x737_ALTHLD_baroalt = XPLMFindDataRef("x737/systems/afds/ALTHLD_baroalt");
+            x737_VS_vvi = XPLMFindDataRef("x737/systems/afds/VS_vvi");
+
+            x737_cmda_toggle = XPLMFindCommand("x737/mcp/CMDA_TOGGLE");
+            x737_mcpspd_toggle = XPLMFindCommand("x737/mcp/MCPSPD_MODE_TOGGLE");
+            x737_lvlchange_toggle = XPLMFindCommand("x737/mcp/LVLCHANGE_TOGGLE");
+            x737_hdgsel_toggle = XPLMFindCommand("x737/mcp/HDGSEL_TOGGLE");
+            x737_lnav_toggle = XPLMFindCommand("x737/mcp/LNAV_TOGGLE");
+            x737_vorloc_toggle = XPLMFindCommand("x737/mcp/VORLOC_TOGGLE");
+            x737_app_toggle = XPLMFindCommand("x737/mcp/APP_TOGGLE");
+            x737_althld_toggle = XPLMFindCommand("x737/mcp/ALTHLD_TOGGLE");
+            x737_vs_toggle = XPLMFindCommand("x737/mcp/VS_TOGGLE");
+
+            x737_left_fixed_land_light_switch = XPLMFindDataRef("x737/systems/exteriorLights/leftFixedLanLtSwitch");
+            x737_right_fixed_land_light_switch = XPLMFindDataRef("x737/systems/exteriorLights/rightFixedLanLtSwitch");
+            x737_left_retr_land_light_switch = XPLMFindDataRef("x737/systems/exteriorLights/leftRetrLanLtSwitch");
+            x737_rigth_retr_land_light_switch = XPLMFindDataRef("x737/systems/exteriorLights/rightRetrLanLtSwitch");
+            x737_taxi_light_switch = XPLMFindDataRef("x737/systems/exteriorLights/taxiLightsSwitch");
+            x737_left_turnoff_light_switch = XPLMFindDataRef("x737/systems/exteriorLights/leftRunwayTurnoffSwitch");
+            x737_right_turnoff_light_switch = XPLMFindDataRef("x737/systems/exteriorLights/rightRunwayTurnoffSwitch");
+            x737_position_light_switch = XPLMFindDataRef("x737/systems/exteriorLights/positionLightSwitch");
+            x737_beacon_light_switch = XPLMFindDataRef("x737/systems/exteriorLights/beaconLightSwitch");
 
         }
 

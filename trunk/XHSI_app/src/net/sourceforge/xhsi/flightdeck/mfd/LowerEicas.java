@@ -95,7 +95,7 @@ public class LowerEicas extends MFDSubcomponent {
             this.inhibit = ( this.aircraft.agl_m() < 1000.0f / 3.28084f );
 
 //            boolean turboprop = this.preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_TRQ);
-            boolean turboprop = ( this.avionics.engine_type() == XHSISettings.ENGINE_TYPE_TRQ );
+            boolean turboprop = ( this.avionics.get_engine_type() == XHSISettings.ENGINE_TYPE_TRQ );
             
             int num_eng = this.aircraft.num_engines();
 //num_eng = 4;
