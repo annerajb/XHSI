@@ -240,14 +240,25 @@ int createADCPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_PARKING_BRAKE_RATIO);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(parkbrake_ratio));
 	i++;
+
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_LIGHTS);
-    sim_packet.sim_data_points[i].value = custom_htonf((float)
-        (XPLMGetDatai(beacon_lights_on) +
-        XPLMGetDatai(landing_lights_on) * 2 +
-        XPLMGetDatai(nav_lights_on) * 4 +
-        XPLMGetDatai(strobe_lights_on) * 8 +
-        XPLMGetDatai(taxi_light_on) * 16));
+    if(x737_ready){
+        sim_packet.sim_data_points[i].value = custom_htonf((float)
+            (XPLMGetDatai(x737_beacon_light_switch) +
+            XPLMGetDatai(x737_left_fixed_land_light_switch) * 2 +
+            (XPLMGetDatai(x737_position_light_switch) != 0 ? 4 : 0) +
+            (XPLMGetDatai(x737_position_light_switch) == -1 ? 8 : 0) +
+            XPLMGetDatai(x737_taxi_light_switch) * 16));
+    } else {
+        sim_packet.sim_data_points[i].value = custom_htonf((float)
+            (XPLMGetDatai(beacon_lights_on) +
+            XPLMGetDatai(landing_lights_on) * 2 +
+            XPLMGetDatai(nav_lights_on) * 4 +
+            XPLMGetDatai(strobe_lights_on) * 8 +
+            XPLMGetDatai(taxi_light_on) * 16));
+    }
     i++;
+
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_FLAP_RATIO);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(flap_deploy));
 	i++;
@@ -633,10 +644,17 @@ int createAvionicsPacket(void) {
 	i++;
 
 
+    // EICAS
+	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_ENGINE_TYPE);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(engine_type));
+	i++;
+
+
     // MFD
 	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_MFD_MODE);
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(mfd_mode));
 	i++;
+
 
     // AP
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_AUTOPILOT_AUTOPILOT_STATE);
@@ -830,6 +848,10 @@ int createAvionicsPacket(void) {
 
         sim_packet.sim_data_points[i].id = custom_htoni(X737_ATHR_ARMED);
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(x737_ATHR_armed));
+        i++;
+
+        sim_packet.sim_data_points[i].id = custom_htoni(X737_LVLCHANGE);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(x737_lvlchange));
         i++;
 
         sim_packet.sim_data_points[i].id = custom_htoni(X737_AFDS_A_PITCH);

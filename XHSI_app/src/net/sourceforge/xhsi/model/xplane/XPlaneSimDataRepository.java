@@ -217,10 +217,14 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_EFIS_COPILOT_MAP_ZOOMIN = 265;
 
 
+    // EICAS
+    public static final int XHSI_ENGINE_TYPE = 280;
+    
+
     // MFD
     public static final int XHSI_MFD_MODE = 290;
 
-
+    
     // Environment
     public static final int SIM_WEATHER_WIND_SPEED_KT = 300;
     public static final int SIM_WEATHER_WIND_DIRECTION_DEGT = 301;

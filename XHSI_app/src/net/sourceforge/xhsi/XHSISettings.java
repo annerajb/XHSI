@@ -238,13 +238,17 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private FixDialog fix_dialog;
     private FuelDialog fuel_dialog;
 
-//    private JRadioButtonMenuItem radio_button_mfd_taxi;
     private JRadioButtonMenuItem radio_button_mfd_arpt;
     private JRadioButtonMenuItem radio_button_mfd_eicas;
     private JRadioButtonMenuItem radio_button_mfd_fpln;
 
     private JRadioButtonMenuItem radio_button_clock_utc;
     private JRadioButtonMenuItem radio_button_clock_lt;
+
+    private JRadioButtonMenuItem radio_button_engine_n1;
+//    private JRadioButtonMenuItem radio_button_engine_epr;
+    private JRadioButtonMenuItem radio_button_engine_trq;
+    private JRadioButtonMenuItem radio_button_engine_map;
 
     
     private static XHSISettings single_instance = null;
@@ -738,45 +742,57 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // define the "EICAS" menu
         JMenu xhsi_eicas_menu = new JMenu("EICAS");
 
-        engine_type = 0;
-        if ( XHSIPreferences.get_instance().get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_MAP) )
-            engine_type = XHSISettings.ENGINE_TYPE_MAP;
-        else if ( XHSIPreferences.get_instance().get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_TRQ) )
-            engine_type = XHSISettings.ENGINE_TYPE_TRQ;
-//        else if ( XHSIPreferences.get_instance().get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_EPR) )
-//            eicas_type = XHSISettings.EICAS_TYPE_EPR;
-        else
-            engine_type = XHSISettings.ENGINE_TYPE_N1;
+//        engine_type = 0;
+//        if ( XHSIPreferences.get_instance().get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_MAP) )
+//            engine_type = XHSISettings.ENGINE_TYPE_MAP;
+//        else if ( XHSIPreferences.get_instance().get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_TRQ) )
+//            engine_type = XHSISettings.ENGINE_TYPE_TRQ;
+////        else if ( XHSIPreferences.get_instance().get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_EPR) )
+////            eicas_type = XHSISettings.EICAS_TYPE_EPR;
+//        else
+//            engine_type = XHSISettings.ENGINE_TYPE_N1;
         
         ButtonGroup eicas_group = new ButtonGroup();
 
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_ENGINE_TYPE_N1);
         radio_button_menu_item.setToolTipText("Engine type N1/EGT/...");
         radio_button_menu_item.addActionListener(this);
-        radio_button_menu_item.setSelected(engine_type == XHSISettings.ENGINE_TYPE_N1);
+//        radio_button_menu_item.setSelected(engine_type == XHSISettings.ENGINE_TYPE_N1);
+        radio_button_menu_item.setSelected(true);
         xhsi_eicas_menu.add(radio_button_menu_item);
         eicas_group.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_engine_n1 = radio_button_menu_item;
 
 //        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_EICAS_EPR);
 //        radio_button_menu_item.setToolTipText("Engine type EPR/...");
 //        radio_button_menu_item.addActionListener(this);
-//        radio_button_menu_item.setSelected(eicas_type == XHSISettings.EICAS_TYPE_EPR);
+////        radio_button_menu_item.setSelected(eicas_type == XHSISettings.EICAS_TYPE_EPR);
+//        radio_button_menu_item.setSelected(false);
 //        xhsi_eicas_menu.add(radio_button_menu_item);
 //        eicas_group.add(radio_button_menu_item);
+//        // keep a reference
+//        this.radio_button_engine_epr = radio_button_menu_item;
 
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_ENGINE_TYPE_TRQ);
         radio_button_menu_item.setToolTipText("Engine type TRQ/ITT/PROP/...");
         radio_button_menu_item.addActionListener(this);
-        radio_button_menu_item.setSelected(engine_type == XHSISettings.ENGINE_TYPE_TRQ);
+//        radio_button_menu_item.setSelected(engine_type == XHSISettings.ENGINE_TYPE_TRQ);
+        radio_button_menu_item.setSelected(false);
         xhsi_eicas_menu.add(radio_button_menu_item);
         eicas_group.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_engine_trq = radio_button_menu_item;
 
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_ENGINE_TYPE_MAP);
         radio_button_menu_item.setToolTipText("Engine type MAP/RPM/FF/..");
         radio_button_menu_item.addActionListener(this);
-        radio_button_menu_item.setSelected(engine_type == XHSISettings.ENGINE_TYPE_MAP);
+//        radio_button_menu_item.setSelected(engine_type == XHSISettings.ENGINE_TYPE_MAP);
+        radio_button_menu_item.setSelected(false);
         xhsi_eicas_menu.add(radio_button_menu_item);
         eicas_group.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_engine_map = radio_button_menu_item;
 
         xhsi_eicas_menu.addSeparator();
 
@@ -1013,16 +1029,16 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
         } else if (command.equals(XHSISettings.ACTION_ENGINE_TYPE_N1)) {
             engine_type = XHSISettings.ENGINE_TYPE_N1;
-//            this.avionics.set_engine_type(engine_type);
+            this.avionics.set_engine_type(engine_type);
 //        } else if (command.equals(XHSISettings.ACTION_ENGINE_TYPE_EPR)) {
 //            engine_type = XHSISettings.ENGINE_TYPE_EPR;
-////            this.avionics.set_engine_type(engine_type);
+//            this.avionics.set_engine_type(engine_type);
         } else if (command.equals(XHSISettings.ACTION_ENGINE_TYPE_TRQ)) {
             engine_type = XHSISettings.ENGINE_TYPE_TRQ;
-//            this.avionics.set_engine_type(engine_type);
+            this.avionics.set_engine_type(engine_type);
         } else if (command.equals(XHSISettings.ACTION_ENGINE_TYPE_MAP)) {
             engine_type = XHSISettings.ENGINE_TYPE_MAP;
-//            this.avionics.set_engine_type(engine_type);
+            this.avionics.set_engine_type(engine_type);
 
         } else if (command.equals(XHSISettings.ACTION_ESTIMATE_FUEL_CAPACITY)) {
             // Estimate total fuel capacity
@@ -1155,6 +1171,12 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         boolean new_clock_mode = avionics.clock_shows_utc();
         this.radio_button_clock_utc.setSelected(new_clock_mode);
         this.radio_button_clock_lt.setSelected(!new_clock_mode);
+
+        int new_engine_type = avionics.get_engine_type();
+        this.radio_button_engine_n1.setSelected( new_engine_type == XHSISettings.ENGINE_TYPE_N1 );
+//        this.radio_button_engine_epr.setSelected( new_engine_type == XHSISettings.ENGINE_TYPE_EPR );
+        this.radio_button_engine_trq.setSelected( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ );
+        this.radio_button_engine_map.setSelected( new_engine_type == XHSISettings.ENGINE_TYPE_MAP );
 
     }
 

@@ -18,6 +18,7 @@
 
 #include "structs.h"
 #include "datarefs.h"
+#include "datarefs_x737.h"
 
 
 #define UP -99
@@ -365,6 +366,16 @@ XPLMCommandRef sim_flight_controls_landing_gear_toggle;
 XPLMCommandRef sim_flight_controls_speed_brakes_down_one;
 XPLMCommandRef sim_flight_controls_speed_brakes_up_one;
 
+//x737 mcp toggles
+XPLMCommandRef x737_cmda_toggle;
+XPLMCommandRef x737_mcpspd_toggle;
+XPLMCommandRef x737_lvlchange_toggle;
+XPLMCommandRef x737_hdgsel_toggle;
+XPLMCommandRef x737_lnav_toggle;
+XPLMCommandRef x737_vorloc_toggle;
+XPLMCommandRef x737_app_toggle;
+XPLMCommandRef x737_althld_toggle;
+XPLMCommandRef x737_vs_toggle;
 
 
 char debug_string[80];
@@ -2112,7 +2123,6 @@ void registerCommands(void) {
     sim_flight_controls_landing_gear_toggle = XPLMFindCommand("sim/flight_controls/landing_gear_toggle");
     sim_flight_controls_speed_brakes_down_one = XPLMFindCommand("sim/flight_controls/speed_brakes_down_one");
     sim_flight_controls_speed_brakes_up_one = XPLMFindCommand("sim/flight_controls/speed_brakes_up_one");
-
 
 
     XPLMDebugString("XHSI: custom commands created and custom command handlers registered\n");

@@ -31,6 +31,16 @@ extern XPLMCommandRef sim_flight_controls_landing_gear_toggle;
 extern XPLMCommandRef sim_flight_controls_speed_brakes_down_one;
 extern XPLMCommandRef sim_flight_controls_speed_brakes_up_one;
 
+extern XPLMCommandRef x737_cmda_toggle;
+extern XPLMCommandRef x737_mcpspd_toggle;
+extern XPLMCommandRef x737_lvlchange_toggle;
+extern XPLMCommandRef x737_hdgsel_toggle;
+extern XPLMCommandRef x737_lnav_toggle;
+extern XPLMCommandRef x737_vorloc_toggle;
+extern XPLMCommandRef x737_app_toggle;
+extern XPLMCommandRef x737_althld_toggle;
+extern XPLMCommandRef x737_vs_toggle;
+
 
 void registerCommands(void);
 void unregisterCommands(void);

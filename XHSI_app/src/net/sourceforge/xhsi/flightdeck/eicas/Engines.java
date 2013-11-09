@@ -89,10 +89,10 @@ public class Engines extends EICASSubcomponent {
 //inhibit = false;
 
 //            boolean piston = this.preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_MAP);
-            boolean piston = ( this.avionics.engine_type() == XHSISettings.ENGINE_TYPE_MAP );
+            boolean piston = ( this.avionics.get_engine_type() == XHSISettings.ENGINE_TYPE_MAP );
 
 //            boolean turboprop = this.preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_TRQ);
-            boolean turboprop = ( this.avionics.engine_type() == XHSISettings.ENGINE_TYPE_TRQ );
+            boolean turboprop = ( this.avionics.get_engine_type() == XHSISettings.ENGINE_TYPE_TRQ );
             
             int num_eng = this.aircraft.num_engines();
 //num_eng = 1;
