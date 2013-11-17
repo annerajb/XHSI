@@ -64,7 +64,7 @@ public class Hydraulics extends EICASSubcomponent {
 
     public void paint(Graphics2D g2) {
 
-        if ( eicas_gc.powered && ( this.aircraft.num_engines() > 0 ) && ! this.preferences.get_eicas_primary() ) {
+        if ( eicas_gc.powered && ( this.aircraft.num_engines() > 0 ) && ! this.preferences.get_eicas_primary_only() ) {
 //if ( true && ! this.preferences.get_eicas_primary() ) {
 
             for (int i=0; i<2; i++) {

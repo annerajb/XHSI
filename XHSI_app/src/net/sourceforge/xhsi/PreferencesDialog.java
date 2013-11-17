@@ -950,7 +950,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
         this.hsi_source_combobox = new JComboBox();
-        this.hsi_source_combobox.addItem("Pilot/Copilot/Instructor selection");
+        this.hsi_source_combobox.addItem("Switchable");
         this.hsi_source_combobox.addItem("Always NAV1");
         this.hsi_source_combobox.addItem("Always NAV2");
         this.hsi_source_combobox.addActionListener(this);
@@ -1064,7 +1064,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
-        pfd_options_panel.add(new JLabel("Draw Radio frequencies", JLabel.TRAILING), cons);
+        pfd_options_panel.add(new JLabel("Display Radio frequencies", JLabel.TRAILING), cons);
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;

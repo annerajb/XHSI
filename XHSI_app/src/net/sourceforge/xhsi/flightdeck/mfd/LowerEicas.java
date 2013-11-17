@@ -94,8 +94,8 @@ public class LowerEicas extends MFDSubcomponent {
             
             this.inhibit = ( this.aircraft.agl_m() < 1000.0f / 3.28084f );
 
-//            boolean turboprop = this.preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_TRQ);
-            boolean turboprop = ( this.avionics.get_engine_type() == XHSISettings.ENGINE_TYPE_TRQ );
+            boolean n1_style = ( this.avionics.get_engine_type() == XHSISettings.ENGINE_TYPE_N1 );
+            boolean piston_style = ( this.avionics.get_engine_type() == XHSISettings.ENGINE_TYPE_MAP );
             
             int num_eng = this.aircraft.num_engines();
 //num_eng = 4;
@@ -114,12 +114,12 @@ public class LowerEicas extends MFDSubcomponent {
 
             for (int i=0; i<num_eng; i++) {
 
-                if ( turboprop ) {
-                    drawNG(g2, i, num_eng);
-                } else {
+                if ( n1_style ) {
                     drawN2(g2, i, num_eng);
                 }
-                drawFF(g2, i, num_eng);
+                if ( ! piston_style ) {
+                    drawFF(g2, i, num_eng);
+                }
                 drawOilP(g2, i, num_eng);
                 drawOilT(g2, i, num_eng);
                 drawOilQ(g2, i, num_eng);
@@ -129,24 +129,31 @@ public class LowerEicas extends MFDSubcomponent {
                 int ind_x;
                 g2.setColor(mfd_gc.color_boeingcyan);
                 g2.setFont(mfd_gc.font_m);
-                // N2 or NG
-                ind_str = turboprop ? "NG" : "N2";
-                if ( cols == 2 ) {
-                    ind_x = (dial_x[0] + dial_x[1]) / 2 - mfd_gc.get_text_width(g2, mfd_gc.font_m, ind_str)/2;
-                } else {
-                    ind_x = dial_x[num_eng-1] + mfd_gc.dial_r[num_eng]*245/100 - mfd_gc.get_text_width(g2, mfd_gc.font_m, ind_str);
-                }
-                g2.drawString(ind_str, ind_x, mfd_gc.dial_n2_y + mfd_gc.dial_r[2]);
-                // FF
-                if ( num_eng < 5 ) {
-                    ind_str = "FF";
+                
+                // N2
+                if ( n1_style ) {
+                    ind_str = "N2";
                     if ( cols == 2 ) {
                         ind_x = (dial_x[0] + dial_x[1]) / 2 - mfd_gc.get_text_width(g2, mfd_gc.font_m, ind_str)/2;
                     } else {
                         ind_x = dial_x[num_eng-1] + mfd_gc.dial_r[num_eng]*245/100 - mfd_gc.get_text_width(g2, mfd_gc.font_m, ind_str);
                     }
-                    g2.drawString(ind_str, ind_x, mfd_gc.dial_ff_y + mfd_gc.line_height_m*5/8);
+                    g2.drawString(ind_str, ind_x, mfd_gc.dial_n2_y + mfd_gc.dial_r[2]);
                 }
+                
+                // FF
+                if ( ! piston_style ) {
+                    if ( num_eng < 5 ) {
+                        ind_str = "FF";
+                        if ( cols == 2 ) {
+                            ind_x = (dial_x[0] + dial_x[1]) / 2 - mfd_gc.get_text_width(g2, mfd_gc.font_m, ind_str)/2;
+                        } else {
+                            ind_x = dial_x[num_eng-1] + mfd_gc.dial_r[num_eng]*245/100 - mfd_gc.get_text_width(g2, mfd_gc.font_m, ind_str);
+                        }
+                        g2.drawString(ind_str, ind_x, mfd_gc.dial_ff_y + mfd_gc.line_height_m*5/8);
+                    }
+                }
+                
                 // OIL P
                 ind_str = "OIL P";
                 if ( cols == 2 ) {
@@ -155,6 +162,7 @@ public class LowerEicas extends MFDSubcomponent {
                     ind_x = dial_x[num_eng-1] + mfd_gc.dial_r[num_eng]*245/100 - mfd_gc.get_text_width(g2, mfd_gc.font_m, ind_str);
                 }
                 g2.drawString(ind_str, ind_x, mfd_gc.dial_oilp_y + mfd_gc.line_height_m*5/8);
+                
                 // OIL T
                 ind_str = "OIL T";
                 if ( cols == 2 ) {
@@ -163,6 +171,7 @@ public class LowerEicas extends MFDSubcomponent {
                     ind_x = dial_x[num_eng-1] + mfd_gc.dial_r[num_eng]*245/100 - mfd_gc.get_text_width(g2, mfd_gc.font_m, ind_str);
                 }
                 g2.drawString(ind_str, ind_x, mfd_gc.dial_oilt_y + mfd_gc.line_height_m*5/8);
+                
                 // OIL Q
                 if ( num_eng < 5 ) {
                     ind_str = "OIL Q";
@@ -173,6 +182,7 @@ public class LowerEicas extends MFDSubcomponent {
                     }
                     g2.drawString(ind_str, ind_x, mfd_gc.dial_oilq_y + mfd_gc.line_height_m*5/8);
                 }
+                
                 // VIB
                 ind_str = "VIB";
                 if ( cols == 2 ) {
@@ -247,64 +257,64 @@ public class LowerEicas extends MFDSubcomponent {
     }
 
 
-    private void drawNG(Graphics2D g2, int pos, int num) {
-
-        AffineTransform original_at = g2.getTransform();
-        scalePen(g2);
-
-        float ng_value = this.aircraft.get_NG(pos);
-        float ng_dial = Math.min(ng_value, 110.0f) / 100.0f;
-
-        int ng_y = mfd_gc.dial_ng_y;
-        int ng_r = mfd_gc.dial_r[num];
-
-//        if ( ( ng_dial <= 1.0f ) || this.inhibit ) {
-//            // inhibit caution or warning below 1000ft
-//            g2.setColor(mfd_gc.instrument_background_color);
-//        } else if ( ng_dial < 1.1f ) {
-//            g2.setColor(mfd_gc.caution_color.darker().darker());
-//        } else {
-//            g2.setColor(mfd_gc.warning_color.darker().darker());
+//    private void drawNG(Graphics2D g2, int pos, int num) {
+//
+//        AffineTransform original_at = g2.getTransform();
+//        scalePen(g2);
+//
+//        float ng_value = this.aircraft.get_NG(pos);
+//        float ng_dial = Math.min(ng_value, 110.0f) / 100.0f;
+//
+//        int ng_y = mfd_gc.dial_ng_y;
+//        int ng_r = mfd_gc.dial_r[num];
+//
+////        if ( ( ng_dial <= 1.0f ) || this.inhibit ) {
+////            // inhibit caution or warning below 1000ft
+////            g2.setColor(mfd_gc.instrument_background_color);
+////        } else if ( ng_dial < 1.1f ) {
+////            g2.setColor(mfd_gc.caution_color.darker().darker());
+////        } else {
+////            g2.setColor(mfd_gc.warning_color.darker().darker());
+////        }
+//        g2.setColor(mfd_gc.instrument_background_color);
+//        g2.fillArc(dial_x[pos]-ng_r, ng_y-ng_r, 2*ng_r, 2*ng_r, 0, -Math.round(ng_dial*200.0f));
+//
+//        g2.setColor(mfd_gc.dim_markings_color);
+//        g2.drawArc(dial_x[pos]-ng_r, ng_y-ng_r, 2*ng_r, 2*ng_r, 0, -200);
+//        g2.setColor(mfd_gc.caution_color);
+//        g2.drawArc(dial_x[pos]-ng_r, ng_y-ng_r, 2*ng_r, 2*ng_r, -200, -20);
+//        g2.rotate(Math.toRadians(220), dial_x[pos], ng_y);
+//        g2.setColor(mfd_gc.warning_color);
+//        g2.drawLine(dial_x[pos]+ng_r, ng_y, dial_x[pos]+ng_r*19/16, ng_y);
+//        g2.setTransform(original_at);
+//
+//        //needle
+//        g2.rotate(Math.toRadians(Math.round(ng_dial*200.0f)), dial_x[pos], ng_y);
+//        g2.setColor(mfd_gc.markings_color);
+//        g2.drawLine(dial_x[pos], ng_y, dial_x[pos]+ng_r-2, ng_y);
+//        g2.setTransform(original_at);
+//
+//        // value box
+//        ng_y -= ng_r/8;
+//        if ( num < 5 ) {
+//            g2.setColor(mfd_gc.dim_markings_color);
+//            g2.drawRect(dial_x[pos], ng_y - mfd_gc.dial_font_h[num]*140/100, mfd_gc.dial_font_w[num]*55/10, mfd_gc.dial_font_h[num]*140/100);
+//            if ( ( ng_dial <= 1.0f ) || this.inhibit ) {
+//                // inhibit caution or warning below 1000ft
+//                g2.setColor(mfd_gc.markings_color);
+//            } else if ( ng_dial < 1.1f ) {
+//                g2.setColor(mfd_gc.caution_color);
+//            } else {
+//                g2.setColor(mfd_gc.warning_color);
+//            }
+//            g2.setFont(mfd_gc.dial_font[num]);
+//            String ng_str = one_decimal_format.format(ng_value);
+//            g2.drawString(ng_str, dial_x[pos]+mfd_gc.dial_font_w[num]*51/10-mfd_gc.get_text_width(g2, mfd_gc.dial_font[num], ng_str), ng_y-mfd_gc.dial_font_h[num]*25/100-2);
 //        }
-        g2.setColor(mfd_gc.instrument_background_color);
-        g2.fillArc(dial_x[pos]-ng_r, ng_y-ng_r, 2*ng_r, 2*ng_r, 0, -Math.round(ng_dial*200.0f));
-
-        g2.setColor(mfd_gc.dim_markings_color);
-        g2.drawArc(dial_x[pos]-ng_r, ng_y-ng_r, 2*ng_r, 2*ng_r, 0, -200);
-        g2.setColor(mfd_gc.caution_color);
-        g2.drawArc(dial_x[pos]-ng_r, ng_y-ng_r, 2*ng_r, 2*ng_r, -200, -20);
-        g2.rotate(Math.toRadians(220), dial_x[pos], ng_y);
-        g2.setColor(mfd_gc.warning_color);
-        g2.drawLine(dial_x[pos]+ng_r, ng_y, dial_x[pos]+ng_r*19/16, ng_y);
-        g2.setTransform(original_at);
-
-        //needle
-        g2.rotate(Math.toRadians(Math.round(ng_dial*200.0f)), dial_x[pos], ng_y);
-        g2.setColor(mfd_gc.markings_color);
-        g2.drawLine(dial_x[pos], ng_y, dial_x[pos]+ng_r-2, ng_y);
-        g2.setTransform(original_at);
-
-        // value box
-        ng_y -= ng_r/8;
-        if ( num < 5 ) {
-            g2.setColor(mfd_gc.dim_markings_color);
-            g2.drawRect(dial_x[pos], ng_y - mfd_gc.dial_font_h[num]*140/100, mfd_gc.dial_font_w[num]*55/10, mfd_gc.dial_font_h[num]*140/100);
-            if ( ( ng_dial <= 1.0f ) || this.inhibit ) {
-                // inhibit caution or warning below 1000ft
-                g2.setColor(mfd_gc.markings_color);
-            } else if ( ng_dial < 1.1f ) {
-                g2.setColor(mfd_gc.caution_color);
-            } else {
-                g2.setColor(mfd_gc.warning_color);
-            }
-            g2.setFont(mfd_gc.dial_font[num]);
-            String ng_str = one_decimal_format.format(ng_value);
-            g2.drawString(ng_str, dial_x[pos]+mfd_gc.dial_font_w[num]*51/10-mfd_gc.get_text_width(g2, mfd_gc.dial_font[num], ng_str), ng_y-mfd_gc.dial_font_h[num]*25/100-2);
-        }
-
-        resetPen(g2);
-
-    }
+//
+//        resetPen(g2);
+//
+//    }
 
 
     private void drawFF(Graphics2D g2, int pos, int num) {

@@ -59,7 +59,7 @@ public class SubPanelLines extends EICASSubcomponent {
 
     public void paint(Graphics2D g2) {
 
-        if ( eicas_gc.powered && ! this.preferences.get_eicas_primary() ) {
+        if ( eicas_gc.powered && ! this.preferences.get_eicas_primary_only() ) {
 
             g2.setColor(eicas_gc.color_boeingcyan);
             g2.drawLine(eicas_gc.panel_rect.x + eicas_gc.panel_rect.width - eicas_gc.alerts_w*33/32, eicas_gc.panel_rect.y + eicas_gc.panel_rect.height/100, eicas_gc.panel_rect.x + eicas_gc.panel_rect.width - eicas_gc.alerts_w*33/32, eicas_gc.panel_rect.y + eicas_gc.panel_rect.height*99/100);

@@ -64,7 +64,7 @@ public class Fuel extends EICASSubcomponent {
     private void drawFuel(Graphics2D g2) {
 
         int tanks = this.aircraft.num_tanks();
-        boolean primaries = this.preferences.get_eicas_primary();
+        boolean primaries = this.preferences.get_eicas_primary_only();
 //tanks = 3;
         if ( tanks == 3 ) {
             drawGauge(g2, 0, "CTR", this.aircraft.get_fuel(1), this.aircraft.get_tank_capacity(1), primaries);

@@ -59,10 +59,10 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
     public int dials_width;
     public int prim_dials_height;
     public int hyd_dials_height;
-    public int dial_n1_y;
-    public int dial_egt_y;
-    public int dial_n2_y;
-    public int dial_ff_y;
+    public int dial_main1_y;
+    public int dial_main2_y;
+    public int dial_main3_y;
+    public int dial_main4_y;
     public int dial_ng_y;
     public int dial_oil_p_y;
     public int dial_oil_t_y;
@@ -124,10 +124,10 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
 
             // the dials take +/-60% of the width
             dials_width = panel_rect.width*575/1000;
-            dial_n1_y = panel_rect.y + eicas_size*17/100;
-            dial_egt_y = panel_rect.y + eicas_size*36/100;
-            dial_n2_y = panel_rect.y + eicas_size*55/100;
-            dial_ff_y = panel_rect.y + eicas_size*73/100;
+            dial_main1_y = panel_rect.y + eicas_size*17/100;
+            dial_main2_y = panel_rect.y + eicas_size*36/100;
+            dial_main3_y = panel_rect.y + eicas_size*55/100;
+            dial_main4_y = panel_rect.y + eicas_size*73/100;
             dial_ng_y = panel_rect.y + eicas_size*87/100;
             dial_oil_p_y = panel_rect.y + eicas_size*29/100;
             dial_oil_t_y = panel_rect.y + eicas_size*44/100;
