@@ -108,11 +108,11 @@ public class Engines extends EICASSubcomponent {
 //                    prim_dial_x[i] = eicas_gc.panel_rect.x + eicas_gc.dials_width*50/100/cols + i*eicas_gc.dials_width/cols;
                     // for later: change the order: MAP/RPM/FF/EGT
                     drawMAP(g2, i, num_eng);
-                    drawEGT(g2, i, num_eng);
                     drawPROP(g2, i, num_eng);
-                    if ( ! this.preferences.get_eicas_primary() ) {
-                        drawFF(g2, i, num_eng);
-                        drawNG(g2, i, num_eng);
+                    drawEGT(g2, i, num_eng, 3);
+                    drawFF(g2, i, num_eng);
+                    if ( ! this.preferences.get_eicas_primary_only() ) {
+                        //drawCHT(g2, i, num_eng);
 //                        seco_dial_x[i] = eicas_gc.alerts_x0 + i*eicas_gc.alerts_w/num_eng + (eicas_gc.alerts_w/cols*15/16)/2;
                         drawOilP(g2, i, num_eng);
                         drawOilT(g2, i, num_eng);
@@ -125,11 +125,11 @@ public class Engines extends EICASSubcomponent {
                 for (int i=0; i<num_eng; i++) {
 //                    prim_dial_x[i] = eicas_gc.panel_rect.x + eicas_gc.dials_width*50/100/cols + i*eicas_gc.dials_width/cols;
                     drawTRQ(g2, i, num_eng);
-                    drawITT(g2, i, num_eng);
                     drawPROP(g2, i, num_eng);
-                    if ( ! this.preferences.get_eicas_primary() ) {
-                        drawFF(g2, i, num_eng);
-                        drawNG(g2, i, num_eng);
+                    drawITT(g2, i, num_eng);
+                    drawNG(g2, i, num_eng);
+                    if ( ! this.preferences.get_eicas_primary_only() ) {
+                        //drawFF(g2, i, num_eng);
 //                        seco_dial_x[i] = eicas_gc.alerts_x0 + i*eicas_gc.alerts_w/num_eng + (eicas_gc.alerts_w/cols*15/16)/2;
                         drawOilP(g2, i, num_eng);
                         drawOilT(g2, i, num_eng);
@@ -142,8 +142,8 @@ public class Engines extends EICASSubcomponent {
                 for (int i=0; i<num_eng; i++) {
 //                    prim_dial_x[i] = eicas_gc.panel_rect.x + eicas_gc.dials_width*50/100/cols + i*eicas_gc.dials_width/cols;
                     drawN1(g2, i, num_eng);
-                    drawEGT(g2, i, num_eng);
-                    if ( ! this.preferences.get_eicas_primary() ) {
+                    drawEGT(g2, i, num_eng, 2);
+                    if ( ! this.preferences.get_eicas_primary_only() ) {
                         drawN2(g2, i, num_eng);
                         drawFF(g2, i, num_eng);
 //                        seco_dial_x[i] = eicas_gc.alerts_x0 + i*eicas_gc.alerts_w/num_eng + (eicas_gc.alerts_w/cols*15/16)/2;
@@ -160,50 +160,56 @@ public class Engines extends EICASSubcomponent {
             int ind_x;
             g2.setColor(eicas_gc.color_boeingcyan);
             g2.setFont(eicas_gc.font_m);
-            // N1
+            
+            // main1
             ind_str = piston ? "MAP" : ( turboprop ? "TRQ" : "N1" );
             if ( cols == 2 ) {
                 ind_x = (prim_dial_x[0] + prim_dial_x[1]) / 2 - eicas_gc.get_text_width(g2, eicas_gc.font_m, ind_str)/2;
             } else {
                 ind_x = prim_dial_x[num_eng-1] + eicas_gc.dial_r[num_eng]*145/100 - eicas_gc.get_text_width(g2, eicas_gc.font_m, ind_str);
             }
-            g2.drawString(ind_str, ind_x, eicas_gc.dial_n1_y + Math.min(eicas_gc.eicas_size*9/100 + eicas_gc.dial_font_h[num_eng], eicas_gc.dial_r[2]) - 2);
-            // EGT
-            ind_str = piston ? "EGT" : ( turboprop ? "ITT" : "EGT" );
+            g2.drawString(ind_str, ind_x, eicas_gc.dial_main1_y + Math.min(eicas_gc.eicas_size*9/100 + eicas_gc.dial_font_h[num_eng], eicas_gc.dial_r[2]) - 2);
+            
+            // main2
+            ind_str = piston ? "RPM" : ( turboprop ? "PROP" : "EGT" );
             if ( cols == 2 ) {
                 ind_x = (prim_dial_x[0] + prim_dial_x[1]) / 2 - eicas_gc.get_text_width(g2, eicas_gc.font_m, ind_str)/2;
             } else {
                 ind_x = prim_dial_x[num_eng-1] + eicas_gc.dial_r[num_eng]*145/100 - eicas_gc.get_text_width(g2, eicas_gc.font_m, ind_str);
             }
-            g2.drawString(ind_str, ind_x, eicas_gc.dial_egt_y + Math.min(eicas_gc.eicas_size*9/100 + eicas_gc.dial_font_h[num_eng], eicas_gc.dial_r[2]) - 2);
+            g2.drawString(ind_str, ind_x, eicas_gc.dial_main2_y + Math.min(eicas_gc.eicas_size*9/100 + eicas_gc.dial_font_h[num_eng], eicas_gc.dial_r[2]) - 2);
 
-            if ( piston || turboprop || ! this.preferences.get_eicas_primary() ) {
+            if ( piston || turboprop || ! this.preferences.get_eicas_primary_only() ) {
                 
-                // N2
-                ind_str = piston ? "RPM" : ( turboprop ? "PROP" : "N2" );
+                // main3
+                ind_str = piston ? "EGT" : ( turboprop ? "ITT" : "N2" );
                 if ( cols == 2 ) {
                     ind_x = (prim_dial_x[0] + prim_dial_x[1]) / 2 - eicas_gc.get_text_width(g2, eicas_gc.font_m, ind_str)/2;
                 } else {
                     ind_x = prim_dial_x[num_eng-1] + eicas_gc.dial_r[num_eng]*145/100 - eicas_gc.get_text_width(g2, eicas_gc.font_m, ind_str);
                 }
-                g2.drawString(ind_str, ind_x, eicas_gc.dial_n2_y + Math.min(eicas_gc.eicas_size*9/100 + eicas_gc.dial_font_h[num_eng], eicas_gc.dial_r[2]) - 2);
+                g2.drawString(ind_str, ind_x, eicas_gc.dial_main3_y + Math.min(eicas_gc.eicas_size*9/100 + eicas_gc.dial_font_h[num_eng], eicas_gc.dial_r[2]) - 2);
                 
                 g2.setFont(eicas_gc.font_xs);
 
             }
 
-            if ( ! this.preferences.get_eicas_primary() ) {
+            if ( piston || turboprop || ! this.preferences.get_eicas_primary_only() ) {
                 
-                // FF
-                ind_str = "FF";
+                // main4
+                ind_str = turboprop ? "NG" : "FF";
                 if ( cols == 2 ) {
                     ind_x = (prim_dial_x[0] + prim_dial_x[1]) / 2 - eicas_gc.get_text_width(g2, eicas_gc.font_m, ind_str)/2;
                 } else {
                     ind_x = prim_dial_x[num_eng-1] + eicas_gc.dial_r[num_eng]*145/100 - eicas_gc.get_text_width(g2, eicas_gc.font_m, ind_str);
                 }
-                g2.drawString(ind_str, ind_x, eicas_gc.dial_ff_y + Math.min(eicas_gc.eicas_size*9/100 + eicas_gc.dial_font_h[num_eng], eicas_gc.dial_r[2]*80/100) - 2);
+                g2.drawString(ind_str, ind_x, eicas_gc.dial_main4_y + Math.min(eicas_gc.eicas_size*9/100 + eicas_gc.dial_font_h[num_eng], eicas_gc.dial_r[2]*80/100) - 2);
 
                 g2.setFont(eicas_gc.font_xs);
+                
+            }
+
+            if ( ! this.preferences.get_eicas_primary_only() ) {
 
                 // OIL P
                 ind_str = "OIL P";
@@ -230,13 +236,16 @@ public class Engines extends EICASSubcomponent {
                 }
                 g2.drawString(ind_str, ind_x, eicas_gc.dial_oil_q_y + eicas_gc.line_height_xs*35/20);
                 // VIB or NG or CHT
-                ind_str = piston ? "CHT" : ( turboprop ? "NG" : "VIB" );
-                if ( cols == 2 ) {
-                    ind_x = (seco_dial_x[0] + seco_dial_x[1]) / 2 - eicas_gc.get_text_width(g2, eicas_gc.font_xs, ind_str)/2;
-                } else {
-                    ind_x = seco_dial_x[0] - eicas_gc.dial_r[num_eng]*85/100;
+                // CHT not implemented, NG goes to primary
+                if ( ! piston && ! turboprop ) {
+                    ind_str = piston ? "CHT" : ( turboprop ? "NG" : "VIB" );
+                    if ( cols == 2 ) {
+                        ind_x = (seco_dial_x[0] + seco_dial_x[1]) / 2 - eicas_gc.get_text_width(g2, eicas_gc.font_xs, ind_str)/2;
+                    } else {
+                        ind_x = seco_dial_x[0] - eicas_gc.dial_r[num_eng]*85/100;
+                    }
+                    g2.drawString(ind_str, ind_x, eicas_gc.dial_vib_y + eicas_gc.dial_r[2]*70/100 + eicas_gc.line_height_xs);
                 }
-                g2.drawString(ind_str, ind_x, eicas_gc.dial_vib_y + eicas_gc.dial_r[2]*70/100 + eicas_gc.line_height_xs);
 
             }
 
@@ -254,7 +263,7 @@ public class Engines extends EICASSubcomponent {
         float n1_dial = Math.min(n1_value, 110.0f) / 100.0f;
         String n1_str = one_decimal_format.format(n1_value);
 
-        int n1_y = eicas_gc.dial_n1_y;
+        int n1_y = eicas_gc.dial_main1_y;
         int n1_r = eicas_gc.dial_r[num];
         int n1_box_y = n1_y - n1_r/8;
 
@@ -372,7 +381,7 @@ if ( ref_n1 <= 1.0f ) {
         float n1_dial = Math.min(n1_value, 44.0f) / 40.0f;
         String n1_str = one_decimal_format.format(n1_value);
 
-        int n1_y = eicas_gc.dial_n1_y;
+        int n1_y = eicas_gc.dial_main1_y;
         int n1_r = eicas_gc.dial_r[num];
         int n1_box_y = n1_y - n1_r/8;
 
@@ -476,9 +485,9 @@ if ( ref_n1 <= 1.0f ) {
 //trq_max=10000.0f;
         float trq_dial = Math.min(trq_value/trq_max, 1.1f);
         // display TRQ in LbFt x100
-//        String trq_str = Integer.toString(Math.round(trq_value/100.0f));
-        String trq_str = one_decimal_format.format(trq_value/100.0f);
-        int trq_y = eicas_gc.dial_n1_y;
+        String trq_str = Integer.toString(Math.round(trq_value));
+//        String trq_str = one_decimal_format.format(trq_value/100.0f);
+        int trq_y = eicas_gc.dial_main1_y;
         int trq_r = eicas_gc.dial_r[num];
 
         if ( trq_dial <= 1.0f ) {
@@ -547,7 +556,7 @@ if ( ref_n1 <= 1.0f ) {
     }
 
     
-    private void drawEGT(Graphics2D g2, int pos, int num) {
+    private void drawEGT(Graphics2D g2, int pos, int num, int line) {
 
         AffineTransform original_at = g2.getTransform();
         scalePen(g2);
@@ -558,7 +567,7 @@ if ( ref_n1 <= 1.0f ) {
 //egt_value=500;
 
         int egt_x = prim_dial_x[pos];
-        int egt_y = eicas_gc.dial_egt_y;
+        int egt_y = ( line == 2 ) ? eicas_gc.dial_main2_y :eicas_gc.dial_main3_y;
         int egt_r = eicas_gc.dial_r[num];
 
         if ( ( egt_dial <= 1.0f ) || this.inhibit ) {
@@ -620,7 +629,7 @@ if ( ref_n1 <= 1.0f ) {
 //itt_value=666;
 
         int itt_x = prim_dial_x[pos];
-        int itt_y = eicas_gc.dial_egt_y;
+        int itt_y = eicas_gc.dial_main3_y;
         int itt_r = eicas_gc.dial_r[num];
 
         if ( itt_dial <= 1.0f ) {
@@ -675,7 +684,7 @@ if ( ref_n1 <= 1.0f ) {
 //ff_value=n1_test;
         float n2_dial = Math.min(n2_value, 110.0f) / 100.0f;
 
-        int n2_y = eicas_gc.dial_n2_y;
+        int n2_y = eicas_gc.dial_main3_y;
         int n2_r = eicas_gc.dial_r[num];
 
         if ( ( n2_dial <= 1.0f ) || this.inhibit ) {
@@ -737,7 +746,7 @@ if ( ref_n1 <= 1.0f ) {
 //rpm_value=2399.0f;
         float rpm_dial = Math.min(rpm_value/rpm_max, 1.1f);
 
-        int rpm_y = eicas_gc.dial_n2_y;
+        int rpm_y = eicas_gc.dial_main2_y;
         int rpm_r = eicas_gc.dial_r[num];
 
         if ( rpm_dial <= 1.0f ) {
@@ -796,7 +805,7 @@ if ( ref_n1 <= 1.0f ) {
 //ff_max=99000.0f;
         float ff_dial = ff_value / ff_max;
 
-        int ff_y = eicas_gc.dial_ff_y;
+        int ff_y = eicas_gc.dial_main4_y;
         int ff_r = eicas_gc.dial_r[num] * 85 / 100;
 
         g2.setColor(eicas_gc.instrument_background_color);
@@ -838,6 +847,65 @@ if ( ref_n1 <= 1.0f ) {
                 ff_str = one_decimal_format.format(ff_value);
             }
             g2.drawString(ff_str, prim_dial_x[pos]+eicas_gc.dial_font_w[num]*51/10-eicas_gc.get_text_width(g2, eicas_gc.dial_font[num], ff_str), ff_y-eicas_gc.dial_font_h[num]*25/100-2);
+        }
+
+        resetPen(g2);
+
+    }
+
+
+    private void drawNG(Graphics2D g2, int pos, int num) {
+
+        AffineTransform original_at = g2.getTransform();
+        scalePen(g2);
+
+        float ng_value = this.aircraft.get_NG(pos);
+//n1_test += 0.1f;
+//if (n1_test > 123.0f) n1_test = 66.0f;
+//ff_value=n1_test;
+        float ng_dial = Math.min(ng_value, 110.0f) / 100.0f;
+
+        int ng_y = eicas_gc.dial_main4_y;
+        int ng_r = eicas_gc.dial_r[num] * 85 / 100;
+
+        if ( ( ng_dial <= 1.0f ) || this.inhibit ) {
+            // inhibit caution or warning below 1000ft
+            g2.setColor(eicas_gc.instrument_background_color);
+        } else if ( ng_dial < 1.1f ) {
+            g2.setColor(eicas_gc.caution_color.darker().darker());
+        } else {
+            g2.setColor(eicas_gc.warning_color.darker().darker());
+        }
+        g2.fillArc(prim_dial_x[pos]-ng_r, ng_y-ng_r, 2*ng_r, 2*ng_r, 0, -Math.round(ng_dial*200.0f));
+
+        g2.setColor(eicas_gc.dim_markings_color);
+        g2.drawArc(prim_dial_x[pos]-ng_r, ng_y-ng_r, 2*ng_r, 2*ng_r, 0, -200);
+        g2.setColor(eicas_gc.warning_color);
+        g2.drawArc(prim_dial_x[pos]-ng_r, ng_y-ng_r, 2*ng_r, 2*ng_r, -200, -20);
+        g2.rotate(Math.toRadians(200), prim_dial_x[pos], ng_y);
+        g2.drawLine(prim_dial_x[pos]+ng_r, ng_y, prim_dial_x[pos]+ng_r*19/16, ng_y);
+        g2.setTransform(original_at);
+
+        //needle
+        g2.rotate(Math.toRadians(Math.round(ng_dial*200.0f)), prim_dial_x[pos], ng_y);
+        g2.setColor(eicas_gc.markings_color);
+        g2.drawLine(prim_dial_x[pos], ng_y, prim_dial_x[pos]+ng_r-2, ng_y);
+        g2.setTransform(original_at);
+
+        // value box
+        ng_y -= ng_r/8;
+        if ( num < 5 ) {
+            g2.setColor(eicas_gc.dim_markings_color);
+            g2.drawRect(prim_dial_x[pos], ng_y - eicas_gc.dial_font_h[num]*140/100, eicas_gc.dial_font_w[num]*40/10, eicas_gc.dial_font_h[num]*140/100);
+            if ( ( ng_dial <= 1.0f ) ) {
+                g2.setColor(eicas_gc.markings_color);
+            } else {
+                g2.setColor(eicas_gc.warning_color);
+            }
+            g2.setFont(eicas_gc.dial_font[num]);
+            // String ng_str = one_decimal_format.format(ng_value);
+            String ng_str = Integer.toString(Math.round(ng_value));
+            g2.drawString(ng_str, prim_dial_x[pos]+eicas_gc.dial_font_w[num]*36/10-eicas_gc.get_text_width(g2, eicas_gc.dial_font[num], ng_str), ng_y-eicas_gc.dial_font_h[num]*25/100-2);
         }
 
         resetPen(g2);
@@ -955,51 +1023,51 @@ if ( ref_n1 <= 1.0f ) {
     }
 
 
-    private void drawNG(Graphics2D g2, int pos, int num) {
-
-        AffineTransform original_at = g2.getTransform();
-        scalePen(g2);
-
-        float ng_dial = this.aircraft.get_NG(pos) / 100.0f;
-//ng_dial = 80.0f / 100.0f;
-
-        int ng_x;
-        int ng_y;
-        int ng_r = eicas_gc.dial_r[num] * 70 /100;
-        if ( this.preferences.get_eicas_primary() ) {
-            // left column
-            ng_x = prim_dial_x[pos];
-            ng_y = eicas_gc.dial_ng_y;
-        } else {
-            // right column
-            ng_x = seco_dial_x[pos];
-            ng_y = eicas_gc.dial_vib_y;
-        }
-
-        if ( ng_dial <= 1.0f ) {
-            g2.setColor(eicas_gc.instrument_background_color);
-        } else {
-            g2.setColor(eicas_gc.warning_color.darker().darker());
-        }
-        g2.fillArc(ng_x-ng_r, ng_y-ng_r, 2*ng_r, 2*ng_r, 0, -Math.round(ng_dial*200.0f));
-
-        g2.setColor(eicas_gc.dim_markings_color);
-        g2.drawArc(ng_x-ng_r, ng_y-ng_r, 2*ng_r, 2*ng_r, 0, -200);
-        g2.setColor(eicas_gc.warning_color);
-        g2.drawArc(ng_x-ng_r, ng_y-ng_r, 2*ng_r, 2*ng_r, -200, -20);
-        g2.rotate(Math.toRadians(200), ng_x, ng_y);
-        g2.drawLine(ng_x+ng_r, ng_y, ng_x+ng_r*19/16, ng_y);
-        g2.setTransform(original_at);
-
-        //needle
-        g2.rotate(Math.toRadians(Math.round(ng_dial*200.0f)), ng_x, ng_y);
-        g2.setColor(eicas_gc.markings_color);
-        g2.drawLine(ng_x, ng_y, ng_x+ng_r-2, ng_y);
-        g2.setTransform(original_at);
-
-        resetPen(g2);
-
-    }
+//    private void drawCHT(Graphics2D g2, int pos, int num) {
+//
+//        AffineTransform original_at = g2.getTransform();
+//        scalePen(g2);
+//
+//        float ng_dial = this.aircraft.get_NG(pos) / 100.0f;
+////ng_dial = 80.0f / 100.0f;
+//
+//        int ng_x;
+//        int ng_y;
+//        int ng_r = eicas_gc.dial_r[num] * 70 /100;
+//        if ( this.preferences.get_eicas_primary() ) {
+//            // left column
+//            ng_x = prim_dial_x[pos];
+//            ng_y = eicas_gc.dial_ng_y;
+//        } else {
+//            // right column
+//            ng_x = seco_dial_x[pos];
+//            ng_y = eicas_gc.dial_vib_y;
+//        }
+//
+//        if ( ng_dial <= 1.0f ) {
+//            g2.setColor(eicas_gc.instrument_background_color);
+//        } else {
+//            g2.setColor(eicas_gc.warning_color.darker().darker());
+//        }
+//        g2.fillArc(ng_x-ng_r, ng_y-ng_r, 2*ng_r, 2*ng_r, 0, -Math.round(ng_dial*200.0f));
+//
+//        g2.setColor(eicas_gc.dim_markings_color);
+//        g2.drawArc(ng_x-ng_r, ng_y-ng_r, 2*ng_r, 2*ng_r, 0, -200);
+//        g2.setColor(eicas_gc.warning_color);
+//        g2.drawArc(ng_x-ng_r, ng_y-ng_r, 2*ng_r, 2*ng_r, -200, -20);
+//        g2.rotate(Math.toRadians(200), ng_x, ng_y);
+//        g2.drawLine(ng_x+ng_r, ng_y, ng_x+ng_r*19/16, ng_y);
+//        g2.setTransform(original_at);
+//
+//        //needle
+//        g2.rotate(Math.toRadians(Math.round(ng_dial*200.0f)), ng_x, ng_y);
+//        g2.setColor(eicas_gc.markings_color);
+//        g2.drawLine(ng_x, ng_y, ng_x+ng_r-2, ng_y);
+//        g2.setTransform(original_at);
+//
+//        resetPen(g2);
+//
+//    }
 
 
     private void scalePen(Graphics2D g2) {

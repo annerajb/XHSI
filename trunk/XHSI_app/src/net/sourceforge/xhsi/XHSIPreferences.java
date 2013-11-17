@@ -701,7 +701,7 @@ public class XHSIPreferences {
      * @return            - Draw only the primary engine indications
      *
      */
-    public boolean get_eicas_primary() {
+    public boolean get_eicas_primary_only() {
         return get_preference(PREF_EICAS_PRIMARY_ONLY).equalsIgnoreCase("true");
     }
 
