@@ -122,6 +122,28 @@ float sendAvionicsCallback(
 			}
 		}
 
+		packet_size = createCustomAvionicsPacket();
+
+		for (i=0; i<NUM_DEST; i++) {
+			if (dest_enable[i]) {
+				res = sendto(sockfd, (const char*)&sim_packet, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr));
+#if IBM
+				if ( res == SOCKET_ERROR ) {
+					XPLMDebugString("XHSI: caught error while sending AVIO packet! (");
+                    sprintf(msg, "%d", WSAGetLastError());
+					XPLMDebugString(msg);
+					XPLMDebugString(")\n");
+				}
+#else
+				if ( res < 0 ) {
+					XPLMDebugString("XHSI: caught error while sending AVIO packet! (");
+					XPLMDebugString((char * const) strerror(GET_ERRNO));
+					XPLMDebugString(")\n");
+				}
+#endif
+			}
+		}
+
 		return avionics_data_delay;
 
 	} else {

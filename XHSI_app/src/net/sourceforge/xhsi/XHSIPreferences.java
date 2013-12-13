@@ -963,7 +963,7 @@ public class XHSIPreferences {
         }
 
         if ( ! this.preferences.containsKey(PREF_DRAW_BEZIER_PAVEMENTS) ) {
-            this.preferences.setProperty(PREF_DRAW_BEZIER_PAVEMENTS, "true");
+            this.preferences.setProperty(PREF_DRAW_BEZIER_PAVEMENTS, "false");
             this.unsaved_changes = true;
         }
 
