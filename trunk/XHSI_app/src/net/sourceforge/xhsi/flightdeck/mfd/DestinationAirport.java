@@ -26,15 +26,15 @@ import java.awt.BasicStroke;
 //import java.awt.Color;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.GradientPaint;
+//import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
+//import java.awt.geom.Area;
+//import java.awt.geom.Rectangle2D;
+//import java.awt.geom.RoundRectangle2D;
 //import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -47,7 +47,7 @@ import net.sourceforge.xhsi.XHSIPreferences;
 import net.sourceforge.xhsi.model.Airport;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ComRadio;
-import net.sourceforge.xhsi.model.FMS;
+//import net.sourceforge.xhsi.model.FMS;
 import net.sourceforge.xhsi.model.FMSEntry;
 import net.sourceforge.xhsi.model.Localizer;
 import net.sourceforge.xhsi.model.ModelFactory;
@@ -68,7 +68,7 @@ public class DestinationAirport extends MFDSubcomponent {
     private static TaxiChart taxi = new TaxiChart();
 
 
-    private String surfaces[] = {"None0", "Asphalt", "Concrete", "Grass", "Dirt", "Gravel", "None6", "None7", "None8", "None9", "None10", "None11", "Dry lakebed", "Water", "Snow", "Transparent"};
+    //private String surfaces[] = {"None0", "Asphalt", "Concrete", "Grass", "Dirt", "Gravel", "None6", "None7", "None8", "None9", "None10", "None11", "Dry lakebed", "Water", "Snow", "Transparent"};
     public static final int RWY_ASPHALT = 1;
     public static final int RWY_CONCRETE = 2;
     public static final int RWY_GRASS = 3;

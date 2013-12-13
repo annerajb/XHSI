@@ -243,7 +243,7 @@ int createADCPacket(void) {
 
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_LIGHTS);
     if(x737_ready){
-        sim_packet.sim_data_points[i].value = custom_htonf((float)
+			sim_packet.sim_data_points[i].value = custom_htonf((float)
             (XPLMGetDatai(x737_beacon_light_switch) +
             XPLMGetDatai(x737_left_fixed_land_light_switch) * 2 +
             (XPLMGetDatai(x737_position_light_switch) != 0 ? 4 : 0) +
@@ -356,18 +356,6 @@ int createAvionicsPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_ELECTRICAL_COCKPIT_LIGHTS_ON);
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(cockpit_lights_on));
 	i++;
-
-
-    if ( x737_ready ) {
-
-        sim_packet.sim_data_points[i].id = custom_htoni(X737_STBY_PWR);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(x737_stby_pwr));
-        i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(X737_PFD_PWR);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(x737_PFD_pwr));
-        i++;
-
-    }
 
 
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ);
@@ -734,6 +722,31 @@ int createAvionicsPacket(void) {
 	i++;
 
 
+	// now we know the number of datapoints
+	sim_packet.nb_of_sim_data_points = custom_htoni( i );
+
+	// packet size : char[4] + int + ( # * ( int + float) )
+	packet_size = 8 + i * 8;
+	if ( packet_size > max_packet_size) {
+        max_packet_size = packet_size;
+        sprintf(msg, "XHSI: max packet size so far (AVIO): %d\n", max_packet_size);
+        XPLMDebugString(msg);
+    }
+	return packet_size;
+
+}
+
+
+int createCustomAvionicsPacket(void) {
+
+	int i = 0;
+	int packet_size;
+//	char nav_id_bytes[4];
+//	float gear_ratio[10];
+
+	strncpy(sim_packet.packet_id, "AVIO", 4);
+
+
     sim_packet.sim_data_points[i].id = custom_htoni(UFMC_STATUS);
     sim_packet.sim_data_points[i].value = custom_htonf((float) ufmc_ready);
     i++;
@@ -765,6 +778,13 @@ int createAvionicsPacket(void) {
     sim_packet.sim_data_points[i].value = custom_htonf((float) x737_ready);
     i++;
     if ( x737_ready ) {
+
+        sim_packet.sim_data_points[i].id = custom_htoni(X737_STBY_PWR);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(x737_stby_pwr));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(X737_PFD_PWR);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(x737_PFD_pwr));
+        i++;
 
         sim_packet.sim_data_points[i].id = custom_htoni(X737_AFDS_FD_A);
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(x737_fdA_status));

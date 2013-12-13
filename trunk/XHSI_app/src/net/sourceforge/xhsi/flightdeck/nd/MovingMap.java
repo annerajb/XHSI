@@ -39,7 +39,7 @@ import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
-import java.awt.geom.Path2D;
+// don't import : import java.awt.geom.Path2D;
 //import java.awt.geom.Rectangle2D;
 //import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
@@ -312,7 +312,7 @@ public class MovingMap extends NDSubcomponent {
 
                         // Bezier
 
-                        Path2D taxishape = new Path2D.Float();
+                        java.awt.geom.Path2D taxishape = new java.awt.geom.Path2D.Float();
                         TaxiChart.Node last_node = null;
                         for (int h=0; h<taxi.border.nodes.size(); h++) {
                             TaxiChart.Node node1 = taxi.border.nodes.get(h);
@@ -385,7 +385,7 @@ public class MovingMap extends NDSubcomponent {
                             } else {
 
                                 // Bezier
-                                Path2D taxishape = new Path2D.Float();
+                                java.awt.geom.Path2D taxishape = new java.awt.geom.Path2D.Float();
                                 TaxiChart.Node last_node = null;
                                 for (int h=0; h<hole1.nodes.size(); h++) {
 
@@ -466,7 +466,7 @@ public class MovingMap extends NDSubcomponent {
                         } else {
 
                             // Bezier
-                            Path2D taxishape = new Path2D.Float();
+                            java.awt.geom.Path2D taxishape = new java.awt.geom.Path2D.Float();
                             TaxiChart.Node last_node = null;
                             for (int h=0; h<ramp1.nodes.size(); h++) {
 
@@ -547,7 +547,7 @@ public class MovingMap extends NDSubcomponent {
                                 } else {
 
                                     // Bezier
-                                    Path2D taxishape = new Path2D.Float();
+                                    java.awt.geom.Path2D taxishape = new java.awt.geom.Path2D.Float();
                                     TaxiChart.Node last_node = null;
                                     for (int h=0; h<hole1.nodes.size(); h++) {
 
