@@ -39,7 +39,7 @@ import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
-// don't import : import java.awt.geom.Path2D;
+import java.awt.geom.Path2D;
 //import java.awt.geom.Rectangle2D;
 //import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
@@ -120,8 +120,8 @@ public class MovingMap extends NDSubcomponent {
         super(model_factory, hsi_gc, parent_component);
         this.nor = NavigationObjectRepository.get_instance();
 
-        MovingMap.vor_freq_formatter = new DecimalFormat(" 000.00");
-        MovingMap.ndb_freq_formatter = new DecimalFormat(" 000");
+        MovingMap.vor_freq_formatter = new DecimalFormat("  000.00");
+        MovingMap.ndb_freq_formatter = new DecimalFormat("  000");
         DecimalFormatSymbols symbols = vor_freq_formatter.getDecimalFormatSymbols();
         symbols.setDecimalSeparator('.');
         MovingMap.vor_freq_formatter.setDecimalFormatSymbols(symbols);
@@ -312,7 +312,7 @@ public class MovingMap extends NDSubcomponent {
 
                         // Bezier
 
-                        java.awt.geom.Path2D taxishape = new java.awt.geom.Path2D.Float();
+                        Path2D taxishape = new Path2D.Float();
                         TaxiChart.Node last_node = null;
                         for (int h=0; h<taxi.border.nodes.size(); h++) {
                             TaxiChart.Node node1 = taxi.border.nodes.get(h);
@@ -385,7 +385,8 @@ public class MovingMap extends NDSubcomponent {
                             } else {
 
                                 // Bezier
-                                java.awt.geom.Path2D taxishape = new java.awt.geom.Path2D.Float();
+                                
+                                Path2D taxishape = new Path2D.Float();
                                 TaxiChart.Node last_node = null;
                                 for (int h=0; h<hole1.nodes.size(); h++) {
 
@@ -466,7 +467,8 @@ public class MovingMap extends NDSubcomponent {
                         } else {
 
                             // Bezier
-                            java.awt.geom.Path2D taxishape = new java.awt.geom.Path2D.Float();
+                            
+                            Path2D taxishape = new Path2D.Float();
                             TaxiChart.Node last_node = null;
                             for (int h=0; h<ramp1.nodes.size(); h++) {
 
@@ -547,7 +549,8 @@ public class MovingMap extends NDSubcomponent {
                                 } else {
 
                                     // Bezier
-                                    java.awt.geom.Path2D taxishape = new java.awt.geom.Path2D.Float();
+                                    
+                                    Path2D taxishape = new Path2D.Float();
                                     TaxiChart.Node last_node = null;
                                     for (int h=0; h<hole1.nodes.size(); h++) {
 
@@ -1215,7 +1218,7 @@ public class MovingMap extends NDSubcomponent {
         g.drawString(vor.ilt, x + 11, y + 13);
         if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
             g2.setFont(nd_gc.font_tiny);
-            g.drawString(MovingMap.vor_freq_formatter.format(vor.frequency), x + 11, y + 13 + nd_gc.line_height_tiny);
+            g.drawString(MovingMap.vor_freq_formatter.format(vor.frequency), x + 11, y + 13 - nd_gc.line_height_small);
         }
         if ( ( bank > 0 ) && ! avionics.efis_shows_pos() ) {
             // the selected course and reciprocal
@@ -1264,7 +1267,7 @@ public class MovingMap extends NDSubcomponent {
         g.drawString(vordme.ilt, x + 11, y + 13);
         if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
             g2.setFont(nd_gc.font_tiny);
-            g.drawString(MovingMap.vor_freq_formatter.format(vordme.frequency), x + 11, y + 13 + nd_gc.line_height_tiny);
+            g.drawString(MovingMap.vor_freq_formatter.format(vordme.frequency), x + 11, y + 13 - nd_gc.line_height_small);
         }
         if ( bank > 0 ) {
             Stroke original_stroke = g2.getStroke();
@@ -1308,7 +1311,7 @@ public class MovingMap extends NDSubcomponent {
         g.drawString(dme.ilt, x + 11, y + 13);
         if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
             g2.setFont(nd_gc.font_tiny);
-            g.drawString(MovingMap.vor_freq_formatter.format(dme.frequency), x + 11, y + 13 + nd_gc.line_height_tiny);
+            g.drawString(MovingMap.vor_freq_formatter.format(dme.frequency), x + 11, y + 13 - nd_gc.line_height_small);
         }
         if ( bank > 0 ) {
             Stroke original_stroke = g2.getStroke();
@@ -1352,7 +1355,7 @@ public class MovingMap extends NDSubcomponent {
         g.drawString(ndb.ilt, x + 11, y + 13);
         if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
             g2.setFont(nd_gc.font_tiny);
-            g.drawString(MovingMap.ndb_freq_formatter.format(ndb.frequency), x + 11, y + 13 + nd_gc.line_height_tiny);
+            g.drawString(MovingMap.ndb_freq_formatter.format(ndb.frequency), x + 11, y + 13 - nd_gc.line_height_small);
         }
         g2.setTransform(original_at);
 
