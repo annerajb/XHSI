@@ -280,6 +280,9 @@ extern XPLMDataRef multiplayer_y[NUM_TCAS];
 extern XPLMDataRef multiplayer_z[NUM_TCAS];
 
 
+// for the NAV-Sync button commands (Direct-to-VOR & Sync-LOC/ILS)
+extern XPLMDataRef  nav_type_;
+
 
 // global functions
 void	findDataRefs(void);

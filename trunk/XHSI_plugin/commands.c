@@ -311,8 +311,8 @@ XPLMCommandRef copilot_mins_reset;
 XPLMCommandRef copilot_mins_down;
 XPLMCommandRef copilot_mins_up;
 
-XPLMCommandRef direct_to_vor1;
-XPLMCommandRef direct_to_vor2;
+XPLMCommandRef nav1_sync;
+XPLMCommandRef nav2_sync;
 
 XPLMCommandRef chr_start_stop_reset;
 XPLMCommandRef chr_start_stop;
@@ -1475,28 +1475,42 @@ XPLMCommandCallback_f mfd_handler(XPLMCommandRef inCommand, XPLMCommandPhase inP
 }
 
 
-// direct_to_vor*
-XPLMCommandCallback_f direct_to_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+// Sync NAV*
+XPLMCommandCallback_f nav_sync_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
 {
     if (inPhase == xplm_CommandContinue)
     {
+	    int navaid[6];
         float heading;
         float bearing;
         float course;
         int i = (int)((intptr_t)inRefcon);
+	    XPLMGetDatavi(nav_type_, navaid, 0, 2);
         if ( i == 1 )
         {
-            heading = XPLMGetDataf(magpsi);
-            bearing = XPLMGetDataf(nav1_dir_degt);
-            course = heading + bearing;
-            if ( course < 0.0f ) course += 360.0f;
-            XPLMSetDataf(nav1_obs_degm, course );
+			// NAV1
+			if ( ( navaid[0] == 4 ) || ( navaid[0] == 5 ) ) {
+				// LOC/ILS
+				XPLMSetDataf( nav1_obs_degm, XPLMGetDataf( nav1_course_degm ) );
+			} else {
+				// VOR
+					heading = XPLMGetDataf(magpsi);
+					bearing = XPLMGetDataf(nav1_dir_degt);
+					course = heading + bearing;
+					if ( course < 0.0f ) course += 360.0f;
+					XPLMSetDataf(nav1_obs_degm, course );
+			}
         } else /* i == 2 */ {
-            heading = XPLMGetDataf(magpsi);
-            bearing = XPLMGetDataf(nav2_dir_degt);
-            course = heading + bearing;
-            if ( course < 0.0f ) course += 360.0f;
-            XPLMSetDataf(nav2_obs_degm, course );
+			// NAV2
+			if ( ( navaid[1] == 4 ) || ( navaid[1] == 5 ) ) {
+				XPLMSetDataf( nav2_obs_degm, XPLMGetDataf( nav2_course_degm ) );
+			} else {
+				heading = XPLMGetDataf(magpsi);
+				bearing = XPLMGetDataf(nav2_dir_degt);
+				course = heading + bearing;
+				if ( course < 0.0f ) course += 360.0f;
+				XPLMSetDataf(nav2_obs_degm, course );
+			}
         }
     }
     return (XPLMCommandCallback_f)1;
@@ -2060,13 +2074,13 @@ void registerCommands(void) {
 
     // xhsi/radios/...
 
-    // direct_to_vor1
-    direct_to_vor1 = XPLMCreateCommand("xhsi/radios/direct_to_vor1", "Set CRS1 Direct-To VOR1");
-    XPLMRegisterCommandHandler(direct_to_vor1, (XPLMCommandCallback_f)direct_to_handler, 1, (void *)1);
+    // nav1_sync
+    nav1_sync = XPLMCreateCommand("xhsi/radios/nav1_sync", "Sync NAV1 to LOC1/ILS1 or Direct-To VOR1");
+    XPLMRegisterCommandHandler(nav1_sync, (XPLMCommandCallback_f)nav_sync_handler, 1, (void *)1);
 
-    // direct_to_vor2
-    direct_to_vor2 = XPLMCreateCommand("xhsi/radios/direct_to_vor2", "Set CRS2 Direct-To VOR2");
-    XPLMRegisterCommandHandler(direct_to_vor2, (XPLMCommandCallback_f)direct_to_handler, 1, (void *)2);
+    // nav2_sync
+    nav2_sync = XPLMCreateCommand("xhsi/radios/nav2_sync", "Sync NAV2 to LOC2/ILS2 or Direct-To VOR2");
+    XPLMRegisterCommandHandler(nav2_sync, (XPLMCommandCallback_f)nav_sync_handler, 1, (void *)2);
 
 
 
@@ -2404,10 +2418,10 @@ void unregisterCommands(void) {
     XPLMUnregisterCommandHandler(mfd_mode_cycle, (XPLMCommandCallback_f)mfd_handler, 1, (void *)CYCLE);
 
 
-    // direct_to_vor1
-    XPLMUnregisterCommandHandler(direct_to_vor1, (XPLMCommandCallback_f)direct_to_handler, 1, (void *)1);
-    // direct_to_vor2
-    XPLMUnregisterCommandHandler(direct_to_vor2, (XPLMCommandCallback_f)direct_to_handler, 1, (void *)2);
+    // nav1_sync
+    XPLMUnregisterCommandHandler(nav1_sync, (XPLMCommandCallback_f)nav_sync_handler, 1, (void *)1);
+    // nav2_sync
+    XPLMUnregisterCommandHandler(nav2_sync, (XPLMCommandCallback_f)nav_sync_handler, 1, (void *)2);
 
 
     // chronometer

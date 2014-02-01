@@ -303,6 +303,11 @@ XPLMDataRef  multiplayer_y[NUM_TCAS];
 XPLMDataRef  multiplayer_z[NUM_TCAS];
 
 
+// for the NAV-Sync button commands (Direct-to-VOR & Sync-LOC/ILS)
+XPLMDataRef  nav_type_;
+
+
+
 // custom datarefs for pilot
 
 // xhsi/nd_pilot/sta
@@ -1424,7 +1429,10 @@ void findDataRefs(void) {
 		multiplayer_z[i] = XPLMFindDataRef(buf);
 	}
 
-    XPLMDebugString("XHSI: standard DataRefs referenced\n");
+	nav_type_ = XPLMFindDataRef("sim/cockpit/radios/nav_type");
+
+
+	XPLMDebugString("XHSI: standard DataRefs referenced\n");
 
 }
 
