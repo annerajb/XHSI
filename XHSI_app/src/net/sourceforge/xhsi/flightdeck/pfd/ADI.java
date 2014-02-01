@@ -409,6 +409,15 @@ public class ADI extends PFDSubcomponent {
             g2.setColor(pfd_gc.markings_color);
             g2.drawPolygon(left_delta_x, delta_y, 3);
             g2.drawPolygon(right_delta_x, delta_y, 3);
+            
+            // Horizon Reference Bars
+            g2.setColor(pfd_gc.background_color);
+            g2.fillRect(cx - left * 15 / 16, cy - up / 36, left * 4 / 16, down / 18);
+            g2.fillRect(cx + right * 11 / 16, cy - up / 36, left * 4 / 16, down / 18);
+            g2.setColor(pfd_gc.markings_color);
+            g2.drawRect(cx - left * 15 / 16, cy - up / 36, left * 4 / 16, down / 18);
+            g2.drawRect(cx + right * 11 / 16, cy - up / 36, left * 4 / 16, down / 18);
+            
 
         } else {
             // small square in the center
