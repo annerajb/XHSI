@@ -107,6 +107,12 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int navradios_left;
     public int comradios_left;
     public int radios_height;
+    // Only for Airbus 
+    public int hdg_top;
+    public int hdg_left;
+    public int hdg_height;
+    public int hdg_width;
+    
 
 
 
@@ -159,23 +165,48 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             adi_size_down = instrument_size * 240 / 1000;
             adi_pitchscale = 22; // max scale down
             adi_pitch90 = adi_size_down * 90 / adi_pitchscale;
-            tape_height = instrument_size * 750 / 1000;
-            tape_top = adi_cy - tape_height/2;
             tape_width = instrument_size * 120 / 1000;
             speedtape_left = adi_cx - adi_size_left - (instrument_size * 50 / 1000) - tape_width;
             altitape_left = adi_cx + adi_size_right + (instrument_size * 75 / 1000);
-            fma_width = instrument_size * 560 / 1000; // was 546
-            fma_left = adi_cx - fma_width/2;
+
+            if (this.preferences.get_pfd_style_airbus()) {
+            	// On Airbus, tape height is align with horizon
+                adi_size_left = instrument_size * 250 / 1000;
+                adi_size_right = instrument_size * 250 / 1000;
+                adi_size_up = instrument_size * 260 / 1000;
+                adi_size_down = instrument_size * 260 / 1000;
+                adi_pitchscale = 22; // max scale down
+                adi_pitch90 = adi_size_down * 90 / adi_pitchscale;
+                tape_width = instrument_size * 120 / 1000;
+                speedtape_left = adi_cx - adi_size_left - (instrument_size * 50 / 1000) - tape_width;
+                altitape_left = adi_cx + adi_size_right + (instrument_size * 75 / 1000);
+            	tape_height = instrument_size * 500 / 1000;
+                vsi_height = instrument_size * 575 / 1000;
+                fma_width =  instrument_size * 980 / 1000; // full width on A320 
+                fma_left = speedtape_left;
+                fma_height = instrument_size * 120 / 1000;
+
+            } else {
+                tape_height = instrument_size * 750 / 1000;
+                vsi_height = instrument_size * 525 / 1000;
+                fma_width = instrument_size * 560 / 1000; // was 546
+                fma_left = adi_cx - fma_width/2;
+                fma_height = instrument_size * 80 / 1000;
+            }
+            
+            tape_top = adi_cy - tape_height/2;
+
             fma_top = panel_offset_y + this.panel_rect.y + instrument_size * 15 / 1000;
-            fma_height = instrument_size * 80 / 1000;
             dg_radius =  instrument_size * 350 / 1000;
             hsi_tick_w = dg_radius / 12;
             dg_cx = adi_cx;
             dg_cy = panel_offset_y + this.panel_rect.y + instrument_size * 880 / 1000 + dg_radius*102/100;
             if ( draw_hsi ) dg_cy += dg_radius*29/100 + line_height_xl*3/2;
+            if (this.preferences.get_pfd_style_airbus()) dg_cy += instrument_size * 80 / 1000;
+            
             vsi_width = instrument_size * 85 / 1000;
             vsi_left = altitape_left + tape_width + (instrument_size * 30 / 1000);
-            vsi_height = tape_height * 7 / 10;
+
             vsi_top = adi_cy - vsi_height/2;
             gs_width = adi_size_right * 5 / 32;
             gs_height = 2 * adi_size_down;
@@ -193,7 +224,12 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             navradios_left = this.panel_rect.x + this.panel_rect.width/2 - instrument_size/2 - (instrument_size * 30 / 1000) - radios_width;
             comradios_left = this.panel_rect.x + this.panel_rect.width/2 + instrument_size/2 + (instrument_size * 30 / 1000);
             radios_height = instrument_size * 420 / 1000;
-
+            
+            // HDG Tape on Airbus
+            hdg_top = adi_cy + instrument_size * 415 / 1000;
+            hdg_left = adi_cx - adi_size_left*9/10;
+            hdg_height = instrument_size * 65 / 1000;
+            hdg_width = (adi_size_left + adi_size_right)*9/10;
 
 //            // clear the flags
 //            this.resized = false;

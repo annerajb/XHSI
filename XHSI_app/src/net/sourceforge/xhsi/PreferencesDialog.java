@@ -130,8 +130,10 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private int du_height[] = new int[MAX_WINS];
 
 //    private JCheckBox draw_wide_horizon_checkbox;
+    private JComboBox pfd_style_combobox;
+    private String pfd_styles[] = { XHSIPreferences.PFD_STYLE_BOEING, XHSIPreferences.PFD_STYLE_AIRBUS };
     private JComboBox horizon_style_combobox;
-    private String horizons[] = { XHSIPreferences.HORIZON_SQUARE, XHSIPreferences.HORIZON_ROUNDED, XHSIPreferences.HORIZON_FULLWIDTH, XHSIPreferences.HORIZON_FULLSCREEN };
+    private String horizons[] = { XHSIPreferences.HORIZON_SQUARE, XHSIPreferences.HORIZON_ROUNDED, XHSIPreferences.HORIZON_FULLWIDTH, XHSIPreferences.HORIZON_FULLSCREEN, XHSIPreferences.HORIZON_AIRBUS };
     private JComboBox dial_transparency_combobox;
     private String transparencies[] = { "0", "25", "50", "75" };
 
@@ -140,6 +142,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox pfd_hsi_checkbox;
     private JCheckBox colored_hsi_course_checkbox;
     private JCheckBox draw_radios_checkbox;
+    private JCheckBox draw_radio_alt_checkbox;
+    
 
     private JCheckBox draw_eicas_primary_checkbox;
     private JComboBox engine_count_combobox;
@@ -312,6 +316,13 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         // PFD Options (3)
 
+        String pfdstyle = preferences.get_preference(XHSIPreferences.PREF_PFD_STYLE);
+        for (int i=0; i<pfd_styles.length; i++) {
+            if ( pfdstyle.equals( pfd_styles[i] ) ) {
+                this.pfd_style_combobox.setSelectedIndex(i);
+            }
+        }
+        
         String horizonstyle = preferences.get_preference(XHSIPreferences.PREF_HORIZON_STYLE);
         for (int i=0; i<horizons.length; i++) {
             if ( horizonstyle.equals( horizons[i] ) ) {
@@ -333,7 +344,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.pfd_hsi_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_HSI).equalsIgnoreCase("true"));
 
         this.draw_radios_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_RADIOS).equalsIgnoreCase("true"));
-
 
         // EICAS Options (4)
 
@@ -974,6 +984,24 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         int dialog_line = 0;
 
+        // PFD style
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        pfd_options_panel.add(new JLabel("PFD style", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.pfd_style_combobox = new JComboBox();
+        this.pfd_style_combobox.addItem("Boeing");
+        this.pfd_style_combobox.addItem("Airbus");
+        this.pfd_style_combobox.addActionListener(this);
+        pfd_options_panel.add(this.pfd_style_combobox, cons);
+        dialog_line++;
+        dialog_line++;
+        
         // Horizon style
         cons.gridx = 0;
         cons.gridwidth = 1;
@@ -989,6 +1017,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.horizon_style_combobox.addItem("Rounded square");
         this.horizon_style_combobox.addItem("Full width");
         this.horizon_style_combobox.addItem("Full screen");
+        this.horizon_style_combobox.addItem("Airbus");        
         this.horizon_style_combobox.addActionListener(this);
         pfd_options_panel.add(this.horizon_style_combobox, cons);
         dialog_line++;
@@ -1074,6 +1103,21 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         dialog_line++;
         dialog_line++;
 
+        // Draw Radio altitude on horizon
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        pfd_options_panel.add(new JLabel("Display Radio altitude", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.draw_radio_alt_checkbox = new JCheckBox("  Draw radio altitude on horizon below 2500 ft");
+        pfd_options_panel.add(this.draw_radio_alt_checkbox, cons);
+        dialog_line++;
+        dialog_line++;
+        
 //        // A reminder
 //        cons.gridx = 2;
 //        cons.gridwidth = 1;
@@ -1734,6 +1778,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
 
             // PFD options
+            if ( ! pfd_styles[this.pfd_style_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_PFD_STYLE)) )
+                this.preferences.set_preference(XHSIPreferences.PREF_PFD_STYLE, pfd_styles[this.pfd_style_combobox.getSelectedIndex()]);
 
             if ( ! horizons[this.horizon_style_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_HORIZON_STYLE)) )
                 this.preferences.set_preference(XHSIPreferences.PREF_HORIZON_STYLE, horizons[this.horizon_style_combobox.getSelectedIndex()]);

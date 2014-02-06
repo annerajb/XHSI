@@ -99,6 +99,7 @@ public class XHSIPreferences {
     public static final String PREF_SINGLE_CUE_FD = "single.cue.fd";
     public static final String PREF_DRAW_AOA = "draw.aoa";
     public static final String PREF_PFD_DRAW_RADIOS = "pfd.draw.radios";
+    public static final String PREF_PFD_STYLE = "pfd.style";
 
     // EICAS options
     public static final String PREF_EICAS_PRIMARY_ONLY = "eicas.primary.only";
@@ -133,6 +134,11 @@ public class XHSIPreferences {
     public static final String HORIZON_ROUNDED = "rounded";
     public static final String HORIZON_FULLWIDTH = "fullwidth";
     public static final String HORIZON_FULLSCREEN = "fullscreen";
+    public static final String HORIZON_AIRBUS = "airbus";
+    
+    // for PREF_PFD_STYLE
+    public static final String PFD_STYLE_BOEING = "boeing";   
+    public static final String PFD_STYLE_AIRBUS = "airbus";   
 
     // for PREF_BORDER_STYLE
     public static final String BORDER_RELIEF = "relief";
@@ -647,6 +653,14 @@ public class XHSIPreferences {
     }
 
     /**
+     * @return            - Draw rounded_square horizon
+     *
+     */
+    public boolean get_draw_airbus_horizon() {
+        return get_preference(PREF_HORIZON_STYLE).equalsIgnoreCase(HORIZON_AIRBUS);
+    }
+        
+    /**
      * @return            - PFD dial opacity
      *
      */
@@ -693,8 +707,24 @@ public class XHSIPreferences {
     public boolean get_pfd_draw_radios() {
         return get_preference(PREF_PFD_DRAW_RADIOS).equalsIgnoreCase("true");
     }
+    
+    /**
+     * @return            - PFD style boeing
+     *
+     */
+    public boolean get_pfd_style_boeing() {
+        return get_preference(PREF_PFD_STYLE).equalsIgnoreCase(PFD_STYLE_BOEING);
+    }
 
-
+    /**
+     * @return            - PFD style airbus
+     *
+     */
+    public boolean get_pfd_style_airbus() {
+        return get_preference(PREF_PFD_STYLE).equalsIgnoreCase(PFD_STYLE_AIRBUS);
+    }
+    
+    
     // EICAS
 
     /**
@@ -1083,7 +1113,11 @@ public class XHSIPreferences {
             this.preferences.setProperty(PREF_PFD_DRAW_RADIOS, "false");
             this.unsaved_changes = true;
         }
-
+       
+        if ( ! this.preferences.containsKey(PREF_PFD_STYLE) ) {
+            this.preferences.setProperty(PREF_PFD_STYLE, PFD_STYLE_BOEING);
+            this.unsaved_changes = true;
+        }
         
         // EICAS
         
