@@ -35,6 +35,9 @@
 #define B737CL_FULL_VOR_ILS 73704
 #define B737CL_PLAN 73705
 
+#define EFIS_PILOT 0
+#define EFIS_COPILOT 1
+
 #define MODE_APP 0
 #define MODE_VOR 1
 #define MODE_MAP 2
@@ -44,8 +47,8 @@
 #define MODE_CENTERED 0
 #define MODE_EXPANDED 1
 
-//#define ZOOMIN_OFF 0
-//#define ZOOMIN_ON 1
+#define ZOOMIN_OFF 0
+#define ZOOMIN_ON 1
 
 #define RANGE_10 0
 #define RANGE_20 1
@@ -313,6 +316,12 @@ XPLMCommandRef copilot_mins_up;
 
 XPLMCommandRef nav1_sync;
 XPLMCommandRef nav2_sync;
+
+XPLMCommandRef auto_range_pilot;
+XPLMCommandRef auto_range_copilot;
+
+XPLMCommandRef auto_ext_range_pilot;
+XPLMCommandRef auto_ext_range_copilot;
 
 XPLMCommandRef chr_start_stop_reset;
 XPLMCommandRef chr_start_stop;
@@ -1517,6 +1526,142 @@ XPLMCommandCallback_f nav_sync_handler(XPLMCommandRef inCommand, XPLMCommandPhas
 }
 
 
+// Auto Range
+XPLMCommandCallback_f auto_range_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandContinue)
+    {
+        float dist;
+        int i = (int)((intptr_t)inRefcon);
+		XPLMDataRef nd_range;
+		int mode;
+		int ctr;
+		switch ( i )
+		{
+		case EFIS_PILOT :
+			dist = XPLMGetDataf(hsi_dme_nm_pilot);
+			mode = XPLMGetDatai(efis_map_submode);
+			ctr = XPLMGetDatai(efis_map_mode);
+			// the copilot dataref that we will modify
+			nd_range = efis_map_range_selector;
+			break;
+		case EFIS_COPILOT :
+			dist = XPLMGetDataf(hsi_dme_nm_copilot);
+			mode = XPLMGetDatai(efis_copilot_map_submode);
+			ctr = XPLMGetDatai(efis_copilot_map_mode);
+			// the copilot dataref that we will modify
+			nd_range = efis_copilot_map_range_selector;
+			break;
+		}
+
+		// half the range when centered
+		// actually, we pretend that the distance doubles, otherwise we would have to change all the range values below
+		if ( ( !ctr && ((mode==0)||(mode==1)||(mode==2)) ) || ( ctr && (mode==3) ) || (mode==4) )
+			dist *= 2.0f;
+
+        if ( ( dist < 999.9f ) && ( dist >= 640.0f * 0.4f ) )
+			XPLMSetDatai(nd_range, RANGE_640);
+		else if ( ( dist < 320.0f * 0.8f ) && ( dist >= 320.0f * 0.4f ) )
+			XPLMSetDatai(nd_range, RANGE_320);
+		else if ( ( dist < 160.0f * 0.8f ) && ( dist >= 160.0f * 0.4f ) )
+			XPLMSetDatai(nd_range, RANGE_160);
+		else if ( ( dist < 80.0f * 0.8f ) && ( dist >= 80.0f * 0.4f ) )
+			XPLMSetDatai(nd_range, RANGE_80);
+		else if ( ( dist < 40.0f * 0.8f ) && ( dist >= 40.0f * 0.4f ) )
+			XPLMSetDatai(nd_range, RANGE_40);
+		else if ( ( dist < 20.0f * 0.8f ) && ( dist >= 20.0f * 0.4f ) )
+			XPLMSetDatai(nd_range, RANGE_20);
+		else if ( ( dist < 10.0f * 0.8f ) && ( dist > 0.0f ) )
+			XPLMSetDatai(nd_range, RANGE_10);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+
+// Auto Extended Range
+XPLMCommandCallback_f auto_ext_range_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandContinue)
+    {
+        float dist;
+        int i = (int)((intptr_t)inRefcon);
+		XPLMDataRef nd_range;
+		XPLMDataRef nd_zoomin;
+		int mode;
+		int ctr;
+		switch ( i )
+		{
+		case EFIS_PILOT :
+			dist = XPLMGetDataf(hsi_dme_nm_pilot);
+			mode = XPLMGetDatai(efis_map_submode);
+			ctr = XPLMGetDatai(efis_map_mode);
+			// the copilot datarefs that we will modify
+			nd_range = efis_map_range_selector;
+			nd_zoomin = efis_pilot_map_zoomin;
+			break;
+		case EFIS_COPILOT :
+			dist = XPLMGetDataf(hsi_dme_nm_copilot);
+			mode = XPLMGetDatai(efis_copilot_map_submode);
+			ctr = XPLMGetDatai(efis_copilot_map_mode);
+			// the copilot datarefs that we will modify
+			nd_range = efis_copilot_map_range_selector;
+			nd_zoomin = efis_copilot_map_zoomin;
+			break;
+		}
+
+		// half the range when centered
+		// actually, we pretend that the distance doubles, otherwise we would have to change all the range values below
+		if ( ( !ctr && ((mode==0)||(mode==1)||(mode==2)) ) || ( ctr && (mode==3) ) || (mode==4) )
+			dist *= 2.0f;
+
+        if ( ( dist < 999.9f ) && ( dist >= 640.0f * 0.4f ) ) {
+			XPLMSetDatai(nd_range, RANGE_640);
+			XPLMSetDatai(nd_zoomin, ZOOMIN_OFF);
+		} else if ( ( dist < 320.0f * 0.8f ) && ( dist >= 320.0f * 0.4f ) ) {
+			XPLMSetDatai(nd_range, RANGE_320);
+			XPLMSetDatai(nd_zoomin, ZOOMIN_OFF);
+		} else if ( ( dist < 160.0f * 0.8f ) && ( dist >= 160.0f * 0.4f ) ) {
+			XPLMSetDatai(nd_range, RANGE_160);
+			XPLMSetDatai(nd_zoomin, ZOOMIN_OFF);
+		} else if ( ( dist < 80.0f * 0.8f ) && ( dist >= 80.0f * 0.4f ) ) {
+			XPLMSetDatai(nd_range, RANGE_80);
+			XPLMSetDatai(nd_zoomin, ZOOMIN_OFF);
+		} else if ( ( dist < 40.0f * 0.8f ) && ( dist >= 40.0f * 0.4f ) ) {
+			XPLMSetDatai(nd_range, RANGE_40);
+			XPLMSetDatai(nd_zoomin, ZOOMIN_OFF);
+		} else if ( ( dist < 20.0f * 0.8f ) && ( dist >= 20.0f * 0.4f ) ) {
+			XPLMSetDatai(nd_range, RANGE_20);
+			XPLMSetDatai(nd_zoomin, ZOOMIN_OFF);
+		} else if ( ( dist < 10.0f * 0.8f ) && ( dist >= 5.0f ) ) {
+			XPLMSetDatai(nd_range, RANGE_10);
+			XPLMSetDatai(nd_zoomin, ZOOMIN_OFF);
+		} else if ( ( dist < 5.0f ) && ( dist >= 6.40f * 0.4f ) ) {
+			XPLMSetDatai(nd_range, RANGE_640);
+			XPLMSetDatai(nd_zoomin, ZOOMIN_ON);
+		} else if ( ( dist < 3.20f * 0.8f ) && ( dist >= 3.20f * 0.4f ) ) {
+			XPLMSetDatai(nd_range, RANGE_320);
+			XPLMSetDatai(nd_zoomin, ZOOMIN_ON);
+		} else if ( ( dist < 1.60f * 0.8f ) && ( dist >= 1.60f * 0.4f ) ) {
+			XPLMSetDatai(nd_range, RANGE_160);
+			XPLMSetDatai(nd_zoomin, ZOOMIN_ON);
+		} else if ( ( dist < 0.80f * 0.8f ) && ( dist >= 0.80f * 0.4f ) ) {
+			XPLMSetDatai(nd_range, RANGE_80);
+			XPLMSetDatai(nd_zoomin, ZOOMIN_ON);
+		} else if ( ( dist < 0.40f * 0.8f ) && ( dist >= 0.40f * 0.4f ) ) {
+			XPLMSetDatai(nd_range, RANGE_40);
+			XPLMSetDatai(nd_zoomin, ZOOMIN_ON);
+		} else if ( ( dist < 0.20f * 0.8f ) && ( dist >= 0.20f * 0.4f ) ) {
+			XPLMSetDatai(nd_range, RANGE_20);
+			XPLMSetDatai(nd_zoomin, ZOOMIN_ON);
+		} else if ( ( dist < 0.10f * 0.8f ) && ( dist > 0.0f ) ) {
+			XPLMSetDatai(nd_range, RANGE_10);
+			XPLMSetDatai(nd_zoomin, ZOOMIN_ON);
+		}
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+
 // clock
 XPLMCommandCallback_f clock_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
 {
@@ -2083,6 +2228,25 @@ void registerCommands(void) {
     XPLMRegisterCommandHandler(nav2_sync, (XPLMCommandCallback_f)nav_sync_handler, 1, (void *)2);
 
 
+	// xhsi/nd_.../range_auto
+
+	// xhsi/nd_pilot/range_auto
+	auto_range_pilot = XPLMCreateCommand("xhsi/nd_pilot/range_auto", "Auto ND map range");
+	XPLMRegisterCommandHandler(auto_range_pilot, (XPLMCommandCallback_f)auto_range_handler, 1, (void *)EFIS_PILOT);
+	// xhsi/nd_copilot/range_auto
+	auto_range_copilot = XPLMCreateCommand("xhsi/nd_copilot/range_auto", "Auto ND map range - copilot");
+	XPLMRegisterCommandHandler(auto_range_copilot, (XPLMCommandCallback_f)auto_range_handler, 1, (void *)EFIS_COPILOT);
+
+
+	// xhsi/nd_ext_range_.../ext_range_auto
+
+	// xhsi/nd_ext_range_pilot/ext_range_auto
+	auto_ext_range_pilot = XPLMCreateCommand("xhsi/nd_ext_range_pilot/ext_range_auto", "Auto ND extended map range");
+	XPLMRegisterCommandHandler(auto_ext_range_pilot, (XPLMCommandCallback_f)auto_ext_range_handler, 1, (void *)EFIS_PILOT);
+	// xhsi/nd_ext_range_copilot/ext_range_auto
+	auto_ext_range_copilot = XPLMCreateCommand("xhsi/nd_ext_range_copilot/ext_range_auto", "Auto ND extended map range - copilot");
+	XPLMRegisterCommandHandler(auto_ext_range_copilot, (XPLMCommandCallback_f)auto_ext_range_handler, 1, (void *)EFIS_COPILOT);
+
 
     // xhsi/clock/...
 
@@ -2422,6 +2586,15 @@ void unregisterCommands(void) {
     XPLMUnregisterCommandHandler(nav1_sync, (XPLMCommandCallback_f)nav_sync_handler, 1, (void *)1);
     // nav2_sync
     XPLMUnregisterCommandHandler(nav2_sync, (XPLMCommandCallback_f)nav_sync_handler, 1, (void *)2);
+
+
+	// range_auto
+	XPLMUnregisterCommandHandler(auto_range_pilot, (XPLMCommandCallback_f)auto_range_handler, 1, (void *)EFIS_PILOT);
+	XPLMUnregisterCommandHandler(auto_range_copilot, (XPLMCommandCallback_f)auto_range_handler, 1, (void *)EFIS_COPILOT);
+
+	// ext_range_auto
+	XPLMUnregisterCommandHandler(auto_ext_range_pilot, (XPLMCommandCallback_f)auto_ext_range_handler, 1, (void *)EFIS_PILOT);
+	XPLMUnregisterCommandHandler(auto_ext_range_copilot, (XPLMCommandCallback_f)auto_ext_range_handler, 1, (void *)EFIS_COPILOT);
 
 
     // chronometer
