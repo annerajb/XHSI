@@ -144,6 +144,12 @@ XPLMDataRef  nav1_dme_time_secs;
 XPLMDataRef  nav2_dme_time_secs;
 XPLMDataRef  gps_dme_time_secs;
 
+// XPLMDataRef  nav1_dme_nm;
+// XPLMDataRef  nav2_dme_nm;
+// XPLMDataRef  gps_dme_nm;
+XPLMDataRef  hsi_dme_nm_pilot;
+XPLMDataRef  hsi_dme_nm_copilot;
+
 XPLMDataRef  outer_marker;
 XPLMDataRef  middle_marker;
 XPLMDataRef  inner_marker;
@@ -1254,6 +1260,12 @@ void findDataRefs(void) {
 	nav1_dme_time_secs = XPLMFindDataRef("sim/cockpit/radios/nav1_dme_time_secs");
 	nav2_dme_time_secs = XPLMFindDataRef("sim/cockpit/radios/nav2_dme_time_secs");
 	gps_dme_time_secs = XPLMFindDataRef("sim/cockpit/radios/gps_dme_time_secs");
+
+//	nav1_dme_nm = XPLMFindDataRef("sim/cockpit2/radios/indicators/nav1_dme_distance_nm");
+//	nav2_dme_nm = XPLMFindDataRef("sim/cockpit2/radios/indicators/nav2_dme_distance_nm");
+//	gps_dme_nm = XPLMFindDataRef("sim/cockpit2/radios/indicators/gps_dme_distance_nm");
+	hsi_dme_nm_pilot = XPLMFindDataRef("sim/cockpit2/radios/indicators/hsi_dme_distance_nm_pilot");
+	hsi_dme_nm_copilot = XPLMFindDataRef("sim/cockpit2/radios/indicatorshsi_dme_distance_nm_copilot/");
 
     outer_marker = XPLMFindDataRef("sim/cockpit2/radios/indicators/outer_marker_lit");
     middle_marker = XPLMFindDataRef("sim/cockpit2/radios/indicators/middle_marker_lit");

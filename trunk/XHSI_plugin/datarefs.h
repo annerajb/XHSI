@@ -79,6 +79,12 @@ extern XPLMDataRef  nav1_dme_time_secs;
 extern XPLMDataRef  nav2_dme_time_secs;
 extern XPLMDataRef  gps_dme_time_secs;
 
+// extern XPLMDataRef  nav1_dme_nm;
+// extern XPLMDataRef  nav2_dme_nm;
+// extern XPLMDataRef  gps_dme_nm;
+extern XPLMDataRef  hsi_dme_nm_pilot;
+extern XPLMDataRef  hsi_dme_nm_copilot;
+
 extern XPLMDataRef  outer_marker;
 extern XPLMDataRef  middle_marker;
 extern XPLMDataRef  inner_marker;
