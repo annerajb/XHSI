@@ -107,11 +107,19 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int navradios_left;
     public int comradios_left;
     public int radios_height;
-    // Only for Airbus 
+    
+    // Only for Airbus
+    // Heading tape
     public int hdg_top;
     public int hdg_left;
     public int hdg_height;
     public int hdg_width;
+    // ILS Data
+    public int ils_line1;
+    public int ils_line2;
+    public int ils_line3;
+    public int ils_x;
+    
     
 
 
@@ -230,7 +238,13 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             hdg_left = adi_cx - adi_size_left*9/10;
             hdg_height = instrument_size * 65 / 1000;
             hdg_width = (adi_size_left + adi_size_right)*9/10;
-
+            
+            // ILS data on Airbus
+            ils_line3 = hdg_top + hdg_width; 
+            ils_line2 = ils_line3 + line_height_l;
+            ils_line1 = ils_line2 + line_height_l;
+            ils_x = speedtape_left;
+            
 //            // clear the flags
 //            this.resized = false;
 //            this.reconfig = false;

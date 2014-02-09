@@ -119,6 +119,17 @@ public class ADI_A320 extends PFDSubcomponent {
 		AffineTransform original_at = g2.getTransform();
 		Stroke original_stroke = g2.getStroke();
 		
+		// Compute bottom ADI line for clipping
+		int bottom_adi_y_max = cy + down*37/48 - 2; // this is the max and the min is cy.
+		int bottom_adi_y;
+		if (ra < 570) {
+			int positive_ra = (ra>0) ? ra : 0;
+			bottom_adi_y = pitch_y + ((bottom_adi_y_max - cy) * positive_ra / 180);
+			if (bottom_adi_y > bottom_adi_y_max ) { bottom_adi_y = bottom_adi_y_max; }
+		} else {
+			bottom_adi_y = bottom_adi_y_max;
+		}
+		
 		if ( ! colorgradient_horizon ) {
 			g2.clipRect(cx - left, cy - up, left + right, up + down);
 		} else if ( this.preferences.get_draw_fullwidth_horizon() ) {
@@ -168,27 +179,36 @@ public class ADI_A320 extends PFDSubcomponent {
 			g2.fillRect(cx - diagonal, pitch_y, 2 * diagonal, p_90/2 + 2);
 			g2.setPaint(down_gradient);
 			g2.fillRect(cx - diagonal, pitch_y + p_90/2, 2 * diagonal, p_90/2);
-
+			g2.setColor(pfd_gc.markings_color);
+			g2.drawLine(cx - diagonal, pitch_y, cx + diagonal, pitch_y);			
 		} else if (this.preferences.get_draw_airbus_horizon()) {
 			// g2.clipRect(cx - left, cy - up, left + right, up + down)
-
+			// With Airbus shape, bank mark area is always blue and RA area is always brown
 			g2.setClip(airbus_horizon_area);
 			g2.rotate(Math.toRadians(-bank), cx, cy);
+			
+			int pitch_y_min = cy - up*37/48;
+			int pitch_y_max = cy + down * 37/48;
+			int pitch_y_airbus = pitch_y;
+			if (pitch_y > pitch_y_max) pitch_y_airbus = pitch_y_max;
+			if (pitch_y < pitch_y_min) pitch_y_airbus = pitch_y_min;
 			g2.setColor(pfd_gc.sky_color);
-			g2.fillRect(cx - diagonal, pitch_y - p_90, 2 * diagonal, p_90);
+			g2.fillRect(cx - diagonal, pitch_y_airbus - p_90, 2 * diagonal, p_90);
 			g2.setColor(pfd_gc.ground_color);
-			g2.fillRect(cx - diagonal, pitch_y, 2 * diagonal, p_90);	
-			// g2.setClip(original_clipshape);
+			g2.fillRect(cx - diagonal, pitch_y_airbus, 2 * diagonal, p_90);	
+			g2.setColor(pfd_gc.markings_color);
+			g2.drawLine(cx - diagonal, pitch_y_airbus, cx + diagonal, pitch_y_airbus);
 		} else {
 			g2.rotate(Math.toRadians(-bank), cx, cy);
 			g2.setColor(pfd_gc.sky_color);
 			g2.fillRect(cx - diagonal, pitch_y - p_90, 2 * diagonal, p_90);
 			g2.setColor(pfd_gc.ground_color);
 			g2.fillRect(cx - diagonal, pitch_y, 2 * diagonal, p_90);
+			g2.setColor(pfd_gc.markings_color);
+			g2.drawLine(cx - diagonal, pitch_y, cx + diagonal, pitch_y);
 		}
 
-		g2.setColor(pfd_gc.markings_color);
-		g2.drawLine(cx - diagonal, pitch_y, cx + diagonal, pitch_y);
+
 
 		g2.setTransform(original_at);
 
@@ -205,26 +225,28 @@ public class ADI_A320 extends PFDSubcomponent {
 		}
 		
 		g2.rotate(Math.toRadians(-bank), cx, cy);
-		// g2.setClip(original_clipshape);
+			
 		// pitch marks
-		Area pitchmark_area = new Area ( new Rectangle(cx - left + left/16,
+		Area pitchmark_area = new Area ( new Rectangle(
+				cx - left + left/16,
 				cy - up*37/48,
 				left - left/16 + right - right/16,
-				up*37/48 + down*37/48) );
-		if (this.preferences.get_draw_airbus_horizon()) {
-		    //pitchmark_area.intersect(airbus_horizon_area);
-		} 
-		// g2.setClip( pitchmark_area);
+//				up*37/48 + down*37/48
+				up*37/48 + down*37/48 - (bottom_adi_y_max - bottom_adi_y) 
+				) );
+
 		// intersect with the previous clip
-		g2.clip( pitchmark_area);
+		g2.clip( pitchmark_area );
 		
 		// g2.rotate(Math.toRadians(-bank), cx, cy);
 
+		// Top and bottom lines
+		// The bottom lines moves up between ground and 120ft AGL.
 		g2.setColor(pfd_gc.pfd_markings_color);
 		g2.drawLine(cx - left, cy - up*37/48   + 2, cx + right, cy - up*37/48   + 2 );
-		g2.drawLine(cx - left, cy + down*37/48 - 2, cx + right, cy + down*37/48 - 2 );
-		
-		// Heading marks
+		g2.drawLine(cx - left, bottom_adi_y, cx + right, bottom_adi_y );
+	
+		// Heading marks (draw before full clipping)
 		float hdg = this.aircraft.heading();
 		int hdg10 = (int)Math.round( hdg / 10.0f ) * 10;
         for (int hdg_mark = hdg10 - 30; hdg_mark <= hdg10 + 30; hdg_mark += 10) {

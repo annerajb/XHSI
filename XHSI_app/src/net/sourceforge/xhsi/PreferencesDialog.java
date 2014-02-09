@@ -142,9 +142,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox pfd_hsi_checkbox;
     private JCheckBox colored_hsi_course_checkbox;
     private JCheckBox draw_radios_checkbox;
-    private JCheckBox draw_radio_alt_checkbox;
-    
-
+  
     private JCheckBox draw_eicas_primary_checkbox;
     private JComboBox engine_count_combobox;
     private JComboBox engine_type_combobox;
@@ -1103,20 +1101,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         dialog_line++;
         dialog_line++;
 
-        // Draw Radio altitude on horizon
-        cons.gridx = 0;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.EAST;
-        pfd_options_panel.add(new JLabel("Display Radio altitude", JLabel.TRAILING), cons);
-        cons.gridx = 2;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.WEST;
-        this.draw_radio_alt_checkbox = new JCheckBox("  Draw radio altitude on horizon below 2500 ft");
-        pfd_options_panel.add(this.draw_radio_alt_checkbox, cons);
-        dialog_line++;
-        dialog_line++;
         
 //        // A reminder
 //        cons.gridx = 2;
