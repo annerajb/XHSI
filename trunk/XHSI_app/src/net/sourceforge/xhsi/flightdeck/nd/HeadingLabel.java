@@ -119,11 +119,11 @@ public class HeadingLabel extends NDSubcomponent {
                 if (nd_gc.panel_rect.width < 450) {
                     up_label = up_label.substring(0, 1);
                 }
-                g2.drawString(up_label , nd_gc.map_center_x - 43 - nd_gc.get_text_width(g2, nd_gc.font_medium, up_label), nd_gc.border_top + nd_gc.line_height_medium);
+                g2.drawString(up_label , nd_gc.map_center_x - 43 - nd_gc.get_text_width(g2, nd_gc.font_medium, up_label), nd_gc.border_top + nd_gc.line_height_medium + 2);
             }
             if ( nd_gc.panel_rect.width >= 405 ) {
 //                g2.drawString( (nd_gc.panel_rect.width >= 480) ? "MAG" : "M" , nd_gc.map_center_x + 43, nd_gc.border_top + nd_gc.line_height_medium);
-                g2.drawString( (nd_gc.panel_rect.width >= 485) ? "MAG" : "M" , nd_gc.map_center_x + 43, nd_gc.border_top + nd_gc.line_height_medium);
+                g2.drawString( (nd_gc.panel_rect.width >= 485) ? "MAG" : "M" , nd_gc.map_center_x + 43, nd_gc.border_top + nd_gc.line_height_medium + 2);
             }
 
             // surrounding box and value

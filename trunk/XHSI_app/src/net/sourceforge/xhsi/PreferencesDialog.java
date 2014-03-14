@@ -122,6 +122,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox draw_inside_rose_checkbox;
     private JCheckBox bold_fonts_checkbox;
     private JCheckBox nd_navaid_frequencies;
+    private JCheckBox nd_write_ap_hdg;
     private JCheckBox arpt_chart_nav_dest;
 
     private int du_pos_x[] = new int[MAX_WINS];
@@ -142,6 +143,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox pfd_hsi_checkbox;
     private JCheckBox colored_hsi_course_checkbox;
     private JCheckBox draw_radios_checkbox;
+    private JCheckBox adi_centered_checkbox;
   
     private JCheckBox draw_eicas_primary_checkbox;
     private JComboBox engine_count_combobox;
@@ -311,6 +313,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         this.nd_navaid_frequencies.setSelected(preferences.get_preference(XHSIPreferences.PREF_ND_NAVAID_FREQ).equalsIgnoreCase("true"));
 
+        this.nd_write_ap_hdg.setSelected(preferences.get_preference(XHSIPreferences.PREF_ND_WRITE_AP_HDG).equalsIgnoreCase("true"));
+
 
         // PFD Options (3)
 
@@ -342,6 +346,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.pfd_hsi_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_HSI).equalsIgnoreCase("true"));
 
         this.draw_radios_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_RADIOS).equalsIgnoreCase("true"));
+
+        this.adi_centered_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_ADI_CENTERED).equalsIgnoreCase("true"));
+
 
         // EICAS Options (4)
 
@@ -1101,6 +1108,21 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         dialog_line++;
         dialog_line++;
 
+        // Center ADI horizontally
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        pfd_options_panel.add(new JLabel("Center ADI horizontally", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.adi_centered_checkbox = new JCheckBox("  (if window is wide enough) (disables DG/HSI)");
+        pfd_options_panel.add(this.adi_centered_checkbox, cons);
+        dialog_line++;
+        dialog_line++;
+
         
 //        // A reminder
 //        cons.gridx = 2;
@@ -1309,6 +1331,20 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.anchor = GridBagConstraints.WEST;
         this.nd_navaid_frequencies = new JCheckBox("  (when DATA is selected)");
         nd_options_panel.add(this.nd_navaid_frequencies, cons);
+        dialog_line++;
+
+        // Write AP heading at the top
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        nd_options_panel.add(new JLabel("Write the AP heading at the top", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.nd_write_ap_hdg = new JCheckBox("  (if the window is wide enough)");
+        nd_options_panel.add(this.nd_write_ap_hdg, cons);
         dialog_line++;
 
 //        // A reminder
@@ -1760,6 +1796,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             if ( this.nd_navaid_frequencies.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_ND_NAVAID_FREQ).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_ND_NAVAID_FREQ, this.nd_navaid_frequencies.isSelected()?"true":"false");
 
+            if ( this.nd_write_ap_hdg.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_ND_WRITE_AP_HDG).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_ND_WRITE_AP_HDG, this.nd_write_ap_hdg.isSelected()?"true":"false");
+
 
             // PFD options
             if ( ! pfd_styles[this.pfd_style_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_PFD_STYLE)) )
@@ -1782,6 +1821,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
             if ( this.draw_radios_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_RADIOS).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_PFD_DRAW_RADIOS, this.draw_radios_checkbox.isSelected()?"true":"false");
+
+            if ( this.adi_centered_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_PFD_ADI_CENTERED).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_PFD_ADI_CENTERED, this.adi_centered_checkbox.isSelected()?"true":"false");
 
 
             // EICAS options

@@ -612,7 +612,7 @@ public class GraphicsConfig implements ComponentListener {
                 pfd_caution_color = color_amber;
                 pfd_alarm_color = Color.red;
             	instrument_background_color = color_bluegray;
-            	heading_bug_color = Color.cyan;            	
+            	heading_bug_color = color_magenta;            	
             }
         } else {
             background_color = Color.BLACK;
@@ -688,8 +688,8 @@ public class GraphicsConfig implements ComponentListener {
             pfd_active_color = Color.green;
             pfd_caution_color = color_amber;
             pfd_alarm_color = Color.red;
-        	instrument_background_color = color_bluegray;
-        	heading_bug_color = Color.cyan;   
+            instrument_background_color = color_bluegray;
+            heading_bug_color = color_magenta;   
             
         }
 
