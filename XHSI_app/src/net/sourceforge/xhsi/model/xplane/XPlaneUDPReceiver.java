@@ -31,6 +31,8 @@ import java.io.*;
 
 
 import net.sourceforge.xhsi.StoppableThread;
+import net.sourceforge.xhsi.XHSIStatus;
+
 
 public class XPlaneUDPReceiver extends StoppableThread {
 
@@ -84,15 +86,20 @@ public class XPlaneUDPReceiver extends StoppableThread {
                 // wait for packet or time-out
                 packet = receiveXPlanePacket();
 
+                XHSIStatus.receiving = true;
+                
                 if  (this.has_reception == false) {
                     this.has_reception = true;
                     logger.info("UDP reception re-established");
                 }
 
+                // this must be some sort of subscription mechanism...
                 for (int i=0; i<this.reception_observers.size(); i++) {
                     ((XPlaneDataPacketObserver)this.reception_observers.get(i)).new_sim_data(packet.getData());
                 }
             } catch (SocketTimeoutException ste) {
+                XHSIStatus.receiving = false;
+                
                 if (this.has_reception == true) {
                     logger.warning("No UDP reception");
                     this.has_reception = false;

@@ -56,7 +56,7 @@ public class NDFail extends NDSubcomponent {
 
 
     public void paint(Graphics2D g2) {
-        if ( XHSIStatus.status.equals(XHSIStatus.STATUS_NO_RECEPTION) ) {
+        if ( ! XHSIStatus.receiving ) {
             drawFailCross(g2);
         }
     }

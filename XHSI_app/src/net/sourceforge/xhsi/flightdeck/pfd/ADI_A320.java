@@ -56,7 +56,7 @@ public class ADI_A320 extends PFDSubcomponent {
 
 
 	public void paint(Graphics2D g2) {
-        if ( XHSIStatus.status.equals(XHSIStatus.STATUS_NO_RECEPTION) ) {
+        if ( ! XHSIStatus.receiving ) {
         	// FCOM 1.31.40 p26 (1) 
         	// if the PFD loses attitude data, its entire sphere is cleared to display the ATT flag (red)
             drawFailedADI(g2);
