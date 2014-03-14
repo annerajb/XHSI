@@ -165,7 +165,19 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             // no longer automatic...
             draw_hsi = this.preferences.get_pfd_draw_hsi();
             //adi_cx = this.panel_rect.x + this.panel_rect.width * 435 / 1000;
-            adi_cx = this.panel_rect.x + this.panel_rect.width/2 - instrument_size*65/1000;
+            if ( this.preferences.get_pfd_adi_centered() ) {
+                if ( this.panel_rect.height >= this.panel_rect.width )
+                    // square or tall window : ADI is left of center
+                    adi_cx = this.panel_rect.x + this.panel_rect.width/2 - instrument_size*65/1000;
+                else if ( this.panel_rect.width > this.panel_rect.height+2*instrument_size*65/1000 )
+                    // ADI centered when window is wide enough (1065/1000)
+                    adi_cx = this.panel_rect.x + this.panel_rect.width/2;
+                else
+                    // ADI as close to the center as possible
+                    adi_cx = this.panel_rect.x + this.panel_rect.width/2 - instrument_size*65/1000 + (this.panel_rect.width-this.panel_rect.height)/2;
+            } else {
+                adi_cx = this.panel_rect.x + this.panel_rect.width/2 - instrument_size*65/1000;
+            }
             adi_cy = panel_offset_y + this.panel_rect.y + instrument_size * 510 / 1000;
             adi_size_left = instrument_size * 250 / 1000;
             adi_size_right = instrument_size * 250 / 1000;
@@ -210,6 +222,11 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             dg_cx = adi_cx;
             dg_cy = panel_offset_y + this.panel_rect.y + instrument_size * 880 / 1000 + dg_radius*102/100;
             if ( draw_hsi ) dg_cy += dg_radius*29/100 + line_height_xl*3/2;
+            if ( this.preferences.get_pfd_adi_centered() ) {
+                // if we want the ADI to be centered horizontally, it means that we will draw the ND below the PFD
+                // so we can get rid of the DG or HSI
+                dg_cy += 8; // whatever, but far away...
+            }
             if (this.preferences.get_pfd_style_airbus()) dg_cy += instrument_size * 80 / 1000;
             
             vsi_width = instrument_size * 85 / 1000;
@@ -229,9 +246,11 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             aoa_y = ra_high_y;
             radios_top = fma_top;
             radios_width = instrument_size * 125 / 1000;
-            navradios_left = this.panel_rect.x + this.panel_rect.width/2 - instrument_size/2 - (instrument_size * 30 / 1000) - radios_width;
-            comradios_left = this.panel_rect.x + this.panel_rect.width/2 + instrument_size/2 + (instrument_size * 30 / 1000);
-            radios_height = instrument_size * 420 / 1000;
+            // navradios_left = this.panel_rect.x + this.panel_rect.width/2 - instrument_size/2 - (instrument_size * 30 / 1000) - radios_width;
+            navradios_left = speedtape_left - (instrument_size * 30 / 1000) - radios_width;
+            // comradios_left = this.panel_rect.x + this.panel_rect.width/2 + instrument_size/2 + (instrument_size * 30 / 1000);
+            comradios_left = vsi_left + vsi_width + (instrument_size * 25 / 1000);
+            radios_height = instrument_size * 440 / 1000;
             
             // HDG Tape on Airbus
             hdg_top = adi_cy + instrument_size * 415 / 1000;

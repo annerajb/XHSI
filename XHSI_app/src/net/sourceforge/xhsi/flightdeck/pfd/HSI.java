@@ -94,7 +94,7 @@ public class HSI extends PFDSubcomponent {
 
 
     public void paint(Graphics2D g2) {
-        if ( pfd_gc.powered ) {
+        if ( pfd_gc.powered && !this.preferences.get_pfd_adi_centered() ) {
             drawDisc(g2);
             drawRose(g2);
             drawTrack(g2);

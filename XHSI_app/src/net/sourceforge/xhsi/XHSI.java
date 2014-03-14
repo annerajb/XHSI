@@ -81,7 +81,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 7 Alpha 3";
+    private static final String RELEASE = "2.0 Beta 7 Alpha 6";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -318,6 +318,8 @@ public class XHSI implements ActionListener {
                     this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_DU_PREPEND);
                     this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_USE_POWER);
                     this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_PFD_DRAW_HSI);
+                    this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_PFD_ADI_CENTERED);
+                    this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_PFD_STYLE);
                     break;
                 case XHSIInstrument.ND_ID :
                     // ND

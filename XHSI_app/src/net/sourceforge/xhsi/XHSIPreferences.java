@@ -91,6 +91,7 @@ public class XHSIPreferences {
     public static final String PREF_DRAW_INSIDE_ROSE = "draw.inside.rose";
     public static final String PREF_COLORED_HSI_COURSE = "pfd.colored.hsi.course";
     public static final String PREF_ND_NAVAID_FREQ = "nd.navaid.frequencies";
+    public static final String PREF_ND_WRITE_AP_HDG = "nd.write.ap.heading";
 
     // PFD options
     public static final String PREF_HORIZON_STYLE = "horizon.style";
@@ -100,6 +101,7 @@ public class XHSIPreferences {
     public static final String PREF_DRAW_AOA = "draw.aoa";
     public static final String PREF_PFD_DRAW_RADIOS = "pfd.draw.radios";
     public static final String PREF_PFD_STYLE = "pfd.style";
+    public static final String PREF_PFD_ADI_CENTERED = "pfd.adi.centered";
 
     // EICAS options
     public static final String PREF_EICAS_PRIMARY_ONLY = "eicas.primary.only";
@@ -617,6 +619,14 @@ public class XHSIPreferences {
         return get_preference(PREF_ND_NAVAID_FREQ).equalsIgnoreCase("true");
     }
 
+    /**
+     * @return            - Display the navaid frequencies on the map when DATA is on
+     *
+     */
+    public boolean get_nd_write_ap_hdg() {
+        return get_preference(PREF_ND_WRITE_AP_HDG).equalsIgnoreCase("true");
+    }
+
     
     // PFD
 
@@ -722,6 +732,14 @@ public class XHSIPreferences {
      */
     public boolean get_pfd_style_airbus() {
         return get_preference(PREF_PFD_STYLE).equalsIgnoreCase(PFD_STYLE_AIRBUS);
+    }
+    
+    /**
+     * @return            - center ADI horizontally
+     *
+     */
+    public boolean get_pfd_adi_centered() {
+        return get_preference(PREF_PFD_ADI_CENTERED).equalsIgnoreCase("true");
     }
     
     
@@ -1081,6 +1099,11 @@ public class XHSIPreferences {
             this.unsaved_changes = true;
         }
 
+        if ( ! this.preferences.containsKey(PREF_ND_WRITE_AP_HDG) ) {
+            this.preferences.setProperty(PREF_ND_WRITE_AP_HDG, "true");
+            this.unsaved_changes = true;
+        }
+
         
         // PFD
 
@@ -1119,6 +1142,11 @@ public class XHSIPreferences {
             this.unsaved_changes = true;
         }
         
+        if ( ! this.preferences.containsKey(PREF_PFD_ADI_CENTERED) ) {
+            this.preferences.setProperty(PREF_PFD_ADI_CENTERED, "false");
+            this.unsaved_changes = true;
+        }
+       
         // EICAS
         
         if ( ! this.preferences.containsKey(PREF_EICAS_PRIMARY_ONLY) ) {
