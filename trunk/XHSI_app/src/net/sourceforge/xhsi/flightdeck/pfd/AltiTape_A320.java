@@ -55,7 +55,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
 
 
     public void paint(Graphics2D g2) {
-        if ( XHSIStatus.status.equals(XHSIStatus.STATUS_NO_RECEPTION) ) {
+        if ( ! XHSIStatus.receiving ) {
         	// FCOM 1.31.40 p26 (10) 
         	// if the altitude information fails, the ALT flag (red) replaces the altitude scale
             drawFailedTape(g2);

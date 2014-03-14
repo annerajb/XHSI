@@ -49,7 +49,7 @@ public class VSI_A320 extends PFDSubcomponent {
 
 
     public void paint(Graphics2D g2) {
-        if ( XHSIStatus.status.equals(XHSIStatus.STATUS_NO_RECEPTION) ) {
+        if ( ! XHSIStatus.receiving ) {
         	// FCOM 1.31.40 p28 (13) 
         	// if the vertical speed information fails, the V/S flag (red) replaces the vertical speed scale
             drawFailedDial(g2);

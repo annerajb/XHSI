@@ -43,7 +43,7 @@ public class PFDFail_A320 extends PFDSubcomponent {
 
 
     public void paint(Graphics2D g2) {
-        if ( XHSIStatus.status.equals(XHSIStatus.STATUS_NO_RECEPTION) ) {
+        if ( ! XHSIStatus.receiving ) {
             drawFailCross(g2);
         }
     }

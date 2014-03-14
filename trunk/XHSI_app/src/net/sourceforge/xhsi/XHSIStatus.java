@@ -36,5 +36,7 @@ public class XHSIStatus {
     public static String status = STATUS_STARTUP;
     public static String nav_db_status = STATUS_NAV_DB_LOADED;
     public static String nav_db_cycle = "";
+    
+    public static boolean receiving = true;
 
 }
