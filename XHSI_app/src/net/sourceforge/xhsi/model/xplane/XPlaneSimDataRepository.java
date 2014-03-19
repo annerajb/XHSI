@@ -271,7 +271,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT2_CONTROLS_SPEEDBRAKE_RATIO = 368;
     public static final int SIM_FLIGHTMODEL2_CONTROLS_SPEEDBRAKE_RATIO = 369;
     public static final int SIM_FLIGHTMODEL2_GEAR_DEPLOY_RATIO_ = 370; // array of 10 floats
-
+    public static final int SIM_COCKPIT2_CONTROLS_YOKE_PITCH_RATIO = 390;
+    public static final int SIM_COCKPIT2_CONTROLS_YOKE_ROLL_RATIO = 391;
 
     // Fuel, engines, etc...
     public static final int SIM_AIRCRAFT_OVERFLOW_ACF_NUM_TANKS = 400;
@@ -306,7 +307,6 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT2_ENGINE_INDICATORS_PROP_SPEED_RPM_ = 570;
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_PROPMODE_ = 580;
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_MPR_ = 590;
-
 
     // UFMC
     public static final int UFMC_STATUS = 700;
@@ -388,6 +388,62 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int CL30_TO_N1 = 861;
     public static final int CL30_CLB_N1 = 862;
     
+ // QPAC AirbusFBW
+    public static final int QPAC_STATUS=870;
+    // Autopilot  
+    public static final int QPAC_AP_FD=871;
+    public static final int QPAC_AP_PHASE=872;
+    public static final int QPAC_PRESEL_CRZ=873;
+    public static final int QPAC_PRESEL_CLB=874;
+    public static final int QPAC_PRESEL_MACH=875;
+    public static final int QPAC_AP_VERTICAL_MODE=876;
+    public static final int QPAC_AP_VERTICAL_ARMED=877;
+    public static final int QPAC_AP_LATERAL_MODE=878;
+    public static final int QPAC_AP_LATERAL_ARMED=879;
+    public static final int QPAC_NPA_VALID=880;
+    public static final int QPAC_NPA_NO_POINTS=881;
+    public static final int QPAC_APPR_ILLUMINATED=882;
+    public static final int QPAC_APPR_TYPE=883;
+    public static final int QPAC_APPR_MDA=884;
+    public static final int QPAC_ALT_IS_CSTR=885;
+    public static final int QPAC_CONSTRAINT_ALT=886;
+    
+    // Auto-Thrust
+    public static final int QPAC_ATHR_MODE=887;
+    public static final int QPAC_ATHR_MODE2=888;
+    public static final int QPAC_ATHR_LIMITED=889;
+    public static final int QPAC_THR_LEVER_MODE=890;
+    public static final int QPAC_FMA_THR_WARNING=891;
+    public static final int QPAC_FLEX_TEMP=892;
+    // RNAV Deviation
+    public static final int QPAC_LOC_VAL_CAPT=893;
+    public static final int QPAC_LOC_ON_CAPT=894;
+    public static final int QPAC_GS_VAL_CAPT=895;
+    public static final int QPAC_GS_ON_CAPT=896;
+    // ILS on NAV3
+    public static final int QPAC_ILS_CRS=897;
+    public static final int QPAC_ILS_CRS_DEV=898;
+    // FD
+    public static final int QPAC_FD1_VER_BAR=899;
+    public static final int QPAC_FD1_HOR_BAR=900;
+    public static final int QPAC_FD2_VER_BAR=901;
+    public static final int QPAC_FD2_HOR_BAR=902;
+    // Baro
+    public static final int QPAC_BARO_STD_CAPT=903;
+    public static final int QPAC_BARO_UNIT_CAPT=904;
+    public static final int QPAC_BARO_HIDE_CAPT=905;
+    
+    // V Speeds
+    public static final int QPAC_V1_VALUE=906;
+    public static final int QPAC_V1=907;
+    public static final int QPAC_VR=908;
+    public static final int QPAC_VMO=909;
+    public static final int QPAC_VLS=910;
+    public static final int QPAC_VF=911;
+    public static final int QPAC_VS=912;
+    public static final int QPAC_V_GREEN_DOT=913;
+    public static final int QPAC_ALPHA_PROT=914;
+    public static final int QPAC_ALPHA_MAX=915;
 
     // Plugin Version
     public static final int PLUGIN_VERSION_ID = 999;

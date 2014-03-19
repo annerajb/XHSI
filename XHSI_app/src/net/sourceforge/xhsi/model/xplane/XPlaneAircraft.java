@@ -89,6 +89,8 @@ public class XPlaneAircraft implements Aircraft {
 //    public float indicated_vv() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_VH_IND_FPM); }
     public float pitch() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_THETA); }
     public float bank() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_PHI); }
+    public float yoke_pitch() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_YOKE_PITCH_RATIO); }
+    public float yoke_roll() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_YOKE_ROLL_RATIO); }
 
 
     public float track() {

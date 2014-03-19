@@ -804,8 +804,6 @@ public class XPlaneAvionics implements Avionics, Observer {
         return ( (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_AUTOPILOT_PITCH_STATUS) == 2.0f) );
     }
 
-
-
     public Aircraft get_aircraft() { return this.aircraft; }
 
     public FMS get_fms() { return this.fms; }
@@ -936,7 +934,195 @@ public class XPlaneAvionics implements Avionics, Observer {
         return sim_data.get_sim_float(XPlaneSimDataRepository.CL30_MAST_CAUT);
     }
 
+    // QPAC Airbus FBW
+    public boolean is_qpac() {
+    	return ( sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_STATUS) == 1.0f );
+    }
+        
+    // Autopilot
+    public boolean qpac_ap1() {
+    	// return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_AP1) > 0 ? true : false;
+    	int qpac_ap_fd_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_AP_FD));
+    	return (qpac_ap_fd_data & 0x08) > 0 ? true : false; 	
+
+    }
+
+    public boolean qpac_ap2() {
+//    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_AP2) > 0 ? true : false;
+    	int qpac_ap_fd_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_AP_FD));
+    	return (qpac_ap_fd_data & 0x04) > 0 ? true : false; 	
+
+    }
+
+    public int qpac_ap_phase() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_AP_PHASE));
+    }
     
+    public int qpac_presel_crz() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_PRESEL_CRZ));
+    }
+    
+    public int qpac_presel_clb() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_PRESEL_CLB));
+    }
+    
+    public float qpac_presel_mach() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_PRESEL_MACH);
+    }
+    
+    public int qpac_ap_vertical_mode() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_AP_VERTICAL_MODE));
+    }
+    
+    public int qpac_ap_vertical_armed() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_AP_VERTICAL_ARMED));
+    }
+
+    public int qpac_ap_lateral_mode() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_AP_LATERAL_MODE));
+    }
+    public int qpac_ap_lateral_armed() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_AP_LATERAL_ARMED));
+    }
+
+    public int qpac_npa_valid() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_NPA_VALID));
+    }
+    public int qpac_npa_no_points() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_NPA_NO_POINTS));
+    }
+    
+    public int qpac_appr_illuminated() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_APPR_ILLUMINATED));
+    }
+    public int qpac_appr_type() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_APPR_TYPE));
+    }
+    public float qpac_appr_mda() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_APPR_MDA);
+    }    
+
+    public boolean qpac_alt_is_cstr(){
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ALT_IS_CSTR) > 0 ? true : false;
+    }    
+    public int qpac_constraint_alt(){
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_CONSTRAINT_ALT));
+    }    
+    
+    // Auto-Thrust
+    public int qpac_athr_mode() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ATHR_MODE));
+    }
+    public int qpac_athr_mode2() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ATHR_MODE2));
+    }
+    public int qpac_athr_limited() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ATHR_LIMITED));
+    }
+    public int qpac_thr_lever_mode() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_THR_LEVER_MODE));
+    }
+    public int qpac_fma_thr_warning() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FMA_THR_WARNING));
+    }
+    public int qpac_flex_temp() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FLEX_TEMP));
+    }
+    
+    // RNAV Deviation
+    public float qpac_loc_val_capt() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_LOC_VAL_CAPT);
+    }
+    public int qpac_loc_on_capt(){
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_LOC_ON_CAPT));
+    }
+    public float qpac_gs_val_capt(){
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_GS_VAL_CAPT);
+    }
+    public int qpac_gs_on_capt(){
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_GS_ON_CAPT));
+    }
+    
+    // ILS
+    public float qpac_ils_crs(){
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ILS_CRS);
+    }
+    public float qpac_ils_crs_dev(){
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ILS_CRS_DEV);
+    } 
+    
+    // FD
+    public boolean qpac_fd1() {
+    	// return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD1) > 0 ? true : false;
+    	int qpac_ap_fd_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_AP_FD));
+    	return (qpac_ap_fd_data & 0x02) > 0 ? true : false; 	
+    }
+
+    public boolean qpac_fd2() {
+//    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD2) > 0 ? true : false;
+    	int qpac_ap_fd_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_AP_FD));
+    	return (qpac_ap_fd_data & 0x01) > 0 ? true : false; 	
+
+    }
+    
+    public float qpac_fd1_ver_bar() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD1_VER_BAR);
+    }    
+    public float qpac_fd1_hor_bar() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD1_HOR_BAR);
+    }    
+    public float qpac_fd2_ver_bar() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD2_VER_BAR);
+    }    
+    public float qpac_fd2_hor_bar() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD2_HOR_BAR);
+    }    
+    
+    // Baro
+    public boolean qpac_baro_std_capt(){
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_BARO_STD_CAPT) > 0 ? true : false; 	
+    }
+    public boolean qpac_baro_unit_capt(){
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_BARO_UNIT_CAPT) > 0 ? true : false; 	
+    }
+    public boolean qpac_baro_hide_capt(){
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_BARO_HIDE_CAPT) != 0 ? false : true; 	
+    }
+    
+    // V Speeds   
+    public float qpac_v1_value() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_V1_VALUE);
+    }
+    public int qpac_v1() {
+        return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_V1));
+    }
+    public int qpac_vr() {
+        return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_VR));
+    }    
+    public int qpac_vmo() {
+        return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_VMO));
+    }    
+    public int qpac_vls() {
+        return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_VLS));
+    }    
+    
+    public int qpac_vs() {
+        return Math.round(this.aircraft.airspeed_ind() + sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_VS) - 41.7f);
+    }    
+    public int qpac_vf() {
+        return Math.round(this.aircraft.airspeed_ind() + sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_VF) - 41.7f);
+    }    
+    public int qpac_v_green_dot() {
+        return Math.round(this.aircraft.airspeed_ind() + sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_V_GREEN_DOT) - 41.7f);
+    }    
+    public int qpac_alpha_prot() {
+        return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ALPHA_PROT));
+    }    
+    public int qpac_alpha_max() {
+        return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ALPHA_MAX));
+    }    
+    
+    // UMFC
     public boolean has_ufmc() {
         return ( sim_data.get_sim_float(XPlaneSimDataRepository.UFMC_STATUS) == 1.0f );
     }

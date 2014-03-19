@@ -90,7 +90,7 @@ public interface Aircraft {
 //    public float indicated_vv();
 
     /**
-     * @return float - roll angle of the aircraft in degrees
+     * @return float - pitch angle of the aircraft in degrees
      */
     public float pitch();
 
@@ -99,6 +99,17 @@ public interface Aircraft {
      */
     public float bank();
 
+    /**
+     * @return float - Yoke pitch ratio (-1.0f to +1.0f)
+     */
+
+    public float yoke_pitch();
+
+    /**
+     * @return float - Yoke roll ratio (-1.0f to +1.0f)
+     */
+    public float yoke_roll();
+    
     /**
      * Returns the magnetic track of the aircraft in degrees. If ground_speed
      * is lower than 5 knots, returns heading of aircraft.
