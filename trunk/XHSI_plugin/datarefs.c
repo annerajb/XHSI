@@ -254,6 +254,8 @@ XPLMDataRef  auto_brake_level;
 XPLMDataRef  speedbrake_handle;
 XPLMDataRef  speedbrake_ratio;
 XPLMDataRef  gear_deploy;
+XPLMDataRef  yoke_pitch_ratio;
+XPLMDataRef  yoke_roll_ratio;
 
 
 XPLMDataRef  num_tanks;
@@ -1379,6 +1381,8 @@ void findDataRefs(void) {
     speedbrake_handle = XPLMFindDataRef("sim/cockpit2/controls/speedbrake_ratio");
     speedbrake_ratio = XPLMFindDataRef("sim/flightmodel2/controls/speedbrake_ratio");
     gear_deploy = XPLMFindDataRef("sim/flightmodel2/gear/deploy_ratio");
+    yoke_pitch_ratio = XPLMFindDataRef("sim/cockpit2/controls/yoke_pitch_ratio");
+    yoke_roll_ratio = XPLMFindDataRef("sim/cockpit2/controls/yoke_roll_ratio");
 
 
     // Engines and fuel
