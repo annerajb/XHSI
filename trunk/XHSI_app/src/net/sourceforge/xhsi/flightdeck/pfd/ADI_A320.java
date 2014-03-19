@@ -96,7 +96,7 @@ public class ADI_A320 extends PFDSubcomponent {
 		int scale = pfd_gc.adi_pitchscale;
         int ra = Math.round(this.aircraft.agl_m() * 3.28084f); // Radio altitude
         boolean airborne = ! this.aircraft.on_ground();
-        boolean protections = false;
+        boolean protections = this.avionics.is_qpac();
         int mark_size = left * 6/10;
         float alt_f_range = 1100.0f;
         int gnd_y = pfd_gc.adi_cy + Math.round( (this.aircraft.agl_m() * 3.28084f) * pfd_gc.tape_height / alt_f_range );
@@ -134,10 +134,19 @@ public class ADI_A320 extends PFDSubcomponent {
 			g2.clipRect(cx - left, cy - up, left + right, up + down);
 		} else if ( this.preferences.get_draw_fullwidth_horizon() ) {
 			if ( pfd_gc.draw_hsi ) {
-				g2.clipRect(pfd_gc.panel_rect.x, pfd_gc.panel_rect.y, pfd_gc.panel_rect.width, pfd_gc.dg_cy - pfd_gc.dg_radius - pfd_gc.hsi_tick_w - pfd_gc.line_height_xl*3/2 - pfd_gc.panel_rect.y);
+				g2.clipRect(
+						pfd_gc.panel_rect.x,
+						pfd_gc.panel_rect.y, 
+						pfd_gc.panel_rect.width,
+						pfd_gc.dg_cy - pfd_gc.dg_radius - pfd_gc.hsi_tick_w - pfd_gc.line_height_xl*3/2 - pfd_gc.panel_rect.y
+						);
 			} else {
-				//	                g2.clipRect(pfd_gc.panel_rect.x, pfd_gc.tape_top - 1, pfd_gc.panel_rect.width, pfd_gc.tape_height + 2);
-				g2.clipRect(pfd_gc.panel_rect.x, pfd_gc.panel_rect.y + pfd_gc.panel_offset_y, pfd_gc.panel_rect.width, pfd_gc.panel_rect.width);
+				g2.clipRect(
+						pfd_gc.panel_rect.x, 
+						pfd_gc.panel_rect.y + pfd_gc.panel_offset_y, 
+						pfd_gc.panel_rect.width, 
+						pfd_gc.panel_rect.width
+						);
 			}
 		}
 
@@ -208,8 +217,6 @@ public class ADI_A320 extends PFDSubcomponent {
 			g2.drawLine(cx - diagonal, pitch_y, cx + diagonal, pitch_y);
 		}
 
-
-
 		g2.setTransform(original_at);
 
 
@@ -231,14 +238,12 @@ public class ADI_A320 extends PFDSubcomponent {
 				cx - left + left/16,
 				cy - up*37/48,
 				left - left/16 + right - right/16,
-//				up*37/48 + down*37/48
 				up*37/48 + down*37/48 - (bottom_adi_y_max - bottom_adi_y) 
 				) );
 
 		// intersect with the previous clip
 		g2.clip( pitchmark_area );
 		
-		// g2.rotate(Math.toRadians(-bank), cx, cy);
 
 		// Top and bottom lines
 		// The bottom lines moves up between ground and 120ft AGL.
@@ -363,14 +368,12 @@ public class ADI_A320 extends PFDSubcomponent {
 		g2.setTransform(original_at);
 
 
-
-		// FPV
+		// FPV (Always on, but shouldn't) 
+		// TODO : Switch PFV / FD mode 
 		if ( ! this.aircraft.on_ground() ) {
-
 			int dx = (int)(down * this.aircraft.drift() / scale);
 			int dy = (int)(down * this.aircraft.aoa() / scale);
 			if ( (Math.abs(dx) < down) && (Math.abs(dy) < down) ) {
-
 				int fpv_x = cx - dx;
 				int fpv_y = cy + dy;
 				int fpv_r = down/17;
@@ -381,63 +384,64 @@ public class ADI_A320 extends PFDSubcomponent {
 				g2.drawLine(fpv_x - fpv_r, fpv_y, fpv_x - fpv_r*26/10, fpv_y);
 				g2.drawLine(fpv_x + fpv_r, fpv_y, fpv_x + fpv_r*26/10, fpv_y);
 				g2.setStroke(original_stroke);
-
 			}
-
 		}
 
 
 		// airplane symbol
-		if ( ! this.preferences.get_single_cue_fd() ) {
-
-			int wing_t = Math.round(3 * pfd_gc.grow_scaling_factor);
-			int wing_i = left * 13 / 24;
-			int wing_o = left * 21 / 24;
-			int wing_h = down * 3 / 24;
-			int left_wing_x[] = {
-					cx - wing_i + wing_t,
-					cx - wing_i + wing_t,
-					cx - wing_i - wing_t,
-					cx - wing_i - wing_t,
-					cx - wing_o,
-					cx - wing_o
-			};
-			int right_wing_x[] = {
-					cx + wing_i - wing_t,
-					cx + wing_i - wing_t,
-					cx + wing_i + wing_t,
-					cx + wing_i + wing_t,
-					cx + wing_o,
-					cx + wing_o
-			};
-			int wing_y[] = {
-					cy - wing_t,
-					cy + wing_h,
-					cy + wing_h,
-					cy + wing_t,
-					cy + wing_t,
-					cy - wing_t
-			};
-			g2.setColor(pfd_gc.background_color);
-			g2.fillPolygon(left_wing_x, wing_y, 6);
-			g2.fillPolygon(right_wing_x, wing_y, 6);
-			g2.setColor(pfd_gc.pfd_reference_color);
-			g2.drawPolygon(left_wing_x, wing_y, 6);
-			g2.drawPolygon(right_wing_x, wing_y, 6);
-
-		}
-
+		int wing_t = Math.round(3 * pfd_gc.grow_scaling_factor);
+		int wing_i = left * 13 / 24;
+		int wing_o = left * 21 / 24;
+		int wing_h = down * 3 / 24;
+		int left_wing_x[] = {
+				cx - wing_i + wing_t,
+				cx - wing_i + wing_t,
+				cx - wing_i - wing_t,
+				cx - wing_i - wing_t,
+				cx - wing_o,
+				cx - wing_o
+		};
+		int right_wing_x[] = {
+				cx + wing_i - wing_t,
+				cx + wing_i - wing_t,
+				cx + wing_i + wing_t,
+				cx + wing_i + wing_t,
+				cx + wing_o,
+				cx + wing_o
+		};
+		int wing_y[] = {
+				cy - wing_t,
+				cy + wing_h,
+				cy + wing_h,
+				cy + wing_t,
+				cy + wing_t,
+				cy - wing_t
+		};
+		g2.setColor(pfd_gc.background_color);
+		g2.fillPolygon(left_wing_x, wing_y, 6);
+		g2.fillPolygon(right_wing_x, wing_y, 6);
+		g2.setColor(pfd_gc.pfd_reference_color);
+		g2.drawPolygon(left_wing_x, wing_y, 6);
+		g2.drawPolygon(right_wing_x, wing_y, 6);
+		// small square in the center (that's the rule on Airbus A320)
+		// int wing_t = Math.round(4 * pfd_gc.grow_scaling_factor);
+		g2.setColor(pfd_gc.background_color);
+		g2.fillRect(cx - wing_t, cy - wing_t, wing_t * 2, wing_t * 2);
+		g2.setColor(pfd_gc.pfd_reference_color);
+		g2.drawRect(cx - wing_t, cy - wing_t, wing_t * 2, wing_t * 2);
+		
+		
 		// Stick orders : on ground / bellow 30 ft AGL
 		if ( (! airborne) || (ra < 30)) {
 			g2.setColor(pfd_gc.pfd_markings_color);
-			int st_width = left / 9;
+			int st_width = left / 8;
 			int st_left = cx - left*14/20;
 			int st_right = cx + right*14/20;
 			int st_up = cy - up/2;
 			int st_down = cy + down/2;
-			int st_x = cx;
-			int st_y = cy;
-			int st_d = left/70;
+			int st_x = cx + Math.round(this.aircraft.yoke_roll() * left*14/20);
+			int st_y = cy - Math.round(this.aircraft.yoke_pitch() * up/2);
+			int st_d = left/60;
 			int st_w = left/10;
 			// Stick box
 			// top left
@@ -466,129 +470,41 @@ public class ADI_A320 extends PFDSubcomponent {
 			// bottom right
 			g2.drawLine(st_x + st_d + st_w , st_y + st_d, st_x + st_d, st_y + st_d);
 			g2.drawLine(st_x + st_d, st_y + st_d, st_x + st_d, st_y + st_d + st_w);
-			
-			
 		}
 
-		// FD
-		if ( this.avionics.autopilot_mode() >= 1 ) {
-		//if ( true ) {
-
+		
+		// Flight Director (VS/HDG mode)
+		boolean fd_on = this.avionics.autopilot_mode() >= 1 ? true : false;	
+		if ( this.avionics.is_qpac()) { 
+			fd_on = this.avionics.qpac_fd1();
+			if (this.avionics.qpac_fd1_hor_bar() == -1.0f) fd_on = false;
+		}
+		// if ( this.aircraft.on_ground() ) { fd_on = false; }
+		if ( fd_on ) {
 			int fd_y;
-			if ( this.avionics.is_x737() )
-				fd_y = cy + (int)(down * (-this.avionics.fd_pitch()) / scale);
-			else
-				fd_y = cy + (int)(down * (pitch-this.avionics.fd_pitch()) / scale);
-
-			g2.setColor(pfd_gc.pfd_active_color);
-
-			if ( this.preferences.get_single_cue_fd() ) {
-
-				// V-bar
-				g2.rotate(Math.toRadians(-bank+this.avionics.fd_roll()), cx, fd_y);
-
-				int bar_o = left * 9 / 16;
-				int bar_d = down / 5;
-				int bar_h = down / 28;
-				int bar_w = left / 10;
-				int left_bar_x[] = {
-						cx - 2,
-						cx - bar_o - 2,
-						cx - bar_o - bar_w - 1
-				};
-				int right_bar_x[] = {
-						cx + 2,
-						cx + bar_o + 2,
-						cx + bar_o + bar_w + 1
-				};
-				int bar_y[] = {
-						fd_y,
-						fd_y + bar_d,
-						fd_y + bar_d - bar_h
-				};
-				g2.drawPolygon(left_bar_x, bar_y, 3);
-				g2.drawPolygon(right_bar_x, bar_y, 3);
-				g2.fillPolygon(left_bar_x, bar_y, 3);
-				g2.fillPolygon(right_bar_x, bar_y, 3);
-				int left_tri_x[] = {
-						cx - bar_o - bar_w - 3,
-						cx - bar_o - 2,
-						cx - bar_o - bar_w - 3
-				};
-				int right_tri_x[] = {
-						cx + bar_o + bar_w + 3,
-						cx + bar_o + 2,
-						cx + bar_o + bar_w + 3
-				};
-				int tri_y[] = {
-						fd_y + bar_d + bar_h,
-						fd_y + bar_d,
-						fd_y + bar_d - bar_h
-				};
-				g2.setColor(pfd_gc.instrument_background_color);
-				g2.fillPolygon(left_tri_x, tri_y, 3);
-				g2.fillPolygon(right_tri_x, tri_y, 3);
-				g2.setColor(pfd_gc.heading_bug_color);
-				g2.drawPolygon(left_tri_x, tri_y, 3);
-				g2.drawPolygon(right_tri_x, tri_y, 3);
-
-				g2.setTransform(original_at);
-
-			} else {
-
-				// cross-hair
-				int fd_x = cx + (int)(down * (-bank+this.avionics.fd_roll()) / scale) / 3; // divide by 3 to limit deflection
-				int fd_bar = down * 7 / 16;
-				original_stroke = g2.getStroke();
-				g2.setStroke(new BasicStroke(3.0f * pfd_gc.scaling_factor));
-				// hor
-				g2.drawLine(cx - fd_bar, fd_y, cx + fd_bar, fd_y);
-				// vert
-				g2.drawLine(fd_x, cy - fd_bar, fd_x, cy + fd_bar);
-				g2.setStroke(original_stroke);
-
-			}
-
-		}
-
-
-		if ( this.preferences.get_single_cue_fd() ) {
-
-			// Delta airplane
-			int delta_i = left / 4;
-			int delta_o = left * 9 / 16;
-			int delta_h = down / 5;
-			int left_delta_x[] = {
-					cx,
-					cx - delta_i,
-					cx - delta_o
-			};
-			int right_delta_x[] = {
-					cx,
-					cx + delta_i,
-					cx + delta_o
-			};
-			int delta_y[] = {
-					cy,
-					cy + delta_h,
-					cy + delta_h
-			};
-			g2.setColor(pfd_gc.background_color);
-			g2.fillPolygon(left_delta_x, delta_y, 3);
-			g2.fillPolygon(right_delta_x, delta_y, 3);
-			g2.setColor(pfd_gc.markings_color);
-			g2.drawPolygon(left_delta_x, delta_y, 3);
-			g2.drawPolygon(right_delta_x, delta_y, 3);
-
-		} else {
-			// small square in the center
+			int fd_x = cx + (int)(down * (-bank+this.avionics.fd_roll()) / scale) / 3; // divide by 3 to limit deflection
+			int fd_bar = left * 12 / 24;
 			
-			int wing_t = Math.round(4 * pfd_gc.grow_scaling_factor);
-			g2.setColor(pfd_gc.background_color);
-			g2.fillRect(cx - wing_t, cy - wing_t, wing_t * 2, wing_t * 2);
-			g2.setColor(pfd_gc.pfd_reference_color);
-			g2.drawRect(cx - wing_t, cy - wing_t, wing_t * 2, wing_t * 2);
+			if ( this.avionics.is_x737() ) {
+				fd_y = cy + (int)(down * (-this.avionics.fd_pitch()) / scale);
+			} else if ( this.avionics.is_qpac() ) {
+				fd_y = cy - (int)(fd_bar * (this.avionics.qpac_fd1_hor_bar() - 1.0f ) );
+				fd_x = cx + (int)(fd_bar * (this.avionics.qpac_fd1_ver_bar() - 1.0f ) );				
+			} else {
+				fd_y = cy + (int)(down * (pitch-this.avionics.fd_pitch()) / scale);
+			}
+	
+			// FD bars
+			g2.setColor(pfd_gc.pfd_active_color);
+			original_stroke = g2.getStroke();
+			g2.setStroke(new BasicStroke(3.0f * pfd_gc.scaling_factor));
+			// horizontal
+			g2.drawLine(cx - fd_bar, fd_y, cx + fd_bar, fd_y);
+			// vertical
+			g2.drawLine(fd_x, cy - fd_bar, fd_x, cy + fd_bar);
+			g2.setStroke(original_stroke);
 		}
+
 
 
 		// bank marks
@@ -611,8 +527,7 @@ public class ADI_A320 extends PFDSubcomponent {
 		g2.setStroke(new BasicStroke(1.5f * pfd_gc.scaling_factor));
 		g2.drawArc(  cx - left,  cy - up, left + right, up + down, 59, 62);
 		
-		g2.rotate(Math.toRadians(+10), cx, cy);
-		// g2.drawLine(cx, cy - up, cx, cy - up - up/16);
+		g2.rotate(Math.toRadians(+10), cx, cy);	
 		g2.drawRect(bank_mark_x, bank_mark_y, bank_mark_thick, bank_mark_heigth);
 		g2.rotate(Math.toRadians(-10-10), cx, cy);
 		g2.drawRect(bank_mark_x, bank_mark_y, bank_mark_thick, bank_mark_heigth);
@@ -629,8 +544,9 @@ public class ADI_A320 extends PFDSubcomponent {
 		g2.rotate(Math.toRadians(-30-30), cx, cy);
 		g2.drawRect(bank_mark_x, bank_mark_2y, bank_mark_thick, bank_mark_2heigth);
 
+		
 		// Airbus max bank protection mark is at 67 deg. (normal law)
-		// todo : double strikes become amber crosses with alternate & direct laws
+		// TODO : double strikes become amber crosses with alternate & direct laws
 		if (protections) {
 			g2.setColor(pfd_gc.pfd_active_color);
 			g2.rotate(Math.toRadians(+30+67), cx, cy);
@@ -650,19 +566,8 @@ public class ADI_A320 extends PFDSubcomponent {
 		}
 		g2.setStroke(original_stroke);
 		g2.setTransform(original_at);
-
-		// g2.setClip(original_clipshape);
-
-		//	        g2.setColor(pfd_gc.instrument_background_color);
-		//	        g2.fillRect(pfd_gc.border_left + ( pfd_gc.frame_size.width - pfd_gc.border_left - pfd_gc.border_right ) / 32, pfd_gc.border_top + ( pfd_gc.frame_size.height - pfd_gc.border_top - pfd_gc.border_bottom ) / 8, ( pfd_gc.frame_size.width - pfd_gc.border_left - pfd_gc.border_right ) / 8, ( pfd_gc.frame_size.height - pfd_gc.border_top - pfd_gc.border_bottom ) / 8 * 6);
-
 	}
 
-
-	//	    private int markWidth(int p_m, int size) {
-	//	        int p_w = size;
-	//	        return p_w;
-	//	    }
 
 
 	private void drawPitchmark(Graphics2D g2, float pitch, int pitchmark, int p_y, int p_90, int cx, int cy, int size, boolean protections) {
@@ -721,6 +626,7 @@ public class ADI_A320 extends PFDSubcomponent {
 			
 			int pa_d = p_m > 0 ? 1 : -1;
 			// BIG ARROW (pitch > 80°)
+			// TODO : draw Big Arrow in pitch upset more than 80°
 			int pa_x[] = { 
 					cx - p_w,
 					cx,
@@ -770,14 +676,12 @@ public class ADI_A320 extends PFDSubcomponent {
 			g2.drawPolygon(sa_x, sa_y, 6);	
 			g2.setColor(pfd_gc.pfd_markings_color);
 			g2.setStroke(original_stroke);
-			
+
 		}
-
-		
-
 	}
 
 
+	// This function should be in the ILS_A320 class
 	private void drawMarker(Graphics2D g2) {
 
 		if ( this.avionics.outer_marker() || this.avionics.middle_marker() || this.avionics.inner_marker() ) {
@@ -787,10 +691,10 @@ public class ADI_A320 extends PFDSubcomponent {
 			int m_y;
 			if ( this.preferences.get_draw_fullwidth_horizon() ) {
 				m_x = pfd_gc.adi_cx - pfd_gc.adi_size_left;
-				m_y = pfd_gc.adi_cy - pfd_gc.adi_size_up;
+				m_y = pfd_gc.adi_cy + pfd_gc.adi_size_up;
 			} else {
 				m_x = pfd_gc.adi_cx + pfd_gc.adi_size_right - pfd_gc.adi_size_right*1/16 - 2*m_r;
-				m_y = pfd_gc.adi_cy - pfd_gc.adi_size_up + pfd_gc.adi_size_right*1/16;
+				m_y = pfd_gc.adi_cy + pfd_gc.adi_size_up + pfd_gc.adi_size_right*1/16;
 			}
 
 			g2.setColor(pfd_gc.background_color);
@@ -808,10 +712,10 @@ public class ADI_A320 extends PFDSubcomponent {
 				mstr = "IM";
 			}
 
-			Stroke original_stroke = g2.getStroke();
-			g2.setStroke(new BasicStroke(4.0f * pfd_gc.grow_scaling_factor));
-			g2.drawOval(m_x, m_y, 2*m_r, 2*m_r);
-			g2.setStroke(original_stroke);
+			// Stroke original_stroke = g2.getStroke();
+			// g2.setStroke(new BasicStroke(4.0f * pfd_gc.grow_scaling_factor));
+			// g2.drawOval(m_x, m_y, 2*m_r, 2*m_r);
+			// g2.setStroke(original_stroke);
 
 			g2.setFont(pfd_gc.font_m);
 			g2.drawString(mstr, m_x + m_r - pfd_gc.get_text_width(g2, pfd_gc.font_m, mstr)/2, m_y + m_r + pfd_gc.line_height_m/2 - 2);

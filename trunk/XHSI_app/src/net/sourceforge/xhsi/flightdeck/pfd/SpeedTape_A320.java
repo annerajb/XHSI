@@ -18,6 +18,8 @@ public class SpeedTape_A320 extends PFDSubcomponent {
     private static final long serialVersionUID = 1L;
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
+    
+    private boolean ias_trend_active = false;
 
     public SpeedTape_A320(ModelFactory model_factory, PFDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
@@ -56,6 +58,7 @@ public class SpeedTape_A320 extends PFDSubcomponent {
 
         // speeds
         float ias = this.aircraft.airspeed_ind();
+        if (ias < 30.0f) { ias = 30.0f; }
         float tas = this.aircraft.true_air_speed();
         float sound_speed = this.aircraft.sound_speed();
         float mach = this.aircraft.mach();
@@ -68,9 +71,15 @@ public class SpeedTape_A320 extends PFDSubcomponent {
         g2.fillRect(pfd_gc.speedtape_left - 1, pfd_gc.tape_top - 1, speedtape_right - pfd_gc.speedtape_left + 1 , pfd_gc.tape_height + 2);
         pfd_gc.setOpaque(g2);
         g2.setColor(pfd_gc.markings_color);
-        g2.drawLine(speedtape_right, pfd_gc.tape_top ,speedtape_right, pfd_gc.tape_top + pfd_gc.tape_height + 1 );
+        if (ias >= 70) 
+        	g2.drawLine(speedtape_right, pfd_gc.tape_top ,speedtape_right, pfd_gc.tape_top + pfd_gc.tape_height + 1 ); 
+        else { 
+        	int line_height = pfd_gc.tape_top + pfd_gc.tape_height/2 + Math.round( (ias-30)/40*pfd_gc.tape_height/2 ) + 1;
+        	g2.drawLine(speedtape_right, pfd_gc.tape_top ,speedtape_right, line_height );
+        }
+        	
         g2.drawLine(pfd_gc.speedtape_left, pfd_gc.tape_top ,pfd_gc.speedtape_left + pfd_gc.tape_width, pfd_gc.tape_top  );
-        g2.drawLine(pfd_gc.speedtape_left, pfd_gc.tape_top + pfd_gc.tape_height + 1,pfd_gc.speedtape_left + pfd_gc.tape_width, pfd_gc.tape_top + pfd_gc.tape_height + 1 );            
+        if (ias >= 70) g2.drawLine(pfd_gc.speedtape_left, pfd_gc.tape_top + pfd_gc.tape_height + 1,pfd_gc.speedtape_left + pfd_gc.tape_width, pfd_gc.tape_top + pfd_gc.tape_height + 1 );            
 
 
         // Yellow line and triangle for actual IAS
@@ -101,14 +110,15 @@ public class SpeedTape_A320 extends PFDSubcomponent {
         int ias5 = Math.round(ias / 10.0f) * 10;
         // From there, go 50kts up and down
         for (int ias_mark = ias5 - 50; ias_mark <= ias5 + 50; ias_mark += 10) {
-            if (ias_mark >= 0) {
+            if (ias_mark >= 30) {
 
                 int ias_y = pfd_gc.adi_cy - Math.round( ((float)ias_mark - ias) * pfd_gc.tape_height / 80.0f );
                 g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*5/8, ias_y, speedtape_right - 1, ias_y);
                 
                 if (ias_mark % 20 == 0) {
                     g2.setFont(pfd_gc.font_l);
-                    String mark_str = "" + ias_mark;
+                    DecimalFormat speed_format = new DecimalFormat("000");            		
+                    String mark_str = speed_format.format(ias_mark);
                     g2.drawString(mark_str, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 - pfd_gc.get_text_width(g2, pfd_gc.font_l, mark_str) - pfd_gc.tape_width*3/16, ias_y + pfd_gc.line_height_l/2 - 2);
                 }
 
@@ -118,8 +128,14 @@ public class SpeedTape_A320 extends PFDSubcomponent {
 
         // 10sec speed trend vector
         // Drawn in yellow on airbus
-        //float ias_trend = this.aircraft.airspeed_acceleration() * 10.0f;
         float ias_trend = this.aircraft.airspeed_acceleration() * 4.0f;
+        // TODO : set class var ias_trend_active ; set true if trend > 2 knots, set false when trend < 1 knot
+        // Reference : FCOM 1.31.40 page 5 (2)
+        if ( Math.abs(ias_trend) > 5.0f ) {
+        	ias_trend_active = true;
+        } else if (	ias_trend_active && (Math.abs(ias_trend) < 2.5f)) {
+        	ias_trend_active = false; 
+        }
         if ( Math.abs(ias_trend) > 5.0f ) {
 
             if ( ( ias + ias_trend ) < 0.0f ) {
@@ -130,8 +146,6 @@ public class SpeedTape_A320 extends PFDSubcomponent {
             g2.drawLine(speedtape_right - pfd_gc.tape_width/12, pfd_gc.adi_cy, speedtape_right - pfd_gc.tape_width/12 , asi10_y);
             int arrow_dx = pfd_gc.tape_width*1/16;
             int arrow_dy = pfd_gc.tape_width*2/16 * (int)Math.signum(ias_trend);
-            //g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*7/8, asi10_y, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8 - arrow_dx, asi10_y + arrow_dy);
-            //g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*7/8, asi10_y, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8 + arrow_dx, asi10_y + arrow_dy);
             int[] arrow_x = {
             	speedtape_right - pfd_gc.tape_width/12,
             	speedtape_right - pfd_gc.tape_width/12 - arrow_dx,
@@ -235,16 +249,16 @@ public class SpeedTape_A320 extends PFDSubcomponent {
                 ( ( this.aircraft.agl_m() < 762.0f /* 2500ft */ ) && ( this.aircraft.vvi() > 250.0f ) );
         boolean landing = ! this.aircraft.on_ground() &&
                 ( ( this.aircraft.agl_m() < 1524.0f /* 5000ft */ ) && ( this.aircraft.vvi() < -250.0f ) );
-
+        float v1;
         if ( this.avionics.has_ufmc() ) {
 
             // V-speeds from UFMC
 
             if ( take_off ) {
-                float v1 = this.avionics.ufmc_v1();
-                if ( v1 > 0.0f ) drawVspeed(g2, v1, ias, "V1");
+                v1 = this.avionics.ufmc_v1();
+                if ( v1 > 0.0f ) drawV1speed(g2, v1, ias);
                 float vr = this.avionics.ufmc_vr();
-                if ( vr > 0.0f ) drawVspeed(g2, vr, ias, "VR");
+                if ( vr > 0.0f ) drawVRSpeed(g2, vr, ias);
                 float v2 = this.avionics.ufmc_v2();
                 if ( v2 > 0.0f ) drawVspeed(g2, v2, ias, "V2");
             }
@@ -265,38 +279,58 @@ public class SpeedTape_A320 extends PFDSubcomponent {
             // V-speeds from CL30 (without UFMC)
             
             if ( this.avionics.cl30_refspds() == 1 ) {
-
-                drawVspeed(g2, (float)this.avionics.cl30_v1(), ias, "V1");
-                drawVspeed(g2, (float)this.avionics.cl30_vr(), ias, "VR");
+            	v1 = (float) this.avionics.cl30_v1();
+                drawV1speed(g2, (float)this.avionics.cl30_v1(), ias);
+                drawVRSpeed(g2, (float)this.avionics.cl30_vr(), ias);
                 drawVspeed(g2, (float)this.avionics.cl30_v2(), ias, "V2");
                 
             } else {
-                
                 drawVspeed(g2, (float)this.avionics.cl30_vt(), ias, "VT");
                 drawVspeed(g2, (float)this.avionics.cl30_vga(), ias, "VGA");
                 drawVspeed(g2, (float)this.avionics.cl30_vref(), ias, "REF");
-                
             }
 
+        } else if ( this.avionics.is_qpac() ) {
+
+            // estimate V-speeds
+            // with no QPAC integration, that would be the default
+            if ( take_off ) {
+                v1 = (float) this.avionics.qpac_v1_value();
+                if ( v1 > 0.0f ) drawV1speed(g2, v1, ias);
+                float vr = this.avionics.qpac_vr(); // very rough estimate based on V2 - 5%
+                drawVRSpeed(g2, vr, ias);
+                
+            }
+            if ( landing ) {
+                float vref = vs_est * 1.3f; // rough estimate
+                drawVspeed(g2, vref, ias, "REF");
+            }
+            
+            drawVspeed(g2, this.avionics.qpac_vf() , ias, "F");
+            drawVspeed(g2, this.avionics.qpac_vs() , ias, "S");
+            drawGDotSpeed(g2, this.avionics.qpac_v_green_dot() , ias);          
+            /*
+             * draw Vso (or V alpha max) - debug purpose only
+            drawVspeed(g2, this.aircraft.get_Vso(), ias, "VSO");
+            drawVspeed(g2, vno, ias, "VNO");
+            drawVspeed(g2, this.aircraft.get_Vle(), ias, "VLE");
+            */
+            drawFlapsLimit(g2, this.aircraft.get_Vfe(), ias);           
+            
         } else {
 
             // estimate V-speeds
             // with no QPAC integration, that would be the default
             if ( take_off ) {
                 float vr = this.avionics.autopilot_speed() * 0.95f; // very rough estimate based on V2 - 5%
-                drawVspeed(g2, vr, ias, "VR");
-                drawGDotSpeed(g2,vr, ias);
+                drawVRSpeed(g2, vr, ias);
+                //drawGDotSpeed(g2,vr, ias);
             }
             if ( landing ) {
                 float vref = vs_est * 1.3f; // rough estimate
                 drawVspeed(g2, vref, ias, "REF");
             }
-            // draw Vso (or V alpha max) - debug purpose only
-            drawVspeed(g2, this.aircraft.get_Vso(), ias, "VSO");
-            drawVspeed(g2, vno, ias, "VNO");
-            drawVspeed(g2, this.aircraft.get_Vle(), ias, "VLE");
-            drawFlapsLimit(g2, this.aircraft.get_Vfe(), ias);           
-            
+                  
         }
 
         
@@ -360,71 +394,11 @@ public class SpeedTape_A320 extends PFDSubcomponent {
         	g2.drawString(ap_spd_str, str_x, str_y);
         }
 
-        // speed readout
-        /* Inexistant in A320
-        int[] box_x = {
-            pfd_gc.speedtape_left + pfd_gc.tape_width*7/8,
-            pfd_gc.speedtape_left + pfd_gc.tape_width*7/8 - pfd_gc.tape_width*3/16,
-            pfd_gc.speedtape_left + pfd_gc.tape_width*7/8 - pfd_gc.tape_width*3/16,
-            pfd_gc.speedtape_left - Math.round(5.0f*pfd_gc.grow_scaling_factor),
-            pfd_gc.speedtape_left - Math.round(5.0f*pfd_gc.grow_scaling_factor),
-            pfd_gc.speedtape_left + pfd_gc.tape_width*7/8 - pfd_gc.tape_width*3/16,
-            pfd_gc.speedtape_left + pfd_gc.tape_width*7/8 - pfd_gc.tape_width*3/16
-        };
-        int[] box_y = {
-            pfd_gc.adi_cy,
-            pfd_gc.adi_cy + pfd_gc.tape_width*3/20,
-            pfd_gc.adi_cy + pfd_gc.line_height_xxl,
-            pfd_gc.adi_cy + pfd_gc.line_height_xxl,
-            pfd_gc.adi_cy - pfd_gc.line_height_xxl,
-            pfd_gc.adi_cy - pfd_gc.line_height_xxl,
-            pfd_gc.adi_cy - pfd_gc.tape_width*3/20
-        };
-        g2.setColor(pfd_gc.background_color);
-        g2.fillPolygon(box_x, box_y, 7);
-        g2.setColor(pfd_gc.markings_color);
-        g2.drawPolygon(box_x, box_y, 7);
 
-        g2.clipRect(pfd_gc.speedtape_left - 2, pfd_gc.adi_cy - pfd_gc.line_height_xxl, pfd_gc.tape_width, 2 * pfd_gc.line_height_xxl);
-
-        g2.setFont(pfd_gc.font_xxl);
-
-        int ias_int = (int)ias; // alternative: ias_int = Math.round(ias - 0.5f);
-        int ias_units = ias_int % 10;
-        int ias_deca = (ias_int / 10) % 10;
-        int ias_hecto = (ias_int / 100) % 10;
-        float ias_frac = ias - (float)ias_int;
-        int ydelta = Math.round( pfd_gc.line_height_xxl * ias_frac );
-
-        g2.drawString("" + (ias_int + 2) % 10, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8 - pfd_gc.tape_width*3/16 - pfd_gc.digit_width_xxl - 2, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 2 + ydelta - pfd_gc.line_height_xxl*2);
-        g2.drawString("" + (ias_int + 1) % 10, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8 - pfd_gc.tape_width*3/16 - pfd_gc.digit_width_xxl - 2, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 2 + ydelta - pfd_gc.line_height_xxl);
-        g2.drawString("" + ias_int % 10, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8 - pfd_gc.tape_width*3/16 - pfd_gc.digit_width_xxl - 2, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 2 + ydelta);
-        if ( ias_int >  0 ) {
-            g2.drawString("" + (ias_int - 1) % 10, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8 - pfd_gc.tape_width*3/16 - pfd_gc.digit_width_xxl - 2, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 2 + ydelta + pfd_gc.line_height_xxl);
-        }
-
-        if ( ias_units == 9 ) {
-            if ( ias > 9.99f ) {
-                g2.drawString("" + ias_deca, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8 - pfd_gc.tape_width*3/16 - 2*pfd_gc.digit_width_xxl - 2, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 2 + ydelta);
-            }
-            g2.drawString("" + (ias_deca + 1) % 10, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8 - pfd_gc.tape_width*3/16 - 2*pfd_gc.digit_width_xxl - 2, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 2 + ydelta - pfd_gc.line_height_xxl);
-        } else if (ias > 9.99f) {
-            g2.drawString("" + ias_deca, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8 - pfd_gc.tape_width*3/16 - 2*pfd_gc.digit_width_xxl - 2, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 2);
-        }
-
-        if ( ( ias_deca == 9 ) && ( ias_units == 9 ) ) {
-            if ( ias > 99.9f ) {
-                g2.drawString("" + ias_hecto, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8 - pfd_gc.tape_width*3/16 - 3*pfd_gc.digit_width_xxl - 2, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 2 + ydelta);
-            }
-            g2.drawString("" + (ias_hecto + 1) % 10, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8 - pfd_gc.tape_width*3/16 - 3*pfd_gc.digit_width_xxl - 2, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 2 + ydelta - pfd_gc.line_height_xxl);
-        } else if (ias > 99.9f) {
-            g2.drawString("" + ias_hecto, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8 - pfd_gc.tape_width*3/16 - 3*pfd_gc.digit_width_xxl - 2, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 2);
-        }
-		*/
         g2.setClip(original_clipshape);
 
         // Mach value, displayed in green
-        if ( mach >= 0.40f ) {
+        if ( mach >= 0.50f ) {
             String mach_str = mach_format.format( mach );
             g2.setFont(pfd_gc.font_xl);
             g2.setColor(Color.green);
@@ -446,22 +420,43 @@ public class SpeedTape_A320 extends PFDSubcomponent {
         
         int v_y = pfd_gc.adi_cy - Math.round( (v - ias) * pfd_gc.tape_height / 80.0f );
 
-        g2.setColor(Color.cyan);
+        g2.setColor(pfd_gc.pfd_active_color);
         g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8, v_y);
-        g2.setFont(pfd_gc.font_normal);
-        g2.drawString(v_str, pfd_gc.speedtape_left + pfd_gc.tape_width + 2, v_y + pfd_gc.line_height_l/2);
-        
+        g2.setFont(pfd_gc.font_l);
+        g2.drawString(v_str, pfd_gc.speedtape_left + pfd_gc.tape_width * 9/10, v_y + pfd_gc.line_height_l/2);       
     }
 
+    private void drawV1speed(Graphics2D g2, float v, float ias) {   
+        int v_y = pfd_gc.adi_cy - Math.round( (v - ias) * pfd_gc.tape_height / 80.0f );
+        String v1_str = "1";
+        g2.setColor(pfd_gc.pfd_armed_color);
+        if ( v_y > pfd_gc.tape_top) {
+        	g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8, v_y);
+        	g2.setFont(pfd_gc.font_l);
+        	g2.drawString(v1_str, pfd_gc.speedtape_left + pfd_gc.tape_width + 2, v_y + pfd_gc.line_height_l/2);
+        } else {
+        	v1_str = "" + Math.round(v);
+            g2.setFont(pfd_gc.font_l);
+            g2.drawString(v1_str, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8, pfd_gc.tape_top + pfd_gc.line_height_l*6/5);       	
+        }
+    }
+
+    
     private void drawGDotSpeed(Graphics2D g2, float v, float ias) {
         int v_y = pfd_gc.adi_cy - Math.round( (v - ias) * pfd_gc.tape_height / 80.0f );
-        g2.setColor(Color.green);
+        g2.setColor(pfd_gc.pfd_active_color);
+        g2.drawArc(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y, pfd_gc.tape_width/8, pfd_gc.tape_width/8, 0, 360);
+    }
+    
+    private void drawVRSpeed(Graphics2D g2, float v, float ias) {
+        int v_y = pfd_gc.adi_cy - Math.round( (v - ias) * pfd_gc.tape_height / 80.0f );
+        g2.setColor(Color.cyan);
         g2.drawArc(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y, pfd_gc.tape_width/8, pfd_gc.tape_width/8, 0, 360);
     }
     
     private void drawFlapsLimit(Graphics2D g2, float v, float ias) {
         int v_y = pfd_gc.adi_cy - Math.round( (v - ias) * pfd_gc.tape_height / 80.0f );
-        g2.setColor(Color.orange);
+        g2.setColor(pfd_gc.pfd_caution_color);
         g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*5/8, v_y-2, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y-2);
         g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*5/8, v_y+2, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y+2);      
     }

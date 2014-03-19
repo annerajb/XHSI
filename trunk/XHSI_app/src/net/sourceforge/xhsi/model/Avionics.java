@@ -22,6 +22,8 @@
 */
 package net.sourceforge.xhsi.model;
 
+import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
+
 public interface Avionics {
 
     public static final int HSI_SOURCE_NAV1 = 0;
@@ -438,7 +440,7 @@ public interface Avionics {
     public boolean ap_roll_on();
 
     public boolean ap_pitch_on();
-
+    
     /**
      * @return Aircraft - reference to aircraft model class to which avionics belongs
      */
@@ -489,7 +491,86 @@ public interface Avionics {
     public float cl30_mast_warn();
     public float cl30_mast_caut();
 
+    public boolean is_qpac();
     
+    // Autopilot
+    /**
+     * @return boolean - QPAC Autopilot 1 or 2 engaged
+     */    
+    public boolean qpac_ap1();
+    public boolean qpac_ap2();
+    
+    /**
+     * @return int - QPAC Autopilot phase
+     */    
+    public int qpac_ap_phase();
+    
+    public int qpac_presel_crz();
+    public int qpac_presel_clb();
+    public float qpac_presel_mach();
+  
+    public int qpac_ap_vertical_mode();
+    public int qpac_ap_vertical_armed();
+
+    public int qpac_ap_lateral_mode();
+    public int qpac_ap_lateral_armed();
+    
+    public int qpac_npa_valid();
+    public int qpac_npa_no_points();
+    public int qpac_appr_illuminated();
+    public int qpac_appr_type();
+    public float qpac_appr_mda();
+    public boolean qpac_alt_is_cstr();
+    public int qpac_constraint_alt();
+    
+    // Auto-Thrust
+    public int qpac_athr_mode();
+    public int qpac_athr_mode2();
+    public int qpac_athr_limited();
+    public int qpac_thr_lever_mode();
+    public int qpac_fma_thr_warning();
+    public int qpac_flex_temp();
+    
+    // RNAV Deviation
+    public float qpac_loc_val_capt();
+    public int qpac_loc_on_capt();
+    public float qpac_gs_val_capt();
+    public int qpac_gs_on_capt();
+    
+    // ILS
+    public float qpac_ils_crs();
+    public float qpac_ils_crs_dev();
+    
+    // FD
+    /**
+     * @return boolean - QPAC Flight director 1 or 2 engaged
+     */  
+    public boolean qpac_fd1();
+    public boolean qpac_fd2();
+    public float qpac_fd1_ver_bar();
+    public float qpac_fd1_hor_bar();
+    public float qpac_fd2_ver_bar();
+    public float qpac_fd2_hor_bar();
+    
+    // Baro
+    public boolean qpac_baro_std_capt();
+    public boolean qpac_baro_unit_capt();
+    public boolean qpac_baro_hide_capt();
+      
+    // V Speeds
+    public float qpac_v1_value();
+    public int qpac_v1();
+    public int qpac_vr();
+    public int qpac_vmo();
+    public int qpac_vls();  
+    public int qpac_vf();
+    public int qpac_vs();
+    public int qpac_v_green_dot();
+    public int qpac_alpha_prot();
+    public int qpac_alpha_max();
+    
+        
+    // UFMC
     public boolean has_ufmc();
 
     public float ufmc_v1();

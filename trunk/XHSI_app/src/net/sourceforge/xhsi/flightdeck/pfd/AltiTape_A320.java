@@ -308,8 +308,15 @@ public class AltiTape_A320 extends PFDSubcomponent {
         // TODO : On Airbus QNH flashes when transition altitude is missed
         // TODO : On Airbus Capt or F/O can select display in Inches or HPa     
         int qnh = this.aircraft.qnh();
+        boolean qnh_display = true;
+        boolean qnh_is_hpa = true;
         float alt_inhg = this.aircraft.altimeter_in_hg();
         boolean std = ( Math.round(alt_inhg * 100.0f) == 2992 );
+        if (this.avionics.is_qpac()) { 
+        	std = this.avionics.qpac_baro_std_capt(); 
+        	qnh_display = this.avionics.qpac_baro_hide_capt();
+        	qnh_is_hpa = this.avionics.qpac_baro_unit_capt();
+        }
         String qnh_str;
         if ( std ) {
             qnh_str = "STD";
@@ -317,18 +324,20 @@ public class AltiTape_A320 extends PFDSubcomponent {
             qnh_str = "" + qnh;
         }
         
-        g2.setColor(pfd_gc.fmc_disp_color);
-        g2.setFont(pfd_gc.font_l);
-        if ( ! std ) {
-        	g2.drawString("QNH", pfd_gc.altitape_left, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_l*25/8);
-        	g2.setColor(pfd_gc.color_boeingcyan);
-        	g2.drawString(qnh_str, pfd_gc.altitape_left + 4*pfd_gc.digit_width_l, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_l*25/8);
+        if (qnh_display) {
+        	g2.setColor(pfd_gc.fmc_disp_color);
+        	g2.setFont(pfd_gc.font_l);
+        	if ( ! std ) {
+        		g2.drawString("QNH", pfd_gc.altitape_left, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_l*25/8);
+        		g2.setColor(pfd_gc.color_boeingcyan);
+        		g2.drawString(qnh_str, pfd_gc.altitape_left + 4*pfd_gc.digit_width_l, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_l*25/8);
 
-        } else {
-        	g2.setColor(pfd_gc.color_boeingcyan);
-        	g2.drawString("STD", pfd_gc.altitape_left + pfd_gc.digit_width_l*18/8, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_l*25/8);
-        	g2.setColor(pfd_gc.fmc_ll_active_color);
-        	g2.drawRect(pfd_gc.altitape_left + 2*pfd_gc.digit_width_l, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_l*17/8, pfd_gc.digit_width_l*29/8, pfd_gc.line_height_l*10/8);
+        	} else {
+        		g2.setColor(pfd_gc.color_boeingcyan);
+        		g2.drawString("STD", pfd_gc.altitape_left + pfd_gc.digit_width_l*18/8, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_l*25/8);
+        		g2.setColor(pfd_gc.fmc_ll_active_color);
+        		g2.drawRect(pfd_gc.altitape_left + 2*pfd_gc.digit_width_l, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_l*17/8, pfd_gc.digit_width_l*29/8, pfd_gc.line_height_l*10/8);
+        	}
         }
 
         
@@ -340,6 +349,12 @@ public class AltiTape_A320 extends PFDSubcomponent {
         // on bottom if alt preselect setting below alt
     	int ap_alt = Math.round(this.avionics.autopilot_altitude());
     	g2.setColor(pfd_gc.heading_bug_color);
+    	if (this.avionics.is_qpac()) {
+    		if (this.avionics.qpac_alt_is_cstr()) {
+    	    	g2.setColor(pfd_gc.pfd_managed_color);
+    	    	ap_alt = this.avionics.qpac_constraint_alt();
+    		}
+    	}
     	g2.setFont(pfd_gc.font_l);
     	
     	// Airbus
