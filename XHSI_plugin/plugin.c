@@ -73,6 +73,7 @@
 #include "datarefs_ufmc.h"
 #include "datarefs_x737.h"
 #include "datarefs_cl30.h"
+#include "datarefs_qpac.h"
 #include "ui.h"
 #include "net.h"
 #include "packets.h"
@@ -220,6 +221,11 @@ PLUGIN_API int XPluginEnable(void) {
 							-1.0f,
 							NULL);
 
+    // QPAC AirbusFBW
+    XPLMRegisterFlightLoopCallback(
+                           checkQpacCallback,
+                           -1.0f,
+                           NULL);
     // X-FMC
     XPLMRegisterFlightLoopCallback(
                            sendXfmcCallback,
@@ -271,6 +277,7 @@ PLUGIN_API void XPluginDisable(void) {
 	XPLMUnregisterFlightLoopCallback(checkUFMCCallback, NULL);
 	XPLMUnregisterFlightLoopCallback(checkX737Callback, NULL);
 	XPLMUnregisterFlightLoopCallback(checkCL30Callback, NULL);
+	XPLMUnregisterFlightLoopCallback(checkQpacCallback, NULL);
 
     XPLMUnregisterFlightLoopCallback(sendXfmcCallback, NULL);
 

@@ -192,6 +192,8 @@ extern XPLMDataRef  auto_brake_level;
 extern XPLMDataRef  speedbrake_handle;
 extern XPLMDataRef  speedbrake_ratio;
 extern XPLMDataRef  gear_deploy;
+extern XPLMDataRef  yoke_pitch_ratio;
+extern XPLMDataRef  yoke_roll_ratio;
 
 
 extern XPLMDataRef  num_tanks;
