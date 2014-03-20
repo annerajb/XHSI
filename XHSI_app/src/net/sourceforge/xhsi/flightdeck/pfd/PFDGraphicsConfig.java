@@ -60,7 +60,9 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
 
     private Composite orig_cmpst;
     private boolean draw_transparent;
-
+    
+    public boolean airbus_style;
+    public boolean boeing_style;
 
     public int instrument_size;
     public int panel_offset_y;
@@ -190,6 +192,8 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             altitape_left = adi_cx + adi_size_right + (instrument_size * 75 / 1000);
 
             if (this.preferences.get_pfd_style_airbus()) {
+            	airbus_style = true;
+            	boeing_style = false;
             	// On Airbus, tape height is align with horizon
                 adi_size_left = instrument_size * 250 / 1000;
                 adi_size_right = instrument_size * 250 / 1000;
@@ -207,6 +211,8 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
                 fma_height = instrument_size * 120 / 1000;
 
             } else {
+            	airbus_style = false;
+            	boeing_style = true;
                 tape_height = instrument_size * 750 / 1000;
                 vsi_height = instrument_size * 525 / 1000;
                 fma_width = instrument_size * 560 / 1000; // was 546

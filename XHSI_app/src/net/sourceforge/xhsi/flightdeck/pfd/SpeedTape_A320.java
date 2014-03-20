@@ -27,12 +27,14 @@ public class SpeedTape_A320 extends PFDSubcomponent {
 
 
     public void paint(Graphics2D g2) {
-        if ( ! XHSIStatus.receiving ) {
-        	// FCOM 1.31.40 p26 (6) 
-        	// if the speed information fails, the SPD flag (red) replaces the speed scale
-            drawFailedTape(g2);
-        } else if ( pfd_gc.powered ) {
-            drawTape(g2);
+    	if ( pfd_gc.airbus_style ) {
+    		if ( ! XHSIStatus.receiving ) {
+    			// FCOM 1.31.40 p26 (6) 
+    			// if the speed information fails, the SPD flag (red) replaces the speed scale
+    			drawFailedTape(g2);
+    		} else if ( pfd_gc.powered ) {
+    			drawTape(g2);
+    		}
         }
     }
 

@@ -45,7 +45,7 @@ public class ILS_A320 extends PFDSubcomponent {
     }
 
     public void paint(Graphics2D g2) {
-        if ( pfd_gc.powered ) {
+        if ( pfd_gc.airbus_style && pfd_gc.powered ) {
             drawILS(g2);
         }
     }

@@ -49,13 +49,15 @@ public class VSI_A320 extends PFDSubcomponent {
 
 
     public void paint(Graphics2D g2) {
-        if ( ! XHSIStatus.receiving ) {
-        	// FCOM 1.31.40 p28 (13) 
-        	// if the vertical speed information fails, the V/S flag (red) replaces the vertical speed scale
-            drawFailedDial(g2);
-        } else if ( pfd_gc.powered ) {
-            drawDial(g2);
-        }
+    	if ( pfd_gc.airbus_style ) {
+    		if ( ! XHSIStatus.receiving ) {
+    			// FCOM 1.31.40 p28 (13) 
+    			// if the vertical speed information fails, the V/S flag (red) replaces the vertical speed scale
+    			drawFailedDial(g2);
+    		} else if ( pfd_gc.powered ) {
+    			drawDial(g2);
+    		}
+    	}
     }
 
     private void drawFailedDial(Graphics2D g2) {  	

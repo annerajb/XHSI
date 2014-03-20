@@ -61,7 +61,7 @@ public class VSI extends PFDSubcomponent {
 
 
     public void paint(Graphics2D g2) {
-        if ( pfd_gc.powered ) {
+        if ( pfd_gc.boeing_style && pfd_gc.powered ) {
             drawDial(g2);
         }
     }

@@ -86,34 +86,33 @@ public class PFDComponent extends Component implements Observer, PreferencesObse
         pfd_gc.reconfig = true;
 
         addComponentListener(pfd_gc);
-        boolean pfd_airbus = this.preferences.get_pfd_style_airbus();
-        if (pfd_airbus ) {
-        	subcomponents.add(new ADI_A320(model_factory, pfd_gc, this));
-        	subcomponents.add(new ILS(model_factory, pfd_gc, this));
-        	subcomponents.add(new SpeedTape_A320(model_factory, pfd_gc, this));
-        	subcomponents.add(new AltiTape_A320(model_factory, pfd_gc, this));
-//        	subcomponents.add(new MINS(model_factory, pfd_gc, this));
-        	subcomponents.add(new AOA(model_factory, pfd_gc, this));
-        	subcomponents.add(new VSI_A320(model_factory, pfd_gc, this));
-        	subcomponents.add(new FMA_A320(model_factory, pfd_gc, this));
-        	subcomponents.add(new HSI_A320(model_factory, pfd_gc, this));
-        	subcomponents.add(new Radios(model_factory, pfd_gc, this));
-        	subcomponents.add(new PFDFail_A320(model_factory, pfd_gc, this));
-        	subcomponents.add(new PFDInstrumentFrame(model_factory, pfd_gc));	
-        } else {
-        	subcomponents.add(new ADI(model_factory, pfd_gc, this));
-        	subcomponents.add(new ILS(model_factory, pfd_gc, this));
-        	subcomponents.add(new SpeedTape(model_factory, pfd_gc, this));
-        	subcomponents.add(new AltiTape(model_factory, pfd_gc, this));
-        	subcomponents.add(new MINS(model_factory, pfd_gc, this));
-        	subcomponents.add(new AOA(model_factory, pfd_gc, this));
-        	subcomponents.add(new VSI(model_factory, pfd_gc, this));
-        	subcomponents.add(new FMA(model_factory, pfd_gc, this));
-        	subcomponents.add(new HSI(model_factory, pfd_gc, this));
-        	subcomponents.add(new Radios(model_factory, pfd_gc, this));
-        	subcomponents.add(new PFDFail(model_factory, pfd_gc, this));
-        	subcomponents.add(new PFDInstrumentFrame(model_factory, pfd_gc));
-        }
+        
+        // Airbus sub components
+        subcomponents.add(new ADI_A320(model_factory, pfd_gc, this));
+        subcomponents.add(new ILS_A320(model_factory, pfd_gc, this));
+        subcomponents.add(new SpeedTape_A320(model_factory, pfd_gc, this));
+        subcomponents.add(new AltiTape_A320(model_factory, pfd_gc, this));
+        subcomponents.add(new VSI_A320(model_factory, pfd_gc, this));
+        subcomponents.add(new FMA_A320(model_factory, pfd_gc, this));
+        subcomponents.add(new HSI_A320(model_factory, pfd_gc, this));
+        subcomponents.add(new PFDFail_A320(model_factory, pfd_gc, this));
+
+        // Boeing sub components
+        subcomponents.add(new ADI(model_factory, pfd_gc, this));
+        subcomponents.add(new ILS(model_factory, pfd_gc, this));
+        subcomponents.add(new SpeedTape(model_factory, pfd_gc, this));
+        subcomponents.add(new AltiTape(model_factory, pfd_gc, this));
+        subcomponents.add(new MINS(model_factory, pfd_gc, this));       
+        subcomponents.add(new VSI(model_factory, pfd_gc, this));
+        subcomponents.add(new FMA(model_factory, pfd_gc, this));
+        subcomponents.add(new HSI(model_factory, pfd_gc, this));
+        subcomponents.add(new PFDFail(model_factory, pfd_gc, this));
+        
+        // Common sub components
+        subcomponents.add(new AOA(model_factory, pfd_gc, this));
+        subcomponents.add(new Radios(model_factory, pfd_gc, this));
+        subcomponents.add(new PFDInstrumentFrame(model_factory, pfd_gc));
+
         this.repaint();
 
     }
