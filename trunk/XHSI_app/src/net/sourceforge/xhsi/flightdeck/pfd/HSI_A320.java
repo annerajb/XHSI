@@ -88,23 +88,25 @@ public class HSI_A320 extends PFDSubcomponent {
 
 
 	public void paint(Graphics2D g2) {
-		if ( ! XHSIStatus.receiving ) {
-			// FCOM 1.31.40 p26 (18) 
-			// if the heading information fails, the HDG flag replaces the heading scale (red)
-			drawFailedHSI(g2);
-		} else if ( pfd_gc.powered ) {
-			drawTape(g2);
+		if ( pfd_gc.airbus_style ) {
+			if ( ! XHSIStatus.receiving ) {
+				// FCOM 1.31.40 p26 (18) 
+				// if the heading information fails, the HDG flag replaces the heading scale (red)
+				drawFailedHSI(g2);
+			} else if ( pfd_gc.powered ) {
+				drawTape(g2);
 
-		}
-		// Usefull for ATR72
-		if ( pfd_gc.draw_hsi ) {
-			drawDisc(g2);
-			drawRose(g2);
-			drawTrack(g2);
-			drawBug(g2);
-			drawHSISource(g2);
-			drawHSI(g2);
-			drawWind(g2);
+			}
+			// Usefull for ATR72
+			if ( pfd_gc.draw_hsi ) {
+				drawDisc(g2);
+				drawRose(g2);
+				drawTrack(g2);
+				drawBug(g2);
+				drawHSISource(g2);
+				drawHSI(g2);
+				drawWind(g2);
+			}
 		}
 	}
 

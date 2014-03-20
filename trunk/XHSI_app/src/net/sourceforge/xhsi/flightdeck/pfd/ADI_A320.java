@@ -56,15 +56,16 @@ public class ADI_A320 extends PFDSubcomponent {
 
 
 	public void paint(Graphics2D g2) {
-        if ( ! XHSIStatus.receiving ) {
-        	// FCOM 1.31.40 p26 (1) 
-        	// if the PFD loses attitude data, its entire sphere is cleared to display the ATT flag (red)
-            drawFailedADI(g2);
-        } else if ( pfd_gc.powered ) {
-			drawADI(g2);
-			drawMarker(g2);
-		}
-        
+		if ( pfd_gc.airbus_style ) {
+			if ( ! XHSIStatus.receiving ) {
+				// FCOM 1.31.40 p26 (1) 
+				// if the PFD loses attitude data, its entire sphere is cleared to display the ATT flag (red)
+				drawFailedADI(g2);
+			} else if ( pfd_gc.powered ) {
+				drawADI(g2);
+				drawMarker(g2);
+			}
+		}       
 	}
 
 	private void drawFailedADI(Graphics2D g2) {

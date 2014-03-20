@@ -45,7 +45,7 @@ public class FMA_A320 extends PFDSubcomponent {
 
 
     public void paint(Graphics2D g2) {
-        if ( pfd_gc.powered ) {
+        if ( pfd_gc.airbus_style && pfd_gc.powered ) {
             drawBox(g2);
             drawSystemStatus(g2);
             if ( this.avionics.is_x737() ) {

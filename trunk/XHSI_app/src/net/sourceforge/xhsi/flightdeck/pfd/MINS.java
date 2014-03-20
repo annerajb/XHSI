@@ -61,7 +61,7 @@ public class MINS extends PFDSubcomponent {
 
 
     public void paint(Graphics2D g2) {
-        if ( pfd_gc.powered ) {
+        if ( pfd_gc.boeing_style && pfd_gc.powered ) {
             if ( this.aircraft.mins_is_baro() )
                 drawBaro(g2);
             else

@@ -55,13 +55,15 @@ public class AltiTape_A320 extends PFDSubcomponent {
 
 
     public void paint(Graphics2D g2) {
-        if ( ! XHSIStatus.receiving ) {
-        	// FCOM 1.31.40 p26 (10) 
-        	// if the altitude information fails, the ALT flag (red) replaces the altitude scale
-            drawFailedTape(g2);
-        } else if ( pfd_gc.powered ) {
-            drawTape(g2);
-        }
+    	if ( pfd_gc.airbus_style ) {
+    		if ( ! XHSIStatus.receiving ) {
+    			// FCOM 1.31.40 p26 (10) 
+    			// if the altitude information fails, the ALT flag (red) replaces the altitude scale
+    			drawFailedTape(g2);
+    		} else if ( pfd_gc.powered ) {
+    			drawTape(g2);
+    		}
+    	}
     }
 
     private void drawFailedTape(Graphics2D g2) {
