@@ -260,6 +260,13 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
 
 
+    public int style() {
+
+        return (int) sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_STYLE);
+        
+    }
+    
+    
     public boolean power() {
 
         if ( XHSIPreferences.get_instance().get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ||
@@ -1153,6 +1160,10 @@ public class XPlaneAvionics implements Avionics, Observer {
 //            udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT2_SWITCHES_AVIONICS_ON, new_power ? 1.0f : 0.0f );
 //        }
 //    }
+
+    public void set_style(int new_style) {
+        udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_STYLE, (float) new_style );
+    };
 
     public void set_hsi_source(int new_source) {
 

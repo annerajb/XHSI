@@ -55,7 +55,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
     // menu item commands must be unique...
 
-//    public static final String ACTION_AVIONICS_POWER = "Power";
+    public static final String ACTION_STYLE_BOEING = "Boeing";
+    public static final String ACTION_STYLE_AIRBUS = "Airbus";
 
     public static final String ACTION_SOURCE_NAV1 = "NAV 1";
     public static final String ACTION_SOURCE_NAV2 = "NAV 2";
@@ -146,6 +147,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private String zoomin_range_list[] = { "0.10", "0.20", "0.40", "0.80", "1.60", "3.20", "6.40" };
 
 
+    public int style = Avionics.STYLE_AIRBUS;
     public int source = Avionics.HSI_SOURCE_NAV1;
     public int radio1 = Avionics.EFIS_RADIO_NAV;
     public float dme1_radius = 0.0f;
@@ -186,7 +188,9 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
     public int clock_mode = 0;
 
-
+    private JRadioButtonMenuItem radio_button_style_boeing;
+    private JRadioButtonMenuItem radio_button_style_airbus;
+    
     private JRadioButtonMenuItem radio_button_source_nav1;
     private JRadioButtonMenuItem radio_button_source_nav2;
     private JRadioButtonMenuItem radio_button_source_fmc;
@@ -282,17 +286,30 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
         // Hmmm... code re-use? This looks more like code polycopy...
 
-//        // define the "Avionics" menu
-//        JMenu xhsi_avionics_menu = new JMenu("Avionics");
-//        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_AVIONICS_POWER);
-//        checkbox_menu_item.addActionListener(this);
-//        checkbox_menu_item.setSelected(true);
-//        xhsi_avionics_menu.add(checkbox_menu_item);
-//        // keep a reference
-//        this.checkbox_avionics_power = checkbox_menu_item;
-//
-//        // add the "Avionics" menu to the menubar
-//        menu_bar.add(xhsi_avionics_menu);
+        // define the "Style" menu
+        JMenu xhsi_style_menu = new JMenu("Style");
+
+        ButtonGroup style_group = new ButtonGroup();
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_STYLE_BOEING);
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(true);
+        style_group.add(radio_button_menu_item);
+        xhsi_style_menu.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_style_boeing = radio_button_menu_item;
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_STYLE_AIRBUS);
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
+        style_group.add(radio_button_menu_item);
+        xhsi_style_menu.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_style_airbus = radio_button_menu_item;
+
+        
+        // add the "Style" menu to the menubar
+        menu_bar.add(xhsi_style_menu);
 
 
         // define the "Transponder" menu
@@ -351,7 +368,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
 
         // define the "Source" menu
-        JMenu xhsi_source_menu = new JMenu("Source");
+        JMenu xhsi_source_menu = new JMenu("NAV-source");
 
         ButtonGroup source_group = new ButtonGroup();
 
@@ -382,24 +399,27 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // keep a reference
         this.radio_button_source_fmc = radio_button_menu_item;
 
-        // add the "Source" menu to the menubar
+        // add the "NAV-source" menu to the menubar
         menu_bar.add(xhsi_source_menu);
 
 
-        // define the "Radio1" menu
-        JMenu xhsi_radio1_menu;
+        // define the "ND" menu
+        JMenu nd_menu = new JMenu("ND");
+        
+        // define the "Radio1" submenu
+        JMenu nd_radio1_submenu;
 
         ButtonGroup radio1_group = new ButtonGroup();
 
-        // define the menu items, and add them to the "Radio1" menu
-        xhsi_radio1_menu = new JMenu("Radio1");
+        // define the menu items, and add them to the "Radio1" submenu
+        nd_radio1_submenu = new JMenu("Radio1");
 
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_RADIO1_ADF1);
         radio_button_menu_item.setToolTipText("Display bearing lines or pointer arrows for ADF1");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
         radio1_group.add(radio_button_menu_item);
-        xhsi_radio1_menu.add(radio_button_menu_item);
+        nd_radio1_submenu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_radio1_adf = radio_button_menu_item;
 
@@ -409,7 +429,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
         radio1_group.add(radio_button_menu_item);
-        xhsi_radio1_menu.add(radio_button_menu_item);
+        nd_radio1_submenu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_radio1_off = radio_button_menu_item;
 
@@ -418,44 +438,44 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(true);
         radio1_group.add(radio_button_menu_item);
-        xhsi_radio1_menu.add(radio_button_menu_item);
+        nd_radio1_submenu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_radio1_nav = radio_button_menu_item;
 
-        xhsi_radio1_menu.addSeparator();
+        nd_radio1_submenu.addSeparator();
 
         checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_RADIO1_DME_ARC);
         checkbox_menu_item.setToolTipText("Draw a circle around NAV1's DME");
         checkbox_menu_item.addActionListener(this);
-        xhsi_radio1_menu.add(checkbox_menu_item);
+        nd_radio1_submenu.add(checkbox_menu_item);
         // keep a reference to the checkbox to set or clear it in a non-standard way from DMEArcDialog.java
         checkbox_dme1_arc = checkbox_menu_item;
 
-        xhsi_radio1_menu.addSeparator();
+        nd_radio1_submenu.addSeparator();
 
         menu_item = new JMenuItem(XHSISettings.ACTION_SYNC_CRS1);
         menu_item.setToolTipText("Set NAV1 CRS to LOC/ILS frontcourse or Direct-To VOR course");
         menu_item.addActionListener(this);
-        xhsi_radio1_menu.add(menu_item);
+        nd_radio1_submenu.add(menu_item);
 
-        // add the "Radio1" menu to the menubar
-        menu_bar.add(xhsi_radio1_menu);
+        // add the "Radio1" menu to the "ND" menu
+        nd_menu.add(nd_radio1_submenu);
 
 
         // define the "Radio2" menu
-        JMenu xhsi_radio2_menu;
+        JMenu nd_radio2_submenu;
 
         ButtonGroup radio2_group = new ButtonGroup();
 
-        // define the menu items, and add them to the "Radio2" menu
-        xhsi_radio2_menu = new JMenu("Radio2");
+        // define the menu items, and add them to the "Radio2" submenu
+        nd_radio2_submenu = new JMenu("Radio2");
 
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_RADIO2_ADF2);
         radio_button_menu_item.setToolTipText("Display bearing lines or pointer arrows for ADF2");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
         radio2_group.add(radio_button_menu_item);
-        xhsi_radio2_menu.add(radio_button_menu_item);
+        nd_radio2_submenu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_radio2_adf = radio_button_menu_item;
 
@@ -465,7 +485,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
         radio2_group.add(radio_button_menu_item);
-        xhsi_radio2_menu.add(radio_button_menu_item);
+        nd_radio2_submenu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_radio2_off = radio_button_menu_item;
 
@@ -474,45 +494,45 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(true);
         radio2_group.add(radio_button_menu_item);
-        xhsi_radio2_menu.add(radio_button_menu_item);
+        nd_radio2_submenu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_radio2_nav = radio_button_menu_item;
 
-        xhsi_radio2_menu.addSeparator();
+        nd_radio2_submenu.addSeparator();
 
         checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_RADIO2_DME_ARC);
         checkbox_menu_item.setToolTipText("Draw a circle around NAV2's DME");
         checkbox_menu_item.addActionListener(this);
-        xhsi_radio2_menu.add(checkbox_menu_item);
+        nd_radio2_submenu.add(checkbox_menu_item);
         // keep a reference to the checkbox to set or clear it in a non-standard way from DMEArcDialog.java
         checkbox_dme2_arc = checkbox_menu_item;
 
-        xhsi_radio2_menu.addSeparator();
+        nd_radio2_submenu.addSeparator();
 
         menu_item = new JMenuItem(XHSISettings.ACTION_SYNC_CRS2);
         menu_item.setToolTipText("Set NAV1 CRS to LOC/ILS frontcourse or Direct-To VOR course");
         menu_item.addActionListener(this);
-        xhsi_radio2_menu.add(menu_item);
+        nd_radio2_submenu.add(menu_item);
 
-        // add the "Radio2" menu to the menubar
-        menu_bar.add(xhsi_radio2_menu);
+        // add the "Radio2" submenu to the "ND" menu
+        nd_menu.add(nd_radio2_submenu);
 
 
-        // define the "Mode" menu
-        JMenu xhsi_mode_menu = new JMenu("Mode");
+        // define the "Mode" submenu
+        JMenu nd_mode_submenu = new JMenu("Mode");
 
         boolean airbus_modes = XHSIPreferences.get_instance().get_airbus_modes();
 
         ButtonGroup submode_group = new ButtonGroup();
 
-        // define the menu items, and add them to the "Mode" menu
+        // define the menu items, and add them to the "Mode" submenu
         radio_button_menu_item = new JRadioButtonMenuItem(airbus_modes ? XHSISettings.LABEL_SUBMODE_ROSE_ILS : XHSISettings.LABEL_SUBMODE_APP);
         radio_button_menu_item.setToolTipText(XHSISettings.ACTION_SUBMODE_APP + " : HSI with CDI and GS");
         radio_button_menu_item.setActionCommand(XHSISettings.ACTION_SUBMODE_APP);
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
         submode_group.add(radio_button_menu_item);
-        xhsi_mode_menu.add(radio_button_menu_item);
+        nd_mode_submenu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_submode_app = radio_button_menu_item;
 
@@ -522,7 +542,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
         submode_group.add(radio_button_menu_item);
-        xhsi_mode_menu.add(radio_button_menu_item);
+        nd_mode_submenu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_submode_vor = radio_button_menu_item;
 
@@ -532,7 +552,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(true);
         submode_group.add(radio_button_menu_item);
-        xhsi_mode_menu.add(radio_button_menu_item);
+        nd_mode_submenu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_submode_map = radio_button_menu_item;
 
@@ -542,7 +562,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
         submode_group.add(radio_button_menu_item);
-        xhsi_mode_menu.add(radio_button_menu_item);
+        nd_mode_submenu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_submode_nav = radio_button_menu_item;
 
@@ -552,11 +572,11 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
         submode_group.add(radio_button_menu_item);
-        xhsi_mode_menu.add(radio_button_menu_item);
+        nd_mode_submenu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_submode_pln = radio_button_menu_item;
 
-        xhsi_mode_menu.addSeparator();
+        nd_mode_submenu.addSeparator();
 
         checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.LABEL_MODE_CENTERED);
         checkbox_menu_item.setToolTipText("Centered / Expanded");
@@ -565,16 +585,16 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         checkbox_menu_item.setMnemonic(KeyEvent.VK_C);
         checkbox_menu_item.setSelected(false);
         checkbox_menu_item.setVisible( ! airbus_modes );
-        xhsi_mode_menu.add(checkbox_menu_item);
+        nd_mode_submenu.add(checkbox_menu_item);
         // keep a reference
         this.checkbox_mode_centered = checkbox_menu_item;
 
-        // add the "Mode" menu to the menubar
-        menu_bar.add(xhsi_mode_menu);
+        // add the "Mode" submenu to the "ND" menu
+        nd_menu.add(nd_mode_submenu);
 
 
-        // define the "Range" menu
-        JMenu xhsi_range_menu = new JMenu("Range");
+        // define the "Range" submenu
+        JMenu nd_range_submenu = new JMenu("Range");
 
         ButtonGroup range_group = new ButtonGroup();
 
@@ -584,11 +604,11 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             radio_button_menu_item.addActionListener(this);
             radio_button_menu_item.setSelected(false);
             range_group.add(radio_button_menu_item);
-            xhsi_range_menu.add(radio_button_menu_item);
+            nd_range_submenu.add(radio_button_menu_item);
             radio_button_range[i] = radio_button_menu_item;
         }
 
-        xhsi_range_menu.addSeparator();
+        nd_range_submenu.addSeparator();
 
         for (int i=0; i<this.range_list.length; i++) {
             radio_button_menu_item = new JRadioButtonMenuItem( this.range_list[i] );
@@ -600,7 +620,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             else
                 radio_button_menu_item.setSelected(false);
             range_group.add(radio_button_menu_item);
-            xhsi_range_menu.add(radio_button_menu_item);
+            nd_range_submenu.add(radio_button_menu_item);
             radio_button_range[i+7] = radio_button_menu_item;
         }
 
@@ -614,19 +634,19 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 //        // keep a reference
 //        this.checkbox_map_zoomin = checkbox_menu_item;
 
-        // add the "Range" menu to the menubar
-        menu_bar.add(xhsi_range_menu);
+        // add the "Range" submenu to the "ND" menu
+        nd_menu.add(nd_range_submenu);
 
 
         // define the "Symbols" menu
-        JMenu xhsi_symbols_menu = new JMenu("Symbols");
+        JMenu nd_symbols_submenu = new JMenu("Symbols");
 
-        // define the menu items, and add them to the "Symbols" menu
+        // define the menu items, and add them to the "Symbols" submenu
         checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_SYMBOLS_SHOW_ARPT);
         checkbox_menu_item.setToolTipText("Show Airports");
         checkbox_menu_item.addActionListener(this);
         checkbox_menu_item.setSelected(true);
-        xhsi_symbols_menu.add(checkbox_menu_item);
+        nd_symbols_submenu.add(checkbox_menu_item);
         // keep a reference to the checkbox to set or clear it in a non-standard way
         this.checkbox_symbols_show_arpt = checkbox_menu_item;
 
@@ -634,7 +654,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         checkbox_menu_item.setToolTipText("Shox Fixes");
         checkbox_menu_item.addActionListener(this);
         checkbox_menu_item.setSelected(true);
-        xhsi_symbols_menu.add(checkbox_menu_item);
+        nd_symbols_submenu.add(checkbox_menu_item);
         // keep a reference to the checkbox to set or clear it in a non-standard way
         this.checkbox_symbols_show_wpt = checkbox_menu_item;
 
@@ -642,7 +662,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         checkbox_menu_item.setToolTipText("Show VORs");
         checkbox_menu_item.addActionListener(this);
         checkbox_menu_item.setSelected(true);
-        xhsi_symbols_menu.add(checkbox_menu_item);
+        nd_symbols_submenu.add(checkbox_menu_item);
         // keep a reference to the checkbox to set or clear it in a non-standard way
         this.checkbox_symbols_show_vor = checkbox_menu_item;
 
@@ -650,7 +670,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         checkbox_menu_item.setToolTipText("Show NDBs");
         checkbox_menu_item.addActionListener(this);
         checkbox_menu_item.setSelected(true);
-        xhsi_symbols_menu.add(checkbox_menu_item);
+        nd_symbols_submenu.add(checkbox_menu_item);
         // keep a reference to the checkbox to set or clear it in a non-standard way
         this.checkbox_symbols_show_ndb = checkbox_menu_item;
 
@@ -658,17 +678,17 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         checkbox_menu_item.setToolTipText("Show Traffic");
         checkbox_menu_item.addActionListener(this);
         checkbox_menu_item.setSelected(true);
-        xhsi_symbols_menu.add(checkbox_menu_item);
+        nd_symbols_submenu.add(checkbox_menu_item);
         // keep a reference to the checkbox to set or clear it in a non-standard way
         this.checkbox_symbols_show_tfc = checkbox_menu_item;
 
-        xhsi_symbols_menu.addSeparator();
+        nd_symbols_submenu.addSeparator();
 
         checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_SYMBOLS_SHOW_POS);
         checkbox_menu_item.setToolTipText("Draw bearing lines instead of pointer arrows)");
         checkbox_menu_item.addActionListener(this);
         checkbox_menu_item.setSelected(true);
-        xhsi_symbols_menu.add(checkbox_menu_item);
+        nd_symbols_submenu.add(checkbox_menu_item);
         // keep a reference to the checkbox to set or clear it in a non-standard way
         this.checkbox_symbols_show_pos = checkbox_menu_item;
 
@@ -676,15 +696,15 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         checkbox_menu_item.setToolTipText("Show altitudes for FMS waypoints");
         checkbox_menu_item.addActionListener(this);
         checkbox_menu_item.setSelected(true);
-        xhsi_symbols_menu.add(checkbox_menu_item);
+        nd_symbols_submenu.add(checkbox_menu_item);
         // keep a reference to the checkbox to set or clear it in a non-standard way
         this.checkbox_symbols_show_data = checkbox_menu_item;
 
         // add the "Symbols" menu to the menubar
-        menu_bar.add(xhsi_symbols_menu);
+        nd_menu.add(nd_symbols_submenu);
 
-        // define the "Holding" menu
-        JMenu hsi_holding_menu = new JMenu("Holding");
+        // define the "Holding" submenu
+        JMenu nd_holding_submenu = new JMenu("Holding");
 
         ButtonGroup holding_group = new ButtonGroup();
 
@@ -693,7 +713,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         radio_button_menu_item.setToolTipText("Hide the holding");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(true);
-        hsi_holding_menu.add(radio_button_menu_item);
+        nd_holding_submenu.add(radio_button_menu_item);
         holding_group.add(radio_button_menu_item);
         // keep a reference to the radiobutton to set or clear it in a non-standard way from HoldingDialog.java
         radiobutton_holding_hide = radio_button_menu_item;
@@ -702,17 +722,17 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         radio_button_menu_item.setToolTipText("Draw a holding");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
-        hsi_holding_menu.add(radio_button_menu_item);
+        nd_holding_submenu.add(radio_button_menu_item);
         holding_group.add(radio_button_menu_item);
         // keep a reference to the radiobutton to set or clear it in a non-standard way from HoldingDialog.java
         radiobutton_holding_show = radio_button_menu_item;
 
-        // add the "Holding" menu to the menubar
-        menu_bar.add(hsi_holding_menu);
+        // add the "Holding" submenu to the "ND" menu
+        nd_menu.add(nd_holding_submenu);
 
 
-        // define the "Fix" menu
-        JMenu hsi_fix_menu = new JMenu("Fix");
+        // define the "Fix" submenu
+        JMenu nd_fix_submenu = new JMenu("Fix");
 
         ButtonGroup fix_group = new ButtonGroup();
 
@@ -721,7 +741,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         radio_button_menu_item.setToolTipText("Hide the CDU FIX");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(true);
-        hsi_fix_menu.add(radio_button_menu_item);
+        nd_fix_submenu.add(radio_button_menu_item);
         fix_group.add(radio_button_menu_item);
         // keep a reference to the radiobutton to set or clear it in a non-standard way from FixDialog.java
         radiobutton_fix_hide = radio_button_menu_item;
@@ -730,13 +750,16 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         radio_button_menu_item.setToolTipText("Draw a CDU FIX");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
-        hsi_fix_menu.add(radio_button_menu_item);
+        nd_fix_submenu.add(radio_button_menu_item);
         fix_group.add(radio_button_menu_item);
         // keep a reference to the radiobutton to set or clear it in a non-standard way from FixDialog.java
         radiobutton_fix_show = radio_button_menu_item;
 
-        // add the "Fix" menu to the menubar
-        menu_bar.add(hsi_fix_menu);
+        // add the "Fix" submenu to the "ND" menu
+        nd_menu.add(nd_fix_submenu);
+        
+        // add the "ND" menu to the menubar
+        menu_bar.add(nd_menu);
 
 
         // define the "EICAS" menu
@@ -889,7 +912,14 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
         String command = event.getActionCommand();
 
-        if (command.equals(XHSISettings.ACTION_SOURCE_NAV1)) {
+        if (command.equals(XHSISettings.ACTION_STYLE_BOEING)) {
+            style = Avionics.STYLE_BOEING;
+            this.avionics.set_style(style);
+        } else if (command.equals(XHSISettings.ACTION_STYLE_AIRBUS)) {
+            style = Avionics.STYLE_AIRBUS;
+            this.avionics.set_style(style);
+
+        } else if (command.equals(XHSISettings.ACTION_SOURCE_NAV1)) {
             source = Avionics.HSI_SOURCE_NAV1;
             this.avionics.set_hsi_source(source);
         } else if (command.equals(XHSISettings.ACTION_SOURCE_NAV2)) {
@@ -1105,6 +1135,10 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // settings have been changed in X-Plane, change the selections in the menu accordingly
 
 //        this.checkbox_avionics_power.setSelected(avionics.power());
+
+        int new_style = avionics.style();
+        this.radio_button_style_boeing.setSelected( new_style == Avionics.STYLE_BOEING );
+        this.radio_button_style_airbus.setSelected( new_style == Avionics.STYLE_AIRBUS );
 
         int new_source = avionics.hsi_source();
         this.radio_button_source_nav1.setSelected( new_source == Avionics.HSI_SOURCE_NAV1 );
