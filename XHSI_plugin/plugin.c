@@ -113,6 +113,7 @@ PLUGIN_API int XPluginStart(
 	// Register custom X-Plane datarefs
 	registerPilotDataRefs();
 	registerCopilotDataRefs();
+	registerGeneralDataRefs();
 	registerEICASDataRefs();
 	registerMFDDataRefs();
 
@@ -301,6 +302,7 @@ PLUGIN_API void	XPluginStop(void) {
     // unregister custom X-Plane datarefs
  	unregisterPilotDataRefs();
  	unregisterCopilotDataRefs();
+	unregisterGeneralDataRefs();
  	unregisterEICASDataRefs();
  	unregisterMFDDataRefs();
 

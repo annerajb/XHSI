@@ -48,6 +48,10 @@
 #define SIM_COCKPIT_ELECTRICAL_COCKPIT_LIGHTS_ON 82
 
 
+// General instrument style
+#define XHSI_STYLE 99
+	
+	
 // Radios
 #define SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ 100
 #define SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ 101
