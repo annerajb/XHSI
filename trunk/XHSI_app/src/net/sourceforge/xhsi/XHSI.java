@@ -81,7 +81,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 7 Alpha 6";
+    private static final String RELEASE = "2.0 Beta 7 Alpha 7";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -332,6 +332,7 @@ public class XHSI implements ActionListener {
                     this.preferences.add_subsciption(nd_ui, XHSIPreferences.PREF_AIRBUS_MODES);
                     this.preferences.add_subsciption(nd_ui, XHSIPreferences.PREF_CLASSIC_HSI);
                     this.preferences.add_subsciption(nd_ui, XHSIPreferences.PREF_APPVOR_UNCLUTTER);
+                    this.preferences.add_subsciption(nd_ui, XHSIPreferences.PREF_PFD_STYLE);
                     break;
                 case XHSIInstrument.EICAS_ID :
                     // EICAS

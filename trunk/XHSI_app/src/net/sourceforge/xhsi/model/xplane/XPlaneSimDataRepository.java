@@ -83,6 +83,10 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT_ELECTRICAL_COCKPIT_LIGHTS_ON = 82;
 
 
+    // General instrument style
+    public static final int XHSI_STYLE = 99;
+    
+    
     // Radios
     public static final int SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ = 100;
     public static final int SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ = 101;
@@ -451,7 +455,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
 
     // array with sim data for all sim data points defined above
     float[] sim_values_float = new float[1000];
-    int[] sim_values_int = new int[1000];
+    // int[] sim_values_int = new int[1000];
     String[] sim_values_string = new String[1000];
 
     long updates = 0;

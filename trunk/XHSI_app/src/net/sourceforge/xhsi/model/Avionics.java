@@ -26,6 +26,9 @@ import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 
 public interface Avionics {
 
+    public static final int STYLE_BOEING = 0;
+    public static final int STYLE_AIRBUS = 1;
+
     public static final int HSI_SOURCE_NAV1 = 0;
     public static final int HSI_SOURCE_NAV2 = 1;
     public static final int HSI_SOURCE_GPS = 2;
@@ -72,6 +75,11 @@ public interface Avionics {
     public static final int RADIO_COM2_STDBY = -6;
 
     
+    /**
+     * @return int - general instrument style STYLE_BOEING, STYLE_AIRBUS
+     */
+    public int style();
+
     /**
      * @return boolean - do we have avionics power?
      */
@@ -582,6 +590,8 @@ public interface Avionics {
 
 
     //    public void set_power(boolean new_power);
+
+    public void set_style(int new_style);
 
     public void set_hsi_source(int new_source);
 
