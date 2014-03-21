@@ -244,6 +244,18 @@ extern XPLMDataRef  piston_mpr;
 //extern XPLMDataRef  relative_altitude_mtrs;
 
 
+// custom datarefs - general
+extern XPLMDataRef  instrument_style;
+
+
+// custom datarefs - EICAS
+extern XPLMDataRef  engine_type;
+
+
+// custom datarefs - MFD
+extern XPLMDataRef  mfd_mode;
+
+
 // custom datarefs - pilot
 extern XPLMDataRef	efis_pilot_shows_stas;
 extern XPLMDataRef	efis_pilot_shows_data;
@@ -274,14 +286,6 @@ extern XPLMDataRef  efis_copilot_mins_mode;
 extern XPLMDataRef  efis_copilot_map_zoomin;
 
 
-// custom datarefs - EICAS
-extern XPLMDataRef  engine_type;
-
-
-// custom datarefs - MFD
-extern XPLMDataRef  mfd_mode;
-
-
 // Multiplayer
 extern XPLMDataRef multiplayer_x[NUM_TCAS];
 extern XPLMDataRef multiplayer_y[NUM_TCAS];
@@ -297,6 +301,7 @@ void	findDataRefs(void);
 
 void    registerPilotDataRefs(void);
 void    registerCopilotDataRefs(void);
+void    registerGeneralDataRefs(void);
 void    registerEICASDataRefs(void);
 void    registerMFDDataRefs(void);
 

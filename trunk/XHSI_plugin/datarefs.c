@@ -30,6 +30,15 @@
 
 // variables that will contain references to be used by XPLMGetData...
 
+// custom datarefs - general
+XPLMDataRef instrument_style;
+
+// custom datarefs - EICAS
+XPLMDataRef  engine_type;
+
+// custom datarefs - MFD
+XPLMDataRef  mfd_mode;
+
 // custom datarefs - pilot
 XPLMDataRef  efis_pilot_shows_stas;
 XPLMDataRef  efis_pilot_shows_data;
@@ -57,12 +66,6 @@ XPLMDataRef  copilot_hsi_selector;
 XPLMDataRef  efis_copilot_da_bug;
 XPLMDataRef  efis_copilot_mins_mode;
 XPLMDataRef  efis_copilot_map_zoomin;
-
-// custom datarefs - EICAS
-XPLMDataRef  engine_type;
-
-// custom datarefs - MFD
-XPLMDataRef  mfd_mode;
 
 // standard datarefs
 XPLMDataRef  groundspeed;
@@ -314,6 +317,44 @@ XPLMDataRef  multiplayer_z[NUM_TCAS];
 // for the NAV-Sync button commands (Direct-to-VOR & Sync-LOC/ILS)
 XPLMDataRef  nav_type_;
 
+
+
+// custom datarefs
+
+// xhsi/style
+int xhsi_style;
+int     getStyle(void* inRefcon)
+{
+     return xhsi_style;
+}
+void	setStyle(void* inRefcon, int inValue)
+{
+      xhsi_style = inValue;
+}
+
+
+// xhsi/eicas/engine_type
+int eicas_engine_type;
+int     getEICASMode(void* inRefcon)
+{
+     return eicas_engine_type;
+}
+void	setEICASMode(void* inRefcon, int inValue)
+{
+      eicas_engine_type = inValue;
+}
+
+
+// xhsi/mfd/mode
+int mfd_display_mode;
+int     getMFDMode(void* inRefcon)
+{
+     return mfd_display_mode;
+}
+void	setMFDMode(void* inRefcon, int inValue)
+{
+      mfd_display_mode = inValue;
+}
 
 
 // custom datarefs for pilot
@@ -575,30 +616,6 @@ void	setCopilotMapRange100(void* inRefcon, int inValue)
 }
 
 
-// xhsi/eicas/engine_type
-int eicas_engine_type;
-int     getEICASMode(void* inRefcon)
-{
-     return eicas_engine_type;
-}
-void	setEICASMode(void* inRefcon, int inValue)
-{
-      eicas_engine_type = inValue;
-}
-
-
-// xhsi/mfd/mode
-int mfd_display_mode;
-int     getMFDMode(void* inRefcon)
-{
-     return mfd_display_mode;
-}
-void	setMFDMode(void* inRefcon, int inValue)
-{
-      mfd_display_mode = inValue;
-}
-
-
 
 
 void registerPilotDataRefs(void) {
@@ -801,6 +818,22 @@ void registerCopilotDataRefs(void) {
 }
 
 
+void registerGeneralDataRefs(void) {
+
+    XPLMDebugString("XHSI: registering custom General DataRefs\n");
+
+    // xhsi/style
+    instrument_style = XPLMRegisterDataAccessor("xhsi/style",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                                   // Writable
+                                        getStyle, setStyle,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    XPLMDebugString("XHSI: custom General DataRefs registered\n");
+
+}
+
+
 void registerEICASDataRefs(void) {
 
     XPLMDebugString("XHSI: registering custom EICAS DataRefs\n");
@@ -844,6 +877,9 @@ float notifyDataRefEditorCallback(
     if (PluginID != XPLM_NO_PLUGIN_ID)
     {
         XPLMDebugString("XHSI: notifying DataRefEditor\n");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/style");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/mode");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/engine_type");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/sta");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/data");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/pos");
@@ -867,8 +903,6 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/da_bug");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/mins_mode");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/map_zoomin");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/mode");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/engine_type");
     }
 
     return 0.0f;
@@ -1148,6 +1182,13 @@ void unregisterCopilotDataRefs(void) {
 
     // xhsi/nd_copilot/map_zoomin
     XPLMUnregisterDataAccessor(efis_copilot_map_zoomin);
+
+}
+
+void unregisterGeneralDataRefs(void) {
+
+    // xhsi/style
+	XPLMUnregisterDataAccessor(instrument_style);
 
 }
 
@@ -1460,6 +1501,13 @@ void writeDataRef(int id, float value) {
     XPLMDebugString(info_string);
 
     switch (id) {
+
+		// general
+
+		case XHSI_STYLE :
+			XPLMSetDatai(instrument_style, (int)value);
+            break;
+
 
 		// clock
 
