@@ -260,13 +260,23 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
 
 
-    public int style() {
+    public int get_instrument_style() {
 
-        return (int) sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_STYLE);
-        
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
+            return xhsi_settings.style;
+        } else {
+            if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_INSTRUMENT_STYLE).equals(XHSIPreferences.INSTRUMENT_STYLE_SWITCHABLE)) {
+                return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_STYLE);
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_INSTRUMENT_STYLE).equals(XHSIPreferences.INSTRUMENT_STYLE_BOEING)) {
+                return Avionics.STYLE_BOEING;
+            } else /* if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_INSTRUMENT_STYLE).equals(XHSIPreferences.INSTRUMENT_STYLE_AIRBUS)) */ {
+                return Avionics.STYLE_AIRBUS;
+            }
+        }
+
     }
-    
-    
+
+
     public boolean power() {
 
         if ( XHSIPreferences.get_instance().get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ||
@@ -1161,7 +1171,7 @@ public class XPlaneAvionics implements Avionics, Observer {
 //        }
 //    }
 
-    public void set_style(int new_style) {
+    public void set_instrument_style(int new_style) {
         udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_STYLE, (float) new_style );
     };
 

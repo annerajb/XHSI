@@ -368,7 +368,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
 
         // define the "Source" menu
-        JMenu xhsi_source_menu = new JMenu("NAV-source");
+        JMenu xhsi_source_menu = new JMenu("Source");
 
         ButtonGroup source_group = new ButtonGroup();
 
@@ -914,10 +914,10 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
         if (command.equals(XHSISettings.ACTION_STYLE_BOEING)) {
             style = Avionics.STYLE_BOEING;
-            this.avionics.set_style(style);
+            this.avionics.set_instrument_style(style);
         } else if (command.equals(XHSISettings.ACTION_STYLE_AIRBUS)) {
             style = Avionics.STYLE_AIRBUS;
-            this.avionics.set_style(style);
+            this.avionics.set_instrument_style(style);
 
         } else if (command.equals(XHSISettings.ACTION_SOURCE_NAV1)) {
             source = Avionics.HSI_SOURCE_NAV1;
@@ -1136,7 +1136,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
 //        this.checkbox_avionics_power.setSelected(avionics.power());
 
-        int new_style = avionics.style();
+        int new_style = avionics.get_instrument_style();
         this.radio_button_style_boeing.setSelected( new_style == Avionics.STYLE_BOEING );
         this.radio_button_style_airbus.setSelected( new_style == Avionics.STYLE_AIRBUS );
 

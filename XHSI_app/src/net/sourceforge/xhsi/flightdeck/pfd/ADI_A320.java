@@ -161,37 +161,37 @@ public class ADI_A320 extends PFDSubcomponent {
 		Area square_horizon_area = new Area ( new Rectangle(cx - left*9/10, cy - up*11/10, left*9/10 + right*9/10, up + down*12/10) );
 		airbus_horizon_area.intersect( square_horizon_area );				
 				
-		if ( colorgradient_horizon ) {
-			g2.rotate(Math.toRadians(-bank), cx, cy);
-			GradientPaint up_gradient = new GradientPaint(
-					cx - diagonal, pitch_y - p_90, pfd_gc.background_color,
-					cx - diagonal, pitch_y - p_90/2, pfd_gc.sky_color,
-					false);
-			GradientPaint sky_gradient = new GradientPaint(
-					cx - diagonal, pitch_y - p_90/2, pfd_gc.sky_color,
-					cx - diagonal, pitch_y, pfd_gc.brightsky_color,
-					false);
-			GradientPaint ground_gradient = new GradientPaint(
-					cx - diagonal, pitch_y, pfd_gc.brightground_color,
-					cx - diagonal, pitch_y + p_90/2, pfd_gc.ground_color,
-					false);
-			GradientPaint down_gradient = new GradientPaint(
-					cx - diagonal, pitch_y + p_90/2, pfd_gc.ground_color,
-					cx - diagonal, pitch_y + p_90 , pfd_gc.background_color,
-					false);
-
-			g2.setPaint(up_gradient);
-			g2.fillRect(cx - diagonal, pitch_y - p_90, 2 * diagonal, p_90/2 + 2);
-			g2.setPaint(sky_gradient);
-			g2.fillRect(cx - diagonal, pitch_y - p_90/2, 2 * diagonal, p_90);
-
-			g2.setPaint(ground_gradient);
-			g2.fillRect(cx - diagonal, pitch_y, 2 * diagonal, p_90/2 + 2);
-			g2.setPaint(down_gradient);
-			g2.fillRect(cx - diagonal, pitch_y + p_90/2, 2 * diagonal, p_90/2);
-			g2.setColor(pfd_gc.markings_color);
-			g2.drawLine(cx - diagonal, pitch_y, cx + diagonal, pitch_y);			
-		} else if (this.preferences.get_draw_airbus_horizon()) {
+//		if ( colorgradient_horizon ) {
+//			g2.rotate(Math.toRadians(-bank), cx, cy);
+//			GradientPaint up_gradient = new GradientPaint(
+//					cx - diagonal, pitch_y - p_90, pfd_gc.background_color,
+//					cx - diagonal, pitch_y - p_90/2, pfd_gc.sky_color,
+//					false);
+//			GradientPaint sky_gradient = new GradientPaint(
+//					cx - diagonal, pitch_y - p_90/2, pfd_gc.sky_color,
+//					cx - diagonal, pitch_y, pfd_gc.brightsky_color,
+//					false);
+//			GradientPaint ground_gradient = new GradientPaint(
+//					cx - diagonal, pitch_y, pfd_gc.brightground_color,
+//					cx - diagonal, pitch_y + p_90/2, pfd_gc.ground_color,
+//					false);
+//			GradientPaint down_gradient = new GradientPaint(
+//					cx - diagonal, pitch_y + p_90/2, pfd_gc.ground_color,
+//					cx - diagonal, pitch_y + p_90 , pfd_gc.background_color,
+//					false);
+//
+//			g2.setPaint(up_gradient);
+//			g2.fillRect(cx - diagonal, pitch_y - p_90, 2 * diagonal, p_90/2 + 2);
+//			g2.setPaint(sky_gradient);
+//			g2.fillRect(cx - diagonal, pitch_y - p_90/2, 2 * diagonal, p_90);
+//
+//			g2.setPaint(ground_gradient);
+//			g2.fillRect(cx - diagonal, pitch_y, 2 * diagonal, p_90/2 + 2);
+//			g2.setPaint(down_gradient);
+//			g2.fillRect(cx - diagonal, pitch_y + p_90/2, 2 * diagonal, p_90/2);
+//			g2.setColor(pfd_gc.markings_color);
+//			g2.drawLine(cx - diagonal, pitch_y, cx + diagonal, pitch_y);			
+//		} else if (this.preferences.get_draw_airbus_horizon()) {
 			// g2.clipRect(cx - left, cy - up, left + right, up + down)
 			// With Airbus shape, bank mark area is always blue and RA area is always brown
 			g2.setClip(airbus_horizon_area);
@@ -208,15 +208,15 @@ public class ADI_A320 extends PFDSubcomponent {
 			g2.fillRect(cx - diagonal, pitch_y_airbus, 2 * diagonal, p_90);	
 			g2.setColor(pfd_gc.markings_color);
 			g2.drawLine(cx - diagonal, pitch_y_airbus, cx + diagonal, pitch_y_airbus);
-		} else {
-			g2.rotate(Math.toRadians(-bank), cx, cy);
-			g2.setColor(pfd_gc.sky_color);
-			g2.fillRect(cx - diagonal, pitch_y - p_90, 2 * diagonal, p_90);
-			g2.setColor(pfd_gc.ground_color);
-			g2.fillRect(cx - diagonal, pitch_y, 2 * diagonal, p_90);
-			g2.setColor(pfd_gc.markings_color);
-			g2.drawLine(cx - diagonal, pitch_y, cx + diagonal, pitch_y);
-		}
+//		} else {
+//			g2.rotate(Math.toRadians(-bank), cx, cy);
+//			g2.setColor(pfd_gc.sky_color);
+//			g2.fillRect(cx - diagonal, pitch_y - p_90, 2 * diagonal, p_90);
+//			g2.setColor(pfd_gc.ground_color);
+//			g2.fillRect(cx - diagonal, pitch_y, 2 * diagonal, p_90);
+//			g2.setColor(pfd_gc.markings_color);
+//			g2.drawLine(cx - diagonal, pitch_y, cx + diagonal, pitch_y);
+//		}
 
 		g2.setTransform(original_at);
 

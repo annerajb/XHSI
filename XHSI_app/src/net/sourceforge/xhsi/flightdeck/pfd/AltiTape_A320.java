@@ -105,7 +105,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
     
     private void drawTape(Graphics2D g2) {
         // Global style
-        boolean pfd_airbus = this.preferences.get_pfd_style_airbus();
+        boolean pfd_airbus = this.avionics.get_instrument_style() == Avionics.STYLE_AIRBUS;
         int altitape_right = pfd_gc.altitape_left + pfd_gc.digit_width_xxl*14/5;
         
         pfd_gc.setTransparent(g2, this.preferences.get_draw_colorgradient_horizon());

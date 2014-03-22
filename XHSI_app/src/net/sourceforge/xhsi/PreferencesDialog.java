@@ -131,10 +131,10 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private int du_height[] = new int[MAX_WINS];
 
 //    private JCheckBox draw_wide_horizon_checkbox;
-    private JComboBox pfd_style_combobox;
-    private String pfd_styles[] = { XHSIPreferences.PFD_STYLE_BOEING, XHSIPreferences.PFD_STYLE_AIRBUS };
+    private JComboBox instrument_style_combobox;
+    private String instrument_styles[] = { XHSIPreferences.INSTRUMENT_STYLE_SWITCHABLE, XHSIPreferences.INSTRUMENT_STYLE_BOEING, XHSIPreferences.INSTRUMENT_STYLE_AIRBUS };
     private JComboBox horizon_style_combobox;
-    private String horizons[] = { XHSIPreferences.HORIZON_SQUARE, XHSIPreferences.HORIZON_ROUNDED, XHSIPreferences.HORIZON_FULLWIDTH, XHSIPreferences.HORIZON_FULLSCREEN, XHSIPreferences.HORIZON_AIRBUS };
+    private String horizons[] = { XHSIPreferences.HORIZON_SQUARE, XHSIPreferences.HORIZON_ROUNDED, XHSIPreferences.HORIZON_FULLWIDTH, XHSIPreferences.HORIZON_FULLSCREEN /*, XHSIPreferences.HORIZON_AIRBUS */ };
     private JComboBox dial_transparency_combobox;
     private String transparencies[] = { "0", "25", "50", "75" };
 
@@ -198,11 +198,11 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             }
         }
 
-        for (int i=0; i<simcoms.length; i++) {
-            if ( preferences.get_preference(XHSIPreferences.PREF_SIMCOM).equals(simcoms[i]) ) {
-                this.simcom_combobox.setSelectedIndex(i);
-            }
-        }
+//        for (int i=0; i<simcoms.length; i++) {
+//            if ( preferences.get_preference(XHSIPreferences.PREF_SIMCOM).equals(simcoms[i]) ) {
+//                this.simcom_combobox.setSelectedIndex(i);
+//            }
+//        }
 
         this.aptnav_dir_textfield.setText(preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR));
         this.port_textfield.setText(preferences.get_preference(XHSIPreferences.PREF_PORT));
@@ -216,6 +216,13 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         
         // GRAPHICS
 
+        String instrumentstyle = preferences.get_preference(XHSIPreferences.PREF_INSTRUMENT_STYLE);
+        for (int i=0; i<instrument_styles.length; i++) {
+            if ( instrumentstyle.equals( instrument_styles[i] ) ) {
+                this.instrument_style_combobox.setSelectedIndex(i);
+            }
+        }
+        
         this.bold_fonts_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_BOLD_FONTS).equalsIgnoreCase("true"));
 
         this.use_more_color_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_USE_MORE_COLOR).equalsIgnoreCase("true"));
@@ -318,13 +325,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         // PFD Options (3)
 
-        String pfdstyle = preferences.get_preference(XHSIPreferences.PREF_PFD_STYLE);
-        for (int i=0; i<pfd_styles.length; i++) {
-            if ( pfdstyle.equals( pfd_styles[i] ) ) {
-                this.pfd_style_combobox.setSelectedIndex(i);
-            }
-        }
-        
         String horizonstyle = preferences.get_preference(XHSIPreferences.PREF_HORIZON_STYLE);
         for (int i=0; i<horizons.length; i++) {
             if ( horizonstyle.equals( horizons[i] ) ) {
@@ -422,20 +422,20 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         int dialog_line = 0;
 
-        // Simulator communication
-        cons.gridx = 0;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.EAST;
-        system_panel.add(new JLabel("Simulator communication", JLabel.TRAILING), cons);
-        cons.gridx = 2;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.WEST;
-        this.simcom_combobox = new JComboBox();
-        this.simcom_combobox.addItem(XHSIPreferences.XHSI_PLUGIN);
-// this.simcom_combobox.addItem(XHSIPreferences.SCS);
-        this.simcom_combobox.addActionListener(this);
-        system_panel.add(this.simcom_combobox, cons);
-        dialog_line++;
+//        // Simulator communication
+//        cons.gridx = 0;
+//        cons.gridy = dialog_line;
+//        cons.anchor = GridBagConstraints.EAST;
+//        system_panel.add(new JLabel("Simulator communication", JLabel.TRAILING), cons);
+//        cons.gridx = 2;
+//        cons.gridy = dialog_line;
+//        cons.anchor = GridBagConstraints.WEST;
+//        this.simcom_combobox = new JComboBox();
+//        this.simcom_combobox.addItem(XHSIPreferences.XHSI_PLUGIN);
+//// this.simcom_combobox.addItem(XHSIPreferences.SCS);
+//        this.simcom_combobox.addActionListener(this);
+//        system_panel.add(this.simcom_combobox, cons);
+//        dialog_line++;
 
         // Empty line for spacing
         cons.gridx = 0;
@@ -791,6 +791,25 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         int dialog_line = 0;
 
+        // instrument style
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        graphics_panel.add(new JLabel("Instrument style", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.instrument_style_combobox = new JComboBox();
+        this.instrument_style_combobox.addItem("Switchable");
+        this.instrument_style_combobox.addItem("Boeing");
+        this.instrument_style_combobox.addItem("Airbus");
+        this.instrument_style_combobox.addActionListener(this);
+        graphics_panel.add(this.instrument_style_combobox, cons);
+        dialog_line++;
+        dialog_line++;
+        
         // Border style
         cons.gridx = 0;
         cons.gridwidth = 1;
@@ -989,30 +1008,12 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         int dialog_line = 0;
 
-        // PFD style
-        cons.gridx = 0;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.EAST;
-        pfd_options_panel.add(new JLabel("PFD style", JLabel.TRAILING), cons);
-        cons.gridx = 2;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.WEST;
-        this.pfd_style_combobox = new JComboBox();
-        this.pfd_style_combobox.addItem("Boeing");
-        this.pfd_style_combobox.addItem("Airbus");
-        this.pfd_style_combobox.addActionListener(this);
-        pfd_options_panel.add(this.pfd_style_combobox, cons);
-        dialog_line++;
-        dialog_line++;
-        
         // Horizon style
         cons.gridx = 0;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
-        pfd_options_panel.add(new JLabel("Horizon style", JLabel.TRAILING), cons);
+        pfd_options_panel.add(new JLabel("Horizon style (Boeing only)", JLabel.TRAILING), cons);
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
@@ -1022,7 +1023,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.horizon_style_combobox.addItem("Rounded square");
         this.horizon_style_combobox.addItem("Full width");
         this.horizon_style_combobox.addItem("Full screen");
-        this.horizon_style_combobox.addItem("Airbus");        
+//        this.horizon_style_combobox.addItem("Airbus");        
         this.horizon_style_combobox.addActionListener(this);
         pfd_options_panel.add(this.horizon_style_combobox, cons);
         dialog_line++;
@@ -1675,8 +1676,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             logger.setLevel(loglevel);
             this.preferences.set_preference(XHSIPreferences.PREF_LOGLEVEL, loglevel.toString());
 
-            if ( ! simcoms[this.simcom_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_SIMCOM)) )
-                this.preferences.set_preference(XHSIPreferences.PREF_SIMCOM, borderstyles[this.simcom_combobox.getSelectedIndex()]);
+//            if ( ! simcoms[this.simcom_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_SIMCOM)) )
+//                this.preferences.set_preference(XHSIPreferences.PREF_SIMCOM, borderstyles[this.simcom_combobox.getSelectedIndex()]);
 
             if ( this.aptnav_dir_textfield.getText().equals(this.preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR)) == false )
                 this.preferences.set_preference(XHSIPreferences.PREF_APTNAV_DIR, this.aptnav_dir_textfield.getText());
@@ -1689,6 +1690,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
 
             // GRAPHICS
+
+            if ( ! instrument_styles[this.instrument_style_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_INSTRUMENT_STYLE)) )
+                this.preferences.set_preference(XHSIPreferences.PREF_INSTRUMENT_STYLE, instrument_styles[this.instrument_style_combobox.getSelectedIndex()]);
 
             if ( this.use_more_color_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_USE_MORE_COLOR).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_USE_MORE_COLOR, this.use_more_color_checkbox.isSelected()?"true":"false");
@@ -1801,8 +1805,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
 
             // PFD options
-            if ( ! pfd_styles[this.pfd_style_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_PFD_STYLE)) )
-                this.preferences.set_preference(XHSIPreferences.PREF_PFD_STYLE, pfd_styles[this.pfd_style_combobox.getSelectedIndex()]);
 
             if ( ! horizons[this.horizon_style_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_HORIZON_STYLE)) )
                 this.preferences.set_preference(XHSIPreferences.PREF_HORIZON_STYLE, horizons[this.horizon_style_combobox.getSelectedIndex()]);

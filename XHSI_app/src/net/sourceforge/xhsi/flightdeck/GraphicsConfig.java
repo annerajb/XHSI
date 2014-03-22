@@ -49,6 +49,8 @@ import java.util.logging.Logger;
 import java.util.Map;
 
 import net.sourceforge.xhsi.XHSIPreferences;
+import net.sourceforge.xhsi.XHSISettings;
+import net.sourceforge.xhsi.model.Avionics;
 //import net.sourceforge.xhsi.model.Avionics;
 
 
@@ -61,6 +63,7 @@ public class GraphicsConfig implements ComponentListener {
 
 
     public XHSIPreferences preferences;
+    public XHSISettings settings;
 
     // for color inspiration: http://en.wikipedia.org/wiki/Internet_colors and http://en.wikipedia.org/wiki/X11_color_names
 
@@ -358,6 +361,7 @@ public class GraphicsConfig implements ComponentListener {
     public int display_unit;
 
     public boolean powered;
+    public int style;
 
 
 
@@ -370,6 +374,7 @@ public class GraphicsConfig implements ComponentListener {
     public void init() {
 
         this.preferences = XHSIPreferences.get_instance();
+        this.settings = XHSISettings.get_instance();
 
         set_colors(false, XHSIPreferences.BORDER_GRAY);
 
@@ -573,7 +578,7 @@ public class GraphicsConfig implements ComponentListener {
             instrument_background_color = color_bluegray;
             fpv_color = Color.LIGHT_GRAY;
             clock_color = color_khaki;
-            if ( this.preferences.get_pfd_style_airbus()) {
+            if ( this.settings.style == Avionics.STYLE_AIRBUS ) {
                 // PFD colors Airbus Style - used to managed PFD lightening
                 pfd_armed_color = Color.cyan;
                 pfd_managed_color = Color.magenta;
