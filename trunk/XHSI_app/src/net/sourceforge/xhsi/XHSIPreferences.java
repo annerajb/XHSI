@@ -65,6 +65,7 @@ public class XHSIPreferences {
     public static final String PREF_CONWIN_MINIMIZED = "conwin.minimized";
 
     // GRAPHICS
+    public static final String PREF_INSTRUMENT_STYLE = "instrument.style";
     public static final String PREF_ANTI_ALIAS = "anti-alias";
     public static final String PREF_BORDER_STYLE = "border.style";
     public static final String PREF_BORDER_COLOR = "border.color";
@@ -100,7 +101,6 @@ public class XHSIPreferences {
     public static final String PREF_SINGLE_CUE_FD = "single.cue.fd";
     public static final String PREF_DRAW_AOA = "draw.aoa";
     public static final String PREF_PFD_DRAW_RADIOS = "pfd.draw.radios";
-    public static final String PREF_PFD_STYLE = "pfd.style";
     public static final String PREF_PFD_ADI_CENTERED = "pfd.adi.centered";
 
     // EICAS options
@@ -126,6 +126,11 @@ public class XHSIPreferences {
     public static final String COPILOT = "copilot";
     public static final String INSTRUCTOR = "instructor";
 
+    // for PREF_INSTRUMENT_STYLE
+    public static final String INSTRUMENT_STYLE_SWITCHABLE = "switchable";   
+    public static final String INSTRUMENT_STYLE_BOEING = "boeing";   
+    public static final String INSTRUMENT_STYLE_AIRBUS = "airbus";   
+
     // for PREF_HSI_SOURCE
     public static final String USER = "user";
     public static final String NAV1 = "nav1";
@@ -136,12 +141,8 @@ public class XHSIPreferences {
     public static final String HORIZON_ROUNDED = "rounded";
     public static final String HORIZON_FULLWIDTH = "fullwidth";
     public static final String HORIZON_FULLSCREEN = "fullscreen";
-    public static final String HORIZON_AIRBUS = "airbus";
+//    public static final String HORIZON_AIRBUS = "airbus";
     
-    // for PREF_PFD_STYLE
-    public static final String PFD_STYLE_BOEING = "boeing";   
-    public static final String PFD_STYLE_AIRBUS = "airbus";   
-
     // for PREF_BORDER_STYLE
     public static final String BORDER_RELIEF = "relief";
     public static final String BORDER_DARK = "dark";
@@ -417,6 +418,22 @@ public class XHSIPreferences {
 
     // GRAPHICS
 
+//    /**
+//     * @return            - instrument style boeing
+//     *
+//     */
+//    public boolean get_instrument_style_boeing() {
+//        return get_preference(PREF_INSTRUMENT_STYLE).equalsIgnoreCase(INSTRUMENT_STYLE_BOEING);
+//    }
+
+//    /**
+//     * @return            - instrument style airbus
+//     *
+//     */
+//    public boolean get_instrument_style_airbus() {
+//        return get_preference(PREF_INSTRUMENT_STYLE).equalsIgnoreCase(INSTRUMENT_STYLE_AIRBUS);
+//    }
+    
     /**
      * @return            - use bold fonts or not
      *
@@ -662,13 +679,13 @@ public class XHSIPreferences {
         return get_preference(PREF_HORIZON_STYLE).equalsIgnoreCase(HORIZON_ROUNDED);
     }
 
-    /**
-     * @return            - Draw rounded_square horizon
-     *
-     */
-    public boolean get_draw_airbus_horizon() {
-        return get_preference(PREF_HORIZON_STYLE).equalsIgnoreCase(HORIZON_AIRBUS);
-    }
+//    /**
+//     * @return            - Draw rounded_square horizon
+//     *
+//     */
+//    public boolean get_draw_airbus_horizon() {
+//        return get_preference(PREF_HORIZON_STYLE).equalsIgnoreCase(HORIZON_AIRBUS);
+//    }
         
     /**
      * @return            - PFD dial opacity
@@ -716,22 +733,6 @@ public class XHSIPreferences {
      */
     public boolean get_pfd_draw_radios() {
         return get_preference(PREF_PFD_DRAW_RADIOS).equalsIgnoreCase("true");
-    }
-    
-    /**
-     * @return            - PFD style boeing
-     *
-     */
-    public boolean get_pfd_style_boeing() {
-        return get_preference(PREF_PFD_STYLE).equalsIgnoreCase(PFD_STYLE_BOEING);
-    }
-
-    /**
-     * @return            - PFD style airbus
-     *
-     */
-    public boolean get_pfd_style_airbus() {
-        return get_preference(PREF_PFD_STYLE).equalsIgnoreCase(PFD_STYLE_AIRBUS);
     }
     
     /**
@@ -981,6 +982,11 @@ public class XHSIPreferences {
 
         // GRAPHICS
 
+        if ( ! this.preferences.containsKey(PREF_INSTRUMENT_STYLE) ) {
+            this.preferences.setProperty(PREF_INSTRUMENT_STYLE, INSTRUMENT_STYLE_SWITCHABLE);
+            this.unsaved_changes = true;
+        }
+        
         if ( ! this.preferences.containsKey(PREF_BORDER_STYLE) ) {
             this.preferences.setProperty(PREF_BORDER_STYLE, BORDER_RELIEF);
             this.unsaved_changes = true;
@@ -1137,11 +1143,6 @@ public class XHSIPreferences {
             this.unsaved_changes = true;
         }
        
-        if ( ! this.preferences.containsKey(PREF_PFD_STYLE) ) {
-            this.preferences.setProperty(PREF_PFD_STYLE, PFD_STYLE_BOEING);
-            this.unsaved_changes = true;
-        }
-        
         if ( ! this.preferences.containsKey(PREF_PFD_ADI_CENTERED) ) {
             this.preferences.setProperty(PREF_PFD_ADI_CENTERED, "false");
             this.unsaved_changes = true;

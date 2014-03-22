@@ -78,7 +78,7 @@ public interface Avionics {
     /**
      * @return int - general instrument style STYLE_BOEING, STYLE_AIRBUS
      */
-    public int style();
+    public int get_instrument_style();
 
     /**
      * @return boolean - do we have avionics power?
@@ -591,7 +591,7 @@ public interface Avionics {
 
     //    public void set_power(boolean new_power);
 
-    public void set_style(int new_style);
+    public void set_instrument_style(int new_style);
 
     public void set_hsi_source(int new_source);
 

@@ -140,16 +140,19 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
 //    }
 
 
-    public void update_config(Graphics2D g2, boolean power) {
+    public void update_config(Graphics2D g2, boolean power, int instrument_style) {
 
         if (this.resized
                 || this.reconfig
                 || (this.powered != power)
+                || (this.style != instrument_style)
             ) {
             // one of the settings has been changed
 
             // remember the avionics power settings
             this.powered = power;
+            this.style = instrument_style;
+            
 //logger.warning("PFD update_config");
             // general instrument config
             super.update_config(g2);
@@ -191,7 +194,7 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             speedtape_left = adi_cx - adi_size_left - (instrument_size * 50 / 1000) - tape_width;
             altitape_left = adi_cx + adi_size_right + (instrument_size * 75 / 1000);
 
-            if (this.preferences.get_pfd_style_airbus()) {
+            if ( instrument_style == Avionics.STYLE_AIRBUS ) {
             	airbus_style = true;
             	boeing_style = false;
             	// On Airbus, tape height is align with horizon
@@ -233,7 +236,7 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
                 // so we can get rid of the DG or HSI
                 dg_cy += 8; // whatever, but far away...
             }
-            if (this.preferences.get_pfd_style_airbus()) dg_cy += instrument_size * 80 / 1000;
+            if ( instrument_style == Avionics.STYLE_AIRBUS ) dg_cy += instrument_size * 80 / 1000;
             
             vsi_width = instrument_size * 85 / 1000;
             vsi_left = altitape_left + tape_width + (instrument_size * 30 / 1000);

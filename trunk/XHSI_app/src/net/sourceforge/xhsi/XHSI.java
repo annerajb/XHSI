@@ -81,7 +81,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 7 Alpha 7";
+    private static final String RELEASE = "2.0 Beta 7 Alpha 8";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -307,11 +307,15 @@ public class XHSI implements ActionListener {
                 case XHSIInstrument.EMPTY_ID :
                     // Empty
                     EmptyComponent empty_ui = (EmptyComponent)instruments.get(i).components;
+                    this.preferences.add_subsciption(empty_ui, XHSIPreferences.PREF_BORDER_STYLE);
+                    this.preferences.add_subsciption(empty_ui, XHSIPreferences.PREF_BORDER_COLOR);
                     this.preferences.add_subsciption(empty_ui, XHSIPreferences.PREF_DU_PREPEND);
                     break;
                 case XHSIInstrument.PFD_ID :
                     // PFD
                     pfd_ui = (PFDComponent)instruments.get(i).components;
+                    this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_BORDER_STYLE);
+                    this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_BORDER_COLOR);
                     this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_BOLD_FONTS);
                     this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_USE_MORE_COLOR);
                     this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_ANTI_ALIAS);
@@ -319,11 +323,13 @@ public class XHSI implements ActionListener {
                     this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_USE_POWER);
                     this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_PFD_DRAW_HSI);
                     this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_PFD_ADI_CENTERED);
-                    this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_PFD_STYLE);
+                    this.preferences.add_subsciption(pfd_ui, XHSIPreferences.PREF_INSTRUMENT_STYLE);
                     break;
                 case XHSIInstrument.ND_ID :
                     // ND
                     nd_ui = (NDComponent)instruments.get(i).components;
+                    this.preferences.add_subsciption(nd_ui, XHSIPreferences.PREF_BORDER_STYLE);
+                    this.preferences.add_subsciption(nd_ui, XHSIPreferences.PREF_BORDER_COLOR);
                     this.preferences.add_subsciption(nd_ui, XHSIPreferences.PREF_BOLD_FONTS);
                     this.preferences.add_subsciption(nd_ui, XHSIPreferences.PREF_USE_MORE_COLOR);
                     this.preferences.add_subsciption(nd_ui, XHSIPreferences.PREF_ANTI_ALIAS);
@@ -332,11 +338,13 @@ public class XHSI implements ActionListener {
                     this.preferences.add_subsciption(nd_ui, XHSIPreferences.PREF_AIRBUS_MODES);
                     this.preferences.add_subsciption(nd_ui, XHSIPreferences.PREF_CLASSIC_HSI);
                     this.preferences.add_subsciption(nd_ui, XHSIPreferences.PREF_APPVOR_UNCLUTTER);
-                    this.preferences.add_subsciption(nd_ui, XHSIPreferences.PREF_PFD_STYLE);
+                    this.preferences.add_subsciption(nd_ui, XHSIPreferences.PREF_INSTRUMENT_STYLE);
                     break;
                 case XHSIInstrument.EICAS_ID :
                     // EICAS
                     eicas_ui = (EICASComponent)instruments.get(i).components;
+                    this.preferences.add_subsciption(eicas_ui, XHSIPreferences.PREF_BORDER_STYLE);
+                    this.preferences.add_subsciption(eicas_ui, XHSIPreferences.PREF_BORDER_COLOR);
                     this.preferences.add_subsciption(eicas_ui, XHSIPreferences.PREF_BOLD_FONTS);
                     this.preferences.add_subsciption(eicas_ui, XHSIPreferences.PREF_USE_MORE_COLOR);
                     this.preferences.add_subsciption(eicas_ui, XHSIPreferences.PREF_ANTI_ALIAS);
@@ -346,6 +354,8 @@ public class XHSI implements ActionListener {
                 case XHSIInstrument.MFD_ID :
                     // EFB
                     mfd_ui = (MFDComponent)instruments.get(i).components;
+                    this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_BORDER_STYLE);
+                    this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_BORDER_COLOR);
                     this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_BOLD_FONTS);
                     this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_USE_MORE_COLOR);
                     this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_ANTI_ALIAS);
@@ -355,6 +365,8 @@ public class XHSI implements ActionListener {
                 case XHSIInstrument.ANNUN_ID :
                     // Annunciators
                     AnnunComponent annun_ui = (AnnunComponent)instruments.get(i).components;
+                    this.preferences.add_subsciption(annun_ui, XHSIPreferences.PREF_BORDER_STYLE);
+                    this.preferences.add_subsciption(annun_ui, XHSIPreferences.PREF_BORDER_COLOR);
                     this.preferences.add_subsciption(annun_ui, XHSIPreferences.PREF_BOLD_FONTS);
                     this.preferences.add_subsciption(annun_ui, XHSIPreferences.PREF_ANTI_ALIAS);
                     this.preferences.add_subsciption(annun_ui, XHSIPreferences.PREF_DU_PREPEND);
@@ -363,6 +375,8 @@ public class XHSI implements ActionListener {
                 case XHSIInstrument.CLOCK_ID :
                     // Clock
                     ClockComponent clock_ui = (ClockComponent)instruments.get(i).components;
+                    this.preferences.add_subsciption(clock_ui, XHSIPreferences.PREF_BORDER_STYLE);
+                    this.preferences.add_subsciption(clock_ui, XHSIPreferences.PREF_BORDER_COLOR);
                     this.preferences.add_subsciption(clock_ui, XHSIPreferences.PREF_BOLD_FONTS);
                     this.preferences.add_subsciption(clock_ui, XHSIPreferences.PREF_USE_MORE_COLOR);
                     this.preferences.add_subsciption(clock_ui, XHSIPreferences.PREF_ANTI_ALIAS);

@@ -139,7 +139,7 @@ public class PFDComponent extends Component implements Observer, PreferencesObse
         g2.setBackground(pfd_gc.background_color);
 //logger.warning("PFDComponent drawAll calling update_config");
         // send Graphics object to pfd_gc to recompute positions, if necessary because the panel has been resized or a mode setting has been changed
-        pfd_gc.update_config( g2, this.avionics.power() );
+        pfd_gc.update_config( g2, this.avionics.power(), this.avionics.get_instrument_style() );
 
         // rotate the display
         XHSIPreferences.Orientation orientation = XHSIPreferences.get_instance().get_panel_orientation( this.pfd_gc.display_unit );
