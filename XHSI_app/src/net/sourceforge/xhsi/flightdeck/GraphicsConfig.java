@@ -262,6 +262,7 @@ public class GraphicsConfig implements ComponentListener {
     public Color pfd_caution_color;
     public Color pfd_alarm_color;
 
+    String font_name = "Verdana";   
     public Font font_statusbar;
 
     public Font font_tiny;
@@ -406,37 +407,37 @@ public class GraphicsConfig implements ComponentListener {
             // fonts
             // Verdana is easier to read than Lucida Sans, and available on Win, Mac and Lin
             if ( XHSIPreferences.get_instance().get_bold_fonts() ) {
-                this.font_statusbar = new Font("Verdana", Font.PLAIN, 9);
-                this.font_tiny = new Font( "Verdana", Font.BOLD, 10);
-                this.font_small = new Font( "Verdana", Font.BOLD, 12);
-                this.font_medium = new Font( "Verdana", Font.BOLD, 16);
-                this.font_large = new Font( "Verdana", Font.PLAIN, 24);
-                this.font_zl = new Font( "Verdana", Font.PLAIN, Math.round(64.0f * scale));
-                this.font_yl = new Font( "Verdana", Font.PLAIN, Math.round(32.0f * scale));
-                this.font_xxl = new Font( "Verdana", Font.BOLD, Math.round(24.0f * scale));
-                this.font_xl = new Font( "Verdana", Font.BOLD, Math.round(21.0f * scale));
-                this.font_l = new Font( "Verdana", Font.BOLD, Math.round(18.0f * scale));
-                this.font_m = new Font( "Verdana", Font.BOLD, Math.round(16.0f * scale));
-                this.font_s = new Font( "Verdana", Font.BOLD, Math.round(14.0f * scale));
-                this.font_xs = new Font( "Verdana", Font.BOLD, Math.round(12.0f * scale));
-                this.font_xxs = new Font( "Verdana", Font.BOLD, Math.round(10.0f * scale));
-                this.font_normal = new Font( "Verdana", Font.BOLD, Math.round(14.0f * scale));
+                this.font_statusbar = new Font(this.font_name, Font.PLAIN, 9);
+                this.font_tiny = new Font( this.font_name, Font.BOLD, 10);
+                this.font_small = new Font( this.font_name, Font.BOLD, 12);
+                this.font_medium = new Font( this.font_name, Font.BOLD, 16);
+                this.font_large = new Font( this.font_name, Font.PLAIN, 24);
+                this.font_zl = new Font( this.font_name, Font.PLAIN, Math.round(64.0f * scale));
+                this.font_yl = new Font( this.font_name, Font.PLAIN, Math.round(32.0f * scale));
+                this.font_xxl = new Font( this.font_name, Font.BOLD, Math.round(24.0f * scale));
+                this.font_xl = new Font( this.font_name, Font.BOLD, Math.round(21.0f * scale));
+                this.font_l = new Font( this.font_name, Font.BOLD, Math.round(18.0f * scale));
+                this.font_m = new Font( this.font_name, Font.BOLD, Math.round(16.0f * scale));
+                this.font_s = new Font( this.font_name, Font.BOLD, Math.round(14.0f * scale));
+                this.font_xs = new Font( this.font_name, Font.BOLD, Math.round(12.0f * scale));
+                this.font_xxs = new Font( this.font_name, Font.BOLD, Math.round(10.0f * scale));
+                this.font_normal = new Font( this.font_name, Font.BOLD, Math.round(14.0f * scale));
             } else {
-                this.font_statusbar = new Font("Verdana", Font.PLAIN, 9);
-                this.font_tiny = new Font( "Verdana", Font.PLAIN, 10);
-                this.font_small = new Font( "Verdana", Font.PLAIN, 12);
-                this.font_medium = new Font( "Verdana", Font.PLAIN, 16);
-                this.font_large = new Font( "Verdana", Font.PLAIN, 24);
-                this.font_zl = new Font( "Verdana", Font.PLAIN, Math.round(64.0f * scale));
-                this.font_yl = new Font( "Verdana", Font.PLAIN, Math.round(32.0f * scale));
-                this.font_xxl = new Font( "Verdana", Font.PLAIN, Math.round(24.0f * scale));
-                this.font_xl = new Font( "Verdana", Font.PLAIN, Math.round(21.0f * scale));
-                this.font_l = new Font( "Verdana", Font.PLAIN, Math.round(18.0f * scale));
-                this.font_m = new Font( "Verdana", Font.PLAIN, Math.round(16.0f * scale));
-                this.font_s = new Font( "Verdana", Font.PLAIN, Math.round(14.0f * scale));
-                this.font_xs = new Font( "Verdana", Font.PLAIN, Math.round(12.0f * scale));
-                this.font_xxs = new Font( "Verdana", Font.PLAIN, Math.round(10.0f * scale));
-                this.font_normal = new Font( "Verdana", Font.PLAIN, Math.round(14.0f * scale));
+                this.font_statusbar = new Font(this.font_name, Font.PLAIN, 9);
+                this.font_tiny = new Font( this.font_name, Font.PLAIN, 10);
+                this.font_small = new Font( this.font_name, Font.PLAIN, 12);
+                this.font_medium = new Font( this.font_name, Font.PLAIN, 16);
+                this.font_large = new Font( this.font_name, Font.PLAIN, 24);
+                this.font_zl = new Font( this.font_name, Font.PLAIN, Math.round(64.0f * scale));
+                this.font_yl = new Font( this.font_name, Font.PLAIN, Math.round(32.0f * scale));
+                this.font_xxl = new Font( this.font_name, Font.PLAIN, Math.round(24.0f * scale));
+                this.font_xl = new Font( this.font_name, Font.PLAIN, Math.round(21.0f * scale));
+                this.font_l = new Font( this.font_name, Font.PLAIN, Math.round(18.0f * scale));
+                this.font_m = new Font( this.font_name, Font.PLAIN, Math.round(16.0f * scale));
+                this.font_s = new Font( this.font_name, Font.PLAIN, Math.round(14.0f * scale));
+                this.font_xs = new Font( this.font_name, Font.PLAIN, Math.round(12.0f * scale));
+                this.font_xxs = new Font( this.font_name, Font.PLAIN, Math.round(10.0f * scale));
+                this.font_normal = new Font( this.font_name, Font.PLAIN, Math.round(14.0f * scale));
             }
 
             // calculate font metrics

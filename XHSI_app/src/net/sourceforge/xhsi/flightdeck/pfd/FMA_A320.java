@@ -37,6 +37,11 @@ public class FMA_A320 extends PFDSubcomponent {
     private static final long serialVersionUID = 1L;
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
+    
+    int box_c1_r0_time=0;
+    int box_c1_r0_state=0;
+    int box_c1_r1_time=0;
+    int box_c1_r1_state=0;
 
 
     public FMA_A320(ModelFactory model_factory, PFDGraphicsConfig hsi_gc, Component parent_component) {
@@ -46,13 +51,14 @@ public class FMA_A320 extends PFDSubcomponent {
 
     public void paint(Graphics2D g2) {
         if ( pfd_gc.airbus_style && pfd_gc.powered ) {
-            drawBox(g2);
-            drawSystemStatus(g2);
+            drawBox(g2);            
             if ( this.avionics.is_x737() ) {
+            	drawSystemStatus(g2);
                 drawX737FMA(g2);
             } else if (this.avionics.is_qpac() ) {
                 drawA320FMA(g2);
             } else {
+            	drawSystemStatus(g2);
             	drawFMA(g2);
             }
         }
@@ -77,16 +83,20 @@ public class FMA_A320 extends PFDSubcomponent {
     private void drawSystemStatus(Graphics2D g2) {
 
         int ap_mode = this.avionics.autopilot_mode();
-
+        
+        // AP Engaged
+        String ap_str = "";
+        if (ap_mode == 2) {
+        	ap_str="AP 1";
+        	draw1Mode(g2,4,0,ap_str,false, pfd_gc.pfd_markings_color);
+        }    
+              
+        // FD Engaged
+        String fd_str = "";
         if ( ap_mode > 0 ) {
-            String ss_str = ap_mode == 1 ? "FD" : "CMD";
-            int ss_x = pfd_gc.adi_cx - pfd_gc.get_text_width(g2, pfd_gc.font_xxl, ss_str) / 2;
-            int ss_y = pfd_gc.adi_cy - pfd_gc.adi_size_up - pfd_gc.line_height_xxl/2;
-            g2.setColor(pfd_gc.pfd_active_color);
-            g2.setFont(pfd_gc.font_xxl);
-            g2.drawString(ss_str, ss_x, ss_y);
-        }
-
+        	fd_str="1 FD 1";
+        	draw1Mode(g2,4,1,fd_str,false, pfd_gc.pfd_markings_color);
+        }       
     }
 
 
