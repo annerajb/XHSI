@@ -35,6 +35,8 @@ XPLMDataRef instrument_style;
 
 // custom datarefs - EICAS
 XPLMDataRef  engine_type;
+XPLMDataRef  trq_scale;
+XPLMDataRef  fuel_capacity;
 
 // custom datarefs - MFD
 XPLMDataRef  mfd_mode;
@@ -342,6 +344,30 @@ int     getEICASMode(void* inRefcon)
 void	setEICASMode(void* inRefcon, int inValue)
 {
       eicas_engine_type = inValue;
+}
+
+
+// xhsi/eicas/trq_scale
+int eicas_trq_scale;
+int     getTRQscale(void* inRefcon)
+{
+     return eicas_trq_scale;
+}
+void	setTRQscale(void* inRefcon, int inValue)
+{
+      eicas_trq_scale = inValue;
+}
+
+
+// xhsi/eicas/fuel_capacity
+float eicas_fuel_total;
+float     getFuelCapacity(void* inRefcon)
+{
+     return eicas_fuel_total;
+}
+void	setFuelCapacity(void* inRefcon, float inValue)
+{
+      eicas_fuel_total = inValue;
 }
 
 
@@ -845,6 +871,21 @@ void registerEICASDataRefs(void) {
                                         getEICASMode, setEICASMode,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
+    // xhsi/eicas/trq_scale
+    trq_scale = XPLMRegisterDataAccessor("xhsi/eicas/trq_scale",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                                   // Writable
+                                        getTRQscale, setTRQscale,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/eicas/fuel_capacity
+    fuel_capacity = XPLMRegisterDataAccessor("xhsi/eicas/fuel_capacity",
+                                        xplmType_Float,                                  // The types we support
+                                        1,                                                   // Writable
+										NULL, NULL, 
+                                        getFuelCapacity, setFuelCapacity,      // Float accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
     XPLMDebugString("XHSI: custom EICAS DataRefs registered\n");
 
 }
@@ -880,6 +921,7 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/style");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/mode");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/engine_type");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_scale");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/sta");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/data");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/pos");
@@ -921,33 +963,33 @@ float initPilotCallback(
 
     // set reasonable defaults for the pilot's ND
 
-    // xhsi/nd_pilot/sta
-    efis_pilot_shows_stas = XPLMFindDataRef ("xhsi/nd_pilot/sta");
+    //// xhsi/nd_pilot/sta
+    //efis_pilot_shows_stas = XPLMFindDataRef ("xhsi/nd_pilot/sta");
     // STA on
     XPLMSetDatai(efis_pilot_shows_stas, 1);
 
-    // xhsi/nd_pilot/data
-    efis_pilot_shows_data = XPLMFindDataRef ("xhsi/nd_pilot/data");
+    //// xhsi/nd_pilot/data
+    //efis_pilot_shows_data = XPLMFindDataRef ("xhsi/nd_pilot/data");
     // DATA on
     XPLMSetDatai(efis_pilot_shows_data, 1);
 
-    // xhsi/nd_pilot/pos
-    efis_pilot_shows_pos = XPLMFindDataRef ("xhsi/nd_pilot/pos");
+    //// xhsi/nd_pilot/pos
+    //efis_pilot_shows_pos = XPLMFindDataRef ("xhsi/nd_pilot/pos");
     // POS off
     XPLMSetDatai(efis_pilot_shows_pos, 0);
 
-    // xhsi/pfd_pilot/da_bug
-    efis_pilot_da_bug = XPLMFindDataRef ("xhsi/pfd_pilot/da_bug");
+    //// xhsi/pfd_pilot/da_bug
+    //efis_pilot_da_bug = XPLMFindDataRef ("xhsi/pfd_pilot/da_bug");
     // just a default DA
     XPLMSetDatai(efis_pilot_da_bug, 0);
 
-    // xhsi/pfd_pilot/mins_mode
-    efis_pilot_mins_mode = XPLMFindDataRef ("xhsi/pfd_pilot/mins_mode");
+    //// xhsi/pfd_pilot/mins_mode
+    //efis_pilot_mins_mode = XPLMFindDataRef ("xhsi/pfd_pilot/mins_mode");
     // mins is radio
     XPLMSetDatai(efis_pilot_mins_mode, 0);
 
-    // xhsi/nd_pilot/map_zoomin
-    efis_pilot_map_zoomin = XPLMFindDataRef ("xhsi/nd_pilot/map_zoomin");
+    //// xhsi/nd_pilot/map_zoomin
+    //efis_pilot_map_zoomin = XPLMFindDataRef ("xhsi/nd_pilot/map_zoomin");
     // normal scale
     XPLMSetDatai(efis_pilot_map_zoomin, 0);
 
@@ -969,88 +1011,88 @@ float initCopilotCallback(
 
     // set reasonable defaults for the copilot's ND
 
-    // xhsi/nd_copilot/map_range
-    efis_copilot_map_range_selector = XPLMFindDataRef ("xhsi/nd_copilot/map_range");
+    //// xhsi/nd_copilot/map_range
+    //efis_copilot_map_range_selector = XPLMFindDataRef ("xhsi/nd_copilot/map_range");
     // map range 40
     XPLMSetDatai(efis_copilot_map_range_selector, 2);
 
-    // xhsi/nd_copilot/radio1
-    efis_copilot_dme_1_selector = XPLMFindDataRef ("xhsi/nd_copilot/radio1");
+    //// xhsi/nd_copilot/radio1
+    //efis_copilot_dme_1_selector = XPLMFindDataRef ("xhsi/nd_copilot/radio1");
     // radio1 : NAV1
     XPLMSetDatai(efis_copilot_dme_1_selector, 2);
 
-    // xhsi/nd_copilot/radio2
-    efis_copilot_dme_2_selector = XPLMFindDataRef ("xhsi/nd_copilot/radio2");
+    //// xhsi/nd_copilot/radio2
+    //efis_copilot_dme_2_selector = XPLMFindDataRef ("xhsi/nd_copilot/radio2");
     // radio2 : NAV2
     XPLMSetDatai(efis_copilot_dme_2_selector, 2);
 
-    // xhsi/nd_copilot/tfc
-    efis_copilot_shows_tcas = XPLMFindDataRef ("xhsi/nd_copilot/tfc");
+    //// xhsi/nd_copilot/tfc
+    //efis_copilot_shows_tcas = XPLMFindDataRef ("xhsi/nd_copilot/tfc");
     // TFC on
     XPLMSetDatai(efis_copilot_shows_tcas, 1);
 
-    // xhsi/nd_copilot/arpt
-    efis_copilot_shows_airports = XPLMFindDataRef ("xhsi/nd_copilot/arpt");
+    //// xhsi/nd_copilot/arpt
+    //efis_copilot_shows_airports = XPLMFindDataRef ("xhsi/nd_copilot/arpt");
     // ARPT on
     XPLMSetDatai(efis_copilot_shows_airports, 1);
 
-    // xhsi/nd_copilot/wpt
-    efis_copilot_shows_waypoints = XPLMFindDataRef ("xhsi/nd_copilot/wpt");
+    //// xhsi/nd_copilot/wpt
+    //efis_copilot_shows_waypoints = XPLMFindDataRef ("xhsi/nd_copilot/wpt");
     // WPT on
     XPLMSetDatai(efis_copilot_shows_waypoints, 1);
 
-    // xhsi/nd_copilot/vor
-    efis_copilot_shows_vors = XPLMFindDataRef ("xhsi/nd_copilot/vor");
+    //// xhsi/nd_copilot/vor
+    //efis_copilot_shows_vors = XPLMFindDataRef ("xhsi/nd_copilot/vor");
     // VOR on
     XPLMSetDatai(efis_copilot_shows_vors, 1);
 
-    // xhsi/nd_copilot/ndb
-    efis_copilot_shows_ndbs = XPLMFindDataRef ("xhsi/nd_copilot/ndb");
+    //// xhsi/nd_copilot/ndb
+    //efis_copilot_shows_ndbs = XPLMFindDataRef ("xhsi/nd_copilot/ndb");
     // NDB on
     XPLMSetDatai(efis_copilot_shows_ndbs, 1);
 
-    // xhsi/nd_copilot/sta
-    efis_copilot_shows_stas = XPLMFindDataRef ("xhsi/nd_copilot/sta");
+    //// xhsi/nd_copilot/sta
+    //efis_copilot_shows_stas = XPLMFindDataRef ("xhsi/nd_copilot/sta");
     // STA on
     XPLMSetDatai(efis_copilot_shows_stas, 1);
 
-    // xhsi/nd_copilot/data
-    efis_copilot_shows_data = XPLMFindDataRef ("xhsi/nd_copilot/data");
+    //// xhsi/nd_copilot/data
+    //efis_copilot_shows_data = XPLMFindDataRef ("xhsi/nd_copilot/data");
     // DATA on
     XPLMSetDatai(efis_copilot_shows_data, 1);
 
-    // xhsi/nd_copilot/pos
-    efis_copilot_shows_pos = XPLMFindDataRef ("xhsi/nd_copilot/pos");
+    //// xhsi/nd_copilot/pos
+    //efis_copilot_shows_pos = XPLMFindDataRef ("xhsi/nd_copilot/pos");
     // POS off
     XPLMSetDatai(efis_copilot_shows_pos, 0);
 
-    // xhsi/nd_copilot/map_ctr
-    efis_copilot_map_mode = XPLMFindDataRef ("xhsi/nd_copilot/map_ctr");
+    //// xhsi/nd_copilot/map_ctr
+    //efis_copilot_map_mode = XPLMFindDataRef ("xhsi/nd_copilot/map_ctr");
     // CTR on ! (just to be a little different from the pilot's ND default)
     XPLMSetDatai(efis_copilot_map_mode, 0);
 
-    // xhsi/nd_copilot/map_mode
-    efis_copilot_map_submode = XPLMFindDataRef ("xhsi/nd_copilot/map_mode");
+    //// xhsi/nd_copilot/map_mode
+    //efis_copilot_map_submode = XPLMFindDataRef ("xhsi/nd_copilot/map_mode");
     // mode MAP
     XPLMSetDatai(efis_copilot_map_submode, 2);
 
-    // xhsi/nd_copilot/nav_source
-    copilot_hsi_selector = XPLMFindDataRef ("xhsi/nd_copilot/nav_source");
+    //// xhsi/nd_copilot/nav_source
+    //copilot_hsi_selector = XPLMFindDataRef ("xhsi/nd_copilot/nav_source");
     // HSI source : NAV2 !
     XPLMSetDatai(copilot_hsi_selector, 1);
 
-    // xhsi/pfd_copilot/da_bug
-    efis_copilot_da_bug = XPLMFindDataRef ("xhsi/pfd_copilot/da_bug");
+    //// xhsi/pfd_copilot/da_bug
+    //efis_copilot_da_bug = XPLMFindDataRef ("xhsi/pfd_copilot/da_bug");
     // just a default DA
     XPLMSetDatai(efis_copilot_da_bug, 1000);
 
-    // xhsi/pfd_copilot/mins_mode
-    efis_copilot_mins_mode = XPLMFindDataRef ("xhsi/pfd_copilot/mins_mode");
+    //// xhsi/pfd_copilot/mins_mode
+    //efis_copilot_mins_mode = XPLMFindDataRef ("xhsi/pfd_copilot/mins_mode");
     // mins is baro
     XPLMSetDatai(efis_copilot_mins_mode, 1);
 
-    // xhsi/nd_copilot/map_zoomin
-    efis_copilot_map_zoomin = XPLMFindDataRef ("xhsi/nd_copilot/map_zoomin");
+    //// xhsi/nd_copilot/map_zoomin
+    //efis_copilot_map_zoomin = XPLMFindDataRef ("xhsi/nd_copilot/map_zoomin");
     // scale * 100
     XPLMSetDatai(efis_copilot_map_zoomin, 1);
 
@@ -1071,10 +1113,17 @@ float initEICASCallback(
 
     // set a default for the LFD mode
 
-//    // xhsi/eicas/engine_type
-//    engine_type = XPLMFindDataRef ("xhsi/eicas/engine_type");
+    //// xhsi/eicas/engine_type
+    //engine_type = XPLMFindDataRef ("xhsi/eicas/engine_type");
     // type 0 = N1 / 1 = EPR / 2 = TRQ / 3 = MAP
     XPLMSetDatai(engine_type, 0);
+
+	// scale 0 = LbFt, 1 = Nm, 2 = %
+    XPLMSetDatai(trq_scale, 0);
+
+	// let the app decide...
+	XPLMSetDataf(fuel_capacity, 0.0f);
+
 
 
     XPLMDebugString("XHSI: custom EICAS DataRefs initialized\n");
@@ -1094,13 +1143,12 @@ float initMFDCallback(
 
     // set a default for the LFD mode
 
-//    // xhsi/mfd/mode
-//    mfd_mode = XPLMFindDataRef ("xhsi/mfd/mode");
+    //// xhsi/mfd/mode
+    //mfd_mode = XPLMFindDataRef ("xhsi/mfd/mode");
     // mode 0 = Airport Chart / 1 = Flight Plan / 2 = Lower EICAS
     XPLMSetDatai(mfd_mode, 0);
 
-
-    XPLMDebugString("XHSI: custom MFD DataRefs initialized\n");
+	XPLMDebugString("XHSI: custom MFD DataRefs initialized\n");
 
     return 0.0f;
 
@@ -1196,6 +1244,12 @@ void unregisterEICASDataRefs(void) {
 
     // xhsi/eicas/engine_type
     XPLMUnregisterDataAccessor(engine_type);
+
+    // xhsi/eicas/trq_scale
+    XPLMUnregisterDataAccessor(trq_scale);
+
+    // xhsi/eicas/fuel_capacity
+    XPLMUnregisterDataAccessor(fuel_capacity);
 
 }
 
@@ -1664,6 +1718,14 @@ void writeDataRef(int id, float value) {
 
         case XHSI_ENGINE_TYPE :
             XPLMSetDatai(engine_type , (int)value);
+            break;
+
+        case XHSI_EICAS_TRQ_SCALE :
+            XPLMSetDatai(trq_scale , (int)value);
+            break;
+
+        case XHSI_FUEL_CAPACITY :
+			XPLMSetDataf(fuel_capacity , value);
             break;
 
 

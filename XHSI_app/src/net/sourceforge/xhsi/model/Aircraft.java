@@ -626,12 +626,17 @@ public interface Aircraft {
     /**
      * @return float - Maximum _available_ engine TRQ
      */
-    public float get_max_TRQ();
+    public float get_max_TRQ_LbFt();
     
     /**
      * @return float - Engine TRQ
      */
-    public float get_TRQ(int engine);
+    public float get_TRQ_LbFt(int engine);
+
+    /**
+     * @return float - Engine TRQ
+     */
+    public float get_TRQ_Nm(int engine);
 
     /**
      * @return float - ITT %
