@@ -479,14 +479,23 @@ if ( ref_n1 <= 1.0f ) {
         AffineTransform original_at = g2.getTransform();
         scalePen(g2);
 
-        float trq_value = Math.max(this.aircraft.get_TRQ(pos), 0.0f);
-        float trq_max = this.aircraft.get_max_TRQ();
-//trq_value=19500.0f;
-//trq_max=10000.0f;
+        float trq_value = Math.max(this.aircraft.get_TRQ_LbFt(pos), 0.0f);
+        float trq_max = this.aircraft.get_max_TRQ_LbFt();
         float trq_dial = Math.min(trq_value/trq_max, 1.1f);
-        // display TRQ in LbFt x100
-        String trq_str = Integer.toString(Math.round(trq_value));
+
+        String trq_str;
+        if ( this.avionics.get_trq_scale() == XHSISettings.TRQ_SCALE_NM ) {
+            // display TRQ in Nm x100
+            trq_str = Integer.toString(Math.round(Math.max(this.aircraft.get_TRQ_Nm(pos), 0.0f)));
+        } else if ( this.avionics.get_trq_scale() == XHSISettings.TRQ_SCALE_PERCENT ) {
+            // display TRQ in %
+            trq_str = Integer.toString(Math.round(trq_value/trq_max*100.0f));
+        } else /* if ( this.avionics.get_trq_scale() == XHSISettings.TRQ_SCALE_LBFT ) */ {
+            // display TRQ in LbFt x100
+            trq_str = Integer.toString(Math.round(trq_value));
+        }
 //        String trq_str = one_decimal_format.format(trq_value/100.0f);
+        
         int trq_y = eicas_gc.dial_main1_y;
         int trq_r = eicas_gc.dial_r[num];
 

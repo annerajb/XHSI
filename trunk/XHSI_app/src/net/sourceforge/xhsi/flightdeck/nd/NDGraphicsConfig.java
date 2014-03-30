@@ -120,7 +120,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 //    }
 
 
-    public void update_config(Graphics2D g2, int mode, int submode, int range, boolean zoomin, boolean power) {
+    public void update_config(Graphics2D g2, int mode, int submode, int range, boolean zoomin, boolean power, int instrument_style) {
 
         if (this.resized
                 || this.reconfig
@@ -129,11 +129,14 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
                 || (this.map_range != range)
                 || (this.map_zoomin != zoomin)
                 || (this.powered != power)
+                || (this.style != instrument_style)
             ) {
             // one of the settings has been changed
 
             // remember the avionics power settings
             this.powered = power;
+            this.style = instrument_style;
+            
 //logger.warning("ND update_config");
             super.update_config(g2);
 

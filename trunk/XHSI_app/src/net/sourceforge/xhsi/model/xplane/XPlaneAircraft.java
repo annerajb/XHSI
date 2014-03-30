@@ -588,12 +588,16 @@ public class XPlaneAircraft implements Aircraft {
             return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_2);
     }
 
-    public float get_TRQ(int engine) {
+    public float get_TRQ_LbFt(int engine) {
         // NM = LbFt * 1.35581794884f
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_ENGINE_ENGN_TRQ_ + engine) / 1.35581794884f;
     }
 
-    public float get_max_TRQ() {
+    public float get_TRQ_Nm(int engine) {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_ENGINE_ENGN_TRQ_ + engine);
+    }
+
+    public float get_max_TRQ_LbFt() {
         // NM = LbFt * 1.35581794884f
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_CONTROLS_ACF_TRQ_MAX_ENG) / 1.35581794884f;
     }

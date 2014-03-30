@@ -643,6 +643,12 @@ int createAvionicsPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_ENGINE_TYPE);
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(engine_type));
 	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EICAS_TRQ_SCALE);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(trq_scale));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FUEL_CAPACITY);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(fuel_capacity));
+	i++;
 
 
     // MFD

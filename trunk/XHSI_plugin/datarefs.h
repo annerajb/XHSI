@@ -250,6 +250,8 @@ extern XPLMDataRef  instrument_style;
 
 // custom datarefs - EICAS
 extern XPLMDataRef  engine_type;
+extern XPLMDataRef  trq_scale;
+extern XPLMDataRef  fuel_capacity;
 
 
 // custom datarefs - MFD
@@ -314,6 +316,7 @@ float   initMFDCallback(float, float, int, void *);
 
 void    unregisterPilotDataRefs(void);
 void    unregisterCopilotDataRefs(void);
+void	unregisterGeneralDataRefs(void);
 void    unregisterEICASDataRefs(void);
 void    unregisterMFDDataRefs(void);
 

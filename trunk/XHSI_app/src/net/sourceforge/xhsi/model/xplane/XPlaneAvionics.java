@@ -542,6 +542,11 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
 
 
+    public int get_trq_scale() {
+        return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EICAS_TRQ_SCALE);
+    }
+    
+
     public int get_engine_type() {
 
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
@@ -1364,6 +1369,13 @@ public class XPlaneAvionics implements Avionics, Observer {
         if ( ! xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_MFD_MODE, (float) new_mode );
         }
+
+    }
+
+
+    public void set_trq_scale(int new_scale) {
+
+        udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EICAS_TRQ_SCALE, (float) new_scale );
 
     }
 

@@ -223,6 +223,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
 
     // EICAS
     public static final int XHSI_ENGINE_TYPE = 280;
+    public static final int XHSI_EICAS_TRQ_SCALE = 281;
+    public static final int XHSI_FUEL_CAPACITY = 282;
     
 
     // MFD

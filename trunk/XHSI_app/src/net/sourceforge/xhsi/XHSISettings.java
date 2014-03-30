@@ -127,6 +127,13 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_ENGINE_TYPE_TRQ = "TRQ";
     public static final String ACTION_ENGINE_TYPE_MAP = "MAP";
 
+    public static final String ACTION_TRQ_SCALE_LBFT = "LbFt";
+    public static final int TRQ_SCALE_LBFT = 0;
+    public static final String ACTION_TRQ_SCALE_NM = "Nm";
+    public static final int TRQ_SCALE_NM = 1;
+    public static final String ACTION_TRQ_SCALE_PERCENT = "Percent";
+    public static final int TRQ_SCALE_PERCENT = 2;
+    
     public static final String ACTION_ESTIMATE_FUEL_CAPACITY = "Estimate fuel capacity";
     public static final String ACTION_SET_FUEL_CAPACITY = "Set fuel capacity ...";
     public static final String ACTION_RESET_MAX_FF = "Reset max FF";
@@ -147,7 +154,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private String zoomin_range_list[] = { "0.10", "0.20", "0.40", "0.80", "1.60", "3.20", "6.40" };
 
 
-    public int style = Avionics.STYLE_AIRBUS;
+    public int style = Avionics.STYLE_BOEING;
+    
     public int source = Avionics.HSI_SOURCE_NAV1;
     public int radio1 = Avionics.EFIS_RADIO_NAV;
     public float dme1_radius = 0.0f;
@@ -180,6 +188,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public float cdu_fix_dist = 1.0f;
 
     public int engine_type;
+    public int trq_scale;
     
     public int xpdr = Avionics.XPDR_TA;
 //    public FUEL_UNITS fuel_units = FUEL_UNITS.KG;
@@ -253,6 +262,10 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 //    private JRadioButtonMenuItem radio_button_engine_epr;
     private JRadioButtonMenuItem radio_button_engine_trq;
     private JRadioButtonMenuItem radio_button_engine_map;
+    
+    private JRadioButtonMenuItem radio_button_trq_scale_lbft;
+    private JRadioButtonMenuItem radio_button_trq_scale_nm;
+    private JRadioButtonMenuItem radio_button_trq_scale_percent;
 
     
     private static XHSISettings single_instance = null;
@@ -819,6 +832,44 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
         xhsi_eicas_menu.addSeparator();
 
+        // define the "TRQ scale" submenu
+        JMenu trq_scale_submenu = new JMenu("TRQ scale");
+
+        ButtonGroup trq_scale_group = new ButtonGroup();
+
+        // define the menu items, and add them to the "Fix" menu
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_TRQ_SCALE_LBFT);
+        radio_button_menu_item.setToolTipText("TRQ in LbFt");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(true);
+        trq_scale_submenu.add(radio_button_menu_item);
+        trq_scale_group.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_trq_scale_lbft = radio_button_menu_item;
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_TRQ_SCALE_NM);
+        radio_button_menu_item.setToolTipText("TRQ in Nm");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
+        trq_scale_submenu.add(radio_button_menu_item);
+        trq_scale_group.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_trq_scale_nm = radio_button_menu_item;
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_TRQ_SCALE_PERCENT);
+        radio_button_menu_item.setToolTipText("TRQ in %");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
+        trq_scale_submenu.add(radio_button_menu_item);
+        trq_scale_group.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_trq_scale_percent = radio_button_menu_item;
+
+        // Add the TRQ scale submenu to the EICAS menu
+        xhsi_eicas_menu.add(trq_scale_submenu);
+        
+        xhsi_eicas_menu.addSeparator();
+
         menu_item = new JMenuItem(XHSISettings.ACTION_ESTIMATE_FUEL_CAPACITY);
         menu_item.setToolTipText("Estimate the aircraft's total fuel capacity");
         menu_item.addActionListener(this);
@@ -1070,6 +1121,16 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             engine_type = XHSISettings.ENGINE_TYPE_MAP;
             this.avionics.set_engine_type(engine_type);
 
+        } else if (command.equals(XHSISettings.ACTION_TRQ_SCALE_LBFT)) {
+            trq_scale = XHSISettings.TRQ_SCALE_LBFT;
+            this.avionics.set_trq_scale(trq_scale);
+        } else if (command.equals(XHSISettings.ACTION_TRQ_SCALE_NM)) {
+            trq_scale = XHSISettings.TRQ_SCALE_NM;
+            this.avionics.set_trq_scale(trq_scale);
+        } else if (command.equals(XHSISettings.ACTION_TRQ_SCALE_PERCENT)) {
+            trq_scale = XHSISettings.TRQ_SCALE_PERCENT;
+            this.avionics.set_trq_scale(trq_scale);
+
         } else if (command.equals(XHSISettings.ACTION_ESTIMATE_FUEL_CAPACITY)) {
             // Estimate total fuel capacity
             this.avionics.get_aircraft().estimate_fuel_capacity();
@@ -1211,6 +1272,14 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 //        this.radio_button_engine_epr.setSelected( new_engine_type == XHSISettings.ENGINE_TYPE_EPR );
         this.radio_button_engine_trq.setSelected( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ );
         this.radio_button_engine_map.setSelected( new_engine_type == XHSISettings.ENGINE_TYPE_MAP );
+
+        int new_trq_scale = avionics.get_trq_scale();
+        this.radio_button_trq_scale_lbft.setSelected( new_trq_scale == XHSISettings.TRQ_SCALE_LBFT );
+        this.radio_button_trq_scale_lbft.setEnabled( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ );
+        this.radio_button_trq_scale_nm.setSelected( new_trq_scale == XHSISettings.TRQ_SCALE_NM );
+        this.radio_button_trq_scale_nm.setEnabled( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ );
+        this.radio_button_trq_scale_percent.setSelected( new_trq_scale == XHSISettings.TRQ_SCALE_PERCENT );
+        this.radio_button_trq_scale_percent.setEnabled( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ );
 
     }
 
