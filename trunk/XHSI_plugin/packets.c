@@ -1109,6 +1109,22 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ALPHA_MAX);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_alpha_max));
         i++;
+        // Failures
+        int qpac_failures = 0xFFFF;
+        if (qpac_co_hdg_valid) {
+        	qpac_failures =
+        		XPLMGetDatai(qpac_co_hdg_valid) << 7 |
+    			XPLMGetDatai(qpac_co_att_valid) << 6 |
+    			XPLMGetDatai(qpac_co_ias_valid) << 5 |
+    			XPLMGetDatai(qpac_co_alt_valid) << 4 |
+    			XPLMGetDatai(qpac_capt_hdg_valid) << 3 |
+    			XPLMGetDatai(qpac_capt_att_valid) << 2 |
+    			XPLMGetDatai(qpac_capt_ias_valid) << 1 |
+    			XPLMGetDatai(qpac_capt_alt_valid) ;
+        }
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FAILURES);
+        sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_failures );
+        i++;
     }
 
 	// now we know the number of datapoints

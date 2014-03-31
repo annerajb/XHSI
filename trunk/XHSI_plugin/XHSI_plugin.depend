@@ -1,0 +1,315 @@
+# depslib dependency file v1.0
+1391955654 source:/home/carel/workspace/XHSI_plugin/commands.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<stdint.h>
+	"XPLMProcessing.h"
+	"XPLMDataAccess.h"
+	"XPLMUtilities.h"
+	"XPLMNavigation.h"
+	"XPLMDisplay.h"
+	"XPLMMenus.h"
+	"XPWidgets.h"
+	"XPStandardWidgets.h"
+	"structs.h"
+	"datarefs.h"
+	"datarefs_x737.h"
+
+1384422868 /home/carel/workspace/SDK/CHeaders/XPLM/XPLMProcessing.h
+	"XPLMDefs.h"
+
+1384422868 /home/carel/workspace/SDK/CHeaders/XPLM/XPLMDefs.h
+	<windows.h>
+	<stdint.h>
+
+1384422868 /home/carel/workspace/SDK/CHeaders/XPLM/XPLMDataAccess.h
+	"XPLMDefs.h"
+
+1384422868 /home/carel/workspace/SDK/CHeaders/XPLM/XPLMUtilities.h
+	"XPLMDefs.h"
+
+1384422868 /home/carel/workspace/SDK/CHeaders/XPLM/XPLMNavigation.h
+	"XPLMDefs.h"
+
+1384422868 /home/carel/workspace/SDK/CHeaders/XPLM/XPLMDisplay.h
+	"XPLMDefs.h"
+
+1384422868 /home/carel/workspace/SDK/CHeaders/XPLM/XPLMMenus.h
+	"XPLMDefs.h"
+
+1384422868 /home/carel/workspace/SDK/CHeaders/Widgets/XPWidgets.h
+	"XPWidgetDefs.h"
+
+1384422868 /home/carel/workspace/SDK/CHeaders/Widgets/XPWidgetDefs.h
+	"XPLMDefs.h"
+
+1384422868 /home/carel/workspace/SDK/CHeaders/Widgets/XPStandardWidgets.h
+	"XPWidgetDefs.h"
+
+1391955654 /home/carel/workspace/XHSI_plugin/structs.h
+
+1391955655 /home/carel/workspace/XHSI_plugin/datarefs.h
+
+1391955655 /home/carel/workspace/XHSI_plugin/datarefs_x737.h
+
+1391955655 source:/home/carel/workspace/XHSI_plugin/datarefs.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<stdint.h>
+	"XPLMProcessing.h"
+	"XPLMDataAccess.h"
+	"XPLMUtilities.h"
+	"XPLMNavigation.h"
+	"XPLMDisplay.h"
+	"XPLMMenus.h"
+	"XPLMPlugin.h"
+	"XPWidgets.h"
+	"XPStandardWidgets.h"
+	"commands.h"
+	"globals.h"
+	"structs.h"
+	"ids.h"
+	"xfmc.h"
+	"datarefs_x737.h"
+
+1384422868 /home/carel/workspace/SDK/CHeaders/XPLM/XPLMPlugin.h
+	"XPLMDefs.h"
+
+1391955654 /home/carel/workspace/XHSI_plugin/commands.h
+
+1391955655 /home/carel/workspace/XHSI_plugin/globals.h
+
+1391955654 /home/carel/workspace/XHSI_plugin/ids.h
+
+1391955655 /home/carel/workspace/XHSI_plugin/xfmc.h
+
+1391955655 source:/home/carel/workspace/XHSI_plugin/datarefs_cl30.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<stdint.h>
+	"XPLMDataAccess.h"
+	"XPLMUtilities.h"
+
+1391955655 source:/home/carel/workspace/XHSI_plugin/datarefs_ufmc.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<stdint.h>
+	"XPLMDataAccess.h"
+	"XPLMUtilities.h"
+
+1391955655 source:/home/carel/workspace/XHSI_plugin/datarefs_x737.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<stdint.h>
+	"XPLMDataAccess.h"
+	"XPLMUtilities.h"
+	"commands.h"
+
+1391955654 source:/home/carel/workspace/XHSI_plugin/endianess.c
+
+1391955655 source:/home/carel/workspace/XHSI_plugin/net.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<stdint.h>
+	<winsock2.h>
+	<sys/socket.h>
+	<sys/errno.h>
+	<sys/types.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<unistd.h>
+	<fcntl.h>
+	"XPLMProcessing.h"
+	"XPLMDataAccess.h"
+	"XPLMUtilities.h"
+	"XPLMNavigation.h"
+	"XPLMDisplay.h"
+	"XPLMMenus.h"
+	"XPWidgets.h"
+	"XPStandardWidgets.h"
+	"globals.h"
+	"plugin.h"
+	"settings.h"
+	"structs.h"
+	"packets.h"
+
+1391955655 /home/carel/workspace/XHSI_plugin/plugin.h
+
+1391955655 /home/carel/workspace/XHSI_plugin/settings.h
+
+1391955654 /home/carel/workspace/XHSI_plugin/packets.h
+
+1391955655 source:/home/carel/workspace/XHSI_plugin/packets.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<stdint.h>
+	"XPLMProcessing.h"
+	"XPLMDataAccess.h"
+	"XPLMUtilities.h"
+	"XPLMNavigation.h"
+	"XPLMDisplay.h"
+	"XPLMGraphics.h"
+	"XPLMMenus.h"
+	"XPLMPlanes.h"
+	"globals.h"
+	"ids.h"
+	"structs.h"
+	"datarefs.h"
+	"datarefs_ufmc.h"
+	"datarefs_x737.h"
+	"datarefs_cl30.h"
+	"endianess.h"
+
+1384422868 /home/carel/workspace/SDK/CHeaders/XPLM/XPLMGraphics.h
+	"XPLMDefs.h"
+
+1384422868 /home/carel/workspace/SDK/CHeaders/XPLM/XPLMPlanes.h
+	"XPLMDefs.h"
+
+1391955655 /home/carel/workspace/XHSI_plugin/datarefs_ufmc.h
+
+1391955655 /home/carel/workspace/XHSI_plugin/datarefs_cl30.h
+
+1391955654 /home/carel/workspace/XHSI_plugin/endianess.h
+
+1391955655 source:/home/carel/workspace/XHSI_plugin/plugin.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<stdint.h>
+	<winsock2.h>
+	"XPLMProcessing.h"
+	"XPLMDataAccess.h"
+	"XPLMUtilities.h"
+	"XPLMNavigation.h"
+	"XPLMDisplay.h"
+	"XPLMMenus.h"
+	"XPWidgets.h"
+	"XPStandardWidgets.h"
+	"globals.h"
+	"settings.h"
+	"structs.h"
+	"datarefs.h"
+	"datarefs_ufmc.h"
+	"datarefs_x737.h"
+	"datarefs_cl30.h"
+	"ui.h"
+	"net.h"
+	"packets.h"
+	"sender.h"
+	"receiver.h"
+	"commands.h"
+	"xfmc.h"
+
+1391955654 /home/carel/workspace/XHSI_plugin/ui.h
+
+1391955655 /home/carel/workspace/XHSI_plugin/net.h
+	<winsock2.h>
+	<sys/socket.h>
+	<sys/errno.h>
+	<sys/types.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<unistd.h>
+
+1391955654 /home/carel/workspace/XHSI_plugin/sender.h
+
+1391955654 /home/carel/workspace/XHSI_plugin/receiver.h
+
+1391955654 source:/home/carel/workspace/XHSI_plugin/receiver.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<stdint.h>
+	<winsock2.h>
+	"XPLMProcessing.h"
+	"XPLMDataAccess.h"
+	"XPLMUtilities.h"
+	"XPLMNavigation.h"
+	"XPLMDisplay.h"
+	"XPLMMenus.h"
+	"XPWidgets.h"
+	"XPStandardWidgets.h"
+	"globals.h"
+	"plugin.h"
+	"settings.h"
+	"structs.h"
+	"packets.h"
+	"net.h"
+
+1391955654 source:/home/carel/workspace/XHSI_plugin/sender.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<stdint.h>
+	<winsock2.h>
+	"XPLMProcessing.h"
+	"XPLMDataAccess.h"
+	"XPLMUtilities.h"
+	"XPLMNavigation.h"
+	"XPLMDisplay.h"
+	"XPLMMenus.h"
+	"XPWidgets.h"
+	"XPStandardWidgets.h"
+	"globals.h"
+	"plugin.h"
+	"settings.h"
+	"structs.h"
+	"packets.h"
+	"net.h"
+
+1391955655 source:/home/carel/workspace/XHSI_plugin/settings.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<stdint.h>
+	"XPLMProcessing.h"
+	"XPLMDataAccess.h"
+	"XPLMUtilities.h"
+	"XPLMNavigation.h"
+	"XPLMDisplay.h"
+	"XPLMMenus.h"
+	"XPWidgets.h"
+	"XPStandardWidgets.h"
+	"globals.h"
+
+1391955654 source:/home/carel/workspace/XHSI_plugin/ui.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<stdint.h>
+	<winsock2.h>
+	"XPLMProcessing.h"
+	"XPLMDataAccess.h"
+	"XPLMUtilities.h"
+	"XPLMNavigation.h"
+	"XPLMDisplay.h"
+	"XPLMMenus.h"
+	"XPWidgets.h"
+	"XPStandardWidgets.h"
+	"globals.h"
+	"plugin.h"
+	"settings.h"
+	"net.h"
+
+1391955655 source:/home/carel/workspace/XHSI_plugin/xfmc.c
+	<stdio.h>
+	<string.h>
+	<winsock2.h>
+	"XPLMDataAccess.h"
+	"XPLMPlugin.h"
+	"XPLMUtilities.h"
+	"xfmc.h"
+	"endianess.h"
+	"plugin.h"
+	"globals.h"
+	"settings.h"
+	"net.h"
+
