@@ -583,6 +583,8 @@ public interface Avionics {
     public int qpac_alpha_prot();
     public int qpac_alpha_max();
     
+    // Failures
+    public float qpac_failures();
         
     // UFMC
     public boolean has_ufmc();
@@ -641,6 +643,26 @@ public interface Avionics {
     
     public void set_mfd_mode(int new_mode);
 
+    // Failures
+    /**
+     * @return boolean - True if attitude valid
+     */  
+    public boolean att_valid ();
 
+    /**
+     * @return boolean - True if heading valid
+     */  
+    public boolean hdg_valid ();
+
+    /**
+     * @return boolean - True if IAS valid 
+     */  
+    public boolean ias_valid ();
+
+    /**
+     * @return boolean - True if Altitude valid 
+     */  
+    public boolean alt_valid ();
+    
 
 }

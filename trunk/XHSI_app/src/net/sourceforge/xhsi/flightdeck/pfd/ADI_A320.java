@@ -57,10 +57,10 @@ public class ADI_A320 extends PFDSubcomponent {
 
 	public void paint(Graphics2D g2) {
 		if ( pfd_gc.airbus_style ) {
-			if ( ! XHSIStatus.receiving ) {
+			if ( ! XHSIStatus.receiving  || ! this.avionics.att_valid() ) {
 				// FCOM 1.31.40 p26 (1) 
 				// if the PFD loses attitude data, its entire sphere is cleared to display the ATT flag (red)
-				drawFailedADI(g2);
+				if ( pfd_gc.powered ) drawFailedADI(g2);
 			} else if ( pfd_gc.powered ) {
 				drawADI(g2);
 				drawMarker(g2);
@@ -71,6 +71,7 @@ public class ADI_A320 extends PFDSubcomponent {
 	private void drawFailedADI(Graphics2D g2) {
 		int cx = pfd_gc.adi_cx;
 		int cy = pfd_gc.adi_cy;
+		/*
 		int left = pfd_gc.adi_size_left;
 		int right = pfd_gc.adi_size_right;
 		int up = pfd_gc.adi_size_up;
@@ -78,8 +79,9 @@ public class ADI_A320 extends PFDSubcomponent {
 		Area airbus_horizon_area = new Area ( new Arc2D.Float ( (float) cx - left, (float) cy - up, (float) left + right, (float) up + down, 0.0f,360.0f,Arc2D.CHORD));
 		Area square_horizon_area = new Area ( new Rectangle(cx - left*9/10, cy - up*11/10, left*9/10 + right*9/10, up + down*12/10) );
 		airbus_horizon_area.intersect( square_horizon_area );
-		g2.setColor(pfd_gc.warning_color);
-		g2.draw(airbus_horizon_area);
+		*/
+		g2.setColor(pfd_gc.pfd_alarm_color);
+		// g2.draw(airbus_horizon_area);
 		g2.setFont(pfd_gc.font_xxl);
 		String failed_str = "ATT";
 		g2.drawString(failed_str, cx - pfd_gc.get_text_width(g2, pfd_gc.font_xxl, failed_str)/2, cy);

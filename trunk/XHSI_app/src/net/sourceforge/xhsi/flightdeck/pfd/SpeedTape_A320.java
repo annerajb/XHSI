@@ -28,10 +28,10 @@ public class SpeedTape_A320 extends PFDSubcomponent {
 
     public void paint(Graphics2D g2) {
     	if ( pfd_gc.airbus_style ) {
-    		if ( ! XHSIStatus.receiving ) {
+    		if ( ! XHSIStatus.receiving || ! this.avionics.ias_valid() ) {
     			// FCOM 1.31.40 p26 (6) 
     			// if the speed information fails, the SPD flag (red) replaces the speed scale
-    			drawFailedTape(g2);
+    			if ( pfd_gc.powered ) drawFailedTape(g2);
     		} else if ( pfd_gc.powered ) {
     			drawTape(g2);
     		}
@@ -41,13 +41,22 @@ public class SpeedTape_A320 extends PFDSubcomponent {
     private void drawFailedTape(Graphics2D g2) {
     	// A320 tape with white line border
     	int speedtape_right = pfd_gc.speedtape_left + pfd_gc.tape_width*6/8;
-    	g2.setColor(pfd_gc.warning_color);
+    	g2.setColor(pfd_gc.pfd_instrument_background_color);
+    	g2.fillRect(pfd_gc.speedtape_left, pfd_gc.tape_top, speedtape_right-pfd_gc.speedtape_left, pfd_gc.tape_height);
+    	g2.setColor(pfd_gc.pfd_alarm_color);
     	g2.drawLine(speedtape_right, pfd_gc.tape_top ,speedtape_right, pfd_gc.tape_top + pfd_gc.tape_height + 1 );
     	g2.drawLine(pfd_gc.speedtape_left, pfd_gc.tape_top ,pfd_gc.speedtape_left + pfd_gc.tape_width, pfd_gc.tape_top  );
     	g2.drawLine(pfd_gc.speedtape_left, pfd_gc.tape_top + pfd_gc.tape_height + 1,pfd_gc.speedtape_left + pfd_gc.tape_width, pfd_gc.tape_top + pfd_gc.tape_height + 1 );       
     	String failed_str = "SPD";
         g2.setFont(pfd_gc.font_xxl);
     	g2.drawString( failed_str, pfd_gc.speedtape_left,  pfd_gc.adi_cy + pfd_gc.line_height_l/2 );
+    	failed_str = "SPD SEL";   	
+    	g2.setFont(pfd_gc.font_l);
+    	int str_w = pfd_gc.get_text_width(g2, pfd_gc.font_l, failed_str);
+    	int str_x = pfd_gc.speedtape_left + pfd_gc.tape_width - str_w;
+    	int str_y =  pfd_gc.tape_top - pfd_gc.tape_width/16 ;
+    	g2.clearRect(str_x - pfd_gc.digit_width_l/3, str_y - pfd_gc.line_height_l*7/8, str_w + pfd_gc.digit_width_l*2/3, pfd_gc.line_height_l);
+    	g2.drawString(failed_str, str_x, str_y); 
     }
 
     private void drawTape(Graphics2D g2) {
@@ -118,10 +127,10 @@ public class SpeedTape_A320 extends PFDSubcomponent {
                 g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*5/8, ias_y, speedtape_right - 1, ias_y);
                 
                 if (ias_mark % 20 == 0) {
-                    g2.setFont(pfd_gc.font_l);
+                    g2.setFont(pfd_gc.font_xl);
                     DecimalFormat speed_format = new DecimalFormat("000");            		
                     String mark_str = speed_format.format(ias_mark);
-                    g2.drawString(mark_str, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 - pfd_gc.get_text_width(g2, pfd_gc.font_l, mark_str) - pfd_gc.tape_width*3/16, ias_y + pfd_gc.line_height_l/2 - 2);
+                    g2.drawString(mark_str, pfd_gc.speedtape_left + pfd_gc.tape_width*9/16 - pfd_gc.get_text_width(g2, pfd_gc.font_xl, mark_str),  ias_y + pfd_gc.line_height_l/2 - 2);
                 }
 
             }
@@ -299,7 +308,7 @@ public class SpeedTape_A320 extends PFDSubcomponent {
             if ( take_off ) {
                 v1 = (float) this.avionics.qpac_v1_value();
                 if ( v1 > 0.0f ) drawV1speed(g2, v1, ias);
-                float vr = this.avionics.qpac_vr(); // very rough estimate based on V2 - 5%
+                float vr = this.avionics.qpac_vr(); 
                 drawVRSpeed(g2, vr, ias);
                 
             }
@@ -342,9 +351,6 @@ public class SpeedTape_A320 extends PFDSubcomponent {
         float ap_ias;
         String ap_spd_str;
         if ( this.avionics.autopilot_speed_is_mach() ) {
-        } else {
-        }
-        if ( this.avionics.autopilot_speed_is_mach() ) {
             // AP SPD is Mach
             float ap_tas = this.avionics.autopilot_speed() * sound_speed;
             if ( ( ias < 10.0f ) || ( tas < 10.0f ) ) {
@@ -361,14 +367,19 @@ public class SpeedTape_A320 extends PFDSubcomponent {
 
         int ap_spdbug_y = pfd_gc.adi_cy - Math.round( (ap_ias - ias) * pfd_gc.tape_height / 80.0f );
         boolean ap_spdbug_show = true;
-        // Managed speed
-       	g2.setColor(Color.magenta); 
+        // Managed or selected speed 
+       	g2.setColor(pfd_gc.pfd_selected_color); 
         if ( ap_spdbug_y < pfd_gc.tape_top ) {
             ap_spdbug_y = pfd_gc.tape_top;
             ap_spdbug_show = false;
         } else if ( ap_spdbug_y > pfd_gc.tape_top + pfd_gc.tape_height ) {
             ap_spdbug_y = pfd_gc.tape_top + pfd_gc.tape_height;
             ap_spdbug_show = false;
+        } else if ( ap_ias == 0 ) {
+        	g2.setColor(pfd_gc.pfd_alarm_color);
+        	ap_spd_str = "SPD SEL";
+        	ap_spdbug_y = pfd_gc.tape_top;
+        	ap_spdbug_show = false;
         }
         if (ap_spdbug_show) {
         	int[] bug_x = {

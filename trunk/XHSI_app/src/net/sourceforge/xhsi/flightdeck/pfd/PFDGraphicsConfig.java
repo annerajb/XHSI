@@ -83,6 +83,10 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int fma_width;
     public int fma_top;
     public int fma_height;
+    public int fma_col_1;
+    public int fma_col_2;
+    public int fma_col_3;
+    public int fma_col_4;
     public int dg_radius;
     public int dg_cx;
     public int dg_cy;
@@ -192,11 +196,12 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             adi_pitch90 = adi_size_down * 90 / adi_pitchscale;
             tape_width = instrument_size * 120 / 1000;
             speedtape_left = adi_cx - adi_size_left - (instrument_size * 50 / 1000) - tape_width;
-            altitape_left = adi_cx + adi_size_right + (instrument_size * 75 / 1000);
+            altitape_left = adi_cx + adi_size_right + (instrument_size * 73 / 1000);
 
             if ( instrument_style == Avionics.STYLE_AIRBUS ) {
             	airbus_style = true;
             	boeing_style = false;
+            	adi_cy = panel_offset_y + this.panel_rect.y + instrument_size * 515 / 1000;
             	// On Airbus, tape height is align with horizon
                 adi_size_left = instrument_size * 250 / 1000;
                 adi_size_right = instrument_size * 250 / 1000;
@@ -204,15 +209,18 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
                 adi_size_down = instrument_size * 260 / 1000;
                 adi_pitchscale = 22; // max scale down
                 adi_pitch90 = adi_size_down * 90 / adi_pitchscale;
-                tape_width = instrument_size * 120 / 1000;
-                speedtape_left = adi_cx - adi_size_left - (instrument_size * 50 / 1000) - tape_width;
-                altitape_left = adi_cx + adi_size_right + (instrument_size * 75 / 1000);
-            	tape_height = instrument_size * 500 / 1000;
-                vsi_height = instrument_size * 575 / 1000;
+                tape_width = instrument_size * 140 / 1000;
+                speedtape_left = adi_cx - adi_size_left - (instrument_size * 30 / 1000) - tape_width;
+                altitape_left = adi_cx + adi_size_right + (instrument_size * 65 / 1000);
+            	tape_height = instrument_size * 530 / 1000;
+                vsi_height = instrument_size * 640 / 1000;
                 fma_width =  instrument_size * 980 / 1000; // full width on A320 
                 fma_left = speedtape_left;
-                fma_height = instrument_size * 120 / 1000;
-
+                fma_height = instrument_size * 135 / 1000;
+                fma_col_1 = fma_width*100/500;
+                fma_col_2 = fma_width*206/500;
+                fma_col_3 = fma_width*325/500;
+                fma_col_4 = fma_width*419/500;
             } else {
             	airbus_style = false;
             	boeing_style = true;
@@ -221,6 +229,10 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
                 fma_width = instrument_size * 560 / 1000; // was 546
                 fma_left = adi_cx - fma_width/2;
                 fma_height = instrument_size * 80 / 1000;
+                fma_col_1 = fma_width*100/500;
+                fma_col_2 = fma_width*206/500;
+                fma_col_3 = fma_width*325/500;
+                fma_col_4 = fma_width*419/500;
             }
             
             tape_top = adi_cy - tape_height/2;
@@ -262,7 +274,7 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             radios_height = instrument_size * 440 / 1000;
             
             // HDG Tape on Airbus
-            hdg_top = adi_cy + instrument_size * 415 / 1000;
+            hdg_top = adi_cy + instrument_size * 405 / 1000;
             hdg_left = adi_cx - adi_size_left*9/10;
             hdg_height = instrument_size * 65 / 1000;
             hdg_width = (adi_size_left + adi_size_right)*9/10;
