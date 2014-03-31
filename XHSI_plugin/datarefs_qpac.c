@@ -88,6 +88,15 @@ XPLMDataRef qpac_vs;
 XPLMDataRef qpac_v_green_dot;
 XPLMDataRef qpac_alpha_prot;
 XPLMDataRef qpac_alpha_max;
+// Failures
+XPLMDataRef qpac_capt_hdg_valid;
+XPLMDataRef qpac_capt_att_valid;
+XPLMDataRef qpac_capt_ias_valid;
+XPLMDataRef qpac_capt_alt_valid;
+XPLMDataRef qpac_co_hdg_valid;
+XPLMDataRef qpac_co_att_valid;
+XPLMDataRef qpac_co_ias_valid;
+XPLMDataRef qpac_co_alt_valid;
 
 int qpac_ready = 0;
 
@@ -168,6 +177,15 @@ void findQpacDataRefs(void) {
             qpac_v_green_dot = XPLMFindDataRef("AirbusFBW/VGreenDot");
             qpac_alpha_prot = XPLMFindDataRef("AirbusFBW/AlphaProt");
             qpac_alpha_max = XPLMFindDataRef("AirbusFBW/AlphaMax");
+            // Failures
+            qpac_capt_hdg_valid = XPLMFindDataRef("AirbusFBW/CaptHDGValid");
+            qpac_capt_att_valid = XPLMFindDataRef("AirbusFBW/CaptATTValid");
+            qpac_capt_ias_valid = XPLMFindDataRef("AirbusFBW/CaptIASValid");
+            qpac_capt_alt_valid = XPLMFindDataRef("AirbusFBW/CaptALTValid");
+            qpac_co_hdg_valid = XPLMFindDataRef("AirbusFBW/CoHDGValid");
+            qpac_co_att_valid = XPLMFindDataRef("AirbusFBW/CoATTValid");
+            qpac_co_ias_valid = XPLMFindDataRef("AirbusFBW/CoIASValid");
+            qpac_co_alt_valid = XPLMFindDataRef("AirbusFBW/CoALTValid");
 
             // Some checks with Datarefs
             reftype = XPLMGetDataRefTypes(qpac_appr_mda);

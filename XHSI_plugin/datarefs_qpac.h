@@ -71,7 +71,15 @@ extern XPLMDataRef qpac_vs;
 extern XPLMDataRef qpac_v_green_dot;
 extern XPLMDataRef qpac_alpha_prot;
 extern XPLMDataRef qpac_alpha_max;
-
+// Failures
+extern XPLMDataRef qpac_capt_hdg_valid;
+extern XPLMDataRef qpac_capt_att_valid;
+extern XPLMDataRef qpac_capt_ias_valid;
+extern XPLMDataRef qpac_capt_alt_valid;
+extern XPLMDataRef qpac_co_hdg_valid;
+extern XPLMDataRef qpac_co_att_valid;
+extern XPLMDataRef qpac_co_ias_valid;
+extern XPLMDataRef qpac_co_alt_valid;
 
 extern int qpac_ready;
 

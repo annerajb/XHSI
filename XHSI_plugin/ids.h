@@ -415,6 +415,8 @@
 #define QPAC_V_GREEN_DOT 913
 #define QPAC_ALPHA_PROT 914
 #define QPAC_ALPHA_MAX 915
+// FAILURES
+#define QPAC_FAILURES 916
 
 
 // Plugin Version
