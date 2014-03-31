@@ -56,10 +56,10 @@ public class AltiTape_A320 extends PFDSubcomponent {
 
     public void paint(Graphics2D g2) {
     	if ( pfd_gc.airbus_style ) {
-    		if ( ! XHSIStatus.receiving ) {
+    		if ( ! XHSIStatus.receiving || ! this.avionics.alt_valid() ) {
     			// FCOM 1.31.40 p26 (10) 
     			// if the altitude information fails, the ALT flag (red) replaces the altitude scale
-    			drawFailedTape(g2);
+    			if ( pfd_gc.powered ) drawFailedTape(g2);
     		} else if ( pfd_gc.powered ) {
     			drawTape(g2);
     		}
@@ -69,35 +69,19 @@ public class AltiTape_A320 extends PFDSubcomponent {
     private void drawFailedTape(Graphics2D g2) {
         // Global style
         
-        int altitape_right = pfd_gc.altitape_left + pfd_gc.digit_width_xxl*14/5;
-        g2.setColor(pfd_gc.warning_color);
+        
+        int altitape_right = pfd_gc.altitape_left + pfd_gc.tape_width*60/100;
+        g2.setColor(pfd_gc.pfd_instrument_background_color);
+        g2.fillRect(pfd_gc.altitape_left, pfd_gc.tape_top, 
+        		    altitape_right-pfd_gc.altitape_left, pfd_gc.tape_height);
+        g2.setColor(pfd_gc.pfd_alarm_color);
         g2.drawLine(altitape_right, pfd_gc.tape_top ,altitape_right, pfd_gc.tape_top + pfd_gc.tape_height + 1 );
         g2.drawLine(pfd_gc.altitape_left, pfd_gc.tape_top ,pfd_gc.altitape_left + pfd_gc.tape_width*7/8, pfd_gc.tape_top  );
         g2.drawLine(pfd_gc.altitape_left, pfd_gc.tape_top + pfd_gc.tape_height + 1,pfd_gc.altitape_left + pfd_gc.tape_width*7/8, pfd_gc.tape_top + pfd_gc.tape_height + 1 );
-    	int[] box_x = {
-    			pfd_gc.altitape_left - pfd_gc.tape_width*3/50,
-    			altitape_right,
-    			altitape_right,
-    			pfd_gc.altitape_left + pfd_gc.digit_width_xxl*3 + pfd_gc.digit_width_l * 9/4,
-    			pfd_gc.altitape_left + pfd_gc.digit_width_xxl*3 + pfd_gc.digit_width_l * 9/4,
-    			altitape_right,
-    			altitape_right,
-    			pfd_gc.altitape_left - pfd_gc.tape_width*3/50,
-    	};
-    	int[] box_y = {
-    			pfd_gc.adi_cy - pfd_gc.line_height_xxl*6/9,
-    			pfd_gc.adi_cy - pfd_gc.line_height_xxl*6/9,
-    			pfd_gc.adi_cy - pfd_gc.line_height_l*3/2,
-    			pfd_gc.adi_cy - pfd_gc.line_height_l*3/2,
-    			pfd_gc.adi_cy + pfd_gc.line_height_l*3/2,
-    			pfd_gc.adi_cy + pfd_gc.line_height_l*3/2,
-    			pfd_gc.adi_cy + pfd_gc.line_height_xxl*6/9,
-    			pfd_gc.adi_cy + pfd_gc.line_height_xxl*6/9,
-    	};
-    	g2.setColor(pfd_gc.background_color);
-    	g2.fillPolygon(box_x, box_y, 8);
-        g2.setColor(pfd_gc.warning_color);    	
-    	g2.drawPolyline(box_x, box_y, 8);
+    	g2.setColor(pfd_gc.background_color);   	
+    	g2.fillRect(pfd_gc.altitape_left - pfd_gc.tape_width*3/50, pfd_gc.adi_cy - pfd_gc.line_height_xxl*6/9,
+    			pfd_gc.tape_width, pfd_gc.line_height_xxl*12/9);
+        g2.setColor(pfd_gc.pfd_alarm_color);    	
     	String failed_str = "ALT";
         g2.setFont(pfd_gc.font_xxl);
     	g2.drawString( failed_str, pfd_gc.altitape_left,  pfd_gc.adi_cy + pfd_gc.line_height_l/2 );
@@ -106,14 +90,15 @@ public class AltiTape_A320 extends PFDSubcomponent {
     private void drawTape(Graphics2D g2) {
         // Global style
         boolean pfd_airbus = this.avionics.get_instrument_style() == Avionics.STYLE_AIRBUS;
-        int altitape_right = pfd_gc.altitape_left + pfd_gc.digit_width_xxl*14/5;
+        // int altitape_right = pfd_gc.altitape_left + pfd_gc.digit_width_xxl*14/5;
+        int altitape_right = pfd_gc.altitape_left + pfd_gc.tape_width*60/100;       
         
         pfd_gc.setTransparent(g2, this.preferences.get_draw_colorgradient_horizon());
         g2.setColor(pfd_gc.instrument_background_color);
         g2.fillRect(pfd_gc.altitape_left - 1, pfd_gc.tape_top - 1, altitape_right - pfd_gc.altitape_left + 1, pfd_gc.tape_height + 2);	
         g2.setColor(pfd_gc.markings_color);
         g2.drawLine(altitape_right, pfd_gc.tape_top ,altitape_right, pfd_gc.tape_top + pfd_gc.tape_height + 1 );
-        g2.drawLine(pfd_gc.altitape_left, pfd_gc.tape_top ,pfd_gc.altitape_left + pfd_gc.tape_width*7/8, pfd_gc.tape_top  );
+        g2.drawLine(pfd_gc.altitape_left, pfd_gc.tape_top, pfd_gc.altitape_left + pfd_gc.tape_width*7/8, pfd_gc.tape_top );
         g2.drawLine(pfd_gc.altitape_left, pfd_gc.tape_top + pfd_gc.tape_height + 1,pfd_gc.altitape_left + pfd_gc.tape_width*7/8, pfd_gc.tape_top + pfd_gc.tape_height + 1 );            
         pfd_gc.setOpaque(g2);
 
@@ -204,24 +189,25 @@ public class AltiTape_A320 extends PFDSubcomponent {
             
             // Airbus marks are on the right
            	g2.setColor(pfd_gc.markings_color);
-           	g2.drawLine(altitape_right, alt_y, altitape_right - pfd_gc.tape_width*1/8, alt_y);
+           	g2.drawLine(altitape_right, alt_y, altitape_right - pfd_gc.tape_width*1/12, alt_y);
  
             if (alt_mark % alt_modulo == 0) {
-            	g2.setFont(pfd_gc.font_l);
+            	g2.setFont(pfd_gc.font_xl);
             	DecimalFormat markform = new DecimalFormat("000");
 
             	String mark_str = markform.format( Math.abs(alt_mark / 100));
-            	g2.drawString(mark_str, pfd_gc.altitape_left, alt_y + pfd_gc.line_height_m/2 - 2);
+            	g2.drawString(mark_str, pfd_gc.altitape_left, alt_y + pfd_gc.line_height_xl/2 - 2);
 
             	// Little triangle before mark
-            	g2.drawLine(pfd_gc.altitape_left - pfd_gc.tape_width*1/16, alt_y, pfd_gc.altitape_left - pfd_gc.tape_width*3/20, alt_y + pfd_gc.tape_width*2/22);
-            	g2.drawLine(pfd_gc.altitape_left - pfd_gc.tape_width*1/16, alt_y, pfd_gc.altitape_left - pfd_gc.tape_width*3/20, alt_y - pfd_gc.tape_width*2/22);
+            	g2.drawLine(pfd_gc.altitape_left - pfd_gc.tape_width*1/20, alt_y, pfd_gc.altitape_left - pfd_gc.tape_width*4/40, alt_y + pfd_gc.tape_width*2/40);
+            	g2.drawLine(pfd_gc.altitape_left - pfd_gc.tape_width*1/20, alt_y, pfd_gc.altitape_left - pfd_gc.tape_width*4/40, alt_y - pfd_gc.tape_width*2/40);
             }
         }
 
         
         // DA arrow
         // Code for Boeing, not modified for Airbus -- let's see
+        /*
         if ( this.aircraft.mins_is_baro() ) {
 
             int da_bug = this.aircraft.da_bug();
@@ -248,6 +234,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
             }
 
         }
+        */
 
 
         // AP Alt bug
@@ -263,21 +250,21 @@ public class AltiTape_A320 extends PFDSubcomponent {
 
         int[] bug_x = {
         		pfd_gc.altitape_left - 2,
-        		pfd_gc.altitape_left - pfd_gc.tape_width*3/16,
-        		pfd_gc.altitape_left - pfd_gc.tape_width*3/16,
-        		pfd_gc.altitape_left + pfd_gc.tape_width*4/16,
-        		pfd_gc.altitape_left + pfd_gc.tape_width*4/16,
-        		pfd_gc.altitape_left - pfd_gc.tape_width*3/16,
-        		pfd_gc.altitape_left - pfd_gc.tape_width*3/16
+        		pfd_gc.altitape_left - pfd_gc.tape_width*3/24,
+        		pfd_gc.altitape_left - pfd_gc.tape_width*3/24,
+        		pfd_gc.altitape_left + pfd_gc.tape_width*4/20,
+        		pfd_gc.altitape_left + pfd_gc.tape_width*4/20,
+        		pfd_gc.altitape_left - pfd_gc.tape_width*3/24,
+        		pfd_gc.altitape_left - pfd_gc.tape_width*3/24
         };
         int[] bug_y = {
         		alt_y,
-        		alt_y + pfd_gc.tape_width*2/20,
-        		alt_y + pfd_gc.line_height_l * 2,
-        		alt_y + pfd_gc.line_height_l * 2,
-        		alt_y - pfd_gc.line_height_l * 2,
-        		alt_y - pfd_gc.line_height_l * 2,
-        		alt_y - pfd_gc.tape_width*2/20
+        		alt_y + pfd_gc.tape_width*2/21,
+        		alt_y + pfd_gc.tape_height*2/18,
+        		alt_y + pfd_gc.tape_height*2/18,
+        		alt_y - pfd_gc.tape_height*2/18,
+        		alt_y - pfd_gc.tape_height*2/18,
+        		alt_y - pfd_gc.tape_width*2/21
         };
         g2.setColor(pfd_gc.heading_bug_color);
         if (! hide_bug ) { g2.drawPolygon(bug_x, bug_y, 7); }
@@ -328,17 +315,17 @@ public class AltiTape_A320 extends PFDSubcomponent {
         
         if (qnh_display) {
         	g2.setColor(pfd_gc.fmc_disp_color);
-        	g2.setFont(pfd_gc.font_l);
+        	g2.setFont(pfd_gc.font_xl);
         	if ( ! std ) {
-        		g2.drawString("QNH", pfd_gc.altitape_left, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_l*25/8);
+        		g2.drawString("QNH", pfd_gc.altitape_left, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_xl*19/8);
         		g2.setColor(pfd_gc.color_boeingcyan);
-        		g2.drawString(qnh_str, pfd_gc.altitape_left + 4*pfd_gc.digit_width_l, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_l*25/8);
+        		g2.drawString(qnh_str, pfd_gc.altitape_left + 4*pfd_gc.digit_width_xl, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_xl*19/8);
 
         	} else {
         		g2.setColor(pfd_gc.color_boeingcyan);
-        		g2.drawString("STD", pfd_gc.altitape_left + pfd_gc.digit_width_l*18/8, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_l*25/8);
+        		g2.drawString("STD", pfd_gc.altitape_left + pfd_gc.digit_width_xl*18/8, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_xl*19/8);
         		g2.setColor(pfd_gc.fmc_ll_active_color);
-        		g2.drawRect(pfd_gc.altitape_left + 2*pfd_gc.digit_width_l, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_l*17/8, pfd_gc.digit_width_l*29/8, pfd_gc.line_height_l*10/8);
+        		g2.drawRect(pfd_gc.altitape_left + 2*pfd_gc.digit_width_xl, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_xl*11/8, pfd_gc.digit_width_xl*29/8, pfd_gc.line_height_xl*10/8);
         	}
         }
 
@@ -381,7 +368,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
     		alt_str = feet_format.format(ap_alt);
     		alt_str = String.format("%1$5s", alt_str);
     		// Right align
-    		alt_str_x =  pfd_gc.altitape_left + pfd_gc.tape_width - pfd_gc.tape_width*1/16 - pfd_gc.get_text_width(g2, pfd_gc.font_l, alt_str);
+    		alt_str_x =  pfd_gc.altitape_left + pfd_gc.tape_width - pfd_gc.tape_width*2/16 - pfd_gc.get_text_width(g2, pfd_gc.font_l, alt_str);
 
     	}
     	int alt_str_w = pfd_gc.get_text_width(g2, pfd_gc.font_l, alt_str);
@@ -393,14 +380,14 @@ public class AltiTape_A320 extends PFDSubcomponent {
     	// Airbus FCOM 1.31.40 p11 (1)
     	// 
     	int[] box_x = {
-    			pfd_gc.altitape_left - pfd_gc.tape_width*3/50,
+    			pfd_gc.altitape_left - pfd_gc.tape_width*2/50,
     			altitape_right,
     			altitape_right,
-    			pfd_gc.altitape_left + pfd_gc.digit_width_xxl*3 + pfd_gc.digit_width_l * 9/4,
-    			pfd_gc.altitape_left + pfd_gc.digit_width_xxl*3 + pfd_gc.digit_width_l * 9/4,
+    			pfd_gc.altitape_left + pfd_gc.digit_width_xxl*3 + pfd_gc.digit_width_xl * 9/4,
+    			pfd_gc.altitape_left + pfd_gc.digit_width_xxl*3 + pfd_gc.digit_width_xl * 9/4,
     			altitape_right,
     			altitape_right,
-    			pfd_gc.altitape_left - pfd_gc.tape_width*3/50,
+    			pfd_gc.altitape_left - pfd_gc.tape_width*2/50,
     	};
     	int[] box_y = {
     			pfd_gc.adi_cy - pfd_gc.line_height_xxl*6/9,
@@ -441,7 +428,9 @@ public class AltiTape_A320 extends PFDSubcomponent {
             int	x10k = pfd_gc.altitape_left;
             int	x1k = x10k + pfd_gc.digit_width_xxl;
             int	x100 = x1k + pfd_gc.digit_width_xxl;
-            int	x20 = x100 + pfd_gc.digit_width_xxl;
+            //int	x20 = x100 + pfd_gc.digit_width_xxl;
+            int x20 = altitape_right + pfd_gc.digit_width_l*2/10 ;
+            // TODO : flight phase + MDA MH settings
             if (alt >= 400f) {	
             	g2.setColor(pfd_gc.pfd_alti_color); 
             } else {
@@ -464,11 +453,8 @@ public class AltiTape_A320 extends PFDSubcomponent {
             alt_20 %= 100;
 
             // hundreds (bigger on Airbus)
-            if (pfd_airbus) { 
-            	g2.setFont(pfd_gc.font_xxl);
-            } else {
-            	g2.setFont(pfd_gc.font_l);
-            }
+            g2.setFont(pfd_gc.font_xxl);
+            
             if ( alt_20 == 80 ) {
                 ydelta = Math.round( pfd_gc.line_height_l*alt_frac );
                 g2.drawString("" + alt_100, x100, pfd_gc.adi_cy + pfd_gc.line_height_l/2 - 3 + ydelta);

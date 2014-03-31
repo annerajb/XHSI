@@ -89,10 +89,10 @@ public class HSI_A320 extends PFDSubcomponent {
 
 	public void paint(Graphics2D g2) {
 		if ( pfd_gc.airbus_style ) {
-			if ( ! XHSIStatus.receiving ) {
+			if ( ! XHSIStatus.receiving || ! this.avionics.hdg_valid() ) {
 				// FCOM 1.31.40 p26 (18) 
 				// if the heading information fails, the HDG flag replaces the heading scale (red)
-				drawFailedHSI(g2);
+				if ( pfd_gc.powered ) drawFailedHSI(g2);
 			} else if ( pfd_gc.powered ) {
 				drawTape(g2);
 
@@ -111,13 +111,14 @@ public class HSI_A320 extends PFDSubcomponent {
 	}
 
 	private void drawFailedHSI(Graphics2D g2) {
+		int hdg_right  = pfd_gc.hdg_left + pfd_gc.hdg_width;
+		int hdg_bottom = pfd_gc.hdg_top  + pfd_gc.hdg_height;
+		g2.setColor(pfd_gc.pfd_instrument_background_color);
+		g2.fillRect(pfd_gc.hdg_left, pfd_gc.hdg_top, pfd_gc.hdg_width, pfd_gc.hdg_height );
 		g2.setFont(pfd_gc.font_xxl);
 		g2.setColor(pfd_gc.warning_color);
 		String failed_str = "HDG";
-		g2.drawString(failed_str, pfd_gc.adi_cx - pfd_gc.get_text_width(g2, pfd_gc.font_xxl, failed_str)/2, pfd_gc.hdg_top + pfd_gc.line_height_xxl*3/2 );
-
-		int hdg_right  = pfd_gc.hdg_left + pfd_gc.hdg_width;
-		int hdg_bottom = pfd_gc.hdg_top  + pfd_gc.hdg_height;
+		g2.drawString(failed_str, pfd_gc.adi_cx - pfd_gc.get_text_width(g2, pfd_gc.font_xxl, failed_str)/2, pfd_gc.hdg_top + pfd_gc.line_height_xxl*5/4 );
 		g2.drawLine(pfd_gc.hdg_left, pfd_gc.hdg_top, hdg_right, pfd_gc.hdg_top);
 		g2.drawLine(pfd_gc.hdg_left, pfd_gc.hdg_top, pfd_gc.hdg_left, hdg_bottom);
 		g2.drawLine(hdg_right, pfd_gc.hdg_top, hdg_right, hdg_bottom);		

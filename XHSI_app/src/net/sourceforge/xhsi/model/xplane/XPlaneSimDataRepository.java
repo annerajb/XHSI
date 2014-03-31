@@ -450,6 +450,9 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_V_GREEN_DOT=913;
     public static final int QPAC_ALPHA_PROT=914;
     public static final int QPAC_ALPHA_MAX=915;
+    
+    // Failures flags
+    public static final int QPAC_FAILURES=916;
 
     // Plugin Version
     public static final int PLUGIN_VERSION_ID = 999;

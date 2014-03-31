@@ -29,7 +29,10 @@ import java.awt.Component;
 import java.awt.Graphics2D;
 import java.util.logging.Logger;
 
+import net.sourceforge.xhsi.XHSIStatus;
 import net.sourceforge.xhsi.model.ModelFactory;
+import net.sourceforge.xhsi.model.SimDataRepository;
+import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 
 
 public class FMA_A320 extends PFDSubcomponent {
@@ -37,7 +40,7 @@ public class FMA_A320 extends PFDSubcomponent {
     private static final long serialVersionUID = 1L;
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
-    
+        
     int box_c1_r0_time=0;
     int box_c1_r0_state=0;
     int box_c1_r1_time=0;
@@ -46,37 +49,40 @@ public class FMA_A320 extends PFDSubcomponent {
 
     public FMA_A320(ModelFactory model_factory, PFDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
+        
     }
 
 
     public void paint(Graphics2D g2) {
-        if ( pfd_gc.airbus_style && pfd_gc.powered ) {
-            drawBox(g2);            
-            if ( this.avionics.is_x737() ) {
-            	drawSystemStatus(g2);
-                drawX737FMA(g2);
-            } else if (this.avionics.is_qpac() ) {
-                drawA320FMA(g2);
-            } else {
-            	drawSystemStatus(g2);
-            	drawFMA(g2);
-            }
+		if ( pfd_gc.airbus_style ) {
+			if ( ! XHSIStatus.receiving ) {
+				drawBox(g2);
+			} else if ( pfd_gc.powered ) {      
+				drawBox(g2);            
+				if ( this.avionics.is_x737() ) {
+					drawSystemStatus(g2);
+					drawX737FMA(g2);
+				} else if (this.avionics.is_qpac() ) {
+					drawA320FMA(g2);
+				} else {
+					drawSystemStatus(g2);
+					drawFMA(g2);
+				}
+			}
         }
     }
 
 
     private void drawBox(Graphics2D g2) {
-
         // pfd_gc.setTransparent(g2, this.preferences.get_draw_fullscreen_horizon() || ( this.preferences.get_draw_fullwidth_horizon() && pfd_gc.draw_hsi ) );
         // g2.setColor(pfd_gc.instrument_background_color);
         // g2.fillRect(pfd_gc.fma_left - 1, pfd_gc.fma_top - 1, pfd_gc.fma_width + 3, pfd_gc.fma_height + 3);
         pfd_gc.setOpaque(g2);
-        g2.setColor(pfd_gc.instrument_background_color);
-        g2.drawLine(pfd_gc.fma_left + pfd_gc.fma_width*1/5, pfd_gc.fma_top, pfd_gc.fma_left + pfd_gc.fma_width*1/5, pfd_gc.fma_top + pfd_gc.fma_height);
-        g2.drawLine(pfd_gc.fma_left + pfd_gc.fma_width*2/5, pfd_gc.fma_top, pfd_gc.fma_left + pfd_gc.fma_width*2/5, pfd_gc.fma_top + pfd_gc.fma_height*2/3);
-        g2.drawLine(pfd_gc.fma_left + pfd_gc.fma_width*3/5, pfd_gc.fma_top, pfd_gc.fma_left + pfd_gc.fma_width*3/5, pfd_gc.fma_top + pfd_gc.fma_height);
-        g2.drawLine(pfd_gc.fma_left + pfd_gc.fma_width*4/5, pfd_gc.fma_top, pfd_gc.fma_left + pfd_gc.fma_width*4/5, pfd_gc.fma_top + pfd_gc.fma_height);
-
+        g2.setColor(pfd_gc.pfd_box_color);
+        g2.drawLine(pfd_gc.fma_left + pfd_gc.fma_col_1, pfd_gc.fma_top, pfd_gc.fma_left + pfd_gc.fma_col_1, pfd_gc.fma_top + pfd_gc.fma_height);
+        g2.drawLine(pfd_gc.fma_left + pfd_gc.fma_col_2, pfd_gc.fma_top, pfd_gc.fma_left + pfd_gc.fma_col_2, pfd_gc.fma_top + pfd_gc.fma_height * 2/3);
+        g2.drawLine(pfd_gc.fma_left + pfd_gc.fma_col_3, pfd_gc.fma_top, pfd_gc.fma_left + pfd_gc.fma_col_3, pfd_gc.fma_top + pfd_gc.fma_height);
+        g2.drawLine(pfd_gc.fma_left + pfd_gc.fma_col_4, pfd_gc.fma_top, pfd_gc.fma_left + pfd_gc.fma_col_4, pfd_gc.fma_top + pfd_gc.fma_height);
     }
 
 
@@ -102,7 +108,15 @@ public class FMA_A320 extends PFDSubcomponent {
 
     private void draw1Mode(Graphics2D g2, int col, int raw, String mode, boolean framed, Color color) {
         int mode_w = pfd_gc.get_text_width(g2, pfd_gc.font_xl, mode);
-        int mode_x = pfd_gc.fma_left + pfd_gc.fma_width/10 + col*pfd_gc.fma_width/5 - mode_w/2;
+        int mode_x = pfd_gc.fma_left;  // + pfd_gc.fma_width/10 + col*pfd_gc.fma_width/5 - mode_w/2;
+        switch (col) {
+        	case 1: mode_x += pfd_gc.fma_col_1 + (pfd_gc.fma_col_2 - pfd_gc.fma_col_1)/2 - mode_w/2; break;
+        	case 2: mode_x += pfd_gc.fma_col_2 + (pfd_gc.fma_col_3 - pfd_gc.fma_col_2)/2 - mode_w/2; break;
+        	case 3: mode_x += pfd_gc.fma_col_3 + (pfd_gc.fma_col_4 - pfd_gc.fma_col_3)/2 - mode_w/2; break;
+        	case 4: mode_x += pfd_gc.fma_col_4 + (pfd_gc.fma_width - pfd_gc.fma_col_4)/2 - mode_w/2; break;
+        	default: mode_x += pfd_gc.fma_col_1 /2 - mode_w/2; break;
+        }
+
         int mode_y = pfd_gc.fma_top + pfd_gc.fma_height*raw/3 + pfd_gc.line_height_xl - 2;
         g2.setColor(color);
         g2.setFont(pfd_gc.font_xl);
@@ -345,7 +359,8 @@ public class FMA_A320 extends PFDSubcomponent {
         drawDMode(g2,3,1,fma_str);
         fma_str = "da_bug " + this.aircraft.da_bug();
         drawDMode(g2,3,2,fma_str);
-        
+        fma_str = "qp_fail " + this.avionics.qpac_failures();
+        drawDMode(g2,3,0,fma_str);
                
       
         

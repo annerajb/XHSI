@@ -579,8 +579,10 @@ public class GraphicsConfig implements ComponentListener {
             instrument_background_color = color_bluegray;
             fpv_color = Color.LIGHT_GRAY;
             clock_color = color_khaki;
+            
+            // PFD colors - used to managed PFD lightening
             if ( this.settings.style == Avionics.STYLE_AIRBUS ) {
-                // PFD colors Airbus Style - used to managed PFD lightening
+                // PFD colors Airbus Style 
                 pfd_armed_color = Color.cyan;
                 pfd_managed_color = Color.magenta;
                 pfd_selected_color = Color.cyan;
@@ -588,38 +590,34 @@ public class GraphicsConfig implements ComponentListener {
                 pfd_vsi_needle_color = Color.green;
                 pfd_instrument_background_color = color_airbusgray;
                 pfd_markings_color = Color.white;
-                pfd_sky_color = sky_color;
-                pfd_ground_color = ground_color;
                 pfd_radio_alti_color = Color.green;
                 pfd_reference_color = Color.yellow;
                 pfd_mach_color = Color.green;
-                pfd_alti_color = Color.green;
-                pfd_active_color = Color.green;
-                pfd_caution_color = color_amber;
-                pfd_alarm_color = Color.red;
+                pfd_alti_color = Color.green;                                              
             	instrument_background_color = color_airbusgray;
             	heading_bug_color = Color.cyan;
             } else {
-                // PFD colors Boeing Style - used to managed PFD lightening
+                // PFD colors Boeing Style 
                 pfd_armed_color = Color.cyan;
                 pfd_managed_color = Color.magenta;
                 pfd_selected_color = Color.magenta;
                 pfd_box_color = Color.white;
                 pfd_vsi_needle_color = Color.white;
-                pfd_instrument_background_color = color_airbusgray;
+                pfd_instrument_background_color = color_bluegray;
                 pfd_markings_color = Color.white;
-                pfd_sky_color = sky_color;
-                pfd_ground_color = ground_color;
                 pfd_radio_alti_color = Color.white;
-                pfd_reference_color = Color.yellow;
+                pfd_reference_color = Color.white;
                 pfd_mach_color = Color.green;
-                pfd_alti_color = Color.green;
-                pfd_active_color = Color.green;
-                pfd_caution_color = color_amber;
-                pfd_alarm_color = Color.red;
+                pfd_alti_color = Color.white;
+                pfd_active_color = Color.green;                               
             	instrument_background_color = color_bluegray;
             	heading_bug_color = color_magenta;            	
             }
+            pfd_sky_color = sky_color;
+            pfd_ground_color = ground_color;
+            pfd_active_color = Color.green;
+            pfd_caution_color = color_amber;
+            pfd_alarm_color = Color.red;
         } else {
             background_color = Color.BLACK;
             navaid_color = color_boeingcyan;
@@ -660,8 +658,7 @@ public class GraphicsConfig implements ComponentListener {
             unusual_color = color_deepskyblue;
             caution_color = color_amber;
             warning_color = Color.RED;
-            aircraft_color = Color.WHITE;
-            heading_bug_color = color_magenta;
+            aircraft_color = Color.WHITE;           
             wind_color = Color.WHITE;
             efb_color = Color.WHITE;
             top_text_color = Color.WHITE;
@@ -672,30 +669,46 @@ public class GraphicsConfig implements ComponentListener {
             sky_color = color_sky;
             brightsky_color = color_sky.brighter();
             ground_color = color_ground;
-            brightground_color = color_ground.brighter();
-            instrument_background_color = color_bluegray;
+            brightground_color = color_ground.brighter();            
             fpv_color = Color.WHITE;
             clock_color = Color.WHITE;
             
-            // PFD colors Boeing Style - used to managed PFD lightening
-            pfd_armed_color = Color.cyan;
-            pfd_managed_color = Color.magenta;
-            pfd_selected_color = Color.magenta;
+            // PFD Colors - used to managed PFD lightening
+            if ( this.settings.style == Avionics.STYLE_AIRBUS ) {
+                // PFD colors Airbus Style 
+                pfd_armed_color = Color.cyan;
+                pfd_managed_color = Color.magenta;
+                pfd_selected_color = Color.cyan;                
+                pfd_vsi_needle_color = Color.green;
+                pfd_instrument_background_color = color_airbusgray;
+                pfd_markings_color = Color.white;
+                pfd_radio_alti_color = Color.green;
+                pfd_reference_color = Color.yellow;
+                pfd_mach_color = Color.green;
+                pfd_alti_color = Color.green;
+            	instrument_background_color = color_airbusgray;
+            	heading_bug_color = Color.cyan;
+            } else {
+            	// PFD colors Boeing Style
+            	pfd_armed_color = Color.cyan;
+            	pfd_managed_color = Color.magenta;
+            	pfd_selected_color = Color.magenta;            	
+            	pfd_vsi_needle_color = Color.white;
+            	pfd_instrument_background_color = color_bluegray;
+            	pfd_markings_color = Color.white;
+            	pfd_radio_alti_color = Color.white;
+            	pfd_reference_color = Color.yellow;
+            	pfd_mach_color = Color.green;
+            	pfd_alti_color = Color.white;
+            	instrument_background_color = color_bluegray;
+            	heading_bug_color = color_magenta;
+            }
             pfd_box_color = Color.white;
-            pfd_vsi_needle_color = Color.white;
-            pfd_instrument_background_color = color_airbusgray;
-            pfd_markings_color = Color.white;
             pfd_sky_color = sky_color;
             pfd_ground_color = ground_color;
-            pfd_radio_alti_color = Color.white;
-            pfd_reference_color = Color.yellow;
-            pfd_mach_color = Color.green;
-            pfd_alti_color = Color.green;
             pfd_active_color = Color.green;
             pfd_caution_color = color_amber;
             pfd_alarm_color = Color.red;
-            instrument_background_color = color_bluegray;
-            heading_bug_color = color_magenta;   
             
         }
 

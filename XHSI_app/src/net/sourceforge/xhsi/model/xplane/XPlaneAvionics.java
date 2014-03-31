@@ -1143,6 +1143,10 @@ public class XPlaneAvionics implements Avionics, Observer {
     public int qpac_alpha_max() {
         return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ALPHA_MAX));
     }    
+    // Failures
+    public float qpac_failures() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FAILURES);
+    }
     
     // UMFC
     public boolean has_ufmc() {
@@ -1405,5 +1409,81 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     }
 
+    // Failures
+    public boolean att_valid () {
+    	int qpac_failures_data=0;
+    	if (is_qpac()) {
+    		qpac_failures_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FAILURES));
+    	}
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+    		if (is_qpac() ) {    			
+    			return (qpac_failures_data & 0x0004) > 0 ? true : false;
+    		} 
+    	} else if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		if (is_qpac() ) {    			
+    			return (qpac_failures_data & 0x0040) > 0 ? true : false;
+    		} 
+    	} 
+    	// Instructor : always true
+    	return true;
+    }
+    
+    public boolean hdg_valid () {
+    	int qpac_failures_data=0;
+    	if (is_qpac()) {
+    		qpac_failures_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FAILURES));
+    	}
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+    		if (is_qpac() ) {    			
+    			return (qpac_failures_data & 0x0008) > 0 ? true : false;
+    		} 
+    	} else if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		if (is_qpac() ) {    			
+    			return (qpac_failures_data & 0x0080) > 0 ? true : false;
+    		} 
+    	} 
+    	// Instructor : always true
+    	return true;
+    	
+    }
+
+ 
+    public boolean ias_valid () {
+    	int qpac_failures_data=0;
+    	if (is_qpac()) {
+    		qpac_failures_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FAILURES));
+    	}
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+    		if (is_qpac() ) {    			
+    			return (qpac_failures_data & 0x0002) > 0 ? true : false;
+    		} 
+    	} else if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		if (is_qpac() ) {    			
+    			return (qpac_failures_data & 0x0020) > 0 ? true : false;
+    		} 
+    	} 
+    	// Instructor : always true
+    	return true;
+    };
+
+
+    public boolean alt_valid () {
+    	int qpac_failures_data=0;
+    	if (is_qpac()) {
+    		qpac_failures_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FAILURES));
+    	}
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+    		if (is_qpac() ) {    			
+    			return (qpac_failures_data & 0x0001) > 0 ? true : false;
+    		} 
+    	} else if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		if (is_qpac() ) {    			
+    			return (qpac_failures_data & 0x0010) > 0 ? true : false;
+    		} 
+    	} 
+    	// Instructor : always true
+    	return true;
+    };
+  
 
 }

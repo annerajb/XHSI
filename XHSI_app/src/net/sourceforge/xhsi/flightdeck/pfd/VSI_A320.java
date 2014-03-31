@@ -50,10 +50,10 @@ public class VSI_A320 extends PFDSubcomponent {
 
     public void paint(Graphics2D g2) {
     	if ( pfd_gc.airbus_style ) {
-    		if ( ! XHSIStatus.receiving ) {
+    		if ( ! XHSIStatus.receiving || ! this.avionics.alt_valid() ) {
     			// FCOM 1.31.40 p28 (13) 
     			// if the vertical speed information fails, the V/S flag (red) replaces the vertical speed scale
-    			drawFailedDial(g2);
+    			if ( pfd_gc.powered ) drawFailedDial(g2);
     		} else if ( pfd_gc.powered ) {
     			drawDial(g2);
     		}
@@ -61,11 +61,59 @@ public class VSI_A320 extends PFDSubcomponent {
     }
 
     private void drawFailedDial(Graphics2D g2) {  	
+    	int l_x = pfd_gc.vsi_left;
+    	//      int lm_x = pfd_gc.vsi_left + pfd_gc.vsi_width/3;
+    	int lm_x = pfd_gc.vsi_left + pfd_gc.digit_width_s + pfd_gc.vsi_width/10;
+
+    	//      int m_x = pfd_gc.vsi_left + pfd_gc.vsi_width/2;
+    	int m_x = pfd_gc.vsi_left +  pfd_gc.digit_width_s + pfd_gc.vsi_width/10+ pfd_gc.vsi_width/6;
+    	int r_x = pfd_gc.vsi_left + pfd_gc.vsi_width;
+    	int rm_x = pfd_gc.vsi_left + pfd_gc.vsi_width*4/5 ;
+
+    	int t_y = pfd_gc.vsi_top;
+    	int tr_y = pfd_gc.vsi_top + pfd_gc.vsi_height/6;
+    	int tl_y = pfd_gc.vsi_top + pfd_gc.vsi_height*320/350;
+    	int tm_y = pfd_gc.vsi_top + pfd_gc.vsi_height*320/350;
+
+    	int b_y = pfd_gc.vsi_top + pfd_gc.vsi_height;
+    	int br_y = pfd_gc.vsi_top + pfd_gc.vsi_height - pfd_gc.vsi_height/6;
+    	int bl_y = pfd_gc.vsi_top + pfd_gc.vsi_height - pfd_gc.vsi_height*320/350;
+    	int bm_y = pfd_gc.vsi_top + pfd_gc.vsi_height - pfd_gc.vsi_height*230/350;
+
+    	int[] vsi_scale_x = {
+    			l_x,	
+    			l_x,
+    			l_x,
+    			m_x,
+    			rm_x,
+    			rm_x,
+    			m_x,
+    			l_x,
+    			l_x,
+    			l_x
+    	};
+    	int[] vsi_scale_y = {
+    			tm_y,
+    			tl_y,
+    			t_y,
+    			t_y,
+    			tr_y,
+    			br_y,
+    			b_y,
+    			b_y,
+    			bl_y,
+    			bm_y
+    	};
+    	pfd_gc.setTransparent(g2, this.preferences.get_draw_colorgradient_horizon());
+    	g2.setColor(pfd_gc.instrument_background_color);
+    	g2.fillPolygon(vsi_scale_x, vsi_scale_y, 10);
+    	pfd_gc.setOpaque(g2);
+
         g2.setFont(pfd_gc.font_xxl);
     	g2.setColor(pfd_gc.warning_color);
-        g2.drawString("V", pfd_gc.vsi_left, pfd_gc.adi_cy - pfd_gc.line_height_xxl/2 - 4);
-        g2.drawString("/", pfd_gc.vsi_left, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 4);
-        g2.drawString("S", pfd_gc.vsi_left, pfd_gc.adi_cy + pfd_gc.line_height_xxl*3/2 - 4);
+        g2.drawString("V", pfd_gc.vsi_left+pfd_gc.vsi_width/5, pfd_gc.adi_cy - pfd_gc.line_height_xxl/2 - 4);
+        g2.drawString("/", pfd_gc.vsi_left+pfd_gc.vsi_width/5, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 4);
+        g2.drawString("S", pfd_gc.vsi_left+pfd_gc.vsi_width/5, pfd_gc.adi_cy + pfd_gc.line_height_xxl*3/2 - 4);
     }
 
     private void drawDial(Graphics2D g2) {
@@ -117,6 +165,9 @@ public class VSI_A320 extends PFDSubcomponent {
             bl_y,
             bm_y
         };
+        
+        Stroke original_stroke = g2.getStroke();
+        
         pfd_gc.setTransparent(g2, this.preferences.get_draw_colorgradient_horizon());
         g2.setColor(pfd_gc.instrument_background_color);
         g2.fillPolygon(vsi_scale_x, vsi_scale_y, 10);
@@ -142,30 +193,36 @@ public class VSI_A320 extends PFDSubcomponent {
 
         g2.setColor(pfd_gc.pfd_reference_color);
         g2.setFont(pfd_gc.font_s);
+        g2.setStroke(new BasicStroke(4.0f));
         g2.drawLine(l_x + 1, pfd_gc.adi_cy, m_x + 3, pfd_gc.adi_cy);
+        g2.setStroke(original_stroke);
         g2.setColor(pfd_gc.pfd_markings_color);       
         g2.drawLine(lm_x + 1, pfd_gc.adi_cy + y_500, m_x - 3, pfd_gc.adi_cy + y_500);
         g2.drawLine(lm_x + 1, pfd_gc.adi_cy - y_500, m_x - 3, pfd_gc.adi_cy - y_500);
-        g2.drawLine(lm_x + 1, pfd_gc.adi_cy + y_1000, m_x - 3, pfd_gc.adi_cy + y_1000);
+        g2.setStroke(new BasicStroke(4.0f));
+        g2.drawLine(lm_x + 1, pfd_gc.adi_cy + y_1000, m_x - 3, pfd_gc.adi_cy + y_1000);        
         g2.drawString("1", lm_x - pfd_gc.digit_width_s - 2, pfd_gc.adi_cy + y_1000 + pfd_gc.line_height_s/2 - 2);
         g2.drawLine(lm_x + 1, pfd_gc.adi_cy - y_1000, m_x - 3, pfd_gc.adi_cy - y_1000);
+        g2.setStroke(original_stroke);
         g2.drawString("1", lm_x - pfd_gc.digit_width_s - 2, pfd_gc.adi_cy - y_1000 + pfd_gc.line_height_s/2 - 2);
         g2.drawLine(lm_x + 1, pfd_gc.adi_cy + y_1500, m_x - 3, pfd_gc.adi_cy + y_1500);
         g2.drawLine(lm_x + 1, pfd_gc.adi_cy - y_1500, m_x - 3, pfd_gc.adi_cy - y_1500);
-        g2.drawLine(lm_x + 1, pfd_gc.adi_cy + y_2000, m_x - 3, pfd_gc.adi_cy + y_2000);
+        g2.setStroke(new BasicStroke(4.0f));
+        g2.drawLine(lm_x + 1, pfd_gc.adi_cy + y_2000, m_x - 3, pfd_gc.adi_cy + y_2000);      
         g2.drawString("2", lm_x - pfd_gc.digit_width_s - 2, pfd_gc.adi_cy + y_2000 + pfd_gc.line_height_s/2 - 2);
         g2.drawLine(lm_x + 1, pfd_gc.adi_cy - y_2000, m_x - 3, pfd_gc.adi_cy - y_2000);
         g2.drawString("2", lm_x - pfd_gc.digit_width_s - 2, pfd_gc.adi_cy - y_2000 + pfd_gc.line_height_s/2 - 2);
+        g2.setStroke(original_stroke);
         g2.drawLine(lm_x + 1, pfd_gc.adi_cy + y_4000, m_x - 3, pfd_gc.adi_cy + y_4000);
         g2.drawLine(lm_x + 1, pfd_gc.adi_cy - y_4000, m_x - 3, pfd_gc.adi_cy - y_4000);
+        g2.setStroke(new BasicStroke(4.0f));
         g2.drawLine(lm_x + 1, pfd_gc.adi_cy + y_6000, m_x - 3, pfd_gc.adi_cy + y_6000);
         g2.drawString("6", lm_x - pfd_gc.digit_width_s - 2, pfd_gc.adi_cy + y_6000 + pfd_gc.line_height_s/2 - 2);
         g2.drawLine(lm_x + 1, pfd_gc.adi_cy - y_6000, m_x - 3, pfd_gc.adi_cy - y_6000);
         g2.drawString("6", lm_x - pfd_gc.digit_width_s - 2, pfd_gc.adi_cy - y_6000 + pfd_gc.line_height_s/2 - 2);
+        g2.setStroke(original_stroke);
 
-
-        Stroke original_stroke = g2.getStroke();
-
+        
 
         // AP VS bug
         int ap_vv = Math.round(this.avionics.autopilot_vv());
