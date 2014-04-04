@@ -816,7 +816,7 @@ public class MovingMap extends NDSubcomponent {
             for (int lat=(int)lat_min; lat<=(int) lat_max; lat++) {
                 for (int lon=(int)lon_min; lon<=(int)lon_max; lon++) {
 
-                    if ( avionics.efis_shows_arpt() && ((nd_gc.map_range <= 20)||nd_gc.map_zoomin) && this.preferences.get_draw_runways() ) {
+                    if ( avionics.efis_shows_arpt() && ( ( (nd_gc.map_range <= 20) && this.preferences.get_draw_runways() ) || nd_gc.map_zoomin ) ) {
                         draw_nav_objects(
                                 g2,
                                 NavigationObject.NO_TYPE_RUNWAY,
