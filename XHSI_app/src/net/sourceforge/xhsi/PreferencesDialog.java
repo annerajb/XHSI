@@ -62,7 +62,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
     private XHSIPreferences preferences;
 
-    private JComboBox simcom_combobox;
+    //private JComboBox simcom_combobox;
     private JTextField aptnav_dir_textfield;
     private JTextField port_textfield;
     private JComboBox loglevel_combobox;
@@ -104,8 +104,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private String hsi_sources[] = { XHSIPreferences.USER, XHSIPreferences.NAV1, XHSIPreferences.NAV2 };
 
     private JTextField min_rwy_textfield;
-    //private Level[] loglevels = new Level[] { Level.OFF, Level.SEVERE, Level.WARNING, Level.CONFIG, Level.INFO, Level.FINE, Level.FINEST };
-    private String[] simcoms = { XHSIPreferences.XHSI_PLUGIN, XHSIPreferences.SCS };
+    //private String[] simcoms = { XHSIPreferences.XHSI_PLUGIN, XHSIPreferences.SCS };
     private Level[] loglevels = { Level.OFF, Level.SEVERE, Level.WARNING, Level.CONFIG, Level.INFO, Level.FINE, Level.FINEST };
     private JComboBox rwy_units_combobox;
     private String units[] = { "meters", "feet" };
@@ -149,6 +148,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JComboBox engine_count_combobox;
     private JComboBox engine_type_combobox;
     private String engine_types[] = { XHSIPreferences.ENGINE_TYPE_SWITCHABLE, XHSIPreferences.ENGINE_TYPE_N1, /*XHSIPreferences.ENGINE_TYPE_EPR,*/ XHSIPreferences.ENGINE_TYPE_TRQ, XHSIPreferences.ENGINE_TYPE_MAP };
+    private JComboBox trq_scale_combobox;
+    private String trq_scales[] = { XHSIPreferences.TRQ_SCALE_SWITCHABLE, XHSIPreferences.TRQ_SCALE_LBFT, XHSIPreferences.TRQ_SCALE_NM, XHSIPreferences.TRQ_SCALE_PERCENT };;
     private JComboBox fuel_unit_combobox;
     private String fuel_units[] = { XHSIPreferences.FUEL_KG, XHSIPreferences.FUEL_LBS, XHSIPreferences.FUEL_USG, XHSIPreferences.FUEL_LTR };
 
@@ -360,6 +361,13 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         for (int i=0; i<engine_types.length; i++) {
             if ( engine.equals( engine_types[i] ) ) {
                 this.engine_type_combobox.setSelectedIndex(i);
+            }
+        }
+
+        String trq_scale = preferences.get_preference(XHSIPreferences.PREF_TRQ_SCALE);
+        for (int i=0; i<trq_scales.length; i++) {
+            if ( engine.equals( trq_scales[i] ) ) {
+                this.trq_scale_combobox.setSelectedIndex(i);
             }
         }
 
@@ -1267,12 +1275,12 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
-        nd_options_panel.add(new JLabel("Draw runways at lowest map ranges", JLabel.TRAILING), cons);
+        nd_options_panel.add(new JLabel("Draw runways at map range 10 and 20", JLabel.TRAILING), cons);
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
-        this.draw_rwy_checkbox = new JCheckBox();
+        this.draw_rwy_checkbox = new JCheckBox("  (runways are always drawn at map ranges 6.4 and below)");
         nd_options_panel.add(this.draw_rwy_checkbox, cons);
         dialog_line++;
 
@@ -1430,6 +1438,26 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.engine_type_combobox.addItem(XHSIPreferences.ENGINE_TYPE_MAP);
         this.engine_type_combobox.addActionListener(this);
         eicas_options_panel.add(this.engine_type_combobox, cons);
+        dialog_line++;
+        dialog_line++;
+
+        // TRQ scale
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        eicas_options_panel.add(new JLabel("TRQ scale", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.trq_scale_combobox = new JComboBox();
+        this.trq_scale_combobox.addItem("Switchable");
+        this.trq_scale_combobox.addItem(XHSIPreferences.TRQ_SCALE_LBFT);
+        this.trq_scale_combobox.addItem(XHSIPreferences.TRQ_SCALE_NM);
+        this.trq_scale_combobox.addItem(XHSIPreferences.TRQ_SCALE_PERCENT);
+        this.trq_scale_combobox.addActionListener(this);
+        eicas_options_panel.add(this.trq_scale_combobox, cons);
         dialog_line++;
         dialog_line++;
 
@@ -1838,6 +1866,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
             if ( ! engine_types[this.engine_type_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE)) )
                 this.preferences.set_preference(XHSIPreferences.PREF_ENGINE_TYPE, engine_types[this.engine_type_combobox.getSelectedIndex()]);
+
+            if ( ! trq_scales[this.trq_scale_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_TRQ_SCALE)) )
+                this.preferences.set_preference(XHSIPreferences.PREF_TRQ_SCALE, trq_scales[this.trq_scale_combobox.getSelectedIndex()]);
 
             if ( ! fuel_units[this.fuel_unit_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_FUEL_UNITS)) )
                 this.preferences.set_preference(XHSIPreferences.PREF_FUEL_UNITS, fuel_units[this.fuel_unit_combobox.getSelectedIndex()]);

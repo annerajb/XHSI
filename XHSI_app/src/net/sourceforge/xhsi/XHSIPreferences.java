@@ -108,6 +108,7 @@ public class XHSIPreferences {
     public static final String PREF_OVERRIDE_ENGINE_COUNT = "override.engine.count";
     public static final String PREF_FUEL_UNITS = "fuel.units";
     public static final String PREF_ENGINE_TYPE = "eicas.engine.type";
+    public static final String PREF_TRQ_SCALE = "eicas.trq.scale";
 
     // MFD options
     public static final String PREF_MFD_MODE = "mfd.mode";
@@ -119,7 +120,7 @@ public class XHSIPreferences {
 
     // for PREF_SIMCOM
     public static final String XHSI_PLUGIN = "XHSI_plugin";
-    public static final String SCS = "Cross-Simulator_SCS";
+    // public static final String SCS = "Cross-Simulator_SCS"; if ever ...
 
     // for PREF_INSTRUMENT_POSITION
     public static final String PILOT = "pilot";
@@ -218,6 +219,12 @@ public class XHSIPreferences {
 //    public static final String ENGINE_TYPE_EPR = "EPR";
     public static final String ENGINE_TYPE_TRQ = "TRQ";
     public static final String ENGINE_TYPE_MAP = "MAP";
+    
+    // for PREF_TRQ_SCALE
+    public static final String TRQ_SCALE_SWITCHABLE = "switchable";
+    public static final String TRQ_SCALE_LBFT = "LbFt";
+    public static final String TRQ_SCALE_NM = "Nm";
+    public static final String TRQ_SCALE_PERCENT = "Percent";
     
     
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
@@ -1167,6 +1174,11 @@ public class XHSIPreferences {
 
         if ( ! this.preferences.containsKey(PREF_ENGINE_TYPE) ) {
             this.preferences.setProperty(PREF_ENGINE_TYPE, ENGINE_TYPE_SWITCHABLE);
+            this.unsaved_changes = true;
+        }
+
+        if ( ! this.preferences.containsKey(PREF_TRQ_SCALE) ) {
+            this.preferences.setProperty(PREF_TRQ_SCALE, TRQ_SCALE_SWITCHABLE);
             this.unsaved_changes = true;
         }
 

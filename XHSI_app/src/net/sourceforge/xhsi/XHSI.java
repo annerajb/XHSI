@@ -81,7 +81,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 7 Alpha 9";
+    private static final String RELEASE = "2.0 Beta 7 Alpha 10";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -242,17 +242,17 @@ public class XHSI implements ActionListener {
                 XHSIStatus.status = XHSIStatus.STATUS_RECEIVING;
                 udp_receiver.start();
 
-            } else if ( this.preferences.get_preference(XHSIPreferences.PREF_SIMCOM).equals(XHSIPreferences.SCS) ) {
-
-                // Communicating with SCS
-                XPlaneUDPSender udp_sender = new XPlaneUDPSender();
-                XPlaneUDPReceiver udp_receiver = new XPlaneUDPReceiver( Integer.parseInt(preferences.get_preference(XHSIPreferences.PREF_PORT)) );
-                XPlaneDataPacketDecoder decoder = new XPlaneDataPacketDecoder(model_instance);
-                udp_receiver.add_reception_observer(decoder);
-                XPlaneSimDataRepository.replaying = false;
-                this.running_threads.add(udp_receiver);
-                XHSIStatus.status = XHSIStatus.STATUS_RECEIVING;
-                udp_receiver.start();
+//            } else if ( this.preferences.get_preference(XHSIPreferences.PREF_SIMCOM).equals(XHSIPreferences.SCS) ) {
+//
+//                // Communicating with SCS
+//                XPlaneUDPSender udp_sender = new XPlaneUDPSender();
+//                XPlaneUDPReceiver udp_receiver = new XPlaneUDPReceiver( Integer.parseInt(preferences.get_preference(XHSIPreferences.PREF_PORT)) );
+//                XPlaneDataPacketDecoder decoder = new XPlaneDataPacketDecoder(model_instance);
+//                udp_receiver.add_reception_observer(decoder);
+//                XPlaneSimDataRepository.replaying = false;
+//                this.running_threads.add(udp_receiver);
+//                XHSIStatus.status = XHSIStatus.STATUS_RECEIVING;
+//                udp_receiver.start();
 
             }
 

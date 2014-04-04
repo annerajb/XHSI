@@ -489,7 +489,7 @@ if ( ref_n1 <= 1.0f ) {
             trq_str = Integer.toString(Math.round(Math.max(this.aircraft.get_TRQ_Nm(pos), 0.0f)));
         } else if ( this.avionics.get_trq_scale() == XHSISettings.TRQ_SCALE_PERCENT ) {
             // display TRQ in %
-            trq_str = Integer.toString(Math.round(trq_value/trq_max*100.0f));
+            trq_str = one_decimal_format.format(trq_value/trq_max*100.0f);
         } else /* if ( this.avionics.get_trq_scale() == XHSISettings.TRQ_SCALE_LBFT ) */ {
             // display TRQ in LbFt x100
             trq_str = Integer.toString(Math.round(trq_value));
@@ -505,6 +505,28 @@ if ( ref_n1 <= 1.0f ) {
             g2.setColor(eicas_gc.warning_color.darker().darker());
         }
         g2.fillArc(prim_dial_x[pos]-trq_r, trq_y-trq_r, 2*trq_r, 2*trq_r, 0, -Math.round(trq_dial*200.0f));
+
+        // scale markings every 10%
+        g2.setColor(eicas_gc.dim_markings_color);
+        for (int i=0; i<=10; i++) {
+            g2.drawLine(prim_dial_x[pos]+trq_r*14/16, trq_y, prim_dial_x[pos]+trq_r-1, trq_y);
+            g2.rotate(Math.toRadians(20), prim_dial_x[pos], trq_y);
+        }
+        g2.setTransform(original_at);
+        
+        // scale numbers 2, 4, 6, 8 and 10 for the scale in %
+        if ( ( this.avionics.get_trq_scale() == XHSISettings.TRQ_SCALE_PERCENT ) && ( num <= 4 ) ) {
+            g2.setFont(eicas_gc.font_xs);
+            int n1_digit_x;
+            int n1_digit_y;
+            int n1_digit_angle = 40;
+            for (int i=2; i<=10; i+=2) {
+                n1_digit_x = prim_dial_x[pos] + (int)(Math.cos(Math.toRadians(n1_digit_angle))*trq_r*11/16);
+                n1_digit_y = trq_y + (int)(Math.sin(Math.toRadians(n1_digit_angle))*trq_r*11/16);
+                g2.drawString(Integer.toString(i), n1_digit_x - eicas_gc.digit_width_xs/2, n1_digit_y+eicas_gc.line_height_xs*3/8);
+                n1_digit_angle += 40;
+            }
+        }
 
         g2.setColor(eicas_gc.dim_markings_color);
         for (int i=0; i<=10; i++) {

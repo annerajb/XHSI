@@ -543,28 +543,32 @@ public class XPlaneAvionics implements Avionics, Observer {
 
 
     public int get_trq_scale() {
-        return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EICAS_TRQ_SCALE);
+        
+        if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_TRQ_SCALE).equals(XHSIPreferences.TRQ_SCALE_SWITCHABLE) ) {
+            return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EICAS_TRQ_SCALE);
+        } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_TRQ_SCALE).equals(XHSIPreferences.TRQ_SCALE_LBFT) ) {
+            return XHSISettings.TRQ_SCALE_LBFT;
+        } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_TRQ_SCALE).equals(XHSIPreferences.TRQ_SCALE_NM) ) {
+            return XHSISettings.TRQ_SCALE_NM;
+        } else /* if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_TRQ_SCALE).equals(XHSIPreferences.TRQ_SCALE_PERCENT) ) */{
+            return XHSISettings.TRQ_SCALE_PERCENT;
+        }
+
     }
     
 
     public int get_engine_type() {
 
-        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
-            return xhsi_settings.engine_type;
+        if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_SWITCHABLE) ) {
+            return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_ENGINE_TYPE);
+        } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_N1) ) {
+            return XHSISettings.ENGINE_TYPE_N1;
+//        } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_EPR) ) {
+//            return XHSISettings.ENGINE_TYPE_EPR;
+        } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_TRQ) ) {
+            return XHSISettings.ENGINE_TYPE_TRQ;
         } else {
-            if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_SWITCHABLE)) {
-                return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_ENGINE_TYPE);
-//            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_TAXI_CHART)) {
-//                return 0;
-            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_N1)) {
-                return XHSISettings.ENGINE_TYPE_N1;
-//            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_EPR)) {
-//                return XHSISettings.ENGINE_TYPE_EPR;
-            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_TRQ)) {
-                return XHSISettings.ENGINE_TYPE_TRQ;
-            } else {
-                return XHSISettings.ENGINE_TYPE_MAP;
-            }
+            return XHSISettings.ENGINE_TYPE_MAP;
         }
 
     }

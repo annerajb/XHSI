@@ -36,6 +36,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
+import net.sourceforge.xhsi.XHSIPreferences;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.NavigationRadio;
 
@@ -1195,6 +1196,9 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
         // settings have been changed in X-Plane, change the selections in the menu accordingly
 
+        XHSIPreferences prefs = XHSIPreferences.get_instance();
+
+        boolean switchable;
 //        this.checkbox_avionics_power.setSelected(avionics.power());
 
         int new_style = avionics.get_instrument_style();
@@ -1262,6 +1266,10 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_mfd_arpt.setSelected( new_mfd_mode == Avionics.MFD_MODE_ARPT );
         this.radio_button_mfd_fpln.setSelected( new_mfd_mode == Avionics.MFD_MODE_FPLN );
         this.radio_button_mfd_eicas.setSelected( new_mfd_mode == Avionics.MFD_MODE_EICAS );
+        switchable = prefs.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_SWITCHABLE) || prefs.get_preference(XHSIPreferences.PREF_INSTRUMENT_POSITION).equals(XHSIPreferences.INSTRUCTOR);
+        this.radio_button_mfd_arpt.setEnabled( switchable );
+        this.radio_button_mfd_fpln.setEnabled( switchable );
+        this.radio_button_mfd_eicas.setEnabled( switchable );
 
         boolean new_clock_mode = avionics.clock_shows_utc();
         this.radio_button_clock_utc.setSelected(new_clock_mode);
@@ -1272,14 +1280,20 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 //        this.radio_button_engine_epr.setSelected( new_engine_type == XHSISettings.ENGINE_TYPE_EPR );
         this.radio_button_engine_trq.setSelected( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ );
         this.radio_button_engine_map.setSelected( new_engine_type == XHSISettings.ENGINE_TYPE_MAP );
+        switchable = prefs.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_SWITCHABLE);
+        this.radio_button_engine_n1.setEnabled( switchable );
+//        this.radio_button_engine_epr.setEnabled( switchable );
+        this.radio_button_engine_trq.setEnabled( switchable );
+        this.radio_button_engine_map.setEnabled( switchable );
 
         int new_trq_scale = avionics.get_trq_scale();
         this.radio_button_trq_scale_lbft.setSelected( new_trq_scale == XHSISettings.TRQ_SCALE_LBFT );
-        this.radio_button_trq_scale_lbft.setEnabled( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ );
         this.radio_button_trq_scale_nm.setSelected( new_trq_scale == XHSISettings.TRQ_SCALE_NM );
-        this.radio_button_trq_scale_nm.setEnabled( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ );
         this.radio_button_trq_scale_percent.setSelected( new_trq_scale == XHSISettings.TRQ_SCALE_PERCENT );
-        this.radio_button_trq_scale_percent.setEnabled( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ );
+        switchable = prefs.get_preference(XHSIPreferences.PREF_TRQ_SCALE).equals(XHSIPreferences.TRQ_SCALE_SWITCHABLE);
+        this.radio_button_trq_scale_lbft.setEnabled( ( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ ) && switchable );
+        this.radio_button_trq_scale_nm.setEnabled( ( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ ) && switchable );
+        this.radio_button_trq_scale_percent.setEnabled( ( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ ) && switchable );
 
     }
 
