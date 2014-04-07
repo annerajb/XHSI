@@ -387,12 +387,12 @@
 #define QPAC_THR_LEVER_MODE 890
 #define QPAC_FMA_THR_WARNING 891
 #define QPAC_FLEX_TEMP 892
-// RNAV Deviation
-#define QPAC_LOC_VAL_CAPT 893
-#define QPAC_LOC_ON_CAPT 894
+// ILS Sig and Deviation Capt. and FO
+#define QPAC_ILS_FLAGS 893
+#define QPAC_LOC_VAL_CAPT 894
 #define QPAC_GS_VAL_CAPT 895
-#define QPAC_GS_ON_CAPT 896
-// ILS on NAV3
+#define QPAC_LOC_VAL_FO 896
+#define QPAC_GS_VAL_FO 917
 #define QPAC_ILS_CRS 897
 #define QPAC_ILS_CRS_DEV 898
 // FD
