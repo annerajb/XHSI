@@ -24,11 +24,14 @@
 */
 package net.sourceforge.xhsi.flightdeck.pfd;
 
+import java.awt.BasicStroke;
 import java.awt.Component;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
+import net.sourceforge.xhsi.XHSIStatus;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.Localizer;
 import net.sourceforge.xhsi.model.ModelFactory;
@@ -45,15 +48,55 @@ public class ILS_A320 extends PFDSubcomponent {
     }
 
     public void paint(Graphics2D g2) {
-        if ( pfd_gc.airbus_style && pfd_gc.powered ) {
+        if ( pfd_gc.airbus_style && pfd_gc.powered && XHSIStatus.receiving ) {
             drawILS(g2);
         }
     }
 
+    void drawILSBug(Graphics2D g2, int course) {
+    	DecimalFormat degrees_formatter = new DecimalFormat("000");
+		// keep the bug in the range -180° to 180°
+		float bug = course - this.aircraft.heading();
+		int hdg_right  = pfd_gc.hdg_left + pfd_gc.hdg_width;
+		int hdg_bug_line = pfd_gc.hdg_top + pfd_gc.hdg_height;
+		int hdg_bug_top = pfd_gc.hdg_top + pfd_gc.hdg_height / 4;
+		int ils_box_x = pfd_gc.hdg_left - pfd_gc.digit_width_l * 9/8;
+		int ils_box_y =  hdg_bug_line - pfd_gc.line_height_l * 9/8;	
+		int ils_box_h =  pfd_gc.line_height_l*10/8;	
+		int ils_box_w =  pfd_gc.digit_width_l * 25/8 ;  
+		int ils_text_x = pfd_gc.hdg_left - pfd_gc.digit_width_l;
+		int ils_text_y = hdg_bug_line - pfd_gc.line_height_l*1/8;
+		if ( bug >  180.0f ) bug -= 360.0f;
+		if ( bug < -180.0f ) bug += 360.0f;
+		
+        int bug_cx = pfd_gc.adi_cx + Math.round( bug * pfd_gc.hdg_width / 50.0f );
+        int d_w = pfd_gc.hdg_height/4; 
+        if (bug_cx > hdg_right ) {
+			ils_box_x += pfd_gc.hdg_width - pfd_gc.digit_width_l;
+			ils_text_x += pfd_gc.hdg_width - pfd_gc.digit_width_l; 
+		}
+
+		String str_bug = "" + degrees_formatter.format(course);
+		if ((bug_cx < pfd_gc.hdg_left) || (bug_cx > hdg_right ) ) {
+			g2.setColor(pfd_gc.background_color);
+			g2.fillRect(ils_box_x, ils_box_y, ils_box_w , ils_box_h);
+			g2.setColor(pfd_gc.pfd_markings_color);
+			g2.drawRect(ils_box_x, ils_box_y, ils_box_w, ils_box_h);
+			g2.setFont(pfd_gc.font_l);
+			g2.setColor(pfd_gc.pfd_ils_color);
+	        g2.drawString(str_bug, ils_text_x, ils_text_y);			
+		} else {
+			g2.setColor(pfd_gc.pfd_ils_color);
+			g2.drawLine(bug_cx, hdg_bug_top, bug_cx, hdg_bug_line);
+			g2.drawLine(bug_cx - d_w, hdg_bug_line - d_w, bug_cx + d_w, hdg_bug_line - d_w);
+		}
+
+    }
 
     public void drawILS(Graphics2D g2) {
 
-        int diamond_w = Math.round(7.0f * pfd_gc.scaling_factor); // half-width
+        //int diamond_w = Math.round(7.0f * pfd_gc.scaling_factor); // half-width
+    	int diamond_w = Math.round(9.0f * pfd_gc.scaling_factor); // half-width
         int diamond_h = Math.round(12.5f * pfd_gc.scaling_factor); // half-height
         int dot_r = Math.round(4.0f * pfd_gc.scaling_factor);
 
@@ -86,6 +129,10 @@ public class ILS_A320 extends PFDSubcomponent {
         float dme = 999.999f;
         float dme1 = 999.999f;
         float dme2 = 999.999f;
+        float freq = 0.0f;
+        float freq1 = 0.0f;
+        float freq2 = 0.0f;
+        
         boolean mismatch = false;
 
         nav_radio = this.avionics.get_nav_radio(1);
@@ -93,10 +140,11 @@ public class ILS_A320 extends PFDSubcomponent {
             nav_object = nav_radio.get_radio_nav_object();
             if (nav_object instanceof Localizer) {
                 nav1_receive = true;
-                nav1_id = nav_radio.get_nav_id() + "/";
+                nav1_id = nav_radio.get_nav_id();
                 cdi1_value = this.avionics.nav1_hdef_dot();
                 obs1 = Math.round( Math.round(this.avionics.nav1_obs()) );
                 crs1 = Math.round( Math.round(this.avionics.nav1_course()) );
+                freq1 = this.avionics.get_radio_freq(1);
                 if ( ((Localizer) nav_object).has_gs ) {
                     nav1_type = "ILS 1";
                     gs1_active = this.avionics.nav1_gs_active();
@@ -115,10 +163,11 @@ public class ILS_A320 extends PFDSubcomponent {
             nav_object = nav_radio.get_radio_nav_object();
             if (nav_object instanceof Localizer) {
                 nav2_receive = true;
-                nav2_id = nav_radio.get_nav_id() + "/";
+                nav2_id = nav_radio.get_nav_id();
                 cdi2_value = this.avionics.nav2_hdef_dot();
                 obs2 = Math.round( Math.round(this.avionics.nav2_obs()) );
                 crs2 = Math.round( Math.round(this.avionics.nav2_course()) );
+                freq2 = this.avionics.get_radio_freq(2);
                 if ( ((Localizer) nav_object).has_gs ) {
                     nav2_type = "ILS 2";
                     gs2_active = this.avionics.nav2_gs_active();
@@ -145,6 +194,7 @@ public class ILS_A320 extends PFDSubcomponent {
                 gs_active = gs1_active;
                 gs_value = gs1_value;
                 dme = dme1;
+                freq = freq1;
             } else if ( nav2_receive ) {
                 mismatch = true;
                 nav_type = nav2_type;
@@ -160,6 +210,7 @@ public class ILS_A320 extends PFDSubcomponent {
                 gs_active = gs2_active;
                 gs_value = gs2_value;
                 dme = dme2;
+                freq = freq2;
             } else if ( nav1_receive ) {
                 mismatch = true;
                 nav_type = nav1_type;
@@ -205,46 +256,68 @@ public class ILS_A320 extends PFDSubcomponent {
             format_symbols.setDecimalSeparator('.');
             dme_formatter.setDecimalFormatSymbols(format_symbols);
 
-            g2.setFont(pfd_gc.font_m);
+            g2.setFont(pfd_gc.font_l);
             int ref_h_m = pfd_gc.line_height_m;
             int ref_h_l = pfd_gc.line_height_l;
-            int ref_x = pfd_gc.adi_cx - pfd_gc.adi_size_left*7/8;
-            int ref_y = pfd_gc.adi_cy - pfd_gc.adi_size_up - 2*ref_h_m - ref_h_l;
-            // id + obs
-            g2.setColor(pfd_gc.markings_color);
+            int ref_x = pfd_gc.speedtape_left;
+            int ref_y = pfd_gc.adi_cy + pfd_gc.instrument_size * 415/1000;
+            
+            // LOC id
+            g2.setColor(pfd_gc.pfd_ils_color);
             g2.drawString(nav_id, ref_x, ref_y);
-            int ref_x1 = ref_x + pfd_gc.get_text_width(g2, pfd_gc.font_m, nav_id);
-            String crs_str = degrees_formatter.format( obs ) + "\u00B0  ";
-            g2.drawString(crs_str, ref_x1, ref_y);
+            
+            // LOC Course and bug
+            int ref_x1 = ref_x + pfd_gc.get_text_width(g2, pfd_gc.font_l, nav_id) + pfd_gc.digit_width_l;
+            //String crs_str = degrees_formatter.format( obs ) + "\u00B0  ";
+            //g2.drawString(crs_str, ref_x1, ref_y);           
+            drawILSBug(g2, obs);
+            
+            // Not for A320, but usefull for other A/C
             if ( crs != obs ) {
-                g2.setColor(pfd_gc.caution_color);
-                int ref_x2 = ref_x1 + pfd_gc.get_text_width(g2, pfd_gc.font_m, crs_str);
+                g2.setColor(pfd_gc.pfd_caution_color);
+                //int ref_x2 = ref_x1 + pfd_gc.get_text_width(g2, pfd_gc.font_m, crs_str);
+                int ref_x2 = ref_x1;
                 g2.setFont(pfd_gc.font_s);
                 g2.drawString("F/C", ref_x2, ref_y);
                 int ref_x3 = ref_x2 + pfd_gc.get_text_width(g2, pfd_gc.font_m, "F/C");
                 g2.setFont(pfd_gc.font_m);
                 g2.drawString(degrees_formatter.format( crs ) + "\u00B0", ref_x3, ref_y);
-                g2.setColor(pfd_gc.markings_color);
+                g2.setColor(pfd_gc.pfd_ils_color);
             }
-            // DME
-            ref_y += ref_h_m;
-            if ( ( dme == 0.0f ) || ( dme >= 99.0f ) ) {
-                g2.drawString("DME ---", ref_x, ref_y);
-            } else {
-                g2.drawString("DME " + dme_formatter.format( dme ), ref_x, ref_y);
-            }
-            // Type
+            
+            // Type or frequency
             ref_y += ref_h_l;
             g2.setFont(pfd_gc.font_l);
-            g2.drawString(nav_type, ref_x, ref_y);
+            g2.setColor(pfd_gc.pfd_ils_color);
+            // g2.drawString(nav_type, ref_x, ref_y);
+            g2.drawString("" + (int)(freq/100) , ref_x, ref_y);
+            g2.setFont(pfd_gc.font_s);
+            g2.drawString("." + Math.round(freq % 100), ref_x+pfd_gc.digit_width_l*3, ref_y );
+            
+            // DME
+            ref_y += ref_h_l;
+            String dme_str = "-.-";
+            if ( ( dme == 0.0f ) || ( dme >= 99.0f ) ) {
+                g2.drawString(dme_str, ref_x, ref_y);
+            } else {
+            	g2.setFont(pfd_gc.font_l);
+            	dme_str = "" + (int) dme;
+                g2.drawString(dme_str, ref_x, ref_y);
+                g2.setFont(pfd_gc.font_s);
+                g2.drawString("." + (int) ((dme*10)%10), ref_x + pfd_gc.get_text_width(g2, pfd_gc.font_l, dme_str), ref_y);
+                g2.setColor(pfd_gc.pfd_selected_color);
+                g2.drawString(" NM", ref_x + pfd_gc.get_text_width(g2, pfd_gc.font_l, dme_str) + 2*pfd_gc.digit_width_l, ref_y);                              
+            }
 
 
             // CDI
-            int dot_dist = pfd_gc.cdi_width*2/13;
+            int dot_dist = pfd_gc.cdi_width*4/22;
             int cdi_pixels = Math.round(cdi_value * (float)dot_dist);
+            float cdi_dev_max = 2.2f;
+            int cdi_pixels_max = Math.round(cdi_dev_max * (float)dot_dist  * Math.signum(cdi_value));
 
             int cdi_x = pfd_gc.adi_cx;
-            int cdi_y = pfd_gc.adi_cy + pfd_gc.adi_size_down + pfd_gc.cdi_height/2;
+            int cdi_y = pfd_gc.adi_cy + pfd_gc.adi_size_down + pfd_gc.cdi_height;
 
             if ( this.preferences.get_draw_colorgradient_horizon() ) {
                 pfd_gc.setTransparent(g2, true);
@@ -255,22 +328,29 @@ public class ILS_A320 extends PFDSubcomponent {
 
             int diamond_x[] = { cdi_x + cdi_pixels, cdi_x + cdi_pixels + diamond_h, cdi_x + cdi_pixels, cdi_x + cdi_pixels - diamond_h };
             int diamond_y[] = { cdi_y - diamond_w, cdi_y, cdi_y + diamond_w, cdi_y };
-
-            g2.setColor(pfd_gc.nav_needle_color);
-            if (Math.abs(cdi_value) < 2.49f) {
-                g2.drawPolygon(diamond_x, diamond_y, 4);
-                g2.fillPolygon(diamond_x, diamond_y, 4);
+            int r_diamond_x[] = { cdi_x + cdi_pixels_max + diamond_h, cdi_x + cdi_pixels_max, cdi_x + cdi_pixels_max + diamond_h  };
+            int l_diamond_x[] = { cdi_x + cdi_pixels_max - diamond_h, cdi_x + cdi_pixels_max, cdi_x + cdi_pixels_max - diamond_h };
+    
+            g2.setColor(pfd_gc.pfd_ils_color);
+            if (cdi_value < -cdi_dev_max) {
+                g2.drawPolyline(r_diamond_x, diamond_y, 3);                
+            } else if (cdi_value > cdi_dev_max) {
+            	g2.drawPolyline(l_diamond_x, diamond_y, 3);
             } else {
                 g2.drawPolygon(diamond_x, diamond_y, 4);
             }
 
-            g2.setColor(pfd_gc.markings_color);
-            g2.drawLine(pfd_gc.adi_cx, pfd_gc.adi_cy + pfd_gc.adi_size_down + 1, pfd_gc.adi_cx, pfd_gc.adi_cy + pfd_gc.adi_size_down + pfd_gc.cdi_height - 1);
+            g2.setColor(pfd_gc.pfd_reference_color);
+            Stroke original_stroke = g2.getStroke();
+            g2.setStroke(new BasicStroke(4.0f));
+            g2.drawLine(pfd_gc.adi_cx, pfd_gc.adi_cy + pfd_gc.adi_size_down + pfd_gc.cdi_height/2,
+            		 pfd_gc.adi_cx, pfd_gc.adi_cy + pfd_gc.adi_size_down + pfd_gc.cdi_height*3/2);
+            g2.setColor(pfd_gc.pfd_markings_color);
+            g2.setStroke(original_stroke);
             g2.drawOval(cdi_x - dot_dist - dot_r, cdi_y - dot_r, 2*dot_r, 2*dot_r);
             g2.drawOval(cdi_x + dot_dist - dot_r, cdi_y - dot_r, 2*dot_r, 2*dot_r);
             g2.drawOval(cdi_x - 2*dot_dist - dot_r, cdi_y - dot_r, 2*dot_r, 2*dot_r);
             g2.drawOval(cdi_x + 2*dot_dist - dot_r, cdi_y - dot_r, 2*dot_r, 2*dot_r);
-
 
         }
 
@@ -278,8 +358,10 @@ public class ILS_A320 extends PFDSubcomponent {
         // Glideslope
         if ( nav_receive && gs_active ) {
 
-            int dot_dist = pfd_gc.gs_height*2/13;
+            int dot_dist = pfd_gc.gs_height*4/21;
             int gs_pixels = Math.round(gs_value * (float)dot_dist);
+            float gs_dev_max = 2.05f;
+            int gs_pixels_max = Math.round(gs_dev_max * (float)dot_dist  * Math.signum(gs_value));
 
             int gs_x = pfd_gc.adi_cx + pfd_gc.adi_size_right + pfd_gc.gs_width/2;
             int gs_y = pfd_gc.adi_cy;
@@ -293,17 +375,20 @@ public class ILS_A320 extends PFDSubcomponent {
 
             int diamond_x[] = { gs_x - diamond_w, gs_x, gs_x + diamond_w, gs_x };
             int diamond_y[] = { gs_y + gs_pixels, gs_y + gs_pixels + diamond_h, gs_y + gs_pixels, gs_y + gs_pixels - diamond_h };
+            int t_diamond_y[] = { gs_y + gs_pixels_max, gs_y + gs_pixels_max + diamond_h, gs_y + gs_pixels_max };
+            int b_diamond_y[] = { gs_y + gs_pixels_max, gs_y + gs_pixels_max - diamond_h, gs_y + gs_pixels_max };
 
-            g2.setColor(pfd_gc.nav_needle_color);
-            if (Math.abs(gs_value) < 2.49f) {
-                g2.drawPolygon(diamond_x, diamond_y, 4);
-                g2.fillPolygon(diamond_x, diamond_y, 4);
+            g2.setColor(pfd_gc.pfd_ils_color);
+            if (gs_value < -gs_dev_max) {
+                g2.drawPolyline(diamond_x, b_diamond_y, 3);                
+            } else if (gs_value > gs_dev_max) {
+                g2.drawPolyline(diamond_x, t_diamond_y, 3);
             } else {
                 g2.drawPolygon(diamond_x, diamond_y, 4);
             }
 
-            g2.setColor(pfd_gc.markings_color);
-            g2.drawLine(pfd_gc.adi_cx + pfd_gc.adi_size_right + 1, gs_y, pfd_gc.adi_cx + pfd_gc.adi_size_right + pfd_gc.gs_width - 1, gs_y);
+            g2.setColor(pfd_gc.pfd_markings_color);
+            // g2.drawLine(pfd_gc.adi_cx + pfd_gc.adi_size_right + 1, gs_y, pfd_gc.adi_cx + pfd_gc.adi_size_right + pfd_gc.gs_width - 1, gs_y);
             g2.drawOval(gs_x - dot_r, gs_y - dot_dist - dot_r, 2*dot_r, 2*dot_r);
             g2.drawOval(gs_x - dot_r, gs_y + dot_dist - dot_r, 2*dot_r, 2*dot_r);
             g2.drawOval(gs_x - dot_r, gs_y - 2*dot_dist - dot_r, 2*dot_r, 2*dot_r);

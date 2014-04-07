@@ -56,7 +56,7 @@ public class VSI_A320 extends PFDSubcomponent {
     			if ( pfd_gc.powered ) drawFailedDial(g2);
     		} else if ( pfd_gc.powered ) {
     			drawDial(g2);
-    		}
+    		} 
     	}
     }
 

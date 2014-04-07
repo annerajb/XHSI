@@ -249,6 +249,7 @@ public class GraphicsConfig implements ComponentListener {
     public Color pfd_managed_color;
     public Color pfd_selected_color;
     public Color pfd_box_color;
+    public Color pfd_ils_color;    
     public Color pfd_vsi_needle_color;
     public Color pfd_instrument_background_color;
     public Color pfd_markings_color;
@@ -593,7 +594,8 @@ public class GraphicsConfig implements ComponentListener {
                 pfd_radio_alti_color = Color.green;
                 pfd_reference_color = Color.yellow;
                 pfd_mach_color = Color.green;
-                pfd_alti_color = Color.green;                                              
+                pfd_alti_color = Color.green;
+                pfd_ils_color = Color.magenta;
             	instrument_background_color = color_airbusgray;
             	heading_bug_color = Color.cyan;
             } else {
@@ -609,7 +611,8 @@ public class GraphicsConfig implements ComponentListener {
                 pfd_reference_color = Color.white;
                 pfd_mach_color = Color.green;
                 pfd_alti_color = Color.white;
-                pfd_active_color = Color.green;                               
+                pfd_active_color = Color.green;
+                pfd_ils_color = Color.white;
             	instrument_background_color = color_bluegray;
             	heading_bug_color = color_magenta;            	
             }
@@ -686,6 +689,7 @@ public class GraphicsConfig implements ComponentListener {
                 pfd_reference_color = Color.yellow;
                 pfd_mach_color = Color.green;
                 pfd_alti_color = Color.green;
+                pfd_ils_color = Color.magenta;
             	instrument_background_color = color_airbusgray;
             	heading_bug_color = Color.cyan;
             } else {
@@ -700,6 +704,7 @@ public class GraphicsConfig implements ComponentListener {
             	pfd_reference_color = Color.yellow;
             	pfd_mach_color = Color.green;
             	pfd_alti_color = Color.white;
+            	pfd_ils_color = Color.white;
             	instrument_background_color = color_bluegray;
             	heading_bug_color = color_magenta;
             }

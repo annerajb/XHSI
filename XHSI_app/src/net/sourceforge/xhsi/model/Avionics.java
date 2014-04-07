@@ -545,13 +545,11 @@ public interface Avionics {
     public int qpac_fma_thr_warning();
     public int qpac_flex_temp();
     
-    // RNAV Deviation
-    public float qpac_loc_val_capt();
-    public int qpac_loc_on_capt();
-    public float qpac_gs_val_capt();
-    public int qpac_gs_on_capt();
-    
-    // ILS
+    // ILS Sig and Deviation Capt. and FO
+    public float qpac_loc_val();
+    public boolean qpac_loc_on();
+    public float qpac_gs_val();
+    public boolean qpac_gs_on();
     public float qpac_ils_crs();
     public float qpac_ils_crs_dev();
     

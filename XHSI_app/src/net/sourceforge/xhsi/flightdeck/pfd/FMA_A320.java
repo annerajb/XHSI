@@ -75,10 +75,10 @@ public class FMA_A320 extends PFDSubcomponent {
 
     private void drawBox(Graphics2D g2) {
         // pfd_gc.setTransparent(g2, this.preferences.get_draw_fullscreen_horizon() || ( this.preferences.get_draw_fullwidth_horizon() && pfd_gc.draw_hsi ) );
-        // g2.setColor(pfd_gc.instrument_background_color);
         // g2.fillRect(pfd_gc.fma_left - 1, pfd_gc.fma_top - 1, pfd_gc.fma_width + 3, pfd_gc.fma_height + 3);
         pfd_gc.setOpaque(g2);
-        g2.setColor(pfd_gc.pfd_box_color);
+        g2.setColor(pfd_gc.instrument_background_color);
+        //g2.setColor(pfd_gc.pfd_box_color);
         g2.drawLine(pfd_gc.fma_left + pfd_gc.fma_col_1, pfd_gc.fma_top, pfd_gc.fma_left + pfd_gc.fma_col_1, pfd_gc.fma_top + pfd_gc.fma_height);
         g2.drawLine(pfd_gc.fma_left + pfd_gc.fma_col_2, pfd_gc.fma_top, pfd_gc.fma_left + pfd_gc.fma_col_2, pfd_gc.fma_top + pfd_gc.fma_height * 2/3);
         g2.drawLine(pfd_gc.fma_left + pfd_gc.fma_col_3, pfd_gc.fma_top, pfd_gc.fma_left + pfd_gc.fma_col_3, pfd_gc.fma_top + pfd_gc.fma_height);
@@ -361,6 +361,18 @@ public class FMA_A320 extends PFDSubcomponent {
         drawDMode(g2,3,2,fma_str);
         fma_str = "qp_fail " + this.avionics.qpac_failures();
         drawDMode(g2,3,0,fma_str);
+        fma_str = "ILS CRS " + this.avionics.qpac_ils_crs();
+        drawDMode(g2,1,3,fma_str);
+        fma_str = "ILS CRS DEV " + this.avionics.qpac_ils_crs_dev();
+        drawDMode(g2,1,4,fma_str);
+        fma_str = "LOC VAL  " + this.avionics.qpac_loc_val();
+        drawDMode(g2,3,5,fma_str);
+        fma_str = "LOC ON  " + this.avionics.qpac_loc_on();
+        drawDMode(g2,3,6,fma_str);
+        fma_str = "GS VAL  " + this.avionics.qpac_gs_val();
+        drawDMode(g2,1,5,fma_str);
+        fma_str = "GS ON  " + this.avionics.qpac_gs_on();
+        drawDMode(g2,1,6,fma_str);
                
       
         

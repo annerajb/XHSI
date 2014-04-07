@@ -64,7 +64,7 @@ public class ADI_A320 extends PFDSubcomponent {
 			} else if ( pfd_gc.powered ) {
 				drawADI(g2);
 				drawMarker(g2);
-			}
+			} 
 		}       
 	}
 

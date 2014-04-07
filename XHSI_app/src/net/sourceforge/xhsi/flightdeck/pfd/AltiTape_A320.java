@@ -24,11 +24,13 @@
 */
 package net.sourceforge.xhsi.flightdeck.pfd;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.geom.Area;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -269,7 +271,10 @@ public class AltiTape_A320 extends PFDSubcomponent {
         g2.setColor(pfd_gc.heading_bug_color);
         if (! hide_bug ) { g2.drawPolygon(bug_x, bug_y, 7); }
         g2.setColor(pfd_gc.pfd_reference_color);
+        Stroke original_stroke = g2.getStroke();
+        g2.setStroke(new BasicStroke(4.0f));
         g2.drawLine(pfd_gc.altitape_left - pfd_gc.tape_width*9/16, pfd_gc.tape_top + pfd_gc.tape_height / 2 , pfd_gc.altitape_left - pfd_gc.tape_width*3/16,  pfd_gc.tape_top + pfd_gc.tape_height / 2);
+        g2.setStroke(original_stroke);
 
 
 //        // a small bug with the _current_ AP Alt
@@ -407,7 +412,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
     	
     	// TODO : Airbus FCOM 1.31.40 p11 (1) amber bold when deviation from FCU selected altitude or flight level
     	// The altitude window changes from yellow to amber, if the aircraft deviates from the FCU selected altitude or flight level
-    	g2.setColor(pfd_gc.fmc_ll_active_color);
+    	g2.setColor(pfd_gc.pfd_reference_color);
     	g2.drawPolyline(box_x, box_y, 8);
 
     	Area alt_ind_area = new Area ( new Polygon(box_x, box_y, 8) );
