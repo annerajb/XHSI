@@ -38,12 +38,15 @@ extern XPLMDataRef qpac_athr_limited;
 extern XPLMDataRef qpac_thr_lever_mode;
 extern XPLMDataRef qpac_fma_thr_warning;
 extern XPLMDataRef qpac_flex_temp;
-// RNAV Deviation
+// ILS Sig and Deviation Capt. and FO
 extern XPLMDataRef qpac_loc_val_capt;
 extern XPLMDataRef qpac_loc_on_capt;
 extern XPLMDataRef qpac_gs_val_capt;
 extern XPLMDataRef qpac_gs_on_capt;
-// ILS on NAV3
+extern XPLMDataRef qpac_loc_val_fo;
+extern XPLMDataRef qpac_loc_on_fo;
+extern XPLMDataRef qpac_gs_val_fo;
+extern XPLMDataRef qpac_gs_on_fo;
 extern XPLMDataRef qpac_ils_crs;
 extern XPLMDataRef qpac_ils_crs_dev;
 extern XPLMDataRef qpac_ils_1;
@@ -60,6 +63,9 @@ extern XPLMDataRef qpac_fd2_hor_bar;
 extern XPLMDataRef qpac_baro_std_capt;
 extern XPLMDataRef qpac_baro_unit_capt;
 extern XPLMDataRef qpac_baro_hide_capt;
+extern XPLMDataRef qpac_baro_std_fo;
+extern XPLMDataRef qpac_baro_unit_fo;
+extern XPLMDataRef qpac_baro_hide_fo;
 // V Speeds
 extern XPLMDataRef qpac_v1_value;
 extern XPLMDataRef qpac_v1;

@@ -55,12 +55,15 @@ XPLMDataRef qpac_flex_temp;
 XPLMDataRef qpac_presel_crz;
 XPLMDataRef qpac_presel_clb;
 XPLMDataRef qpac_presel_mach;
-// RNAV Deviation
+// ILS Sig and Deviation Capt. and FO
 XPLMDataRef qpac_loc_val_capt;
 XPLMDataRef qpac_loc_on_capt;
 XPLMDataRef qpac_gs_val_capt;
 XPLMDataRef qpac_gs_on_capt;
-// ILS on NAV3
+XPLMDataRef qpac_loc_val_fo;
+XPLMDataRef qpac_loc_on_fo;
+XPLMDataRef qpac_gs_val_fo;
+XPLMDataRef qpac_gs_on_fo;
 XPLMDataRef qpac_ils_crs;
 XPLMDataRef qpac_ils_crs_dev;
 XPLMDataRef qpac_ils_1;
@@ -77,6 +80,9 @@ XPLMDataRef qpac_fd2_hor_bar;
 XPLMDataRef qpac_baro_std_capt;
 XPLMDataRef qpac_baro_unit_capt;
 XPLMDataRef qpac_baro_hide_capt;
+XPLMDataRef qpac_baro_std_fo;
+XPLMDataRef qpac_baro_unit_fo;
+XPLMDataRef qpac_baro_hide_fo;
 // V Speeds
 XPLMDataRef qpac_v1_value;
 XPLMDataRef qpac_v1;
@@ -144,11 +150,15 @@ void findQpacDataRefs(void) {
             qpac_presel_crz = XPLMFindDataRef("AirbusFBW/Presel_CRZ");
             qpac_presel_clb = XPLMFindDataRef("AirbusFBW/Presel_CLB");
             qpac_presel_mach = XPLMFindDataRef("AirbusFBW/PreselMach");
-            // RNAV Deviation
+            // ILS Sig and Deviation Capt. and FO
             qpac_loc_val_capt = XPLMFindDataRef("AirbusFBW/LOCvalCapt");
             qpac_loc_on_capt = XPLMFindDataRef("AirbusFBW/LOConCapt");
             qpac_gs_val_capt = XPLMFindDataRef("AirbusFBW/GSvalCapt");
             qpac_gs_on_capt = XPLMFindDataRef("AirbusFBW/GSonCapt");
+            qpac_loc_val_fo = XPLMFindDataRef("AirbusFBW/LOCvalFO");
+            qpac_loc_on_fo = XPLMFindDataRef("AirbusFBW/LOConFO");
+            qpac_gs_val_fo = XPLMFindDataRef("AirbusFBW/GSvalFO");
+            qpac_gs_on_fo = XPLMFindDataRef("AirbusFBW/GSonFO");
             // ILS on NAV3
             qpac_ils_crs = XPLMFindDataRef("AirbusFBW/ILSCrs");
             qpac_ils_crs_dev = XPLMFindDataRef("AirbusFBW/ILSCourseDev");
@@ -166,6 +176,9 @@ void findQpacDataRefs(void) {
             qpac_baro_std_capt = XPLMFindDataRef("AirbusFBW/BaroStdCapt");
             qpac_baro_unit_capt = XPLMFindDataRef("AirbusFBW/BaroUnitCapt");
             qpac_baro_hide_capt = XPLMFindDataRef("AirbusFBW/HideBaroCapt");
+            qpac_baro_std_fo = XPLMFindDataRef("AirbusFBW/BaroStdFO");
+            qpac_baro_unit_fo = XPLMFindDataRef("AirbusFBW/BaroUnitFO");
+            qpac_baro_hide_fo = XPLMFindDataRef("AirbusFBW/HideBaroFO");
             // V Speeds
             qpac_v1_value = XPLMFindDataRef("AirbusFBW/V1Value");
             qpac_v1 = XPLMFindDataRef("AirbusFBW/V1Capt"); //  AirbusFBW/V1 or AirbusFBW/V1Capt

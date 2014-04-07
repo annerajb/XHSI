@@ -1013,19 +1013,28 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FLEX_TEMP);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_flex_temp));
         i++;
-        // RNAV Deviation
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_LOC_VAL_CAPT);
+        // ILS Sig and Deviation Capt. and FO
+        int qpac_ils =	XPLMGetDatai(qpac_gs_on_fo) << 3 |
+    			XPLMGetDatai(qpac_loc_on_fo) << 2 |
+    			XPLMGetDatai(qpac_gs_on_capt) << 1 |
+    			XPLMGetDatai(qpac_loc_on_capt) ;
+
+    	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ILS_FLAGS);
+    	sim_packet.sim_data_points[i].value = custom_htonf((float) qpac_ils );
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_LOC_VAL_CAPT);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_loc_val_capt));
-        i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_LOC_ON_CAPT);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_loc_on_capt));
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_GS_VAL_CAPT);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_gs_val_capt));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_GS_ON_CAPT);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_gs_on_capt));
+    	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_LOC_VAL_FO);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_loc_val_fo));
         i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_GS_VAL_FO);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_gs_val_fo));
+        i++;
+
 
         // ILS on NAV3
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ILS_CRS);
