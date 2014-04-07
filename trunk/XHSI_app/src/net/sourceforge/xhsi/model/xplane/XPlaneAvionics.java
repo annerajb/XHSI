@@ -1055,21 +1055,38 @@ public class XPlaneAvionics implements Avionics, Observer {
     	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FLEX_TEMP));
     }
     
-    // RNAV Deviation
-    public float qpac_loc_val_capt() {
-    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_LOC_VAL_CAPT);
-    }
-    public int qpac_loc_on_capt(){
-    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_LOC_ON_CAPT));
-    }
-    public float qpac_gs_val_capt(){
-    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_GS_VAL_CAPT);
-    }
-    public int qpac_gs_on_capt(){
-    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_GS_ON_CAPT));
+    // ILS Sig and Deviation Capt. and FO
+    public float qpac_loc_val() {
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ))  
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_LOC_VAL_FO);
+    	else 
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_LOC_VAL_CAPT);
     }
     
-    // ILS
+    public boolean qpac_loc_on(){
+    	
+    	int qpac_ils_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ILS_FLAGS));
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ))
+    		return (qpac_ils_data & 0x04) > 0 ? true : false;
+    	else
+    		return (qpac_ils_data & 0x01) > 0 ? true : false;
+    }
+    
+    public float qpac_gs_val(){
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ))
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_GS_VAL_FO);
+    	else
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_GS_VAL_CAPT);
+    }
+    
+    public boolean qpac_gs_on(){
+    	int qpac_ils_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ILS_FLAGS));
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ))
+    		return (qpac_ils_data & 0x08) > 0 ? true : false; 	
+    	else
+    		return (qpac_ils_data & 0x02) > 0 ? true : false;	
+    }
+    
     public float qpac_ils_crs(){
     	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ILS_CRS);
     }

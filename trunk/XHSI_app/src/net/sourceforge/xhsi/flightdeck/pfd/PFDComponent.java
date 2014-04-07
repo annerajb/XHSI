@@ -88,13 +88,13 @@ public class PFDComponent extends Component implements Observer, PreferencesObse
         addComponentListener(pfd_gc);
         
         // Airbus sub components
-        subcomponents.add(new ADI_A320(model_factory, pfd_gc, this));
-        subcomponents.add(new ILS_A320(model_factory, pfd_gc, this));
+        subcomponents.add(new ADI_A320(model_factory, pfd_gc, this));       
         subcomponents.add(new SpeedTape_A320(model_factory, pfd_gc, this));
         subcomponents.add(new AltiTape_A320(model_factory, pfd_gc, this));
         subcomponents.add(new VSI_A320(model_factory, pfd_gc, this));
         subcomponents.add(new FMA_A320(model_factory, pfd_gc, this));
         subcomponents.add(new HSI_A320(model_factory, pfd_gc, this));
+        subcomponents.add(new ILS_A320(model_factory, pfd_gc, this));
         subcomponents.add(new PFDFail_A320(model_factory, pfd_gc, this));
 
         // Boeing sub components

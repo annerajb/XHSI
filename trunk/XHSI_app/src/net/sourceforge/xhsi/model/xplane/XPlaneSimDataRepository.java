@@ -421,12 +421,12 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_THR_LEVER_MODE=890;
     public static final int QPAC_FMA_THR_WARNING=891;
     public static final int QPAC_FLEX_TEMP=892;
-    // RNAV Deviation
-    public static final int QPAC_LOC_VAL_CAPT=893;
-    public static final int QPAC_LOC_ON_CAPT=894;
+    // ILS Sig and Deviation Capt. and FO
+    public static final int QPAC_ILS_FLAGS=893;
+    public static final int QPAC_LOC_VAL_CAPT=894;
     public static final int QPAC_GS_VAL_CAPT=895;
-    public static final int QPAC_GS_ON_CAPT=896;
-    // ILS on NAV3
+    public static final int QPAC_LOC_VAL_FO=896;
+    public static final int QPAC_GS_VAL_FO=917;
     public static final int QPAC_ILS_CRS=897;
     public static final int QPAC_ILS_CRS_DEV=898;
     // FD

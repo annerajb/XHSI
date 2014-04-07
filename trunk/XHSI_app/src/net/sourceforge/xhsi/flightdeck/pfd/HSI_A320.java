@@ -95,8 +95,7 @@ public class HSI_A320 extends PFDSubcomponent {
 				if ( pfd_gc.powered ) drawFailedHSI(g2);
 			} else if ( pfd_gc.powered ) {
 				drawTape(g2);
-
-			}
+			} 
 			// Usefull for ATR72
 			if ( pfd_gc.draw_hsi ) {
 				drawDisc(g2);
