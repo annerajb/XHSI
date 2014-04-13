@@ -102,6 +102,22 @@ XPLMDataRef  baro_pilot;
 XPLMDataRef  baro_copilot;
 XPLMDataRef  airspeed_acceleration;
 
+//Instruments failures pilot
+XPLMDataRef  sim_op_fail_rel_ss_ahz;
+XPLMDataRef  sim_op_fail_rel_ss_alt;
+XPLMDataRef  sim_op_fail_rel_ss_asi;
+XPLMDataRef  sim_op_fail_rel_ss_dgy;
+XPLMDataRef  sim_op_fail_rel_ss_tsi;
+XPLMDataRef  sim_op_fail_rel_ss_vvi;
+//Instruments failures co-pilot
+XPLMDataRef  sim_op_fail_rel_cop_ahz;
+XPLMDataRef  sim_op_fail_rel_cop_alt;
+XPLMDataRef  sim_op_fail_rel_cop_asi;
+XPLMDataRef  sim_op_fail_rel_cop_dgy;
+XPLMDataRef  sim_op_fail_rel_cop_tsi;
+XPLMDataRef  sim_op_fail_rel_cop_vvi;
+
+
 XPLMDataRef  avionics_on;
 XPLMDataRef  battery_on;
 XPLMDataRef  cockpit_lights_on;
@@ -1304,6 +1320,21 @@ void findDataRefs(void) {
     baro_pilot = XPLMFindDataRef("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot");
     baro_copilot = XPLMFindDataRef("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot");
     airspeed_acceleration = XPLMFindDataRef("sim/cockpit2/gauges/indicators/airspeed_acceleration_kts_sec_pilot");
+
+    //Instruments failures pilot
+    sim_op_fail_rel_ss_ahz = XPLMFindDataRef("sim/operation/failures/rel_ss_ahz");
+    sim_op_fail_rel_ss_alt = XPLMFindDataRef("sim/operation/failures/rel_ss_alt");
+    sim_op_fail_rel_ss_asi = XPLMFindDataRef("sim/operation/failures/rel_ss_asi");
+    sim_op_fail_rel_ss_dgy = XPLMFindDataRef("sim/operation/failures/rel_ss_dgy");
+    sim_op_fail_rel_ss_tsi = XPLMFindDataRef("sim/operation/failures/rel_ss_tsi");
+    sim_op_fail_rel_ss_vvi = XPLMFindDataRef("sim/operation/failures/rel_ss_vvi");
+    //Instruments failures co-pilot
+    sim_op_fail_rel_cop_ahz = XPLMFindDataRef("sim/operation/failures/rel_cop_ahz");
+    sim_op_fail_rel_cop_alt = XPLMFindDataRef("sim/operation/failures/rel_cop_alt");
+    sim_op_fail_rel_cop_asi = XPLMFindDataRef("sim/operation/failures/rel_cop_asi");
+    sim_op_fail_rel_cop_dgy = XPLMFindDataRef("sim/operation/failures/rel_cop_dgy");
+    sim_op_fail_rel_cop_tsi = XPLMFindDataRef("sim/operation/failures/rel_cop_tsi");
+    sim_op_fail_rel_cop_vvi = XPLMFindDataRef("sim/operation/failures/rel_cop_vvi");
 
 
     // Electrical
