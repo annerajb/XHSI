@@ -30,6 +30,7 @@ import java.awt.Graphics2D;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSIStatus;
+import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.SimDataRepository;
 import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
@@ -150,7 +151,7 @@ public class FMA_A320 extends PFDSubcomponent {
         int mode_x = pfd_gc.fma_left + pfd_gc.fma_width/10 + col*pfd_gc.fma_width/5 - mode_w/2;       
         int mode_y = pfd_gc.instrument_size*1050/1000 + pfd_gc.fma_height*raw/5 + pfd_gc.line_height_m - 2;
         g2.setColor(pfd_gc.pfd_markings_color);
-        g2.setFont(pfd_gc.font_m);
+        g2.setFont(pfd_gc.font_s);
         g2.drawString(mode, mode_x, mode_y);
     }
     
@@ -361,20 +362,19 @@ public class FMA_A320 extends PFDSubcomponent {
         drawDMode(g2,3,2,fma_str);
         fma_str = "qp_fail " + this.avionics.qpac_failures();
         drawDMode(g2,3,0,fma_str);
-        fma_str = "ILS CRS " + this.avionics.qpac_ils_crs();
+        fma_str = "ILS Crs " + this.avionics.qpac_ils_crs();
         drawDMode(g2,1,3,fma_str);
-        fma_str = "ILS CRS DEV " + this.avionics.qpac_ils_crs_dev();
+        fma_str = "ILS Crs DEV " + this.avionics.qpac_ils_crs_dev();
         drawDMode(g2,1,4,fma_str);
-        fma_str = "LOC VAL  " + this.avionics.qpac_loc_val();
-        drawDMode(g2,3,5,fma_str);
-        fma_str = "LOC ON  " + this.avionics.qpac_loc_on();
-        drawDMode(g2,3,6,fma_str);
-        fma_str = "GS VAL  " + this.avionics.qpac_gs_val();
-        drawDMode(g2,1,5,fma_str);
-        fma_str = "GS ON  " + this.avionics.qpac_gs_on();
-        drawDMode(g2,1,6,fma_str);
-               
-      
+        fma_str = "LOC val  " + this.avionics.qpac_loc_val();
+        drawDMode(g2,3,3,fma_str);
+        fma_str = "LOC on  " + this.avionics.qpac_loc_on();
+        drawDMode(g2,3,4,fma_str);
+        fma_str = "GS val  " + this.avionics.qpac_gs_val();
+        drawDMode(g2,2,3,fma_str);
+        fma_str = "GS on  " + this.avionics.qpac_gs_on();
+        drawDMode(g2,2,4,fma_str);
+
         
         // AP Engaged
         String ap_str = "";

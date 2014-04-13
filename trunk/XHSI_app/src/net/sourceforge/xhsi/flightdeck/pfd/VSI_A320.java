@@ -270,7 +270,7 @@ public class VSI_A320 extends PFDSubcomponent {
         } else {
            	g2.setColor(pfd_gc.pfd_vsi_needle_color);
         }
-        g2.setStroke(new BasicStroke(2.5f * pfd_gc.grow_scaling_factor));
+        g2.setStroke(new BasicStroke(3f * pfd_gc.grow_scaling_factor));
         g2.drawLine(m_x - 2, pfd_gc.adi_cy - vvy * up_down, pfd_gc.vsi_left + pfd_gc.vsi_width*150/100, pfd_gc.adi_cy);
         g2.setClip(original_clipshape);
 

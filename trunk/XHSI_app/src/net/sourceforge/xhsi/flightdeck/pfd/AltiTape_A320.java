@@ -150,30 +150,45 @@ public class AltiTape_A320 extends PFDSubcomponent {
             }
         }
         int gnd_y;
-        if ( loc_receive ) {
+        float radio_altitude = this.aircraft.agl_m() * 3.28084f;
+        float mda=400f;
+        int ra_y = pfd_gc.adi_cy + Math.round( radio_altitude * pfd_gc.tape_height / alt_f_range );
+        if ( loc_receive && ! this.aircraft.on_ground()) {
+        	Stroke original_stroke = g2.getStroke();
+        	int halfstroke = pfd_gc.tape_width/16;
+        	// These indicators are not FCOM compliant, inherited from Boeing and adapter to Airbus style
+        	// It should be a graphic option in the preference panel
             int loc_y = pfd_gc.adi_cy - Math.round( ((float)dest_alt - alt) * pfd_gc.tape_height / alt_f_range );
             int h1000_y = pfd_gc.adi_cy - Math.round( ((float)dest_alt + (float)1000 - alt) * pfd_gc.tape_height / alt_f_range );
-            int h500_y = pfd_gc.adi_cy - Math.round( ((float)dest_alt + (float)500 - alt) * pfd_gc.tape_height / alt_f_range );
+            int mda_y = pfd_gc.adi_cy - Math.round( ((float)dest_alt + mda - alt) * pfd_gc.tape_height / alt_f_range );
             // between 500 and 1000ft
-            g2.setColor(pfd_gc.markings_color);
-            g2.drawLine(pfd_gc.altitape_left - 4, h1000_y, pfd_gc.altitape_left - 4, h500_y);
-            // between 500 and 1000ft
-            g2.setColor(pfd_gc.caution_color);
-            g2.drawLine(pfd_gc.altitape_left - 4, h500_y, pfd_gc.altitape_left - 4, loc_y);
+            g2.setColor(pfd_gc.pfd_caution_color);
+            g2.drawLine(altitape_right + pfd_gc.tape_width / 12, h1000_y, altitape_right + pfd_gc.tape_width / 12, mda_y);
+            g2.drawLine(altitape_right+1, h1000_y, altitape_right + pfd_gc.tape_width / 12, h1000_y);
+            //g2.fillRect(altitape_right+1,  h1000_y, pfd_gc.tape_width / 7 ,  pfd_gc.tape_top + pfd_gc.tape_height + h1000_y - h500_y );
+            // between 500 and 1000ft            
+
+        	g2.setStroke(new BasicStroke(2.0f * halfstroke));
+            float red_dashes[] = { halfstroke*2.0f, halfstroke*2.0f };
+            g2.setStroke(new BasicStroke(2.0f * halfstroke, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, red_dashes, 0.0f));
+            g2.drawLine(altitape_right+1+halfstroke, mda_y, altitape_right+1+halfstroke, ra_y+2);
+            // g2.fillRect(altitape_right+1, h500_y, pfd_gc.tape_width / 7 ,  pfd_gc.tape_top + pfd_gc.tape_height + h500_y - loc_y + 2 );
             // localizer altitude
+            g2.setStroke(original_stroke);
             gnd_y = loc_y;
         } else {
             // ground elevation from the radar altitude
-            gnd_y = pfd_gc.adi_cy + Math.round( (this.aircraft.agl_m() * 3.28084f) * pfd_gc.tape_height / alt_f_range );
+            gnd_y = pfd_gc.adi_cy + Math.round( radio_altitude * pfd_gc.tape_height / alt_f_range );
         }
         
         // Ground reference        
         // TODO : ??? on Airbus, flight phase 7 and 8 with QNH mode, display DH zone in amber
         // TODO : Airbus FCOM 1.31.40 p.13 (3) Ground reference - display below 570 ft
-        if ( (this.aircraft.agl_m() * 3.28084f) < 570f ) { 
+        
+        if ( radio_altitude < 570f ) { 
             // Ground bar on Airbus
-        	g2.setColor(pfd_gc.warning_color); 
-        	g2.fillRect(altitape_right+1, gnd_y, pfd_gc.tape_width / 7 , gnd_y - pfd_gc.tape_top + 2);
+        	g2.setColor(pfd_gc.pfd_alarm_color); 
+        	g2.fillRect(altitape_right+1, ra_y, pfd_gc.tape_width / 7 ,  pfd_gc.tape_top + pfd_gc.tape_height - ra_y + 2);
             // TODO : Airbus FCOM 1.31.40 p.13 (2) Landing elevation, an horizontal blue line indicates barometric Ground that may differ from radio altimeter ground
             g2.setColor(Color.blue);
             g2.drawLine(pfd_gc.altitape_left, gnd_y, altitape_right, gnd_y);
@@ -419,6 +434,13 @@ public class AltiTape_A320 extends PFDSubcomponent {
     	g2.clip(alt_ind_area);
         // g2.clipRect(pfd_gc.altitape_left, pfd_gc.adi_cy - pfd_gc.line_height_xxl, pfd_gc.tape_width*2, 2 * pfd_gc.line_height_xxl);
 
+        // TODO : flight phase + MDA MH settings
+        if (radio_altitude >= mda) {	
+        	g2.setColor(pfd_gc.pfd_alti_color); 
+        } else {
+        	g2.setColor(pfd_gc.pfd_caution_color);
+        }
+    	
         if ( alt >= 0.0f ) {
 
 //            int alt_int = alt.intValue();
@@ -435,12 +457,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
             int	x100 = x1k + pfd_gc.digit_width_xxl;
             //int	x20 = x100 + pfd_gc.digit_width_xxl;
             int x20 = altitape_right + pfd_gc.digit_width_l*2/10 ;
-            // TODO : flight phase + MDA MH settings
-            if (alt >= 400f) {	
-            	g2.setColor(pfd_gc.pfd_alti_color); 
-            } else {
-            	g2.setColor(pfd_gc.pfd_caution_color);
-            }
+
              
             int ydelta = Math.round( pfd_gc.line_height_l*alt_frac );
 
@@ -481,23 +498,12 @@ public class AltiTape_A320 extends PFDSubcomponent {
             // ten-thousands
             if ( ( alt_1k == 9 ) && ( alt_100 == 9 ) && ( alt_20 == 80 ) ) {
                 // already done: ydelta = Math.round( pfd_gc.line_height_xxl*alt_frac );
-                if ( alt_10k == 0) {
-                    g2.setColor(pfd_gc.heading_labels_color.darker());
-                    if (! pfd_airbus) { 
-                    	g2.fillRoundRect(x10k + pfd_gc.digit_width_xxl/8, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - pfd_gc.line_height_xxl*3/4 - 4 + ydelta, pfd_gc.digit_width_xxl*3/4, pfd_gc.line_height_xxl*3/4, (int)(8.0f*pfd_gc.scaling_factor), (int)(8.0f*pfd_gc.scaling_factor)); 
-                    }
-                    g2.setColor(pfd_gc.pfd_alti_color);
-                } else {
+                if ( alt_10k != 0) {                                   
                     g2.drawString("" + alt_10k, x10k, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 4 + ydelta);
                 }
                 g2.drawString("" + (alt_10k + 1) % 10, x10k, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 4 + ydelta - pfd_gc.line_height_xxl);
             } else {
-                if ( alt_10k == 0) {
-                    g2.setColor(pfd_gc.heading_labels_color.darker());
-                    if (! pfd_airbus ) { g2.fillRoundRect(x10k + pfd_gc.digit_width_xxl/8, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - pfd_gc.line_height_xxl*3/4 - 4, pfd_gc.digit_width_xxl*3/4, pfd_gc.line_height_xxl*3/4, (int)(8.0f*pfd_gc.scaling_factor), (int)(8.0f*pfd_gc.scaling_factor));
-                    }                    
-                    g2.setColor(pfd_gc.markings_color);
-                } else {
+                if ( alt_10k != 0) {                    
                     g2.drawString("" + alt_10k, x10k, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 4);
                 }
             }
@@ -520,8 +526,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
             int	x1k = x10k + pfd_gc.digit_width_xxl;
             int	x100 = x1k + pfd_gc.digit_width_xxl;
             int	x20 = x100 + pfd_gc.digit_width_xxl;
-            g2.setColor(Color.GREEN);
-             
+                         
             int ydelta = Math.round( pfd_gc.line_height_l*alt_frac );
 
             DecimalFormat decaform = new DecimalFormat("00");
@@ -562,7 +567,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
                 if ( alt_10k == 0) {
                     g2.setColor(pfd_gc.heading_labels_color);
                     g2.drawString("\u25CF", x10k, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 4 - ydelta);
-                    g2.setColor(pfd_gc.markings_color);
+                    g2.setColor(pfd_gc.pfd_markings_color);
                 } else {
                     g2.drawString("" + alt_10k, x10k, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 4 - ydelta);
                 }
@@ -576,7 +581,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
             }
             
             // Mark NEG in white letters
-            g2.setColor(pfd_gc.markings_color);
+            g2.setColor(pfd_gc.pfd_markings_color);
             g2.setClip(original_clipshape);
             g2.drawString("N", pfd_gc.altitape_left, pfd_gc.adi_cy - pfd_gc.line_height_xxl/2 - 4);
             g2.drawString("E", pfd_gc.altitape_left, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 4);
