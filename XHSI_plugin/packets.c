@@ -364,6 +364,28 @@ int createAvionicsPacket(void) {
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(cockpit_lights_on));
 	i++;
 
+	// Standard gauges failures
+	// Each value is on 3 bits (enum failure integer 0 to 6)
+    int std_gauges_failures_pilot =
+    		XPLMGetDatai(sim_op_fail_rel_ss_ahz) << 15 |
+    		XPLMGetDatai(sim_op_fail_rel_ss_alt) << 12 |
+    		XPLMGetDatai(sim_op_fail_rel_ss_asi) << 9 |
+			XPLMGetDatai(sim_op_fail_rel_ss_dgy) << 6 |
+			XPLMGetDatai(sim_op_fail_rel_ss_tsi) << 3 |
+			XPLMGetDatai(sim_op_fail_rel_ss_vvi) ;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_GAUGES_FAILURES_PILOT);
+    sim_packet.sim_data_points[i].value = custom_htonf( (float) std_gauges_failures_pilot );
+    i++;
+    int std_gauges_failures_copilot =
+    		XPLMGetDatai(sim_op_fail_rel_cop_ahz) << 15 |
+    		XPLMGetDatai(sim_op_fail_rel_cop_alt) << 12 |
+    		XPLMGetDatai(sim_op_fail_rel_cop_asi) << 9 |
+			XPLMGetDatai(sim_op_fail_rel_cop_dgy) << 6 |
+			XPLMGetDatai(sim_op_fail_rel_cop_tsi) << 3 |
+			XPLMGetDatai(sim_op_fail_rel_cop_vvi) ;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_GAUGES_FAILURES_COPILOT);
+    sim_packet.sim_data_points[i].value = custom_htonf( (float) std_gauges_failures_copilot );
+    i++;
 
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ);
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(nav1_freq_hz));
