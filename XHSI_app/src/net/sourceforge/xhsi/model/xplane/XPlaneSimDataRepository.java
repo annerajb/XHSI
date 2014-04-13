@@ -75,7 +75,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_EFIS_PILOT_MINS_MODE = 65;
     public static final int XHSI_EFIS_COPILOT_DA_BUG = 66;
     public static final int XHSI_EFIS_COPILOT_MINS_MODE = 67;
-
+    public static final int SIM_GAUGES_FAILURES_PILOT = 68;
+    public static final int SIM_GAUGES_FAILURES_COPILOT = 69;
 
     // Electrical
     public static final int SIM_COCKPIT_ELECTRICAL_AVIONICS_ON = 80;
@@ -466,7 +467,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     long updates = 0;
     ArrayList observers;
     public static boolean replaying = false;
-
+  
 //    private static XPlaneSimDataRepository single_instance;
 //
 //    public static XPlaneSimDataRepository get_instance() {

@@ -38,6 +38,8 @@ import net.sourceforge.xhsi.model.RadioNavBeacon;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.SimDataRepository;
 import net.sourceforge.xhsi.model.TCAS;
+import net.sourceforge.xhsi.model.Avionics.FailedElement;
+import net.sourceforge.xhsi.model.Avionics.FailureMode;
 
 
 public class XPlaneAvionics implements Avionics, Observer {
@@ -58,7 +60,17 @@ public class XPlaneAvionics implements Avionics, Observer {
     private NavigationRadio adf2_radio;
     private NavigationRadio gps_radio;
 
+    /* Internal X-Plane failure values
+     * always working = 0
+     * fail at mean_time = 1
+	 * fail at exact time = 2
+	 * fail at speed = 3
+	 * fail at altitude = 4
+	 * fail at key = 5
+	 * inoperative now = 6
+     */
 
+    
     public XPlaneAvionics(Aircraft aircraft, ModelFactory sim_model) {
 
         this.sim_data = sim_model.get_repository_instance();
@@ -1430,6 +1442,33 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     }
 
+    // Failures
+    // 
+    public FailureMode failure_mode(FailedElement element) {    	
+    	int gauges_failure_data=0;
+    	int failure_index = 0;
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		gauges_failure_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_GAUGES_FAILURES_COPILOT));
+    	} else {
+    		gauges_failure_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_GAUGES_FAILURES_PILOT));    		
+    	}
+    	switch (element) {
+    		case PFD_VSI :failure_index = gauges_failure_data & 0x0007; break; 
+    		case PFD_TURN :failure_index = (gauges_failure_data & 0x0038) >> 3; break;
+    		case PFD_HEADING :failure_index = (gauges_failure_data & 0x01C0) >> 6; break;
+    		case PFD_AIR_SPEED :failure_index = (gauges_failure_data & 0x000E00) >> 9; break;
+    		case PFD_ALTITUDE :failure_index = (gauges_failure_data & 0x007000) >> 12; break;
+    		case PFD_ATTITUDE :failure_index = (gauges_failure_data & 0x038000) >> 15; break;    		
+    	}
+   	 	
+    	return FailureMode.values()[failure_index];  	
+    }
+ 
+    public void set_failure(FailedElement element, FailureMode mode) {
+    	// Will allow XHSI to trigger failures
+    	// Feature should be implemented with the Instructor mode of XSHI
+    }
+    
     // Failures
     public boolean att_valid () {
     	int qpac_failures_data=0;

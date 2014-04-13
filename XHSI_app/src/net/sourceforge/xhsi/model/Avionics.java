@@ -642,6 +642,12 @@ public interface Avionics {
     public void set_mfd_mode(int new_mode);
 
     // Failures
+    public enum FailedElement { PFD_ATTITUDE, PFD_ALTITUDE, PFD_AIR_SPEED, PFD_HEADING, PFD_TURN, PFD_VSI };
+    public enum FailureMode { WORKING, FAIL_MEAN_TIME, FAIL_TIME, FAIL_SPD, FAIL_ALT, FAIL_KEY, INOPERATIVE  };
+  
+    public FailureMode failure_mode(FailedElement element);
+    public void set_failure(FailedElement element, FailureMode mode);    
+    
     /**
      * @return boolean - True if attitude valid
      */  
