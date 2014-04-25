@@ -364,28 +364,6 @@ int createAvionicsPacket(void) {
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(cockpit_lights_on));
 	i++;
 
-	// Standard gauges failures
-	// Each value is on 3 bits (enum failure integer 0 to 6)
-    int std_gauges_failures_pilot =
-    		XPLMGetDatai(sim_op_fail_rel_ss_ahz) << 15 |
-    		XPLMGetDatai(sim_op_fail_rel_ss_alt) << 12 |
-    		XPLMGetDatai(sim_op_fail_rel_ss_asi) << 9 |
-			XPLMGetDatai(sim_op_fail_rel_ss_dgy) << 6 |
-			XPLMGetDatai(sim_op_fail_rel_ss_tsi) << 3 |
-			XPLMGetDatai(sim_op_fail_rel_ss_vvi) ;
-    sim_packet.sim_data_points[i].id = custom_htoni(SIM_GAUGES_FAILURES_PILOT);
-    sim_packet.sim_data_points[i].value = custom_htonf( (float) std_gauges_failures_pilot );
-    i++;
-    int std_gauges_failures_copilot =
-    		XPLMGetDatai(sim_op_fail_rel_cop_ahz) << 15 |
-    		XPLMGetDatai(sim_op_fail_rel_cop_alt) << 12 |
-    		XPLMGetDatai(sim_op_fail_rel_cop_asi) << 9 |
-			XPLMGetDatai(sim_op_fail_rel_cop_dgy) << 6 |
-			XPLMGetDatai(sim_op_fail_rel_cop_tsi) << 3 |
-			XPLMGetDatai(sim_op_fail_rel_cop_vvi) ;
-    sim_packet.sim_data_points[i].id = custom_htoni(SIM_GAUGES_FAILURES_COPILOT);
-    sim_packet.sim_data_points[i].value = custom_htonf( (float) std_gauges_failures_copilot );
-    i++;
 
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ);
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(nav1_freq_hz));
@@ -668,8 +646,8 @@ int createAvionicsPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EICAS_TRQ_SCALE);
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(trq_scale));
 	i++;
-	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FUEL_CAPACITY);
-	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(fuel_capacity));
+	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FUEL_UNITS);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(fuel_units));
 	i++;
 
 
@@ -1035,28 +1013,19 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FLEX_TEMP);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_flex_temp));
         i++;
-        // ILS Sig and Deviation Capt. and FO
-        int qpac_ils =	XPLMGetDatai(qpac_gs_on_fo) << 3 |
-    			XPLMGetDatai(qpac_loc_on_fo) << 2 |
-    			XPLMGetDatai(qpac_gs_on_capt) << 1 |
-    			XPLMGetDatai(qpac_loc_on_capt) ;
-
-    	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ILS_FLAGS);
-    	sim_packet.sim_data_points[i].value = custom_htonf((float) qpac_ils );
-    	i++;
-    	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_LOC_VAL_CAPT);
+        // RNAV Deviation
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_LOC_VAL_CAPT);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_loc_val_capt));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_LOC_ON_CAPT);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_loc_on_capt));
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_GS_VAL_CAPT);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_gs_val_capt));
         i++;
-    	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_LOC_VAL_FO);
-        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_loc_val_fo));
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_GS_ON_CAPT);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_gs_on_capt));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_GS_VAL_FO);
-        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_gs_val_fo));
-        i++;
-
 
         // ILS on NAV3
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ILS_CRS);
@@ -1140,22 +1109,6 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ALPHA_MAX);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_alpha_max));
         i++;
-        // Failures
-        int qpac_failures = 0xFFFF;
-        if (qpac_co_hdg_valid) {
-        	qpac_failures =
-        		XPLMGetDatai(qpac_co_hdg_valid) << 7 |
-    			XPLMGetDatai(qpac_co_att_valid) << 6 |
-    			XPLMGetDatai(qpac_co_ias_valid) << 5 |
-    			XPLMGetDatai(qpac_co_alt_valid) << 4 |
-    			XPLMGetDatai(qpac_capt_hdg_valid) << 3 |
-    			XPLMGetDatai(qpac_capt_att_valid) << 2 |
-    			XPLMGetDatai(qpac_capt_ias_valid) << 1 |
-    			XPLMGetDatai(qpac_capt_alt_valid) ;
-        }
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FAILURES);
-        sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_failures );
-        i++;
     }
 
 	// now we know the number of datapoints
@@ -1216,7 +1169,10 @@ int createEnginesPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_WEIGHT_M_FUEL_TOTAL);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(total_fuel));
 	i++;
-
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_WEIGHT_ACF_M_FUEL_TOT);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(fuel_capacity));
+	i++;
+	
     XPLMGetDatavf(fuel_quantity, fuelfloat, 0, tanks);
 	for (e=0; e<tanks; e++) {
         sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_FUEL_QUANTITY_ + e);

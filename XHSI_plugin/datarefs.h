@@ -32,21 +32,6 @@ extern XPLMDataRef  baro_pilot;
 extern XPLMDataRef  baro_copilot;
 extern XPLMDataRef  airspeed_acceleration;
 
-//Instruments failures pilot
-extern XPLMDataRef  sim_op_fail_rel_ss_ahz;
-extern XPLMDataRef  sim_op_fail_rel_ss_alt;
-extern XPLMDataRef  sim_op_fail_rel_ss_asi;
-extern XPLMDataRef  sim_op_fail_rel_ss_dgy;
-extern XPLMDataRef  sim_op_fail_rel_ss_tsi;
-extern XPLMDataRef  sim_op_fail_rel_ss_vvi;
-//Instruments failures co-pilot
-extern XPLMDataRef  sim_op_fail_rel_cop_ahz;
-extern XPLMDataRef  sim_op_fail_rel_cop_alt;
-extern XPLMDataRef  sim_op_fail_rel_cop_asi;
-extern XPLMDataRef  sim_op_fail_rel_cop_dgy;
-extern XPLMDataRef  sim_op_fail_rel_cop_tsi;
-extern XPLMDataRef  sim_op_fail_rel_cop_vvi;
-
 extern XPLMDataRef  avionics_on;
 extern XPLMDataRef  battery_on;
 extern XPLMDataRef  cockpit_lights_on;
@@ -219,6 +204,7 @@ extern XPLMDataRef  oil_temperature;
 extern XPLMDataRef  fuel_pressure;
 extern XPLMDataRef  total_fuel;
 extern XPLMDataRef  fuel_quantity;
+extern XPLMDataRef  fuel_capacity;
 extern XPLMDataRef  engine_n1;
 extern XPLMDataRef  engine_egt_percent;
 extern XPLMDataRef  engine_egt_value;
@@ -266,7 +252,7 @@ extern XPLMDataRef  instrument_style;
 // custom datarefs - EICAS
 extern XPLMDataRef  engine_type;
 extern XPLMDataRef  trq_scale;
-extern XPLMDataRef  fuel_capacity;
+extern XPLMDataRef  fuel_units;
 
 
 // custom datarefs - MFD

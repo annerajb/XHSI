@@ -450,13 +450,15 @@ public class XPlaneAircraft implements Aircraft {
     }
 
     public float get_fuel_capacity() {
-        if ( get_total_fuel() > this.fuel_capacity ) estimate_fuel_capacity();
-        return this.fuel_capacity;
+//        if ( get_total_fuel() > this.fuel_capacity ) estimate_fuel_capacity();
+//        return this.fuel_capacity;
+        return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_WEIGHT_ACF_M_FUEL_TOT);
     }
 
     public float get_tank_capacity(int tank) {
-        if ( get_total_fuel() > this.fuel_capacity ) estimate_fuel_capacity();
-        return this.fuel_capacity * tank_ratio(tank);
+//        if ( get_total_fuel() > this.fuel_capacity ) estimate_fuel_capacity();
+//        return this.fuel_capacity * tank_ratio(tank);
+        return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_WEIGHT_ACF_M_FUEL_TOT) * tank_ratio(tank);
     }
 
     public void set_fuel_capacity(float capacity) {

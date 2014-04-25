@@ -50,7 +50,7 @@ public class FuelDialog extends JDialog implements ActionListener {
     private static final long serialVersionUID = 1L;
 
     private static final String SET = "Set";
-    private static final String EST = "Estimate";
+    private static final String ESTIMATE = "Estimate";
 
     private JTextField capacity;
     private String units;
@@ -127,10 +127,6 @@ public class FuelDialog extends JDialog implements ActionListener {
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
         units_text = new JLabel(this.units, JLabel.TRAILING);
-//        {
-//            // For now, only in KG !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//            units_text.setText("KG");
-//        }
         capacity_panel.add(units_text, cons);
         dialog_line++;
 
@@ -143,8 +139,8 @@ public class FuelDialog extends JDialog implements ActionListener {
         FlowLayout layout = new FlowLayout();
         JPanel capacity_panel = new JPanel(layout);
 
-        JButton estimate_button = new JButton(FuelDialog.EST);
-        estimate_button.setActionCommand(FuelDialog.EST);
+        JButton estimate_button = new JButton(FuelDialog.ESTIMATE);
+        estimate_button.setActionCommand(FuelDialog.ESTIMATE);
         estimate_button.addActionListener(this);
 
         JButton set_button = new JButton(FuelDialog.SET);
@@ -160,7 +156,7 @@ public class FuelDialog extends JDialog implements ActionListener {
 
     public void actionPerformed(ActionEvent event) {
         
-        if (event.getActionCommand().equals(FuelDialog.EST)) {
+        if (event.getActionCommand().equals(FuelDialog.ESTIMATE)) {
             
             // force an estimate
             xhsi_settings.avionics.get_aircraft().estimate_fuel_capacity();
