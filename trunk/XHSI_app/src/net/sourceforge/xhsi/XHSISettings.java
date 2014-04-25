@@ -36,7 +36,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
-import net.sourceforge.xhsi.XHSIPreferences;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.NavigationRadio;
 
@@ -135,8 +134,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_TRQ_SCALE_PERCENT = "Percent";
     public static final int TRQ_SCALE_PERCENT = 2;
     
-    public static final String ACTION_ESTIMATE_FUEL_CAPACITY = "Estimate fuel capacity";
-    public static final String ACTION_SET_FUEL_CAPACITY = "Set fuel capacity ...";
+//    public static final String ACTION_ESTIMATE_FUEL_CAPACITY = "Estimate fuel capacity";
+//    public static final String ACTION_SET_FUEL_CAPACITY = "Set fuel capacity ...";
     public static final String ACTION_RESET_MAX_FF = "Reset max FF";
 
     public static final String ACTION_MFD_ARPT_CHART = "Airport Chart";
@@ -871,17 +870,17 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         
         xhsi_eicas_menu.addSeparator();
 
-        menu_item = new JMenuItem(XHSISettings.ACTION_ESTIMATE_FUEL_CAPACITY);
-        menu_item.setToolTipText("Estimate the aircraft's total fuel capacity");
-        menu_item.addActionListener(this);
-        xhsi_eicas_menu.add(menu_item);
-
-        menu_item = new JMenuItem(XHSISettings.ACTION_SET_FUEL_CAPACITY);
-        menu_item.setToolTipText("Set the aircraft's total fuel capacity manually");
-        menu_item.addActionListener(this);
-        xhsi_eicas_menu.add(menu_item);
-
-        xhsi_eicas_menu.addSeparator();
+//        menu_item = new JMenuItem(XHSISettings.ACTION_ESTIMATE_FUEL_CAPACITY);
+//        menu_item.setToolTipText("Estimate the aircraft's total fuel capacity");
+//        menu_item.addActionListener(this);
+//        xhsi_eicas_menu.add(menu_item);
+//
+//        menu_item = new JMenuItem(XHSISettings.ACTION_SET_FUEL_CAPACITY);
+//        menu_item.setToolTipText("Set the aircraft's total fuel capacity manually");
+//        menu_item.addActionListener(this);
+//        xhsi_eicas_menu.add(menu_item);
+//
+//        xhsi_eicas_menu.addSeparator();
 
         menu_item = new JMenuItem(XHSISettings.ACTION_RESET_MAX_FF);
         menu_item.setToolTipText("Reset the range of the Fuel Flow dials");
@@ -1132,17 +1131,17 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             trq_scale = XHSISettings.TRQ_SCALE_PERCENT;
             this.avionics.set_trq_scale(trq_scale);
 
-        } else if (command.equals(XHSISettings.ACTION_ESTIMATE_FUEL_CAPACITY)) {
-            // Estimate total fuel capacity
-            this.avionics.get_aircraft().estimate_fuel_capacity();
+//        } else if (command.equals(XHSISettings.ACTION_ESTIMATE_FUEL_CAPACITY)) {
+//            // Estimate total fuel capacity
+//            this.avionics.get_aircraft().estimate_fuel_capacity();
 
-        } else if (command.equals(XHSISettings.ACTION_SET_FUEL_CAPACITY)) {
-            // Set total fuel capacity manually
-            // update the fields in the dialog box
-            this.fuel_dialog.init_capacity();
-            this.fuel_dialog.setLocation(this.main_frame.getX()+this.main_frame.getWidth()/2-this.fuel_dialog.getWidth()/2, this.main_frame.getY()+100);
-            this.fuel_dialog.setVisible(true);
-            this.fuel_dialog.pack();
+//        } else if (command.equals(XHSISettings.ACTION_SET_FUEL_CAPACITY)) {
+//            // Set total fuel capacity manually
+//            // update the fields in the dialog box
+//            this.fuel_dialog.init_capacity();
+//            this.fuel_dialog.setLocation(this.main_frame.getX()+this.main_frame.getWidth()/2-this.fuel_dialog.getWidth()/2, this.main_frame.getY()+100);
+//            this.fuel_dialog.setVisible(true);
+//            this.fuel_dialog.pack();
 
         } else if (command.equals(XHSISettings.ACTION_RESET_MAX_FF)) {
             this.avionics.get_aircraft().reset_max_FF();

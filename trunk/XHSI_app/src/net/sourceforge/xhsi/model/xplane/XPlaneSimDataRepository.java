@@ -225,7 +225,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     // EICAS
     public static final int XHSI_ENGINE_TYPE = 280;
     public static final int XHSI_EICAS_TRQ_SCALE = 281;
-    public static final int XHSI_FUEL_CAPACITY = 282;
+    public static final int XHSI_FUEL_UNITS = 282;
     
 
     // MFD
@@ -289,6 +289,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT2_ANNUNCIATORS_OIL_TEMPERATURE = 404;  // bitfield
     public static final int SIM_COCKPIT2_ANNUNCIATORS_FUEL_PRESSURE = 405;  // bitfield
     public static final int SIM_FLIGHTMODEL_WEIGHT_M_FUEL_TOTAL = 406;
+    public static final int SIM_AIRCRAFT_WEIGHT_ACF_M_FUEL_TOT = 407;
     public static final int SIM_COCKPIT2_FUEL_QUANTITY_ = 410; // 410..418 : array
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_N1_ = 420; // array
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_EGT_ = 430; // array

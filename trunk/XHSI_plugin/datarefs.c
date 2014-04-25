@@ -36,7 +36,7 @@ XPLMDataRef instrument_style;
 // custom datarefs - EICAS
 XPLMDataRef  engine_type;
 XPLMDataRef  trq_scale;
-XPLMDataRef  fuel_capacity;
+XPLMDataRef  fuel_units;
 
 // custom datarefs - MFD
 XPLMDataRef  mfd_mode;
@@ -101,22 +101,6 @@ XPLMDataRef  ra_bug_copilot;
 XPLMDataRef  baro_pilot;
 XPLMDataRef  baro_copilot;
 XPLMDataRef  airspeed_acceleration;
-
-//Instruments failures pilot
-XPLMDataRef  sim_op_fail_rel_ss_ahz;
-XPLMDataRef  sim_op_fail_rel_ss_alt;
-XPLMDataRef  sim_op_fail_rel_ss_asi;
-XPLMDataRef  sim_op_fail_rel_ss_dgy;
-XPLMDataRef  sim_op_fail_rel_ss_tsi;
-XPLMDataRef  sim_op_fail_rel_ss_vvi;
-//Instruments failures co-pilot
-XPLMDataRef  sim_op_fail_rel_cop_ahz;
-XPLMDataRef  sim_op_fail_rel_cop_alt;
-XPLMDataRef  sim_op_fail_rel_cop_asi;
-XPLMDataRef  sim_op_fail_rel_cop_dgy;
-XPLMDataRef  sim_op_fail_rel_cop_tsi;
-XPLMDataRef  sim_op_fail_rel_cop_vvi;
-
 
 XPLMDataRef  avionics_on;
 XPLMDataRef  battery_on;
@@ -287,6 +271,7 @@ XPLMDataRef  oil_temperature;
 XPLMDataRef  fuel_pressure;
 XPLMDataRef  total_fuel;
 XPLMDataRef  fuel_quantity;
+XPLMDataRef  fuel_capacity;
 XPLMDataRef  engine_n1;
 XPLMDataRef  engine_egt_percent;
 XPLMDataRef  engine_egt_value;
@@ -375,15 +360,15 @@ void	setTRQscale(void* inRefcon, int inValue)
 }
 
 
-// xhsi/eicas/fuel_capacity
-float eicas_fuel_total;
-float     getFuelCapacity(void* inRefcon)
+// xhsi/eicas/fuel_units
+int eicas_fuel_units;
+int     getFuelUnits(void* inRefcon)
 {
-     return eicas_fuel_total;
+     return eicas_fuel_units;
 }
-void	setFuelCapacity(void* inRefcon, float inValue)
+void	setFuelUnits(void* inRefcon, int inValue)
 {
-      eicas_fuel_total = inValue;
+      eicas_fuel_units = inValue;
 }
 
 
@@ -894,13 +879,12 @@ void registerEICASDataRefs(void) {
                                         getTRQscale, setTRQscale,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
-    // xhsi/eicas/fuel_capacity
-    fuel_capacity = XPLMRegisterDataAccessor("xhsi/eicas/fuel_capacity",
-                                        xplmType_Float,                                  // The types we support
+    // xhsi/eicas/fuel_units
+    fuel_units = XPLMRegisterDataAccessor("xhsi/eicas/fuel_units",
+                                        xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
-										NULL, NULL, 
-                                        getFuelCapacity, setFuelCapacity,      // Float accessors
-                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+                                        getFuelUnits, setFuelUnits,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
     XPLMDebugString("XHSI: custom EICAS DataRefs registered\n");
 
@@ -938,6 +922,7 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/mode");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/engine_type");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_scale");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/fuel_units");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/sta");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/data");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/pos");
@@ -1321,21 +1306,6 @@ void findDataRefs(void) {
     baro_copilot = XPLMFindDataRef("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot");
     airspeed_acceleration = XPLMFindDataRef("sim/cockpit2/gauges/indicators/airspeed_acceleration_kts_sec_pilot");
 
-    //Instruments failures pilot
-    sim_op_fail_rel_ss_ahz = XPLMFindDataRef("sim/operation/failures/rel_ss_ahz");
-    sim_op_fail_rel_ss_alt = XPLMFindDataRef("sim/operation/failures/rel_ss_alt");
-    sim_op_fail_rel_ss_asi = XPLMFindDataRef("sim/operation/failures/rel_ss_asi");
-    sim_op_fail_rel_ss_dgy = XPLMFindDataRef("sim/operation/failures/rel_ss_dgy");
-    sim_op_fail_rel_ss_tsi = XPLMFindDataRef("sim/operation/failures/rel_ss_tsi");
-    sim_op_fail_rel_ss_vvi = XPLMFindDataRef("sim/operation/failures/rel_ss_vvi");
-    //Instruments failures co-pilot
-    sim_op_fail_rel_cop_ahz = XPLMFindDataRef("sim/operation/failures/rel_cop_ahz");
-    sim_op_fail_rel_cop_alt = XPLMFindDataRef("sim/operation/failures/rel_cop_alt");
-    sim_op_fail_rel_cop_asi = XPLMFindDataRef("sim/operation/failures/rel_cop_asi");
-    sim_op_fail_rel_cop_dgy = XPLMFindDataRef("sim/operation/failures/rel_cop_dgy");
-    sim_op_fail_rel_cop_tsi = XPLMFindDataRef("sim/operation/failures/rel_cop_tsi");
-    sim_op_fail_rel_cop_vvi = XPLMFindDataRef("sim/operation/failures/rel_cop_vvi");
-
 
     // Electrical
     avionics_on = XPLMFindDataRef("sim/cockpit/electrical/avionics_on");
@@ -1520,6 +1490,7 @@ void findDataRefs(void) {
     fuel_pressure = XPLMFindDataRef("sim/cockpit2/annunciators/fuel_pressure");
     total_fuel = XPLMFindDataRef("sim/flightmodel/weight/m_fuel_total");
     fuel_quantity = XPLMFindDataRef("sim/cockpit2/fuel/fuel_quantity");
+	fuel_capacity = XPLMFindDataRef("sim/aircraft/weight/acf_m_fuel_tot");
     engine_n1 = XPLMFindDataRef("sim/flightmodel/engine/ENGN_N1_");
     engine_egt_percent = XPLMFindDataRef("sim/flightmodel/engine/ENGN_EGT");
     engine_egt_value = XPLMFindDataRef("sim/flightmodel/engine/ENGN_EGT_c");
@@ -1755,8 +1726,8 @@ void writeDataRef(int id, float value) {
             XPLMSetDatai(trq_scale , (int)value);
             break;
 
-        case XHSI_FUEL_CAPACITY :
-			XPLMSetDataf(fuel_capacity , value);
+        case XHSI_FUEL_UNITS :
+			XPLMSetDatai(fuel_units , (int)value);
             break;
 
 
