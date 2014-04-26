@@ -304,6 +304,18 @@ public interface Avionics {
     
     
     /**
+     * @return int - 0=Kg, 1=Lb, 2=USG, 3=Liter
+     */
+    public int get_fuel_units();
+    
+    
+    /**
+     * @return float 
+     */
+    public float fuel_multiplier();
+
+    
+    /**
      * @return int - Engine type (0=N1, 1=EPR, 2=TRQ, 3=MAP)
      */
     public int get_engine_type();
@@ -616,6 +628,8 @@ public interface Avionics {
     public void set_mode(int new_mode);
 
     public void set_trq_scale(int new_scale);
+
+    public void set_fuel_units(int new_units);
 
     public void set_engine_type(int new_type);
     

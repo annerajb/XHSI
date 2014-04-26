@@ -535,7 +535,9 @@ public interface Aircraft {
 
     public float get_tank_capacity(int tank);
 
-    public void set_fuel_capacity(float capacity);
+    public float fuel_multiplier();
+    
+//    public void set_fuel_capacity(float capacity);
 
 
     /**

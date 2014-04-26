@@ -82,7 +82,12 @@ public class Fuel extends EICASSubcomponent {
             g2.setColor(eicas_gc.color_boeingcyan);
             g2.setFont(eicas_gc.font_m);
 //            String units_str = XHSISettings.get_instance().fuel_units.get_units();
-            String units_str = this.preferences.get_preference(XHSIPreferences.PREF_FUEL_UNITS);
+//            String units_str = this.preferences.get_preference(XHSIPreferences.PREF_FUEL_UNITS);
+            String units_str;
+            if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_KG ) units_str = XHSIPreferences.FUEL_UNITS_KG;
+            else if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_LBS ) units_str = XHSIPreferences.FUEL_UNITS_LBS;
+            else if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_USG ) units_str = XHSIPreferences.FUEL_UNITS_USG;
+            else /* if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_LTR ) */ units_str = XHSIPreferences.FUEL_UNITS_LTR;
             if ( primaries ) {
                 g2.drawString("FUEL", eicas_gc.fuel_primary_x[0] - eicas_gc.get_text_width(g2, eicas_gc.font_m, "FUEL")/2, eicas_gc.fuel_primary_y[0] + eicas_gc.fuel_r - 2);
                 g2.drawString(units_str, eicas_gc.fuel_primary_x[0] - eicas_gc.get_text_width(g2, eicas_gc.font_m, units_str)/2, eicas_gc.fuel_primary_y[0] + eicas_gc.fuel_r + eicas_gc.line_height_m - 2);
@@ -123,7 +128,7 @@ public class Fuel extends EICASSubcomponent {
         g2.setStroke(orininal_stroke);
 
 //        String qty_str = "" + Math.round( quantity * XHSISettings.get_instance().fuel_units.get_multiplier() );
-        String qty_str = "" + Math.round( quantity * this.preferences.get_fuel_multiplier() );
+        String qty_str = "" + Math.round( quantity * this.aircraft.fuel_multiplier() );
         g2.setFont(eicas_gc.font_xl);
         g2.drawString(qty_str, fuel_x - eicas_gc.get_text_width(g2, eicas_gc.font_xl, qty_str)/2, fuel_y + eicas_gc.line_height_xl/2 - 2);
 

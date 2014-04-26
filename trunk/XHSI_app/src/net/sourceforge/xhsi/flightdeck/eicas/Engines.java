@@ -827,7 +827,7 @@ if ( ref_n1 <= 1.0f ) {
         scalePen(g2);
 
         // convert FF from kg/s to kg/h, lbs/h, usg/h or ltr/h
-        float unit_multiplier = this.preferences.get_fuel_multiplier();
+        float unit_multiplier = this.aircraft.fuel_multiplier();
         float ff_value = this.aircraft.get_FF(pos) * 3600 * unit_multiplier;
         float ff_max = this.aircraft.get_max_FF() * 3600 * unit_multiplier;
 //n1_test *= 1.1f;
