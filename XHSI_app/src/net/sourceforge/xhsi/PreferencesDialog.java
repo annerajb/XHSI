@@ -151,7 +151,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JComboBox trq_scale_combobox;
     private String trq_scales[] = { XHSIPreferences.TRQ_SCALE_SWITCHABLE, XHSIPreferences.TRQ_SCALE_LBFT, XHSIPreferences.TRQ_SCALE_NM, XHSIPreferences.TRQ_SCALE_PERCENT };;
     private JComboBox fuel_unit_combobox;
-    private String fuel_units[] = { XHSIPreferences.FUEL_KG, XHSIPreferences.FUEL_LBS, XHSIPreferences.FUEL_USG, XHSIPreferences.FUEL_LTR };
+    private String fuel_units[] = { XHSIPreferences.FUEL_UNITS_SWITCHABLE, XHSIPreferences.FUEL_UNITS_KG, XHSIPreferences.FUEL_UNITS_LBS, XHSIPreferences.FUEL_UNITS_USG, XHSIPreferences.FUEL_UNITS_LTR };
 
     private JComboBox mfd_mode_combobox;
     private String mfd_modes[] = { XHSIPreferences.MFD_MODE_SWITCHABLE, /*XHSIPreferences.MFD_MODE_TAXI_CHART,*/ XHSIPreferences.MFD_MODE_ARPT_CHART , XHSIPreferences.MFD_MODE_FPLN, XHSIPreferences.MFD_MODE_LOWER_EICAS };
@@ -1472,10 +1472,11 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
         this.fuel_unit_combobox = new JComboBox();
-        this.fuel_unit_combobox.addItem(XHSIPreferences.FUEL_KG);
-        this.fuel_unit_combobox.addItem(XHSIPreferences.FUEL_LBS);
-        this.fuel_unit_combobox.addItem(XHSIPreferences.FUEL_USG);
-        this.fuel_unit_combobox.addItem(XHSIPreferences.FUEL_LTR);
+        this.fuel_unit_combobox.addItem("Switchable");
+        this.fuel_unit_combobox.addItem(XHSIPreferences.FUEL_UNITS_KG);
+        this.fuel_unit_combobox.addItem(XHSIPreferences.FUEL_UNITS_LBS);
+        this.fuel_unit_combobox.addItem(XHSIPreferences.FUEL_UNITS_USG);
+        this.fuel_unit_combobox.addItem(XHSIPreferences.FUEL_UNITS_LTR);
         this.fuel_unit_combobox.addActionListener(this);
         eicas_options_panel.add(this.fuel_unit_combobox, cons);
         dialog_line++;

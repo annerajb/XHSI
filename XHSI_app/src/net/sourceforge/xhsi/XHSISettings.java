@@ -134,6 +134,15 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_TRQ_SCALE_PERCENT = "Percent";
     public static final int TRQ_SCALE_PERCENT = 2;
     
+    public static final String ACTION_FUEL_UNITS_KG = "Kg";
+    public static final int FUEL_UNITS_KG = 0;
+    public static final String ACTION_FUEL_UNITS_LBS = "Lb";
+    public static final int FUEL_UNITS_LBS = 1;
+    public static final String ACTION_FUEL_UNITS_USG = "USG";
+    public static final int FUEL_UNITS_USG = 2;
+    public static final String ACTION_FUEL_UNITS_LTR = "Ltr";
+    public static final int FUEL_UNITS_LTR = 3;
+    
 //    public static final String ACTION_ESTIMATE_FUEL_CAPACITY = "Estimate fuel capacity";
 //    public static final String ACTION_SET_FUEL_CAPACITY = "Set fuel capacity ...";
     public static final String ACTION_RESET_MAX_FF = "Reset max FF";
@@ -189,6 +198,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
     public int engine_type;
     public int trq_scale;
+    public int fuel_units;
     
     public int xpdr = Avionics.XPDR_TA;
 //    public FUEL_UNITS fuel_units = FUEL_UNITS.KG;
@@ -249,7 +259,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private DMEArcDialog dme2_radius_dialog;
     private HoldingDialog holding_dialog;
     private FixDialog fix_dialog;
-    private FuelDialog fuel_dialog;
+    //private FuelDialog fuel_dialog;
 
     private JRadioButtonMenuItem radio_button_mfd_arpt;
     private JRadioButtonMenuItem radio_button_mfd_eicas;
@@ -267,6 +277,10 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JRadioButtonMenuItem radio_button_trq_scale_nm;
     private JRadioButtonMenuItem radio_button_trq_scale_percent;
 
+    private JRadioButtonMenuItem radio_button_fuel_units_kg;
+    private JRadioButtonMenuItem radio_button_fuel_units_lbs;
+    private JRadioButtonMenuItem radio_button_fuel_units_usg;
+    private JRadioButtonMenuItem radio_button_fuel_units_ltr;
     
     private static XHSISettings single_instance = null;
 
@@ -286,7 +300,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.dme2_radius_dialog = new DMEArcDialog(xhsi_main_frame, 2);
         this.holding_dialog = new HoldingDialog(xhsi_main_frame);
         this.fix_dialog = new FixDialog(xhsi_main_frame);
-        this.fuel_dialog = new FuelDialog(xhsi_main_frame);
+        //this.fuel_dialog = new FuelDialog(xhsi_main_frame);
 
     }
 
@@ -870,6 +884,53 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         
         xhsi_eicas_menu.addSeparator();
 
+        // define the "TRQ scale" submenu
+        JMenu fuel_units_submenu = new JMenu("Fuel units");
+
+        ButtonGroup fuel_units_group = new ButtonGroup();
+
+        // define the menu items, and add them to the "Fix" menu
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_FUEL_UNITS_KG);
+        radio_button_menu_item.setToolTipText("Kg");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(true);
+        fuel_units_submenu.add(radio_button_menu_item);
+        fuel_units_group.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_fuel_units_kg = radio_button_menu_item;
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_FUEL_UNITS_LBS);
+        radio_button_menu_item.setToolTipText("Lb");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(true);
+        fuel_units_submenu.add(radio_button_menu_item);
+        fuel_units_group.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_fuel_units_lbs = radio_button_menu_item;
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_FUEL_UNITS_USG);
+        radio_button_menu_item.setToolTipText("US Gallon");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
+        fuel_units_submenu.add(radio_button_menu_item);
+        fuel_units_group.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_fuel_units_usg = radio_button_menu_item;
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_FUEL_UNITS_LTR);
+        radio_button_menu_item.setToolTipText("Liter");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
+        fuel_units_submenu.add(radio_button_menu_item);
+        fuel_units_group.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_fuel_units_ltr = radio_button_menu_item;
+
+        // Add the TRQ scale submenu to the EICAS menu
+        xhsi_eicas_menu.add(fuel_units_submenu);
+        
+        xhsi_eicas_menu.addSeparator();
+
 //        menu_item = new JMenuItem(XHSISettings.ACTION_ESTIMATE_FUEL_CAPACITY);
 //        menu_item.setToolTipText("Estimate the aircraft's total fuel capacity");
 //        menu_item.addActionListener(this);
@@ -1131,6 +1192,19 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             trq_scale = XHSISettings.TRQ_SCALE_PERCENT;
             this.avionics.set_trq_scale(trq_scale);
 
+        } else if (command.equals(XHSISettings.ACTION_FUEL_UNITS_KG)) {
+            fuel_units = XHSISettings.FUEL_UNITS_KG;
+            this.avionics.set_fuel_units(fuel_units);
+        } else if (command.equals(XHSISettings.ACTION_FUEL_UNITS_LBS)) {
+            fuel_units = XHSISettings.FUEL_UNITS_LBS;
+            this.avionics.set_fuel_units(fuel_units);
+        } else if (command.equals(XHSISettings.ACTION_FUEL_UNITS_USG)) {
+            fuel_units = XHSISettings.FUEL_UNITS_USG;
+            this.avionics.set_fuel_units(fuel_units);
+        } else if (command.equals(XHSISettings.ACTION_FUEL_UNITS_LTR)) {
+            fuel_units = XHSISettings.FUEL_UNITS_LTR;
+            this.avionics.set_fuel_units(fuel_units);
+
 //        } else if (command.equals(XHSISettings.ACTION_ESTIMATE_FUEL_CAPACITY)) {
 //            // Estimate total fuel capacity
 //            this.avionics.get_aircraft().estimate_fuel_capacity();
@@ -1293,6 +1367,17 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_trq_scale_lbft.setEnabled( ( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ ) && switchable );
         this.radio_button_trq_scale_nm.setEnabled( ( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ ) && switchable );
         this.radio_button_trq_scale_percent.setEnabled( ( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ ) && switchable );
+        
+        int new_fuel_units = avionics.get_fuel_units();
+        this.radio_button_fuel_units_kg.setSelected( new_fuel_units == XHSISettings.FUEL_UNITS_KG );
+        this.radio_button_fuel_units_lbs.setSelected( new_fuel_units == XHSISettings.FUEL_UNITS_LBS );
+        this.radio_button_fuel_units_usg.setSelected( new_fuel_units == XHSISettings.FUEL_UNITS_USG );
+        this.radio_button_fuel_units_ltr.setSelected( new_fuel_units == XHSISettings.FUEL_UNITS_LTR );
+        switchable = prefs.get_preference(XHSIPreferences.PREF_FUEL_UNITS).equals(XHSIPreferences.FUEL_UNITS_SWITCHABLE);
+        this.radio_button_fuel_units_kg.setEnabled( switchable );
+        this.radio_button_fuel_units_lbs.setEnabled( switchable );
+        this.radio_button_fuel_units_usg.setEnabled( switchable );
+        this.radio_button_fuel_units_ltr.setEnabled( switchable );
 
     }
 

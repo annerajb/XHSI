@@ -23,6 +23,7 @@
 package net.sourceforge.xhsi.model.xplane;
 
 import net.sourceforge.xhsi.XHSIPreferences;
+import net.sourceforge.xhsi.XHSISettings;
 import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.AircraftEnvironment;
 import net.sourceforge.xhsi.model.Avionics;
@@ -38,6 +39,7 @@ public class XPlaneAircraft implements Aircraft {
     private Avionics avionics;
     private AircraftEnvironment environment;
     private XHSIPreferences xhsi_preferences;
+    private XHSISettings xhsi_settings;
 
     private float fuel_capacity;
     private float max_fuel_flow;
@@ -51,6 +53,7 @@ public class XPlaneAircraft implements Aircraft {
         this.environment = new XPlaneAircraftEnvironment(sim_model);
         this.avionics = new XPlaneAvionics(this, sim_model);
         this.xhsi_preferences = XHSIPreferences.get_instance();
+        this.xhsi_settings = XHSISettings.get_instance();
     }
 
     public Avionics get_avionics() {
@@ -461,10 +464,18 @@ public class XPlaneAircraft implements Aircraft {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_WEIGHT_ACF_M_FUEL_TOT) * tank_ratio(tank);
     }
 
-    public void set_fuel_capacity(float capacity) {
-        this.fuel_capacity = capacity;
-    }
+//    public void set_fuel_capacity(float capacity) {
+//        this.fuel_capacity = capacity;
+//    }
 
+    public float fuel_multiplier() {
+        
+        if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_LBS ) return 2.20462262185f;
+        else if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_USG ) return 2.20462262185f/6.02f;
+        else if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_LTR ) return 2.20462262185f/6.02f*3.785411784f;
+        else /* if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_KG ) */ return 1.0f;
+        
+    }
 
     public float get_N1(int engine) {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_ENGINE_ENGN_N1_ + engine);

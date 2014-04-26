@@ -183,35 +183,11 @@ public class XHSIPreferences {
     }
 
     // for PREF_FUEL_UNITS
-    public static final String FUEL_KG = "KG";
-    public static final String FUEL_LBS = "LBS";
-    public static final String FUEL_USG = "USG";
-    public static final String FUEL_LTR = "LTR";
-
-    public static enum FUEL_UNITS {
-
-        KG (1.0f, FUEL_KG),
-        LBS (2.20462262185f, FUEL_LBS),
-        USG (2.20462262185f/6.02f, FUEL_USG),
-        LTR (2.20462262185f/6.02f*3.785411784f, FUEL_LTR);
-
-        private final float multiplier;
-        private final String name;
-
-        FUEL_UNITS(float mul, String nm) {
-            this.multiplier = mul;
-            this.name = nm;
-        }
-
-        public float get_multiplier() {
-            return this.multiplier;
-        }
-
-        public String get_units() {
-            return this.name;
-        }
-
-    }
+    public static final String FUEL_UNITS_SWITCHABLE = "switchable";
+    public static final String FUEL_UNITS_KG = "KG";
+    public static final String FUEL_UNITS_LBS = "LBS";
+    public static final String FUEL_UNITS_USG = "USG";
+    public static final String FUEL_UNITS_LTR = "LTR";
 
     // for PREF_ENGINE_TYPE
     public static final String ENGINE_TYPE_SWITCHABLE = "switchable";
@@ -771,21 +747,6 @@ public class XHSIPreferences {
     }
 
 
-    public float get_fuel_multiplier() {
-        String units = get_preference(PREF_FUEL_UNITS);
-        float fuel_multiplier;
-        if (units.equals(FUEL_KG)) {
-            fuel_multiplier = FUEL_UNITS.KG.get_multiplier();
-        } else if (units.equals(FUEL_LBS)) {
-            fuel_multiplier = FUEL_UNITS.LBS.get_multiplier();
-        } else if (units.equals(FUEL_USG)) {
-            fuel_multiplier = FUEL_UNITS.USG.get_multiplier();
-        } else {
-            fuel_multiplier = FUEL_UNITS.LTR.get_multiplier();
-        }
-        return fuel_multiplier;
-    }
-
 
     // MFD
     
@@ -1168,7 +1129,7 @@ public class XHSIPreferences {
         }
 
         if ( ! this.preferences.containsKey(PREF_FUEL_UNITS) ) {
-            this.preferences.setProperty(PREF_FUEL_UNITS, FUEL_KG);
+            this.preferences.setProperty(PREF_FUEL_UNITS, FUEL_UNITS_KG);
             this.unsaved_changes = true;
         }
 
@@ -1179,6 +1140,11 @@ public class XHSIPreferences {
 
         if ( ! this.preferences.containsKey(PREF_TRQ_SCALE) ) {
             this.preferences.setProperty(PREF_TRQ_SCALE, TRQ_SCALE_SWITCHABLE);
+            this.unsaved_changes = true;
+        }
+
+        if ( ! this.preferences.containsKey(PREF_FUEL_UNITS) ) {
+            this.preferences.setProperty(PREF_FUEL_UNITS, FUEL_UNITS_SWITCHABLE);
             this.unsaved_changes = true;
         }
 

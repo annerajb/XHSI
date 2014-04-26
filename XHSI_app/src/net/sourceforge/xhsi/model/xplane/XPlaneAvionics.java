@@ -569,6 +569,33 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
     
 
+    public int get_fuel_units() {
+
+        if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_FUEL_UNITS).equals(XHSIPreferences.FUEL_UNITS_SWITCHABLE) ) {
+            return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_FUEL_UNITS);
+        } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_FUEL_UNITS).equals(XHSIPreferences.FUEL_UNITS_KG) ) {
+            return XHSISettings.FUEL_UNITS_KG;
+        } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_FUEL_UNITS).equals(XHSIPreferences.FUEL_UNITS_LBS) ) {
+            return XHSISettings.FUEL_UNITS_LBS;
+        } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_FUEL_UNITS).equals(XHSIPreferences.FUEL_UNITS_USG) ) {
+            return XHSISettings.FUEL_UNITS_USG;
+        } else /* if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_FUEL_UNITS).equals(XHSIPreferences.FUEL_LTR) ) */{
+            return XHSISettings.FUEL_UNITS_LTR;
+        }
+
+    }
+    
+    
+    public float fuel_multiplier() {
+        
+        if ( xhsi_settings.fuel_units == XHSISettings.FUEL_UNITS_LBS ) return 2.20462262185f;
+        else if ( xhsi_settings.fuel_units == XHSISettings.FUEL_UNITS_USG ) return 2.20462262185f/6.02f;
+        else if ( xhsi_settings.fuel_units == XHSISettings.FUEL_UNITS_LTR ) return 2.20462262185f/6.02f*3.785411784f;
+        else /* if ( xhsi_settings.fuel_units == XHSISettings.FUEL_UNITS_KG ) */ return 1.0f;
+        
+    }
+
+
     public int get_engine_type() {
 
         if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_SWITCHABLE) ) {
@@ -1417,6 +1444,13 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
 
 
+    public void set_fuel_units(int new_units) {
+
+        udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_FUEL_UNITS, (float) new_units );
+
+    }
+    
+    
     public void set_engine_type(int new_type) {
 
         if ( ! xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
