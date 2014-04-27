@@ -129,6 +129,7 @@ public class HSI_A320 extends PFDSubcomponent {
 		int hdg_bottom = pfd_gc.hdg_top  + pfd_gc.hdg_height;
 		int hdg_top_line = pfd_gc.hdg_top - pfd_gc.hdg_height / 2;
 		int hdg_mid_line = pfd_gc.hdg_top + pfd_gc.hdg_height*2/5;
+		int hdg_mark_line = pfd_gc.hdg_top + pfd_gc.hdg_height*2/10;
 		float hdg = this.aircraft.heading();
 		Stroke original_stroke = g2.getStroke();
 		Shape original_clipshape = g2.getClip();
@@ -144,7 +145,7 @@ public class HSI_A320 extends PFDSubcomponent {
 		g2.drawLine(hdg_right, pfd_gc.hdg_top, hdg_right, hdg_bottom);
 		g2.setColor(pfd_gc.pfd_reference_color);
 		g2.setStroke(new BasicStroke(4.0f));
-		g2.drawLine(pfd_gc.adi_cx, hdg_top_line, pfd_gc.adi_cx, hdg_mid_line);
+		g2.drawLine(pfd_gc.adi_cx, hdg_top_line, pfd_gc.adi_cx, hdg_mark_line);
 		g2.setStroke(original_stroke);
 		
 		// Marks
@@ -180,7 +181,7 @@ public class HSI_A320 extends PFDSubcomponent {
                 	}
                     
                 } else {
-                	g2.drawLine( hdg_x, pfd_gc.hdg_top, hdg_x, hdg_mid_line-pfd_gc.hdg_height/4);
+                	g2.drawLine( hdg_x, pfd_gc.hdg_top, hdg_x, hdg_mark_line);
                 	
                 }
 
@@ -190,6 +191,7 @@ public class HSI_A320 extends PFDSubcomponent {
 
 
 		// keep the bug in the range -180° to 180°
+    	boolean hdg_bug_on = true;
 		float bug = this.avionics.heading_bug() - this.aircraft.heading();
 		if ( bug >  180.0f ) bug -= 360.0f;
 		if ( bug < -180.0f ) bug += 360.0f;
@@ -210,18 +212,27 @@ public class HSI_A320 extends PFDSubcomponent {
 				hdg_top_line
 			
 		};
-		g2.setColor(pfd_gc.pfd_selected_color);
-		String str_bug = "" + Math.round(this.avionics.heading_bug());
-		if (bug_cx < pfd_gc.hdg_left ) {
-			g2.setFont(pfd_gc.font_l);
-	        g2.drawString(str_bug, pfd_gc.hdg_left, pfd_gc.hdg_top - pfd_gc.hdg_height/12);
-			
-		} else if (bug_cx > hdg_right ) {
-			g2.setFont(pfd_gc.font_l);
-	        g2.drawString(str_bug, hdg_right - pfd_gc.get_text_width(g2, pfd_gc.font_l, str_bug) , pfd_gc.hdg_top - pfd_gc.hdg_height/12 );
-			
+		
+		if (this.avionics.is_qpac() && this.avionics.qpac_fcu_hdg_managed()) {
+			hdg_bug_on = false;
+			g2.setColor(pfd_gc.pfd_managed_color);
 		} else {
-			g2.drawPolygon(bug_x, bug_y, 3);	
+			g2.setColor(pfd_gc.pfd_selected_color);	
+		}
+			 
+		if (hdg_bug_on) {
+			String str_bug = "" + Math.round(this.avionics.heading_bug());
+			if (bug_cx < pfd_gc.hdg_left ) {
+				g2.setFont(pfd_gc.font_l);
+				g2.drawString(str_bug, pfd_gc.hdg_left, pfd_gc.hdg_top - pfd_gc.hdg_height/12);
+
+			} else if (bug_cx > hdg_right ) {
+				g2.setFont(pfd_gc.font_l);
+				g2.drawString(str_bug, hdg_right - pfd_gc.get_text_width(g2, pfd_gc.font_l, str_bug) , pfd_gc.hdg_top - pfd_gc.hdg_height/12 );
+
+			} else {
+				g2.drawPolygon(bug_x, bug_y, 3);	
+			}
 		}
 
 		// Drift (green diamond)
@@ -230,7 +241,7 @@ public class HSI_A320 extends PFDSubcomponent {
 		if ( drift >  180.0f ) drift -= 360.0f;
 		if ( drift < -180.0f ) drift += 360.0f;
 		// diamond
-		int d_d = pfd_gc.hdg_height/7;
+		int d_d = pfd_gc.hdg_height/6;
 		int drift_x[] = {
 				drift_cx,
 				drift_cx + d_d,
@@ -238,13 +249,15 @@ public class HSI_A320 extends PFDSubcomponent {
 				drift_cx - d_d
 		};
 		int drift_y[] = {
-				pfd_gc.hdg_top,
-				pfd_gc.hdg_top + d_d*3/2,
-				pfd_gc.hdg_top + 3*d_d,
-				pfd_gc.hdg_top + d_d*3/2	
+				pfd_gc.hdg_top +1 ,
+				pfd_gc.hdg_top +1 + d_d*3/2,
+				pfd_gc.hdg_top +1 + 3*d_d,
+				pfd_gc.hdg_top +1 + d_d*3/2	
 		};
 		g2.setColor(pfd_gc.pfd_active_color);
+		g2.setStroke(new BasicStroke(3.0f));
 		g2.drawPolygon(drift_x, drift_y, 4);
+		g2.setStroke(original_stroke);
 		
 	}
 

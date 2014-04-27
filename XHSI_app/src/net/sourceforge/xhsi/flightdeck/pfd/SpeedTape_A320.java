@@ -369,6 +369,7 @@ public class SpeedTape_A320 extends PFDSubcomponent {
         boolean ap_spdbug_show = true;
         // Managed or selected speed 
        	g2.setColor(pfd_gc.pfd_selected_color); 
+       	if (this.avionics.is_qpac() && this.avionics.qpac_fcu_spd_dashed()) g2.setColor(pfd_gc.pfd_managed_color); 
         if ( ap_spdbug_y < pfd_gc.tape_top ) {
             ap_spdbug_y = pfd_gc.tape_top;
             ap_spdbug_show = false;

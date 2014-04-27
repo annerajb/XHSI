@@ -225,6 +225,18 @@ public class ILS_A320 extends PFDSubcomponent {
             }
         }
 
+        if (this.avionics.is_qpac()) {
+        	nav_receive = this.avionics.qpac_loc_on();
+        	gs_active = this.avionics.qpac_gs_on();
+        	gs_value = this.avionics.qpac_gs_val();
+        	cdi_value = this.avionics.qpac_loc_val();
+        	obs = Math.round(this.avionics.qpac_ils_crs());
+        	crs = Math.round(this.avionics.qpac_ils_crs()); 
+        	dme = 0;
+        	nav_id = "C"+crs;
+        	nav_type = "ILS 3";
+        	freq=19900;
+        }
 
 //mismatch = false;
 //nav_receive = true;

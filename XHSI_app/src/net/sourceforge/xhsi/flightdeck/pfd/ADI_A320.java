@@ -104,7 +104,22 @@ public class ADI_A320 extends PFDSubcomponent {
         float alt_f_range = 1100.0f;
         int gnd_y = pfd_gc.adi_cy + Math.round( (this.aircraft.agl_m() * 3.28084f) * pfd_gc.tape_height / alt_f_range );
         
-
+        // Get engines status : Slideslip Blue target and ground stick orders
+		boolean engine_started = false;
+		boolean engine_takeoff = false;
+		boolean beta_target = false;
+		float max_n1=0.0f;
+		float min_n1=1000.0f;
+		float n1;
+		for (int pos=0; pos<this.aircraft.num_engines(); pos++) {
+			n1 = this.aircraft.get_N1(pos);
+			if (n1 > max_n1) max_n1 = n1; 
+			if (n1 < min_n1) min_n1 = n1;
+			if (n1 > 5.0f) engine_started = true;
+			if (n1 > 80.0f) engine_takeoff = true;
+		}
+		if (((max_n1 - min_n1) > 35.0f) && engine_takeoff && this.aircraft.get_flap_handle() > 0.0f ) beta_target=true;
+        
 		boolean colorgradient_horizon = this.preferences.get_draw_colorgradient_horizon();
 
 		float pitch = this.aircraft.pitch(); // radians? no, degrees!
@@ -312,10 +327,7 @@ public class ADI_A320 extends PFDSubcomponent {
 		// slip/skid indicator => Beta target on airbus
 		float ss = - this.aircraft.sideslip();
 		int ss_x;
-		if ( Math.abs(ss) > 2.0) {
-			// beta target becomes blue on engine failure
-			g2.setColor(Color.blue);
-		}
+		if ( beta_target ) 	g2.setColor(Color.blue);
 		if ( Math.abs(ss) > 10.0f ) {
 			ss = 10.0f * Math.signum(ss);
 			ss_x = cx - Math.round(ss * left/6 / 10.0f);
@@ -371,9 +383,12 @@ public class ADI_A320 extends PFDSubcomponent {
 		g2.setTransform(original_at);
 
 
-		// FPV (Always on, but shouldn't) 
-		// TODO : Switch PFV / FD mode 
-		if ( ! this.aircraft.on_ground() ) {
+		// FPV Flight Path Vector or Bird 
+		boolean fpv_on = ! this.aircraft.on_ground();	
+		if ( this.avionics.is_qpac()) { 
+			fpv_on = this.avionics.qpac_fcu_hdg_trk() && ! this.aircraft.on_ground();						
+		}
+		if ( fpv_on ) {
 			int dx = (int)(down * this.aircraft.drift() / scale);
 			int dy = (int)(down * this.aircraft.aoa() / scale);
 			if ( (Math.abs(dx) < down) && (Math.abs(dy) < down) ) {
@@ -392,6 +407,7 @@ public class ADI_A320 extends PFDSubcomponent {
 
 
 		// airplane symbol
+		// TODO : Should be dimmed with FPV on and FD bars off
 		int wing_t = Math.round(3 * pfd_gc.grow_scaling_factor);
 		int wing_i = left * 13 / 24;
 		int wing_o = left * 21 / 24;
@@ -433,46 +449,49 @@ public class ADI_A320 extends PFDSubcomponent {
 		g2.setColor(pfd_gc.pfd_reference_color);
 		g2.drawRect(cx - wing_t, cy - wing_t, wing_t * 2, wing_t * 2);
 		
-		
+	
 		// Stick orders : on ground / bellow 30 ft AGL
-		if ( (! airborne) || (ra < 30)) {
-			g2.setColor(pfd_gc.pfd_markings_color);
-			int st_width = left / 8;
-			int st_left = cx - left*14/20;
-			int st_right = cx + right*14/20;
-			int st_up = cy - up/2;
-			int st_down = cy + down/2;
-			int st_x = cx + Math.round(this.aircraft.yoke_roll() * left*14/20);
-			int st_y = cy - Math.round(this.aircraft.yoke_pitch() * up/2);
-			int st_d = left/60;
-			int st_w = left/10;
-			// Stick box
-			// top left
-			g2.drawLine(st_left, st_up, st_left + st_width, st_up);
-			g2.drawLine(st_left, st_up, st_left, st_up + st_width);
-			// top right
-			g2.drawLine(st_right, st_up, st_right - st_width, st_up);
-			g2.drawLine(st_right, st_up, st_right, st_up + st_width);
-			// bottom left
-			g2.drawLine(st_left, st_down, st_left + st_width, st_down);
-			g2.drawLine(st_left, st_down, st_left, st_down - st_width);
-			// bottom right
-			g2.drawLine(st_right, st_down, st_right - st_width, st_down);
-			g2.drawLine(st_right, st_down, st_right, st_down - st_width);
-			
-			// Stick marker
-			// top left
-			g2.drawLine(st_x - st_d - st_w , st_y - st_d, st_x - st_d, st_y - st_d);
-			g2.drawLine(st_x - st_d, st_y - st_d, st_x - st_d, st_y - st_d - st_w);
-			// top right
-			g2.drawLine(st_x + st_d + st_w , st_y - st_d, st_x + st_d, st_y - st_d);
-			g2.drawLine(st_x + st_d, st_y - st_d, st_x + st_d, st_y - st_d - st_w);
-			// bottom left
-			g2.drawLine(st_x - st_d - st_w , st_y + st_d, st_x - st_d, st_y + st_d);
-			g2.drawLine(st_x - st_d, st_y + st_d, st_x - st_d, st_y + st_d + st_w);
-			// bottom right
-			g2.drawLine(st_x + st_d + st_w , st_y + st_d, st_x + st_d, st_y + st_d);
-			g2.drawLine(st_x + st_d, st_y + st_d, st_x + st_d, st_y + st_d + st_w);
+		if  ((! airborne) || (ra < 30))  {
+
+			if (engine_started) {
+				g2.setColor(pfd_gc.pfd_markings_color);
+				int st_width = left / 8;
+				int st_left = cx - left*14/20;
+				int st_right = cx + right*14/20;
+				int st_up = cy - up/2;
+				int st_down = cy + down/2;
+				int st_x = cx + Math.round(this.aircraft.yoke_roll() * left*14/20);
+				int st_y = cy - Math.round(this.aircraft.yoke_pitch() * up/2);
+				int st_d = left/60;
+				int st_w = left/10;
+				// Stick box
+				// top left
+				g2.drawLine(st_left, st_up, st_left + st_width, st_up);
+				g2.drawLine(st_left, st_up, st_left, st_up + st_width);
+				// top right
+				g2.drawLine(st_right, st_up, st_right - st_width, st_up);
+				g2.drawLine(st_right, st_up, st_right, st_up + st_width);
+				// bottom left
+				g2.drawLine(st_left, st_down, st_left + st_width, st_down);
+				g2.drawLine(st_left, st_down, st_left, st_down - st_width);
+				// bottom right
+				g2.drawLine(st_right, st_down, st_right - st_width, st_down);
+				g2.drawLine(st_right, st_down, st_right, st_down - st_width);
+
+				// Stick marker
+				// top left
+				g2.drawLine(st_x - st_d - st_w , st_y - st_d, st_x - st_d, st_y - st_d);
+				g2.drawLine(st_x - st_d, st_y - st_d, st_x - st_d, st_y - st_d - st_w);
+				// top right
+				g2.drawLine(st_x + st_d + st_w , st_y - st_d, st_x + st_d, st_y - st_d);
+				g2.drawLine(st_x + st_d, st_y - st_d, st_x + st_d, st_y - st_d - st_w);
+				// bottom left
+				g2.drawLine(st_x - st_d - st_w , st_y + st_d, st_x - st_d, st_y + st_d);
+				g2.drawLine(st_x - st_d, st_y + st_d, st_x - st_d, st_y + st_d + st_w);
+				// bottom right
+				g2.drawLine(st_x + st_d + st_w , st_y + st_d, st_x + st_d, st_y + st_d);
+				g2.drawLine(st_x + st_d, st_y + st_d, st_x + st_d, st_y + st_d + st_w);
+			}
 		}
 
 		
@@ -481,6 +500,7 @@ public class ADI_A320 extends PFDSubcomponent {
 		if ( this.avionics.is_qpac()) { 
 			fd_on = this.avionics.qpac_fd1();
 			if (this.avionics.qpac_fd1_hor_bar() == -1.0f) fd_on = false;
+			if (this.avionics.qpac_fcu_hdg_trk()) fd_on = false;
 		}
 		// if ( this.aircraft.on_ground() ) { fd_on = false; }
 		if ( fd_on ) {
@@ -549,7 +569,7 @@ public class ADI_A320 extends PFDSubcomponent {
 
 		
 		// Airbus max bank protection mark is at 67 deg. (normal law)
-		// TODO : double strikes become amber crosses with alternate & direct laws
+		// double strikes become amber crosses with alternate & direct laws
 		if (protections) {
 			g2.setColor(pfd_gc.pfd_active_color);
 			g2.rotate(Math.toRadians(+30+67), cx, cy);
@@ -705,13 +725,13 @@ public class ADI_A320 extends PFDSubcomponent {
 
 			String mstr = "";
 			if ( this.avionics.outer_marker() ) {
-				g2.setColor(Color.BLUE);
+				g2.setColor(pfd_gc.pfd_selected_color);
 				mstr = "OM";
 			} else if ( this.avionics.middle_marker() ) {
-				g2.setColor(pfd_gc.caution_color);
+				g2.setColor(pfd_gc.pfd_caution_color);
 				mstr = "MM";
 			} else {
-				g2.setColor(pfd_gc.markings_color);
+				g2.setColor(pfd_gc.pfd_markings_color);
 				mstr = "IM";
 			}
 

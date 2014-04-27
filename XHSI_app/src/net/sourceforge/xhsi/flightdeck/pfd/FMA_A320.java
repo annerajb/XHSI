@@ -132,17 +132,24 @@ public class FMA_A320 extends PFDSubcomponent {
         int mode_w1 = pfd_gc.get_text_width(g2, pfd_gc.font_xl, mode);
         int mode_w2 = pfd_gc.get_text_width(g2, pfd_gc.font_xl, value);
         int mode_w = mode_w1 + mode_w2;
-        int mode_x1 = pfd_gc.fma_left + pfd_gc.fma_width/10 + col*pfd_gc.fma_width/5 - mode_w/2;
-        int mode_x2 = pfd_gc.fma_left + pfd_gc.fma_width/10 + col*pfd_gc.fma_width/5 - mode_w/2 + mode_w1;        
+        int mode_x = pfd_gc.fma_left; 
+        switch (col) {
+        	case 1: mode_x += pfd_gc.fma_col_1 + (pfd_gc.fma_col_2 - pfd_gc.fma_col_1)/2 - mode_w/2; break;
+        	case 2: mode_x += pfd_gc.fma_col_2 + (pfd_gc.fma_col_3 - pfd_gc.fma_col_2)/2 - mode_w/2; break;
+        	case 3: mode_x += pfd_gc.fma_col_3 + (pfd_gc.fma_col_4 - pfd_gc.fma_col_3)/2 - mode_w/2; break;
+        	case 4: mode_x += pfd_gc.fma_col_4 + (pfd_gc.fma_width - pfd_gc.fma_col_4)/2 - mode_w/2; break;
+        	default: mode_x += pfd_gc.fma_col_1 /2 - mode_w/2; break;
+        }        
+        int mode_x2 = mode_x + mode_w1;        
         int mode_y = pfd_gc.fma_top + pfd_gc.fma_height*raw/3 + pfd_gc.line_height_xl - 2;
         g2.setColor(color_mode);
         g2.setFont(pfd_gc.font_xl);
-        g2.drawString(mode, mode_x1, mode_y);
+        g2.drawString(mode, mode_x, mode_y);
         g2.setColor(color_value);
         g2.drawString(value, mode_x2, mode_y);
         if ( framed ) {
         	g2.setColor(pfd_gc.pfd_markings_color);
-        	g2.drawRect(mode_x1-pfd_gc.digit_width_xl/2, mode_y - pfd_gc.line_height_xl*15/16, mode_w+pfd_gc.digit_width_xl, pfd_gc.line_height_xl*18/16);
+        	g2.drawRect(mode_x-pfd_gc.digit_width_xl/2, mode_y - pfd_gc.line_height_xl*15/16, mode_w+pfd_gc.digit_width_xl, pfd_gc.line_height_xl*18/16);
         }
     }
     
@@ -362,18 +369,6 @@ public class FMA_A320 extends PFDSubcomponent {
         drawDMode(g2,3,2,fma_str);
         fma_str = "qp_fail " + this.avionics.qpac_failures();
         drawDMode(g2,3,0,fma_str);
-        fma_str = "ILS Crs " + this.avionics.qpac_ils_crs();
-        drawDMode(g2,1,3,fma_str);
-        fma_str = "ILS Crs DEV " + this.avionics.qpac_ils_crs_dev();
-        drawDMode(g2,1,4,fma_str);
-        fma_str = "LOC val  " + this.avionics.qpac_loc_val();
-        drawDMode(g2,3,3,fma_str);
-        fma_str = "LOC on  " + this.avionics.qpac_loc_on();
-        drawDMode(g2,3,4,fma_str);
-        fma_str = "GS val  " + this.avionics.qpac_gs_val();
-        drawDMode(g2,2,3,fma_str);
-        fma_str = "GS on  " + this.avionics.qpac_gs_on();
-        drawDMode(g2,2,4,fma_str);
 
         
         // AP Engaged

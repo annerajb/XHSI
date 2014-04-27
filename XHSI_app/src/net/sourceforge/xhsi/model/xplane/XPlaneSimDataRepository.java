@@ -415,7 +415,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_APPR_MDA=884;
     public static final int QPAC_ALT_IS_CSTR=885;
     public static final int QPAC_CONSTRAINT_ALT=886;
-    
+    // FCU
+    public static final int QPAC_FCU=918;
     // Auto-Thrust
     public static final int QPAC_ATHR_MODE=887;
     public static final int QPAC_ATHR_MODE2=888;
@@ -430,7 +431,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_LOC_VAL_FO=896;
     public static final int QPAC_GS_VAL_FO=917;
     public static final int QPAC_ILS_CRS=897;
-    public static final int QPAC_ILS_CRS_DEV=898;
+    public static final int QPAC_ILS_FREQ=898;
     // FD
     public static final int QPAC_FD1_VER_BAR=899;
     public static final int QPAC_FD1_HOR_BAR=900;
