@@ -31,6 +31,15 @@ extern XPLMDataRef qpac_appr_type;
 extern XPLMDataRef qpac_appr_mda;
 extern XPLMDataRef qpac_alt_is_cstr;
 extern XPLMDataRef qpac_constraint_alt;
+// FCU
+extern XPLMDataRef qpac_fcu_hdg_trk;
+extern XPLMDataRef qpac_fcu_metric_alt;
+extern XPLMDataRef qpac_fcu_vs_dashed;
+extern XPLMDataRef qpac_fcu_spd_dashed;
+extern XPLMDataRef qpac_fcu_spd_managed;
+extern XPLMDataRef qpac_fcu_hdg_dashed;
+extern XPLMDataRef qpac_fcu_hdg_managed;
+extern XPLMDataRef qpac_fcu_alt_managed;
 // Auto-Thrust and speed
 extern XPLMDataRef qpac_athr_mode;
 extern XPLMDataRef qpac_athr_mode2;
@@ -48,7 +57,6 @@ extern XPLMDataRef qpac_loc_on_fo;
 extern XPLMDataRef qpac_gs_val_fo;
 extern XPLMDataRef qpac_gs_on_fo;
 extern XPLMDataRef qpac_ils_crs;
-extern XPLMDataRef qpac_ils_crs_dev;
 extern XPLMDataRef qpac_ils_1;
 extern XPLMDataRef qpac_ils_2;
 extern XPLMDataRef qpac_ils_3;
@@ -86,6 +94,11 @@ extern XPLMDataRef qpac_co_hdg_valid;
 extern XPLMDataRef qpac_co_att_valid;
 extern XPLMDataRef qpac_co_ias_valid;
 extern XPLMDataRef qpac_co_alt_valid;
+// EFIS
+extern XPLMDataRef qpac_capt_efis_nd_mode;
+extern XPLMDataRef qpac_co_efis_nd_mode;
+extern XPLMDataRef qpac_capt_efis_nd_range;
+extern XPLMDataRef qpac_co_efis_nd_range;
 
 extern int qpac_ready;
 

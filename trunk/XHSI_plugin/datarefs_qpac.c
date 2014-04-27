@@ -45,6 +45,15 @@ XPLMDataRef qpac_appr_type;
 XPLMDataRef qpac_appr_mda;
 XPLMDataRef qpac_alt_is_cstr;
 XPLMDataRef qpac_constraint_alt;
+// FCU
+XPLMDataRef qpac_fcu_hdg_trk;
+XPLMDataRef qpac_fcu_metric_alt;
+XPLMDataRef qpac_fcu_vs_dashed;
+XPLMDataRef qpac_fcu_spd_dashed;
+XPLMDataRef qpac_fcu_spd_managed;
+XPLMDataRef qpac_fcu_hdg_dashed;
+XPLMDataRef qpac_fcu_hdg_managed;
+XPLMDataRef qpac_fcu_alt_managed;
 // Auto-Thrust and speeds
 XPLMDataRef qpac_athr_mode;
 XPLMDataRef qpac_athr_mode2;
@@ -65,7 +74,6 @@ XPLMDataRef qpac_loc_on_fo;
 XPLMDataRef qpac_gs_val_fo;
 XPLMDataRef qpac_gs_on_fo;
 XPLMDataRef qpac_ils_crs;
-XPLMDataRef qpac_ils_crs_dev;
 XPLMDataRef qpac_ils_1;
 XPLMDataRef qpac_ils_2;
 XPLMDataRef qpac_ils_3;
@@ -103,6 +111,11 @@ XPLMDataRef qpac_co_hdg_valid;
 XPLMDataRef qpac_co_att_valid;
 XPLMDataRef qpac_co_ias_valid;
 XPLMDataRef qpac_co_alt_valid;
+// EFIS
+XPLMDataRef qpac_capt_efis_nd_mode;
+XPLMDataRef qpac_co_efis_nd_mode;
+XPLMDataRef qpac_capt_efis_nd_range;
+XPLMDataRef qpac_co_efis_nd_range;
 
 int qpac_ready = 0;
 
@@ -140,6 +153,16 @@ void findQpacDataRefs(void) {
             qpac_appr_mda = XPLMFindDataRef("AirbusFBW/ApprMDA");
             qpac_alt_is_cstr = XPLMFindDataRef("AirbusFBW/ALTisCstr");
             qpac_constraint_alt = XPLMFindDataRef("AirbusFBW/ConstraintAlt");
+            // FCU
+            qpac_fcu_hdg_trk = XPLMFindDataRef("AirbusFBW/HDGTRKmode");
+            qpac_fcu_metric_alt = XPLMFindDataRef("AirbusFBW/MetricAlt");
+            qpac_fcu_vs_dashed = XPLMFindDataRef("AirbusFBW/VSdashed");
+            qpac_fcu_hdg_dashed = XPLMFindDataRef("AirbusFBW/HDGdashed");
+            qpac_fcu_hdg_managed = XPLMFindDataRef("AirbusFBW/HDGmanaged");
+            qpac_fcu_spd_dashed = XPLMFindDataRef("AirbusFBW/SPDdashed");
+            qpac_fcu_spd_managed = XPLMFindDataRef("AirbusFBW/SPDmanaged");
+            qpac_fcu_alt_managed = XPLMFindDataRef("AirbusFBW/ALTmanaged");
+
             // Auto-Thrust and speed
             qpac_athr_mode = XPLMFindDataRef("AirbusFBW/ATHRmode");
             qpac_athr_mode2 = XPLMFindDataRef("AirbusFBW/ATHRmode2");
@@ -159,9 +182,7 @@ void findQpacDataRefs(void) {
             qpac_loc_on_fo = XPLMFindDataRef("AirbusFBW/LOConFO");
             qpac_gs_val_fo = XPLMFindDataRef("AirbusFBW/GSvalFO");
             qpac_gs_on_fo = XPLMFindDataRef("AirbusFBW/GSonFO");
-            // ILS on NAV3
             qpac_ils_crs = XPLMFindDataRef("AirbusFBW/ILSCrs");
-            qpac_ils_crs_dev = XPLMFindDataRef("AirbusFBW/ILSCourseDev");
             qpac_ils_1 = XPLMFindDataRef("AirbusFBW/ILS1");
             qpac_ils_2 = XPLMFindDataRef("AirbusFBW/ILS2");
             qpac_ils_3 = XPLMFindDataRef("AirbusFBW/ILS3");
@@ -199,10 +220,21 @@ void findQpacDataRefs(void) {
             qpac_co_att_valid = XPLMFindDataRef("AirbusFBW/CoATTValid");
             qpac_co_ias_valid = XPLMFindDataRef("AirbusFBW/CoIASValid");
             qpac_co_alt_valid = XPLMFindDataRef("AirbusFBW/CoALTValid");
+            // EFIS
+            qpac_capt_efis_nd_mode = XPLMFindDataRef("AirbusFBW/NDmodeCapt");
+            qpac_co_efis_nd_mode = XPLMFindDataRef("AirbusFBW/NDrangeFO");
+            qpac_capt_efis_nd_range = XPLMFindDataRef("AirbusFBW/NDrangeCapt");
+            qpac_co_efis_nd_range = XPLMFindDataRef("AirbusFBW/NDmodeFO");
 
             // Some checks with Datarefs
-            reftype = XPLMGetDataRefTypes(qpac_appr_mda);
-            sprintf(msg, "XHSI: DEBUG AirbusFBW/ApprMDA DataTypeID: %d\n", reftype);
+            reftype = XPLMGetDataRefTypes(qpac_ils_1);
+            sprintf(msg, "XHSI: DEBUG AirbusFBW/ILS1: %d\n", reftype);
+            XPLMDebugString(msg);
+            reftype = XPLMGetDataRefTypes(qpac_ils_2);
+            sprintf(msg, "XHSI: DEBUG AirbusFBW/ILS2: %d\n", reftype);
+            XPLMDebugString(msg);
+            reftype = XPLMGetDataRefTypes(qpac_ils_3);
+            sprintf(msg, "XHSI: DEBUG AirbusFBW/ILS3: %d\n", reftype);
             XPLMDebugString(msg);
 
         }
