@@ -1073,7 +1073,39 @@ public class XPlaneAvionics implements Avionics, Observer {
     public int qpac_constraint_alt(){
     	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_CONSTRAINT_ALT));
     }    
-    
+    // FCU
+    public boolean qpac_fcu_hdg_trk(){
+    	int qpac_fcu_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FCU));
+    	return (qpac_fcu_data & 0x01) > 0 ? true : false;
+    }    
+    public boolean qpac_fcu_metric_alt(){
+    	int qpac_fcu_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FCU));
+    	return (qpac_fcu_data & 0x02) > 0 ? true : false;
+    }    
+    public boolean qpac_fcu_vs_dashed(){
+    	int qpac_fcu_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FCU));
+    	return (qpac_fcu_data & 0x04) > 0 ? true : false;
+    }    
+    public boolean qpac_fcu_spd_dashed(){
+    	int qpac_fcu_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FCU));
+    	return (qpac_fcu_data & 0x08) > 0 ? true : false;
+    }    
+    public boolean qpac_fcu_spd_managed(){
+    	int qpac_fcu_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FCU));
+    	return (qpac_fcu_data & 0x10) > 0 ? true : false;
+    }    
+    public boolean qpac_fcu_hdg_dashed(){
+    	int qpac_fcu_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FCU));
+    	return (qpac_fcu_data & 0x20) > 0 ? true : false;
+    }    
+    public boolean qpac_fcu_hdg_managed(){
+    	int qpac_fcu_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FCU));
+    	return (qpac_fcu_data & 0x40) > 0 ? true : false;
+    }    
+    public boolean qpac_fcu_alt_managed(){
+    	int qpac_fcu_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FCU));
+    	return (qpac_fcu_data & 0x80) > 0 ? true : false;
+    }      
     // Auto-Thrust
     public int qpac_athr_mode() {
     	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ATHR_MODE));
@@ -1129,9 +1161,10 @@ public class XPlaneAvionics implements Avionics, Observer {
     public float qpac_ils_crs(){
     	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ILS_CRS);
     }
-    public float qpac_ils_crs_dev(){
-    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ILS_CRS_DEV);
-    } 
+    
+    public float qpac_ils_freq(){
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ILS_FREQ);
+    }   
     
     // FD
     public boolean qpac_fd1() {

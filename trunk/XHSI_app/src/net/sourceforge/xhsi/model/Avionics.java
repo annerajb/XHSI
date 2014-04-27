@@ -548,7 +548,15 @@ public interface Avionics {
     public float qpac_appr_mda();
     public boolean qpac_alt_is_cstr();
     public int qpac_constraint_alt();
-    
+    // FCU
+    public boolean qpac_fcu_hdg_trk();
+    public boolean qpac_fcu_metric_alt();
+    public boolean qpac_fcu_vs_dashed();
+    public boolean qpac_fcu_spd_dashed();
+    public boolean qpac_fcu_spd_managed();
+    public boolean qpac_fcu_hdg_dashed();
+    public boolean qpac_fcu_hdg_managed();
+    public boolean qpac_fcu_alt_managed();    
     // Auto-Thrust
     public int qpac_athr_mode();
     public int qpac_athr_mode2();
@@ -563,7 +571,7 @@ public interface Avionics {
     public float qpac_gs_val();
     public boolean qpac_gs_on();
     public float qpac_ils_crs();
-    public float qpac_ils_crs_dev();
+    public float qpac_ils_freq();
     
     // FD
     /**
