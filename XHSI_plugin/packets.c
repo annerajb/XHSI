@@ -364,6 +364,28 @@ int createAvionicsPacket(void) {
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(cockpit_lights_on));
 	i++;
 
+	// Standard gauges failures
+	// Each value is on 3 bits (enum failure integer 0 to 6)
+    int std_gauges_failures_pilot =
+    		XPLMGetDatai(sim_op_fail_rel_ss_ahz) << 15 |
+    		XPLMGetDatai(sim_op_fail_rel_ss_alt) << 12 |
+    		XPLMGetDatai(sim_op_fail_rel_ss_asi) << 9 |
+			XPLMGetDatai(sim_op_fail_rel_ss_dgy) << 6 |
+			XPLMGetDatai(sim_op_fail_rel_ss_tsi) << 3 |
+			XPLMGetDatai(sim_op_fail_rel_ss_vvi) ;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_GAUGES_FAILURES_PILOT);
+    sim_packet.sim_data_points[i].value = custom_htonf( (float) std_gauges_failures_pilot );
+    i++;
+    int std_gauges_failures_copilot =
+    		XPLMGetDatai(sim_op_fail_rel_cop_ahz) << 15 |
+    		XPLMGetDatai(sim_op_fail_rel_cop_alt) << 12 |
+    		XPLMGetDatai(sim_op_fail_rel_cop_asi) << 9 |
+			XPLMGetDatai(sim_op_fail_rel_cop_dgy) << 6 |
+			XPLMGetDatai(sim_op_fail_rel_cop_tsi) << 3 |
+			XPLMGetDatai(sim_op_fail_rel_cop_vvi) ;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_GAUGES_FAILURES_COPILOT);
+    sim_packet.sim_data_points[i].value = custom_htonf( (float) std_gauges_failures_copilot );
+    i++;
 
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ);
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(nav1_freq_hz));
@@ -994,6 +1016,21 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_CONSTRAINT_ALT);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_constraint_alt));
         i++;
+        //
+    	// FCU
+        int qpac_fcu_data =
+        		XPLMGetDatai(qpac_fcu_alt_managed) << 7 |
+        		XPLMGetDatai(qpac_fcu_hdg_managed) << 6 |
+        		XPLMGetDatai(qpac_fcu_hdg_dashed) << 5 |
+        		XPLMGetDatai(qpac_fcu_spd_managed) << 4 |
+        		XPLMGetDatai(qpac_fcu_spd_dashed) << 3 |
+    			XPLMGetDatai(qpac_fcu_vs_dashed) << 2 |
+    			XPLMGetDatai(qpac_fcu_metric_alt) << 1 |
+    			XPLMGetDatai(qpac_fcu_hdg_trk) ;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FCU);
+        sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fcu_data );
+        i++;
+
         // Auto-Thrust
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ATHR_MODE);
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_athr_mode));
@@ -1013,27 +1050,32 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FLEX_TEMP);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_flex_temp));
         i++;
-        // RNAV Deviation
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_LOC_VAL_CAPT);
+
+        // ILS Sig and Deviation Capt. and FO
+        int qpac_ils =	XPLMGetDatai(qpac_gs_on_fo) << 3 |
+    			XPLMGetDatai(qpac_loc_on_fo) << 2 |
+    			XPLMGetDatai(qpac_gs_on_capt) << 1 |
+    			XPLMGetDatai(qpac_loc_on_capt) ;
+
+    	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ILS_FLAGS);
+    	sim_packet.sim_data_points[i].value = custom_htonf((float) qpac_ils );
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_LOC_VAL_CAPT);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_loc_val_capt));
-        i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_LOC_ON_CAPT);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_loc_on_capt));
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_GS_VAL_CAPT);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_gs_val_capt));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_GS_ON_CAPT);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_gs_on_capt));
+    	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_LOC_VAL_FO);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_loc_val_fo));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_GS_VAL_FO);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_gs_val_fo));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ILS_CRS);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_ils_crs));
         i++;
 
-        // ILS on NAV3
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ILS_CRS);
-        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_loc_val_capt));
-        i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ILS_CRS_DEV);
-        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_loc_on_capt));
-        i++;
         /* MAY NOT WORK : Text data
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ILS_1);
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_ils_1));
@@ -1108,6 +1150,22 @@ int createCustomAvionicsPacket(void) {
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ALPHA_MAX);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_alpha_max));
+        i++;
+        // Failures
+        int qpac_failures = 0xFFFF;
+        if (qpac_co_hdg_valid) {
+        	qpac_failures =
+        		XPLMGetDatai(qpac_co_hdg_valid) << 7 |
+    			XPLMGetDatai(qpac_co_att_valid) << 6 |
+    			XPLMGetDatai(qpac_co_ias_valid) << 5 |
+    			XPLMGetDatai(qpac_co_alt_valid) << 4 |
+    			XPLMGetDatai(qpac_capt_hdg_valid) << 3 |
+    			XPLMGetDatai(qpac_capt_att_valid) << 2 |
+    			XPLMGetDatai(qpac_capt_ias_valid) << 1 |
+    			XPLMGetDatai(qpac_capt_alt_valid) ;
+        }
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FAILURES);
+        sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_failures );
         i++;
     }
 
