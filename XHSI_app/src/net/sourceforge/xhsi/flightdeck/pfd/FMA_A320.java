@@ -425,7 +425,7 @@ public class FMA_A320 extends PFDSubcomponent {
         	case 103 : ap_vertical_mode="ALT*"; break; // or ALT CRZ*
         	case 104 : ap_vertical_mode="ALT"; break; // or ALT CRZ
         	case 105 : ap_vertical_mode="ALT"; break;
-        	case 107 : ap_vertical_mode="V/S "; break; //or FPA + value sim/cockpit2/autopilot/vvi_dial_fpm
+        	case 107 : if (this.avionics.qpac_fcu_hdg_trk()) ap_vertical_mode="FPA "; else ap_vertical_mode="V/S "; break; //or FPA + value sim/cockpit2/autopilot/vvi_dial_fpm
         	case 112 : ap_vertical_mode="EXP CLB"; break;
         	case 113 : ap_vertical_mode="EXP DES"; break;       
         }
@@ -464,7 +464,7 @@ public class FMA_A320 extends PFDSubcomponent {
     		case 10 : ap_lateral_mode="ROLL OUT"; break; 
     		case 11 : ap_lateral_mode="LAND"; break; // or FLARE
     		case 12 : ap_lateral_mode="GA TRK"; break;  
-    		case 101 : ap_lateral_mode="HDG"; break;
+    		case 101 : if (this.avionics.qpac_fcu_hdg_trk()) ap_lateral_mode="TRACK"; else ap_lateral_mode="HDG"; break;
         }
         draw1Mode(g2, 2, 0, ap_lateral_mode, false, pfd_gc.pfd_active_color);
 

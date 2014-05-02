@@ -301,9 +301,9 @@ public class AltiTape_A320 extends PFDSubcomponent {
         float alt_inhg = this.aircraft.altimeter_in_hg();
         boolean std = ( Math.round(alt_inhg * 100.0f) == 2992 );
         if (this.avionics.is_qpac()) { 
-        	std = this.avionics.qpac_baro_std_capt(); 
-        	qnh_display = this.avionics.qpac_baro_hide_capt();
-        	qnh_is_hpa = this.avionics.qpac_baro_unit_capt();
+        	std = this.avionics.qpac_baro_std(); 
+        	qnh_display = this.avionics.qpac_baro_hide();
+        	qnh_is_hpa = this.avionics.qpac_baro_unit();
         }
         String qnh_str;
         if ( std ) {

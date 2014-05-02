@@ -572,6 +572,7 @@ public interface Avionics {
     public boolean qpac_gs_on();
     public float qpac_ils_crs();
     public float qpac_ils_freq();
+    public String qpac_ils_id();
     
     // FD
     /**
@@ -585,9 +586,9 @@ public interface Avionics {
     public float qpac_fd2_hor_bar();
     
     // Baro
-    public boolean qpac_baro_std_capt();
-    public boolean qpac_baro_unit_capt();
-    public boolean qpac_baro_hide_capt();
+    public boolean qpac_baro_std();
+    public boolean qpac_baro_unit();
+    public boolean qpac_baro_hide();
       
     // V Speeds
     public float qpac_v1_value();
