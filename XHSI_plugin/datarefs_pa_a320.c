@@ -39,8 +39,8 @@ int pa_a320_ready = 0;
 
 void findPaA320DataRefs(void) {
 	// For datarefs checks, remove for release
-	char msg[200];
-	XPLMDataTypeID reftype;
+	// char msg[200];
+	// XPLMDataTypeID reftype;
 
 	pa_a320_plugin_status = XPLMFindDataRef("com/petersaircraft/airbus/ApprType");
 
