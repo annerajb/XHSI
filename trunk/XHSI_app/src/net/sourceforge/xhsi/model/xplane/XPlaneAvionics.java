@@ -1106,6 +1106,31 @@ public class XPlaneAvionics implements Avionics, Observer {
     	int qpac_fcu_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FCU));
     	return (qpac_fcu_data & 0x80) > 0 ? true : false;
     }      
+    
+    // Baro
+    public boolean qpac_baro_std(){
+    	int qpac_fcu_baro = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FCU_BARO));
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ))  
+    		return (qpac_fcu_baro & 0x40) > 0 ? true : false;
+    	else 
+    		return (qpac_fcu_baro & 0x04) > 0 ? true : false;
+    	 	
+    }
+    public boolean qpac_baro_unit(){
+    	int qpac_fcu_baro = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FCU_BARO));
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ))  
+    		return (qpac_fcu_baro & 0x20) > 0 ? true : false;
+    	else 
+    		return (qpac_fcu_baro & 0x02) > 0 ? true : false; 	
+    }
+    public boolean qpac_baro_hide(){
+    	int qpac_fcu_baro = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FCU_BARO));
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ))  
+    		return (qpac_fcu_baro & 0x10) > 0 ? true : false;
+    	else 
+    		return (qpac_fcu_baro & 0x01) > 0 ? true : false;	
+    }
+    
     // Auto-Thrust
     public int qpac_athr_mode() {
     	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ATHR_MODE));
@@ -1166,6 +1191,10 @@ public class XPlaneAvionics implements Avionics, Observer {
     	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ILS_FREQ);
     }   
     
+    public String qpac_ils_id(){
+    	return sim_data.get_sim_string(XPlaneSimDataRepository.QPAC_ILS_ID);
+    }
+    
     // FD
     public boolean qpac_fd1() {
     	// return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD1) > 0 ? true : false;
@@ -1192,17 +1221,7 @@ public class XPlaneAvionics implements Avionics, Observer {
     public float qpac_fd2_hor_bar() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD2_HOR_BAR);
     }    
-    
-    // Baro
-    public boolean qpac_baro_std_capt(){
-    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_BARO_STD_CAPT) > 0 ? true : false; 	
-    }
-    public boolean qpac_baro_unit_capt(){
-    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_BARO_UNIT_CAPT) > 0 ? true : false; 	
-    }
-    public boolean qpac_baro_hide_capt(){
-    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_BARO_HIDE_CAPT) != 0 ? false : true; 	
-    }
+
     
     // V Speeds   
     public float qpac_v1_value() {
