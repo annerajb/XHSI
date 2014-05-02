@@ -24,6 +24,7 @@
 #include "datarefs_x737.h"
 #include "datarefs_cl30.h"
 #include "datarefs_qpac.h"
+#include "datarefs_pa_a320.h"
 #include "endianess.h"
 
 
@@ -775,7 +776,7 @@ int createCustomAvionicsPacket(void) {
 
 	int i = 0;
 	int packet_size;
-//	char nav_id_bytes[4];
+	char nav_id_bytes[4];
 //	float gear_ratio[10];
 
 	strncpy(sim_packet.packet_id, "AVIO", 4);
@@ -1018,17 +1019,48 @@ int createCustomAvionicsPacket(void) {
         i++;
         //
     	// FCU
-        int qpac_fcu_data =
+        int qpac_fcu_data = 0;
+        int qpac_fcu_baro = 0;
+        if (pa_a320_ready) {
+        	qpac_fcu_data =
         		XPLMGetDatai(qpac_fcu_alt_managed) << 7 |
         		XPLMGetDatai(qpac_fcu_hdg_managed) << 6 |
         		XPLMGetDatai(qpac_fcu_hdg_dashed) << 5 |
         		XPLMGetDatai(qpac_fcu_spd_managed) << 4 |
         		XPLMGetDatai(qpac_fcu_spd_dashed) << 3 |
     			XPLMGetDatai(qpac_fcu_vs_dashed) << 2 |
-    			XPLMGetDatai(qpac_fcu_metric_alt) << 1 |
-    			XPLMGetDatai(qpac_fcu_hdg_trk) ;
+    			XPLMGetDatai(pa_a320_fcu_metric_alt) << 1 |
+    			XPLMGetDatai(pa_a320_fcu_hdg_trk) ;
+            qpac_fcu_baro =
+        			XPLMGetDatai(qpac_baro_std_fo) << 6 |
+        			XPLMGetDatai(qpac_baro_unit_fo) << 5 |
+        			!XPLMGetDatai(pa_a320_baro_hide) << 4 |
+        			XPLMGetDatai(qpac_baro_std_capt) << 2 |
+        			XPLMGetDatai(qpac_baro_unit_capt) << 1 |
+        			!XPLMGetDatai(pa_a320_baro_hide) ;
+        } else {
+        	qpac_fcu_data =
+        		XPLMGetDatai(qpac_fcu_alt_managed) << 7 |
+        		XPLMGetDatai(qpac_fcu_hdg_managed) << 6 |
+        		XPLMGetDatai(qpac_fcu_hdg_dashed) << 5 |
+        		XPLMGetDatai(qpac_fcu_spd_managed) << 4 |
+        		XPLMGetDatai(qpac_fcu_spd_dashed) << 3 |
+        		XPLMGetDatai(qpac_fcu_vs_dashed) << 2 |
+        		XPLMGetDatai(qpac_fcu_metric_alt) << 1 |
+        		XPLMGetDatai(qpac_fcu_hdg_trk) ;
+            qpac_fcu_baro =
+        			XPLMGetDatai(qpac_baro_std_fo) << 5 |
+        			XPLMGetDatai(qpac_baro_unit_fo) << 4 |
+        			XPLMGetDatai(qpac_baro_hide_fo) << 3 |
+        			XPLMGetDatai(qpac_baro_std_capt) << 2 |
+        			XPLMGetDatai(qpac_baro_unit_capt) << 1 |
+        			XPLMGetDatai(qpac_baro_hide_capt) ;
+        }
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FCU);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fcu_data );
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FCU_BARO);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) qpac_fcu_baro);
         i++;
 
         // Auto-Thrust
@@ -1076,6 +1108,10 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_ils_crs));
         i++;
 
+    	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ILS_ID);
+    	XPLMGetDatab(qpac_ils_1, nav_id_bytes, 0, 4);
+        strncpy( (char *)&sim_packet.sim_data_points[i].value, nav_id_bytes, 4 );
+    	i++;
         /* MAY NOT WORK : Text data
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ILS_1);
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_ils_1));
@@ -1109,16 +1145,8 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_fd2_hor_bar));
         i++;
 
-        // Baro
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BARO_STD_CAPT);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_baro_std_capt));
-        i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BARO_UNIT_CAPT);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_baro_unit_capt));
-        i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BARO_HIDE_CAPT);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_baro_hide_capt));
-        i++;
+
+
 
         // V Speeds
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_V1_VALUE);
@@ -1163,6 +1191,11 @@ int createCustomAvionicsPacket(void) {
     			XPLMGetDatai(qpac_capt_att_valid) << 2 |
     			XPLMGetDatai(qpac_capt_ias_valid) << 1 |
     			XPLMGetDatai(qpac_capt_alt_valid) ;
+        } else if (pa_a320_ready) {
+        	int pa_a320_failures = XPLMGetDatai(pa_a320_ir_capt_avail);
+        	// if 0 : whole PFD failed
+        	if (pa_a320_failures == 0) qpac_failures = 0; else
+        	if (pa_a320_failures < 3 ) qpac_failures = 0x77;
         }
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FAILURES);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_failures );

@@ -74,6 +74,7 @@
 #include "datarefs_x737.h"
 #include "datarefs_cl30.h"
 #include "datarefs_qpac.h"
+#include "datarefs_pa_a320.h"
 #include "ui.h"
 #include "net.h"
 #include "packets.h"
@@ -227,6 +228,11 @@ PLUGIN_API int XPluginEnable(void) {
                            checkQpacCallback,
                            -1.0f,
                            NULL);
+    // Peter Aircraf Airbus A320
+    XPLMRegisterFlightLoopCallback(
+                           checkPaA320Callback,
+                           -1.0f,
+                           NULL);
     // X-FMC
     XPLMRegisterFlightLoopCallback(
                            sendXfmcCallback,
@@ -279,6 +285,7 @@ PLUGIN_API void XPluginDisable(void) {
 	XPLMUnregisterFlightLoopCallback(checkX737Callback, NULL);
 	XPLMUnregisterFlightLoopCallback(checkCL30Callback, NULL);
 	XPLMUnregisterFlightLoopCallback(checkQpacCallback, NULL);
+	XPLMUnregisterFlightLoopCallback(checkPaA320Callback, NULL);
 
     XPLMUnregisterFlightLoopCallback(sendXfmcCallback, NULL);
 
