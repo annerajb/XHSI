@@ -352,6 +352,8 @@ int createAvionicsPacket(void) {
 	int packet_size;
 	char nav_id_bytes[4];
 //	float gear_ratio[10];
+	int std_gauges_failures_pilot;
+	int std_gauges_failures_copilot;
 
 	strncpy(sim_packet.packet_id, "AVIO", 4);
 
@@ -367,7 +369,7 @@ int createAvionicsPacket(void) {
 
 	// Standard gauges failures
 	// Each value is on 3 bits (enum failure integer 0 to 6)
-    int std_gauges_failures_pilot =
+    std_gauges_failures_pilot =
     		XPLMGetDatai(sim_op_fail_rel_ss_ahz) << 15 |
     		XPLMGetDatai(sim_op_fail_rel_ss_alt) << 12 |
     		XPLMGetDatai(sim_op_fail_rel_ss_asi) << 9 |
@@ -377,7 +379,7 @@ int createAvionicsPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_GAUGES_FAILURES_PILOT);
     sim_packet.sim_data_points[i].value = custom_htonf( (float) std_gauges_failures_pilot );
     i++;
-    int std_gauges_failures_copilot =
+    std_gauges_failures_copilot =
     		XPLMGetDatai(sim_op_fail_rel_cop_ahz) << 15 |
     		XPLMGetDatai(sim_op_fail_rel_cop_alt) << 12 |
     		XPLMGetDatai(sim_op_fail_rel_cop_asi) << 9 |
@@ -777,7 +779,11 @@ int createCustomAvionicsPacket(void) {
 	int i = 0;
 	int packet_size;
 	char nav_id_bytes[4];
-//	float gear_ratio[10];
+    int qpac_fcu_data;
+    int qpac_fcu_baro;
+    int qpac_ils;
+	int qpac_failures;
+	int pa_a320_failures;
 
 	strncpy(sim_packet.packet_id, "AVIO", 4);
 
@@ -1017,10 +1023,10 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_CONSTRAINT_ALT);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_constraint_alt));
         i++;
-        //
-    	// FCU
-        int qpac_fcu_data = 0;
-        int qpac_fcu_baro = 0;
+
+		// FCU
+        qpac_fcu_data = 0;
+        qpac_fcu_baro = 0;
         if (pa_a320_ready) {
         	qpac_fcu_data =
         		XPLMGetDatai(qpac_fcu_alt_managed) << 7 |
@@ -1084,7 +1090,8 @@ int createCustomAvionicsPacket(void) {
         i++;
 
         // ILS Sig and Deviation Capt. and FO
-        int qpac_ils =	XPLMGetDatai(qpac_gs_on_fo) << 3 |
+        qpac_ils =	
+				XPLMGetDatai(qpac_gs_on_fo) << 3 |
     			XPLMGetDatai(qpac_loc_on_fo) << 2 |
     			XPLMGetDatai(qpac_gs_on_capt) << 1 |
     			XPLMGetDatai(qpac_loc_on_capt) ;
@@ -1146,8 +1153,6 @@ int createCustomAvionicsPacket(void) {
         i++;
 
 
-
-
         // V Speeds
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_V1_VALUE);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_v1_value));
@@ -1179,8 +1184,9 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ALPHA_MAX);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_alpha_max));
         i++;
+
         // Failures
-        int qpac_failures = 0xFFFF;
+        qpac_failures = 0xFFFF;
         if (qpac_co_hdg_valid) {
         	qpac_failures =
         		XPLMGetDatai(qpac_co_hdg_valid) << 7 |
@@ -1192,7 +1198,7 @@ int createCustomAvionicsPacket(void) {
     			XPLMGetDatai(qpac_capt_ias_valid) << 1 |
     			XPLMGetDatai(qpac_capt_alt_valid) ;
         } else if (pa_a320_ready) {
-        	int pa_a320_failures = XPLMGetDatai(pa_a320_ir_capt_avail);
+        	pa_a320_failures = XPLMGetDatai(pa_a320_ir_capt_avail);
         	// if 0 : whole PFD failed
         	if (pa_a320_failures == 0) qpac_failures = 0; else
         	if (pa_a320_failures < 3 ) qpac_failures = 0x77;
