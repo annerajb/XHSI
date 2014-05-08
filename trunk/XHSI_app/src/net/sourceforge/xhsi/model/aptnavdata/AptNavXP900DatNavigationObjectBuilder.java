@@ -59,7 +59,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
     private NavigationObjectRepository nor;
     private ProgressObserver progressObserver;
     private Fix fix;
-
+    
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
 
@@ -83,9 +83,42 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
 //            this.nor.init();
 
             if (this.progressObserver != null) {
-                this.progressObserver.set_progress("Loading databases", "loading APT", 0.0f);
+                this.progressObserver.set_progress("Loading databases", "loading custom APT", 0.0f);
             }
-            read_apt_table();
+            File scenery_packs_ini = new File( this.pathname_to_aptnav + "/Custom Scenery/scenery_packs.ini");
+            if ( scenery_packs_ini.exists() ) {
+                // There is an ini-file that defines the load order of custom scenery
+                BufferedReader reader = new BufferedReader( new FileReader( scenery_packs_ini ));
+                String line;
+                String[] tokens;
+
+                while ( (line = reader.readLine()) != null ) {
+                    tokens = line.split("\\s+", 2);
+                    if ( (tokens.length == 2) && tokens[0].equals("SCENERY_PACK") ) {
+                        File custom_apt_file = new File( this.pathname_to_aptnav + "/" + tokens[1] + "/Earth nav data/apt.dat" );
+                        if ( custom_apt_file.exists() ) {
+
+                            // We have a custom apt.dat
+                            logger.warning("Loading custom apt " + custom_apt_file.getPath());
+                            read_an_apt_file(custom_apt_file);
+
+                        } // else logger.warning("No custom apt.dat found at " + custom_apt_dat.getPath());
+                    }
+                }
+            }
+
+            if (this.progressObserver != null) {
+                this.progressObserver.set_progress("Loading databases", "loading default APT", 10.0f);
+            }
+            File global_apt_file;
+            if ( new File( this.pathname_to_aptnav + this.APT_xplane ).exists() ) {
+                logger.fine("Reading APT database ( " + this.pathname_to_aptnav + this.APT_xplane + " )");
+                global_apt_file = new File( this.pathname_to_aptnav + this.APT_xplane );
+            } else {
+                logger.fine("Reading APT database ( " + this.pathname_to_aptnav + this.APT_file + " )");
+                global_apt_file = new File( this.pathname_to_aptnav + this.APT_file );
+            }
+            read_an_apt_file(global_apt_file);
 
             if (this.progressObserver != null) {
                 this.progressObserver.set_progress("Loading databases", "loading NAV", 25.0f);
@@ -112,24 +145,16 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
     }
 
 
-    public void read_apt_table() throws Exception {
+    public void read_an_apt_file(File apt_file) throws Exception {
 
-        File file;
-        if ( new File( this.pathname_to_aptnav + this.APT_xplane ).exists() ) {
-            logger.fine("Reading APT database ( " + this.pathname_to_aptnav + this.APT_xplane + " )");
-            file = new File( this.pathname_to_aptnav + this.APT_xplane );
-        } else {
-            logger.fine("Reading APT database ( " + this.pathname_to_aptnav + this.APT_file + " )");
-            file = new File( this.pathname_to_aptnav + this.APT_file );
-        }
-        BufferedReader reader = new BufferedReader( new FileReader( file ));
+        BufferedReader reader = new BufferedReader( new FileReader( apt_file ));
         String line;
         long line_number = 0;
         int info_type;
         String[] tokens;
         String airport_icao_code = "";
         String airport_name = "";
-        boolean current_airport_saved = true;
+        boolean current_airport_saved = true; // this is a trick to say that there is no previous airport when starting to read the first 
         ArrayList runways = new ArrayList();
         float width;
         int surface;
@@ -164,14 +189,21 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                 line_number++;
 
                 line = line.trim();
-                if ((line_number > 2) && ( ! line.equals("99") ) ) {
+                if ((line_number > 2) /* && ( ! line.equals("99") ) */ ) {
                     try {
-                        //info_type = Integer.parseInt(line.substring(0, 3).trim());
-                        tokens = line.split("\\s+",6);
-                        info_type = Integer.parseInt(tokens[0]);
+                        if ( line.equals("99") ) {
+                            // a line with a fake airport to force saving the last
+                            tokens = "1 9999 0 0 XXXX Fake Airport to force saving the last".split("\\s+",6);
+                            info_type = Integer.parseInt(tokens[0]);
+                        } else {
+                            tokens = line.split("\\s+",6);
+                            info_type = Integer.parseInt(tokens[0]);
+                        }
                         if (info_type == 1) {
                             // hold it, save the previous airport before proceeding with this one...
                             if ( ! current_airport_saved ) {
+                                // when this is the first airport that whe read, there is no previous airport
+                                // that is why current_airport_saved is initialized to true
                                 // position of the ARP (Aerodrome Reference Point)
                                 if (tower) {
                                     // ARP = tower position
@@ -221,15 +253,6 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                             // we dont't save this airport right away, we collect information about the runways first
                         } else if (info_type == 100) {
                             // a runway
-                            //if (airport_icao_code.equals("LOWI")) logger.warning("<" + airport_icao_code + "> " + line);
-//                            width = Float.parseFloat(line.substring(5, 11));
-//                            surface = Integer.parseInt(line.substring(13, 15).trim());
-//                            rwy_num1 = line.substring(31, 34).trim();
-//                            thr1_lat = Float.parseFloat(line.substring(35, 47));
-//                            thr1_lon = Float.parseFloat(line.substring(48, 61));
-//                            rwy_num2 = line.substring(87, 90).trim();
-//                            thr2_lat = Float.parseFloat(line.substring(91, 103));
-//                            thr2_lon = Float.parseFloat(line.substring(104, 117));
                             // we need more tokens
                             tokens = line.split("\\s+",26);
                             width = Float.parseFloat(tokens[1]);
@@ -303,7 +326,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                             }
                         }
                     } catch (Exception e) {
-                        logger.warning("\nParse error in " +file.getName() + ":" + line_number + "(" + e + ") " + line);
+                        logger.warning("\nParse error in " +apt_file.getName() + ":" + line_number + "(" + e + ") " + line);
                     }
                 }
 

@@ -238,10 +238,10 @@ public class MovingMap extends NDSubcomponent {
                 this.active_chart_str = null;
                 try {
                     AptNavXP900DatTaxiChartBuilder cb = new AptNavXP900DatTaxiChartBuilder(this.taxi);
-                    logger.warning("\nRequesting "+nearest_arpt_str);
+                    logger.warning("Requesting "+nearest_arpt_str);
                     cb.get_chart(nearest_arpt_str);
                 } catch (Exception e) {
-                    logger.warning("\nProblem requesting TaxiChartBuilder "+nearest_arpt_str);
+                    logger.warning("Problem requesting TaxiChartBuilder "+nearest_arpt_str);
                 }
 
             } else if ( taxi.ready && (taxi.airport!=null) && taxi.airport.icao_code.equals(nearest_arpt_str) ) {

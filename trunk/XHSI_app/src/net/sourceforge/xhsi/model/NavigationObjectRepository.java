@@ -120,8 +120,14 @@ public class NavigationObjectRepository {
         } else if (nav_object instanceof Fix) {
             get_nav_objects(NavigationObject.NO_TYPE_FIX, nav_object).add(nav_object);
         } else if (nav_object instanceof Airport) {
-            get_nav_objects(NavigationObject.NO_TYPE_AIRPORT, nav_object).add(nav_object);
-            add_arpt(nav_object);
+            String arpt_str = ((Airport)nav_object).icao_code;
+            if ( get_airport( arpt_str ) == null ) {
+                // OK, it's not a duplicate
+                get_nav_objects(NavigationObject.NO_TYPE_AIRPORT, nav_object).add(nav_object);
+                add_arpt(nav_object);
+//            } else {
+//                logger.warning("NOT storing a duplicate Airport in the ArrayList for: " + arpt_str);
+            }
         } else if (nav_object instanceof Runway) {
             get_nav_objects(NavigationObject.NO_TYPE_RUNWAY, nav_object).add(nav_object);
         }
@@ -153,7 +159,13 @@ public class NavigationObjectRepository {
     private void add_arpt(NavigationObject arpt_object) {
 
         String arpt_str = ((Airport)arpt_object).icao_code;
-        this.airports.put(arpt_str, arpt_object);
+        // logger.warning("I have to store: " + arpt_str);
+        if ( ! this.airports.containsKey(arpt_str) ) {
+            // OK, it's not a duplicate
+            this.airports.put(arpt_str, arpt_object);
+//        } else {
+//            logger.warning("NOT storing a duplicate Airport in the HashMap for: " + arpt_str);
+        }
 
     }
 
