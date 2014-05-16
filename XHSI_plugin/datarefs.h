@@ -268,6 +268,7 @@ extern XPLMDataRef  instrument_style;
 extern XPLMDataRef  engine_type;
 extern XPLMDataRef  trq_scale;
 extern XPLMDataRef  fuel_units;
+extern XPLMDataRef  override_trq_max;
 
 
 // custom datarefs - MFD

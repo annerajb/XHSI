@@ -306,7 +306,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO2 = 532;
     public static final int SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_1 = 533;
     public static final int SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_2 = 534;
-    // 535, 536, 537, 538 : free
+    // 535, 536, 537 : free
+    public static final int XHSI_EICAS_OVERRIDE_TRQ_MAX = 538;
     public static final int SIM_AIRCRAFT_CONTROLS_ACF_TRQ_MAX_ENG = 539;
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_TRQ_ = 540;
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_ITT_ = 550;
@@ -396,6 +397,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int CL30_TO_N1 = 861;
     public static final int CL30_CLB_N1 = 862;
     
+    
  // QPAC AirbusFBW
     public static final int QPAC_STATUS=1000;
     // Autopilot  
@@ -454,6 +456,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     // Failures flags
     public static final int QPAC_FAILURES=1047;
 
+    
     // Plugin Version
     public static final int PLUGIN_VERSION_ID = 999;
 

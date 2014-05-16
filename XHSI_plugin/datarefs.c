@@ -37,6 +37,7 @@ XPLMDataRef instrument_style;
 XPLMDataRef  engine_type;
 XPLMDataRef  trq_scale;
 XPLMDataRef  fuel_units;
+XPLMDataRef  override_trq_max;
 
 // custom datarefs - MFD
 XPLMDataRef  mfd_mode;
@@ -372,6 +373,18 @@ int     getTRQscale(void* inRefcon)
 void	setTRQscale(void* inRefcon, int inValue)
 {
       eicas_trq_scale = inValue;
+}
+
+
+// xhsi/eicas/trq_max
+float eicas_trq_max;
+float     getOverrideTRQmax(void* inRefcon)
+{
+     return eicas_trq_max;
+}
+void	setOverrideTRQmax(void* inRefcon, float inValue)
+{
+      eicas_trq_max = inValue;
 }
 
 
@@ -901,6 +914,14 @@ void registerEICASDataRefs(void) {
                                         getFuelUnits, setFuelUnits,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
+	// xhsi/eicas/trq_max
+	override_trq_max = XPLMRegisterDataAccessor("xhsi/eicas/trq_max",
+										xplmType_Float,
+										1,
+										NULL, NULL,
+										getOverrideTRQmax, setOverrideTRQmax,
+										NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
     XPLMDebugString("XHSI: custom EICAS DataRefs registered\n");
 
 }
@@ -938,6 +959,7 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/engine_type");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_scale");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/fuel_units");
+		XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_max");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/sta");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/data");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/pos");
@@ -1088,6 +1110,9 @@ float initEICASCallback(
 
 	// scale 0 = LbFt, 1 = Nm, 2 = %
     XPLMSetDatai(trq_scale, 0);
+
+	// don't override the maximum torque that X-Plane calculates
+	XPLMSetDataf(override_trq_max, 0.0f);
 
 
     XPLMDebugString("XHSI: custom EICAS DataRefs initialized\n");
