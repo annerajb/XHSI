@@ -612,7 +612,9 @@ public class XPlaneAircraft implements Aircraft {
 
     public float get_max_TRQ_LbFt() {
         // NM = LbFt * 1.35581794884f
-        return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_CONTROLS_ACF_TRQ_MAX_ENG) / 1.35581794884f;
+        float override = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EICAS_OVERRIDE_TRQ_MAX);
+        if ( override > 0.0f ) return override;
+        else return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_CONTROLS_ACF_TRQ_MAX_ENG) / 1.35581794884f;
     }
 
     public float get_ITT_percent(int engine) {
@@ -624,7 +626,7 @@ public class XPlaneAircraft implements Aircraft {
     }
 
     public float get_max_prop_RPM() {
-        // rev/min = rad/s * 60 / (2xpi)
+        // rev/min = rad/s * 60 / (2 * PI)
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_CONTROLS_ACF_RSC_REDLINE_PRP) * 30.0f / (float)Math.PI;
     }
 

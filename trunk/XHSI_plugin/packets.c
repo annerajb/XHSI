@@ -1373,6 +1373,10 @@ int createEnginesPacket(void) {
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(hyd_q_2));
 	i++;
 
+	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EICAS_OVERRIDE_TRQ_MAX);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(override_trq_max));
+	i++;
+
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_CONTROLS_ACF_TRQ_MAX_ENG);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(engine_trq_max));
 	i++;
