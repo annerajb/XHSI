@@ -226,17 +226,6 @@ void findQpacDataRefs(void) {
             qpac_capt_efis_nd_range = XPLMFindDataRef("AirbusFBW/NDrangeCapt");
             qpac_co_efis_nd_range = XPLMFindDataRef("AirbusFBW/NDmodeFO");
 
-            // Some checks with Datarefs
-            reftype = XPLMGetDataRefTypes(qpac_ils_1);
-            sprintf(msg, "XHSI: DEBUG AirbusFBW/ILS1: %d\n", reftype);
-            XPLMDebugString(msg);
-            reftype = XPLMGetDataRefTypes(qpac_ils_2);
-            sprintf(msg, "XHSI: DEBUG AirbusFBW/ILS2: %d\n", reftype);
-            XPLMDebugString(msg);
-            reftype = XPLMGetDataRefTypes(qpac_ils_3);
-            sprintf(msg, "XHSI: DEBUG AirbusFBW/ILS3: %d\n", reftype);
-            XPLMDebugString(msg);
-
         }
     }
 }
