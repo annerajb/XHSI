@@ -363,13 +363,27 @@ public class FMA_A320 extends PFDSubcomponent {
         drawDMode(g2,2,0,fma_str);
         fma_str = "vS " + this.avionics.qpac_vs();
         drawDMode(g2,2,1,fma_str);
-        fma_str = "ra bug " + this.aircraft.ra_bug();
-        drawDMode(g2,3,1,fma_str);
-        fma_str = "da_bug " + this.aircraft.da_bug();
-        drawDMode(g2,3,2,fma_str);
-        fma_str = "qp_fail " + this.avionics.qpac_failures();
+        fma_str = "VMO " + this.avionics.qpac_vmo();
         drawDMode(g2,3,0,fma_str);
-
+        fma_str = "VLS " + this.avionics.qpac_vls();
+        drawDMode(g2,3,1,fma_str);
+        fma_str = "aProt " + this.avionics.qpac_alpha_prot();
+        drawDMode(g2,4,0,fma_str);
+        fma_str = "aMax " + this.avionics.qpac_alpha_max();
+        drawDMode(g2,4,1,fma_str);
+        fma_str = "ra bug " + this.aircraft.ra_bug();
+        drawDMode(g2,3,2,fma_str);
+        fma_str = "da_bug " + this.aircraft.da_bug();
+        drawDMode(g2,3,3,fma_str);        
+        fma_str = "vso " + this.aircraft.get_Vso();
+        drawDMode(g2,4,2,fma_str);
+        fma_str = "vno " + this.aircraft.get_Vno();
+        drawDMode(g2,4,3,fma_str);   
+        fma_str = "vle " + this.aircraft.get_Vle();
+        drawDMode(g2,4,4,fma_str);
+        fma_str = "vfe " + this.aircraft.get_Vfe();
+        drawDMode(g2,4,5,fma_str);
+         
         
         // AP Engaged
         String ap_str = "";
@@ -582,126 +596,18 @@ public class FMA_A320 extends PFDSubcomponent {
         }
         
         
-        
-        if ( this.avionics.autothrottle_on() ) {
-            fma_str = "A/THR";
-            draw1Mode(g2, 4, 2, fma_str, false, pfd_gc.pfd_markings_color);
-        } else if ( this.avionics.autothrottle_enabled() ) {
-            fma_str = "A/THR";
-            draw1Mode(g2, 4, 2, fma_str, false, pfd_gc.pfd_armed_color);
-        }
+        // col 0, raw 3
+        // Presel speed : show if show if AirbusFBW/FMATHRWarning = 0 and com/peteraircraft/airbus/PreSelSPD_on = 1
+        // MACH:SEL .00 show if AirbusFBW/FMATHRWarning = 0 and sim/cockpit2/autopilot/airspeed_is_mach =1 and ap_phase = 2
+        // value is AirbusFBW/PreselMach
 
-        if ( this.avionics.autopilot_mode() > 0 ) {
+        // SPEED SEL 000 show if AirbusFBW/FMATHRWarning = 0 and sim/cockpit2/autopilot/airspeed_is_mach =0 and ap_phase = 1 or 2
+        // ap_phase = 1 value is AirbusFBW/Presel_CLB
+        // ap_phase = 2 value is AirbusFBW/Presel_CRZ            
 
-            // Lateral
-
-            boolean hdg_sel_on = this.avionics.ap_hdg_sel_on();
-            boolean vorloc_on = this.avionics.ap_vorloc_on();
-            boolean bc_on = this.avionics.ap_bc_on();
-            boolean lnav_on = this.avionics.ap_lnav_on();
-            boolean ltoga_on = this.avionics.ap_ltoga_on();
-            boolean roll_on = this.avionics.ap_roll_on();
-
-            if ( hdg_sel_on || vorloc_on || bc_on || lnav_on || ltoga_on || roll_on ) {
-                if ( hdg_sel_on ) {
-                    fma_str = "HDG SEL";
-                } else if ( vorloc_on ) {
-                    fma_str = "VOR/LOC";
-                } else if ( bc_on ) {
-                    fma_str = "B/C";
-                } else if ( lnav_on ) {
-                    fma_str = "LNAV";
-                } else if ( ltoga_on ) {
-                    fma_str = "TO/GA";
-                } else /* if ( roll_on ) */ {
-                    fma_str = "WLV";
-                }
-                draw1Mode(g2, 2, 0, fma_str, false, pfd_gc.pfd_markings_color);
-            }
-
-            boolean vorloc_arm = this.avionics.ap_vorloc_arm();
-            boolean bc_arm = this.avionics.ap_bc_arm();
-            boolean lnav_arm = this.avionics.ap_lnav_arm();
-            boolean ltoga_arm = this.avionics.ap_ltoga_arm(); // huh?
-
-            if ( vorloc_arm || bc_arm || lnav_arm || ltoga_arm ) {
-                if ( vorloc_arm ) {
-                    fma_str = "VOR/LOC";
-                } else if ( bc_arm ) {
-                    fma_str = "B/C";
-                } else if ( lnav_arm ) {
-                    fma_str = "LNAV";
-                } else /* if ( ltoga_arm ) */ {
-                    fma_str = "TO/GA";
-                }
-                draw1Mode(g2, 2, 1, fma_str, false,  pfd_gc.pfd_armed_color);
-            }
-
-            // Vertical
-
-            boolean alt_hold_on = this.avionics.ap_alt_hold_on();
-            boolean vs_on = this.avionics.ap_vs_on();
-            boolean gs_on = this.avionics.ap_gs_on();
-            boolean vnav_on = this.avionics.ap_vnav_on();
-            boolean vtoga_on = this.avionics.ap_vtoga_on();
-            boolean flch_on = this.avionics.ap_flch_on();
-            boolean pitch_on = this.avionics.ap_pitch_on();
-
-            if ( alt_hold_on || vs_on || gs_on || vnav_on || vtoga_on || flch_on || pitch_on ) {
-                if ( vnav_on )  {
-                    fma_str = "VNAV PTH";
-                } else if ( alt_hold_on ) {
-                    fma_str = "ALT HOLD";
-                } else if ( vs_on ) {
-                    fma_str = "V/S";
-                } else if ( gs_on ) {
-                    fma_str = "G/S";
-                } else if ( vtoga_on ) {
-                    fma_str = "TO/GA";
-                } else if ( flch_on ) {
-                    fma_str = "MCP SPD";
-                } else /* if ( pitch_on ) */ {
-                    fma_str = "PTCH";
-                }
-                draw1Mode(g2, 1, 0, fma_str, false, pfd_gc.pfd_active_color);
-            }
-
-            boolean alt_hold_arm = this.avionics.ap_alt_hold_arm();
-            boolean vs_arm = this.avionics.ap_vs_arm();
-            boolean gs_arm = this.avionics.ap_gs_arm();
-            boolean vnav_arm = this.avionics.ap_vnav_arm();
-            boolean vtoga_arm = this.avionics.ap_vtoga_arm();
-
-            if ( alt_hold_arm || vs_arm || gs_arm || vnav_arm || vtoga_arm ) {
-                if ( vnav_arm ) {
-                    fma_str = "VNAV PTH";
-                } else if ( alt_hold_arm ) {
-                    fma_str = "ALT HOLD";
-                } else if ( vs_arm ) {
-                    fma_str = "V/S";
-                } else if ( gs_arm ) {
-                    fma_str = "G/S";
-                } else /* if ( vtoga_arm ) */ {
-                    fma_str = "TO/GA";
-                }
-                draw1Mode(g2, 1, 1, fma_str, false, pfd_gc.pfd_armed_color);
-            }
-            
-            // col 0, raw 3
-            // Presel speed : show if show if AirbusFBW/FMATHRWarning = 0 and com/peteraircraft/airbus/PreSelSPD_on = 1
-            // MACH:SEL .00 show if AirbusFBW/FMATHRWarning = 0 and sim/cockpit2/autopilot/airspeed_is_mach =1 and ap_phase = 2
-            // value is AirbusFBW/PreselMach
-
-            // SPEED SEL 000 show if AirbusFBW/FMATHRWarning = 0 and sim/cockpit2/autopilot/airspeed_is_mach =0 and ap_phase = 1 or 2
-            // ap_phase = 1 value is AirbusFBW/Presel_CLB
-            // ap_phase = 2 value is AirbusFBW/Presel_CRZ            
-
-            // if (NPA_NO_POINTS==2 and/or NPAValid == 1) and ap_vertical_mode == 8
-            // Column 3, raw 0 : F-APP
-            // Column 3, raw 1 : +RAW
-            
-
-        }
+        // if (NPA_NO_POINTS==2 and/or NPAValid == 1) and ap_vertical_mode == 8
+        // Column 3, raw 0 : F-APP
+        // Column 3, raw 1 : +RAW      
         
     }
 

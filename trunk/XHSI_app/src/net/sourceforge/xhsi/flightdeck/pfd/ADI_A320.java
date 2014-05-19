@@ -709,19 +709,12 @@ public class ADI_A320 extends PFDSubcomponent {
 
 		if ( this.avionics.outer_marker() || this.avionics.middle_marker() || this.avionics.inner_marker() ) {
 
-			int m_r = pfd_gc.adi_size_right*2/16;
-			int m_x;
-			int m_y;
-			if ( this.preferences.get_draw_fullwidth_horizon() ) {
-				m_x = pfd_gc.adi_cx - pfd_gc.adi_size_left;
-				m_y = pfd_gc.adi_cy + pfd_gc.adi_size_up;
-			} else {
-				m_x = pfd_gc.adi_cx + pfd_gc.adi_size_right - pfd_gc.adi_size_right*1/16 - 2*m_r;
-				m_y = pfd_gc.adi_cy + pfd_gc.adi_size_up + pfd_gc.adi_size_right*1/16;
-			}
+			//int m_r = pfd_gc.adi_size_right*2/16;
+			int m_x = pfd_gc.adi_cx + pfd_gc.adi_size_right;
+			int m_y = pfd_gc.adi_cy + pfd_gc.adi_size_down; // - pfd_gc.line_height_xl/2
 
-			g2.setColor(pfd_gc.background_color);
-			g2.fillOval(m_x, m_y, 2*m_r, 2*m_r);
+			//g2.setColor(pfd_gc.background_color);
+			//g2.fillOval(m_x, m_y, 2*m_r, 2*m_r);
 
 			String mstr = "";
 			if ( this.avionics.outer_marker() ) {
@@ -735,13 +728,8 @@ public class ADI_A320 extends PFDSubcomponent {
 				mstr = "IM";
 			}
 
-			// Stroke original_stroke = g2.getStroke();
-			// g2.setStroke(new BasicStroke(4.0f * pfd_gc.grow_scaling_factor));
-			// g2.drawOval(m_x, m_y, 2*m_r, 2*m_r);
-			// g2.setStroke(original_stroke);
-
-			g2.setFont(pfd_gc.font_m);
-			g2.drawString(mstr, m_x + m_r - pfd_gc.get_text_width(g2, pfd_gc.font_m, mstr)/2, m_y + m_r + pfd_gc.line_height_m/2 - 2);
+			g2.setFont(pfd_gc.font_xl);
+			g2.drawString(mstr, m_x - pfd_gc.get_text_width(g2, pfd_gc.font_xl, mstr), m_y  );
 
 		}
 

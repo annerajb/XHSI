@@ -573,6 +573,7 @@ public interface Avionics {
     public float qpac_ils_crs();
     public float qpac_ils_freq();
     public String qpac_ils_id();
+    public float qpac_ils_dme();
     
     // FD
     /**

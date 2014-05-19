@@ -232,10 +232,10 @@ public class ILS_A320 extends PFDSubcomponent {
         	cdi_value = this.avionics.qpac_loc_val();
         	obs = Math.round(this.avionics.qpac_ils_crs());
         	crs = Math.round(this.avionics.qpac_ils_crs()); 
-        	dme = 0;
+        	dme = this.avionics.qpac_ils_dme();
         	nav_id = this.avionics.qpac_ils_id();
         	nav_type = "ILS 3";
-        	freq=19900;
+        	freq=this.avionics.qpac_ils_freq();
         }
 
 //mismatch = false;

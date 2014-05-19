@@ -1126,9 +1126,9 @@ public class XPlaneAvionics implements Avionics, Observer {
     public boolean qpac_baro_hide(){
     	int qpac_fcu_baro = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FCU_BARO));
     	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ))  
-    		return (qpac_fcu_baro & 0x10) > 0 ? true : false;
+    		return (qpac_fcu_baro & 0x10) > 0 ? false : true;
     	else 
-    		return (qpac_fcu_baro & 0x01) > 0 ? true : false;	
+    		return (qpac_fcu_baro & 0x01) > 0 ? false : true;	
     }
     
     // Auto-Thrust
@@ -1195,6 +1195,10 @@ public class XPlaneAvionics implements Avionics, Observer {
     	return sim_data.get_sim_string(XPlaneSimDataRepository.QPAC_ILS_ID);
     }
     
+    public float qpac_ils_dme(){
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ILS_DME);
+    }
+    
     // FD
     public boolean qpac_fd1() {
     	// return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD1) > 0 ? true : false;
@@ -1241,13 +1245,13 @@ public class XPlaneAvionics implements Avionics, Observer {
     }    
     
     public int qpac_vs() {
-        return Math.round(this.aircraft.airspeed_ind() + sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_VS) - 41.7f);
+        return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_VS));
     }    
     public int qpac_vf() {
-        return Math.round(this.aircraft.airspeed_ind() + sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_VF) - 41.7f);
+        return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_VF));
     }    
     public int qpac_v_green_dot() {
-        return Math.round(this.aircraft.airspeed_ind() + sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_V_GREEN_DOT) - 41.7f);
+        return Math.round( sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_V_GREEN_DOT));
     }    
     public int qpac_alpha_prot() {
         return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ALPHA_PROT));
