@@ -192,6 +192,10 @@ public class SpeedTape_A320 extends PFDSubcomponent {
             // landing gear extended
             vmax = Math.min(vmax, this.aircraft.get_Vle());
         }
+        if ( this.avionics.is_qpac() && (this.avionics.qpac_vmo()>100)) {
+        	// QPAC VMO
+        	vmax = Math.min(vmax, this.avionics.qpac_vmo());
+        }
         int red_max_y = pfd_gc.adi_cy - Math.round( (vmax - ias) * pfd_gc.tape_height / 80.0f );
         if ( red_max_y > pfd_gc.tape_top ) {
             // draw a thick red dashed line *from* red_max_y *to* the top
@@ -201,6 +205,8 @@ public class SpeedTape_A320 extends PFDSubcomponent {
             g2.setStroke(new BasicStroke(2.0f * halfstroke, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, red_dashes, 0.0f));
             g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + halfstroke + 1, red_max_y, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + halfstroke + 1, pfd_gc.tape_top);
             g2.setStroke(original_stroke);
+            g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + halfstroke * 2, red_max_y, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + halfstroke * 2, pfd_gc.tape_top);
+
         } else {
             // we don't draw, but set the top for the amber line
             red_max_y = pfd_gc.tape_top;
@@ -208,7 +214,7 @@ public class SpeedTape_A320 extends PFDSubcomponent {
 
         // amber max
         float vno = this.aircraft.get_Vno();
-        if ( vno < vmax ) {
+        if ( (vno < vmax) && (vno > 0) ) {
             int amber_max_y = pfd_gc.adi_cy - Math.round( (vno - ias) * pfd_gc.tape_height / 80.0f );
             if ( amber_max_y > pfd_gc.tape_top ) {
                 // draw an amber line between red_max_y and amber_max_y
@@ -221,6 +227,15 @@ public class SpeedTape_A320 extends PFDSubcomponent {
 
         // red min and amber min only when airborne
         float vs_est = this.aircraft.get_Vso() + ( 1.0f - this.aircraft.get_flap_position() ) * ( this.aircraft.get_Vs() - this.aircraft.get_Vso() );
+        // VLS Minimum select speed, 1.25 * stalling speed
+        float vls = vs_est*1.1f;
+        float v_aprot = vls;
+        if ( this.avionics.is_qpac() ) { 
+        	if ( this.avionics.qpac_vls() > 0 ) vls=this.avionics.qpac_vls();
+        	if ( this.avionics.qpac_alpha_max() > 0 ) vs_est=this.avionics.qpac_alpha_max();
+        	if ( this.avionics.qpac_alpha_prot() > 0 ) v_aprot=this.avionics.qpac_alpha_prot();
+        }
+
         if ( ! this.aircraft.on_ground() ) {
 
             // red min
@@ -231,22 +246,41 @@ public class SpeedTape_A320 extends PFDSubcomponent {
             if ( red_min_y < pfd_gc.tape_top + pfd_gc.tape_height ) {
                 // draw a thick red dashed line *from* red_min_y *to* zero
                 int red_zero_y = pfd_gc.adi_cy - Math.round( (0.0f - ias) * pfd_gc.tape_height / 80.0f );
-                g2.setColor(pfd_gc.warning_color);
+                g2.setColor(pfd_gc.pfd_alarm_color);
                 g2.setStroke(new BasicStroke(2.0f * halfstroke));
-                float red_dashes[] = { halfstroke*2.0f, halfstroke*2.0f };
-                g2.setStroke(new BasicStroke(2.0f * halfstroke, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, red_dashes, 0.0f));
+                //float red_dashes[] = { halfstroke*2.0f, halfstroke*2.0f };
+                //g2.setStroke(new BasicStroke(2.0f * halfstroke, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, red_dashes, 0.0f));
                 g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + halfstroke + 1, red_min_y, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + halfstroke + 1, red_zero_y);
                 g2.setStroke(original_stroke);
             } else {
                 // we don't draw, but set the top for the amber line
                 red_min_y = pfd_gc.tape_top + pfd_gc.tape_height;
             }
-            // Amber min is VLS Minimum select speed, 1.25 * stalling speed
-            int amber_min_y = pfd_gc.adi_cy - Math.round( (vs_est*1.1f - ias) * pfd_gc.tape_height / 80.0f );
+            
+            // Alpha prot
+            int a_dashed_min_y = pfd_gc.adi_cy - Math.round( (v_aprot - ias) * pfd_gc.tape_height / 80.0f );
+            if ( a_dashed_min_y < pfd_gc.tape_top + pfd_gc.tape_height ) {
+                // draw a thick amber dashed line *from* red_min_y *to* a_dashed_min_y
+                // int red_zero_y = pfd_gc.adi_cy - Math.round( (0.0f - ias) * pfd_gc.tape_height / 80.0f );
+                g2.setColor(pfd_gc.pfd_caution_color);
+                g2.setStroke(new BasicStroke(2.0f * halfstroke));
+                float red_dashes[] = { halfstroke*2.0f, halfstroke*2.0f };
+                g2.setStroke(new BasicStroke(2.0f * halfstroke, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, red_dashes, 0.0f));
+//                g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + halfstroke + 1, red_min_y, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + halfstroke + 1, a_dashed_min_y);
+                g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + halfstroke + 1, a_dashed_min_y, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + halfstroke + 1, red_min_y);
+                g2.setStroke(original_stroke);
+                g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + halfstroke * 2, red_min_y, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + halfstroke * 2, a_dashed_min_y);
+            } else {
+                // we don't draw, but set the top for the amber line
+            	a_dashed_min_y = pfd_gc.tape_top + pfd_gc.tape_height;
+            }
+            
+            // Amber min lien is VLS Minimum select speed, 1.25 * stalling speed
+            int amber_min_y = pfd_gc.adi_cy - Math.round( (vls - ias) * pfd_gc.tape_height / 80.0f );
             if ( amber_min_y < pfd_gc.tape_top + pfd_gc.tape_height ) {
                 // draw an amber line between red_min_y and amber_min_y
-                g2.setColor(pfd_gc.caution_color);
-                g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + halfstroke + 2, red_min_y, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + halfstroke + 2, amber_min_y);
+                g2.setColor(pfd_gc.pfd_caution_color);
+                g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + halfstroke + 2, a_dashed_min_y, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + halfstroke + 2, amber_min_y);
                 g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + 1, amber_min_y, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8 + halfstroke + 1, amber_min_y);
             }
 
@@ -431,48 +465,57 @@ public class SpeedTape_A320 extends PFDSubcomponent {
 
     
     private void drawVspeed(Graphics2D g2, float v, float ias, String v_str) {
-        
-        int v_y = pfd_gc.adi_cy - Math.round( (v - ias) * pfd_gc.tape_height / 80.0f );
+        if (v > 0) {
+        	int v_y = pfd_gc.adi_cy - Math.round( (v - ias) * pfd_gc.tape_height / 80.0f );
 
-        g2.setColor(pfd_gc.pfd_active_color);
-        g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8, v_y);
-        g2.setFont(pfd_gc.font_l);
-        g2.drawString(v_str, pfd_gc.speedtape_left + pfd_gc.tape_width * 9/10, v_y + pfd_gc.line_height_l/2);       
+        	g2.setColor(pfd_gc.pfd_active_color);
+        	g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8, v_y);
+        	g2.setFont(pfd_gc.font_l);
+        	g2.drawString(v_str, pfd_gc.speedtape_left + pfd_gc.tape_width * 9/10, v_y + pfd_gc.line_height_l/2); 
+        }
     }
 
     private void drawV1speed(Graphics2D g2, float v, float ias) {   
         int v_y = pfd_gc.adi_cy - Math.round( (v - ias) * pfd_gc.tape_height / 80.0f );
         String v1_str = "1";
-        g2.setColor(pfd_gc.pfd_armed_color);
-        if ( v_y > pfd_gc.tape_top) {
-        	g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8, v_y);
-        	g2.setFont(pfd_gc.font_l);
-        	g2.drawString(v1_str, pfd_gc.speedtape_left + pfd_gc.tape_width + 2, v_y + pfd_gc.line_height_l/2);
-        } else {
-        	v1_str = "" + Math.round(v);
-            g2.setFont(pfd_gc.font_l);
-            g2.drawString(v1_str, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8, pfd_gc.tape_top + pfd_gc.line_height_l*6/5);       	
+        if (v>0) {
+        	g2.setColor(pfd_gc.pfd_armed_color);
+        	if ( v_y > pfd_gc.tape_top) {
+        		g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8, v_y);
+        		g2.setFont(pfd_gc.font_l);
+        		g2.drawString(v1_str, pfd_gc.speedtape_left + pfd_gc.tape_width + 2, v_y + pfd_gc.line_height_l/2);
+        	} else {
+        		v1_str = "" + Math.round(v);
+        		g2.setFont(pfd_gc.font_l);
+        		g2.drawString(v1_str, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8, pfd_gc.tape_top + pfd_gc.line_height_l*6/5);       	
+        	}
         }
     }
 
     
     private void drawGDotSpeed(Graphics2D g2, float v, float ias) {
         int v_y = pfd_gc.adi_cy - Math.round( (v - ias) * pfd_gc.tape_height / 80.0f );
-        g2.setColor(pfd_gc.pfd_active_color);
-        g2.drawArc(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y, pfd_gc.tape_width/8, pfd_gc.tape_width/8, 0, 360);
+        if (v>0) {
+        	g2.setColor(pfd_gc.pfd_active_color);
+        	g2.drawArc(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y, pfd_gc.tape_width/8, pfd_gc.tape_width/8, 0, 360);
+        }
     }
     
     private void drawVRSpeed(Graphics2D g2, float v, float ias) {
         int v_y = pfd_gc.adi_cy - Math.round( (v - ias) * pfd_gc.tape_height / 80.0f );
-        g2.setColor(Color.cyan);
-        g2.drawArc(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y, pfd_gc.tape_width/8, pfd_gc.tape_width/8, 0, 360);
+        if (v>0) {
+        	g2.setColor(pfd_gc.pfd_selected_color);
+        	g2.drawArc(pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y, pfd_gc.tape_width/8, pfd_gc.tape_width/8, 0, 360);
+        }
     }
     
     private void drawFlapsLimit(Graphics2D g2, float v, float ias) {
         int v_y = pfd_gc.adi_cy - Math.round( (v - ias) * pfd_gc.tape_height / 80.0f );
-        g2.setColor(pfd_gc.pfd_caution_color);
-        g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*5/8, v_y-2, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y-2);
-        g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*5/8, v_y+2, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y+2);      
+        if (v>0) {
+        	g2.setColor(pfd_gc.pfd_caution_color);
+        	g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*5/8, v_y-2, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y-2);
+        	g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*5/8, v_y+2, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y+2);  
+        }
     }
     
     

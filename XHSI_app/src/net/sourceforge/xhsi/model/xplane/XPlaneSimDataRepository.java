@@ -436,6 +436,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_ILS_CRS=1030;
     public static final int QPAC_ILS_FREQ=1031;
     public static final int QPAC_ILS_ID=11032;
+    public static final int QPAC_ILS_DME=1048;
+    
     // FD
     public static final int QPAC_FD1_VER_BAR=1033;
     public static final int QPAC_FD1_HOR_BAR=1034;
