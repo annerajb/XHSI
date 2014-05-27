@@ -27,6 +27,7 @@ extern XPLMDataRef qpac_ap_lateral_armed;
 extern XPLMDataRef qpac_npa_valid;
 extern XPLMDataRef qpac_npa_no_points;
 extern XPLMDataRef qpac_appr_illuminated;
+extern XPLMDataRef qpac_loc_illuminated;
 extern XPLMDataRef qpac_appr_type;
 extern XPLMDataRef qpac_appr_mda;
 extern XPLMDataRef qpac_alt_is_cstr;
@@ -65,8 +66,10 @@ extern XPLMDataRef qpac_fd1;
 extern XPLMDataRef qpac_fd2;
 extern XPLMDataRef qpac_fd1_ver_bar;
 extern XPLMDataRef qpac_fd1_hor_bar;
+extern XPLMDataRef qpac_fd1_yaw_bar;
 extern XPLMDataRef qpac_fd2_ver_bar;
 extern XPLMDataRef qpac_fd2_hor_bar;
+extern XPLMDataRef qpac_fd2_yaw_bar;
 // Baro
 extern XPLMDataRef qpac_baro_std_capt;
 extern XPLMDataRef qpac_baro_unit_capt;

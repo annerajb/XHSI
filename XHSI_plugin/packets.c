@@ -806,6 +806,7 @@ int createCustomAvionicsPacket(void) {
 	char qpac_ils_char[12];
     int qpac_fcu_data;
     int qpac_fcu_baro;
+    int qpac_ap_appr;
     int qpac_ils;
 	int qpac_failures;
 	int pa_a320_failures;
@@ -1033,9 +1034,6 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_NPA_NO_POINTS);
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_npa_no_points));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_APPR_ILLUMINATED);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_appr_illuminated));
-        i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_APPR_TYPE);
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_appr_type));
         i++;
@@ -1080,18 +1078,25 @@ int createCustomAvionicsPacket(void) {
         		XPLMGetDatai(qpac_fcu_metric_alt) << 1 |
         		XPLMGetDatai(qpac_fcu_hdg_trk) ;
             qpac_fcu_baro =
-        			XPLMGetDatai(qpac_baro_std_fo) << 5 |
-        			XPLMGetDatai(qpac_baro_unit_fo) << 4 |
-        			XPLMGetDatai(qpac_baro_hide_fo) << 3 |
+        			XPLMGetDatai(qpac_baro_std_fo) << 6 |
+        			XPLMGetDatai(qpac_baro_unit_fo) << 5 |
+        			XPLMGetDatai(qpac_baro_hide_fo) << 4 |
         			XPLMGetDatai(qpac_baro_std_capt) << 2 |
         			XPLMGetDatai(qpac_baro_unit_capt) << 1 |
         			XPLMGetDatai(qpac_baro_hide_capt) ;
         }
+        qpac_ap_appr =
+        		XPLMGetDatai(qpac_loc_illuminated) << 1 |
+        		XPLMGetDatai(qpac_appr_illuminated) ;
+
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FCU);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fcu_data );
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FCU_BARO);
         sim_packet.sim_data_points[i].value = custom_htonf((float) qpac_fcu_baro);
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_AP_APPR);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) qpac_ap_appr);
         i++;
 
         // Auto-Thrust
@@ -1164,15 +1169,20 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_fd1_ver_bar));
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FD1_HOR_BAR);
-        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_fd2_hor_bar));
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_fd1_hor_bar));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FD1_YAW_BAR);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_fd1_yaw_bar));
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FD2_VER_BAR);
-        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_fd1_ver_bar));
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_fd2_ver_bar));
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FD2_HOR_BAR);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_fd2_hor_bar));
         i++;
-
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FD2_YAW_BAR);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_fd2_yaw_bar));
+        i++;
 
         // V Speeds
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_V1_VALUE);
@@ -1204,6 +1214,22 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ALPHA_MAX);
         sim_packet.sim_data_points[i].value = custom_htonf(qpac_ias_shift(XPLMGetDataf(qpac_alpha_max)));
         i++;
+
+        // EFIS
+        if (qpac_capt_efis_nd_mode) {
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_EFIS_ND_MODE_CAPT);
+            sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_capt_efis_nd_mode));
+            i++;
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_EFIS_ND_RANGE_CAPT);
+            sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_capt_efis_nd_range));
+            i++;
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_EFIS_ND_MODE_FO);
+            sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_co_efis_nd_mode));
+            i++;
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_EFIS_ND_RANGE_FO);
+            sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_co_efis_nd_range));
+            i++;
+        }
 
         // Failures
         qpac_failures = 0xFFFF;
