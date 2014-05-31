@@ -639,6 +639,8 @@ public interface Avionics {
 
     public void set_trq_scale(int new_scale);
 
+    public void set_max_trq_override(float new_max_trq);
+
     public void set_fuel_units(int new_units);
 
     public void set_engine_type(int new_type);

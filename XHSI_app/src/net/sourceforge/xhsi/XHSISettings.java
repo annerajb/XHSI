@@ -142,6 +142,9 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final int FUEL_UNITS_USG = 2;
     public static final String ACTION_FUEL_UNITS_LTR = "Ltr";
     public static final int FUEL_UNITS_LTR = 3;
+
+    public static final String ACTION_MAX_TRQ_AUTO = "Auto";
+    public static final String ACTION_MAX_TRQ_SET = "Set ...";
     
 //    public static final String ACTION_ESTIMATE_FUEL_CAPACITY = "Estimate fuel capacity";
 //    public static final String ACTION_SET_FUEL_CAPACITY = "Set fuel capacity ...";
@@ -198,6 +201,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
     public int engine_type;
     public int trq_scale;
+    public float max_trq;
     public int fuel_units;
     
     public int xpdr = Avionics.XPDR_TA;
@@ -259,6 +263,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private DMEArcDialog dme2_radius_dialog;
     private HoldingDialog holding_dialog;
     private FixDialog fix_dialog;
+    private MaxTRQDialog max_trq_dialog;
     //private FuelDialog fuel_dialog;
 
     private JRadioButtonMenuItem radio_button_mfd_arpt;
@@ -276,6 +281,9 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JRadioButtonMenuItem radio_button_trq_scale_lbft;
     private JRadioButtonMenuItem radio_button_trq_scale_nm;
     private JRadioButtonMenuItem radio_button_trq_scale_percent;
+
+    private JRadioButtonMenuItem radiobutton_max_trq_auto;
+    private JRadioButtonMenuItem radiobutton_max_trq_set;
 
     private JRadioButtonMenuItem radio_button_fuel_units_kg;
     private JRadioButtonMenuItem radio_button_fuel_units_lbs;
@@ -300,6 +308,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.dme2_radius_dialog = new DMEArcDialog(xhsi_main_frame, 2);
         this.holding_dialog = new HoldingDialog(xhsi_main_frame);
         this.fix_dialog = new FixDialog(xhsi_main_frame);
+        this.max_trq_dialog = new MaxTRQDialog(xhsi_main_frame);
         //this.fuel_dialog = new FuelDialog(xhsi_main_frame);
 
     }
@@ -847,7 +856,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         xhsi_eicas_menu.addSeparator();
 
         // define the "TRQ scale" submenu
-        JMenu trq_scale_submenu = new JMenu("TRQ scale");
+        JMenu trq_scale_submenu = new JMenu("TRQ units");
 
         ButtonGroup trq_scale_group = new ButtonGroup();
 
@@ -882,9 +891,36 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // Add the TRQ scale submenu to the EICAS menu
         xhsi_eicas_menu.add(trq_scale_submenu);
         
+        // define the "Max TRQ" submenu
+        JMenu max_trq_submenu = new JMenu("Max TRQ");
+
+        ButtonGroup max_trq_group = new ButtonGroup();
+
+        // define the menu items, and add them to the "Fix" menu
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MAX_TRQ_AUTO);
+        radio_button_menu_item.setToolTipText("Get the value for max TRQ from X-Plane");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(true);
+        max_trq_submenu.add(radio_button_menu_item);
+        max_trq_group.add(radio_button_menu_item);
+        // keep a reference to the radiobutton to set or clear it in a non-standard way from FixDialog.java
+        radiobutton_max_trq_auto = radio_button_menu_item;
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MAX_TRQ_SET);
+        radio_button_menu_item.setToolTipText("Set the value for max TRQ");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
+        max_trq_submenu.add(radio_button_menu_item);
+        max_trq_group.add(radio_button_menu_item);
+        // keep a reference to the radiobutton to set or clear it in a non-standard way from FixDialog.java
+        radiobutton_max_trq_set = radio_button_menu_item;
+
+        // add the "Max TRQ" submenu to the "EICAS" menu
+        xhsi_eicas_menu.add(max_trq_submenu);
+        
         xhsi_eicas_menu.addSeparator();
 
-        // define the "TRQ scale" submenu
+        // define the "Fuel units" submenu
         JMenu fuel_units_submenu = new JMenu("Fuel units");
 
         ButtonGroup fuel_units_group = new ButtonGroup();
@@ -926,7 +962,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // keep a reference
         this.radio_button_fuel_units_ltr = radio_button_menu_item;
 
-        // Add the TRQ scale submenu to the EICAS menu
+        // Add the Fuel units submenu to the EICAS menu
         xhsi_eicas_menu.add(fuel_units_submenu);
         
         xhsi_eicas_menu.addSeparator();
@@ -1192,6 +1228,14 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             trq_scale = XHSISettings.TRQ_SCALE_PERCENT;
             this.avionics.set_trq_scale(trq_scale);
 
+        } else if (command.equals(XHSISettings.ACTION_MAX_TRQ_AUTO)) {
+            this.avionics.set_max_trq_override(0.0f);
+        } else if (command.equals(XHSISettings.ACTION_MAX_TRQ_SET)) {
+            // Set & show holding pattern
+            this.max_trq_dialog.setLocation(this.main_frame.getX()+this.main_frame.getWidth()/2-this.max_trq_dialog.getWidth()/2, this.main_frame.getY()+120);
+            this.max_trq_dialog.setVisible(true);
+            this.max_trq_dialog.pack();
+
         } else if (command.equals(XHSISettings.ACTION_FUEL_UNITS_KG)) {
             fuel_units = XHSISettings.FUEL_UNITS_KG;
             this.avionics.set_fuel_units(fuel_units);
@@ -1363,10 +1407,17 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_trq_scale_lbft.setSelected( new_trq_scale == XHSISettings.TRQ_SCALE_LBFT );
         this.radio_button_trq_scale_nm.setSelected( new_trq_scale == XHSISettings.TRQ_SCALE_NM );
         this.radio_button_trq_scale_percent.setSelected( new_trq_scale == XHSISettings.TRQ_SCALE_PERCENT );
-        switchable = prefs.get_preference(XHSIPreferences.PREF_TRQ_SCALE).equals(XHSIPreferences.TRQ_SCALE_SWITCHABLE);
-        this.radio_button_trq_scale_lbft.setEnabled( ( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ ) && switchable );
-        this.radio_button_trq_scale_nm.setEnabled( ( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ ) && switchable );
-        this.radio_button_trq_scale_percent.setEnabled( ( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ ) && switchable );
+        switchable = ( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ ) && prefs.get_preference(XHSIPreferences.PREF_TRQ_SCALE).equals(XHSIPreferences.TRQ_SCALE_SWITCHABLE);
+        this.radio_button_trq_scale_lbft.setEnabled( switchable );
+        this.radio_button_trq_scale_nm.setEnabled( switchable );
+        this.radio_button_trq_scale_percent.setEnabled( switchable );
+        
+        boolean new_trq_max_override = ( avionics.get_aircraft().get_max_TRQ_override() != 0.0f );
+        this.radiobutton_max_trq_auto.setSelected( ! new_trq_max_override );
+        this.radiobutton_max_trq_set.setSelected( new_trq_max_override );
+        switchable = ( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ );
+        this.radiobutton_max_trq_auto.setEnabled( switchable );
+        this.radiobutton_max_trq_set.setEnabled( switchable );
         
         int new_fuel_units = avionics.get_fuel_units();
         this.radio_button_fuel_units_kg.setSelected( new_fuel_units == XHSISettings.FUEL_UNITS_KG );

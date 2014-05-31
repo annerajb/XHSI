@@ -1498,6 +1498,13 @@ public class XPlaneAvionics implements Avionics, Observer {
         udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EICAS_TRQ_SCALE, (float) new_scale );
 
     }
+    
+    
+    public void set_max_trq_override(float new_max_trq) {
+        
+        udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EICAS_OVERRIDE_TRQ_MAX, new_max_trq );
+        
+    }
 
 
     public void set_fuel_units(int new_units) {
