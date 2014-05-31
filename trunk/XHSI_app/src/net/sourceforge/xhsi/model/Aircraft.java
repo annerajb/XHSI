@@ -629,6 +629,11 @@ public interface Aircraft {
      * @return float - Maximum _available_ engine TRQ
      */
     public float get_max_TRQ_LbFt();
+
+    /**
+     * @return float - The value to override the max TRQ
+     */
+    public float get_max_TRQ_override();
     
     /**
      * @return float - Engine TRQ

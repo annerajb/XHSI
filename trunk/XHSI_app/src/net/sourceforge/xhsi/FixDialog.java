@@ -72,12 +72,12 @@ public class FixDialog extends JDialog implements ActionListener {
         content_pane.add(create_fix_panel(), BorderLayout.CENTER);
         content_pane.add(create_dialog_buttons_panel(), BorderLayout.SOUTH);
 
-        init_holding();
+        init_fix_dialog();
         pack();
     }
 
 
-    private void init_holding() {
+    private void init_fix_dialog() {
 
         this.fix.setText(xhsi_settings.cdu_fix);
         this.radial.setText("" + xhsi_settings.cdu_fix_radial);
@@ -177,7 +177,7 @@ public class FixDialog extends JDialog implements ActionListener {
 
     private void show_fix() {
 
-        if (fields_valid() == false) {
+        if ( ! fields_valid() ) {
             JOptionPane.showMessageDialog(this,
                     this.field_validation_errors,
                     "Invalid fix",

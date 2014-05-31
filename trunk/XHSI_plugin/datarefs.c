@@ -1725,6 +1725,10 @@ void writeDataRef(int id, float value) {
             XPLMSetDatai(trq_scale , (int)value);
             break;
 
+		case XHSI_EICAS_OVERRIDE_TRQ_MAX :
+			XPLMSetDataf(override_trq_max , value);
+			break;
+
         case XHSI_FUEL_UNITS :
 			XPLMSetDatai(fuel_units , (int)value);
             break;

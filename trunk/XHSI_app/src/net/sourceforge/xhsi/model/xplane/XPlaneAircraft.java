@@ -617,6 +617,10 @@ public class XPlaneAircraft implements Aircraft {
         else return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_CONTROLS_ACF_TRQ_MAX_ENG) / 1.35581794884f;
     }
 
+    public float get_max_TRQ_override() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EICAS_OVERRIDE_TRQ_MAX);
+    }
+
     public float get_ITT_percent(int engine) {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_ENGINE_ENGN_ITT_ + engine) * 100.0f;
     }
