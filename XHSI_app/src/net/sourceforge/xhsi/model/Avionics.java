@@ -543,7 +543,8 @@ public interface Avionics {
     
     public int qpac_npa_valid();
     public int qpac_npa_no_points();
-    public int qpac_appr_illuminated();
+    public boolean qpac_loc_illuminated();
+    public boolean qpac_appr_illuminated();
     public int qpac_appr_type();
     public float qpac_appr_mda();
     public boolean qpac_alt_is_cstr();
@@ -581,10 +582,16 @@ public interface Avionics {
      */  
     public boolean qpac_fd1();
     public boolean qpac_fd2();
+    public boolean qpac_fd_on();
     public float qpac_fd1_ver_bar();
     public float qpac_fd1_hor_bar();
+    public float qpac_fd1_yaw_bar();
     public float qpac_fd2_ver_bar();
     public float qpac_fd2_hor_bar();
+    public float qpac_fd2_yaw_bar();
+    public float qpac_fd_ver_bar();
+    public float qpac_fd_hor_bar();
+    public float qpac_fd_yaw_bar();
     
     // Baro
     public boolean qpac_baro_std();

@@ -312,7 +312,10 @@ public class AltiTape_A320 extends PFDSubcomponent {
             if (qnh_is_hpa) { 
             	qnh_str = "" + qnh; 
             } else {
-            	qnh_str = "" + this.aircraft.altimeter_in_hg();
+            	DecimalFormatSymbols dotSymbols = new DecimalFormatSymbols();
+            	dotSymbols.setDecimalSeparator('.');
+            	DecimalFormat qnh_form = new DecimalFormat("00.00", dotSymbols);            	
+            	qnh_str = "" + qnh_form.format(this.aircraft.altimeter_in_hg());
             }
         }
         
@@ -411,7 +414,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
         // AP Alt metric display
         if (display_metric) {        	
         	String metric_ap_str = Math.round(ap_alt / 328.08f)*100 + " M";
-        	g2.drawString(metric_ap_str, pfd_gc.altitape_left - pfd_gc.digit_width_l - pfd_gc.get_text_width(g2, pfd_gc.font_l, metric_ap_str), pfd_gc.tape_top - pfd_gc.tape_width/12);
+        	g2.drawString(metric_ap_str, pfd_gc.altitape_left - pfd_gc.digit_width_l*3 - pfd_gc.get_text_width(g2, pfd_gc.font_l, metric_ap_str), pfd_gc.tape_top - pfd_gc.tape_width/12);
         	String metric_alt_str = ""+Math.round(alt / 32.808f)*10;
         	g2.setFont(pfd_gc.font_xl);
         	g2.setColor(pfd_gc.pfd_active_color);

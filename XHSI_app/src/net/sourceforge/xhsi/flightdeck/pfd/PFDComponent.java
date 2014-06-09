@@ -60,7 +60,7 @@ public class PFDComponent extends Component implements Observer, PreferencesObse
 
 
     // subcomponents --------------------------------------------------------
-    ArrayList subcomponents = new ArrayList();
+    ArrayList<PFDSubcomponent> subcomponents = new ArrayList<PFDSubcomponent>();
     long[] subcomponent_paint_times = new long[15];
     long total_paint_times = 0;
     long nb_of_paints = 0;
