@@ -498,8 +498,8 @@ public class ADI_A320 extends PFDSubcomponent {
 		// Flight Director (VS/HDG mode)
 		boolean fd_on = this.avionics.autopilot_mode() >= 1 ? true : false;	
 		if ( this.avionics.is_qpac()) { 
-			fd_on = this.avionics.qpac_fd1();
-			if (this.avionics.qpac_fd1_hor_bar() == -1.0f) fd_on = false;
+			fd_on = this.avionics.qpac_fd_on();
+			// if (this.avionics.qpac_fd1_hor_bar() == -1.0f) fd_on = false;
 			if (this.avionics.qpac_fcu_hdg_trk()) fd_on = false;
 		}
 		// if ( this.aircraft.on_ground() ) { fd_on = false; }
@@ -507,12 +507,14 @@ public class ADI_A320 extends PFDSubcomponent {
 			int fd_y;
 			int fd_x = cx + (int)(down * (-bank+this.avionics.fd_roll()) / scale) / 3; // divide by 3 to limit deflection
 			int fd_bar = left * 12 / 24;
+			int fd_yaw = -10000;
 			
 			if ( this.avionics.is_x737() ) {
 				fd_y = cy + (int)(down * (-this.avionics.fd_pitch()) / scale);
 			} else if ( this.avionics.is_qpac() ) {
-				fd_y = cy - (int)(fd_bar * (this.avionics.qpac_fd1_hor_bar() - 1.0f ) );
-				fd_x = cx + (int)(fd_bar * (this.avionics.qpac_fd1_ver_bar() - 1.0f ) );				
+				fd_y = cy - (int)(fd_bar * (this.avionics.qpac_fd_hor_bar() - 1.0f ) );
+				fd_x = cx + (int)(fd_bar * (this.avionics.qpac_fd_ver_bar() - 1.0f ) );
+				fd_yaw = cx + (int)(fd_bar * (this.avionics.qpac_fd_yaw_bar() * 2.0f) );
 			} else {
 				fd_y = cy + (int)(down * (pitch-this.avionics.fd_pitch()) / scale);
 			}
@@ -522,9 +524,13 @@ public class ADI_A320 extends PFDSubcomponent {
 			original_stroke = g2.getStroke();
 			g2.setStroke(new BasicStroke(3.0f * pfd_gc.scaling_factor));
 			// horizontal
-			g2.drawLine(cx - fd_bar, fd_y, cx + fd_bar, fd_y);
+			if (fd_y < (cy+left)) g2.drawLine(cx - fd_bar, fd_y, cx + fd_bar, fd_y);
 			// vertical
-			g2.drawLine(fd_x, cy - fd_bar, fd_x, cy + fd_bar);
+			if (fd_x > (cx-left)) g2.drawLine(fd_x, cy - fd_bar, fd_x, cy + fd_bar);
+			if (fd_yaw > (cx-left)) {
+				g2.setStroke(new BasicStroke(8.0f * pfd_gc.scaling_factor));
+				g2.drawLine(fd_yaw, cy, fd_yaw, cy + fd_bar);
+			}
 			g2.setStroke(original_stroke);
 		}
 

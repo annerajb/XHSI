@@ -290,6 +290,8 @@ public class SpeedTape_A320 extends PFDSubcomponent {
         // V1 is labelled "1" in CYAN with a mark
         // VR is green dot speed
         // V2 is target speed
+        boolean display_v1 = this.aircraft.on_ground() ||
+                ( ( this.aircraft.agl_m() < 100.0f /* 30ft */ ) && ( this.aircraft.vvi() > 250.0f ) );
         boolean take_off = this.aircraft.on_ground() ||
                 ( ( this.aircraft.agl_m() < 762.0f /* 2500ft */ ) && ( this.aircraft.vvi() > 250.0f ) );
         boolean landing = ! this.aircraft.on_ground() &&
@@ -301,7 +303,7 @@ public class SpeedTape_A320 extends PFDSubcomponent {
 
             if ( take_off ) {
                 v1 = this.avionics.ufmc_v1();
-                if ( v1 > 0.0f ) drawV1speed(g2, v1, ias);
+                if ( display_v1 && (v1 > 0.0f) ) drawV1speed(g2, v1, ias);
                 float vr = this.avionics.ufmc_vr();
                 if ( vr > 0.0f ) drawVRSpeed(g2, vr, ias);
                 float v2 = this.avionics.ufmc_v2();
@@ -325,7 +327,7 @@ public class SpeedTape_A320 extends PFDSubcomponent {
             
             if ( this.avionics.cl30_refspds() == 1 ) {
             	v1 = (float) this.avionics.cl30_v1();
-                drawV1speed(g2, (float)this.avionics.cl30_v1(), ias);
+                if (display_v1) drawV1speed(g2, (float)this.avionics.cl30_v1(), ias);
                 drawVRSpeed(g2, (float)this.avionics.cl30_vr(), ias);
                 drawVspeed(g2, (float)this.avionics.cl30_v2(), ias, "V2");
                 
@@ -341,15 +343,17 @@ public class SpeedTape_A320 extends PFDSubcomponent {
             // with no QPAC integration, that would be the default
             if ( take_off ) {
                 v1 = (float) this.avionics.qpac_v1_value();
-                if ( v1 > 0.0f ) drawV1speed(g2, v1, ias);
+                if ( display_v1 && (v1 > 0.0f) ) drawV1speed(g2, v1, ias);
                 float vr = this.avionics.qpac_vr(); 
                 drawVRSpeed(g2, vr, ias);
                 
             }
+            /*
             if ( landing ) {
                 float vref = vs_est * 1.3f; // rough estimate
                 drawVspeed(g2, vref, ias, "REF");
             }
+            */
             
             drawVspeed(g2, this.avionics.qpac_vf() , ias, "F");
             drawVspeed(g2, this.avionics.qpac_vs() , ias, "S");
@@ -453,14 +457,6 @@ public class SpeedTape_A320 extends PFDSubcomponent {
             g2.drawString(mach_str, pfd_gc.speedtape_left + pfd_gc.tape_width*7/8 - pfd_gc.get_text_width(g2, pfd_gc.font_xxl, mach_str), pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.tape_width/8 + 2*pfd_gc.line_height_xl - 3);
         }
         
-        // Draw green dot
-        
-        // Draw flaps limits
-        
-        // Draw F Speed
-        
-        // Draw S Speed
-
     }
 
     
@@ -519,5 +515,4 @@ public class SpeedTape_A320 extends PFDSubcomponent {
     }
     
     
-
 }

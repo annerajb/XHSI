@@ -412,7 +412,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_AP_LATERAL_ARMED=1009;
     public static final int QPAC_NPA_VALID=1010;
     public static final int QPAC_NPA_NO_POINTS=1011;
-    public static final int QPAC_APPR_ILLUMINATED=1012;
+    public static final int QPAC_AP_APPR=1012;
     public static final int QPAC_APPR_TYPE=1013;
     public static final int QPAC_APPR_MDA=1014;
     public static final int QPAC_ALT_IS_CSTR=1015;
@@ -441,8 +441,10 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     // FD
     public static final int QPAC_FD1_VER_BAR=1033;
     public static final int QPAC_FD1_HOR_BAR=1034;
+    public static final int QPAC_FD1_YAW_BAR=1049;
     public static final int QPAC_FD2_VER_BAR=1035;
-    public static final int QPAC_FD2_HOR_BAR=1036;  
+    public static final int QPAC_FD2_HOR_BAR=1036;
+    public static final int QPAC_FD2_YAW_BAR=1050;
     // V Speeds
     public static final int QPAC_V1_VALUE=1037;
     public static final int QPAC_V1=1038;

@@ -1057,9 +1057,15 @@ public class XPlaneAvionics implements Avionics, Observer {
     	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_NPA_NO_POINTS));
     }
     
-    public int qpac_appr_illuminated() {
-    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_APPR_ILLUMINATED));
+    public boolean qpac_appr_illuminated() {
+    	int qpac_ap_appr_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_AP_APPR));
+    	return  (qpac_ap_appr_data  & 0x01) > 0 ? true : false;
     }
+    public boolean qpac_loc_illuminated() {
+    	int qpac_ap_appr_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_AP_APPR));
+    	return  (qpac_ap_appr_data  & 0x02) > 0 ? true : false;
+    }
+
     public int qpac_appr_type() {
     	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_APPR_TYPE));
     }
@@ -1113,8 +1119,7 @@ public class XPlaneAvionics implements Avionics, Observer {
     	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ))  
     		return (qpac_fcu_baro & 0x40) > 0 ? true : false;
     	else 
-    		return (qpac_fcu_baro & 0x04) > 0 ? true : false;
-    	 	
+    		return (qpac_fcu_baro & 0x04) > 0 ? true : false;    	 	
     }
     public boolean qpac_baro_unit(){
     	int qpac_fcu_baro = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FCU_BARO));
@@ -1210,7 +1215,14 @@ public class XPlaneAvionics implements Avionics, Observer {
 //    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD2) > 0 ? true : false;
     	int qpac_ap_fd_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_AP_FD));
     	return (qpac_ap_fd_data & 0x01) > 0 ? true : false; 	
+    }
 
+    public boolean qpac_fd_on() {
+    	int qpac_ap_fd_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_AP_FD));
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ))
+    		return (qpac_ap_fd_data & 0x01) > 0 ? true : false; 	
+    	else
+    		return (qpac_ap_fd_data & 0x02) > 0 ? true : false;	
     }
     
     public float qpac_fd1_ver_bar() {
@@ -1219,13 +1231,36 @@ public class XPlaneAvionics implements Avionics, Observer {
     public float qpac_fd1_hor_bar() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD1_HOR_BAR);
     }    
+    public float qpac_fd1_yaw_bar() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD1_YAW_BAR);
+    }    
     public float qpac_fd2_ver_bar() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD2_VER_BAR);
     }    
     public float qpac_fd2_hor_bar() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD2_HOR_BAR);
     }    
-
+    public float qpac_fd2_yaw_bar() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD2_YAW_BAR);
+    }    
+    public float qpac_fd_ver_bar() {
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT )) 
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD2_VER_BAR);
+    	else
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD1_VER_BAR);
+    }    
+    public float qpac_fd_hor_bar() {
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT )) 
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD2_HOR_BAR);
+    	else
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD1_HOR_BAR);
+    }  
+    public float qpac_fd_yaw_bar() {
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT )) 
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD2_YAW_BAR);
+    	else
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD1_YAW_BAR);
+    }  
     
     // V Speeds   
     public float qpac_v1_value() {
