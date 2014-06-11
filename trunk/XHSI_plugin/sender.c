@@ -48,6 +48,7 @@ float sendADCCallback(
 	int i;
 	int packet_size;
 	int res;
+	int send_error = 0;
 #if IBM
 	char msg[80];
 #endif
@@ -61,6 +62,7 @@ float sendADCCallback(
 				res = sendto(sockfd, (const char*)&sim_packet, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr));
 #if IBM
 				if ( res == SOCKET_ERROR ) {
+					send_error = 1;
 					XPLMDebugString("XHSI: caught error while sending ADCD packet! (");
                     sprintf(msg, "%d", WSAGetLastError());
 					XPLMDebugString(msg);
@@ -68,6 +70,7 @@ float sendADCCallback(
 				}
 #else
 				if ( res < 0 ) {
+					send_error = 1;
 					XPLMDebugString("XHSI: caught error while sending ADCD packet! (");
 					XPLMDebugString((char * const) strerror(GET_ERRNO));
 					XPLMDebugString(")\n");
@@ -76,7 +79,10 @@ float sendADCCallback(
 			}
 		}
 
-		return adc_data_delay;
+		if ( send_error )
+			return 1.0f;
+		else
+			return adc_data_delay;
 
 	} else {
 		return 1.0f;
@@ -94,6 +100,7 @@ float sendAvionicsCallback(
 	int i;
 	int packet_size;
 	int res;
+	int send_error = 0;
 #if IBM
 	char msg[80];
 #endif
@@ -107,6 +114,7 @@ float sendAvionicsCallback(
 				res = sendto(sockfd, (const char*)&sim_packet, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr));
 #if IBM
 				if ( res == SOCKET_ERROR ) {
+					send_error = 1;
 					XPLMDebugString("XHSI: caught error while sending AVIO packet! (");
                     sprintf(msg, "%d", WSAGetLastError());
 					XPLMDebugString(msg);
@@ -114,6 +122,7 @@ float sendAvionicsCallback(
 				}
 #else
 				if ( res < 0 ) {
+					send_error = 1;
 					XPLMDebugString("XHSI: caught error while sending AVIO packet! (");
 					XPLMDebugString((char * const) strerror(GET_ERRNO));
 					XPLMDebugString(")\n");
@@ -129,6 +138,7 @@ float sendAvionicsCallback(
 				res = sendto(sockfd, (const char*)&sim_packet, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr));
 #if IBM
 				if ( res == SOCKET_ERROR ) {
+					send_error = 1;
 					XPLMDebugString("XHSI: caught error while sending AVIO packet! (");
                     sprintf(msg, "%d", WSAGetLastError());
 					XPLMDebugString(msg);
@@ -136,6 +146,7 @@ float sendAvionicsCallback(
 				}
 #else
 				if ( res < 0 ) {
+					send_error = 1;
 					XPLMDebugString("XHSI: caught error while sending AVIO packet! (");
 					XPLMDebugString((char * const) strerror(GET_ERRNO));
 					XPLMDebugString(")\n");
@@ -144,7 +155,10 @@ float sendAvionicsCallback(
 			}
 		}
 
-		return avionics_data_delay;
+		if ( send_error )
+			return 2.0f;
+		else
+			return avionics_data_delay;
 
 	} else {
 		return 1.0f;
@@ -162,6 +176,7 @@ float sendEnginesCallback(
 	int i;
 	int packet_size;
 	int res;
+	int send_error = 0;
 #if IBM
 	char msg[80];
 #endif
@@ -175,6 +190,7 @@ float sendEnginesCallback(
 				res = sendto(sockfd, (const char*)&sim_packet, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr));
 #if IBM
 				if ( res == SOCKET_ERROR ) {
+					send_error = 1;
 					XPLMDebugString("XHSI: caught error while sending ENGI packet! (");
                     sprintf(msg, "%d", WSAGetLastError());
 					XPLMDebugString(msg);
@@ -182,6 +198,7 @@ float sendEnginesCallback(
 				}
 #else
 				if ( res < 0 ) {
+					send_error = 1;
 					XPLMDebugString("XHSI: caught error while sending ENGI packet! (");
 					XPLMDebugString((char * const) strerror(GET_ERRNO));
 					XPLMDebugString(")\n");
@@ -190,7 +207,10 @@ float sendEnginesCallback(
 			}
 		}
 
-		return engines_data_delay;
+		if ( send_error )
+			return 3.0f;
+		else
+			return engines_data_delay;
 
 	} else {
 		return 1.0f;
@@ -208,6 +228,7 @@ float sendStaticCallback(
 	int i;
 	int packet_size;
 	int res;
+	int send_error = 0;
 #if IBM
 	char msg[80];
 #endif
@@ -221,6 +242,7 @@ float sendStaticCallback(
 				res = sendto(sockfd, (const char*)&sim_packet, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr));
 #if IBM
 				if ( res == SOCKET_ERROR ) {
+					send_error = 1;
 					XPLMDebugString("XHSI: caught error while sending STAT packet! (");
                     sprintf(msg, "%d", WSAGetLastError());
 					XPLMDebugString(msg);
@@ -228,6 +250,7 @@ float sendStaticCallback(
 				}
 #else
 				if ( res < 0 ) {
+					send_error = 1;
 					XPLMDebugString("XHSI: caught error while sending STAT packet! (");
 					XPLMDebugString((char * const) strerror(GET_ERRNO));
 					XPLMDebugString(")\n");
@@ -236,7 +259,10 @@ float sendStaticCallback(
 			}
 		}
 
-		return static_data_delay;
+		if ( send_error )
+			return 4.0f;
+		else
+			return static_data_delay;
 
 	} else {
 		return 1.0f;
@@ -257,6 +283,7 @@ float sendFmsCallback(
 	int packet_size;
 	int last_pack;
 	int res;
+	int send_error = 0;
 #if IBM
 	char msg[80];
 #endif
@@ -284,6 +311,7 @@ float sendFmsCallback(
                     res = sendto(sockfd, (const char*)&fms_packet[j], packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr));
 #if IBM
                     if ( res == SOCKET_ERROR ) {
+						send_error = 1;
                         XPLMDebugString("XHSI: caught error while sending FMCx packet! (");
                         sprintf(msg, "%d", WSAGetLastError());
                         XPLMDebugString(msg);
@@ -291,6 +319,7 @@ float sendFmsCallback(
                     }
 #else
                     if ( res < 0 ) {
+						send_error = 1;
                         XPLMDebugString("XHSI: caught error while sending FMCx packet! (");
                         XPLMDebugString((char * const) strerror(GET_ERRNO));
                         XPLMDebugString(")\n");
@@ -301,7 +330,10 @@ float sendFmsCallback(
 
         }
 
-		return fms_data_delay;
+		if ( send_error )
+			return 5.0f;
+		else
+			return fms_data_delay;
 
 	} else {
 		return 1.0f;
@@ -319,6 +351,7 @@ float sendTcasCallback(
 	int i;
 	int packet_size;
 	int res;
+	int send_error = 0;
 #if IBM
 	char msg[80];
 #endif
@@ -333,6 +366,7 @@ float sendTcasCallback(
                     res = sendto(sockfd, (const char*)&tcas_packet, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr));
 #if IBM
                     if ( res == SOCKET_ERROR ) {
+						send_error = 1;
                         XPLMDebugString("XHSI: caught error while sending TCAS packet! (");
                         sprintf(msg, "%d", WSAGetLastError());
                         XPLMDebugString(msg);
@@ -340,6 +374,7 @@ float sendTcasCallback(
                     }
 #else
                     if ( res < 0 ) {
+						send_error = 1;
                         XPLMDebugString("XHSI: caught error while sending TCAS packet! (");
                         XPLMDebugString((char * const) strerror(GET_ERRNO));
                         XPLMDebugString(")\n");
@@ -347,7 +382,12 @@ float sendTcasCallback(
 #endif
                 }
             }
-            return tcas_data_delay;
+
+			if ( send_error )
+				return 6.0f;
+			else
+				return tcas_data_delay;
+
         } else {
             return 1.0f;
         }

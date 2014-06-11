@@ -125,8 +125,8 @@ int qpac_ready = 0;
 
 void findQpacDataRefs(void) {
 	// For datarefs checks, remove for release
-	char msg[200];
-	XPLMDataTypeID reftype;
+	// char msg[200];
+	// XPLMDataTypeID reftype;
 
 	qpac_plugin_status = XPLMFindDataRef("AirbusFBW/APPhase");
 
