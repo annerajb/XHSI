@@ -192,7 +192,7 @@ public class XHSIPreferences {
     // for PREF_ENGINE_TYPE
     public static final String ENGINE_TYPE_SWITCHABLE = "switchable";
     public static final String ENGINE_TYPE_N1 = "N1";
-//    public static final String ENGINE_TYPE_EPR = "EPR";
+    public static final String ENGINE_TYPE_EPR = "EPR";
     public static final String ENGINE_TYPE_TRQ = "TRQ";
     public static final String ENGINE_TYPE_MAP = "MAP";
     

@@ -123,7 +123,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_FIX_SHOW = "Define CDU fix ...";
 
     public static final String ACTION_ENGINE_TYPE_N1 = "N1";    
-//    public static final String ACTION_ENGINE_TYPE_EPR = "EPR";    
+    public static final String ACTION_ENGINE_TYPE_EPR = "EPR";    
     public static final String ACTION_ENGINE_TYPE_TRQ = "TRQ";
     public static final String ACTION_ENGINE_TYPE_MAP = "MAP";
 
@@ -158,7 +158,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_CLOCK_LT = "Local Time";
 
     public static final int ENGINE_TYPE_N1 = 0;
-//    public static final int ENGINE_TYPE_EPR = 1;
+    public static final int ENGINE_TYPE_EPR = 1;
     public static final int ENGINE_TYPE_TRQ = 2;
     public static final int ENGINE_TYPE_MAP = 3;
             
@@ -274,7 +274,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JRadioButtonMenuItem radio_button_clock_lt;
 
     private JRadioButtonMenuItem radio_button_engine_n1;
-//    private JRadioButtonMenuItem radio_button_engine_epr;
+    private JRadioButtonMenuItem radio_button_engine_epr;
     private JRadioButtonMenuItem radio_button_engine_trq;
     private JRadioButtonMenuItem radio_button_engine_map;
     
@@ -823,15 +823,15 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // keep a reference
         this.radio_button_engine_n1 = radio_button_menu_item;
 
-//        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_EICAS_EPR);
-//        radio_button_menu_item.setToolTipText("Engine type EPR/...");
-//        radio_button_menu_item.addActionListener(this);
-////        radio_button_menu_item.setSelected(eicas_type == XHSISettings.EICAS_TYPE_EPR);
-//        radio_button_menu_item.setSelected(false);
-//        xhsi_eicas_menu.add(radio_button_menu_item);
-//        eicas_group.add(radio_button_menu_item);
-//        // keep a reference
-//        this.radio_button_engine_epr = radio_button_menu_item;
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_ENGINE_TYPE_EPR);
+        radio_button_menu_item.setToolTipText("Engine type EPR/...");
+        radio_button_menu_item.addActionListener(this);
+//        radio_button_menu_item.setSelected(eicas_type == XHSISettings.EICAS_TYPE_EPR);
+        radio_button_menu_item.setSelected(false);
+        xhsi_eicas_menu.add(radio_button_menu_item);
+        eicas_group.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_engine_epr = radio_button_menu_item;
 
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_ENGINE_TYPE_TRQ);
         radio_button_menu_item.setToolTipText("Engine type TRQ/ITT/PROP/...");
@@ -1208,9 +1208,9 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         } else if (command.equals(XHSISettings.ACTION_ENGINE_TYPE_N1)) {
             engine_type = XHSISettings.ENGINE_TYPE_N1;
             this.avionics.set_engine_type(engine_type);
-//        } else if (command.equals(XHSISettings.ACTION_ENGINE_TYPE_EPR)) {
-//            engine_type = XHSISettings.ENGINE_TYPE_EPR;
-//            this.avionics.set_engine_type(engine_type);
+        } else if (command.equals(XHSISettings.ACTION_ENGINE_TYPE_EPR)) {
+            engine_type = XHSISettings.ENGINE_TYPE_EPR;
+            this.avionics.set_engine_type(engine_type);
         } else if (command.equals(XHSISettings.ACTION_ENGINE_TYPE_TRQ)) {
             engine_type = XHSISettings.ENGINE_TYPE_TRQ;
             this.avionics.set_engine_type(engine_type);
@@ -1394,12 +1394,12 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
         int new_engine_type = avionics.get_engine_type();
         this.radio_button_engine_n1.setSelected( new_engine_type == XHSISettings.ENGINE_TYPE_N1 );
-//        this.radio_button_engine_epr.setSelected( new_engine_type == XHSISettings.ENGINE_TYPE_EPR );
+        this.radio_button_engine_epr.setSelected( new_engine_type == XHSISettings.ENGINE_TYPE_EPR );
         this.radio_button_engine_trq.setSelected( new_engine_type == XHSISettings.ENGINE_TYPE_TRQ );
         this.radio_button_engine_map.setSelected( new_engine_type == XHSISettings.ENGINE_TYPE_MAP );
         switchable = prefs.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_SWITCHABLE);
         this.radio_button_engine_n1.setEnabled( switchable );
-//        this.radio_button_engine_epr.setEnabled( switchable );
+        this.radio_button_engine_epr.setEnabled( switchable );
         this.radio_button_engine_trq.setEnabled( switchable );
         this.radio_button_engine_map.setEnabled( switchable );
 

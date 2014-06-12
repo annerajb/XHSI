@@ -320,6 +320,8 @@ XPLMDataRef  prop_rpm;
 XPLMDataRef  prop_mode;
 // Piston
 XPLMDataRef  piston_mpr;
+// EPR
+XPLMDataRef  engine_epr;
 
 
 //// TCAS
@@ -1522,6 +1524,8 @@ void findDataRefs(void) {
     prop_mode = XPLMFindDataRef("sim/flightmodel/engine/ENGN_propmode");
     // Piston
     piston_mpr = XPLMFindDataRef("sim/flightmodel/engine/ENGN_MPR");
+	// EPR
+    engine_epr = XPLMFindDataRef("sim/flightmodel/engine/ENGN_EPR");
 
 
 //	// TCAS

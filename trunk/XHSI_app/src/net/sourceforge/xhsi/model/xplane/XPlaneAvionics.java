@@ -602,8 +602,8 @@ public class XPlaneAvionics implements Avionics, Observer {
             return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_ENGINE_TYPE);
         } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_N1) ) {
             return XHSISettings.ENGINE_TYPE_N1;
-//        } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_EPR) ) {
-//            return XHSISettings.ENGINE_TYPE_EPR;
+        } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_EPR) ) {
+            return XHSISettings.ENGINE_TYPE_EPR;
         } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_TRQ) ) {
             return XHSISettings.ENGINE_TYPE_TRQ;
         } else {

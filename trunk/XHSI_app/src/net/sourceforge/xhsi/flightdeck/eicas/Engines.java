@@ -88,11 +88,9 @@ public class Engines extends EICASSubcomponent {
             this.inhibit = ( this.aircraft.agl_m() < 1000.0f / 3.28084f );
 //inhibit = false;
 
-//            boolean piston = this.preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_MAP);
             boolean piston = ( this.avionics.get_engine_type() == XHSISettings.ENGINE_TYPE_MAP );
-
-//            boolean turboprop = this.preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_TRQ);
             boolean turboprop = ( this.avionics.get_engine_type() == XHSISettings.ENGINE_TYPE_TRQ );
+            boolean epr_jet = ( this.avionics.get_engine_type() == XHSISettings.ENGINE_TYPE_EPR );
             
             int num_eng = this.aircraft.num_engines();
 //num_eng = 1;
@@ -141,7 +139,7 @@ public class Engines extends EICASSubcomponent {
 
                 for (int i=0; i<num_eng; i++) {
 //                    prim_dial_x[i] = eicas_gc.panel_rect.x + eicas_gc.dials_width*50/100/cols + i*eicas_gc.dials_width/cols;
-                    drawN1(g2, i, num_eng);
+                    drawN1(g2, i, num_eng, epr_jet);
                     drawEGT(g2, i, num_eng, 2);
                     if ( ! this.preferences.get_eicas_primary_only() ) {
                         drawN2(g2, i, num_eng);
@@ -162,7 +160,7 @@ public class Engines extends EICASSubcomponent {
             g2.setFont(eicas_gc.font_m);
             
             // main1
-            ind_str = piston ? "MAP" : ( turboprop ? "TRQ" : "N1" );
+            ind_str = piston ? "MAP" : ( turboprop ? "TRQ" : ( epr_jet ? "EPR/N1" : "N1" ) );
             if ( cols == 2 ) {
                 ind_x = (prim_dial_x[0] + prim_dial_x[1]) / 2 - eicas_gc.get_text_width(g2, eicas_gc.font_m, ind_str)/2;
             } else {
@@ -254,14 +252,15 @@ public class Engines extends EICASSubcomponent {
     }
 
 
-    private void drawN1(Graphics2D g2, int pos, int num) {
+    private void drawN1(Graphics2D g2, int pos, int num, boolean with_epr) {
 
         AffineTransform original_at = g2.getTransform();
         scalePen(g2);
 
         float n1_value = this.aircraft.get_N1(pos);
         float n1_dial = Math.min(n1_value, 110.0f) / 100.0f;
-        String n1_str = one_decimal_format.format(n1_value);
+        int epr_value = Math.round( this.aircraft.get_EPR(pos) * 100.0f );
+        String n1_str = with_epr ? Integer.toString(epr_value) : one_decimal_format.format(n1_value);
 
         int n1_y = eicas_gc.dial_main1_y;
         int n1_r = eicas_gc.dial_r[num];
