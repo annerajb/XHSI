@@ -667,6 +667,11 @@ public class XPlaneAircraft implements Aircraft {
     }
 
 
+    public float get_EPR(int engine) {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_ENGINE_ENGN_EPR_ + engine);
+    }
+
+
     public String get_nearest_arpt() {
         return sim_data.get_sim_string(XPlaneSimDataRepository.XHSI_FLIGHTMODEL_POSITION_NEAREST_ARPT);
     }

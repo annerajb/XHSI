@@ -1473,6 +1473,13 @@ int createEnginesPacket(void) {
         i++;
 	}
 
+    XPLMGetDatavf(engine_epr, engifloat, 0, engines);
+	for (e=0; e<engines; e++) {
+        sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_ENGINE_ENGN_EPR_ + e);
+        sim_packet.sim_data_points[i].value = custom_htonf( engifloat[e] );
+        i++;
+	}
+
 
     sim_packet.sim_data_points[i].id = custom_htoni(UFMC_STATUS);
     sim_packet.sim_data_points[i].value = custom_htonf((float) ufmc_ready);

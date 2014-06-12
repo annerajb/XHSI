@@ -252,6 +252,8 @@ extern XPLMDataRef  prop_rpm;
 extern XPLMDataRef  prop_mode;
 // Piston
 extern XPLMDataRef  piston_mpr;
+// EPR
+extern XPLMDataRef  engine_epr;
 
 
 //// TCAS

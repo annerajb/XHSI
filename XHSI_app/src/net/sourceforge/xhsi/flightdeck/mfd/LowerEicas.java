@@ -95,6 +95,7 @@ public class LowerEicas extends MFDSubcomponent {
             this.inhibit = ( this.aircraft.agl_m() < 1000.0f / 3.28084f );
 
             boolean n1_style = ( this.avionics.get_engine_type() == XHSISettings.ENGINE_TYPE_N1 );
+            boolean epr_style = ( this.avionics.get_engine_type() == XHSISettings.ENGINE_TYPE_EPR );
             boolean piston_style = ( this.avionics.get_engine_type() == XHSISettings.ENGINE_TYPE_MAP );
             
             int num_eng = this.aircraft.num_engines();
@@ -114,7 +115,7 @@ public class LowerEicas extends MFDSubcomponent {
 
             for (int i=0; i<num_eng; i++) {
 
-                if ( n1_style ) {
+                if ( n1_style || epr_style ) {
                     drawN2(g2, i, num_eng);
                 }
                 if ( ! piston_style ) {
@@ -131,7 +132,7 @@ public class LowerEicas extends MFDSubcomponent {
                 g2.setFont(mfd_gc.font_m);
                 
                 // N2
-                if ( n1_style ) {
+                if ( n1_style || epr_style ) {
                     ind_str = "N2";
                     if ( cols == 2 ) {
                         ind_x = (dial_x[0] + dial_x[1]) / 2 - mfd_gc.get_text_width(g2, mfd_gc.font_m, ind_str)/2;

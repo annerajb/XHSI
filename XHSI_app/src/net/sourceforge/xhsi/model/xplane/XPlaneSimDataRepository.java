@@ -316,6 +316,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT2_ENGINE_INDICATORS_PROP_SPEED_RPM_ = 570;
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_PROPMODE_ = 580;
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_MPR_ = 590;
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_EPR_ = 600;
 
     // UFMC
     public static final int UFMC_STATUS = 700;
