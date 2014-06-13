@@ -90,6 +90,8 @@ public class MovingMap extends NDSubcomponent {
     NavigationObjectRepository nor;
 
     String active_chart_str;
+    
+    String nearest_arpt_str = "";
 
     float map_up;
     float center_lon;
@@ -220,7 +222,7 @@ public class MovingMap extends NDSubcomponent {
 
     private void drawChart(Graphics2D g2) {
 
-        String nearest_arpt_str = this.aircraft.get_nearest_arpt();
+        // String nearest_arpt_str = this.aircraft.get_nearest_arpt();
 
         Color paper = nd_gc.background_color;
         Color field = nd_gc.color_verydarkgreen; // Color.GREEN.darker().darker().darker().darker().darker(); // nd_gc.color_lavender; //new Color(0xF0F0F0);
@@ -854,6 +856,8 @@ public class MovingMap extends NDSubcomponent {
                                 NavigationObject.NO_TYPE_AIRPORT,
                                 nor.get_nav_objects(NavigationObject.NO_TYPE_AIRPORT, lat, lon)
                             );
+                        // draw_nav_objects has found the nearest airport for us
+                        this.aircraft.set_nearest_arpt(this.nearest_arpt_str);
                     }
                 }
             }
@@ -1147,9 +1151,11 @@ public class MovingMap extends NDSubcomponent {
         NavigationObject navobj = null;
         RadioNavBeacon rnb;
 
+        double nearest_arpt_dist = 999.9f;
+        
         for (int i=0; i<nav_objects.size(); i++) {
 
-            navobj = (NavigationObject) nav_objects.get(i);
+            navobj = (NavigationObject)nav_objects.get(i);
             int x = lon_to_x(navobj.lon);
             int y = lat_to_y(navobj.lat);
             double dist = Math.hypot( x - nd_gc.map_center_x, y - nd_gc.map_center_y );
@@ -1158,30 +1164,40 @@ public class MovingMap extends NDSubcomponent {
                 
                 if (type == NavigationObject.NO_TYPE_NDB) {
                     
-                    drawNDB(g2, x, y, (RadioNavBeacon) navobj, false);
+                    drawNDB(g2, x, y, (RadioNavBeacon)navobj, false);
                     
                 } else if (type == NavigationObject.NO_TYPE_VOR) {
                     
-                    rnb = (RadioNavBeacon) navobj;
+                    rnb = (RadioNavBeacon)navobj;
                     if (rnb.type == RadioNavBeacon.TYPE_VOR) {
                         if ( rnb.has_dme )
-                            drawVORDME(g2, x, y, (RadioNavBeacon) navobj, 0, 0.0f, 0.0f);
+                            drawVORDME(g2, x, y, (RadioNavBeacon)navobj, 0, 0.0f, 0.0f);
                         else
-                            drawVOR(g2, x, y, (RadioNavBeacon) navobj, 0, 0.0f);
+                            drawVOR(g2, x, y, (RadioNavBeacon)navobj, 0, 0.0f);
                     } else if (rnb.type == RadioNavBeacon.TYPE_STANDALONE_DME)
-                        drawDME(g2, x, y, (RadioNavBeacon) navobj, 0, 0);
+                        drawDME(g2, x, y, (RadioNavBeacon)navobj, 0, 0);
                     
                 } else if (type == NavigationObject.NO_TYPE_FIX) {
                     
-                        drawFix(g2, x, y, (Fix) navobj);
+                        drawFix(g2, x, y, (Fix)navobj);
                         
                 } else if (type == NavigationObject.NO_TYPE_AIRPORT) {
                     
-                        drawAirport(g2, x, y, (Airport) navobj, "");
+                    if ( ((Airport)navobj).longest >= this.preferences.get_min_rwy_length() ) {
+
+                        drawAirport(g2, x, y, (Airport)navobj, "");
+                        
+                        // find the nearest airport
+                        if ( dist < nearest_arpt_dist ) {
+                            nearest_arpt_dist = dist;
+                            this.nearest_arpt_str = ((Airport)navobj).icao_code;
+                        }
+                        
+                    }
                         
                 } else if ( type == NavigationObject.NO_TYPE_RUNWAY )
                     
-                    drawRunway(g2, x, y, (Runway) navobj);
+                    drawRunway(g2, x, y, (Runway)navobj);
                 
             }
         }
@@ -1481,7 +1497,7 @@ public class MovingMap extends NDSubcomponent {
 
 
     private void drawAirport(Graphics2D g2, int x, int y, Airport airport, String runway) {
-        if ( airport.longest >= this.preferences.get_min_rwy_length() ) {
+//        if ( airport.longest >= this.preferences.get_min_rwy_length() ) {
             AffineTransform original_at = g2.getTransform();
             Stroke original_stroke = g2.getStroke();
             g2.rotate(Math.toRadians(this.map_up), x, y);
@@ -1493,7 +1509,7 @@ public class MovingMap extends NDSubcomponent {
             g2.drawString(airport.icao_code, x + 11, y + 13);
             g2.drawString(runway, x + 11, y + 13 + nd_gc.line_height_small);
             g2.setTransform(original_at);
-        }
+//        }
     }
 
 
