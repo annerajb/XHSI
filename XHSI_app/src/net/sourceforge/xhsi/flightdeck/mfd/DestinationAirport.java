@@ -80,6 +80,8 @@ public class DestinationAirport extends MFDSubcomponent {
     public static final int RWY_TRNSPARENT = 15;
 
     private DecimalFormat freq_format;
+    
+    private String source = "";
 
 
     public DestinationAirport(ModelFactory model_factory, MFDGraphicsConfig hsi_gc, Component parent_component) {
@@ -120,6 +122,7 @@ public class DestinationAirport extends MFDSubcomponent {
             if ( dest_loc != null ) {
                 // we are tuned to a Localizer, now fetch the airport that goes with it
                 dest_str = dest_loc.airport;
+                this.source = "(NAV" + Integer.toString(bank) + ")";
             }
         }
 
@@ -138,6 +141,7 @@ public class DestinationAirport extends MFDSubcomponent {
             FMSEntry last_wpt = this.avionics.get_fms().get_last_waypoint();
             if ( ( last_wpt != null ) && ( last_wpt.type == FMSEntry.ARPT ) ) {
                 dest_str = last_wpt.name;
+                this.source = "(FMS)";
             }
         }
 
@@ -154,6 +158,7 @@ public class DestinationAirport extends MFDSubcomponent {
             // when we are on the ground, take the nearest airport
             // (which is the airport that we are really at in 99.99% of the cases)
             dest_arpt_str = this.aircraft.get_nearest_arpt();
+            this.source = "(NRST)";
         }
 
         if ( dest_arpt_str.equals("") ) {
@@ -169,6 +174,7 @@ public class DestinationAirport extends MFDSubcomponent {
         if ( dest_arpt_str.equals("") ) {
             // if not, the nearest airport...
             dest_arpt_str = this.aircraft.get_nearest_arpt();
+            this.source = "(NRST)";
         }
 
         return dest_arpt_str;
@@ -206,6 +212,7 @@ public class DestinationAirport extends MFDSubcomponent {
             int arpt_size = Math.min(mfd_gc.panel_rect.width, mfd_gc.panel_rect.height);
             int arpt_x = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*15/16 - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, dest_arpt_str);
             int arpt_y = mfd_gc.panel_rect.y + arpt_size/16;
+            // ICAO code
             g2.setFont(mfd_gc.font_xxl);
             g2.drawString(dest_arpt_str, arpt_x, arpt_y);
 
@@ -214,12 +221,18 @@ public class DestinationAirport extends MFDSubcomponent {
 
             if ( airport != null ) {
 
+                // Source (NRST, NAV1, NAV2, FMS)
+                g2.setFont(mfd_gc.font_xxs);
+                g2.drawString(this.source, arpt_x - mfd_gc.get_text_width(g2, mfd_gc.font_xxs, this.source + "W"), arpt_y);
+
+                // Airport name
                 g2.setFont(mfd_gc.font_xl);
                 arpt_x = mfd_gc.panel_rect.x + arpt_size/32;
                 g2.drawString(airport.name, mfd_gc.panel_rect.x + mfd_gc.panel_rect.width/16, arpt_y);
 //                g2.drawLine(mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*1/16, arpt_y + mfd_gc.line_height_m/2, mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*15/16, arpt_y + mfd_gc.line_height_m/2);
                 g2.drawLine(arpt_x, arpt_y + mfd_gc.line_height_m/2, mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*31/32, arpt_y + mfd_gc.line_height_m/2);
                 chart_y = arpt_y + mfd_gc.line_height_m/2;
+                // Elevation
                 g2.setFont(mfd_gc.font_xs);
                 arpt_y += mfd_gc.line_height_xs*7/3;
                 String elev_str = "elev: " + airport.elev + "ft";
@@ -281,7 +294,6 @@ public class DestinationAirport extends MFDSubcomponent {
                 //g2.drawRect(chart_x + chart_w/100, chart_y + chart_h/100, chart_w*98/100, chart_h*98/100);
                 g2.drawLine(mfd_gc.panel_rect.x + arpt_size/32, chart_y + chart_h, mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*31/32, chart_y + chart_h);
                 g2.drawLine(chart_x, chart_y, chart_x, chart_y + chart_h);
-                
 
 
                 if ( taxi.ready && ! taxi.icao.equals(dest_arpt_str) /*&& (XHSIStatus.nav_db_status.equals(XHSIStatus.STATUS_NAV_DB_LOADED))*/ ) {

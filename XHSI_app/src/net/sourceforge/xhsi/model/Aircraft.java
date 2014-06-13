@@ -706,4 +706,10 @@ public interface Aircraft {
     public String get_nearest_arpt();
 
 
+    /**
+     * @return String - Nearest airport
+     */
+    public void set_nearest_arpt(String nrst_arpt);
+
+
 }

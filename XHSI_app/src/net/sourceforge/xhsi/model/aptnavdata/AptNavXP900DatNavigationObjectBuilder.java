@@ -294,36 +294,36 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                             // we need the name, which can include spaces, in the third token
                             tokens = line.split("\\s+",3);
                             comms.add(new ComRadio(airport_icao_code, tokens.length==3?tokens[2]:"", (float)Float.parseFloat(tokens[1]) / 100.0f));
-                        } else if ((info_type == 99) && (current_airport_saved == false)) {
-                            // end of file, save the last airport
-                            if ( ! current_airport_saved ) {
-                                // position of the ARP (Aerodrome Reference Point)
-                                if (tower) {
-                                    // ARP = tower position
-                                    arp_lat = tower_lat;
-                                    arp_lon = tower_lon;
-                                } else if (hard_rwy_count == 1) {
-                                    // ARP = the center of the one and only hard runway
-                                    arp_lat = hard_lat_sum;
-                                    arp_lon = hard_lon_sum;
-                                } else if (rwy_count == 1) {
-                                    // ARP = the center of the one and only non-hard runway
-                                    arp_lat = lat_sum;
-                                    arp_lon = lon_sum;
-                                } else if (hard_rwy_count > 1) {
-                                    // no tower, but several hard runways
-                                    // ARP = center of all hard runways
-                                    arp_lat = hard_lat_sum / hard_rwy_count;
-                                    arp_lon = hard_lon_sum / hard_rwy_count;
-                                } else {
-                                    // no hard runways and no tower
-                                    // ARP = center of all non-hard runways
-                                    arp_lat = lat_sum / rwy_count;
-                                    arp_lon = lon_sum / rwy_count;
-                                }
-                                nor.add_nav_object(new Airport(airport_name, airport_icao_code, lat, lon, runways, longest, elev, comms));
-                                current_airport_saved = true;
-                            }
+//                        } else if ((info_type == 99) && (current_airport_saved == false)) {
+//                            // end of file, save the last airport
+//                            if ( ! current_airport_saved ) {
+//                                // position of the ARP (Aerodrome Reference Point)
+//                                if (tower) {
+//                                    // ARP = tower position
+//                                    arp_lat = tower_lat;
+//                                    arp_lon = tower_lon;
+//                                } else if (hard_rwy_count == 1) {
+//                                    // ARP = the center of the one and only hard runway
+//                                    arp_lat = hard_lat_sum;
+//                                    arp_lon = hard_lon_sum;
+//                                } else if (rwy_count == 1) {
+//                                    // ARP = the center of the one and only non-hard runway
+//                                    arp_lat = lat_sum;
+//                                    arp_lon = lon_sum;
+//                                } else if (hard_rwy_count > 1) {
+//                                    // no tower, but several hard runways
+//                                    // ARP = center of all hard runways
+//                                    arp_lat = hard_lat_sum / hard_rwy_count;
+//                                    arp_lon = hard_lon_sum / hard_rwy_count;
+//                                } else {
+//                                    // no hard runways and no tower
+//                                    // ARP = center of all non-hard runways
+//                                    arp_lat = lat_sum / rwy_count;
+//                                    arp_lon = lon_sum / rwy_count;
+//                                }
+//                                nor.add_nav_object(new Airport(airport_name, airport_icao_code, lat, lon, runways, longest, elev, comms));
+//                                current_airport_saved = true;
+//                            }
                         }
                     } catch (Exception e) {
                         logger.warning("\nParse error in " +apt_file.getName() + ":" + line_number + "(" + e + ") " + line);

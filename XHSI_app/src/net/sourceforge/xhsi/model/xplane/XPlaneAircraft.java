@@ -43,6 +43,7 @@ public class XPlaneAircraft implements Aircraft {
 
     private float fuel_capacity;
     private float max_fuel_flow;
+    private String nearest_arpt = "";
 
     private static String x737_thrust_modes[] = { "---", "TO", "R-TO", "R-CLB", "CLB", "CRZ", "G/A", "CON", "MAX" };
     private static String cl30_thrust_modes[] = { "---", "CRZ", "CLB", "TO", "APR" };
@@ -673,7 +674,16 @@ public class XPlaneAircraft implements Aircraft {
 
 
     public String get_nearest_arpt() {
-        return sim_data.get_sim_string(XPlaneSimDataRepository.XHSI_FLIGHTMODEL_POSITION_NEAREST_ARPT);
+        if ( this.nearest_arpt.isEmpty() ) {
+            return sim_data.get_sim_string(XPlaneSimDataRepository.XHSI_FLIGHTMODEL_POSITION_NEAREST_ARPT);
+        } else {
+            return this.nearest_arpt;
+        }
+    }
+
+
+    public void set_nearest_arpt(String nrst_arpt) {
+        this.nearest_arpt = nrst_arpt;
     }
 
 
