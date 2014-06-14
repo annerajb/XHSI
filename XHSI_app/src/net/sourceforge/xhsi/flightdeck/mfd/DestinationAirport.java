@@ -154,27 +154,35 @@ public class DestinationAirport extends MFDSubcomponent {
 
         String dest_arpt_str = "";
 
-        if ( this.aircraft.on_ground() || ! this.preferences.get_arpt_chart_nav_dest() ) {
+        if ( this.aircraft.on_ground() ) {
             // when we are on the ground, take the nearest airport
             // (which is the airport that we are really at in 99.99% of the cases)
             dest_arpt_str = this.aircraft.get_nearest_arpt();
-            this.source = "(NRST)";
-        }
-
-        if ( dest_arpt_str.equals("") ) {
-            // if not, get the airport of the LOC/ILS that we are we tuned to, and selected as NAV source
-            dest_arpt_str = get_nav_dest();
-        }
-
-        if ( dest_arpt_str.equals("") ) {
-            // if not, the destination airport in the FMS
-            dest_arpt_str = get_fms_dest();
-        }
-
-        if ( dest_arpt_str.equals("") ) {
-            // if not, the nearest airport...
+            this.source = "(GND)";
+        } else if ( ! this.preferences.get_arpt_chart_nav_dest() ) {
+            // always display nearest
             dest_arpt_str = this.aircraft.get_nearest_arpt();
             this.source = "(NRST)";
+        } else {
+
+            // search for a destination airport that corresponds to the nav-source
+            
+            if ( dest_arpt_str.equals("") ) {
+                // if not, get the airport of the LOC/ILS that we are we tuned to, and selected as NAV source
+                dest_arpt_str = get_nav_dest();
+            }
+
+            if ( dest_arpt_str.equals("") ) {
+                // if not, the destination airport in the FMS
+                dest_arpt_str = get_fms_dest();
+            }
+
+            if ( dest_arpt_str.equals("") ) {
+                // if not, the nearest airport...
+                dest_arpt_str = this.aircraft.get_nearest_arpt();
+                this.source = "(NRST)";
+            }
+            
         }
 
         return dest_arpt_str;
