@@ -105,6 +105,18 @@ extern XPLMDataRef qpac_co_efis_nd_range;
 
 extern int qpac_ready;
 
+/* QPAC Versions :
+ *  major version number is x100
+ *  0 = Not ready
+ *  110 = QPAC Freeware 1.1
+ *  150 = PeterAircraft A320
+ *  202 = QPAC 2.02 Final Basic
+ */
+#define QPAC_VERSION_1_1 110
+#define QPAC_VERSION_PA  150
+#define QPAC_VERSION_2_02_BASIC 202
+extern int qpac_version;
+
 // global functions
 float	checkQpacCallback(float, float, int, void *);
 
