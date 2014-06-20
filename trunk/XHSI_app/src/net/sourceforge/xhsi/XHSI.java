@@ -60,6 +60,7 @@ import net.sourceforge.xhsi.model.xplane.XPlaneDataPacketDecoder;
 import net.sourceforge.xhsi.model.xplane.XPlaneFlightSessionPlayer;
 import net.sourceforge.xhsi.model.xplane.XPlaneFlightSessionRecorder;
 import net.sourceforge.xhsi.model.xplane.XPlaneModelFactory;
+import net.sourceforge.xhsi.model.xplane.XPlaneNearestAirport;
 import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 import net.sourceforge.xhsi.model.xplane.XPlaneUDPReceiver;
 import net.sourceforge.xhsi.model.xplane.XPlaneUDPSender;
@@ -81,7 +82,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 7 Alpha 19";
+    private static final String RELEASE = "2.0 Beta 7 Alpha 20";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -212,6 +213,10 @@ public class XHSI implements ActionListener {
             XHSIStatus.status = XHSIStatus.STATUS_PLAYING_RECORDING;
             player.start();
 
+            XPlaneNearestAirport find_nrst_arpt = new XPlaneNearestAirport( this.model_instance.get_aircraft_instance() );
+            this.running_threads.add(find_nrst_arpt);
+            find_nrst_arpt.start();
+
             // thanks for your patience...
             for (int i=0; i<instruments.size(); i++) {
                 XHSIInstrument duf = instruments.get(i);
@@ -241,6 +246,10 @@ public class XHSI implements ActionListener {
                 this.running_threads.add(udp_receiver);
                 XHSIStatus.status = XHSIStatus.STATUS_RECEIVING;
                 udp_receiver.start();
+                
+                XPlaneNearestAirport find_nrst_arpt = new XPlaneNearestAirport( this.model_instance.get_aircraft_instance() );
+                this.running_threads.add(find_nrst_arpt);
+                find_nrst_arpt.start();
 
 //            } else if ( this.preferences.get_preference(XHSIPreferences.PREF_SIMCOM).equals(XHSIPreferences.SCS) ) {
 //

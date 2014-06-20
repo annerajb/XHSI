@@ -5,7 +5,7 @@
 * arpts via various accessors and search methods.
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
-* Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2009-2014  Marc Rogiers (marrog.123@gmail.com)
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -42,7 +42,7 @@ public class NavigationObjectRepository {
     private HashMap frequencies;
     private HashMap airports;
 
-    private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
+    private static final Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     private static NavigationObjectRepository single_instance;
 
@@ -432,6 +432,39 @@ public class NavigationObjectRepository {
 
     }
 
+    public String find_nrst_arpt(float my_lat, float my_lon, float min_rwy, boolean no_hurry) {
+        
+        // TODO: handle longitudes around the international date line
+        
+        String nrst_arpt = "";
+        double nrst_dist = 99999.0d;
+        ArrayList<NavigationObject> navobj_list;
+        
+        for (int grid_lat=0; grid_lat<181; grid_lat++) {
+            for (int grid_lon=0; grid_lon<361; grid_lon++) {
+
+                navobj_list = arpts[grid_lat][grid_lon];
+                int index = 0;
+                while ( index < navobj_list.size() ) {
+                    Airport arpt = (Airport)navobj_list.get(index);
+                    if ( arpt.longest >= min_rwy ) {
+                        double dist = Math.hypot( (my_lat - arpt.lat) * Math.cos(my_lat), (my_lon - arpt.lon));
+                        if ( dist < nrst_dist ) {
+                            nrst_dist = dist;
+                            nrst_arpt = arpt.icao_code;
+                        }
+                    }
+                    index += 1;
+                }
+            }
+            if ( no_hurry ) try { Thread.sleep(1l); } catch(Exception e) {}
+        }
+        
+        logger.finest("NRST ARPT = "+nrst_arpt);
+        
+        return nrst_arpt;
+        
+    }
 
     private int get_lat_index(float lat) {
         int lat_index = (int)lat + 90;
