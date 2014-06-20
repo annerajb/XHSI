@@ -166,6 +166,8 @@ public class VSI_A320 extends PFDSubcomponent {
             bm_y
         };
         
+        float radio_altitude = this.aircraft.agl_m() * 3.28084f;
+        
         Stroke original_stroke = g2.getStroke();
         
         pfd_gc.setTransparent(g2, this.preferences.get_draw_colorgradient_horizon());
@@ -265,7 +267,10 @@ public class VSI_A320 extends PFDSubcomponent {
         }
         Shape original_clipshape = g2.getClip();
         g2.clipRect(pfd_gc.vsi_left, pfd_gc.tape_top, pfd_gc.vsi_width - 1, pfd_gc.tape_height);
-        if (vvabs > 6000 ) { 
+        // FCOM 1.31.40p15 amber if V/S > 6000ft/m, (V/S < 2000 ft/m and 1000 < ra < 2500), ( V/S < 1200 ft/m and ra<1000)
+        if (	( vvabs > 6000 ) || 
+        		( (vvi < -2000) && (radio_altitude < 2500.0f) && (radio_altitude > 1000.0f)) || 
+        		( (vvi < -1200.0f) && (radio_altitude  < 1000.0f)) ) { 
         	g2.setColor(pfd_gc.pfd_caution_color); 
         } else {
            	g2.setColor(pfd_gc.pfd_vsi_needle_color);
@@ -280,7 +285,7 @@ public class VSI_A320 extends PFDSubcomponent {
         DecimalFormat vsi_format = new DecimalFormat("00");
         String vsi_str = "" + vsi_format.format(Math.abs(Math.round(vvi/100.0f)));
 
-        if (vvabs > 100) {
+        if (vvabs >= 200) {
             g2.setFont(pfd_gc.font_m);
             if (up_down > 0 ) {
             	g2.clearRect(m_x, pfd_gc.adi_cy - vvy * up_down - (pfd_gc.line_height_m * 7/8) , pfd_gc.digit_width_m * 2, pfd_gc.line_height_m);

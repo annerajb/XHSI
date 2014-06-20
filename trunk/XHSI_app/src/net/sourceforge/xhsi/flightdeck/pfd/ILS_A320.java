@@ -225,7 +225,8 @@ public class ILS_A320 extends PFDSubcomponent {
             }
         }
 
-        if (this.avionics.is_qpac()) {
+        if (this.avionics.qpac_version() > 110) {
+        	// The first QPAC AirbusFBW 1.1 relies on X-Plane NAV1 for ILS
         	nav_receive = this.avionics.qpac_loc_on();
         	gs_active = this.avionics.qpac_gs_on();
         	gs_value = this.avionics.qpac_gs_val();

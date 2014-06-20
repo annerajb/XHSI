@@ -44,11 +44,6 @@ public class FMA_A320 extends PFDSubcomponent {
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
         
-    // int box_c1_r0_time=0;
-    // int box_c1_r0_state=0;
-    // int box_c1_r1_time=0;
-    // int box_c1_r1_state=0;
-
     PFDFramedElement pfe_thrust;
     PFDFramedElement pfe_thrust_message;
     PFDFramedElement pfe_ap;
@@ -60,6 +55,7 @@ public class FMA_A320 extends PFDSubcomponent {
     PFDFramedElement pfe_lat_armed;
     PFDFramedElement pfe_land_cat;
     PFDFramedElement pfe_land_mode;
+    PFDFramedElement pfe_land_minimums;
           
     public FMA_A320(ModelFactory model_factory, PFDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
@@ -74,7 +70,9 @@ public class FMA_A320 extends PFDSubcomponent {
         pfe_lat_armed = new PFDFramedElement(2,1, hsi_gc, PFE_Color.PFE_COLOR_MARK);
         pfe_land_cat = new PFDFramedElement(3,0, hsi_gc, PFE_Color.PFE_COLOR_MARK);
         pfe_land_mode = new PFDFramedElement(3,1, hsi_gc, PFE_Color.PFE_COLOR_MARK);
+        pfe_land_minimums = new PFDFramedElement(3,2, hsi_gc, PFE_Color.PFE_COLOR_MARK);
         pfe_thrust_message.disableFraming();
+        pfe_land_minimums.disableFraming();
     }
 
 
@@ -129,26 +127,6 @@ public class FMA_A320 extends PFDSubcomponent {
     }
 
 
-    private void draw1Mode(Graphics2D g2, int col, int raw, String mode, boolean framed, Color color) {
-        int mode_w = pfd_gc.get_text_width(g2, pfd_gc.font_xl, mode);
-        int mode_x = pfd_gc.fma_left;  // + pfd_gc.fma_width/10 + col*pfd_gc.fma_width/5 - mode_w/2;
-        switch (col) {
-        	case 1: mode_x += pfd_gc.fma_col_1 + (pfd_gc.fma_col_2 - pfd_gc.fma_col_1)/2 - mode_w/2; break;
-        	case 2: mode_x += pfd_gc.fma_col_2 + (pfd_gc.fma_col_3 - pfd_gc.fma_col_2)/2 - mode_w/2; break;
-        	case 3: mode_x += pfd_gc.fma_col_3 + (pfd_gc.fma_col_4 - pfd_gc.fma_col_3)/2 - mode_w/2; break;
-        	case 4: mode_x += pfd_gc.fma_col_4 + (pfd_gc.fma_width - pfd_gc.fma_col_4)/2 - mode_w/2; break;
-        	default: mode_x += pfd_gc.fma_col_1 /2 - mode_w/2; break;
-        }
-
-        int mode_y = pfd_gc.fma_top + pfd_gc.fma_height*raw/3 + pfd_gc.line_height_xl - 2;
-        g2.setColor(color);
-        g2.setFont(pfd_gc.font_xl);
-        g2.drawString(mode, mode_x, mode_y);
-        if ( framed ) {
-        	g2.setColor(pfd_gc.pfd_markings_color);
-        	g2.drawRect(mode_x-pfd_gc.digit_width_xl/2, mode_y - pfd_gc.line_height_xl*15/16, mode_w+pfd_gc.digit_width_xl, pfd_gc.line_height_xl*18/16);
-        }
-    }
 
     private void drawFinalMode(Graphics2D g2, int raw, String mode, boolean framed, Color color) {
         int mode_w = pfd_gc.get_text_width(g2, pfd_gc.font_xl, mode);
@@ -166,30 +144,6 @@ public class FMA_A320 extends PFDSubcomponent {
         }
     }
     
-    private void draw2Mode(Graphics2D g2, int col, int raw, String mode, String value, boolean framed, Color color_mode, Color color_value) {
-        int mode_w1 = pfd_gc.get_text_width(g2, pfd_gc.font_xl, mode);
-        int mode_w2 = pfd_gc.get_text_width(g2, pfd_gc.font_xl, value);
-        int mode_w = mode_w1 + mode_w2;
-        int mode_x = pfd_gc.fma_left; 
-        switch (col) {
-        	case 1: mode_x += pfd_gc.fma_col_1 + (pfd_gc.fma_col_2 - pfd_gc.fma_col_1)/2 - mode_w/2; break;
-        	case 2: mode_x += pfd_gc.fma_col_2 + (pfd_gc.fma_col_3 - pfd_gc.fma_col_2)/2 - mode_w/2; break;
-        	case 3: mode_x += pfd_gc.fma_col_3 + (pfd_gc.fma_col_4 - pfd_gc.fma_col_3)/2 - mode_w/2; break;
-        	case 4: mode_x += pfd_gc.fma_col_4 + (pfd_gc.fma_width - pfd_gc.fma_col_4)/2 - mode_w/2; break;
-        	default: mode_x += pfd_gc.fma_col_1 /2 - mode_w/2; break;
-        }        
-        int mode_x2 = mode_x + mode_w1;        
-        int mode_y = pfd_gc.fma_top + pfd_gc.fma_height*raw/3 + pfd_gc.line_height_xl - 2;
-        g2.setColor(color_mode);
-        g2.setFont(pfd_gc.font_xl);
-        g2.drawString(mode, mode_x, mode_y);
-        g2.setColor(color_value);
-        g2.drawString(value, mode_x2, mode_y);
-        if ( framed ) {
-        	g2.setColor(pfd_gc.pfd_markings_color);
-        	g2.drawRect(mode_x-pfd_gc.digit_width_xl/2, mode_y - pfd_gc.line_height_xl*15/16, mode_w+pfd_gc.digit_width_xl, pfd_gc.line_height_xl*18/16);
-        }
-    }
     
     private void drawDMode(Graphics2D g2, int col, int raw, String mode) {
         int mode_w = pfd_gc.get_text_width(g2, pfd_gc.font_m, mode);
@@ -421,7 +375,7 @@ public class FMA_A320 extends PFDSubcomponent {
     private void drawA320FMA(Graphics2D g2) {
 
         String fma_str = "ERROR";
-        /*
+        
         fma_str = "CRZ " + this.avionics.qpac_presel_crz();
         drawDMode(g2,0,0,fma_str);
         fma_str = "CLB " + this.avionics.qpac_presel_clb();
@@ -432,24 +386,38 @@ public class FMA_A320 extends PFDSubcomponent {
         drawDMode(g2,1,1,fma_str);
         fma_str = "VR " + this.avionics.qpac_vr();
         drawDMode(g2,1,2,fma_str);
+        
+        fma_str = "Range " + this.avionics.map_range();
+        drawDMode(g2,1,3,fma_str);
+        fma_str = "Mode " + this.avionics.map_submode();
+        drawDMode(g2,1,4,fma_str);
+        
         fma_str = "vF " + this.avionics.qpac_vf();
         drawDMode(g2,2,0,fma_str);
         fma_str = "vS " + this.avionics.qpac_vs();
         drawDMode(g2,2,1,fma_str);
+        fma_str = "Qpac " + this.avionics.qpac_version();
+        drawDMode(g2,2,2,fma_str);        
         fma_str = "VMO " + this.avionics.qpac_vmo();
+        
         drawDMode(g2,3,0,fma_str);
         fma_str = "VLS " + this.avionics.qpac_vls();
         drawDMode(g2,3,1,fma_str);
-        fma_str = "aProt " + this.avionics.qpac_alpha_prot();
-        drawDMode(g2,4,0,fma_str);
-        fma_str = "aMax " + this.avionics.qpac_alpha_max();
-        drawDMode(g2,4,1,fma_str);
         fma_str = "ra bug " + this.aircraft.ra_bug();
         drawDMode(g2,3,2,fma_str);
         fma_str = "da_bug " + this.aircraft.da_bug();
         drawDMode(g2,3,3,fma_str);        
         fma_str = "vso " + this.aircraft.get_Vso();
-        drawDMode(g2,4,2,fma_str);
+        drawDMode(g2,3,4,fma_str);        
+        fma_str = "fd_v " + this.avionics.qpac_fd_ver_bar();
+        drawDMode(g2,3,5,fma_str);        
+        fma_str = "fd h " + this.avionics.qpac_fd_hor_bar();
+        drawDMode(g2,3,6,fma_str);
+        
+        fma_str = "aProt " + this.avionics.qpac_alpha_prot();
+        drawDMode(g2,4,0,fma_str);
+        fma_str = "aMax " + this.avionics.qpac_alpha_max();
+        drawDMode(g2,4,1,fma_str);
         fma_str = "vno " + this.aircraft.get_Vno();
         drawDMode(g2,4,3,fma_str);   
         fma_str = "vle " + this.aircraft.get_Vle();
@@ -464,7 +432,8 @@ public class FMA_A320 extends PFDSubcomponent {
         drawDMode(g2,0,5,fma_str); 
         fma_str = "ApprType" + this.avionics.qpac_appr_type();
         drawDMode(g2,0,6,fma_str);
-        */
+        
+        
         
         // AP Engaged
         String ap_str = "";       
@@ -503,7 +472,7 @@ public class FMA_A320 extends PFDSubcomponent {
         	case 6 : str_ap_phase="GO ARROUND"; break;
       	   	case 7 : str_ap_phase="DONE"; break; 	
         }
-        // drawDMode(g2,1,0,str_ap_phase);
+        drawDMode(g2,1,0,str_ap_phase);
         
         // Autopilote vertical mode
         boolean col_2_3 = false; // Column 2 + 3
@@ -553,7 +522,7 @@ public class FMA_A320 extends PFDSubcomponent {
     		case 5 : pfe_vert_armed.setText("DES G/S", PFE_Color.PFE_COLOR_ARMED);break;
         	case 6 : pfe_vert_armed.setText("ALT", PFE_Color.PFE_COLOR_ARMED); break;
         	case 7 : pfe_vert_armed.setText("ALT G/S", PFE_Color.PFE_COLOR_ARMED); break;
-        	case 8 : pfe_vert_armed.setText("G/S", PFE_Color.PFE_COLOR_MANAGED); break;
+        	case 8 : pfe_vert_armed.setText("ALT", PFE_Color.PFE_COLOR_MANAGED); break;
         	case 9 : // TODO: G/S should be in blue 			 		 
 			 		 pfe_vert_armed.setTextValue("ALT", "G/S", PFE_Color.PFE_COLOR_MANAGED);
 			 		 break;       			 
@@ -583,6 +552,7 @@ public class FMA_A320 extends PFDSubcomponent {
     						pfe_lat_mode.setText("HDG", PFE_Color.PFE_COLOR_ACTIVE);
     					}
     					break;
+    		default : pfe_lat_mode.setText(ap_lateral_mode, PFE_Color.PFE_COLOR_ACTIVE); 
     		}
         
         if (col_2_3) { 
@@ -605,35 +575,33 @@ public class FMA_A320 extends PFDSubcomponent {
         	pfe_thrust_message.setText("A/THR LIMITED", PFE_Color.PFE_COLOR_CAUTION);
         }
 
-        // TODO : Warning messages - justified left
-        String str_thr_warning = "TWarn " + this.avionics.qpac_fma_thr_warning();       
+        // TODO : TOGA LK and A.FLOOR
+        String str_thr_warning = "THR MSG " + this.avionics.qpac_fma_thr_warning();       
         if (this.avionics.qpac_fma_thr_warning()==1) { 
-        	str_thr_warning = "LVR CLB";
-        	// draw1Mode(g2, 0, 2, str_thr_warning, false, pfd_gc.pfd_markings_color);
+        	str_thr_warning = "LVR CLB";        	
         	pfe_thrust_message.setText("LVR CLB", PFE_Color.PFE_COLOR_MARK);
         } else if (this.avionics.qpac_fma_thr_warning()==4) { 
         	str_thr_warning = "THR LK";
-        	//draw1Mode(g2, 0, 2, str_thr_warning, false, pfd_gc.pfd_caution_color);
         	pfe_thrust_message.setText("THR LK", PFE_Color.PFE_COLOR_CAUTION);
         } else if (this.avionics.qpac_fma_thr_warning()==2) { 
         	str_thr_warning = "LVR MCT";
-        	//draw1Mode(g2, 0, 2, str_thr_warning, false, pfd_gc.pfd_markings_color);
         	pfe_thrust_message.setText("LVR MCT", PFE_Color.PFE_COLOR_MARK);
         } else if (this.avionics.qpac_fma_thr_warning()==3) { 
         	str_thr_warning = "LVR ASYM";
-        	// draw1Mode(g2, 0, 2, str_thr_warning, false, pfd_gc.pfd_caution_color);
         	pfe_thrust_message.setText("LVR ASYM", PFE_Color.PFE_COLOR_CAUTION);
         } else if  (this.avionics.qpac_fma_thr_warning()>4) {
-        	draw1Mode(g2, 0, 2, str_thr_warning, false, pfd_gc.pfd_caution_color);
+        	pfe_thrust_message.setText(str_thr_warning, PFE_Color.PFE_COLOR_CAUTION);
+        } else if (this.avionics.qpac_athr_limited()!=0 ) {     
+            // A/THR LIMITED (on ECAM - this is not FCOM)
+            pfe_thrust_message.setText("A/THR LIMITED", PFE_Color.PFE_COLOR_CAUTION);
         } else if (this.avionics.qpac_presel_clb() > 0 && (ap_phase == 1)) {
         	str_thr_warning = "SPEED SEL: "+this.avionics.qpac_presel_clb();
-        	// draw1Mode(g2, 1, 2, str_thr_warning, false, pfd_gc.pfd_armed_color);
         	pfe_thrust_message.setText(str_thr_warning, PFE_Color.PFE_COLOR_ARMED);
        	} else if (this.avionics.qpac_presel_crz() > 0 && (ap_phase == 2)) {
         	str_thr_warning = "SPEED SEL: "+this.avionics.qpac_presel_crz();
-        	// draw1Mode(g2, 1, 2, str_thr_warning, false, pfd_gc.pfd_armed_color);
         	pfe_thrust_message.setText(str_thr_warning, PFE_Color.PFE_COLOR_ARMED);
-       	}
+       	} else pfe_thrust_message.clearText();
+        pfe_thrust_message.paint(g2);
         // TODO : display : qpac_presel_mach()
         
         // Manual Lever modes
@@ -665,6 +633,7 @@ public class FMA_A320 extends PFDSubcomponent {
         } 
         
         // Autothrust (it's not autothrottle !!!)
+        // TODO: "THR DES" ???
         String str_athr_mode = "A/THR";
         String str_athr_mode2 = "M2 "+this.avionics.qpac_athr_mode2();  
         switch (this.avionics.qpac_athr_mode2()) {
@@ -674,6 +643,8 @@ public class FMA_A320 extends PFDSubcomponent {
         case 3 : str_athr_mode2 = "THR IDLE"; break;
         case 4 : str_athr_mode2 = "SPEED"; break;
         case 5 : str_athr_mode2 = "MACH"; break;
+        case 11 : str_athr_mode2 = "A FLOOR"; break; 
+        case 12 : str_athr_mode2 = "TOGA LK"; break; 
         }
         if (this.avionics.qpac_thr_lever_mode()==0) {       	              
         	if (this.avionics.qpac_athr_mode()==1) {
@@ -682,6 +653,7 @@ public class FMA_A320 extends PFDSubcomponent {
         	}  else if (this.avionics.qpac_athr_mode()==2) {
         		pfe_athr.setText(str_athr_mode, PFE_Color.PFE_COLOR_MARK);
         		pfe_thrust.setText(str_athr_mode2, PFE_Color.PFE_COLOR_ACTIVE);
+        		if (this.avionics.qpac_athr_mode2()>10) pfe_thrust.setFrameColor(PFE_Color.PFE_COLOR_CAUTION);
         	} else {
         		pfe_athr.clearText();
         		pfe_thrust.clearText();
@@ -711,23 +683,27 @@ public class FMA_A320 extends PFDSubcomponent {
         		if (this.aircraft.ra_bug() != -10.0f) { 
         			str_dh_mda = "DH ";
         			str_dh_mda_value = "" + this.aircraft.ra_bug();
-        			draw2Mode(g2, 3, 2, str_dh_mda, str_dh_mda_value, false, pfd_gc.pfd_markings_color, pfd_gc.pfd_armed_color);
+        			// draw2Mode(g2, 3, 2, str_dh_mda, str_dh_mda_value, false, pfd_gc.pfd_markings_color, pfd_gc.pfd_armed_color);
+        			pfe_land_minimums.setTextValue("DH ", str_dh_mda_value, PFE_Color.PFE_COLOR_MARK);
         		} else {
-        			str_dh_mda ="NO DH";
+        			pfe_land_minimums.setText("NO DH", PFE_Color.PFE_COLOR_MARK);
         		}
         		break;
         	case 1: 
         		str_dh_mda = "MDA "; 
         		str_dh_mda_value = "" + this.aircraft.da_bug();         	
-        		draw2Mode(g2, 3, 2, str_dh_mda, str_dh_mda_value, false, pfd_gc.pfd_markings_color, pfd_gc.pfd_armed_color);
+        		// draw2Mode(g2, 3, 2, str_dh_mda, str_dh_mda_value, false, pfd_gc.pfd_markings_color, pfd_gc.pfd_armed_color);
+        		pfe_land_minimums.setTextValue("MDA ", str_dh_mda_value, PFE_Color.PFE_COLOR_MARK);
         		break;
         	case 2: 
         		str_dh_mda = "BARO ";
         		str_dh_mda_value = "" + this.aircraft.da_bug(); 
-        		draw2Mode(g2, 3, 2, str_dh_mda, str_dh_mda_value, false, pfd_gc.pfd_markings_color, pfd_gc.pfd_armed_color);
+        		// draw2Mode(g2, 3, 2, str_dh_mda, str_dh_mda_value, false, pfd_gc.pfd_markings_color, pfd_gc.pfd_armed_color);
+        		pfe_land_minimums.setTextValue("BARO ", str_dh_mda_value, PFE_Color.PFE_COLOR_MARK);
         		break;
         	}      	
-        }
+        } else pfe_land_minimums.clearText();
+        pfe_land_minimums.paint(g2);
         
         // Landing capabilities
         String ldg_cap_1 = "";

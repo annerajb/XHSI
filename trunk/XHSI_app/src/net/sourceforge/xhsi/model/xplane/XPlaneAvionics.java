@@ -323,9 +323,17 @@ public class XPlaneAvionics implements Avionics, Observer {
 
         // ranges: 0:10, 1:20, 2:40, 3:80, 4:160, 5:320, 6:640
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
-            return (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_MAP_RANGE_SELECTOR);
+    		if (this.qpac_version() > 150) {
+    			return (int) (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_EFIS_ND_RANGE_CAPT)); 
+    		} else {
+    			return (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_MAP_RANGE_SELECTOR);
+    		}
         } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
-            return (int) sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MAP_RANGE);
+    		if (this.qpac_version() > 150) {
+    			return (int) (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_EFIS_ND_RANGE_FO)); 
+    		} else {
+    			return (int) sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MAP_RANGE);
+    		}
         } else {
             return xhsi_settings.map_range_index;
         }
@@ -337,9 +345,17 @@ public class XPlaneAvionics implements Avionics, Observer {
 
         // ranges: 10, 20, 40, 80, 160, 320, 640
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
-            return EFIS_MAP_RANGE[ (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_MAP_RANGE_SELECTOR) ];
+    		if (this.qpac_version() > 150) {
+    			return EFIS_MAP_RANGE[ (int) (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_EFIS_ND_RANGE_CAPT))]; 
+    		} else {
+    			return EFIS_MAP_RANGE[ (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_MAP_RANGE_SELECTOR) ];
+    		}
         } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
-            return EFIS_MAP_RANGE[ (int) sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MAP_RANGE) ];
+    		if (this.qpac_version() > 150) {
+    			return EFIS_MAP_RANGE[ (int) (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_EFIS_ND_RANGE_FO))]; 
+    		} else {
+    			return EFIS_MAP_RANGE[ (int) sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MAP_RANGE) ];
+    		}
         } else {
             return xhsi_settings.map_range;
         }
@@ -375,15 +391,23 @@ public class XPlaneAvionics implements Avionics, Observer {
 
 
     public int map_submode() {
-
-        // submodes: 0=APP, 1=VOR, 2=MAP, 3=NAV, 4=PLN (see the constants in model/Avionics)
-        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
-            return (int) (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_MAP_SUBMODE));
-        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
-            return (int) (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MAP_MODE));
-        } else {
-            return xhsi_settings.map_mode;
-        }
+    	
+    	// submodes: 0=APP, 1=VOR, 2=MAP, 3=NAV, 4=PLN (see the constants in model/Avionics)
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+    		if (this.qpac_version() > 110) {
+    			return (int) (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_EFIS_ND_MODE_CAPT)); 
+    		} else {
+    			return (int) (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_MAP_SUBMODE));
+    		}
+    	} else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		if (this.qpac_version() > 110) {
+    			return (int) (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_EFIS_ND_MODE_FO)); 
+    		} else {
+    			return (int) (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MAP_MODE));
+    		}
+    	} else {
+    		return xhsi_settings.map_mode;
+    	}
 
     }
 
@@ -1001,9 +1025,13 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     // QPAC Airbus FBW
     public boolean is_qpac() {
-    	return ( sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_STATUS) == 1.0f );
+    	return ( sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_STATUS) > 0.0f );
     }
-        
+    
+    public int qpac_version() {
+    	return Math.round( sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_STATUS));
+    }
+    
     // Autopilot
     public boolean qpac_ap1() {
     	// return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_AP1) > 0 ? true : false;
@@ -1256,10 +1284,12 @@ public class XPlaneAvionics implements Avionics, Observer {
     		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD1_HOR_BAR);
     }  
     public float qpac_fd_yaw_bar() {
-    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT )) 
+    	// Only QPAC FD2 yaw bar is transmitting. 
+    	// With QPAC v2 range is not between -0.5 and +0.5 but -20 to +20 visible
+    	if (qpac_version() >= 202) {
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD2_YAW_BAR)/-40.0f;
+    	} else 
     		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD2_YAW_BAR);
-    	else
-    		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FD1_YAW_BAR);
     }  
     
     // V Speeds   

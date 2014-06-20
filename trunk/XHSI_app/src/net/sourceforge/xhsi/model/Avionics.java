@@ -518,6 +518,7 @@ public interface Avionics {
     public float cl30_mast_caut();
 
     public boolean is_qpac();
+    public int qpac_version();
     
     // Autopilot
     /**

@@ -125,10 +125,19 @@ public class ADI_A320 extends PFDSubcomponent {
 		float pitch = this.aircraft.pitch(); // radians? no, degrees!
 		
 		float bank = this.aircraft.bank(); // degrees
-		//logger.warning("pitch: " + pitch + " / " + Math.toDegrees(pitch));
-		//bank *= 2.0f;
-		//pitch = 11.75f;
-
+		
+		// Flight Director Mode (VS/HDG mode)
+		boolean fd_on = this.avionics.autopilot_mode() >= 1 ? true : false;	
+		boolean path_director_on = false;
+		if ( this.avionics.is_qpac()) { 
+			fd_on = this.avionics.qpac_fd_on();
+			// if (this.avionics.qpac_fd1_hor_bar() == -1.0f) fd_on = false;
+			if (this.avionics.qpac_fcu_hdg_trk()) { fd_on = false; path_director_on = true; }
+		}
+		if (pitch > 25.0f || pitch < -13.0f || Math.abs(bank) > 45.0f) { fd_on=false; path_director_on=false; }		
+		// TODO: FCOM 1.27.20p3 FD bars are removed when pitch > 25°up or pitch < 13° down restored when pitch between 10° down and 22°up
+		// TODO : FCOM 1.31.40p3 FD bars are removed when bank > 45° restored when bank < 40°
+		
 		// full-scale pitch down = adi_pitchscale (eg: 22°)
 		int pitch_y = cy + (int)(down * pitch / scale);
 
@@ -219,11 +228,11 @@ public class ADI_A320 extends PFDSubcomponent {
 			int pitch_y_airbus = pitch_y;
 			if (pitch_y > pitch_y_max) pitch_y_airbus = pitch_y_max;
 			if (pitch_y < pitch_y_min) pitch_y_airbus = pitch_y_min;
-			g2.setColor(pfd_gc.sky_color);
+			g2.setColor(pfd_gc.pfd_sky_color);
 			g2.fillRect(cx - diagonal, pitch_y_airbus - p_90, 2 * diagonal, p_90);
-			g2.setColor(pfd_gc.ground_color);
+			g2.setColor(pfd_gc.pfd_ground_color);
 			g2.fillRect(cx - diagonal, pitch_y_airbus, 2 * diagonal, p_90);	
-			g2.setColor(pfd_gc.markings_color);
+			g2.setColor(pfd_gc.pfd_markings_color);
 			g2.drawLine(cx - diagonal, pitch_y_airbus, cx + diagonal, pitch_y_airbus);
 //		} else {
 //			g2.rotate(Math.toRadians(-bank), cx, cy);
@@ -347,6 +356,20 @@ public class ADI_A320 extends PFDSubcomponent {
 				cy - up*26/32 + 1 };
 		g2.drawPolygon(slip_pointer_x, slip_pointer_y, 4);
 
+		// Selected heading when FD off
+		if (! fd_on) {
+			float hdg_bug = this.avionics.heading_bug() - this.aircraft.heading();
+			if ( hdg_bug >  180.0f ) hdg_bug -= 360.0f;
+			if ( hdg_bug < -180.0f ) hdg_bug += 360.0f;
+			int bug_cx = cx + Math.round( hdg_bug * pfd_gc.hdg_width / 50.0f );
+			
+			if ((bug_cx > (cx-(left*9/10))) && (bug_cx < (cx+(right*9/10)))) {
+				g2.setColor(pfd_gc.pfd_selected_color);
+				g2.setStroke(new BasicStroke(4.0f * pfd_gc.grow_scaling_factor));
+				g2.drawLine(bug_cx, pitch_y_airbus, bug_cx, pitch_y_airbus - up*3/32);	
+				g2.setStroke(original_stroke);
+			}
+		}
 	
 		// Display Radar Altitude
 		if  ( ra < 2500 )  {
@@ -495,14 +518,9 @@ public class ADI_A320 extends PFDSubcomponent {
 		}
 
 		
-		// Flight Director (VS/HDG mode)
-		boolean fd_on = this.avionics.autopilot_mode() >= 1 ? true : false;	
-		if ( this.avionics.is_qpac()) { 
-			fd_on = this.avionics.qpac_fd_on();
-			// if (this.avionics.qpac_fd1_hor_bar() == -1.0f) fd_on = false;
-			if (this.avionics.qpac_fcu_hdg_trk()) fd_on = false;
-		}
-		// if ( this.aircraft.on_ground() ) { fd_on = false; }
+
+
+		// Flight Director Display (VS/HDG mode)
 		if ( fd_on ) {
 			int fd_y;
 			int fd_x = cx + (int)(down * (-bank+this.avionics.fd_roll()) / scale) / 3; // divide by 3 to limit deflection
@@ -525,15 +543,61 @@ public class ADI_A320 extends PFDSubcomponent {
 			g2.setStroke(new BasicStroke(3.0f * pfd_gc.scaling_factor));
 			// horizontal
 			if (fd_y < (cy+left)) g2.drawLine(cx - fd_bar, fd_y, cx + fd_bar, fd_y);
-			// vertical
-			if (fd_x > (cx-left)) g2.drawLine(fd_x, cy - fd_bar, fd_x, cy + fd_bar);
-			if (fd_yaw > (cx-left)) {
-				g2.setStroke(new BasicStroke(8.0f * pfd_gc.scaling_factor));
-				g2.drawLine(fd_yaw, cy, fd_yaw, cy + fd_bar);
+			// vertical or yaw bar
+			if ((! airborne) || (ra < 30)) {
+				// conditions to display yaw bar instead of vertical FD bar is below 30 ft radar or on ground (FCOM 1.31.40p2 n3)
+				if (fd_yaw > (cx-left)) {
+					int fd_thick = wing_t;
+					int fd_yaw_x [] = {
+							fd_yaw,
+							fd_yaw-fd_thick,
+							fd_yaw-fd_thick,
+							fd_yaw+fd_thick,
+							fd_yaw+fd_thick
+					};
+					int fd_yaw_y[] = {
+							cy + 2,
+							cy + fd_thick *3,
+							cy + down * 9/24,
+							cy + down * 9/24,
+							cy + fd_thick *3
+					};
+					// g2.setStroke(new BasicStroke(8.0f * pfd_gc.scaling_factor));
+					//g2.drawLine(fd_yaw, cy, fd_yaw, cy + fd_bar);
+					g2.drawPolygon(fd_yaw_x, fd_yaw_y, 5);
+				}
+			} else {
+				if (fd_x > (cx-left)) g2.drawLine(fd_x, cy - fd_bar, fd_x, cy + fd_bar);
 			}
+				
+			
+			if (fd_x > (cx-left)) g2.drawLine(fd_x, cy - fd_bar, fd_x, cy + fd_bar);
+
 			g2.setStroke(original_stroke);
 		}
 
+		if (path_director_on) {
+			int fpd_bar = left * 12 / 24;
+			
+			int fpd_r = down/25;
+			int fpd_w = down/4;
+			int fpd_y = cy - (int)(fpd_bar * (this.avionics.qpac_fd_hor_bar() - 1.0f ) );
+			int fpd_x = cx + (int)(fpd_bar * (this.avionics.qpac_fd_ver_bar() - 1.0f ) );
+			float fpd_y_rad = (45.0f * (this.avionics.qpac_fd_ver_bar() - 1.0f ));
+			g2.setColor(pfd_gc.pfd_active_color);
+			g2.rotate(Math.toRadians(fpd_y_rad), fpd_x, fpd_y);
+			g2.drawOval(fpd_x - fpd_r, fpd_y - fpd_r, fpd_r*2, fpd_r*2);
+			g2.drawLine(fpd_x - fpd_r, fpd_y, fpd_x - fpd_w, fpd_y);
+			g2.drawLine(fpd_x - fpd_w, fpd_y, fpd_x - fpd_w - fpd_r, fpd_y + fpd_r);
+			g2.drawLine(fpd_x - fpd_w, fpd_y, fpd_x - fpd_w - fpd_r, fpd_y - fpd_r);
+			g2.drawLine(fpd_x - fpd_w - fpd_r, fpd_y + fpd_r, fpd_x - fpd_w - fpd_r, fpd_y - fpd_r);
+			
+			g2.drawLine(fpd_x + fpd_r, fpd_y, fpd_x + fpd_w, fpd_y);
+			g2.drawLine(fpd_x + fpd_w, fpd_y, fpd_x + fpd_w + fpd_r, fpd_y + fpd_r);
+			g2.drawLine(fpd_x + fpd_w, fpd_y, fpd_x + fpd_w + fpd_r, fpd_y - fpd_r);
+			g2.drawLine(fpd_x + fpd_w + fpd_r, fpd_y + fpd_r, fpd_x + fpd_w + fpd_r, fpd_y - fpd_r);
+			g2.setTransform(original_at);
+		}
 
 
 		// bank marks

@@ -213,8 +213,9 @@ public class SpeedTape_A320 extends PFDSubcomponent {
         }
 
         // amber max
+        // Not displayed on real Airbus but usefull for other aircrafts
         float vno = this.aircraft.get_Vno();
-        if ( (vno < vmax) && (vno > 0) ) {
+        if ( (vno < vmax) && (vno > 0) && (! this.avionics.is_qpac()) ) {
             int amber_max_y = pfd_gc.adi_cy - Math.round( (vno - ias) * pfd_gc.tape_height / 80.0f );
             if ( amber_max_y > pfd_gc.tape_top ) {
                 // draw an amber line between red_max_y and amber_max_y
@@ -364,7 +365,8 @@ public class SpeedTape_A320 extends PFDSubcomponent {
             drawVspeed(g2, vno, ias, "VNO");
             drawVspeed(g2, this.aircraft.get_Vle(), ias, "VLE");
             */
-            drawFlapsLimit(g2, this.aircraft.get_Vfe(), ias);           
+            drawFlapsLimit(g2, this.aircraft.get_Vfe(), ias); 
+            drawSpeedProtection(g2, vmax + 6.0f, ias);
             
         } else {
 
@@ -509,10 +511,18 @@ public class SpeedTape_A320 extends PFDSubcomponent {
         int v_y = pfd_gc.adi_cy - Math.round( (v - ias) * pfd_gc.tape_height / 80.0f );
         if (v>0) {
         	g2.setColor(pfd_gc.pfd_caution_color);
-        	g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*5/8, v_y-2, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y-2);
-        	g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*5/8, v_y+2, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y+2);  
+        	g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*5/9, v_y-2, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y-2);
+        	g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*5/9, v_y+2, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y+2);  
         }
     }
     
+    private void drawSpeedProtection(Graphics2D g2, float v, float ias) {
+        int v_y = pfd_gc.adi_cy - Math.round( (v - ias) * pfd_gc.tape_height / 80.0f );
+        if (v>0) {
+        	g2.setColor(pfd_gc.pfd_active_color);
+        	g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*5/9, v_y-2, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y-2);
+        	g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*5/9, v_y+2, pfd_gc.speedtape_left + pfd_gc.tape_width*6/8, v_y+2);  
+        }
+    }
     
 }
