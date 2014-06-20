@@ -174,12 +174,13 @@ public class GraphicsConfig implements ComponentListener {
     public Color color_airbusknob = new Color(0xD1D2D3); // was : 0xEDEDEB
     
     // Airbus grey
-    public Color color_airbusgray = new Color(0x4f6477);
+    public Color color_airbusgray = new Color(0x7f7f87);
 
     // Airbus PFD Colors
     public Color color_airbus_selected = Color.cyan;
     public Color color_airbus_armed = Color.cyan;
     public Color color_airbus_managed = Color.magenta;
+    public Color color_airbussky = new Color(0x10A0FF); 
  
      
     // variables
@@ -574,7 +575,7 @@ public class GraphicsConfig implements ComponentListener {
             sand_color = color_darktan;
             snow_color = Color.LIGHT_GRAY;
             sky_color = color_sky;
-            brightsky_color = color_sky.brighter();
+            
             ground_color = color_ground;
             brightground_color = color_ground.brighter();
             instrument_background_color = color_bluegray;
@@ -597,7 +598,8 @@ public class GraphicsConfig implements ComponentListener {
                 pfd_alti_color = Color.green;
                 pfd_ils_color = Color.magenta;
             	instrument_background_color = color_airbusgray;
-            	heading_bug_color = Color.cyan;
+            	heading_bug_color = Color.cyan;           	
+            	pfd_sky_color = color_airbussky;
             } else {
                 // PFD colors Boeing Style 
                 pfd_armed_color = Color.cyan;
@@ -614,9 +616,10 @@ public class GraphicsConfig implements ComponentListener {
                 pfd_active_color = Color.green;
                 pfd_ils_color = Color.white;
             	instrument_background_color = color_bluegray;
-            	heading_bug_color = color_magenta;            	
+            	heading_bug_color = color_magenta;             	
+            	pfd_sky_color = sky_color;
             }
-            pfd_sky_color = sky_color;
+            
             pfd_ground_color = ground_color;
             pfd_active_color = Color.green;
             pfd_caution_color = color_amber;
@@ -692,6 +695,7 @@ public class GraphicsConfig implements ComponentListener {
                 pfd_ils_color = Color.magenta;
             	instrument_background_color = color_airbusgray;
             	heading_bug_color = Color.cyan;
+            	pfd_sky_color = color_airbussky;
             } else {
             	// PFD colors Boeing Style
             	pfd_armed_color = Color.cyan;
@@ -707,9 +711,9 @@ public class GraphicsConfig implements ComponentListener {
             	pfd_ils_color = Color.white;
             	instrument_background_color = color_bluegray;
             	heading_bug_color = color_magenta;
+            	pfd_sky_color = sky_color;
             }
-            pfd_box_color = Color.white;
-            pfd_sky_color = sky_color;
+            pfd_box_color = Color.white;            
             pfd_ground_color = ground_color;
             pfd_active_color = Color.green;
             pfd_caution_color = color_amber;

@@ -437,29 +437,34 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_ILS_CRS=1030;
     public static final int QPAC_ILS_FREQ=1031;
     public static final int QPAC_ILS_ID=11032;
-    public static final int QPAC_ILS_DME=1048;
+    public static final int QPAC_ILS_DME=1033;
     
     // FD
-    public static final int QPAC_FD1_VER_BAR=1033;
-    public static final int QPAC_FD1_HOR_BAR=1034;
-    public static final int QPAC_FD1_YAW_BAR=1049;
-    public static final int QPAC_FD2_VER_BAR=1035;
-    public static final int QPAC_FD2_HOR_BAR=1036;
-    public static final int QPAC_FD2_YAW_BAR=1050;
+    public static final int QPAC_FD1_VER_BAR=1034;
+    public static final int QPAC_FD1_HOR_BAR=1035;
+    public static final int QPAC_FD1_YAW_BAR=1036;
+    public static final int QPAC_FD2_VER_BAR=1037;
+    public static final int QPAC_FD2_HOR_BAR=1038;
+    public static final int QPAC_FD2_YAW_BAR=1039;
     // V Speeds
-    public static final int QPAC_V1_VALUE=1037;
-    public static final int QPAC_V1=1038;
-    public static final int QPAC_VR=1039;
-    public static final int QPAC_VMO=1040;
-    public static final int QPAC_VLS=1041;
-    public static final int QPAC_VF=1042;
-    public static final int QPAC_VS=1043;
-    public static final int QPAC_V_GREEN_DOT=1044;
-    public static final int QPAC_ALPHA_PROT=1045;
-    public static final int QPAC_ALPHA_MAX=1046;
-    
+    public static final int QPAC_V1_VALUE=1040;
+    public static final int QPAC_V1=1041;
+    public static final int QPAC_VR=1042;
+    public static final int QPAC_VMO=1043;
+    public static final int QPAC_VLS=1044;
+    public static final int QPAC_VF=1045;
+    public static final int QPAC_VS=1046;
+    public static final int QPAC_V_GREEN_DOT=1047;
+    public static final int QPAC_ALPHA_PROT=1048;
+    public static final int QPAC_ALPHA_MAX=1049;
+    // EFIS
+    public static final int QPAC_EFIS_ND_MODE_CAPT=1050;
+    public static final int QPAC_EFIS_ND_RANGE_CAPT=1051;
+    public static final int QPAC_EFIS_ND_MODE_FO=1052;
+    public static final int QPAC_EFIS_ND_RANGE_FO=1053;  
+    public static final int QPAC_EFIS_ND_SYMBOLS=1054;
     // Failures flags
-    public static final int QPAC_FAILURES=1047;
+    public static final int QPAC_FAILURES=1055;
 
     
     // Plugin Version
