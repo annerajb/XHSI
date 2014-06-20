@@ -15,6 +15,7 @@
 //#include "XPLMProcessing.h"
 #include "XPLMDataAccess.h"
 #include "XPLMUtilities.h"
+#include "datarefs_qpac.h"
 //#include "XPLMNavigation.h"
 //#include "XPLMDisplay.h"
 //#include "XPLMMenus.h"
@@ -33,8 +34,13 @@ XPLMDataRef pa_a320_ir_capt_avail;
 XPLMDataRef pa_a320_pa1_horiz_bar;
 XPLMDataRef pa_a320_alt_cruize;
 XPLMDataRef pa_a320_fcu_fpa_sel;
+XPLMDataRef pa_a320_thr_a_floor;
+XPLMDataRef pa_a320_fd1_yaw_bar;
+XPLMDataRef pa_a320_fd2_yaw_bar;
+XPLMDataRef pa_a320_fd_yaw_bar_show;
 
 int pa_a320_ready = 0;
+int pa_a320_version = 0;
 
 
 void findPaA320DataRefs(void) {
@@ -52,6 +58,7 @@ void findPaA320DataRefs(void) {
         if ( pa_a320_ready == 0 ) {
 
         	pa_a320_ready = 1;
+        	pa_a320_version = 150;
 
             XPLMDebugString("XHSI: finding Peter Aircraft DataRefs\n");
 
@@ -62,6 +69,10 @@ void findPaA320DataRefs(void) {
             pa_a320_pa1_horiz_bar = XPLMFindDataRef("com/petersaircraft/airbus/PA1HorizBar");
             pa_a320_alt_cruize = XPLMFindDataRef("com/petersaircraft/airbus/ALT_CRZ_Capture");
             pa_a320_fcu_fpa_sel = XPLMFindDataRef("com/petersaircraft/airbus/FPA_SEL");
+            pa_a320_thr_a_floor = XPLMFindDataRef("com/petersaircraft/airbus/A_Floor");
+            pa_a320_fd1_yaw_bar = XPLMFindDataRef("com/petersaircraft/airbus/PA1YawBar");
+            pa_a320_fd2_yaw_bar = XPLMFindDataRef("com/petersaircraft/airbus/PA2YawBar");
+            pa_a320_fd_yaw_bar_show = XPLMFindDataRef("com/petersaircraft/airbus/PA1YawBar_show");
 
         }
     }

@@ -121,7 +121,15 @@ XPLMDataRef qpac_capt_efis_nd_range;
 XPLMDataRef qpac_co_efis_nd_range;
 
 int qpac_ready = 0;
+int qpac_version = 0;
 
+/* QPAC Versions :
+ *  major version number is x100
+ *  0 = Not ready
+ *  110 = QPAC Freeware 1.1
+ *  150 = PeterAircraft A320
+ *  202 = QPAC 2.02 Final Basic
+ */
 
 void findQpacDataRefs(void) {
 	// For datarefs checks, remove for release
@@ -133,11 +141,13 @@ void findQpacDataRefs(void) {
 	if ( ( qpac_plugin_status == NULL ) || ( XPLMGetDatai(qpac_plugin_status) < 0 ) ) {
 
         qpac_ready = 0;
+        qpac_version = 0;
 
     } else {
         if ( qpac_ready == 0 ) {
 
             qpac_ready = 1;
+            qpac_version = 110;
 
             XPLMDebugString("XHSI: finding QPAC AirbusFBW DataRefs\n");
 
@@ -228,9 +238,10 @@ void findQpacDataRefs(void) {
             qpac_co_alt_valid = XPLMFindDataRef("AirbusFBW/CoALTValid");
             // EFIS
             qpac_capt_efis_nd_mode = XPLMFindDataRef("AirbusFBW/NDmodeCapt");
-            qpac_co_efis_nd_mode = XPLMFindDataRef("AirbusFBW/NDrangeFO");
+            qpac_co_efis_nd_mode = XPLMFindDataRef("AirbusFBW/NDmodeFO");
             qpac_capt_efis_nd_range = XPLMFindDataRef("AirbusFBW/NDrangeCapt");
-            qpac_co_efis_nd_range = XPLMFindDataRef("AirbusFBW/NDmodeFO");
+            qpac_co_efis_nd_range = XPLMFindDataRef("AirbusFBW/NDrangeFO");
+            if (qpac_capt_efis_nd_range != NULL) qpac_version = 202;
 
         }
     }
