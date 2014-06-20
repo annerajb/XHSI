@@ -6,7 +6,7 @@
 * also renders the map_range marker rings.
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
-* Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2009-2014  Marc Rogiers (marrog.123@gmail.com)
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -49,7 +49,7 @@ import java.util.logging.Logger;
 //import java.util.HashMap;
 
 import net.sourceforge.xhsi.XHSISettings;
-import net.sourceforge.xhsi.XHSIPreferences;
+//import net.sourceforge.xhsi.XHSIPreferences;
 
 import net.sourceforge.xhsi.model.Airport;
 import net.sourceforge.xhsi.model.Avionics;
@@ -61,7 +61,7 @@ import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.NavigationObject;
 import net.sourceforge.xhsi.model.NavigationObjectRepository;
 import net.sourceforge.xhsi.model.NavigationRadio;
-import net.sourceforge.xhsi.model.RadioNavigationObject;
+//import net.sourceforge.xhsi.model.RadioNavigationObject;
 import net.sourceforge.xhsi.model.RadioNavBeacon;
 import net.sourceforge.xhsi.model.Runway;
 import net.sourceforge.xhsi.model.TaxiChart;
@@ -76,7 +76,7 @@ import net.sourceforge.xhsi.model.aptnavdata.AptNavXP900DatTaxiChartBuilder;
 
 public class MovingMap extends NDSubcomponent {
 
-    private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
+    private static final Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     private static final long serialVersionUID = 1L;
     private static final boolean DRAW_LAT_LON_GRID = false;
@@ -91,7 +91,7 @@ public class MovingMap extends NDSubcomponent {
 
     String active_chart_str;
     
-    String nearest_arpt_str = "";
+//    String nearest_arpt_str = "";
 
     float map_up;
     float center_lon;
@@ -100,11 +100,9 @@ public class MovingMap extends NDSubcomponent {
     float pixels_per_deg_lat;
     float pixels_per_nm;
     
-//    float longdashes[] = { 16.0f, 6.0f };
     float longdashes_1[] = { 16.0f, 6.0f };
     float longdashes_2[] = { 10.0f, 2.0f, 10.0f, 8.0f };
     
-//    float shortdashes[] = { 4.0f, 12.0f };
     float shortdashes_1[] = { 4.0f, 12.0f };
     float shortdashes_2[] = { 3.0f, 2.0f, 3.0f, 14.0f };
     
@@ -222,14 +220,12 @@ public class MovingMap extends NDSubcomponent {
 
     private void drawChart(Graphics2D g2) {
 
-        // String nearest_arpt_str = this.aircraft.get_nearest_arpt();
+        String nearest_arpt_str = this.aircraft.get_nearest_arpt();
 
         Color paper = nd_gc.background_color;
         Color field = nd_gc.color_verydarkgreen; // Color.GREEN.darker().darker().darker().darker().darker(); // nd_gc.color_lavender; //new Color(0xF0F0F0);
         Color taxi_ramp = nd_gc.hard_color.darker();
         Color hard_rwy = nd_gc.hard_color.brighter();
-//        g2.setColor(paper);
-//        g2.fillRect(nd_gc.panel_rect.x, nd_gc.panel_rect.y, nd_gc.panel_rect.width, nd_gc.panel_rect.height);
 
 
         if (nearest_arpt_str.length() >= 3) {
@@ -856,8 +852,7 @@ public class MovingMap extends NDSubcomponent {
                                 NavigationObject.NO_TYPE_AIRPORT,
                                 nor.get_nav_objects(NavigationObject.NO_TYPE_AIRPORT, lat, lon)
                             );
-                        // draw_nav_objects has found the nearest airport for us
-                        this.aircraft.set_nearest_arpt(this.nearest_arpt_str);
+
                     }
                 }
             }
@@ -1151,7 +1146,7 @@ public class MovingMap extends NDSubcomponent {
         NavigationObject navobj = null;
         RadioNavBeacon rnb;
 
-        double nearest_arpt_dist = 999.9f;
+        double min_rwy = this.preferences.get_min_rwy_length();
         
         for (int i=0; i<nav_objects.size(); i++) {
 
@@ -1183,16 +1178,8 @@ public class MovingMap extends NDSubcomponent {
                         
                 } else if (type == NavigationObject.NO_TYPE_AIRPORT) {
                     
-                    if ( ((Airport)navobj).longest >= this.preferences.get_min_rwy_length() ) {
-
+                    if ( ((Airport)navobj).longest >= min_rwy ) {
                         drawAirport(g2, x, y, (Airport)navobj, "");
-                        
-                        // find the nearest airport
-                        if ( dist < nearest_arpt_dist ) {
-                            nearest_arpt_dist = dist;
-                            this.nearest_arpt_str = ((Airport)navobj).icao_code;
-                        }
-                        
                     }
                         
                 } else if ( type == NavigationObject.NO_TYPE_RUNWAY )
@@ -1497,7 +1484,6 @@ public class MovingMap extends NDSubcomponent {
 
 
     private void drawAirport(Graphics2D g2, int x, int y, Airport airport, String runway) {
-//        if ( airport.longest >= this.preferences.get_min_rwy_length() ) {
             AffineTransform original_at = g2.getTransform();
             Stroke original_stroke = g2.getStroke();
             g2.rotate(Math.toRadians(this.map_up), x, y);
@@ -1509,7 +1495,6 @@ public class MovingMap extends NDSubcomponent {
             g2.drawString(airport.icao_code, x + 11, y + 13);
             g2.drawString(runway, x + 11, y + 13 + nd_gc.line_height_small);
             g2.setTransform(original_at);
-//        }
     }
 
 
