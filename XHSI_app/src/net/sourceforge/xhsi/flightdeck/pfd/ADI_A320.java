@@ -542,11 +542,11 @@ public class ADI_A320 extends PFDSubcomponent {
 			original_stroke = g2.getStroke();
 			g2.setStroke(new BasicStroke(3.0f * pfd_gc.scaling_factor));
 			// horizontal
-			if (fd_y < (cy+left)) g2.drawLine(cx - fd_bar, fd_y, cx + fd_bar, fd_y);
+			if (fd_y < (cy+left*9/10)) g2.drawLine(cx - fd_bar, fd_y, cx + fd_bar, fd_y);
 			// vertical or yaw bar
 			if ((! airborne) || (ra < 30)) {
 				// conditions to display yaw bar instead of vertical FD bar is below 30 ft radar or on ground (FCOM 1.31.40p2 n3)
-				if (fd_yaw > (cx-left)) {
+				if (fd_yaw > (cx-left*9/10)) {
 					int fd_thick = wing_t;
 					int fd_yaw_x [] = {
 							fd_yaw,
@@ -567,11 +567,11 @@ public class ADI_A320 extends PFDSubcomponent {
 					g2.drawPolygon(fd_yaw_x, fd_yaw_y, 5);
 				}
 			} else {
-				if (fd_x > (cx-left)) g2.drawLine(fd_x, cy - fd_bar, fd_x, cy + fd_bar);
+				if (fd_x > (cx-left*9/10)) g2.drawLine(fd_x, cy - fd_bar, fd_x, cy + fd_bar);
 			}
 				
 			
-			if (fd_x > (cx-left)) g2.drawLine(fd_x, cy - fd_bar, fd_x, cy + fd_bar);
+			if (fd_x > (cx-left*9/10)) g2.drawLine(fd_x, cy - fd_bar, fd_x, cy + fd_bar);
 
 			g2.setStroke(original_stroke);
 		}
@@ -580,6 +580,7 @@ public class ADI_A320 extends PFDSubcomponent {
 			int fpd_bar = left * 12 / 24;
 			
 			int fpd_r = down/25;
+			int fpd_r2 = down/45;	
 			int fpd_w = down/4;
 			int fpd_y = cy - (int)(fpd_bar * (this.avionics.qpac_fd_hor_bar() - 1.0f ) );
 			int fpd_x = cx + (int)(fpd_bar * (this.avionics.qpac_fd_ver_bar() - 1.0f ) );
@@ -588,14 +589,14 @@ public class ADI_A320 extends PFDSubcomponent {
 			g2.rotate(Math.toRadians(fpd_y_rad), fpd_x, fpd_y);
 			g2.drawOval(fpd_x - fpd_r, fpd_y - fpd_r, fpd_r*2, fpd_r*2);
 			g2.drawLine(fpd_x - fpd_r, fpd_y, fpd_x - fpd_w, fpd_y);
-			g2.drawLine(fpd_x - fpd_w, fpd_y, fpd_x - fpd_w - fpd_r, fpd_y + fpd_r);
-			g2.drawLine(fpd_x - fpd_w, fpd_y, fpd_x - fpd_w - fpd_r, fpd_y - fpd_r);
-			g2.drawLine(fpd_x - fpd_w - fpd_r, fpd_y + fpd_r, fpd_x - fpd_w - fpd_r, fpd_y - fpd_r);
+			g2.drawLine(fpd_x - fpd_w, fpd_y, fpd_x - fpd_w - fpd_r, fpd_y + fpd_r2);
+			g2.drawLine(fpd_x - fpd_w, fpd_y, fpd_x - fpd_w - fpd_r, fpd_y - fpd_r2);
+			g2.drawLine(fpd_x - fpd_w - fpd_r, fpd_y + fpd_r2, fpd_x - fpd_w - fpd_r, fpd_y - fpd_r2);
 			
 			g2.drawLine(fpd_x + fpd_r, fpd_y, fpd_x + fpd_w, fpd_y);
-			g2.drawLine(fpd_x + fpd_w, fpd_y, fpd_x + fpd_w + fpd_r, fpd_y + fpd_r);
-			g2.drawLine(fpd_x + fpd_w, fpd_y, fpd_x + fpd_w + fpd_r, fpd_y - fpd_r);
-			g2.drawLine(fpd_x + fpd_w + fpd_r, fpd_y + fpd_r, fpd_x + fpd_w + fpd_r, fpd_y - fpd_r);
+			g2.drawLine(fpd_x + fpd_w, fpd_y, fpd_x + fpd_w + fpd_r, fpd_y + fpd_r2);
+			g2.drawLine(fpd_x + fpd_w, fpd_y, fpd_x + fpd_w + fpd_r, fpd_y - fpd_r2);
+			g2.drawLine(fpd_x + fpd_w + fpd_r, fpd_y + fpd_r2, fpd_x + fpd_w + fpd_r, fpd_y - fpd_r2);
 			g2.setTransform(original_at);
 		}
 

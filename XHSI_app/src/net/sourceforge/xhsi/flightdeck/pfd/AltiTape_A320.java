@@ -49,10 +49,20 @@ public class AltiTape_A320 extends PFDSubcomponent {
     private static final long serialVersionUID = 1L;
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
+    
+    enum AltitudeAlert { NORMAL, FLASHING, PULSING };
+    
+    private AltitudeAlert altitude_alert_status;
+    
+    private boolean altitude_captured;
+    private int altitude_captured_ap;
 
 
     public AltiTape_A320(ModelFactory model_factory, PFDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
+        altitude_alert_status = AltitudeAlert.NORMAL;
+        altitude_captured = true;
+        altitude_captured_ap = Math.round(this.avionics.autopilot_altitude());
     }
 
 
@@ -351,6 +361,37 @@ public class AltiTape_A320 extends PFDSubcomponent {
     		}
     	}
     	
+    	// Compute Altitude Alert Status
+    	// FCOM 1.32.40p25
+    	// if gear_down or glide slope -> NORMAL
+    	// if ALT armed => incoming 
+    	// boolean altitude_incoming = true;
+    	// if (this.avionics.is_qpac()) altitude_incoming =(this.avionics.qpac_ap_vertical_armed() > 5 && this.avionics.qpac_ap_vertical_armed() < 10);
+    	if (Math.abs(ap_alt-altitude_captured_ap) > 300) altitude_captured = false;
+    	if (this.aircraft.get_gear(0) == 0.0f) {   		
+    		if ( (Math.abs(ap_alt - alt) < 750) && (Math.abs(ap_alt - alt) > 250) ) {    			
+    			if (altitude_captured && (altitude_captured_ap == ap_alt)) { 
+    				altitude_alert_status = AltitudeAlert.FLASHING; 
+    			} else {
+    				altitude_alert_status = AltitudeAlert.PULSING;
+    			}
+    		}
+    		if ( (Math.abs(ap_alt - alt) < 250) ) {
+    			altitude_alert_status = AltitudeAlert.NORMAL;
+    			altitude_captured = true;
+    			altitude_captured_ap = ap_alt;
+    		}
+    		if ( (Math.abs(altitude_captured_ap - alt) > 750) ) {
+    			altitude_captured = false;
+    			if (altitude_alert_status == AltitudeAlert.PULSING ) altitude_alert_status = AltitudeAlert.FLASHING;
+    		}
+    	} else {
+    		altitude_alert_status = AltitudeAlert.NORMAL;
+    		altitude_captured = true;    
+    		altitude_captured_ap = ap_alt;
+    	}
+    	
+    	
         // AP Alt bug
         int alt_y = Math.round(pfd_gc.adi_cy - (ap_alt - alt) * pfd_gc.tape_height / alt_f_range );
         boolean hide_bug = false;
@@ -457,8 +498,23 @@ public class AltiTape_A320 extends PFDSubcomponent {
     	
     	// TODO : Airbus FCOM 1.31.40 p11 (1) amber bold when deviation from FCU selected altitude or flight level
     	// The altitude window changes from yellow to amber, if the aircraft deviates from the FCU selected altitude or flight level
-    	g2.setColor(pfd_gc.pfd_reference_color);
-    	g2.drawPolyline(box_x, box_y, 8);
+    	switch (altitude_alert_status) {
+    	case NORMAL : 
+    		g2.setColor(pfd_gc.pfd_reference_color);
+    		g2.drawPolyline(box_x, box_y, 8);
+    		break;
+    	case PULSING : 
+    		g2.setColor(pfd_gc.pfd_reference_color);
+    		if ((System.currentTimeMillis() % 1000) < 500) g2.setStroke(new BasicStroke(4.0f));
+    		g2.drawPolyline(box_x, box_y, 8);
+    		g2.setStroke(original_stroke);
+    		break;
+    	case FLASHING : 
+    		g2.setColor(pfd_gc.pfd_caution_color);
+    		if ((System.currentTimeMillis() % 1000) < 500) { g2.setStroke(new BasicStroke(4.0f)); g2.drawPolyline(box_x, box_y, 8); g2.setStroke(original_stroke); }
+    		break;
+    	}
+
 
     	Area alt_ind_area = new Area ( new Polygon(box_x, box_y, 8) );
     	g2.clip(alt_ind_area);

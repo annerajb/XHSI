@@ -23,11 +23,9 @@
 package net.sourceforge.xhsi.flightdeck.pfd;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-public class PFDFramedElement {
-	private Graphics2D g2;
+public class PFDFramedElement {	
     private PFDGraphicsConfig pfd_gc;
 	private boolean framed ; // True if framed
 	private boolean framing; // True if framing active
@@ -40,9 +38,8 @@ public class PFDFramedElement {
 	private String str_line1_right;
 	private String str_line2_left;
 	private String str_line2_right;
-	private long paint_start;
-	private long nb_of_paints;
-	private long framed_nb_paints;
+	private long paint_start;	
+	private long framed_milli;
 	
     public enum PFE_Color { PFE_COLOR_MARK, PFE_COLOR_ACTIVE, PFE_COLOR_ARMED, PFE_COLOR_MANAGED, PFE_COLOR_CAUTION, PFE_COLOR_ALARM };
     PFE_Color text_color;
@@ -62,9 +59,8 @@ public class PFDFramedElement {
 		this.col = col;
 		this.raw = raw;		
 		this.pfd_gc = pfd_gc;
-		nb_of_paints = 0;
 		paint_start = 0;
-		framed_nb_paints = 200;
+		framed_milli = 10000;
 		text_color = default_pfe_color;
 		value_color = PFE_Color.PFE_COLOR_ARMED;
 		frame_color = PFE_Color.PFE_COLOR_MARK;
@@ -83,9 +79,8 @@ public class PFDFramedElement {
 		this.col = col;
 		this.raw = raw;		
 		this.pfd_gc = pfd_gc;
-		nb_of_paints = 0;
 		paint_start = 0;
-		framed_nb_paints = 200;
+		framed_milli = 10000;
 		text_color = default_pfe_color;
 		value_color = PFE_Color.PFE_COLOR_ARMED;
 		frame_color = PFE_Color.PFE_COLOR_MARK;
@@ -94,9 +89,9 @@ public class PFDFramedElement {
 	}
 
 	public void paint(Graphics2D g2) {    	 
-    	 nb_of_paints++;
+    	 
     	 if (framed) {
-    		 if (nb_of_paints > paint_start + framed_nb_paints ) framed = false;
+    		 if (System.currentTimeMillis() > paint_start + framed_milli ) framed = false;
     	 }
     	 if (!cleared) { 
     		 switch (text_style) {
@@ -113,7 +108,7 @@ public class PFDFramedElement {
     public void setText ( String text, PFE_Color color ) {    	
     	if ((! str_line1_left.equals(text)) || (color != text_color) ) {
     		if (text.equals("")) framed=false; else framed=true;
-    		paint_start = nb_of_paints;
+    		paint_start = System.currentTimeMillis();    		
     		str_line1_left = text;
     		text_color = color;
     		frame_color = PFE_Color.PFE_COLOR_MARK;
@@ -125,7 +120,7 @@ public class PFDFramedElement {
     public void setText ( String text1, String text2, PFE_Color color ) {    	
     	if ((! str_line1_left.equals(text1)) || (! str_line2_left.equals(text2)) || (color != text_color) ) {
     		if (text1.equals("")) framed=false; else framed=true;
-    		paint_start = nb_of_paints;
+    		paint_start = System.currentTimeMillis(); 
     		str_line1_left = text1;
     		str_line2_left = text2;
     		text_color = color;
@@ -138,7 +133,7 @@ public class PFDFramedElement {
     public void setTextValue ( String text, String value, PFE_Color color ) {    	
     	if ((! str_line1_left.equals(text)) || (color != text_color) || (! str_line1_right.equals(value))) {
     		if (text.equals("")) framed=false; else framed=true;
-    		paint_start = nb_of_paints;
+    		paint_start = System.currentTimeMillis(); 
     		str_line1_left = text;
     		str_line1_right = value;
     		text_color = color;
@@ -151,7 +146,7 @@ public class PFDFramedElement {
     public void setTextValue ( String text1, String text2, String value, PFE_Color color ) {    	
     	if ((! str_line1_left.equals(text1)) || (color != text_color) || (! str_line2_right.equals(value)) || (! str_line2_left.equals(text2))) {
     		if (text1.equals("")) framed=false; else framed=true;
-    		paint_start = nb_of_paints;
+    		paint_start = System.currentTimeMillis(); 
     		str_line1_left = text1;
     		str_line2_left = text2;
     		str_line2_right = value;
@@ -172,7 +167,7 @@ public class PFDFramedElement {
     
     public void setFrame() {
     	framed = true;
-		paint_start = nb_of_paints;
+		paint_start = System.currentTimeMillis(); 
     }
     
     public void clearFrame() {
