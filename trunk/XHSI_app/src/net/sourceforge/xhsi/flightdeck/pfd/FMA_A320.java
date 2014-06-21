@@ -375,7 +375,7 @@ public class FMA_A320 extends PFDSubcomponent {
     private void drawA320FMA(Graphics2D g2) {
 
         String fma_str = "ERROR";
-        
+        /*
         fma_str = "CRZ " + this.avionics.qpac_presel_crz();
         drawDMode(g2,0,0,fma_str);
         fma_str = "CLB " + this.avionics.qpac_presel_clb();
@@ -432,7 +432,7 @@ public class FMA_A320 extends PFDSubcomponent {
         drawDMode(g2,0,5,fma_str); 
         fma_str = "ApprType" + this.avionics.qpac_appr_type();
         drawDMode(g2,0,6,fma_str);
-        
+        */
         
         
         // AP Engaged
@@ -472,7 +472,7 @@ public class FMA_A320 extends PFDSubcomponent {
         	case 6 : str_ap_phase="GO ARROUND"; break;
       	   	case 7 : str_ap_phase="DONE"; break; 	
         }
-        drawDMode(g2,1,0,str_ap_phase);
+        // drawDMode(g2,1,0,str_ap_phase);
         
         // Autopilote vertical mode
         boolean col_2_3 = false; // Column 2 + 3
