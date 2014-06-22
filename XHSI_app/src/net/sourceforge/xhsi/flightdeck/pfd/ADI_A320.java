@@ -132,7 +132,7 @@ public class ADI_A320 extends PFDSubcomponent {
 		if ( this.avionics.is_qpac()) { 
 			fd_on = this.avionics.qpac_fd_on();
 			// if (this.avionics.qpac_fd1_hor_bar() == -1.0f) fd_on = false;
-			if (this.avionics.qpac_fcu_hdg_trk()) { fd_on = false; path_director_on = true; }
+			if (this.avionics.qpac_fcu_hdg_trk() && !this.aircraft.on_ground()) { fd_on = false; path_director_on = true; }			
 		}
 		if (pitch > 25.0f || pitch < -13.0f || Math.abs(bank) > 45.0f) { fd_on=false; path_director_on=false; }		
 		// TODO: FCOM 1.27.20p3 FD bars are removed when pitch > 25°up or pitch < 13° down restored when pitch between 10° down and 22°up

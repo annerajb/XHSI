@@ -497,7 +497,17 @@ public interface Avionics {
      */
     public boolean clock_shows_utc();
     
-
+    
+    /**
+     * @return boolean - true is show metric altitude on PFD
+     */
+    public boolean pfd_show_metric_alt();
+    /**
+     * @return boolean - true if baro is in HPa, false if baro is in Hg
+     */
+    public boolean pfd_show_baro_hpa();
+    	   
+    
     /**
      * @return boolean - receiving CL30 data
      */

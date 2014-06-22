@@ -103,7 +103,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
         // Global style
         // boolean pfd_airbus = this.avionics.get_instrument_style() == Avionics.STYLE_AIRBUS;
         boolean display_metric = false;
-        if (this.avionics.is_qpac() && this.avionics.qpac_fcu_metric_alt() ) { display_metric = true; } 
+        if (this.avionics.pfd_show_metric_alt() ) { display_metric = true; } 
         
         // int altitape_right = pfd_gc.altitape_left + pfd_gc.digit_width_xxl*14/5;
         int altitape_right = pfd_gc.altitape_left + pfd_gc.tape_width*60/100;       
@@ -307,13 +307,12 @@ public class AltiTape_A320 extends PFDSubcomponent {
         // TODO : On Airbus Capt or F/O can select display in Inches or HPa     
         int qnh = this.aircraft.qnh();
         boolean qnh_display = true;
-        boolean qnh_is_hpa = true;
+        boolean qnh_is_hpa = this.avionics.pfd_show_baro_hpa();
         float alt_inhg = this.aircraft.altimeter_in_hg();
         boolean std = ( Math.round(alt_inhg * 100.0f) == 2992 );
         if (this.avionics.is_qpac()) { 
         	std = this.avionics.qpac_baro_std(); 
-        	qnh_display = this.avionics.qpac_baro_hide();
-        	qnh_is_hpa = this.avionics.qpac_baro_unit();
+        	qnh_display = this.avionics.qpac_baro_hide();        	
         }
         String qnh_str;
         if ( std ) {

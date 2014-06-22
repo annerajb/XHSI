@@ -987,6 +987,21 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     public boolean gps_gs_active() { return false; }
 
+    // PFD Display options
+    public boolean pfd_show_metric_alt () {
+    	if (this.is_qpac()) 
+    		return qpac_fcu_metric_alt(); 
+    	else if (this.is_jar_a320neo() ) 
+    		return jar_a320neo_fcu_metric_alt(); 
+    	else return false;
+    }
+    public boolean pfd_show_baro_hpa () {
+    	if (this.is_qpac()) 
+    		return qpac_baro_unit(); 
+    	else if (this.is_jar_a320neo() ) 
+    		return jar_a320neo_baro_unit(); 
+    	else return false;
+    }
     
     public boolean is_cl30() {
         return ( sim_data.get_sim_float(XPlaneSimDataRepository.CL30_STATUS) == 1.0f );
@@ -1327,6 +1342,19 @@ public class XPlaneAvionics implements Avionics, Observer {
     // Failures
     public float qpac_failures() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FAILURES);
+    }
+    
+    // JAR Design A320 neo
+    public boolean is_jar_a320neo() {
+    	return ( sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_STATUS) > 0.0f );
+    }
+    
+    public boolean jar_a320neo_fcu_metric_alt() {
+    	return ( sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FCU) > 0.0f );
+    }
+   
+    public boolean jar_a320neo_baro_unit() {
+    	return ( sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FCU_BARO) > 0.0f );
     }
     
     // UMFC

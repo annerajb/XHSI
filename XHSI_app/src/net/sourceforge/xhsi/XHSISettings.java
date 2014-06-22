@@ -167,6 +167,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
 
     public int style = Avionics.STYLE_BOEING;
+    public int old_style = Avionics.STYLE_BOEING;
     
     public int source = Avionics.HSI_SOURCE_NAV1;
     public int radio1 = Avionics.EFIS_RADIO_NAV;
@@ -1319,6 +1320,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 //        this.checkbox_avionics_power.setSelected(avionics.power());
 
         int new_style = avionics.get_instrument_style();
+        if (old_style != new_style) { style=new_style; old_style=new_style; }
         this.radio_button_style_boeing.setSelected( new_style == Avionics.STYLE_BOEING );
         this.radio_button_style_airbus.setSelected( new_style == Avionics.STYLE_AIRBUS );
 
