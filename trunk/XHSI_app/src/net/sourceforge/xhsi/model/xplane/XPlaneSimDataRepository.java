@@ -466,15 +466,21 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     // Failures flags
     public static final int QPAC_FAILURES=1055;
 
+    // IDs reserved for QPAC up to 1199
+
+    // JarDesign Airbus A320neo
+    public static final int JAR_A320NEO_STATUS=1200;
+    public static final int JAR_A320NEO_FCU=1201;
+    public static final int JAR_A320NEO_FCU_BARO=1202;
     
     // Plugin Version
     public static final int PLUGIN_VERSION_ID = 999;
 
 
     // array with sim data for all sim data points defined above
-    float[] sim_values_float = new float[1200];
+    float[] sim_values_float = new float[1300];
     // int[] sim_values_int = new int[1000];
-    String[] sim_values_string = new String[1200];
+    String[] sim_values_string = new String[1300];
 
     long updates = 0;
     ArrayList observers;
@@ -491,7 +497,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
 
     public XPlaneSimDataRepository() {
         observers = new ArrayList();
-        for (int i=0; i<1000; i++) {
+        for (int i=0; i<1300; i++) {
             sim_values_string[i] = "";
         }
     }
