@@ -88,6 +88,15 @@ public class CDI extends NDSubcomponent {
             is_vor = ( this.avionics.get_tuned_localizer(2) == null );
             reception = this.avionics.get_nav_radio(2).receiving();
         }
+        // Custom NAV3 for ILS on Airbus
+        if (this.avionics.qpac_version() > 110) {
+        	// The first QPAC AirbusFBW 1.1 relies on X-Plane NAV1 for ILS
+        	cdi_value = this.avionics.qpac_loc_val();
+        	fromto = 1;        	
+        	course = Math.round(this.avionics.qpac_ils_crs()); 
+        	is_vor = this.avionics.qpac_loc_on();
+        	reception = this.avionics.qpac_loc_on();
+        }
         int cdi_pixels = Math.round(cdi_value * (float)dot_dist);
 
         int c_x = nd_gc.map_center_x;
