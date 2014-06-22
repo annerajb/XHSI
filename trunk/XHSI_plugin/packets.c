@@ -25,6 +25,7 @@
 #include "datarefs_cl30.h"
 #include "datarefs_qpac.h"
 #include "datarefs_pa_a320.h"
+#include "datarefs_jar_a320neo.h"
 #include "endianess.h"
 
 
@@ -1265,6 +1266,16 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_failures );
         i++;
     }
+
+    if ( jar_a320_neo_ready ) {
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_FCU);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_fcu_hdg_trk));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_FCU_BARO);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_baro_hpa));
+        i++;
+    }
+
 
 	// now we know the number of datapoints
 	sim_packet.nb_of_sim_data_points = custom_htoni( i );

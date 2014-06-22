@@ -75,6 +75,7 @@
 #include "datarefs_cl30.h"
 #include "datarefs_qpac.h"
 #include "datarefs_pa_a320.h"
+#include "datarefs_jar_a320neo.h"
 #include "ui.h"
 #include "net.h"
 #include "packets.h"
@@ -233,6 +234,12 @@ PLUGIN_API int XPluginEnable(void) {
                            checkPaA320Callback,
                            -1.0f,
                            NULL);
+    // JarDesign Airbus A320neo Aircraft
+    XPLMRegisterFlightLoopCallback(
+    					   checkJarA320NeoCallback,
+                           -1.0f,
+                           NULL);
+
     // X-FMC
     XPLMRegisterFlightLoopCallback(
                            sendXfmcCallback,
@@ -286,6 +293,7 @@ PLUGIN_API void XPluginDisable(void) {
 	XPLMUnregisterFlightLoopCallback(checkCL30Callback, NULL);
 	XPLMUnregisterFlightLoopCallback(checkQpacCallback, NULL);
 	XPLMUnregisterFlightLoopCallback(checkPaA320Callback, NULL);
+	XPLMUnregisterFlightLoopCallback(checkJarA320NeoCallback, NULL);
 
     XPLMUnregisterFlightLoopCallback(sendXfmcCallback, NULL);
 
