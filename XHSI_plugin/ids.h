@@ -429,6 +429,12 @@
 #define QPAC_EFIS_ND_RANGE_FO 1053
 // FAILURES
 #define QPAC_FAILURES 1055
+// IDs reserved for QPAC up to 1199
+
+// JarDesign Airbus A320neo
+#define JAR_A320NEO_STATUS 1200
+#define JAR_A320NEO_FCU 1201
+#define JAR_A320NEO_FCU_BARO 1202
 
 // Plugin Version
 #define PLUGIN_VERSION_ID 999
