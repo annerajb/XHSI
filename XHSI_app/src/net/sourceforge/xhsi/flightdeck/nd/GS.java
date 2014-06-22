@@ -210,7 +210,13 @@ public class GS extends NDSubcomponent {
             gs_value = this.avionics.nav2_vdef_dot();
             //navradio = this.avionics.get_selected_radio(2);
         }
-
+        // Custom NAV3 for ILS on Airbus
+        if (this.avionics.qpac_version() > 110) {
+        	// The first QPAC AirbusFBW 1.1 relies on X-Plane NAV1 for ILS       	
+        	gs_active = this.avionics.qpac_gs_on();
+        	gs_value = this.avionics.qpac_gs_val();        	
+        }
+        
         int cdi_pixels = Math.round(gs_value * (float)dot_dist);
 
         this.cdi_box_buf_image = create_buffered_image(cdi_box_width, cdi_box_height);
