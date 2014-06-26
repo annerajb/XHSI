@@ -523,14 +523,15 @@ public class XHSIPreferences {
      * @return            - the minimum length of runway that the airports should have in order to be dispalyed on the map
      *
      */
-    public Float get_min_rwy_length() {
-        Float min_rwy_length = Float.parseFloat(get_preference(PREF_MIN_RWY_LEN));
+    public float get_min_rwy_length() {
+        float min_rwy_length = (float)Float.parseFloat(get_preference(PREF_MIN_RWY_LEN));
         String rwy_units = get_preference(PREF_RWY_LEN_UNITS);
         if (rwy_units.equals("feet")) min_rwy_length *= 0.3048f;
 
         return min_rwy_length;
     }
 
+    
     /**
      * @return            - draw range arcs or not
      *

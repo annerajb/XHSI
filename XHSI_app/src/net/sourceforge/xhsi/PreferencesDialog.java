@@ -799,25 +799,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         int dialog_line = 0;
 
-        // instrument style
-        cons.gridx = 0;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.EAST;
-        graphics_panel.add(new JLabel("Instrument style", JLabel.TRAILING), cons);
-        cons.gridx = 2;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.WEST;
-        this.instrument_style_combobox = new JComboBox();
-        this.instrument_style_combobox.addItem("Switchable");
-        this.instrument_style_combobox.addItem("Boeing");
-        this.instrument_style_combobox.addItem("Airbus");
-        this.instrument_style_combobox.addActionListener(this);
-        graphics_panel.add(this.instrument_style_combobox, cons);
-        dialog_line++;
-        dialog_line++;
-        
         // Border style
         cons.gridx = 0;
         cons.gridwidth = 1;
@@ -942,6 +923,73 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         int dialog_line = 0;
 
+        // instrument style
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        avionics_options_panel.add(new JLabel("Instrument style", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.instrument_style_combobox = new JComboBox();
+        this.instrument_style_combobox.addItem("Switchable");
+        this.instrument_style_combobox.addItem("Boeing");
+        this.instrument_style_combobox.addItem("Airbus");
+        this.instrument_style_combobox.addActionListener(this);
+        avionics_options_panel.add(this.instrument_style_combobox, cons);
+        dialog_line++;
+        
+        // Empty line for spacing
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        avionics_options_panel.add(new JLabel(" ", JLabel.TRAILING), cons);
+        dialog_line++;
+
+        // Minimum runway length
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        avionics_options_panel.add(new JLabel("Airport minimum runway length", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.min_rwy_textfield = new JTextField(4);
+        avionics_options_panel.add(this.min_rwy_textfield, cons);
+        dialog_line++;
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        avionics_options_panel.add(new JLabel("Runway length units", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.rwy_units_combobox = new JComboBox();
+        this.rwy_units_combobox.addItem("meters");
+        this.rwy_units_combobox.addItem("feet");
+        this.rwy_units_combobox.addActionListener(this);
+        avionics_options_panel.add(this.rwy_units_combobox, cons);
+        dialog_line++;
+        cons.gridx = 0;
+        cons.gridwidth = 3;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        avionics_options_panel.add(new JLabel("(override of minimum runway length and units possible with datarefs)", JLabel.TRAILING), cons);
+        dialog_line++;
+
+        // Empty line for spacing
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        avionics_options_panel.add(new JLabel(" ", JLabel.TRAILING), cons);
+        dialog_line++;
+
         // Use avionics power
         cons.gridx = 0;
         cons.gridy = dialog_line;
@@ -973,7 +1021,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.anchor = GridBagConstraints.WEST;
         this.auto_frontcourse_checkbox = new JCheckBox("  (set the CRS (=OBS) automatically to the Localizer or ILS frontcourse)");
         avionics_options_panel.add(this.auto_frontcourse_checkbox, cons);
-        dialog_line++;
         dialog_line++;
 
         // Empty line for spacing
@@ -1035,7 +1082,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.horizon_style_combobox.addActionListener(this);
         pfd_options_panel.add(this.horizon_style_combobox, cons);
         dialog_line++;
-        dialog_line++;
 
         // Dial transparency
         cons.gridx = 0;
@@ -1055,7 +1101,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.dial_transparency_combobox.addActionListener(this);
         pfd_options_panel.add(this.dial_transparency_combobox, cons);
         dialog_line++;
-        dialog_line++;
 
         // Draw an HSI below the AI
         cons.gridx = 0;
@@ -1069,7 +1114,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.anchor = GridBagConstraints.WEST;
         this.pfd_hsi_checkbox = new JCheckBox();
         pfd_options_panel.add(this.pfd_hsi_checkbox, cons);
-        dialog_line++;
         dialog_line++;
 
         // V-bar FD instead of crosshairs
@@ -1085,7 +1129,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.draw_single_cue_fd_checkbox = new JCheckBox();
         pfd_options_panel.add(this.draw_single_cue_fd_checkbox, cons);
         dialog_line++;
-        dialog_line++;
 
         // Draw AOA-indicator, pushing a (crippled) RA-indicator to the bottom
         cons.gridx = 0;
@@ -1099,7 +1142,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.anchor = GridBagConstraints.WEST;
         this.draw_aoa_checkbox = new JCheckBox();
         pfd_options_panel.add(this.draw_aoa_checkbox, cons);
-        dialog_line++;
         dialog_line++;
 
         // Draw Radios
@@ -1115,7 +1157,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.draw_radios_checkbox = new JCheckBox("  (window aspect ratio must be 4/3 or wider)");
         pfd_options_panel.add(this.draw_radios_checkbox, cons);
         dialog_line++;
-        dialog_line++;
 
         // Center ADI horizontally
         cons.gridx = 0;
@@ -1129,7 +1170,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.anchor = GridBagConstraints.WEST;
         this.adi_centered_checkbox = new JCheckBox("  (if window is wide enough) (disables DG/HSI)");
         pfd_options_panel.add(this.adi_centered_checkbox, cons);
-        dialog_line++;
         dialog_line++;
 
         
@@ -1284,35 +1324,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         nd_options_panel.add(this.draw_rwy_checkbox, cons);
         dialog_line++;
 
-        // Minimum runway length
-        cons.gridx = 0;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.EAST;
-        nd_options_panel.add(new JLabel("Airport minimum runway length", JLabel.TRAILING), cons);
-        cons.gridx = 2;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.WEST;
-        this.min_rwy_textfield = new JTextField(4);
-        nd_options_panel.add(this.min_rwy_textfield, cons);
-        dialog_line++;
-        cons.gridx = 0;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.EAST;
-        nd_options_panel.add(new JLabel("Runway length units", JLabel.TRAILING), cons);
-        cons.gridx = 2;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.WEST;
-        this.rwy_units_combobox = new JComboBox();
-        this.rwy_units_combobox.addItem("meters");
-        this.rwy_units_combobox.addItem("feet");
-        this.rwy_units_combobox.addActionListener(this);
-        nd_options_panel.add(this.rwy_units_combobox, cons);
-        dialog_line++;
-
         // TCAS always ON
         cons.gridx = 0;
         cons.gridwidth = 1;
@@ -1325,7 +1336,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.anchor = GridBagConstraints.WEST;
         this.tcas_always_on_checkbox = new JCheckBox();
         nd_options_panel.add(this.tcas_always_on_checkbox, cons);
-        dialog_line++;
         dialog_line++;
 
         // Display navaid frequencies when DATA is on
@@ -1394,7 +1404,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.draw_eicas_primary_checkbox = new JCheckBox();
         eicas_options_panel.add(this.draw_eicas_primary_checkbox, cons);
         dialog_line++;
-        dialog_line++;
 
         // Number of engines
         cons.gridx = 0;
@@ -1418,7 +1427,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.engine_count_combobox.addItem("8");
         eicas_options_panel.add(this.engine_count_combobox, cons);
         dialog_line++;
-        dialog_line++;
 
         // Engines type
         cons.gridx = 0;
@@ -1439,7 +1447,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.engine_type_combobox.addActionListener(this);
         eicas_options_panel.add(this.engine_type_combobox, cons);
         dialog_line++;
-        dialog_line++;
 
         // TRQ scale
         cons.gridx = 0;
@@ -1458,7 +1465,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.trq_scale_combobox.addItem(XHSIPreferences.TRQ_SCALE_PERCENT);
         this.trq_scale_combobox.addActionListener(this);
         eicas_options_panel.add(this.trq_scale_combobox, cons);
-        dialog_line++;
         dialog_line++;
 
         // Fuel units
@@ -1479,7 +1485,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.fuel_unit_combobox.addItem(XHSIPreferences.FUEL_UNITS_LTR);
         this.fuel_unit_combobox.addActionListener(this);
         eicas_options_panel.add(this.fuel_unit_combobox, cons);
-        dialog_line++;
         dialog_line++;
 
 //        // A reminder
@@ -1526,7 +1531,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.mfd_mode_combobox.addActionListener(this);
         mfd_options_panel.add(this.mfd_mode_combobox, cons);
         dialog_line++;
-        dialog_line++;
 
         // Airport Diagram colors
         cons.gridx = 0;
@@ -1544,7 +1548,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.arpt_chart_color_combobox.addItem("Night");
         this.arpt_chart_color_combobox.addActionListener(this);
         mfd_options_panel.add(this.arpt_chart_color_combobox, cons);
-        dialog_line++;
         dialog_line++;
 
         // Display airport that is set as NAV destination

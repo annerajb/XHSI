@@ -256,10 +256,9 @@ public class DestinationAirport extends MFDSubcomponent {
                         g2.drawString(rwy.rwy_num1 + "/" + rwy.rwy_num2, arpt_x, arpt_y);
                         g2.setFont(mfd_gc.font_xxs);
                         String soft_field = ( (rwy.surface!=Runway.RWY_ASPHALT) && (rwy.surface!=Runway.RWY_CONCRETE) ) ? " (S) " : "  ";
-                        if ( this.preferences.get_preference(XHSIPreferences.PREF_RWY_LEN_UNITS).equals("meters") ) {
+                        if ( this.aircraft.rwy_len_meters() ) {
                             g2.drawString(soft_field + Math.round(rwy.length) + " x " + Math.round(rwy.width) + " m", arpt_x + arpt_size*9/64, arpt_y);
-                        }
-                        if ( this.preferences.get_preference(XHSIPreferences.PREF_RWY_LEN_UNITS).equals("feet") ) {
+                        } else {
                             g2.drawString(soft_field + Math.round(rwy.length/0.3048f) + " x " + Math.round(rwy.width/0.3048f) + " ft", arpt_x + arpt_size*9/64, arpt_y);
                         }
                         if ( ! rwy.localizers.isEmpty() ) {

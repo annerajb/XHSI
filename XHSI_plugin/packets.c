@@ -1632,7 +1632,13 @@ int createStaticPacket(void) {
 	i++;
 
 	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_STYLE);
-	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(instrument_style));
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(xhsi_instrument_style));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_MIN_RWY_LENGTH);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(xhsi_min_rwy_length));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_RWY_UNITS);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(xhsi_rwy_units));
 	i++;
 
 

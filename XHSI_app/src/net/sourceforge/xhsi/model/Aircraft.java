@@ -701,6 +701,18 @@ public interface Aircraft {
 
 
     /**
+     * @return float - Minimum runway length
+     */
+    public float get_min_rwy_length();
+
+
+    /**
+     * @return boolean - Runway length in meters
+     */
+    public boolean rwy_len_meters();
+
+
+    /**
      * @return String - Nearest airport
      */
     public String get_nearest_arpt();
