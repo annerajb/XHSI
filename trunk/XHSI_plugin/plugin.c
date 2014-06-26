@@ -190,6 +190,10 @@ PLUGIN_API int XPluginEnable(void) {
 
 	// initialize custom X-Plane datarefs
 	XPLMRegisterFlightLoopCallback(
+							initGeneralCallback,
+							-1.0f,
+							NULL);
+	XPLMRegisterFlightLoopCallback(
 							initPilotCallback,
 							-1.0f,
 							NULL);

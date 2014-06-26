@@ -31,7 +31,9 @@
 // variables that will contain references to be used by XPLMGetData...
 
 // custom datarefs - general
-XPLMDataRef instrument_style;
+XPLMDataRef xhsi_instrument_style;
+XPLMDataRef xhsi_min_rwy_length;
+XPLMDataRef xhsi_rwy_units;
 
 // custom datarefs - EICAS
 XPLMDataRef  engine_type;
@@ -343,14 +345,38 @@ XPLMDataRef  nav_type_;
 // custom datarefs
 
 // xhsi/style
-int xhsi_style;
+int instrument_style;
 int     getStyle(void* inRefcon)
 {
-     return xhsi_style;
+     return instrument_style;
 }
 void	setStyle(void* inRefcon, int inValue)
 {
-      xhsi_style = inValue;
+      instrument_style = inValue;
+}
+
+
+// xhsi/min_rwy_length
+int min_rwy_length;
+int     getMinRwyLen(void* inRefcon)
+{
+     return min_rwy_length;
+}
+void	setMinRwyLen(void* inRefcon, int inValue)
+{
+      min_rwy_length = inValue;
+}
+
+
+// xhsi/rwy_units
+int rwy_units;
+int     getRwyUnits(void* inRefcon)
+{
+     return rwy_units;
+}
+void	setRwyUnits(void* inRefcon, int inValue)
+{
+      rwy_units = inValue;
 }
 
 
@@ -880,10 +906,24 @@ void registerGeneralDataRefs(void) {
     XPLMDebugString("XHSI: registering custom General DataRefs\n");
 
     // xhsi/style
-    instrument_style = XPLMRegisterDataAccessor("xhsi/style",
+    xhsi_instrument_style = XPLMRegisterDataAccessor("xhsi/style",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getStyle, setStyle,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/min_rwy_length
+    xhsi_min_rwy_length = XPLMRegisterDataAccessor("xhsi/min_rwy_length",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                                   // Writable
+                                        getMinRwyLen, setMinRwyLen,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/rwy_units
+    xhsi_rwy_units = XPLMRegisterDataAccessor("xhsi/rwy_units",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                                   // Writable
+                                        getRwyUnits, setRwyUnits,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
     XPLMDebugString("XHSI: custom General DataRefs registered\n");
@@ -957,6 +997,8 @@ float notifyDataRefEditorCallback(
     {
         XPLMDebugString("XHSI: notifying DataRefEditor\n");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/style");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/min_rwy_length");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rwy_units");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/mode");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/engine_type");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_scale");
@@ -991,6 +1033,33 @@ float notifyDataRefEditorCallback(
 
 }
 
+
+
+float initGeneralCallback(
+									float	inElapsedSinceLastCall,
+									float	inElapsedTimeSinceLastFlightLoop,
+									int		inCounter,
+									void *	inRefcon) {
+
+    XPLMDebugString("XHSI: initializing custom general DataRefs\n");
+
+    // set defaults
+
+    // General instrument style 0:Boeing 1:Airbus
+    XPLMSetDatai(xhsi_instrument_style, 0);
+
+    // Don't override the minimum runway length that is defined in the XHSI_app/Preferences
+    XPLMSetDatai(xhsi_min_rwy_length, 0);
+
+    // Runway length units 0:Meters 1:Feet (has no effect when min_rwy_lentgh==0)
+    XPLMSetDatai(xhsi_rwy_units, 0);
+
+
+    XPLMDebugString("XHSI: custom general DataRefs initialized\n");
+
+    return 0.0f;
+
+}
 
 
 float initPilotCallback(
@@ -1227,7 +1296,13 @@ void unregisterCopilotDataRefs(void) {
 void unregisterGeneralDataRefs(void) {
 
     // xhsi/style
-	XPLMUnregisterDataAccessor(instrument_style);
+	XPLMUnregisterDataAccessor(xhsi_instrument_style);
+
+    // xhsi/min_rwy_length
+    XPLMUnregisterDataAccessor(xhsi_min_rwy_length);
+
+    // xhsi/rwy_units
+    XPLMUnregisterDataAccessor(xhsi_rwy_units);
 
 }
 
@@ -1564,7 +1639,7 @@ void writeDataRef(int id, float value) {
 		// general
 
 		case XHSI_STYLE :
-			XPLMSetDatai(instrument_style, (int)value);
+			XPLMSetDatai(xhsi_instrument_style, (int)value);
             break;
 
 

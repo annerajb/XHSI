@@ -263,7 +263,9 @@ extern XPLMDataRef  engine_epr;
 
 
 // custom datarefs - general
-extern XPLMDataRef  instrument_style;
+extern XPLMDataRef  xhsi_instrument_style;
+extern XPLMDataRef  xhsi_min_rwy_length;
+extern XPLMDataRef  xhsi_rwy_units;
 
 
 // custom datarefs - EICAS
@@ -328,6 +330,7 @@ void    registerMFDDataRefs(void);
 
 float   notifyDataRefEditorCallback(float, float, int, void *);
 
+float   initGeneralCallback(float, float, int, void *);
 float   initPilotCallback(float, float, int, void *);
 float   initCopilotCallback(float, float, int, void *);
 float   initEICASCallback(float, float, int, void *);

@@ -49,10 +49,6 @@
 #define SIM_COCKPIT_ELECTRICAL_COCKPIT_LIGHTS_ON 82
 
 
-// General instrument style
-#define XHSI_STYLE 99
-	
-	
 // Radios
 #define SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ 100
 #define SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ 101
@@ -365,6 +361,15 @@
 #define CL30_CLB_N1 862
 
 
+// Settings & Preferences
+// General instrument style
+#define XHSI_STYLE 900 // 0:Boeing 1:Airbus
+// Minimum runway length
+#define XHSI_MIN_RWY_LENGTH 901 // Override with this value if it is > 0
+#define XHSI_RWY_UNITS 902 // 0:Meters 1:Feet
+
+	
+	
 // QPAC AirbusFBW
 #define QPAC_STATUS 1000
 // Autopilot

@@ -673,6 +673,32 @@ public class XPlaneAircraft implements Aircraft {
     }
 
 
+    public float get_min_rwy_length() {
+        float dataref_rwy_len = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_MIN_RWY_LENGTH);
+        if ( dataref_rwy_len > 0.0f ) {
+            // there is an override for minimum runway length and units via datarefs
+            if ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_RWY_UNITS) == 1.0f )
+                dataref_rwy_len *= 0.3048f;
+            return dataref_rwy_len;
+        } else {
+            // return the preferences setting
+            return this.xhsi_preferences.get_min_rwy_length();
+        }
+    }
+    
+    
+    public boolean rwy_len_meters() {
+        float dataref_rwy_len = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_MIN_RWY_LENGTH);
+        if ( dataref_rwy_len > 0.0f ) {
+            // there is an override for minimum runway length and units via datarefs
+            return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_RWY_UNITS) == 0.0f );
+        } else {
+            // return the preferences setting
+            return this.xhsi_preferences.get_preference(XHSIPreferences.PREF_RWY_LEN_UNITS).equals("meters");
+        }
+    }
+    
+    
     public String get_nearest_arpt() {
         if ( this.nearest_arpt.isEmpty() ) {
             return sim_data.get_sim_string(XPlaneSimDataRepository.XHSI_FLIGHTMODEL_POSITION_NEAREST_ARPT);

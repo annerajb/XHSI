@@ -1146,7 +1146,8 @@ public class MovingMap extends NDSubcomponent {
         NavigationObject navobj = null;
         RadioNavBeacon rnb;
 
-        double min_rwy = this.preferences.get_min_rwy_length();
+        //float min_rwy = this.preferences.get_min_rwy_length();
+        float min_rwy = this.aircraft.get_min_rwy_length();
         
         for (int i=0; i<nav_objects.size(); i++) {
 
