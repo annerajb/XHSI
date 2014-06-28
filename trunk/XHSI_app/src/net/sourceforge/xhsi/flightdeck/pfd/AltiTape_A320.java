@@ -302,9 +302,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
 
         
 
-        // QNH setting
-        // TODO : On Airbus QNH flashes when transition altitude is missed
-        // TODO : On Airbus Capt or F/O can select display in Inches or HPa     
+        // QNH setting   
         int qnh = this.aircraft.qnh();
         boolean qnh_display = true;
         boolean qnh_is_hpa = this.avionics.pfd_show_baro_hpa();
@@ -382,7 +380,12 @@ public class AltiTape_A320 extends PFDSubcomponent {
     		}
     		if ( (Math.abs(altitude_captured_ap - alt) > 750) ) {
     			altitude_captured = false;
-    			if (altitude_alert_status == AltitudeAlert.PULSING ) altitude_alert_status = AltitudeAlert.FLASHING;
+    			if (altitude_alert_status == AltitudeAlert.PULSING ) altitude_alert_status = AltitudeAlert.FLASHING;    			    			
+    		}
+    		// stop flashing if ap_alt is modified
+    		if (ap_alt != altitude_captured_ap && (altitude_alert_status == AltitudeAlert.FLASHING || altitude_alert_status == AltitudeAlert.PULSING)){
+    			altitude_captured_ap = ap_alt;
+    			altitude_alert_status = AltitudeAlert.NORMAL;
     		}
     	} else {
     		altitude_alert_status = AltitudeAlert.NORMAL;
@@ -495,7 +498,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
     	g2.fillPolygon(box_x, box_y, 8);
     	//g2.setComposite(oricomp);
     	
-    	// TODO : Airbus FCOM 1.31.40 p11 (1) amber bold when deviation from FCU selected altitude or flight level
+    	// Airbus FCOM 1.31.40 p11 (1) amber bold when deviation from FCU selected altitude or flight level
     	// The altitude window changes from yellow to amber, if the aircraft deviates from the FCU selected altitude or flight level
     	switch (altitude_alert_status) {
     	case NORMAL : 
