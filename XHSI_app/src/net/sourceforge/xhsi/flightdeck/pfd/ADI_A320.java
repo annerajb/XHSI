@@ -48,6 +48,19 @@ public class ADI_A320 extends PFDSubcomponent {
 	private static final long serialVersionUID = 1L;
 
 	private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
+	
+	// Set of enums and private data to manage FD bar flashing
+	enum FDEngagement { NONE, FD, AP, FD_AP };
+	enum FDReversion { NORMAL, VS };
+	enum FDLand { NONE, LAND, LAND_ON_LOC, LAND_ON_GS };
+	enum FDAltCapture { NONE, ALT, ALT_STAR };
+	private boolean fd_flashing = false;
+	private long fd_flashing_start = 0;
+	private int ap_alt = 0; 
+	private FDEngagement fd_engagement = FDEngagement.NONE;
+	private FDReversion fd_reversion = FDReversion.NORMAL;
+	private FDLand fd_land = FDLand.NONE;
+	private FDAltCapture fd_alt_capture = FDAltCapture.NONE;
 
 
 	public ADI_A320(ModelFactory model_factory, PFDGraphicsConfig hsi_gc, Component parent_component) {
@@ -429,8 +442,8 @@ public class ADI_A320 extends PFDSubcomponent {
 		}
 
 
-		// airplane symbol
-		// TODO : Should be dimmed with FPV on and FD bars off
+		// aircraft symbol
+		boolean aircraft_dimmed = fpv_on && !fd_on;
 		int wing_t = Math.round(3 * pfd_gc.grow_scaling_factor);
 		int wing_i = left * 13 / 24;
 		int wing_o = left * 21 / 24;
@@ -462,14 +475,15 @@ public class ADI_A320 extends PFDSubcomponent {
 		g2.setColor(pfd_gc.background_color);
 		g2.fillPolygon(left_wing_x, wing_y, 6);
 		g2.fillPolygon(right_wing_x, wing_y, 6);
-		g2.setColor(pfd_gc.pfd_reference_color);
+		// small square in the center (that's the rule on Airbus A320)
+		g2.fillRect(cx - wing_t, cy - wing_t, wing_t * 2, wing_t * 2);
+		if (aircraft_dimmed) {
+			g2.setColor(pfd_gc.pfd_reference_color.darker());
+		} else {
+			g2.setColor(pfd_gc.pfd_reference_color);
+		}		
 		g2.drawPolygon(left_wing_x, wing_y, 6);
 		g2.drawPolygon(right_wing_x, wing_y, 6);
-		// small square in the center (that's the rule on Airbus A320)
-		// int wing_t = Math.round(4 * pfd_gc.grow_scaling_factor);
-		g2.setColor(pfd_gc.background_color);
-		g2.fillRect(cx - wing_t, cy - wing_t, wing_t * 2, wing_t * 2);
-		g2.setColor(pfd_gc.pfd_reference_color);
 		g2.drawRect(cx - wing_t, cy - wing_t, wing_t * 2, wing_t * 2);
 		
 	
@@ -517,11 +531,54 @@ public class ADI_A320 extends PFDSubcomponent {
 			}
 		}
 
+		// Controls flight director flashing (FCOM 1.31.40 p18)
+		// - reversion to the HDG V/S (manual or automatic)
+		// - change of selected speed when ALT* 
+		// - loss of LOC or G/S in LAND mode
+		// - loss of LAND mode
+		// - first AP or FD engagement
+		boolean ap_on;
+		if (this.avionics.is_qpac()) {
+			ap_on = this.avionics.qpac_ap1() || this.avionics.qpac_ap2();
+		} else {
+			ap_on = this.avionics.autopilot_mode() > 1;
+		}
+		if ( (fd_engagement != FDEngagement.AP) && (fd_engagement != FDEngagement.FD_AP) && ap_on) {
+			// Autopilot was engaged
+			fd_flashing_start = System.currentTimeMillis();
+			fd_flashing = true;
+		}
+		if ( (fd_engagement != FDEngagement.FD) && (fd_engagement != FDEngagement.FD_AP) && fd_on ) {
+			// FD was engaged
+			fd_flashing_start = System.currentTimeMillis();
+			fd_flashing = true;
+		}
+		// Update AP FD engagement mode
+		if ((!fd_on) && (!ap_on) ) fd_engagement = FDEngagement.NONE; 
+				else if ((fd_on) && (!ap_on) ) fd_engagement = FDEngagement.FD ;
+				else if ((!fd_on) && (ap_on) ) fd_engagement = FDEngagement.AP ;
+				else fd_engagement = FDEngagement.FD_AP;
+		// Detect AP reversion only for QPAC
+		if (this.avionics.is_qpac()) {
+			int v_mode=this.avionics.qpac_ap_vertical_mode();		
+			if (v_mode==107 && fd_reversion == FDReversion.NORMAL) {
+				// This is a mode reversion to V/S
+				fd_flashing_start = System.currentTimeMillis();
+				fd_flashing = true;
+				fd_reversion = FDReversion.VS;				
+			}
+			if (v_mode != 107) fd_reversion =  FDReversion.NORMAL;
+		}
+		// Flashing command
+		boolean fd_display_bars = true;
+		if (fd_flashing) {
+			if (System.currentTimeMillis() > fd_flashing_start + 10000) fd_flashing = false;
+			if (fd_flashing && (System.currentTimeMillis() % 1000 < 500)) fd_display_bars = false; 
+		}
 		
 
-
 		// Flight Director Display (VS/HDG mode)
-		if ( fd_on ) {
+		if ( fd_on && fd_display_bars ) {
 			int fd_y;
 			int fd_x = cx + (int)(down * (-bank+this.avionics.fd_roll()) / scale) / 3; // divide by 3 to limit deflection
 			int fd_bar = left * 12 / 24;

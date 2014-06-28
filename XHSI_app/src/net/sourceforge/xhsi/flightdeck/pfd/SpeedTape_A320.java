@@ -139,15 +139,16 @@ public class SpeedTape_A320 extends PFDSubcomponent {
 
         // 10sec speed trend vector
         // Drawn in yellow on airbus
-        float ias_trend = this.aircraft.airspeed_acceleration() * 4.0f;
+        // dataref unit is in knots/sec
+        float ias_trend = this.aircraft.airspeed_acceleration() * 10.0f;
         // TODO : set class var ias_trend_active ; set true if trend > 2 knots, set false when trend < 1 knot
         // Reference : FCOM 1.31.40 page 5 (2)
-        if ( Math.abs(ias_trend) > 5.0f ) {
+        if ( Math.abs(ias_trend) > 2.0f ) {
         	ias_trend_active = true;
-        } else if (	ias_trend_active && (Math.abs(ias_trend) < 2.5f)) {
+        } else if (	ias_trend_active && (Math.abs(ias_trend) < 1.0f)) {
         	ias_trend_active = false; 
         }
-        if ( Math.abs(ias_trend) > 5.0f ) {
+        if ( ias_trend_active ) {
 
             if ( ( ias + ias_trend ) < 0.0f ) {
                 ias_trend = - ias;
