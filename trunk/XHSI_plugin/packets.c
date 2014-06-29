@@ -331,6 +331,15 @@ int createADCPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_YOKE_ROLL_RATIO);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(yoke_roll_ratio));
 	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_ELEVATOR_TRIM);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(elevator_trim));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_AILERON_TRIM);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(aileron_trim));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_RUDDER_TRIM);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(rudder_trim));
+	i++;
 
     XPLMGetDatavf(gear_deploy, gear_ratio, 0, gears);
 	for (g=0; g<gears; g++) {
@@ -1634,8 +1643,8 @@ int createStaticPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_STYLE);
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(xhsi_instrument_style));
 	i++;
-	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_MIN_RWY_LENGTH);
-	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(xhsi_min_rwy_length));
+	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_RWY_LENGTH_MIN);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(xhsi_rwy_length_min));
 	i++;
 	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_RWY_UNITS);
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(xhsi_rwy_units));

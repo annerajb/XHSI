@@ -209,6 +209,9 @@ extern XPLMDataRef  speedbrake_ratio;
 extern XPLMDataRef  gear_deploy;
 extern XPLMDataRef  yoke_pitch_ratio;
 extern XPLMDataRef  yoke_roll_ratio;
+extern XPLMDataRef  elevator_trim;
+extern XPLMDataRef  aileron_trim;
+extern XPLMDataRef  rudder_trim;
 
 
 extern XPLMDataRef  num_tanks;
@@ -264,7 +267,7 @@ extern XPLMDataRef  engine_epr;
 
 // custom datarefs - general
 extern XPLMDataRef  xhsi_instrument_style;
-extern XPLMDataRef  xhsi_min_rwy_length;
+extern XPLMDataRef  xhsi_rwy_length_min;
 extern XPLMDataRef  xhsi_rwy_units;
 
 

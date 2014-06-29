@@ -674,7 +674,7 @@ public class XPlaneAircraft implements Aircraft {
 
 
     public float get_min_rwy_length() {
-        float dataref_rwy_len = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_MIN_RWY_LENGTH);
+        float dataref_rwy_len = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_RWY_LENGTH_MIN);
         if ( dataref_rwy_len > 0.0f ) {
             // there is an override for minimum runway length and units via datarefs
             if ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_RWY_UNITS) == 1.0f )
@@ -688,7 +688,7 @@ public class XPlaneAircraft implements Aircraft {
     
     
     public boolean rwy_len_meters() {
-        float dataref_rwy_len = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_MIN_RWY_LENGTH);
+        float dataref_rwy_len = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_RWY_LENGTH_MIN);
         if ( dataref_rwy_len > 0.0f ) {
             // there is an override for minimum runway length and units via datarefs
             return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_RWY_UNITS) == 0.0f );

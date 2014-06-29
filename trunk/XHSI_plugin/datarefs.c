@@ -32,7 +32,7 @@
 
 // custom datarefs - general
 XPLMDataRef xhsi_instrument_style;
-XPLMDataRef xhsi_min_rwy_length;
+XPLMDataRef xhsi_rwy_length_min;
 XPLMDataRef xhsi_rwy_units;
 
 // custom datarefs - EICAS
@@ -279,7 +279,9 @@ XPLMDataRef  speedbrake_ratio;
 XPLMDataRef  gear_deploy;
 XPLMDataRef  yoke_pitch_ratio;
 XPLMDataRef  yoke_roll_ratio;
-
+XPLMDataRef  elevator_trim;
+XPLMDataRef  aileron_trim;
+XPLMDataRef  rudder_trim;
 
 XPLMDataRef  num_tanks;
 XPLMDataRef  num_engines;
@@ -356,7 +358,7 @@ void	setStyle(void* inRefcon, int inValue)
 }
 
 
-// xhsi/min_rwy_length
+// xhsi/rwy_length_min
 int min_rwy_length;
 int     getMinRwyLen(void* inRefcon)
 {
@@ -404,7 +406,7 @@ void	setTRQscale(void* inRefcon, int inValue)
 }
 
 
-// xhsi/eicas/trq_max
+// xhsi/eicas/trq_max_lbft
 float eicas_trq_max;
 float     getOverrideTRQmax(void* inRefcon)
 {
@@ -912,8 +914,8 @@ void registerGeneralDataRefs(void) {
                                         getStyle, setStyle,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
-    // xhsi/min_rwy_length
-    xhsi_min_rwy_length = XPLMRegisterDataAccessor("xhsi/min_rwy_length",
+    // xhsi/rwy_length_min
+    xhsi_rwy_length_min = XPLMRegisterDataAccessor("xhsi/rwy_length_min",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getMinRwyLen, setMinRwyLen,      // Integer accessors
@@ -951,18 +953,18 @@ void registerEICASDataRefs(void) {
 
     // xhsi/eicas/fuel_units
     fuel_units = XPLMRegisterDataAccessor("xhsi/eicas/fuel_units",
-                                        xplmType_Int,                                  // The types we support
+                                        xplmType_Int,      // Integer accessors
                                         1,                                                   // Writable
                                         getFuelUnits, setFuelUnits,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
-	// xhsi/eicas/trq_max
-	override_trq_max = XPLMRegisterDataAccessor("xhsi/eicas/trq_max",
-										xplmType_Float,
-										1,
-										NULL, NULL,
-										getOverrideTRQmax, setOverrideTRQmax,
-										NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	// xhsi/eicas/trq_max_lbft
+	override_trq_max = XPLMRegisterDataAccessor("xhsi/eicas/trq_max_lbft",
+										xplmType_Float,      // Integer accessors
+										1,                                                   // Writable
+										NULL, NULL,      // No integer accessors
+										getOverrideTRQmax, setOverrideTRQmax,      // Float accessors
+										NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
     XPLMDebugString("XHSI: custom EICAS DataRefs registered\n");
 
@@ -997,13 +999,13 @@ float notifyDataRefEditorCallback(
     {
         XPLMDebugString("XHSI: notifying DataRefEditor\n");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/style");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/min_rwy_length");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rwy_length_min");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rwy_units");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/mode");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/engine_type");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_scale");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/fuel_units");
-		XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_max");
+		XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_max_lbft");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/sta");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/data");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/pos");
@@ -1049,7 +1051,7 @@ float initGeneralCallback(
     XPLMSetDatai(xhsi_instrument_style, 0);
 
     // Don't override the minimum runway length that is defined in the XHSI_app/Preferences
-    XPLMSetDatai(xhsi_min_rwy_length, 0);
+    XPLMSetDatai(xhsi_rwy_length_min, 0);
 
     // Runway length units 0:Meters 1:Feet (has no effect when min_rwy_lentgh==0)
     XPLMSetDatai(xhsi_rwy_units, 0);
@@ -1298,8 +1300,8 @@ void unregisterGeneralDataRefs(void) {
     // xhsi/style
 	XPLMUnregisterDataAccessor(xhsi_instrument_style);
 
-    // xhsi/min_rwy_length
-    XPLMUnregisterDataAccessor(xhsi_min_rwy_length);
+    // xhsi/rwy_length_min
+    XPLMUnregisterDataAccessor(xhsi_rwy_length_min);
 
     // xhsi/rwy_units
     XPLMUnregisterDataAccessor(xhsi_rwy_units);
@@ -1555,7 +1557,10 @@ void findDataRefs(void) {
     gear_deploy = XPLMFindDataRef("sim/flightmodel2/gear/deploy_ratio");
     yoke_pitch_ratio = XPLMFindDataRef("sim/cockpit2/controls/yoke_pitch_ratio");
     yoke_roll_ratio = XPLMFindDataRef("sim/cockpit2/controls/yoke_roll_ratio");
-
+	elevator_trim = XPLMFindDataRef("sim/cockpit2/controls/elevator_trim");
+	aileron_trim = XPLMFindDataRef("sim/cockpit2/controls/aileron_trim");
+	rudder_trim = XPLMFindDataRef("sim/cockpit2/controls/rudder_trim");
+	
 
     // Engines and fuel
     num_tanks = XPLMFindDataRef("sim/aircraft/overflow/acf_num_tanks");

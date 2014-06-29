@@ -237,6 +237,9 @@
 #define SIM_FLIGHTMODEL2_GEAR_DEPLOY_RATIO_ 370 // array of 10 floats
 #define SIM_COCKPIT2_CONTROLS_YOKE_PITCH_RATIO 390
 #define SIM_COCKPIT2_CONTROLS_YOKE_ROLL_RATIO 391
+#define SIM_COCKPIT2_CONTROLS_ELEVATOR_TRIM 392
+#define SIM_COCKPIT2_CONTROLS_AILERON_TRIM 393
+#define SIM_COCKPIT2_CONTROLS_RUDDER_TRIM 394
 
 
 // Fuel, engines, etc...
@@ -365,7 +368,7 @@
 // General instrument style
 #define XHSI_STYLE 900 // 0:Boeing 1:Airbus
 // Minimum runway length
-#define XHSI_MIN_RWY_LENGTH 901 // Override with this value if it is > 0
+#define XHSI_RWY_LENGTH_MIN 901 // Override with this value if it is > 0
 #define XHSI_RWY_UNITS 902 // 0:Meters 1:Feet
 
 	
