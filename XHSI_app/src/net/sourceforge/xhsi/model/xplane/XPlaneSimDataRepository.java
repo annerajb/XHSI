@@ -276,6 +276,9 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_FLIGHTMODEL2_GEAR_DEPLOY_RATIO_ = 370; // array of 10 floats
     public static final int SIM_COCKPIT2_CONTROLS_YOKE_PITCH_RATIO = 390;
     public static final int SIM_COCKPIT2_CONTROLS_YOKE_ROLL_RATIO = 391;
+    public static final int SIM_COCKPIT2_CONTROLS_ELEVATOR_TRIM = 392;
+    public static final int SIM_COCKPIT2_CONTROLS_AILERON_TRIM = 393;
+    public static final int SIM_COCKPIT2_CONTROLS_RUDDER_TRIM = 394;
 
     // Fuel, engines, etc...
     public static final int SIM_AIRCRAFT_OVERFLOW_ACF_NUM_TANKS = 400;
@@ -399,7 +402,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     // General instrument style
     public static final int XHSI_STYLE = 900;
     // Minimum runway length
-    public static final int XHSI_MIN_RWY_LENGTH = 901; // Override with this value if it is > 0
+    public static final int XHSI_RWY_LENGTH_MIN = 901; // Override with this value if it is > 0
     public static final int XHSI_RWY_UNITS = 902; // 0:Meters 1:Feet
     
     
