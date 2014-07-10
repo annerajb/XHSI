@@ -986,7 +986,7 @@ public class XHSIPreferences {
         }
 
         if ( ! this.preferences.containsKey(PREF_DRAW_BEZIER_PAVEMENTS) ) {
-            this.preferences.setProperty(PREF_DRAW_BEZIER_PAVEMENTS, "false");
+            this.preferences.setProperty(PREF_DRAW_BEZIER_PAVEMENTS, "true");
             this.unsaved_changes = true;
         }
 
@@ -1050,7 +1050,7 @@ public class XHSIPreferences {
         }
 
         if ( ! this.preferences.containsKey(PREF_APPVOR_UNCLUTTER) ) {
-            this.preferences.setProperty(PREF_APPVOR_UNCLUTTER, "true");
+            this.preferences.setProperty(PREF_APPVOR_UNCLUTTER, "false");
             this.unsaved_changes = true;
         }
 
@@ -1126,11 +1126,6 @@ public class XHSIPreferences {
 
         if ( ! this.preferences.containsKey(PREF_OVERRIDE_ENGINE_COUNT) ) {
             this.preferences.setProperty(PREF_OVERRIDE_ENGINE_COUNT, "0");
-            this.unsaved_changes = true;
-        }
-
-        if ( ! this.preferences.containsKey(PREF_FUEL_UNITS) ) {
-            this.preferences.setProperty(PREF_FUEL_UNITS, FUEL_UNITS_KG);
             this.unsaved_changes = true;
         }
 
