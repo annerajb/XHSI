@@ -38,6 +38,7 @@ XPLMDataRef pa_a320_thr_a_floor;
 XPLMDataRef pa_a320_fd1_yaw_bar;
 XPLMDataRef pa_a320_fd2_yaw_bar;
 XPLMDataRef pa_a320_fd_yaw_bar_show;
+XPLMDataRef pa_a320_brake_fan;
 
 int pa_a320_ready = 0;
 int pa_a320_version = 0;
@@ -73,7 +74,7 @@ void findPaA320DataRefs(void) {
             pa_a320_fd1_yaw_bar = XPLMFindDataRef("com/petersaircraft/airbus/PA1YawBar");
             pa_a320_fd2_yaw_bar = XPLMFindDataRef("com/petersaircraft/airbus/PA2YawBar");
             pa_a320_fd_yaw_bar_show = XPLMFindDataRef("com/petersaircraft/airbus/PA1YawBar_show");
-
+            pa_a320_brake_fan = XPLMFindDataRef("com/petersaircraft/airbus/BrakeFan");
         }
     }
 }

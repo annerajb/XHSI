@@ -26,6 +26,7 @@ extern XPLMDataRef qpac_ap_lateral_mode;
 extern XPLMDataRef qpac_ap_lateral_armed;
 extern XPLMDataRef qpac_npa_valid;
 extern XPLMDataRef qpac_npa_no_points;
+extern XPLMDataRef qpac_npa_slope;
 extern XPLMDataRef qpac_appr_illuminated;
 extern XPLMDataRef qpac_loc_illuminated;
 extern XPLMDataRef qpac_appr_type;
@@ -53,10 +54,12 @@ extern XPLMDataRef qpac_loc_val_capt;
 extern XPLMDataRef qpac_loc_on_capt;
 extern XPLMDataRef qpac_gs_val_capt;
 extern XPLMDataRef qpac_gs_on_capt;
+extern XPLMDataRef qpac_ils_on_capt;
 extern XPLMDataRef qpac_loc_val_fo;
 extern XPLMDataRef qpac_loc_on_fo;
 extern XPLMDataRef qpac_gs_val_fo;
 extern XPLMDataRef qpac_gs_on_fo;
+extern XPLMDataRef qpac_ils_on_fo;
 extern XPLMDataRef qpac_ils_crs;
 extern XPLMDataRef qpac_ils_1;
 extern XPLMDataRef qpac_ils_2;
@@ -102,6 +105,11 @@ extern XPLMDataRef qpac_capt_efis_nd_mode;
 extern XPLMDataRef qpac_co_efis_nd_mode;
 extern XPLMDataRef qpac_capt_efis_nd_range;
 extern XPLMDataRef qpac_co_efis_nd_range;
+// Brakes
+// 0=OFF, 1=Engaged, 2=DECEL
+extern XPLMDataRef qpac_autobrake_low;
+extern XPLMDataRef qpac_autobrake_med;
+extern XPLMDataRef qpac_autobrake_max;
 
 extern int qpac_ready;
 

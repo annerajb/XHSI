@@ -20,6 +20,7 @@ extern XPLMDataRef pa_a320_thr_a_floor;
 extern XPLMDataRef pa_a320_fd1_yaw_bar;
 extern XPLMDataRef pa_a320_fd2_yaw_bar;
 extern XPLMDataRef pa_a320_fd_yaw_bar_show;
+extern XPLMDataRef pa_a320_brake_fan;
 
 extern int pa_a320_ready;
 extern int pa_a320_version;
