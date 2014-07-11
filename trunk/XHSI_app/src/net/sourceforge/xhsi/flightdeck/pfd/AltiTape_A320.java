@@ -492,10 +492,12 @@ public class AltiTape_A320 extends PFDSubcomponent {
     			pfd_gc.adi_cy + pfd_gc.line_height_xxl*6/9,
     			pfd_gc.adi_cy + pfd_gc.line_height_xxl*6/9,
     	};
+    	
     	//Composite oricomp = g2.getComposite();
     	//g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
     	g2.setColor(pfd_gc.background_color);
-    	g2.fillPolygon(box_x, box_y, 8);
+    	// g2.fillPolygon(box_x, box_y, 8);
+    	g2.fillRect(pfd_gc.altitape_left - pfd_gc.tape_width*2/50, pfd_gc.adi_cy - pfd_gc.line_height_xxl*6/9, altitape_right-pfd_gc.altitape_left+pfd_gc.tape_width*3/50, pfd_gc.line_height_xxl*12/9);
     	//g2.setComposite(oricomp);
     	
     	// Airbus FCOM 1.31.40 p11 (1) amber bold when deviation from FCU selected altitude or flight level

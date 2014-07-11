@@ -41,10 +41,30 @@ import net.sourceforge.xhsi.model.RadioNavigationObject;
 public class ILS_A320 extends PFDSubcomponent {
 
     private static final long serialVersionUID = 1L;
+    
+    // used to manage scale and symbols flashing
+    private long loc_exceeded_start_time = 0;
+    private long gs_exceeded_start_time = 0;
+    private long two_dots_exceeded_start_time = 0;
+    private boolean two_dots_exceeded = false;
+    private boolean loc_exceeded = false;
+    private boolean gs_exceeded = false;
+    private boolean loc_scale_flashing = false;
+    private boolean gs_scale_flashing = false;
+    private boolean symbols_flashing = false;
 
 
     public ILS_A320(ModelFactory model_factory, PFDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
+        loc_exceeded_start_time = 0;
+        gs_exceeded_start_time = 0;
+        two_dots_exceeded_start_time = 0;
+        two_dots_exceeded = false;
+        loc_exceeded = false;
+        gs_exceeded = false;
+        loc_scale_flashing = false;
+        gs_scale_flashing = false;
+        symbols_flashing = false;
     }
 
     public void paint(Graphics2D g2) {
@@ -257,8 +277,140 @@ public class ILS_A320 extends PFDSubcomponent {
             g2.drawString(nav_type, ref_x, ref_y);
 
         }
+        
+        // TODO : FLS mode qpac_npa_no_points = 2 and qpac_npa_valid = 1
+        boolean display_fls = false;
+        if (this.avionics.qpac_npa_valid() >= 1 && this.avionics.qpac_npa_no_points() == 2) display_fls = true;
+        // FLS line 1 : runway ID "RWY xx" (sim/cockpit/radios/gps_course_degtm)
+        // FLS line 2 : Slope (this.avionics.qpac_npa_slope())
+        // FLS line 3 : distance (sim/cockpit2/radios/indicators/gps_dme_distance_nm)
+        
+        // qpac_appr_type values : 0 = DH et ILS, 1 = MDA et GPS, 2 = BARO DH, 3 = RNAV
+        
+        // Scales and symbols flashing management
+        // on non QPAC aircraft, we assume that flashing should be active below 1000ft RA
+        // for QPAC aircraft, flashing is active on lateral navigation "LOC" and vertical navigation "G/S" above 1000 ft        
+        int ra = Math.round(this.aircraft.agl_m() * 3.28084f); // Radio altitude
+        boolean on_loc=false; 
+        // Test lateral navigation mode
+        if (this.avionics.is_qpac()) { 
+        		on_loc = this.avionics.qpac_ap_lateral_mode() == 7;
+        } else {
+        	on_loc = ra < 1000; 
+        }
+        	
+        if ((Math.abs(cdi_value) > 2.0f || Math.abs(gs_value) > 2.0f) && (! two_dots_exceeded ) && on_loc && (ra>15)) {
+        	two_dots_exceeded = true;
+        	two_dots_exceeded_start_time = System.currentTimeMillis();        	
+        } 
+        if ((Math.abs(cdi_value) < 2.0f && Math.abs(gs_value) < 2.0f) || (!on_loc) || (ra <= 15)) {
+        	two_dots_exceeded = false;
+        	symbols_flashing = false;
+        }
+        
+        if ( (! loc_exceeded ) && on_loc && ((Math.abs(cdi_value) > 0.25f) && (ra > 15))) {
+        	loc_exceeded = true;
+        	loc_exceeded_start_time = System.currentTimeMillis();
+        } 
+        if ((Math.abs(cdi_value) < 0.25f) || (!on_loc) || (ra <= 15)) {
+        	loc_exceeded = false;
+        	loc_scale_flashing = false; 
+        }
+        if (loc_exceeded && (System.currentTimeMillis()  > loc_exceeded_start_time + 2000 ) ) {        	
+            loc_scale_flashing = true;          
+        }  
 
-
+        if ((! gs_exceeded ) && on_loc && ((Math.abs(gs_value) > 1.0f) && (ra > 100)) ) {
+        	gs_exceeded = true;
+        	gs_exceeded_start_time = System.currentTimeMillis();
+        } 
+        if ((Math.abs(gs_value) < 1.0f) || (!on_loc) || (ra <= 15)) {
+        	gs_exceeded = false;
+        	gs_scale_flashing = false;
+        }
+        if (gs_exceeded && (System.currentTimeMillis()  > (gs_exceeded_start_time + 2000) )) {        	
+            gs_scale_flashing = true;          
+        }  
+        
+        if (two_dots_exceeded && (System.currentTimeMillis() > (two_dots_exceeded_start_time + 2000) )) {
+        	symbols_flashing = true;
+            loc_scale_flashing = true;
+            gs_scale_flashing = true;
+        } 
+        
+      
+        
+        // boolean display_loc_scale = (!loc_scale_flashing) || ((System.currentTimeMillis() % 1000) > 500);
+        // boolean display_gs_scale = (!gs_scale_flashing) || ((System.currentTimeMillis() % 1000) > 500);
+        boolean display_loc_scale = true;
+        if (loc_scale_flashing && ((System.currentTimeMillis() % 1000) < 500) ) display_loc_scale = false;
+        boolean display_gs_scale = true;
+        if (gs_scale_flashing && ((System.currentTimeMillis() % 1000) < 500) ) display_gs_scale = false;
+        boolean display_symbols = true;
+        if (symbols_flashing && ((System.currentTimeMillis() % 1000) < 500) ) display_symbols = false;
+        
+        boolean display_vdev = false;
+        boolean display_ldev = false;
+        // conditions to display V/DEV : NPA Valid + APPR illuminated + ILS pushbutton OFF
+        // ILS has always priority over V/DEV
+        if (this.avionics.qpac_npa_valid() == 1 && !this.avionics.qpac_ils_on() && this.avionics.qpac_appr_illuminated() ) display_vdev = true;
+        
+        // ILS scales (LOC & G/S)
+        // LOC scale
+        // TODO: the LOC scale flashes when deviation exceeds 1/4 for 2 secs (above 15 feet RA). 
+        // TODO : LOC and glide scale flashes when deviation exceeds one dot for 2 secs. 
+        if ((nav_receive || this.avionics.qpac_ils_on() || display_ldev ) && display_loc_scale ) {
+        	int dot_dist = pfd_gc.cdi_width*4/22;
+        	int cdi_x = pfd_gc.adi_cx;
+        	int cdi_y = pfd_gc.adi_cy + pfd_gc.adi_size_down + pfd_gc.cdi_height;
+        	g2.setColor(pfd_gc.pfd_reference_color);
+        	Stroke original_stroke = g2.getStroke();
+        	g2.setStroke(new BasicStroke(4.0f));
+        	g2.drawLine(pfd_gc.adi_cx, pfd_gc.adi_cy + pfd_gc.adi_size_down + pfd_gc.cdi_height/2,
+        			pfd_gc.adi_cx, pfd_gc.adi_cy + pfd_gc.adi_size_down + pfd_gc.cdi_height*3/2);
+        	g2.setColor(pfd_gc.pfd_markings_color);          	  
+        	g2.setStroke(original_stroke);
+        	if (display_ldev) {
+        		g2.drawLine(cdi_x - dot_dist, cdi_y - dot_r, cdi_x - dot_dist, cdi_y + dot_r);
+        		g2.drawLine(cdi_x + dot_dist, cdi_y - dot_r, cdi_x + dot_dist, cdi_y + dot_r);
+        		g2.drawLine(cdi_x - 2*dot_dist, cdi_y - dot_r, cdi_x - 2*dot_dist, cdi_y + dot_r);
+        		g2.drawLine(cdi_x + 2*dot_dist, cdi_y - dot_r, cdi_x + 2*dot_dist, cdi_y + dot_r);
+        		g2.setColor(pfd_gc.pfd_managed_color);
+        		g2.setFont(pfd_gc.font_l);
+        		g2.drawString("L/DEV", cdi_x - dot_dist * 3, cdi_y);
+        		
+        	} else {
+        		g2.drawOval(cdi_x - dot_dist - dot_r, cdi_y - dot_r, 2*dot_r, 2*dot_r);
+        		g2.drawOval(cdi_x + dot_dist - dot_r, cdi_y - dot_r, 2*dot_r, 2*dot_r);
+        		g2.drawOval(cdi_x - 2*dot_dist - dot_r, cdi_y - dot_r, 2*dot_r, 2*dot_r);
+        		g2.drawOval(cdi_x + 2*dot_dist - dot_r, cdi_y - dot_r, 2*dot_r, 2*dot_r);
+        	}
+        }
+        // GS Scale
+        if ( ((nav_receive && gs_active) || this.avionics.qpac_ils_on() || display_vdev ) && display_gs_scale) {
+            int dot_dist = pfd_gc.gs_height*4/21;
+            int gs_x = pfd_gc.adi_cx + pfd_gc.adi_size_right + pfd_gc.gs_width/2;
+            int gs_y = pfd_gc.adi_cy;
+            
+            g2.setColor(pfd_gc.pfd_markings_color);            
+            // g2.drawLine(pfd_gc.adi_cx + pfd_gc.adi_size_right + 1, gs_y, pfd_gc.adi_cx + pfd_gc.adi_size_right + pfd_gc.gs_width - 1, gs_y);
+        	if (display_vdev) {
+        		g2.drawLine(gs_x - dot_r, gs_y - dot_dist, gs_x + dot_r, gs_y - dot_dist);
+        		g2.drawLine(gs_x - dot_r, gs_y + dot_dist, gs_x + dot_r, gs_y + dot_dist);
+        		g2.drawLine(gs_x - dot_r, gs_y - 2*dot_dist, gs_x + dot_r, gs_y - 2*dot_dist);
+        		g2.drawLine(gs_x - dot_r, gs_y + 2*dot_dist, gs_x + dot_r, gs_y + 2*dot_dist);
+        		g2.setColor(pfd_gc.pfd_managed_color);
+        		g2.setFont(pfd_gc.font_l);
+        		g2.drawString("V/DEV", gs_x - 5 * pfd_gc.digit_width_l , gs_y - dot_dist*9/4);       		
+        	} else {
+        		g2.drawOval(gs_x - dot_r, gs_y - dot_dist - dot_r, 2*dot_r, 2*dot_r);
+        		g2.drawOval(gs_x - dot_r, gs_y + dot_dist - dot_r, 2*dot_r, 2*dot_r);
+        		g2.drawOval(gs_x - dot_r, gs_y - 2*dot_dist - dot_r, 2*dot_r, 2*dot_r);
+        		g2.drawOval(gs_x - dot_r, gs_y + 2*dot_dist - dot_r, 2*dot_r, 2*dot_r);
+        	}
+        }
+        
+        
         // Localizer
         if ( nav_receive ) {
 
@@ -342,17 +494,24 @@ public class ILS_A320 extends PFDSubcomponent {
             int diamond_x[] = { cdi_x + cdi_pixels, cdi_x + cdi_pixels + diamond_h, cdi_x + cdi_pixels, cdi_x + cdi_pixels - diamond_h };
             int diamond_y[] = { cdi_y - diamond_w, cdi_y, cdi_y + diamond_w, cdi_y };
             int r_diamond_x[] = { cdi_x + cdi_pixels_max + diamond_h, cdi_x + cdi_pixels_max, cdi_x + cdi_pixels_max + diamond_h  };
-            int l_diamond_x[] = { cdi_x + cdi_pixels_max - diamond_h, cdi_x + cdi_pixels_max, cdi_x + cdi_pixels_max - diamond_h };
-    
-            g2.setColor(pfd_gc.pfd_ils_color);
-            if (cdi_value < -cdi_dev_max) {
-                g2.drawPolyline(r_diamond_x, diamond_y, 3);                
-            } else if (cdi_value > cdi_dev_max) {
-            	g2.drawPolyline(l_diamond_x, diamond_y, 3);
-            } else {
-                g2.drawPolygon(diamond_x, diamond_y, 4);
+            int l_diamond_x[] = { cdi_x + cdi_pixels_max - diamond_h, cdi_x + cdi_pixels_max, cdi_x + cdi_pixels_max - diamond_h };    
+            
+            if (display_symbols) {
+            	g2.setColor(pfd_gc.pfd_ils_color);            	
+            	if (display_vdev) {
+            		g2.drawRect(cdi_x + cdi_pixels, cdi_y-diamond_h, diamond_w, diamond_h*2);
+            	} else {
+            		if (cdi_value < -cdi_dev_max) {
+            			g2.drawPolyline(r_diamond_x, diamond_y, 3);                
+            		} else if (cdi_value > cdi_dev_max) {
+            			g2.drawPolyline(l_diamond_x, diamond_y, 3);
+            		} else {
+            			g2.drawPolygon(diamond_x, diamond_y, 4);
+            		}
+            	}
             }
 
+            /*
             g2.setColor(pfd_gc.pfd_reference_color);
             Stroke original_stroke = g2.getStroke();
             g2.setStroke(new BasicStroke(4.0f));
@@ -364,6 +523,7 @@ public class ILS_A320 extends PFDSubcomponent {
             g2.drawOval(cdi_x + dot_dist - dot_r, cdi_y - dot_r, 2*dot_r, 2*dot_r);
             g2.drawOval(cdi_x - 2*dot_dist - dot_r, cdi_y - dot_r, 2*dot_r, 2*dot_r);
             g2.drawOval(cdi_x + 2*dot_dist - dot_r, cdi_y - dot_r, 2*dot_r, 2*dot_r);
+            */
 
         }
 
@@ -391,24 +551,55 @@ public class ILS_A320 extends PFDSubcomponent {
             int t_diamond_y[] = { gs_y + gs_pixels_max, gs_y + gs_pixels_max + diamond_h, gs_y + gs_pixels_max };
             int b_diamond_y[] = { gs_y + gs_pixels_max, gs_y + gs_pixels_max - diamond_h, gs_y + gs_pixels_max };
 
-            g2.setColor(pfd_gc.pfd_ils_color);
-            if (gs_value < -gs_dev_max) {
-                g2.drawPolyline(diamond_x, b_diamond_y, 3);                
-            } else if (gs_value > gs_dev_max) {
-                g2.drawPolyline(diamond_x, t_diamond_y, 3);
-            } else {
-                g2.drawPolygon(diamond_x, diamond_y, 4);
+            if (display_symbols) {
+            	g2.setColor(pfd_gc.pfd_ils_color);
+            	if (display_vdev) {
+            		g2.drawRect(gs_x - diamond_w, gs_y + gs_pixels, diamond_w*2, diamond_h);
+            	} else {
+            		if (gs_value < -gs_dev_max) {
+            			g2.drawPolyline(diamond_x, b_diamond_y, 3);                
+            		} else if (gs_value > gs_dev_max) {
+            			g2.drawPolyline(diamond_x, t_diamond_y, 3);
+            		} else {
+            			g2.drawPolygon(diamond_x, diamond_y, 4);
+            		}
+            	}
             }
 
+            /*
             g2.setColor(pfd_gc.pfd_markings_color);
             // g2.drawLine(pfd_gc.adi_cx + pfd_gc.adi_size_right + 1, gs_y, pfd_gc.adi_cx + pfd_gc.adi_size_right + pfd_gc.gs_width - 1, gs_y);
             g2.drawOval(gs_x - dot_r, gs_y - dot_dist - dot_r, 2*dot_r, 2*dot_r);
             g2.drawOval(gs_x - dot_r, gs_y + dot_dist - dot_r, 2*dot_r, 2*dot_r);
             g2.drawOval(gs_x - dot_r, gs_y - 2*dot_dist - dot_r, 2*dot_r, 2*dot_r);
             g2.drawOval(gs_x - dot_r, gs_y + 2*dot_dist - dot_r, 2*dot_r, 2*dot_r);
+            */
 
         }
 
+        // ILS Amber flashing warning (QPAC only) when APPR mode armed without ILS
+        // V/DEV Amber flashing warning (QPAC only) when APPR mode armed in NPA Approach and ILS displayed
+        if (this.avionics.is_qpac()) {
+        	if ( 
+        			(this.avionics.qpac_ap_vertical_armed() == 9 || 
+        			 this.avionics.qpac_ap_vertical_armed() == 7 || 
+        			 this.avionics.qpac_ap_vertical_armed() == 5 || 
+        			 this.avionics.qpac_ap_vertical_armed() == 1 ||
+        			 this.avionics.qpac_ap_vertical_mode() == 6  ||
+        			 this.avionics.qpac_ap_vertical_mode() == 7     ) ) {
+        		if (System.currentTimeMillis() % 1000 < 500) {    			
+        		    int ils_wrn_x = pfd_gc.adi_cx + pfd_gc.cdi_width*9/22; ;
+                	int ils_wrn_y = pfd_gc.adi_cy + pfd_gc.adi_size_down + pfd_gc.cdi_height + pfd_gc.line_height_l*3/8;
+        			g2.setColor(pfd_gc.pfd_caution_color);
+        			g2.setFont(pfd_gc.font_l);
+        			if (this.avionics.qpac_npa_valid()==0 && !this.avionics.qpac_ils_on() ) 
+        				g2.drawString("ILS",ils_wrn_x,ils_wrn_y);
+        			else if (this.avionics.qpac_npa_valid()==1 && this.avionics.qpac_ils_on() )
+        				g2.drawString("V/DEV",ils_wrn_x,ils_wrn_y);
+        		}
+        	}
+        }
+        
 
     }
 

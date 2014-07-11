@@ -405,7 +405,7 @@ public class FMA_A320 extends PFDSubcomponent {
         drawDMode(g2,3,1,fma_str);
         fma_str = "ra bug " + this.aircraft.ra_bug();
         drawDMode(g2,3,2,fma_str);
-        fma_str = "da_bug " + this.aircraft.da_bug();
+        fma_str = "qpac_da " + this.avionics.qpac_appr_mda();
         drawDMode(g2,3,3,fma_str);        
         fma_str = "vso " + this.aircraft.get_Vso();
         drawDMode(g2,3,4,fma_str);        
@@ -413,6 +413,9 @@ public class FMA_A320 extends PFDSubcomponent {
         drawDMode(g2,3,5,fma_str);        
         fma_str = "fd h " + this.avionics.qpac_fd_hor_bar();
         drawDMode(g2,3,6,fma_str);
+        fma_str = "ils on " + this.avionics.qpac_ils_on();
+        drawDMode(g2,3,7,fma_str);
+        
         
         fma_str = "aProt " + this.avionics.qpac_alpha_prot();
         drawDMode(g2,4,0,fma_str);
@@ -430,7 +433,7 @@ public class FMA_A320 extends PFDSubcomponent {
         drawDMode(g2,0,4,fma_str); 
         fma_str = "NPA No Points " + this.avionics.qpac_npa_no_points();
         drawDMode(g2,0,5,fma_str); 
-        fma_str = "ApprType" + this.avionics.qpac_appr_type();
+        fma_str = "ApprType " + this.avionics.qpac_appr_type();
         drawDMode(g2,0,6,fma_str);
         */
         
@@ -516,16 +519,30 @@ public class FMA_A320 extends PFDSubcomponent {
         // Autopilote vertical armed mode
         switch (this.avionics.qpac_ap_vertical_armed()) {
     		case 0 : pfe_vert_armed.clearText(); break;
-    		case 1 : pfe_vert_armed.setText("G/S", PFE_Color.PFE_COLOR_ARMED); break;
+    		case 1 : if (this.avionics.qpac_npa_valid() == 0) 
+    					pfe_vert_armed.setText("G/S", PFE_Color.PFE_COLOR_ARMED); 
+    				 else 
+    					pfe_vert_armed.setText("FINAL", PFE_Color.PFE_COLOR_ARMED);
+    				 break;
     		case 2 : pfe_vert_armed.setText("CLB", PFE_Color.PFE_COLOR_ARMED); break;
     		case 4 : pfe_vert_armed.setText("DES", PFE_Color.PFE_COLOR_ARMED); break;
-    		case 5 : pfe_vert_armed.setText("DES G/S", PFE_Color.PFE_COLOR_ARMED);break;
+    		case 5 : if (this.avionics.qpac_npa_valid() == 0) 
+    					pfe_vert_armed.setText("DES G/S", PFE_Color.PFE_COLOR_ARMED); 
+			 		 else 
+			 			pfe_vert_armed.setText("DES FNL", PFE_Color.PFE_COLOR_ARMED);
+			 		 break;    			    			    		
         	case 6 : pfe_vert_armed.setText("ALT", PFE_Color.PFE_COLOR_ARMED); break;
-        	case 7 : pfe_vert_armed.setText("ALT G/S", PFE_Color.PFE_COLOR_ARMED); break;
+        	case 7 : if (this.avionics.qpac_npa_valid() == 0) 
+        				pfe_vert_armed.setText("ALT G/S", PFE_Color.PFE_COLOR_ARMED); 
+			 		 else 
+			 			pfe_vert_armed.setText("ALT FNL", PFE_Color.PFE_COLOR_ARMED);
+			 		 break;         		 
         	case 8 : pfe_vert_armed.setText("ALT", PFE_Color.PFE_COLOR_MANAGED); break;
-        	case 9 : // TODO: G/S should be in blue 			 		 
-			 		 pfe_vert_armed.setTextValue("ALT", "G/S", PFE_Color.PFE_COLOR_MANAGED);
-			 		 break;       			 
+        	case 9 : if (this.avionics.qpac_npa_valid() == 0) 
+        			 	pfe_vert_armed.setTextValue("ALT", " G/S", PFE_Color.PFE_COLOR_MANAGED); 
+	 		 		 else 
+	 		 			pfe_vert_armed.setTextValue("ALT", " FNL", PFE_Color.PFE_COLOR_MANAGED);
+	 		 		 break; 			 		 		 
         	case 10 : pfe_vert_armed.setText("OP CLB", PFE_Color.PFE_COLOR_ARMED); break;        	
         }       
         pfe_vert_armed.paint(g2);
@@ -543,6 +560,7 @@ public class FMA_A320 extends PFDSubcomponent {
     		case 2 : pfe_lat_mode.setText("NAV", PFE_Color.PFE_COLOR_ACTIVE); break; 
     		case 6 : pfe_lat_mode.setText("LOC*", PFE_Color.PFE_COLOR_ACTIVE); break; 
     		case 7 : pfe_lat_mode.setText("LOC", PFE_Color.PFE_COLOR_ACTIVE); break; 
+    		case 9 : pfe_lat_mode.setText("APP NAV", PFE_Color.PFE_COLOR_ACTIVE); break;
     		case 10 : final_mode="ROLL OUT"; col_2_3 = true; pfe_lat_mode.clearText(); break; 
     		case 11 : col_2_3 = true; pfe_lat_mode.clearText(); break; // or FLARE
     		case 12 : pfe_lat_mode.setText("GA TRK", PFE_Color.PFE_COLOR_ACTIVE); break;  
@@ -566,6 +584,7 @@ public class FMA_A320 extends PFDSubcomponent {
     		case 0 : pfe_lat_armed.clearText(); break;
     		case 1 : pfe_lat_armed.setText("LOC", PFE_Color.PFE_COLOR_ARMED); break;   		
     		case 2 : pfe_lat_armed.setText("NAV", PFE_Color.PFE_COLOR_ARMED); break;
+    		default : pfe_lat_armed.setText("? "+this.avionics.qpac_ap_lateral_armed(), PFE_Color.PFE_COLOR_ARMED);
         }
         pfe_lat_armed.paint(g2);
     
@@ -674,6 +693,7 @@ public class FMA_A320 extends PFDSubcomponent {
         // THR DES ???
         
         // Minimums
+    	// On QPAC v2.02 - MDA shown when npa_valid=1 and ap_phase == (4 or 5)
         int appr_type = this.avionics.qpac_appr_type();
         if (ap_phase == 4 || ap_phase == 5 ) {
         	String str_dh_mda ="";       
@@ -691,7 +711,7 @@ public class FMA_A320 extends PFDSubcomponent {
         		break;
         	case 1: 
         		str_dh_mda = "MDA "; 
-        		str_dh_mda_value = "" + this.aircraft.da_bug();         	
+        		str_dh_mda_value = "" + (int)Math.round(this.avionics.qpac_appr_mda());         	
         		// draw2Mode(g2, 3, 2, str_dh_mda, str_dh_mda_value, false, pfd_gc.pfd_markings_color, pfd_gc.pfd_armed_color);
         		pfe_land_minimums.setTextValue("MDA ", str_dh_mda_value, PFE_Color.PFE_COLOR_MARK);
         		break;
