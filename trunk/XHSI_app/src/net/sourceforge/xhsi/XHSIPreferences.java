@@ -109,6 +109,7 @@ public class XHSIPreferences {
     public static final String PREF_FUEL_UNITS = "fuel.units";
     public static final String PREF_ENGINE_TYPE = "eicas.engine.type";
     public static final String PREF_TRQ_SCALE = "eicas.trq.scale";
+    public static final String PREF_EICAS_DRAW_CONTROLS = "eicas.draw.controls";
 
     // MFD options
     public static final String PREF_MFD_MODE = "mfd.mode";
@@ -748,6 +749,15 @@ public class XHSIPreferences {
     }
 
 
+    /**
+     * @return            - Draw the position of trim, gear, flaps, autobrake, spoilers, etc...
+     *
+     */
+    public boolean get_eicas_draw_controls() {
+        return get_preference(PREF_EICAS_DRAW_CONTROLS).equalsIgnoreCase("true");
+    }
+
+
 
     // MFD
     
@@ -1121,6 +1131,11 @@ public class XHSIPreferences {
         
         if ( ! this.preferences.containsKey(PREF_EICAS_PRIMARY_ONLY) ) {
             this.preferences.setProperty(PREF_EICAS_PRIMARY_ONLY, "false");
+            this.unsaved_changes = true;
+        }
+
+        if ( ! this.preferences.containsKey(PREF_EICAS_DRAW_CONTROLS) ) {
+            this.preferences.setProperty(PREF_EICAS_DRAW_CONTROLS, "false");
             this.unsaved_changes = true;
         }
 

@@ -352,6 +352,24 @@ public interface Aircraft {
 
 
     /**
+     * @return float - pitch trim
+     */
+    public float get_pitch_trim();
+
+
+    /**
+     * @return float - roll trim
+     */
+    public float get_roll_trim();
+
+
+    /**
+     * @return float - yaw trim
+     */
+    public float get_yaw_trim();
+
+
+    /**
      * @return float - flaps position
      */
     public float get_flap_position();

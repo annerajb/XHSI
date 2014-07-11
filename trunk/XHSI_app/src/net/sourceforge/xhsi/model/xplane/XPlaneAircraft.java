@@ -323,6 +323,18 @@ public class XPlaneAircraft implements Aircraft {
         return ( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_ANNUNCIATORS_MASTER_CAUTION) == 1.0f );
     }
 
+    public float get_pitch_trim() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_ELEVATOR_TRIM);
+    }
+
+    public float get_roll_trim() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_AILERON_TRIM);
+    }
+
+    public float get_yaw_trim() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_RUDDER_TRIM);
+    }
+
     public float get_flap_position() {
         // sim data for handle and real position are reversed
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_FLAP_HANDLE_DEPLOY_RATIO);
