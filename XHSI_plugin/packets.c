@@ -1139,6 +1139,8 @@ int createCustomAvionicsPacket(void) {
 
         // ILS Sig and Deviation Capt. and FO
         qpac_ils =	
+        		XPLMGetDatai(qpac_ils_on_fo) << 5 |
+        		XPLMGetDatai(qpac_ils_on_capt) << 4 |
 				XPLMGetDatai(qpac_gs_on_fo) << 3 |
     			XPLMGetDatai(qpac_loc_on_fo) << 2 |
     			XPLMGetDatai(qpac_gs_on_capt) << 1 |

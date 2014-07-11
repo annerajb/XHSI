@@ -40,6 +40,7 @@ XPLMDataRef qpac_ap_lateral_mode;
 XPLMDataRef qpac_ap_lateral_armed;
 XPLMDataRef qpac_npa_valid;
 XPLMDataRef qpac_npa_no_points;
+XPLMDataRef qpac_npa_slope;
 XPLMDataRef qpac_appr_illuminated;
 XPLMDataRef qpac_loc_illuminated;
 XPLMDataRef qpac_appr_type;
@@ -70,10 +71,12 @@ XPLMDataRef qpac_loc_val_capt;
 XPLMDataRef qpac_loc_on_capt;
 XPLMDataRef qpac_gs_val_capt;
 XPLMDataRef qpac_gs_on_capt;
+XPLMDataRef qpac_ils_on_capt;
 XPLMDataRef qpac_loc_val_fo;
 XPLMDataRef qpac_loc_on_fo;
 XPLMDataRef qpac_gs_val_fo;
 XPLMDataRef qpac_gs_on_fo;
+XPLMDataRef qpac_ils_on_fo;
 XPLMDataRef qpac_ils_crs;
 XPLMDataRef qpac_ils_1;
 XPLMDataRef qpac_ils_2;
@@ -119,6 +122,12 @@ XPLMDataRef qpac_capt_efis_nd_mode;
 XPLMDataRef qpac_co_efis_nd_mode;
 XPLMDataRef qpac_capt_efis_nd_range;
 XPLMDataRef qpac_co_efis_nd_range;
+// Brakes
+// 0=OFF, 1=Engaged, 2=DECEL
+XPLMDataRef qpac_autobrake_low;
+XPLMDataRef qpac_autobrake_med;
+XPLMDataRef qpac_autobrake_max;
+
 
 int qpac_ready = 0;
 int qpac_version = 0;
@@ -161,6 +170,7 @@ void findQpacDataRefs(void) {
             qpac_ap_lateral_armed = XPLMFindDataRef("AirbusFBW/APLateralArmed");
             qpac_npa_valid = XPLMFindDataRef("AirbusFBW/NPAValid");
             qpac_npa_no_points = XPLMFindDataRef("AirbusFBW/NPANoPoints");
+            qpac_npa_slope = XPLMFindDataRef("AirbusFBW/NPASlope");
             qpac_appr_illuminated = XPLMFindDataRef("AirbusFBW/APPRilluminated");
             qpac_loc_illuminated = XPLMFindDataRef("AirbusFBW/LOCilluminated");
             qpac_appr_type = XPLMFindDataRef("AirbusFBW/ApprType");
@@ -192,10 +202,12 @@ void findQpacDataRefs(void) {
             qpac_loc_on_capt = XPLMFindDataRef("AirbusFBW/LOConCapt");
             qpac_gs_val_capt = XPLMFindDataRef("AirbusFBW/GSvalCapt");
             qpac_gs_on_capt = XPLMFindDataRef("AirbusFBW/GSonCapt");
+            qpac_ils_on_capt = XPLMFindDataRef("AirbusFBW/ILSonCapt");
             qpac_loc_val_fo = XPLMFindDataRef("AirbusFBW/LOCvalFO");
             qpac_loc_on_fo = XPLMFindDataRef("AirbusFBW/LOConFO");
             qpac_gs_val_fo = XPLMFindDataRef("AirbusFBW/GSvalFO");
             qpac_gs_on_fo = XPLMFindDataRef("AirbusFBW/GSonFO");
+            qpac_ils_on_fo = XPLMFindDataRef("AirbusFBW/ILSonFO");
             qpac_ils_crs = XPLMFindDataRef("AirbusFBW/ILSCrs");
             qpac_ils_1 = XPLMFindDataRef("AirbusFBW/ILS1");
             qpac_ils_2 = XPLMFindDataRef("AirbusFBW/ILS2");
@@ -242,7 +254,10 @@ void findQpacDataRefs(void) {
             qpac_capt_efis_nd_range = XPLMFindDataRef("AirbusFBW/NDrangeCapt");
             qpac_co_efis_nd_range = XPLMFindDataRef("AirbusFBW/NDrangeFO");
             if (qpac_capt_efis_nd_range != NULL) qpac_version = 202;
-
+            // Brakes
+            qpac_autobrake_low = XPLMFindDataRef("AirbusFBW/AutoBrkLow");
+            qpac_autobrake_med = XPLMFindDataRef("AirbusFBW/AutoBrkMed");
+            qpac_autobrake_max = XPLMFindDataRef("AirbusFBW/AutoBrkMax");
         }
     }
 }
