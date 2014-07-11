@@ -1231,6 +1231,14 @@ public class XPlaneAvionics implements Avionics, Observer {
     		return (qpac_ils_data & 0x02) > 0 ? true : false;	
     }
     
+    public boolean qpac_ils_on(){
+    	int qpac_ils_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ILS_FLAGS));
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ))
+    		return (qpac_ils_data & 0x20) > 0 ? true : false; 	
+    	else
+    		return (qpac_ils_data & 0x10) > 0 ? true : false;	   	
+    }
+    
     public float qpac_ils_crs(){
     	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ILS_CRS);
     }

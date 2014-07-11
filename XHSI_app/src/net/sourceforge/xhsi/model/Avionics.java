@@ -578,6 +578,7 @@ public interface Avionics {
     public int qpac_flex_temp();
     
     // ILS Sig and Deviation Capt. and FO
+    public boolean qpac_ils_on();
     public float qpac_loc_val();
     public boolean qpac_loc_on();
     public float qpac_gs_val();
