@@ -86,6 +86,10 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
     public int divtext_y;
     public int tat_x;
     public int thrustmode_x;
+    public int controls_x;
+    public int controls_w;
+    public int controls_y;
+    public int controls_h;
 
 
     public EICASGraphicsConfig(Component root_component, int du) {
@@ -200,6 +204,11 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
             fuel_compact_y[1] = panel_rect.y + panel_rect.height - fuel_r*14/16;
             fuel_compact_y[2] = fuel_compact_y[1];
 
+            controls_x = panel_rect.x + panel_rect.width * 80/100 - eicas_size * 20/100;
+            controls_w = eicas_size * 40/100;
+            controls_y = alert_y[2] + alert_h + eicas_size * 3/100;
+            controls_h = eicas_size * 40/100;
+            
         }
 
     }

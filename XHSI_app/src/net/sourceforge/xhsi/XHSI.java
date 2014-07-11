@@ -82,7 +82,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 7 Alpha 23";
+    private static final String RELEASE = "2.0 Beta 7 Alpha 24";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -760,7 +760,8 @@ public class XHSI implements ActionListener {
                     "Main contributors:\n" +
                     "2007-2009 Georg Gruetter\n" +
                     "2009 Sandy Barbour\n" +
-                    "2009-2013 Marc Rogiers\n" +
+                    "2009-2014 Marc Rogiers\n" +
+                    "2014 Nicolas Carel\n" +
                     "\n" +
                     "running on " + this.ip_host,
                     "About XHSI",
