@@ -90,6 +90,15 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
     public int controls_w;
     public int controls_y;
     public int controls_h;
+    public int lat_trim_x;
+    public int lat_trim_w;
+    public int lat_trim_y;
+    public int lat_trim_h;
+    public int yaw_trim_y;
+    public int pitch_trim_x;
+    public int pitch_trim_w;
+    public int pitch_trim_y;
+    public int pitch_trim_h;
 
 
     public EICASGraphicsConfig(Component root_component, int du) {
@@ -208,6 +217,18 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
             controls_w = eicas_size * 40/100;
             controls_y = alert_y[2] + alert_h + eicas_size * 3/100;
             controls_h = eicas_size * 40/100;
+            
+            lat_trim_x = controls_x + controls_w/10;
+            lat_trim_w = controls_w/2;
+            lat_trim_y = controls_y + controls_h*65/100;
+            lat_trim_h = controls_h/2;
+            
+            yaw_trim_y = lat_trim_y + lat_trim_h*6/10;
+            
+            pitch_trim_x = controls_x + controls_w*5/8;
+            pitch_trim_w = controls_w/2;
+            pitch_trim_y = controls_y + controls_h*65/100;
+            pitch_trim_h = controls_h*5/16;
             
         }
 
