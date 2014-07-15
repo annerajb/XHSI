@@ -184,6 +184,7 @@ extern XPLMDataRef  acf_vno;
 extern XPLMDataRef  acf_vne;
 extern XPLMDataRef  acf_mmo;
 extern XPLMDataRef  acf_vle;
+extern XPLMDataRef  speedbrake_equiped;
 
 
 extern XPLMDataRef  master_caution;

@@ -394,6 +394,12 @@ public interface Aircraft {
 
 
     /**
+     * @return boolean - Aircraft has speedbrake/spoilers
+     */
+    public boolean has_speed_brake();
+
+
+    /**
      * @return boolean - Speed Brake armed
      */
     public boolean speed_brake_armed();

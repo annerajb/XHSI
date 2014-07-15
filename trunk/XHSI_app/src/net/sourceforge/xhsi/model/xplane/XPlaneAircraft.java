@@ -357,6 +357,10 @@ public class XPlaneAircraft implements Aircraft {
         return ( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_SPEEDBRAKE_RATIO) == -0.5f );
     }
 
+    public boolean has_speed_brake() {
+        return ( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_PARTS_ACF_SBRKEQ) != 0.0f );
+    }
+
     public float get_parking_brake() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_PARKING_BRAKE_RATIO);
     }

@@ -108,10 +108,10 @@ public class Annunciators extends AnnunSubcomponent {
 
         // SPEED BRK
         if ( this.aircraft.battery() ) {
-            float speed_brake = this.aircraft.get_speed_brake();
+            float speed_brake = this.aircraft.get_speed_brake()/1.5f;
             if ( speed_brake > 0.51f ) {
                 annun_color = annun_gc.caution_color;
-            } else if ( ( ( ! this.avionics.is_cl30() ) && ( speed_brake > 0.01f ) ) || ( ( this.avionics.is_cl30() ) && ( speed_brake > 0.033f ) ) ) {
+            } else if ( ( ( ! this.avionics.is_cl30() ) && ( speed_brake > 0.01f ) ) || ( ( this.avionics.is_cl30() ) && ( speed_brake > 0.05f ) ) ) {
                 annun_color = annun_gc.unusual_color;
             } else if ( this.aircraft.speed_brake_armed() ) {
                 annun_color = annun_gc.normal_color;

@@ -255,6 +255,7 @@ XPLMDataRef  acf_vno;
 XPLMDataRef  acf_vne;
 XPLMDataRef  acf_mmo;
 XPLMDataRef  acf_vle;
+XPLMDataRef  speedbrake_equiped;
 
 
 XPLMDataRef  master_caution;
@@ -1005,7 +1006,7 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/engine_type");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_scale");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/fuel_units");
-		XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_max_lbft");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_max_lbft");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/sta");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/data");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/pos");
@@ -1532,6 +1533,7 @@ void findDataRefs(void) {
     acf_vne = XPLMFindDataRef("sim/aircraft/view/acf_Vne");
     acf_mmo = XPLMFindDataRef("sim/aircraft/view/acf_Mmo");
     acf_vle = XPLMFindDataRef("sim/aircraft/overflow/acf_Vle");
+    speedbrake_equiped = XPLMFindDataRef("sim/aircraft/parts/acf_sbrkEQ");
 
 
     // Controls & annunciators
