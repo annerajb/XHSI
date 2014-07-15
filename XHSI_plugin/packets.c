@@ -1641,6 +1641,9 @@ int createStaticPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_OVERFLOW_ACF_VLE);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(acf_vle));
 	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_PARTS_ACF_SBRKEQ);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(speedbrake_equiped));
+	i++;
 
 	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_STYLE);
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(xhsi_instrument_style));

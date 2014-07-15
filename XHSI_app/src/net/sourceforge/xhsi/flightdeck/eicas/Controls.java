@@ -188,32 +188,59 @@ public class Controls extends EICASSubcomponent {
     private void draw_flaps_speedbrake(Graphics2D g2) {
         
         float flaps = this.aircraft.get_flap_position();
+        float flapshandle = this.aircraft.get_flap_handle();
         int detents = this.aircraft.get_flap_detents();
         // whatever the DataRefs documentation might say, sim/flightmodel2/controls/speedbrake_ratio goes from 0.0 to 1.5
         float speedbrake = this.aircraft.get_speed_brake() / 1.5f;
-        boolean armed = this.aircraft.speed_brake_armed();
+        boolean sbrk_armed = this.aircraft.speed_brake_armed();
+        boolean sbrk_eq = this.aircraft.has_speed_brake();
 
         AffineTransform original_at = g2.getTransform();
         
         // wing
         g2.setColor(eicas_gc.dim_markings_color);
         g2.fillOval(eicas_gc.wing_x - eicas_gc.wing_h/2, eicas_gc.wing_y - eicas_gc.wing_h/2, eicas_gc.wing_h, eicas_gc.wing_h);
-        g2.fillRect(eicas_gc.wing_x, eicas_gc.wing_y - eicas_gc.wing_h/2, eicas_gc.wing_w, eicas_gc.wing_h);
+        int[] wing_section_x = {
+            eicas_gc.wing_x,
+            eicas_gc.wing_x + eicas_gc.wing_w/8,
+            eicas_gc.wing_x + eicas_gc.wing_w/3,
+            eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.speedbrake_w,
+            eicas_gc.wing_x + eicas_gc.wing_w,
+            eicas_gc.wing_x + eicas_gc.wing_w,
+            eicas_gc.wing_x
+        };
+        int[] wing_section_y = {
+            eicas_gc.wing_y - eicas_gc.wing_h/2,
+            eicas_gc.wing_y - eicas_gc.wing_h*7/8,
+            eicas_gc.wing_y - eicas_gc.wing_h,
+            eicas_gc.wing_y - eicas_gc.wing_h,
+            eicas_gc.wing_y - eicas_gc.wing_h/2,
+            eicas_gc.wing_y + eicas_gc.wing_h/2,
+            eicas_gc.wing_y + eicas_gc.wing_h/2
+        };
+        g2.fillPolygon(wing_section_x, wing_section_y, 7);
 
+        
         // flaps arc
         g2.setColor(eicas_gc.dim_markings_color);
-        g2.drawArc(eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.flaps_l - 1, eicas_gc.wing_y - eicas_gc.flaps_l - 1, eicas_gc.flaps_l*2 + 2, eicas_gc.flaps_l*2 + 2, 0, -60);
-        g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l, eicas_gc.wing_y, eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l - eicas_gc.controls_w/2*8/100, eicas_gc.wing_y);
+        g2.drawArc(eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.flaps_l - 1, eicas_gc.wing_y - eicas_gc.flaps_l - 1, eicas_gc.flaps_l*2 + 2, eicas_gc.flaps_l*2 + 2, 0-5, -60);
+        g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l, eicas_gc.wing_y + eicas_gc.wing_h/2, eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l - eicas_gc.controls_w/2*8/100, eicas_gc.wing_y + eicas_gc.wing_h/2);
         if ( detents >= 2 ) {
             double rotang = Math.toRadians(60.0d / detents);
             for ( int i=0; i!=detents; i++) {
                 g2.rotate(rotang, eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.wing_y);
-                g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l, eicas_gc.wing_y, eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l - eicas_gc.controls_w/2*4/100, eicas_gc.wing_y);
+                g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l, eicas_gc.wing_y + eicas_gc.wing_h/2, eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l - eicas_gc.controls_w/2*4/100, eicas_gc.wing_y + eicas_gc.wing_h/2);
             }
             g2.setTransform(original_at);
         }
         g2.rotate(Math.toRadians(60), eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.wing_y);
-        g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l, eicas_gc.wing_y, eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l - eicas_gc.controls_w/2*8/100, eicas_gc.wing_y);
+        g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l, eicas_gc.wing_y + eicas_gc.wing_h/2, eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l - eicas_gc.controls_w/2*8/100, eicas_gc.wing_y + eicas_gc.wing_h/2);
+        g2.setTransform(original_at);
+        
+        // flaps handle
+        g2.setColor(eicas_gc.dim_markings_color);
+        g2.rotate(Math.toRadians(60*flapshandle), eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.wing_y);
+        g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w , eicas_gc.wing_y + eicas_gc.wing_h/2 - 1, eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l, eicas_gc.wing_y + eicas_gc.wing_h/2);
         g2.setTransform(original_at);
         
         // flaps
@@ -225,45 +252,62 @@ public class Controls extends EICASSubcomponent {
         int[] flaps_triangle_y = {
             eicas_gc.wing_y + eicas_gc.wing_h/2,
             eicas_gc.wing_y - eicas_gc.wing_h/2,
-            eicas_gc.wing_y
+            eicas_gc.wing_y + eicas_gc.wing_h/2
         };
         g2.setColor(eicas_gc.normal_color);
-        g2.rotate(Math.toRadians(60*flaps), eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.wing_y);
         g2.fillOval(eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.wing_h/2, eicas_gc.wing_y - eicas_gc.wing_h/2, eicas_gc.wing_h, eicas_gc.wing_h);
+        g2.rotate(Math.toRadians(60*flaps), eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.wing_y);
         g2.fillPolygon(flaps_triangle_x, flaps_triangle_y, 3);
-        g2.setTransform(original_at);
-        
-        // speedbrake arc
-        g2.setColor(eicas_gc.dim_markings_color);
-        g2.drawArc(eicas_gc.speedbrake_x - eicas_gc.speedbrake_w - 1, eicas_gc.speedbrake_y - eicas_gc.speedbrake_w - 1, eicas_gc.speedbrake_w*2 + 2, eicas_gc.speedbrake_w*2 + 2, 0, 80);
-        g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.speedbrake_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.speedbrake_y);
-        g2.rotate(Math.toRadians(-40), eicas_gc.speedbrake_x, eicas_gc.speedbrake_y);
-        g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.speedbrake_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.speedbrake_y);
-        g2.rotate(Math.toRadians(-40), eicas_gc.speedbrake_x, eicas_gc.speedbrake_y);
-        g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.speedbrake_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.speedbrake_y);
-        g2.setTransform(original_at);
-        
-        //speedbrake
-        int[] speedbrake_triangle_x = {
-            eicas_gc.speedbrake_x,
-            eicas_gc.speedbrake_x,
-            eicas_gc.speedbrake_x + eicas_gc.speedbrake_w
-        };
-        int[] speedbrake_triangle_y = {
-            eicas_gc.speedbrake_y + eicas_gc.speedbrake_h/2,
-            eicas_gc.speedbrake_y - eicas_gc.speedbrake_h/2,
-            eicas_gc.speedbrake_y
-        };
-        if ( armed || ( ( ( ! this.avionics.is_cl30() ) && ( speedbrake > 0.01f ) ) || ( ( this.avionics.is_cl30() ) && ( speedbrake > 0.033f ) ) ) ) g2.setColor(eicas_gc.normal_color);
-        else g2.setColor(eicas_gc.markings_color);
-        g2.rotate(Math.toRadians(-80*speedbrake), eicas_gc.speedbrake_x, eicas_gc.speedbrake_y);
-        g2.fillOval(eicas_gc.speedbrake_x - eicas_gc.speedbrake_h/2, eicas_gc.speedbrake_y - eicas_gc.speedbrake_h/2, eicas_gc.speedbrake_h, eicas_gc.speedbrake_h);
-        g2.fillPolygon(speedbrake_triangle_x, speedbrake_triangle_y, 3);
         g2.setTransform(original_at);
         
         g2.setColor(eicas_gc.color_boeingcyan);
         g2.setFont(eicas_gc.font_s);
-        g2.drawString("SP-BRAKE", eicas_gc.wing_x, eicas_gc.wing_y - eicas_gc.line_height_s*12/4);
+        g2.drawString("FLAPS", eicas_gc.wing_x, eicas_gc.wing_y + eicas_gc.line_height_s*10/4);
+
+        
+        if ( sbrk_eq ) {
+            
+            // speedbrake arc
+            g2.setColor(eicas_gc.dim_markings_color);
+            g2.drawArc(eicas_gc.speedbrake_x - eicas_gc.speedbrake_w - 1, eicas_gc.speedbrake_y - eicas_gc.speedbrake_w - 1, eicas_gc.speedbrake_w*2 + 2, eicas_gc.speedbrake_w*2 + 2, 0, 80);
+            g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.speedbrake_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.speedbrake_y);
+            g2.rotate(Math.toRadians(-40), eicas_gc.speedbrake_x, eicas_gc.speedbrake_y);
+            g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.speedbrake_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.speedbrake_y);
+            g2.rotate(Math.toRadians(-40), eicas_gc.speedbrake_x, eicas_gc.speedbrake_y);
+            g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.speedbrake_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.speedbrake_y);
+            g2.setTransform(original_at);
+        
+            //speedbrake
+            int[] speedbrake_triangle_x = {
+                eicas_gc.speedbrake_x,
+                eicas_gc.speedbrake_x,
+                eicas_gc.speedbrake_x + eicas_gc.speedbrake_w
+            };
+            int[] speedbrake_triangle_y = {
+                eicas_gc.speedbrake_y + eicas_gc.speedbrake_h/2,
+                eicas_gc.speedbrake_y - eicas_gc.speedbrake_h/2,
+                eicas_gc.speedbrake_y
+            };
+            if ( speedbrake > 0.51f ) {
+                g2.setColor(eicas_gc.caution_color);
+            } else if ( ( ( ! this.avionics.is_cl30() ) && ( speedbrake > 0.01f ) ) || ( ( this.avionics.is_cl30() ) && ( speedbrake > 0.05f ) ) ) {
+                g2.setColor(eicas_gc.unusual_color);
+            } else if ( sbrk_armed ) {
+                g2.setColor(eicas_gc.normal_color);
+            } else {
+                g2.setColor(eicas_gc.markings_color);
+            }
+            g2.rotate(Math.toRadians(-80*speedbrake), eicas_gc.speedbrake_x, eicas_gc.speedbrake_y);
+            g2.fillOval(eicas_gc.speedbrake_x - eicas_gc.speedbrake_h/2, eicas_gc.speedbrake_y - eicas_gc.speedbrake_h/2, eicas_gc.speedbrake_h, eicas_gc.speedbrake_h);
+            g2.fillPolygon(speedbrake_triangle_x, speedbrake_triangle_y, 3);
+            g2.setTransform(original_at);
+
+            g2.setColor(eicas_gc.color_boeingcyan);
+            g2.setFont(eicas_gc.font_s);
+            g2.drawString("SPDBRK", eicas_gc.wing_x, eicas_gc.wing_y - eicas_gc.line_height_s*12/4);
+        
+        }
+        
         g2.drawString("FLAPS", eicas_gc.wing_x, eicas_gc.wing_y + eicas_gc.line_height_s*10/4);
 
     }
