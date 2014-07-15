@@ -99,6 +99,15 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
     public int pitch_trim_w;
     public int pitch_trim_y;
     public int pitch_trim_h;
+    public int wing_x;
+    public int wing_y;
+    public int wing_h;
+    public int wing_w;
+    public int flaps_l;
+    public int speedbrake_h;
+    public int speedbrake_w;
+    public int speedbrake_x;
+    public int speedbrake_y;
 
 
     public EICASGraphicsConfig(Component root_component, int du) {
@@ -218,17 +227,27 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
             controls_y = alert_y[2] + alert_h + eicas_size * 3/100;
             controls_h = eicas_size * 40/100;
             
-            lat_trim_x = controls_x + controls_w/10;
+            lat_trim_x = controls_x + controls_w*6/100;
             lat_trim_w = controls_w/2;
-            lat_trim_y = controls_y + controls_h*65/100;
+            lat_trim_y = controls_y + controls_h*64/100;
             lat_trim_h = controls_h/2;
             
             yaw_trim_y = lat_trim_y + lat_trim_h*6/10;
             
-            pitch_trim_x = controls_x + controls_w*5/8;
+            pitch_trim_x = controls_x + controls_w*66/100;
             pitch_trim_w = controls_w/2;
-            pitch_trim_y = controls_y + controls_h*65/100;
+            pitch_trim_y = controls_y + controls_h*64/100;
             pitch_trim_h = controls_h*5/16;
+            
+            wing_x = controls_x + controls_w*8/100;
+            wing_y = controls_y + controls_h*9/32;
+            wing_h = controls_h*3/100;
+            wing_w = controls_w*26/100;
+            flaps_l = controls_w*18/100;
+            speedbrake_h = controls_h*3/100;
+            speedbrake_w = controls_w*12/100;
+            speedbrake_x = wing_x + wing_w - speedbrake_w;
+            speedbrake_y = wing_y - wing_h/2;
             
         }
 
