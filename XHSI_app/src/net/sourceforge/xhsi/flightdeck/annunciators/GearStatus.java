@@ -73,14 +73,16 @@ public class GearStatus extends AnnunSubcomponent {
 
     public void paint(Graphics2D g2) {
 
-        if ( this.aircraft.num_gears() == 3 ) {
-            // B737-NG style with text labels
-            drawTricycle(g2);
-        } else if ( this.aircraft.num_gears() > 0 ) {
-            // simple annunciators with an icon
-            drawAllGears(g2);
+        if ( this.aircraft.has_retractable_gear() ) {
+            if ( this.aircraft.num_gears() == 3 ) {
+                // B737-NG style with text labels
+                drawTricycle(g2);
+            } else if ( this.aircraft.num_gears() > 0 ) {
+                // simple annunciators with an icon
+                drawAllGears(g2);
+            }
         }
-//drawTricycle(g2);
+
     }
 
 

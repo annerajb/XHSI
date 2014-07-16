@@ -1413,7 +1413,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
-        eicas_options_panel.add(new JLabel("Draw gear, flaps, autobrake, spoiler and trim positions", JLabel.TRAILING), cons);
+        eicas_options_panel.add(new JLabel("Draw gear, flaps, autobrake, speedbrake and trim positions", JLabel.TRAILING), cons);
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;

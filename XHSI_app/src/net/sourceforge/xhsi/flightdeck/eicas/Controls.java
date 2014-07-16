@@ -70,14 +70,15 @@ public class Controls extends EICASSubcomponent {
 
         if ( eicas_gc.powered && this.preferences.get_eicas_primary_only() && this.preferences.get_eicas_draw_controls() ) {
 
-//            g2.setColor(eicas_gc.color_boeingcyan);
-//            g2.drawRect(eicas_gc.controls_x, eicas_gc.controls_y, eicas_gc.controls_w, eicas_gc.controls_h);
-//            g2.drawLine(eicas_gc.controls_x, eicas_gc.controls_y + eicas_gc.controls_h/2, eicas_gc.controls_x + eicas_gc.controls_w, eicas_gc.controls_y + eicas_gc.controls_h/2);
-//            g2.drawLine(eicas_gc.controls_x + eicas_gc.controls_w*60/100, eicas_gc.controls_y, eicas_gc.controls_x + eicas_gc.controls_w*60/100, eicas_gc.controls_y + eicas_gc.controls_h/2);
+            g2.setColor(eicas_gc.instrument_background_color);
+            g2.drawRect(eicas_gc.controls_x, eicas_gc.controls_y, eicas_gc.controls_w, eicas_gc.controls_h);
+            g2.drawLine(eicas_gc.controls_x, eicas_gc.controls_y + eicas_gc.controls_h/2, eicas_gc.controls_x + eicas_gc.controls_w, eicas_gc.controls_y + eicas_gc.controls_h/2);
+            g2.drawLine(eicas_gc.controls_x + eicas_gc.controls_w*60/100, eicas_gc.controls_y, eicas_gc.controls_x + eicas_gc.controls_w*60/100, eicas_gc.controls_y + eicas_gc.controls_h/2);
+            g2.drawLine(eicas_gc.controls_x + eicas_gc.controls_w*60/100, eicas_gc.controls_y + eicas_gc.controls_h*30/100, eicas_gc.controls_x + eicas_gc.controls_w, eicas_gc.controls_y + eicas_gc.controls_h*30/100);
 
             draw_trim(g2);
             draw_flaps_speedbrake(g2);
-            draw_gear(g2);
+            draw_gears(g2);
             draw_autobrake(g2);
             
         }
@@ -95,6 +96,13 @@ public class Controls extends EICASSubcomponent {
         
         g2.setColor(eicas_gc.color_boeingcyan);
         g2.setFont(eicas_gc.font_s);
+        g2.drawString("T", eicas_gc.trim_txt_x - eicas_gc.get_text_width(g2, eicas_gc.font_s, "T")/2, eicas_gc.trim_txt_y + eicas_gc.line_height_s*0);
+        g2.drawString("R", eicas_gc.trim_txt_x - eicas_gc.get_text_width(g2, eicas_gc.font_s, "R")/2, eicas_gc.trim_txt_y + eicas_gc.line_height_s*1);
+        g2.drawString("I", eicas_gc.trim_txt_x - eicas_gc.get_text_width(g2, eicas_gc.font_s, "I")/2, eicas_gc.trim_txt_y + eicas_gc.line_height_s*2);
+        g2.drawString("M", eicas_gc.trim_txt_x - eicas_gc.get_text_width(g2, eicas_gc.font_s, "M")/2, eicas_gc.trim_txt_y + eicas_gc.line_height_s*3);
+
+        //g2.setColor(eicas_gc.color_boeingcyan);
+        //g2.setFont(eicas_gc.font_s);
         g2.drawString("ROLL", eicas_gc.lat_trim_x + eicas_gc.lat_trim_w/2 - eicas_gc.get_text_width(g2, eicas_gc.font_s, "ROLL")/2, eicas_gc.lat_trim_y - eicas_gc.line_height_s);
 
         g2.setColor(eicas_gc.dim_markings_color);
@@ -185,13 +193,13 @@ public class Controls extends EICASSubcomponent {
         
     }
     
+    
     private void draw_flaps_speedbrake(Graphics2D g2) {
         
         float flaps = this.aircraft.get_flap_position();
         float flapshandle = this.aircraft.get_flap_handle();
         int detents = this.aircraft.get_flap_detents();
-        // whatever the DataRefs documentation might say, sim/flightmodel2/controls/speedbrake_ratio goes from 0.0 to 1.5
-        float speedbrake = this.aircraft.get_speed_brake() / 1.5f;
+        float speedbrake = this.aircraft.get_speed_brake();
         boolean sbrk_armed = this.aircraft.speed_brake_armed();
         boolean sbrk_eq = this.aircraft.has_speed_brake();
 
@@ -204,7 +212,7 @@ public class Controls extends EICASSubcomponent {
             eicas_gc.wing_x,
             eicas_gc.wing_x + eicas_gc.wing_w/8,
             eicas_gc.wing_x + eicas_gc.wing_w/3,
-            eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.speedbrake_w,
+            eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.spdbrk_w,
             eicas_gc.wing_x + eicas_gc.wing_w,
             eicas_gc.wing_x + eicas_gc.wing_w,
             eicas_gc.wing_x
@@ -269,24 +277,24 @@ public class Controls extends EICASSubcomponent {
             
             // speedbrake arc
             g2.setColor(eicas_gc.dim_markings_color);
-            g2.drawArc(eicas_gc.speedbrake_x - eicas_gc.speedbrake_w - 1, eicas_gc.speedbrake_y - eicas_gc.speedbrake_w - 1, eicas_gc.speedbrake_w*2 + 2, eicas_gc.speedbrake_w*2 + 2, 0, 80);
-            g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.speedbrake_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.speedbrake_y);
-            g2.rotate(Math.toRadians(-40), eicas_gc.speedbrake_x, eicas_gc.speedbrake_y);
-            g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.speedbrake_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.speedbrake_y);
-            g2.rotate(Math.toRadians(-40), eicas_gc.speedbrake_x, eicas_gc.speedbrake_y);
-            g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.speedbrake_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.speedbrake_y);
+            g2.drawArc(eicas_gc.spdbrk_x - eicas_gc.spdbrk_w - 1, eicas_gc.spdbrk_y - eicas_gc.spdbrk_w - 1, eicas_gc.spdbrk_w*2 + 2, eicas_gc.spdbrk_w*2 + 2, 0, 80);
+            g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.spdbrk_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.spdbrk_y);
+            g2.rotate(Math.toRadians(-40), eicas_gc.spdbrk_x, eicas_gc.spdbrk_y);
+            g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.spdbrk_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.spdbrk_y);
+            g2.rotate(Math.toRadians(-40), eicas_gc.spdbrk_x, eicas_gc.spdbrk_y);
+            g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.spdbrk_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.spdbrk_y);
             g2.setTransform(original_at);
         
             //speedbrake
-            int[] speedbrake_triangle_x = {
-                eicas_gc.speedbrake_x,
-                eicas_gc.speedbrake_x,
-                eicas_gc.speedbrake_x + eicas_gc.speedbrake_w
+            int[] spdbrk_triangle_x = {
+                eicas_gc.spdbrk_x,
+                eicas_gc.spdbrk_x,
+                eicas_gc.spdbrk_x + eicas_gc.spdbrk_w
             };
-            int[] speedbrake_triangle_y = {
-                eicas_gc.speedbrake_y + eicas_gc.speedbrake_h/2,
-                eicas_gc.speedbrake_y - eicas_gc.speedbrake_h/2,
-                eicas_gc.speedbrake_y
+            int[] spdbrk_triangle_y = {
+                eicas_gc.spdbrk_y + eicas_gc.spdbrk_h/2,
+                eicas_gc.spdbrk_y - eicas_gc.spdbrk_h/2,
+                eicas_gc.spdbrk_y
             };
             if ( speedbrake > 0.51f ) {
                 g2.setColor(eicas_gc.caution_color);
@@ -297,27 +305,105 @@ public class Controls extends EICASSubcomponent {
             } else {
                 g2.setColor(eicas_gc.markings_color);
             }
-            g2.rotate(Math.toRadians(-80*speedbrake), eicas_gc.speedbrake_x, eicas_gc.speedbrake_y);
-            g2.fillOval(eicas_gc.speedbrake_x - eicas_gc.speedbrake_h/2, eicas_gc.speedbrake_y - eicas_gc.speedbrake_h/2, eicas_gc.speedbrake_h, eicas_gc.speedbrake_h);
-            g2.fillPolygon(speedbrake_triangle_x, speedbrake_triangle_y, 3);
+            g2.rotate(Math.toRadians(-80*speedbrake), eicas_gc.spdbrk_x, eicas_gc.spdbrk_y);
+            g2.fillOval(eicas_gc.spdbrk_x - eicas_gc.spdbrk_h/2, eicas_gc.spdbrk_y - eicas_gc.spdbrk_h/2, eicas_gc.spdbrk_h, eicas_gc.spdbrk_h);
+            g2.fillPolygon(spdbrk_triangle_x, spdbrk_triangle_y, 3);
             g2.setTransform(original_at);
 
             g2.setColor(eicas_gc.color_boeingcyan);
             g2.setFont(eicas_gc.font_s);
-            g2.drawString("SPDBRK", eicas_gc.wing_x, eicas_gc.wing_y - eicas_gc.line_height_s*12/4);
+            g2.drawString("SPEEDBRK", eicas_gc.wing_x, eicas_gc.wing_y - eicas_gc.line_height_s*12/4);
         
         }
         
-        g2.drawString("FLAPS", eicas_gc.wing_x, eicas_gc.wing_y + eicas_gc.line_height_s*10/4);
+    }
+
+    
+    private void draw_1_gear(Graphics2D g2, int pos, String g_char, int g_x, int g_y) {
+
+        g2.setFont(eicas_gc.font_s);
+
+        float g_ext = this.aircraft.get_gear( pos );
+        int circle_y = g_y - eicas_gc.line_height_s*3/8;
+        int circle_r = eicas_gc.max_char_advance_s*4/6;
+
+        if ( g_ext > 0.0f ) {
+            if ( g_ext == 1.0f ) {
+                g2.setColor(eicas_gc.normal_color);
+            } else {
+                g2.setColor(eicas_gc.caution_color);
+            }
+            g2.fillOval(g_x - circle_r, circle_y - circle_r, circle_r*2, circle_r*2);
+        }
+        if ( g_ext == 0.0f ) g2.setColor(eicas_gc.dim_markings_color);
+        else g2.setColor(eicas_gc.background_color);
+        g2.drawString(g_char, g_x - eicas_gc.get_text_width(g2, eicas_gc.font_s, g_char)/2, g_y);
 
     }
 
-    private void draw_gear(Graphics2D g2) {
+    private void draw_gears(Graphics2D g2) {
+        
+        if ( this.aircraft.has_retractable_gear() ) {
+            
+            g2.setFont(eicas_gc.font_s);
+            g2.setColor(eicas_gc.color_boeingcyan);
+            g2.drawString("GEAR", eicas_gc.gear_x - eicas_gc.get_text_width(g2, eicas_gc.font_s, "GEAR")/2, eicas_gc.gear_y);
+
+            draw_1_gear(g2, 0, "N", eicas_gc.gear_x, eicas_gc.gear_y + eicas_gc.line_height_s*13/8);
+
+            draw_1_gear(g2, 1, "L", eicas_gc.gear_x - eicas_gc.gear_w, eicas_gc.gear_y + eicas_gc.line_height_s*13/8 + eicas_gc.line_height_s*11/8);
+
+            draw_1_gear(g2, 2, "R", eicas_gc.gear_x + eicas_gc.gear_w, eicas_gc.gear_y + eicas_gc.line_height_s*13/8 + eicas_gc.line_height_s*11/8);
+        
+        }
         
     }
 
+    
     private void draw_autobrake(Graphics2D g2) {
-        
+
+        int autobrake = this.aircraft.auto_brake();
+        boolean on_ground = this.aircraft.on_ground();
+
+        String autbrk_str;
+        switch (autobrake) {
+            
+            case -1 :
+                autbrk_str = "RTO";
+                break;
+            case 1 :
+                autbrk_str = "1";
+                break;
+            case 2 :
+                autbrk_str = "2";
+                break;
+            case 3 :
+                autbrk_str = "3";
+                break;
+            case 4 :
+                autbrk_str = "MAX";
+                break;
+            default :
+                autbrk_str = "OFF";
+                break;
+
+        }
+
+        g2.setFont(eicas_gc.font_s);
+        g2.setColor(eicas_gc.color_boeingcyan);
+        g2.drawString("AUTOBRK", eicas_gc.autbrk_x - eicas_gc.get_text_width(g2, eicas_gc.font_s, "AUTOBRK")/2, eicas_gc.autbrk_y);
+ 
+        if ( ( ! on_ground && ( autobrake == -1 ) ) || ( on_ground && ( autobrake > 0 ) ) ) {
+            // RTO in the air or 1,2,3,max on the ground : caution
+            g2.setColor(eicas_gc.caution_color);
+        } else if ( ( on_ground && ( autobrake == -1 ) ) || ( ! on_ground && ( autobrake > 0 ) ) ) {
+            // RTO on the ground or 1,2,3,max in the air : armed
+            g2.setColor(eicas_gc.normal_color);
+        } else {
+            g2.setColor(eicas_gc.dim_markings_color);
+        }
+        g2.drawString(autbrk_str, eicas_gc.autbrk_x - eicas_gc.get_text_width(g2, eicas_gc.font_s, autbrk_str)/2, eicas_gc.autbrk_y + eicas_gc.line_height_s*3/2);
+
     }
 
 }
