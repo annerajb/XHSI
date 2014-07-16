@@ -277,6 +277,10 @@ public class XPlaneAircraft implements Aircraft {
 
     public int num_gears() { return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_AIRCRAFT_GEAR_COUNT); }
 
+    public boolean has_retractable_gear() {
+        return ( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_GEAR_ACF_GEAR_RETRACT) == 1.0f );
+    }
+    
     public float get_gear(int gear) {
         if ( ( gear >= 0 ) && ( gear < num_gears() ) ) {
             return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL2_GEAR_DEPLOY_RATIO_ + gear);

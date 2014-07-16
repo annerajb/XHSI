@@ -256,6 +256,7 @@ XPLMDataRef  acf_vne;
 XPLMDataRef  acf_mmo;
 XPLMDataRef  acf_vle;
 XPLMDataRef  speedbrake_equiped;
+XPLMDataRef  retractable_gear;
 
 
 XPLMDataRef  master_caution;
@@ -1534,6 +1535,7 @@ void findDataRefs(void) {
     acf_mmo = XPLMFindDataRef("sim/aircraft/view/acf_Mmo");
     acf_vle = XPLMFindDataRef("sim/aircraft/overflow/acf_Vle");
     speedbrake_equiped = XPLMFindDataRef("sim/aircraft/parts/acf_sbrkEQ");
+    retractable_gear = XPLMFindDataRef("sim/aircraft/gear/acf_gear_retract");
 
 
     // Controls & annunciators

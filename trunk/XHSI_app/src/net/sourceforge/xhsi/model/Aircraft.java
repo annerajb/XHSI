@@ -316,6 +316,12 @@ public interface Aircraft {
 
 
     /**
+     * @return boolean - gear is retractable
+     */
+    public boolean has_retractable_gear();
+    
+    
+    /**
      * @return float - position of a gear
      */
     public float get_gear(int gear);
