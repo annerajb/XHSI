@@ -5,7 +5,7 @@
 * persistence mechanisms.
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
-* Copyright (C) 2010  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2010-2014  Marc Rogiers (marrog.123@gmail.com)
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -104,12 +104,11 @@ public class XHSIPreferences {
     public static final String PREF_PFD_ADI_CENTERED = "pfd.adi.centered";
 
     // EICAS options
-    public static final String PREF_EICAS_PRIMARY_ONLY = "eicas.primary.only";
+    public static final String PREF_EICAS_LAYOUT = "eicas.layout";
     public static final String PREF_OVERRIDE_ENGINE_COUNT = "override.engine.count";
     public static final String PREF_FUEL_UNITS = "fuel.units";
     public static final String PREF_ENGINE_TYPE = "eicas.engine.type";
     public static final String PREF_TRQ_SCALE = "eicas.trq.scale";
-    public static final String PREF_EICAS_DRAW_CONTROLS = "eicas.draw.controls";
 
     // MFD options
     public static final String PREF_MFD_MODE = "mfd.mode";
@@ -143,7 +142,6 @@ public class XHSIPreferences {
     public static final String HORIZON_ROUNDED = "rounded";
     public static final String HORIZON_FULLWIDTH = "fullwidth";
     public static final String HORIZON_FULLSCREEN = "fullscreen";
-//    public static final String HORIZON_AIRBUS = "airbus";
     
     // for PREF_BORDER_STYLE
     public static final String BORDER_RELIEF = "relief";
@@ -158,7 +156,6 @@ public class XHSIPreferences {
 
     // for PREF_MFD_MODE
     public static final String MFD_MODE_SWITCHABLE = "switchable";
-    //public static final String MFD_MODE_TAXI_CHART = "taxi_chart";
     public static final String MFD_MODE_ARPT_CHART = "artp_chart";
     public static final String MFD_MODE_FPLN = "fpln";
     public static final String MFD_MODE_LOWER_EICAS = "lower_eicas";
@@ -182,6 +179,11 @@ public class XHSIPreferences {
             return this.rotation;
         }
     }
+
+    // for PREF_EICAS_LAYOUT
+    public static final String EICAS_LAYOUT_PRIMARY = "primary";
+    public static final String EICAS_LAYOUT_PRIMARY_AND_CONTROLS = "primary+controls";
+    public static final String EICAS_LAYOUT_FULL = "full";
 
     // for PREF_FUEL_UNITS
     public static final String FUEL_UNITS_SWITCHABLE = "switchable";
@@ -664,14 +666,6 @@ public class XHSIPreferences {
         return get_preference(PREF_HORIZON_STYLE).equalsIgnoreCase(HORIZON_ROUNDED);
     }
 
-//    /**
-//     * @return            - Draw rounded_square horizon
-//     *
-//     */
-//    public boolean get_draw_airbus_horizon() {
-//        return get_preference(PREF_HORIZON_STYLE).equalsIgnoreCase(HORIZON_AIRBUS);
-//    }
-        
     /**
      * @return            - PFD dial opacity
      *
@@ -736,7 +730,17 @@ public class XHSIPreferences {
      *
      */
     public boolean get_eicas_primary_only() {
-        return get_preference(PREF_EICAS_PRIMARY_ONLY).equalsIgnoreCase("true");
+        String layout = get_preference(PREF_EICAS_LAYOUT);
+        return ( layout.equalsIgnoreCase(EICAS_LAYOUT_PRIMARY) || layout.equalsIgnoreCase(EICAS_LAYOUT_PRIMARY_AND_CONTROLS) );
+    }
+
+
+    /**
+     * @return            - Draw the position of trim, flaps, speedbrake, gear, autobrake, etc...
+     *
+     */
+    public boolean get_eicas_draw_controls() {
+        return get_preference(PREF_EICAS_LAYOUT).equalsIgnoreCase(EICAS_LAYOUT_PRIMARY_AND_CONTROLS);
     }
 
 
@@ -746,15 +750,6 @@ public class XHSIPreferences {
      */
     public int get_override_engine_count() {
         return Integer.parseInt( get_preference(PREF_OVERRIDE_ENGINE_COUNT) );
-    }
-
-
-    /**
-     * @return            - Draw the position of trim, gear, flaps, autobrake, spoilers, etc...
-     *
-     */
-    public boolean get_eicas_draw_controls() {
-        return get_preference(PREF_EICAS_DRAW_CONTROLS).equalsIgnoreCase("true");
     }
 
 
@@ -1129,13 +1124,8 @@ public class XHSIPreferences {
        
         // EICAS
         
-        if ( ! this.preferences.containsKey(PREF_EICAS_PRIMARY_ONLY) ) {
-            this.preferences.setProperty(PREF_EICAS_PRIMARY_ONLY, "false");
-            this.unsaved_changes = true;
-        }
-
-        if ( ! this.preferences.containsKey(PREF_EICAS_DRAW_CONTROLS) ) {
-            this.preferences.setProperty(PREF_EICAS_DRAW_CONTROLS, "false");
+        if ( ! this.preferences.containsKey(PREF_EICAS_LAYOUT) ) {
+            this.preferences.setProperty(PREF_EICAS_LAYOUT, EICAS_LAYOUT_FULL);
             this.unsaved_changes = true;
         }
 
