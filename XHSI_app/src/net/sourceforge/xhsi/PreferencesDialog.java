@@ -1,10 +1,10 @@
 /**
  * PreferencesDialog.java
  * 
- * Dialog for setting preferences of XHSI_PLUGIN
+ * Dialog for setting preferences.
  * 
  * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
- * Copyright (C) 2010  Marc Rogiers (marrog.123@gmail.com)
+ * Copyright (C) 2010-2014  Marc Rogiers (marrog.123@gmail.com)
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -129,7 +129,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private int du_width[] = new int[MAX_WINS];
     private int du_height[] = new int[MAX_WINS];
 
-//    private JCheckBox draw_wide_horizon_checkbox;
     private JComboBox instrument_style_combobox;
     private String instrument_styles[] = { XHSIPreferences.INSTRUMENT_STYLE_SWITCHABLE, XHSIPreferences.INSTRUMENT_STYLE_BOEING, XHSIPreferences.INSTRUMENT_STYLE_AIRBUS };
     private JComboBox horizon_style_combobox;
@@ -144,8 +143,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox draw_radios_checkbox;
     private JCheckBox adi_centered_checkbox;
   
-    private JCheckBox draw_eicas_primary_checkbox;
-    private JCheckBox draw_eicas_controls_checkbox;
+    private JComboBox eicas_layout_combobox;
+    private final String[] eicas_layouts = { XHSIPreferences.EICAS_LAYOUT_PRIMARY, XHSIPreferences.EICAS_LAYOUT_PRIMARY_AND_CONTROLS, XHSIPreferences.EICAS_LAYOUT_FULL };
     private JComboBox engine_count_combobox;
     private JComboBox engine_type_combobox;
     private String engine_types[] = { XHSIPreferences.ENGINE_TYPE_SWITCHABLE, XHSIPreferences.ENGINE_TYPE_N1, XHSIPreferences.ENGINE_TYPE_EPR, XHSIPreferences.ENGINE_TYPE_TRQ, XHSIPreferences.ENGINE_TYPE_MAP };
@@ -352,11 +351,14 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.adi_centered_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_ADI_CENTERED).equalsIgnoreCase("true"));
 
 
-        // EICAS Options (6)
+        // EICAS Options (5)
 
-        this.draw_eicas_primary_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_EICAS_PRIMARY_ONLY).equalsIgnoreCase("true"));
-
-        this.draw_eicas_controls_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_EICAS_DRAW_CONTROLS).equalsIgnoreCase("true"));
+        String eicas_layout = preferences.get_preference(XHSIPreferences.PREF_EICAS_LAYOUT);
+        for (int i=0; i<eicas_layouts.length; i++) {
+            if ( eicas_layout.equals( eicas_layouts[i] ) ) {
+                this.eicas_layout_combobox.setSelectedIndex(i);
+            }
+        }
 
         this.engine_count_combobox.setSelectedIndex( preferences.get_override_engine_count() );
         
@@ -1394,32 +1396,21 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         int dialog_line = 0;
 
-        // Draw only primary engine indications
+        // EICAS layout
         cons.gridx = 0;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
-        eicas_options_panel.add(new JLabel("Limit to primary engine indications", JLabel.TRAILING), cons);
+        eicas_options_panel.add(new JLabel("Layout", JLabel.TRAILING), cons);
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
-        this.draw_eicas_primary_checkbox = new JCheckBox();
-        eicas_options_panel.add(this.draw_eicas_primary_checkbox, cons);
-        dialog_line++;
-
-        // Draw gear, flaps, autobrake, spoiler and trim positions
-        cons.gridx = 0;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.EAST;
-        eicas_options_panel.add(new JLabel("Draw gear, flaps, autobrake, speedbrake and trim positions", JLabel.TRAILING), cons);
-        cons.gridx = 2;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.WEST;
-        this.draw_eicas_controls_checkbox = new JCheckBox("  (only when EICAS is limited to primary engine indications)");
-        eicas_options_panel.add(this.draw_eicas_controls_checkbox, cons);
+        this.eicas_layout_combobox = new JComboBox();
+        this.eicas_layout_combobox.addItem("Primary engine instruments only");
+        this.eicas_layout_combobox.addItem("Primary engine instruments and gear, flaps, etc...");
+        this.eicas_layout_combobox.addItem("Primary and secondary engine instruments");
+        eicas_options_panel.add(this.eicas_layout_combobox, cons);
         dialog_line++;
 
         // Number of engines
@@ -1879,11 +1870,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
             // EICAS options
 
-            if ( this.draw_eicas_primary_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_EICAS_PRIMARY_ONLY).equals("true") )
-                this.preferences.set_preference(XHSIPreferences.PREF_EICAS_PRIMARY_ONLY, this.draw_eicas_primary_checkbox.isSelected()?"true":"false");
-
-            if ( this.draw_eicas_controls_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_EICAS_DRAW_CONTROLS).equals("true") )
-                this.preferences.set_preference(XHSIPreferences.PREF_EICAS_DRAW_CONTROLS, this.draw_eicas_controls_checkbox.isSelected()?"true":"false");
+            if ( ! eicas_layouts[this.eicas_layout_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_EICAS_LAYOUT)) )
+                this.preferences.set_preference(XHSIPreferences.PREF_EICAS_LAYOUT, eicas_layouts[this.eicas_layout_combobox.getSelectedIndex()]);
 
             if ( this.engine_count_combobox.getSelectedIndex() != this.preferences.get_override_engine_count() )
                 this.preferences.set_preference(XHSIPreferences.PREF_OVERRIDE_ENGINE_COUNT, "" + this.engine_count_combobox.getSelectedIndex());
