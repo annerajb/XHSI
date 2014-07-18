@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 //import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSIPreferences;
@@ -126,13 +127,9 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
                 if ( (tokens.length == 2) && tokens[0].equals("SCENERY_PACK") ) {
                     File custom_apt_dat = new File( this.pathname_to_aptnav + "/" + tokens[1] + "/Earth nav data/apt.dat" );
                     if ( custom_apt_dat.exists() ) {
-                        
                         // We have a custom apt.dat
-                        logger.warning("Custom scenery " + custom_apt_dat.getPath());
-                        
+                        //logger.warning("Custom scenery " + custom_apt_dat.getPath());
                         chart_found = read_apt_file(custom_apt_dat, icao);
-                        if (chart_found) logger.warning("Found " + icao + " in custom scenery " + tokens[1]);
-                        
                     } // else logger.warning("No custom apt.dat found at " + custom_apt_dat.getPath());
                 }
             }
@@ -142,28 +139,58 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
             }
 
         }
+        
+        if ( ! chart_found ) {
+            // search in all Global Scenery packs
+            chart_found = scan_apt_files("Global Scenery", icao);
+        }
 
         if ( ! chart_found ) {
-            
-            // it's not in the custom scenery apt.dat files; try in the default apt.dat
-            
-            File default_apt_dat;
-            if ( new File( this.pathname_to_aptnav + this.APT_xplane ).exists() ) {
-                default_apt_dat = new File( this.pathname_to_aptnav + this.APT_xplane );
-            } else {
-                default_apt_dat = new File( this.pathname_to_aptnav + this.APT_file );
-            }
-logger.warning("Searching in the default apt.dat at " + default_apt_dat.getPath());
-            chart_found = read_apt_file(default_apt_dat, icao);
-        
-            if ( ! chart_found ) {
-
-                // send a message that we could't find the airport
-                this.taxi_chart.not_found();
-
-            }
-
+            // search in all Global Scenery packs
+            chart_found = scan_apt_files("Resources/default scenery", icao);
         }
+
+        if ( ! chart_found ) {
+            // DEPRECATED : a single file in the aptnav dir
+            File single_apt_dat = new File( this.pathname_to_aptnav + this.APT_file );
+            if ( single_apt_dat.exists() ) {
+                chart_found = read_apt_file(single_apt_dat, icao);
+            }
+        }
+
+        if ( ! chart_found ) {
+            // send a message that we could't find the airport
+            this.taxi_chart.not_found();
+        }
+
+    }
+    
+    
+    private boolean scan_apt_files(String basedir, String icao) throws Exception {
+
+        boolean found = false;
+        
+        File scenery_dir = new File( this.pathname_to_aptnav + "/" + basedir);
+        // get the list of packs in scenery_dir
+        String[] scenery_packs = scenery_dir.list();
+        if ( ( scenery_packs != null ) && ( scenery_packs.length > 0 ) ) {
+            // sort alphabetically
+            Arrays.sort(scenery_packs);
+            int i = 0;
+            while ( ( ! found ) && (i!=scenery_packs.length ) ) {
+                // check if we have a scenery pack directory
+                if ( new File( this.pathname_to_aptnav + "/" + basedir + "/" + scenery_packs[i] ).isDirectory() ) {
+                    File apt_file = new File( this.pathname_to_aptnav + "/" + basedir + "/" + scenery_packs[i] + "/Earth nav data/apt.dat");
+                    // check if we have an apt.dat file in this pack
+                    if ( apt_file.exists() ) {
+                        found = read_apt_file(apt_file, icao);
+                    }
+                }
+                i++;
+            }
+        }
+        
+        return found;
 
     }
     
