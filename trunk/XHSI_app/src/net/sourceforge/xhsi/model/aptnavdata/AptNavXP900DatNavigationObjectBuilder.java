@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSIPreferences;
@@ -82,8 +83,9 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
 
 //            this.nor.init();
 
+            // read the "<aptnavdir>/Custom Scenery/<pack>/Earth nav data/apt.dat" in the other specified by scenery_packs.ini
             if (this.progressObserver != null) {
-                this.progressObserver.set_progress("Loading databases", "loading custom APT", 0.0f);
+                this.progressObserver.set_progress("Loading databases", "Loading Custom Scenery APT ...", 0.0f);
             }
             File scenery_packs_ini = new File( this.pathname_to_aptnav + "/Custom Scenery/scenery_packs.ini");
             if ( scenery_packs_ini.exists() ) {
@@ -99,7 +101,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                         if ( custom_apt_file.exists() ) {
 
                             // We have a custom apt.dat
-                            logger.warning("Loading custom apt " + custom_apt_file.getPath());
+                            logger.warning("Loading Custom Scenery APT " + custom_apt_file.getPath());
                             read_an_apt_file(custom_apt_file);
 
                         } // else logger.warning("No custom apt.dat found at " + custom_apt_dat.getPath());
@@ -108,30 +110,34 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
             }
 
             if (this.progressObserver != null) {
-                this.progressObserver.set_progress("Loading databases", "loading default APT", 10.0f);
+                this.progressObserver.set_progress("Loading databases", "Loading Global Scenery APT ...", 10.0f);
             }
-            File global_apt_file;
-            if ( new File( this.pathname_to_aptnav + this.APT_xplane ).exists() ) {
-                logger.fine("Reading APT database ( " + this.pathname_to_aptnav + this.APT_xplane + " )");
-                global_apt_file = new File( this.pathname_to_aptnav + this.APT_xplane );
-            } else {
-                logger.fine("Reading APT database ( " + this.pathname_to_aptnav + this.APT_file + " )");
-                global_apt_file = new File( this.pathname_to_aptnav + this.APT_file );
+            // read the "<aptnavdir>/Global Scenery/<pack>/Earth nav data/apt.dat" in alphabetical other
+            scan_apt_files("Global Scenery");
+            
+            if (this.progressObserver != null) {
+                this.progressObserver.set_progress("Loading databases", "Loading Default Scenery APT ...", 20.0f);
             }
-            read_an_apt_file(global_apt_file);
+            if ( new File( this.pathname_to_aptnav + this.APT_file ).exists() ) {
+                logger.fine("Reading APT database ( " + this.pathname_to_aptnav + this.APT_file + " )    DEPRECATED!");
+                File aptnav_apt_file = new File( this.pathname_to_aptnav + this.APT_file );
+                read_an_apt_file(aptnav_apt_file);
+            }
+            // read the "<aptnavdir>/Resources/default scenery/<pack>/Earth nav data/apt.dat" in alphabetical other
+            scan_apt_files("Resources/default scenery");
 
             if (this.progressObserver != null) {
-                this.progressObserver.set_progress("Loading databases", "loading NAV", 25.0f);
+                this.progressObserver.set_progress("Loading databases", "Loading NAV ...", 40.0f);
             }
             read_nav_table();
 
             if (this.progressObserver != null) {
-                this.progressObserver.set_progress("Loading databases", "loading FIX", 50.0f);
+                this.progressObserver.set_progress("Loading databases", "Loading FIX ...", 60.0f);
             }
             read_fix_table();
 
             if (this.progressObserver != null) {
-                this.progressObserver.set_progress("Loading databases", "loading AWY", 75.0f);
+                this.progressObserver.set_progress("Loading databases", "Loading AWY ...", 80.0f);
             }
             read_awy_table();
 
@@ -145,7 +151,31 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
     }
 
 
-    public void read_an_apt_file(File apt_file) throws Exception {
+    private void scan_apt_files(String basedir) throws Exception {
+
+        File scenery_dir = new File( this.pathname_to_aptnav + "/" + basedir);
+        // get the list of packs in scenery_dir
+        String[] scenery_packs = scenery_dir.list();
+        if ( ( scenery_packs != null ) && ( scenery_packs.length > 0 ) ) {
+            // sort alphabetically
+            Arrays.sort(scenery_packs);
+            for ( int i=0; i!=scenery_packs.length; i++ ) {
+                // check if we have a scenery pack directory
+                if ( new File( this.pathname_to_aptnav + "/" + basedir + "/" + scenery_packs[i] ).isDirectory() ) {
+                    File apt_file = new File( this.pathname_to_aptnav + "/" + basedir + "/" + scenery_packs[i] + "/Earth nav data/apt.dat");
+                    // check if we have an apt.dat file in this pack
+                    if ( apt_file.exists() ) {
+                        logger.warning("Loading " + basedir + " APT " + apt_file.getPath());
+                        read_an_apt_file(apt_file);
+                    }
+                }
+            }
+        }
+
+    }
+    
+    
+    private void read_an_apt_file(File apt_file) throws Exception {
 
         BufferedReader reader = new BufferedReader( new FileReader( apt_file ));
         String line;
@@ -348,7 +378,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
             logger.fine("Reading NAV database ( " + this.pathname_to_aptnav + this.NAV_xplane + " )");
             file = new File( this.pathname_to_aptnav + this.NAV_xplane );
         } else {
-            logger.fine("Reading NAV database ( " + this.pathname_to_aptnav + this.NAV_file + " )");
+            logger.fine("Reading NAV database ( " + this.pathname_to_aptnav + this.NAV_file + " )    DEPRECATED!");
             file = new File( this.pathname_to_aptnav + this.NAV_file );
         }
         BufferedReader reader = new BufferedReader( new FileReader( file ));
@@ -499,7 +529,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
             logger.fine("Reading FIX database ( " + this.pathname_to_aptnav + this.FIX_xplane + " )");
             file = new File( this.pathname_to_aptnav + this.FIX_xplane );
         } else {
-            logger.fine("Reading FIX database ( " + this.pathname_to_aptnav + this.FIX_file + " )");
+            logger.fine("Reading FIX database ( " + this.pathname_to_aptnav + this.FIX_file + " )    DEPRECATED!");
             file = new File( this.pathname_to_aptnav + this.FIX_file );
         }
         BufferedReader reader = new BufferedReader( new FileReader( file ));
@@ -545,7 +575,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
             logger.fine("Reading AWY database ( " + this.pathname_to_aptnav + this.AWY_xplane + " )");
             file = new File( this.pathname_to_aptnav + this.AWY_xplane );
         } else {
-            logger.fine("Reading AWY database ( " + this.pathname_to_aptnav + this.AWY_file + " )");
+            logger.fine("Reading AWY database ( " + this.pathname_to_aptnav + this.AWY_file + " )    DEPRECATED!");
             file = new File( this.pathname_to_aptnav + this.AWY_file );
         }
         BufferedReader reader = new BufferedReader( new FileReader( file ));
