@@ -79,7 +79,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
     public void read_all_tables() throws Exception {
 
         if (new File(this.pathname_to_aptnav).exists()) {
-            logger.fine("Start reading AptNav resource files in " + XHSIPreferences.PREF_APTNAV_DIR);
+            logger.info("Start reading AptNav resource files in " + XHSIPreferences.PREF_APTNAV_DIR);
 
 //            this.nor.init();
 
@@ -101,7 +101,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                         if ( custom_apt_file.exists() ) {
 
                             // We have a custom apt.dat
-                            logger.warning("Loading Custom Scenery APT " + custom_apt_file.getPath());
+                            logger.config("Loading Custom Scenery APT " + custom_apt_file.getPath());
                             read_an_apt_file(custom_apt_file);
 
                         } // else logger.warning("No custom apt.dat found at " + custom_apt_dat.getPath());
@@ -119,7 +119,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                 this.progressObserver.set_progress("Loading databases", "Loading Default Scenery APT ...", 20.0f);
             }
             if ( new File( this.pathname_to_aptnav + this.APT_file ).exists() ) {
-                logger.fine("Reading APT database ( " + this.pathname_to_aptnav + this.APT_file + " )    DEPRECATED!");
+                logger.info("Reading APT database ( " + this.pathname_to_aptnav + this.APT_file + " )    DEPRECATED!");
                 File aptnav_apt_file = new File( this.pathname_to_aptnav + this.APT_file );
                 read_an_apt_file(aptnav_apt_file);
             }
@@ -165,7 +165,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                     File apt_file = new File( this.pathname_to_aptnav + "/" + basedir + "/" + scenery_packs[i] + "/Earth nav data/apt.dat");
                     // check if we have an apt.dat file in this pack
                     if ( apt_file.exists() ) {
-                        logger.warning("Loading " + basedir + " APT " + apt_file.getPath());
+                        logger.config("Loading " + basedir + " APT " + apt_file.getPath());
                         read_an_apt_file(apt_file);
                     }
                 }
@@ -373,12 +373,12 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
 
     public void read_nav_table() throws Exception {
 
-        File file;
+        File file = null;
         if ( new File( this.pathname_to_aptnav + this.NAV_xplane ).exists() ) {
-            logger.fine("Reading NAV database ( " + this.pathname_to_aptnav + this.NAV_xplane + " )");
+            logger.config("Reading NAV database ( " + this.pathname_to_aptnav + this.NAV_xplane + " )");
             file = new File( this.pathname_to_aptnav + this.NAV_xplane );
-        } else {
-            logger.fine("Reading NAV database ( " + this.pathname_to_aptnav + this.NAV_file + " )    DEPRECATED!");
+        } else if ( new File( this.pathname_to_aptnav + this.NAV_file ).exists() ) {
+            logger.info("Reading NAV database ( " + this.pathname_to_aptnav + this.NAV_file + " )    DEPRECATED!");
             file = new File( this.pathname_to_aptnav + this.NAV_file );
         }
         BufferedReader reader = new BufferedReader( new FileReader( file ));
@@ -501,7 +501,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                                 coupled_rno.dme_lat = Float.parseFloat(tokens[1]);
                                 coupled_rno.dme_lon = Float.parseFloat(tokens[2]);
                             } else {
-                                logger.config("Error NAV.dat: no VOR or Loc for DME " + tokens[7] + " " + tokens[4]);
+                                logger.warning("Error NAV.dat: no VOR or Loc for DME " + tokens[7] + " " + tokens[4]);
                             }
                         }
                         
@@ -524,12 +524,12 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
 
     public void read_fix_table() throws Exception {
 
-        File file;
+        File file = null;
         if ( new File( this.pathname_to_aptnav + this.FIX_xplane ).exists() ) {
-            logger.fine("Reading FIX database ( " + this.pathname_to_aptnav + this.FIX_xplane + " )");
+            logger.config("Reading FIX database ( " + this.pathname_to_aptnav + this.FIX_xplane + " )");
             file = new File( this.pathname_to_aptnav + this.FIX_xplane );
-        } else {
-            logger.fine("Reading FIX database ( " + this.pathname_to_aptnav + this.FIX_file + " )    DEPRECATED!");
+        } else if ( new File( this.pathname_to_aptnav + this.FIX_file ).exists() ) {
+            logger.info("Reading FIX database ( " + this.pathname_to_aptnav + this.FIX_file + " )    DEPRECATED!");
             file = new File( this.pathname_to_aptnav + this.FIX_file );
         }
         BufferedReader reader = new BufferedReader( new FileReader( file ));
@@ -570,12 +570,12 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
 
     public void read_awy_table() throws Exception {
 
-        File file;
+        File file = null;
         if ( new File( this.pathname_to_aptnav + this.AWY_xplane ).exists() ) {
-            logger.fine("Reading AWY database ( " + this.pathname_to_aptnav + this.AWY_xplane + " )");
+            logger.config("Reading AWY database ( " + this.pathname_to_aptnav + this.AWY_xplane + " )");
             file = new File( this.pathname_to_aptnav + this.AWY_xplane );
         } else {
-            logger.fine("Reading AWY database ( " + this.pathname_to_aptnav + this.AWY_file + " )    DEPRECATED!");
+            logger.info("Reading AWY database ( " + this.pathname_to_aptnav + this.AWY_file + " )    DEPRECATED!");
             file = new File( this.pathname_to_aptnav + this.AWY_file );
         }
         BufferedReader reader = new BufferedReader( new FileReader( file ));
@@ -614,13 +614,13 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
 
     public void preference_changed(String key) {
 
-        logger.finest("Preference changed");
+        logger.config("Preference "+key+" changed");
         if (key.equals(XHSIPreferences.PREF_APTNAV_DIR)) {
             // reload navigation databases
             this.pathname_to_aptnav = XHSIPreferences.get_instance().get_preference(XHSIPreferences.PREF_APTNAV_DIR);
             if (XHSIStatus.nav_db_status.equals(XHSIStatus.STATUS_NAV_DB_NOT_FOUND) == false) {
                 try {
-                    logger.fine("Reload navigation tables");
+                    logger.config("Reload navigation tables");
                     read_all_tables();
                 } catch (Exception e) {
                     logger.warning("Could not read navigation tables! (" + e.toString() + ")");

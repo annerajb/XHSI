@@ -312,7 +312,7 @@ public class DestinationAirport extends MFDSubcomponent {
                     // redundant: taxi.ready = false;
                     try {
                         AptNavXP900DatTaxiChartBuilder cb = new AptNavXP900DatTaxiChartBuilder(taxi);
-                        logger.warning("Requesting "+dest_arpt_str);
+                        logger.config("MFD Requests "+dest_arpt_str);
                         cb.get_chart(dest_arpt_str);
                     } catch (Exception e) {
                         logger.warning("Exception encountered when requesting TaxiChartBuilder "+dest_arpt_str);

@@ -82,7 +82,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 7 Alpha 29";
+    private static final String RELEASE = "2.0 Beta 7 Alpha 30";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -130,7 +130,7 @@ public class XHSI implements ActionListener {
         logger.setLevel(Level.ALL);
         logger.setUseParentHandlers(false);
 
-        logger.config("XHSI " + XHSI.RELEASE + " started");
+        logger.info("XHSI " + XHSI.RELEASE + " started");
 
         Runtime java_run = Runtime.getRuntime();
         logger.config("Free  Memory: " + (java_run.freeMemory()/1024/1024) + "M");
@@ -182,7 +182,7 @@ public class XHSI implements ActionListener {
 
         if (mode == Mode.RECORD) {
 
-            logger.fine("recording flight session to '" + rec_file + "' ...");
+            logger.info("recording flight session to '" + rec_file + "' ...");
 
             XPlaneFlightSessionRecorder recorder = new XPlaneFlightSessionRecorder(rec_file, rec_rate);
             XPlaneUDPReceiver udp_receiver = new XPlaneUDPReceiver( Integer.parseInt(preferences.get_preference(XHSIPreferences.PREF_PORT)) );
@@ -203,7 +203,7 @@ public class XHSI implements ActionListener {
 
         if (mode == Mode.REPLAY) {
 
-            logger.fine("playing flight session recording from '" + filename + "' ...");
+            logger.info("playing flight session recording from '" + filename + "' ...");
 
             XPlaneFlightSessionPlayer player = new XPlaneFlightSessionPlayer(filename, Long.parseLong(this.preferences.get_preference(XHSIPreferences.PREF_REPLAY_DELAY_PER_FRAME)));
             XPlaneDataPacketDecoder decoder = new XPlaneDataPacketDecoder(model_instance);

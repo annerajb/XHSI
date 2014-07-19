@@ -212,7 +212,7 @@ public class AptNavXP900DatTaxiChartBuilder extends Thread {
             if ( line.startsWith("1 ") ) {
                 tokens = line.split("\\s+",6);
                 arpt_hit = tokens[4].equalsIgnoreCase(icao);
-if (arpt_hit) logger.warning("Found " + icao + " in " + current_file.getPath());
+if (arpt_hit) logger.config("Found " + icao + " in " + current_file.getPath());
             }
 
         }

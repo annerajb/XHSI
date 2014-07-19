@@ -105,7 +105,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
     private JTextField min_rwy_textfield;
     //private String[] simcoms = { XHSIPreferences.XHSI_PLUGIN, XHSIPreferences.SCS };
-    private Level[] loglevels = { Level.OFF, Level.SEVERE, Level.WARNING, Level.CONFIG, Level.INFO, Level.FINE, Level.FINEST };
+    private Level[] loglevels = { Level.OFF, Level.SEVERE, Level.WARNING, Level.INFO, Level.CONFIG, Level.FINE, Level.FINER, Level.FINEST };
     private JComboBox rwy_units_combobox;
     private String units[] = { "meters", "feet" };
     private JCheckBox draw_rwy_checkbox;
@@ -529,14 +529,16 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
         this.loglevel_combobox = new JComboBox();
-        this.loglevel_combobox.addItem("Off");
-        this.loglevel_combobox.addItem("Severe");
-        this.loglevel_combobox.addItem("Warning");
-        this.loglevel_combobox.addItem("Configuration");
-        this.loglevel_combobox.addItem("Info");
-        this.loglevel_combobox.addItem("Fine");
-        this.loglevel_combobox.addItem("Finest");
-        this.loglevel_combobox.addActionListener(this);
+        for ( int i=0; i!=loglevels.length; i++) this.loglevel_combobox.addItem( loglevels[i] );
+//        this.loglevel_combobox.addItem("Off");
+//        this.loglevel_combobox.addItem("Severe");
+//        this.loglevel_combobox.addItem("Warning");
+//        this.loglevel_combobox.addItem("Info");
+//        this.loglevel_combobox.addItem("Configuration");
+//        this.loglevel_combobox.addItem("Fine");
+//        this.loglevel_combobox.addItem("Finer");
+//        this.loglevel_combobox.addItem("Finest");
+//        this.loglevel_combobox.addActionListener(this);
         system_panel.add(this.loglevel_combobox, cons);
         dialog_line++;
 

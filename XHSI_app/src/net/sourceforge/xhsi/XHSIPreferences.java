@@ -870,7 +870,7 @@ public class XHSIPreferences {
         }
 
         if ( ! this.preferences.containsKey(PREF_LOGLEVEL) ) {
-            this.preferences.setProperty(PREF_LOGLEVEL, "WARNING");
+            this.preferences.setProperty(PREF_LOGLEVEL, "CONFIG");
             this.unsaved_changes = true;
         }
 
@@ -1184,7 +1184,7 @@ public class XHSIPreferences {
     private void validate_preferences() {
         // verify that X-Plane directory exists
         if (new File(this.preferences.getProperty(PREF_APTNAV_DIR)).exists() == false) {
-            logger.warning("AptNav Resources directory not found. Will not read navigation data!");
+            logger.severe("AptNav Resources directory not found. Will not read navigation data!");
             XHSIStatus.nav_db_status = XHSIStatus.STATUS_NAV_DB_NOT_FOUND;
         } else if (
                 ! ( new File(this.preferences.getProperty(PREF_APTNAV_DIR) + "/Resources/default data/earth_nav.dat").exists() ||
