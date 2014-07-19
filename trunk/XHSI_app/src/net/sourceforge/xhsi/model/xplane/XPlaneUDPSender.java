@@ -64,7 +64,7 @@ public class XPlaneUDPSender {
         this.datagram_socket = socket;
         this.destination_address = address;
         this.destination_port = port;
-        logger.warning("Received first packet from port : " + port);
+        logger.info("Received first packet from port : " + port);
 
     }
 
@@ -87,7 +87,7 @@ public class XPlaneUDPSender {
                 DatagramPacket packet = new DatagramPacket(byte_array, byte_array_stream.size(), this.destination_address, this.destination_port);
                 // this.datagram_socket = new DatagramSocket(); no, we already have an open socket...
                 this.datagram_socket.send(packet);
-                logger.info("Datapoint packet sent!");
+                logger.fine("Datapoint packet sent!");
             } catch (IOException ioe) {
                 logger.warning("Caught error while sending a datapoint packet! (" + ioe.toString() + ")");
             }
