@@ -1531,11 +1531,11 @@ XPLMCommandCallback_f auto_range_handler(XPLMCommandRef inCommand, XPLMCommandPh
 {
     if (inPhase == xplm_CommandContinue)
     {
-        float dist;
+        float dist = 0.0f;
         int i = (int)((intptr_t)inRefcon);
-		XPLMDataRef nd_range;
-		int mode;
-		int ctr;
+		XPLMDataRef nd_range = NULL;
+		int mode = 0;
+		int ctr = 0;
 		switch ( i )
 		{
 		case EFIS_PILOT :
@@ -1583,12 +1583,12 @@ XPLMCommandCallback_f auto_ext_range_handler(XPLMCommandRef inCommand, XPLMComma
 {
     if (inPhase == xplm_CommandContinue)
     {
-        float dist;
+        float dist = 0.0f;
         int i = (int)((intptr_t)inRefcon);
-		XPLMDataRef nd_range;
-		XPLMDataRef nd_zoomin;
-		int mode;
-		int ctr;
+		XPLMDataRef nd_range = NULL;
+		XPLMDataRef nd_zoomin = NULL;
+		int mode = 0;
+		int ctr = 0;
 		switch ( i )
 		{
 		case EFIS_PILOT :
