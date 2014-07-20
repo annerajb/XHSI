@@ -814,11 +814,12 @@ int createCustomAvionicsPacket(void) {
 	int packet_size;
 	char nav_id_bytes[4];
 	char qpac_ils_char[12];
-    int qpac_fcu_data;
-    int qpac_fcu_baro;
-    int qpac_ap_appr;
+    int fcu_data;
+    int fcu_baro;
+    int ap_appr;
     int qpac_ils;
 	int qpac_failures;
+	int auto_brake_level;
 	int pa_a320_failures;
 
 	strncpy(sim_packet.packet_id, "AVIO", 4);
@@ -1062,10 +1063,10 @@ int createCustomAvionicsPacket(void) {
         i++;
 
 		// FCU
-        qpac_fcu_data = 0;
-        qpac_fcu_baro = 0;
+        fcu_data = 0;
+        fcu_baro = 0;
         if (pa_a320_ready) {
-        	qpac_fcu_data =
+        	fcu_data =
         		XPLMGetDatai(qpac_fcu_alt_managed) << 7 |
         		XPLMGetDatai(qpac_fcu_hdg_managed) << 6 |
         		XPLMGetDatai(qpac_fcu_hdg_dashed) << 5 |
@@ -1074,7 +1075,7 @@ int createCustomAvionicsPacket(void) {
     			XPLMGetDatai(qpac_fcu_vs_dashed) << 2 |
     			XPLMGetDatai(pa_a320_fcu_metric_alt) << 1 |
     			XPLMGetDatai(pa_a320_fcu_hdg_trk) ;
-            qpac_fcu_baro =
+            fcu_baro =
         			XPLMGetDatai(qpac_baro_std_fo) << 6 |
         			XPLMGetDatai(qpac_baro_unit_fo) << 5 |
         			XPLMGetDatai(pa_a320_baro_hide) << 4 |
@@ -1082,7 +1083,7 @@ int createCustomAvionicsPacket(void) {
         			XPLMGetDatai(qpac_baro_unit_capt) << 1 |
         			XPLMGetDatai(pa_a320_baro_hide) ;
         } else {
-        	qpac_fcu_data =
+        	fcu_data =
         		XPLMGetDatai(qpac_fcu_alt_managed) << 7 |
         		XPLMGetDatai(qpac_fcu_hdg_managed) << 6 |
         		XPLMGetDatai(qpac_fcu_hdg_dashed) << 5 |
@@ -1091,7 +1092,7 @@ int createCustomAvionicsPacket(void) {
         		XPLMGetDatai(qpac_fcu_vs_dashed) << 2 |
         		XPLMGetDatai(qpac_fcu_metric_alt) << 1 |
         		XPLMGetDatai(qpac_fcu_hdg_trk) ;
-            qpac_fcu_baro =
+            fcu_baro =
         			XPLMGetDatai(qpac_baro_std_fo) << 6 |
         			XPLMGetDatai(qpac_baro_unit_fo) << 5 |
         			XPLMGetDatai(qpac_baro_hide_fo) << 4 |
@@ -1099,18 +1100,18 @@ int createCustomAvionicsPacket(void) {
         			XPLMGetDatai(qpac_baro_unit_capt) << 1 |
         			XPLMGetDatai(qpac_baro_hide_capt) ;
         }
-        qpac_ap_appr =
+        ap_appr =
         		XPLMGetDatai(qpac_loc_illuminated) << 1 |
         		XPLMGetDatai(qpac_appr_illuminated) ;
 
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FCU);
-        sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fcu_data );
+        sim_packet.sim_data_points[i].value = custom_htonf( (float) fcu_data );
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FCU_BARO);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) qpac_fcu_baro);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) fcu_baro);
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_AP_APPR);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) qpac_ap_appr);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) ap_appr);
         i++;
 
         // Auto-Thrust
@@ -1276,14 +1277,174 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FAILURES);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_failures );
         i++;
+        // Brakes
+        if (XPLMGetDatai(qpac_autobrake_low) == 1) {
+        	auto_brake_level=1;
+        	}
+        else if (XPLMGetDatai(qpac_autobrake_med) == 1) {
+        	auto_brake_level=2;
+        	}
+        else if (XPLMGetDatai(qpac_autobrake_max) == 1) {
+        	auto_brake_level=4;
+        	}
+        else {
+        	auto_brake_level=0;
+        	}
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_AUTO_BRAKE_LEVEL);
+        sim_packet.sim_data_points[i].value = custom_htonf( (float) auto_brake_level );
+        i++;
     }
 
     if ( jar_a320_neo_ready ) {
+
+        // Approach
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_APPR_TYPE);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_ap_appr_type));
+        i++;
+        // sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_APPR_TYPE);
+        // sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_ap_appr_illuminated));
+        // i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_APPR_DH);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_fma_dh_alt));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_APPR_MDA);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_fma_mda_alt));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_FMA_CAT);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_fma_cat_mode));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_FMA_DUAL);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_fma_dual_mode));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_FMA_DH);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_fma_dh_mode));
+        i++;
+
+		// FCU
+        fcu_data =
+        		// XPLMGetDatai(qpac_fcu_alt_managed) << 7 |
+        		XPLMGetDatai(jar_a320_neo_hdg_managed) << 6 |
+        		XPLMGetDatai(jar_a320_neo_hdg_dashed) << 5 |
+        		XPLMGetDatai(jar_a320_neo_spd_managed) << 4 |
+        		// XPLMGetDatai(qpac_fcu_spd_dashed) << 3 |
+        		XPLMGetDatai(jar_a320_neo_vs_dashed) << 2 |
+        		XPLMGetDatai(jar_a320_neo_fcu_metric_alt) << 1 |
+        		XPLMGetDatai(jar_a320_neo_fcu_hdg_trk) ;
+        fcu_baro =
+        			// XPLMGetDatai(qpac_baro_std_fo) << 6 |
+        			XPLMGetDatai(jar_a320_neo_baro_hpa) << 5 |
+        			// XPLMGetDatai(qpac_baro_hide_fo) << 4 |
+        			// XPLMGetDatai(qpac_baro_std_capt) << 2 |
+        			XPLMGetDatai(jar_a320_neo_baro_hpa) << 1  // |
+        			// XPLMGetDatai(qpac_baro_hide_capt)
+        			;
+        ap_appr =
+        		XPLMGetDatai(jar_a320_neo_ap_loc_illuminated) << 1 |
+        		XPLMGetDatai(jar_a320_neo_ap_appr_illuminated) ;
+
         sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_FCU);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_fcu_hdg_trk));
+        sim_packet.sim_data_points[i].value = custom_htonf( (float) fcu_data );
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_FCU_BARO);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_baro_hpa));
+        sim_packet.sim_data_points[i].value = custom_htonf((float) fcu_baro);
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_APPR);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) ap_appr);
+        i++;
+
+
+        // Auto-pilot
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_AP_PHASE);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_ap_phase));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_AP_VERTICAL_MODE);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_vert_mode));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_AP_VERTICAL_ARMED);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_vert_wait));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_AP_LATERAL_MODE);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_lat_mode));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_AP_LATERAL_ARMED);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_lat_wait));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_AP_COMMON_MODE);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_com_mode));
+        i++;
+        // JAR_A320NEO_ALT_IS_CSTR
+        // JAR_A320NEO_CONSTRAINT_ALT
+
+        // Auto-Thrust
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_ATHR_MODE);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_athr_mode));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_THR_MODE);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_thr_mode));
+        i++;
+        // sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_ATHR_LIMITED);
+        // sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_athr_limited));
+        // i++;
+        // sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_THR_LEVER_MODE);
+        // sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_thr_lever_mode));
+        // i++;
+        // sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_FMA_THR_WARNING);
+        // sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_fma_thr_warning));
+        // i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_FLEX_TEMP);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_flex_t));
+        i++;
+
+
+        // V Speeds
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_V1);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_v1));
+        i++;
+                sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_VR);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_vr));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_VMO);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_vmax));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_VLS);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_vls));
+        i++;
+        //sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_VF);
+        //sim_packet.sim_data_points[i].value = custom_htonf(qpac_ias_shift(XPLMGetDataf(qpac_vf)));
+        //i++;
+        //sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_VS);
+        //sim_packet.sim_data_points[i].value = custom_htonf(qpac_ias_shift(XPLMGetDataf(qpac_vs)));
+        //i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_V_GREEN_DOT);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_vgrdot));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_ALPHA_PROT);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_vaprot));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_ALPHA_MAX);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_vamax));
+        i++;
+
+        // EFIS
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_ND_MODE);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_nd_mode));
+        i++;
+
+        // Brakes
+        if (XPLMGetDatai(jar_a320_neo_autobrake_low) == 1) {
+        	auto_brake_level=1;
+        	}
+        else if (XPLMGetDatai(jar_a320_neo_autobrake_med) == 1) {
+        	auto_brake_level=2;
+        	}
+        else if (XPLMGetDatai(jar_a320_neo_autobrake_max) == 1) {
+        	auto_brake_level=4;
+        	}
+        else {
+        	auto_brake_level=0;
+        	}
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_AUTO_BRAKE_LEVEL);
+        sim_packet.sim_data_points[i].value = custom_htonf( (float) auto_brake_level );
         i++;
     }
 

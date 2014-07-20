@@ -9,8 +9,91 @@
 #define DATAREFS_JAR_A320NEO_H_
 
 extern XPLMDataRef jar_a320_neo_plugin_status;
+
+// FCU
 extern XPLMDataRef jar_a320_neo_baro_hpa;
 extern XPLMDataRef jar_a320_neo_fcu_hdg_trk;
+extern XPLMDataRef jar_a320_neo_fcu_metric_alt;
+extern XPLMDataRef jar_a320_neo_vs_dashed;
+extern XPLMDataRef jar_a320_neo_hdg_dashed;
+extern XPLMDataRef jar_a320_neo_hdg_managed;
+extern XPLMDataRef jar_a320_neo_lvlch_dot;
+extern XPLMDataRef jar_a320_neo_spd_managed;
+extern XPLMDataRef jar_a320_neo_alt_managed;
+
+// Autopilot and FD
+extern XPLMDataRef jar_a320_neo_ap_phase;
+extern XPLMDataRef jar_a320_neo_ap1;
+extern XPLMDataRef jar_a320_neo_ap2;
+extern XPLMDataRef jar_a320_neo_ils;
+extern XPLMDataRef jar_a320_neo_fd;
+// JARDesign A320Neo is using X-Plane flight director
+
+// Vertical and horizontal modes
+extern XPLMDataRef jar_a320_neo_com_mode;
+// integer enum_values {"", "LAND", "FLARE", "ROLL OUT", "FINAL APP"}
+
+extern XPLMDataRef jar_a320_neo_vert_mode;
+// integer enum_values {"", "SRS", "CLB", "OP CLB", "ALT*", "ALT CST*", "ALT", "ALT CST", "ALT CRZ", "DES", "OP DES", "GS*", "GS", "V/S", "FPA"}
+
+extern XPLMDataRef jar_a320_neo_vert_wait;
+// integer enum_values {"", "CLB", "ALT", "ALT", "DES", "G/S", "FINAL", "ALT G/S", "ALT G/S", "ALT FINAL", "ALT FINAL", "DES GS", "DES FINAL"}
+
+extern XPLMDataRef jar_a320_neo_lat_mode;
+// integer enum_values {"", "RWY", " RWY TRK", "HDG", "TRACK", "NAV", "LOC*", "LOC", "APP NAV", "GA TRK", ""}
+
+extern XPLMDataRef jar_a320_neo_lat_wait;
+// integer enum_values {"", "NAV", "LOC", "APP NAV", "NAV", "LOC", "APP NAV", "NAV", "LOC", "APP NAV"}
+
+// Landing capabilities
+extern XPLMDataRef jar_a320_neo_fma_cat_mode;
+extern XPLMDataRef jar_a320_neo_fma_dual_mode;
+extern XPLMDataRef jar_a320_neo_fma_dh_mode;
+//  {"", "CAT 1", "CAT 2", "CAT 3", "SINGLE", "DUAL", "MDA", "DH", "NO DH"}
+
+extern XPLMDataRef jar_a320_neo_fma_mda_alt;
+extern XPLMDataRef jar_a320_neo_fma_dh_alt;
+
+// Approach
+extern XPLMDataRef jar_a320_neo_ap_appr_type;
+// String !!!
+extern XPLMDataRef jar_a320_neo_ap_appr_illuminated;
+// integer
+extern XPLMDataRef jar_a320_neo_ap_loc_illuminated;
+// integer
+
+
+// A/THR
+extern XPLMDataRef jar_a320_neo_athr_mode;
+// integer enum_values {"", "MAN TOGA", "MAN FLX", "MAN MCT", "MAN THR", "THR MCT", "THR CLB", "THR IDLE", "THR LVR", "SPEED", "MACH", "A.FLOOR", "TOGALK", ""}
+
+extern XPLMDataRef jar_a320_neo_thr_mode;
+// integer enum_values {"", "A/THR" (armed), "A/THR" (active) }
+
+extern XPLMDataRef jar_a320_neo_flex_t;
+// integer
+
+
+// Brakes
+extern XPLMDataRef jar_a320_neo_autobrake_low;
+extern XPLMDataRef jar_a320_neo_autobrake_med;
+extern XPLMDataRef jar_a320_neo_autobrake_max;
+
+// FMS
+extern XPLMDataRef jar_a320_neo_fms_tr_alt;
+// integer : transition altitude
+
+// V-Speeds (absolute values in knots)
+extern XPLMDataRef jar_a320_neo_vls;
+extern XPLMDataRef jar_a320_neo_vamax;
+extern XPLMDataRef jar_a320_neo_vaprot;
+extern XPLMDataRef jar_a320_neo_vmax;
+extern XPLMDataRef jar_a320_neo_v1;
+extern XPLMDataRef jar_a320_neo_vr;
+extern XPLMDataRef jar_a320_neo_vgrdot;
+
+// EFIS
+extern XPLMDataRef jar_a320_neo_nd_mode;
 
 extern int jar_a320_neo_ready;
 
