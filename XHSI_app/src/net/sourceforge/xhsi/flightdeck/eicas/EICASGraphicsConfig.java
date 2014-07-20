@@ -63,7 +63,8 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
     public int dial_main2_y;
     public int dial_main3_y;
     public int dial_main4_y;
-    public int dial_ng_y;
+    public int dial_main5_y;
+    //public int dial_ng_y;
     public int dial_oil_p_y;
     public int dial_oil_t_y;
     public int dial_oil_q_y;
@@ -157,7 +158,8 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
             dial_main2_y = panel_rect.y + eicas_size*36/100;
             dial_main3_y = panel_rect.y + eicas_size*55/100;
             dial_main4_y = panel_rect.y + eicas_size*73/100;
-            dial_ng_y = panel_rect.y + eicas_size*87/100;
+            dial_main5_y = panel_rect.y + eicas_size*89/100;
+            //dial_ng_y = panel_rect.y + eicas_size*87/100;
             dial_oil_p_y = panel_rect.y + eicas_size*29/100;
             dial_oil_t_y = panel_rect.y + eicas_size*44/100;
             dial_oil_q_y = panel_rect.y + eicas_size*54/100;

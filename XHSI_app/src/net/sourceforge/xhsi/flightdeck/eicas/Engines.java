@@ -108,7 +108,7 @@ public class Engines extends EICASSubcomponent {
                     drawMAP(g2, i, num_eng);
                     drawPROP(g2, i, num_eng);
                     drawEGT(g2, i, num_eng, 3);
-                    drawFF(g2, i, num_eng);
+                    drawFF(g2, i, num_eng, 4);
                     if ( ! this.preferences.get_eicas_primary_only() ) {
                         //drawCHT(g2, i, num_eng);
 //                        seco_dial_x[i] = eicas_gc.alerts_x0 + i*eicas_gc.alerts_w/num_eng + (eicas_gc.alerts_w/cols*15/16)/2;
@@ -132,10 +132,13 @@ public class Engines extends EICASSubcomponent {
                         drawOilP(g2, i, num_eng);
                         drawOilT(g2, i, num_eng);
                         drawOilQ(g2, i);
+                    } else {
+                        // this is exceptional: for a turboprop, there are actually more engine instruments in primary-only mode !
+                        drawFF(g2, i, num_eng, 5);
                     }
                 }
 
-            } else {
+            } else /* most be jet */ {
 
                 for (int i=0; i<num_eng; i++) {
 //                    prim_dial_x[i] = eicas_gc.panel_rect.x + eicas_gc.dials_width*50/100/cols + i*eicas_gc.dials_width/cols;
@@ -143,7 +146,7 @@ public class Engines extends EICASSubcomponent {
                     drawEGT(g2, i, num_eng, 2);
                     if ( ! this.preferences.get_eicas_primary_only() ) {
                         drawN2(g2, i, num_eng);
-                        drawFF(g2, i, num_eng);
+                        drawFF(g2, i, num_eng, 4);
 //                        seco_dial_x[i] = eicas_gc.alerts_x0 + i*eicas_gc.alerts_w/num_eng + (eicas_gc.alerts_w/cols*15/16)/2;
                         drawOilP(g2, i, num_eng);
                         drawOilT(g2, i, num_eng);
@@ -202,6 +205,17 @@ public class Engines extends EICASSubcomponent {
                     ind_x = prim_dial_x[num_eng-1] + eicas_gc.dial_r[num_eng]*145/100 - eicas_gc.get_text_width(g2, eicas_gc.font_m, ind_str);
                 }
                 g2.drawString(ind_str, ind_x, eicas_gc.dial_main4_y + Math.min(eicas_gc.eicas_size*9/100 + eicas_gc.dial_font_h[num_eng], eicas_gc.dial_r[2]*80/100) - 2);
+
+                // main5
+                if ( turboprop && this.preferences.get_eicas_primary_only() ) {
+                    ind_str = "FF";
+                    if ( cols == 2 ) {
+                        ind_x = (prim_dial_x[0] + prim_dial_x[1]) / 2 - eicas_gc.get_text_width(g2, eicas_gc.font_m, ind_str)/2;
+                    } else {
+                        ind_x = prim_dial_x[num_eng-1] + eicas_gc.dial_r[num_eng]*145/100 - eicas_gc.get_text_width(g2, eicas_gc.font_m, ind_str);
+                    }
+                    g2.drawString(ind_str, ind_x, eicas_gc.dial_main5_y + Math.min(eicas_gc.eicas_size*9/100 + eicas_gc.dial_font_h[num_eng], eicas_gc.dial_r[2]*80/100) - 2);
+                }
 
                 g2.setFont(eicas_gc.font_xs);
                 
@@ -820,7 +834,7 @@ if ( ref_n1 <= 1.0f ) {
     }
 
 
-    private void drawFF(Graphics2D g2, int pos, int num) {
+    private void drawFF(Graphics2D g2, int pos, int num, int row) {
 
         AffineTransform original_at = g2.getTransform();
         scalePen(g2);
@@ -835,7 +849,7 @@ if ( ref_n1 <= 1.0f ) {
 //ff_max=99000.0f;
         float ff_dial = ff_value / ff_max;
 
-        int ff_y = eicas_gc.dial_main4_y;
+        int ff_y = row==5 ? eicas_gc.dial_main5_y : eicas_gc.dial_main4_y;
         int ff_r = eicas_gc.dial_r[num] * 85 / 100;
 
         g2.setColor(eicas_gc.instrument_background_color);
@@ -860,9 +874,9 @@ if ( ref_n1 <= 1.0f ) {
             g2.drawRect(prim_dial_x[pos], ff_y - eicas_gc.dial_font_h[num]*140/100, eicas_gc.dial_font_w[num]*55/10, eicas_gc.dial_font_h[num]*140/100);
             g2.setColor(eicas_gc.markings_color);
             g2.setFont(eicas_gc.dial_font[num]);
-            if ( ff_max > 9999.9f ) {
-                ff_value /= 1000.0f;
-            }
+//            if ( ff_max > 9999.9f ) {
+//                ff_value /= 1000.0f;
+//            }
             String ff_str;
 //            if ( ff_value > 999.9f ) {
 //                ff_str = "" + Math.round(ff_value);
@@ -871,11 +885,12 @@ if ( ref_n1 <= 1.0f ) {
 //            } else {
 //                ff_str = two_decimals_format.format(ff_value);
 //            }
-            if ( ff_value > 99.9f ) {
-                ff_str = Integer.toString( Math.round(ff_value) );
-            } else {
-                ff_str = one_decimal_format.format(ff_value);
-            }
+//            if ( ff_value > 99.9f ) {
+//                ff_str = Integer.toString( Math.round(ff_value) );
+//            } else {
+//                ff_str = one_decimal_format.format(ff_value);
+//            }
+            ff_str = Integer.toString( Math.round(ff_value) );
             g2.drawString(ff_str, prim_dial_x[pos]+eicas_gc.dial_font_w[num]*51/10-eicas_gc.get_text_width(g2, eicas_gc.dial_font[num], ff_str), ff_y-eicas_gc.dial_font_h[num]*25/100-2);
         }
 

@@ -327,7 +327,7 @@ public class LowerEicas extends MFDSubcomponent {
         // convert FF from kg/s to kg/h, lbs/h, usg/h or ltr/h
         float unit_multiplier = this.aircraft.fuel_multiplier();
         float ff_value = this.aircraft.get_FF(pos) * 3600 * unit_multiplier;
-        float ff_max = this.aircraft.get_max_FF() * 3600 * unit_multiplier;
+//        float ff_max = this.aircraft.get_max_FF() * 3600 * unit_multiplier;
 
         int ff_y = mfd_gc.dial_ff_y + mfd_gc.dial_font_h[num]*5/8;
         int offset_x = mirror ? 0 : -mfd_gc.dial_font_w[num]*55/10;
@@ -341,15 +341,16 @@ public class LowerEicas extends MFDSubcomponent {
                     mfd_gc.dial_font_h[num]*140/100);
             g2.setColor(mfd_gc.markings_color);
             g2.setFont(mfd_gc.dial_font[num]);
-            if ( ff_max > 9999.9f ) {
-                ff_value /= 1000.0f;
-            }
+//            if ( ff_max > 9999.9f ) {
+//                ff_value /= 1000.0f;
+//            }
             String ff_str;
-            if ( ff_value > 99.9f ) {
-                ff_str = Integer.toString( Math.round(ff_value) );
-            } else {
-                ff_str = one_decimal_format.format(ff_value);
-            }
+//            if ( ff_value > 99.9f ) {
+//                ff_str = Integer.toString( Math.round(ff_value) );
+//            } else {
+//                ff_str = one_decimal_format.format(ff_value);
+//            }
+            ff_str = Integer.toString( Math.round(ff_value) );
             g2.drawString(ff_str,
                     tape_x[pos] + offset_x + mfd_gc.dial_font_w[num]*51/10 - mfd_gc.get_text_width(g2, mfd_gc.dial_font[num], ff_str),
                     ff_y-mfd_gc.dial_font_h[num]*25/100-2);
