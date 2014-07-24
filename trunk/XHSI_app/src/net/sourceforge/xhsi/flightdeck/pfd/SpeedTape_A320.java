@@ -197,6 +197,11 @@ public class SpeedTape_A320 extends PFDSubcomponent {
         	// QPAC VMO
         	vmax = Math.min(vmax, this.avionics.qpac_vmo());
         }
+        if ( this.avionics.is_jar_a320neo() && (this.avionics.jar_a320neo_vmo()>100)) {
+        	// JAR A320Neo VMO
+        	vmax = Math.min(vmax, this.avionics.jar_a320neo_vmo());
+        }
+
         int red_max_y = pfd_gc.adi_cy - Math.round( (vmax - ias) * pfd_gc.tape_height / 80.0f );
         if ( red_max_y > pfd_gc.tape_top ) {
             // draw a thick red dashed line *from* red_max_y *to* the top
@@ -237,7 +242,12 @@ public class SpeedTape_A320 extends PFDSubcomponent {
         	if ( this.avionics.qpac_alpha_max() > 0 ) vs_est=this.avionics.qpac_alpha_max();
         	if ( this.avionics.qpac_alpha_prot() > 0 ) v_aprot=this.avionics.qpac_alpha_prot();
         }
-
+        if ( this.avionics.is_jar_a320neo() ) { 
+        	if ( this.avionics.jar_a320neo_vls() > 0 ) vls=this.avionics.jar_a320neo_vls();
+        	if ( this.avionics.jar_a320neo_alpha_max() > 0 ) vs_est=this.avionics.jar_a320neo_alpha_max();
+        	if ( this.avionics.jar_a320neo_alpha_prot() > 0 ) v_aprot=this.avionics.jar_a320neo_alpha_prot();
+        }
+        
         if ( ! this.aircraft.on_ground() ) {
 
             // red min
@@ -340,9 +350,7 @@ public class SpeedTape_A320 extends PFDSubcomponent {
             }
 
         } else if ( this.avionics.is_qpac() ) {
-
-            // estimate V-speeds
-            // with no QPAC integration, that would be the default
+            // QPAC Airbus
             if ( take_off ) {
                 v1 = (float) this.avionics.qpac_v1_value();
                 if ( display_v1 && (v1 > 0.0f) ) drawV1speed(g2, v1, ias);
@@ -350,22 +358,25 @@ public class SpeedTape_A320 extends PFDSubcomponent {
                 drawVRSpeed(g2, vr, ias);
                 
             }
-            /*
-            if ( landing ) {
-                float vref = vs_est * 1.3f; // rough estimate
-                drawVspeed(g2, vref, ias, "REF");
-            }
-            */
-            
+
             drawVspeed(g2, this.avionics.qpac_vf() , ias, "F");
             drawVspeed(g2, this.avionics.qpac_vs() , ias, "S");
             drawGDotSpeed(g2, this.avionics.qpac_v_green_dot() , ias);          
-            /*
-             * draw Vso (or V alpha max) - debug purpose only
-            drawVspeed(g2, this.aircraft.get_Vso(), ias, "VSO");
-            drawVspeed(g2, vno, ias, "VNO");
-            drawVspeed(g2, this.aircraft.get_Vle(), ias, "VLE");
-            */
+            drawFlapsLimit(g2, this.aircraft.get_Vfe(), ias); 
+            drawSpeedProtection(g2, vmax + 6.0f, ias);
+            
+        } else if ( this.avionics.is_jar_a320neo() ) {
+            // JAR Design A320neo
+            if ( take_off ) {
+                v1 = (float) this.avionics.jar_a320neo_v1();
+                if ( display_v1 && (v1 > 0.0f) ) drawV1speed(g2, v1, ias);
+                float vr = this.avionics.jar_a320neo_vr(); 
+                drawVRSpeed(g2, vr, ias);                
+            }
+            
+            drawVspeed(g2, this.avionics.jar_a320neo_vf() , ias, "F");
+            drawVspeed(g2, this.avionics.jar_a320neo_vs() , ias, "S");
+            drawGDotSpeed(g2, this.avionics.jar_a320neo_v_green_dot() , ias);          
             drawFlapsLimit(g2, this.aircraft.get_Vfe(), ias); 
             drawSpeedProtection(g2, vmax + 6.0f, ias);
             
@@ -408,9 +419,11 @@ public class SpeedTape_A320 extends PFDSubcomponent {
 
         int ap_spdbug_y = pfd_gc.adi_cy - Math.round( (ap_ias - ias) * pfd_gc.tape_height / 80.0f );
         boolean ap_spdbug_show = true;
-        // Managed or selected speed 
+        // Managed or selected speed (selected by default)
        	g2.setColor(pfd_gc.pfd_selected_color); 
-       	if (this.avionics.is_qpac() && this.avionics.qpac_fcu_spd_dashed()) g2.setColor(pfd_gc.pfd_managed_color); 
+       	if (this.avionics.is_qpac() && this.avionics.qpac_fcu_spd_dashed()) g2.setColor(pfd_gc.pfd_managed_color);
+       	if (this.avionics.is_jar_a320neo() && this.avionics.jar_a320neo_fcu_spd_dashed()) g2.setColor(pfd_gc.pfd_managed_color);
+       	
         if ( ap_spdbug_y < pfd_gc.tape_top ) {
             ap_spdbug_y = pfd_gc.tape_top;
             ap_spdbug_show = false;

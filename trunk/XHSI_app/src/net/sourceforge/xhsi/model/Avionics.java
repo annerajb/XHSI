@@ -624,6 +624,53 @@ public interface Avionics {
     
     // Failures
     public float qpac_failures();
+    
+    // JARDesign A320 Neo
+    public boolean is_jar_a320neo();
+    // Baro
+    public boolean jar_a320neo_baro_unit();
+    // Auto-pilot
+    public boolean jar_a320neo_ap1();
+    public boolean jar_a320neo_ap2();
+    public boolean jar_a320neo_fd();
+    public int jar_a320neo_ap_phase();
+    public int jar_a320neo_ap_common_mode();
+    public int jar_a320neo_ap_vertical_mode();
+    public int jar_a320neo_ap_vertical_armed();
+    public int jar_a320neo_ap_lateral_mode();
+    public int jar_a320neo_ap_lateral_armed();
+    // Approach
+    public boolean jar_a320neo_appr_illuminated();
+    public boolean jar_a320neo_loc_illuminated();
+    public float jar_a320neo_appr_mda();
+    public float jar_a320neo_appr_dh();
+    // FCU
+    public boolean jar_a320neo_fcu_hdg_trk();
+    public boolean jar_a320neo_fcu_metric_alt();
+    public boolean jar_a320neo_fcu_vs_dashed();
+    public boolean jar_a320neo_fcu_spd_dashed();
+    public boolean jar_a320neo_fcu_spd_managed();
+    public boolean jar_a320neo_fcu_hdg_dashed();
+    public boolean jar_a320neo_fcu_hdg_managed();
+    public boolean jar_a320neo_fcu_alt_managed();    
+    // Auto-Thrust
+    public int jar_a320neo_athr_mode();
+    public int jar_a320neo_thr_mode();
+    public int jar_a320neo_athr_limited();
+    public int jar_a320neo_thr_lever_mode();
+    public int jar_a320neo_fma_thr_warning();
+    public int jar_a320neo_flex_temp();   
+    // V-Speeds
+    public int jar_a320neo_v1();
+    public int jar_a320neo_vr();
+    public int jar_a320neo_vmo();
+    public int jar_a320neo_vls();
+    public int jar_a320neo_vs();
+    public int jar_a320neo_vf();
+    public int jar_a320neo_v_green_dot();
+    public int jar_a320neo_alpha_prot();
+    public int jar_a320neo_alpha_max();
+    
         
     // UFMC
     public boolean has_ufmc();
