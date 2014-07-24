@@ -1322,11 +1322,12 @@ int createCustomAvionicsPacket(void) {
 
 		// FCU
         fcu_data =
-        		// XPLMGetDatai(qpac_fcu_alt_managed) << 7 |
+        		XPLMGetDatai(jar_a320_neo_ap1) << 8 |
+    			XPLMGetDatai(jar_a320_neo_ap2) << 7 |
         		XPLMGetDatai(jar_a320_neo_hdg_managed) << 6 |
         		XPLMGetDatai(jar_a320_neo_hdg_dashed) << 5 |
         		XPLMGetDatai(jar_a320_neo_spd_managed) << 4 |
-        		// XPLMGetDatai(qpac_fcu_spd_dashed) << 3 |
+        		XPLMGetDatai(jar_a320_neo_fd) << 3 |
         		XPLMGetDatai(jar_a320_neo_vs_dashed) << 2 |
         		XPLMGetDatai(jar_a320_neo_fcu_metric_alt) << 1 |
         		XPLMGetDatai(jar_a320_neo_fcu_hdg_trk) ;
