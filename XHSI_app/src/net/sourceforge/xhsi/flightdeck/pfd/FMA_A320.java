@@ -87,6 +87,8 @@ public class FMA_A320 extends PFDSubcomponent {
 					drawX737FMA(g2);
 				} else if (this.avionics.is_qpac() ) {
 					drawA320FMA(g2);
+				} else if (this.avionics.is_jar_a320neo() ) {
+					drawA320_NEO_FMA(g2);
 				} else {
 					drawSystemStatus(g2);
 					drawFMA(g2);
@@ -770,6 +772,313 @@ public class FMA_A320 extends PFDSubcomponent {
         // if (NPA_NO_POINTS==2 and/or NPAValid == 1) and ap_vertical_mode == 8
         // Column 3, raw 0 : F-APP
         // Column 3, raw 1 : +RAW      
+        
+    }
+
+    private void drawA320_NEO_FMA(Graphics2D g2) {
+
+    	// JAR Design A320 Neo
+    	
+        String fma_str = "ERROR";       
+        
+        // AP Engaged
+        String ap_str = "";       
+        boolean dual_ap = this.avionics.jar_a320neo_ap1() && this.avionics.jar_a320neo_ap2();
+        boolean single_ap = (this.avionics.jar_a320neo_ap1() || this.avionics.jar_a320neo_ap2()) && ! dual_ap;       
+        if (dual_ap) {
+        	ap_str="AP 1+2";
+        } else if (this.avionics.jar_a320neo_ap1()) {
+        	ap_str="AP 1";
+        } else if (this.avionics.jar_a320neo_ap2()) {
+        	ap_str="AP 2";
+        }
+        pfe_ap.setText(ap_str, PFE_Color.PFE_COLOR_MARK);
+        pfe_ap.paint(g2);
+ 
+        
+        // FD Engaged
+        String fd_str = "";
+        if (this.avionics.jar_a320neo_fd()) {fd_str="1";} else {fd_str="-";}
+        fd_str+=" FD ";
+        if (this.avionics.jar_a320neo_fd()) {fd_str+="2";} else {fd_str+="-";}
+        pfe_fd.setText(fd_str, PFE_Color.PFE_COLOR_MARK);
+        pfe_fd.paint(g2);        
+
+        
+        // Autopilote phase
+        String str_ap_phase="Phase " + this.avionics.jar_a320neo_ap_phase();
+        int ap_phase = this.avionics.qpac_ap_phase();
+        switch (ap_phase) {
+        	case 0 : str_ap_phase="PREFLIGHT"; break;
+    		case 1 : str_ap_phase="TAKEOFF"; break;
+        	case 2 : str_ap_phase="CLIMB"; break;
+        	case 3 : str_ap_phase="CRUIZE"; break;
+        	case 4 : str_ap_phase="DESCENT"; break;
+        	case 5 : str_ap_phase="APPR"; break;
+        	case 6 : str_ap_phase="GO ARROUND"; break;
+      	   	case 7 : str_ap_phase="DONE"; break; 	
+        }
+        // drawDMode(g2,1,0,str_ap_phase);
+        
+        // Autopilote vertical mode
+        boolean col_2_3 = this.avionics.jar_a320neo_ap_common_mode() > 0; 
+        String final_mode = "";
+        String ap_vertical_mode="Vert " + this.avionics.jar_a320neo_ap_vertical_mode();
+        int ap_vv = Math.round(this.avionics.autopilot_vv());
+        switch (this.avionics.jar_a320neo_ap_vertical_mode()) {
+        	case 0 : ap_vertical_mode=""; pfe_vert_mode.clearText(); break;
+        	case 1 : ap_vertical_mode="SRS"; break;
+        	case 2 : ap_vertical_mode="CLB"; break;
+        	case 3 : ap_vertical_mode="OP CLB"; break;
+        	case 4 : ap_vertical_mode="ALT*"; break;
+        	case 5 : ap_vertical_mode="ALT CST*"; break;
+        	case 6 : ap_vertical_mode="ALT*"; break;
+        	case 7 : ap_vertical_mode="ALT CST"; break;
+           	case 8 : ap_vertical_mode="ALT CRZ"; break;            	
+        	case 9 : ap_vertical_mode="DES"; break;
+        	case 10 : ap_vertical_mode="OP DES"; break;
+        	case 11 : ap_vertical_mode="GS*"; break;
+        	case 12 : ap_vertical_mode="GS"; break;
+        	case 13 : ap_vertical_mode="V/S"; break;
+        	case 14 : ap_vertical_mode="FPA"; break;
+        	case 15 :  
+        	case 16 : if (this.avionics.jar_a320neo_fcu_hdg_trk()) ap_vertical_mode="FPA "; else ap_vertical_mode="V/S "; break; //or FPA + value sim/cockpit2/autopilot/vvi_dial_fpm
+        	case 17 : ap_vertical_mode="EXP CLB"; break;
+        	case 18 : ap_vertical_mode="EXP DES"; break;       
+        }
+        if (! col_2_3) { 
+        	if (this.avionics.jar_a320neo_ap_vertical_mode()==13 ) {
+        		// TODO : fix the FPA value display 
+        		String str_vv = "" + ap_vv;
+        		if ( ap_vv >0 ) { str_vv = "+" + ap_vv; }
+        		pfe_vert_mode.setTextValue(ap_vertical_mode, str_vv, PFE_Color.PFE_COLOR_ACTIVE);
+        		pfe_vert_mode.paint(g2);
+        	} else {
+        		pfe_vert_mode.setText(ap_vertical_mode, PFE_Color.PFE_COLOR_ACTIVE);
+        		pfe_vert_mode.paint(g2);
+        	}
+        }
+
+        // Autopilote vertical armed mode
+        switch (this.avionics.jar_a320neo_ap_vertical_armed()) {
+    		case 0 : pfe_vert_armed.clearText(); break;
+    		case 1 : pfe_vert_armed.setText("CLB", PFE_Color.PFE_COLOR_ARMED); break;
+    		case 2 : pfe_vert_armed.setText("ALT", PFE_Color.PFE_COLOR_ARMED); break;
+    		case 3 : pfe_vert_armed.setText("ALT", PFE_Color.PFE_COLOR_MANAGED); break;
+    		case 4 : pfe_vert_armed.setText("DES", PFE_Color.PFE_COLOR_ARMED); break;    			    			    		
+        	case 5 : pfe_vert_armed.setText("G/S", PFE_Color.PFE_COLOR_ARMED); break;
+        	case 6 : pfe_vert_armed.setText("FINAL", PFE_Color.PFE_COLOR_ARMED); break;         		 
+        	case 7 : pfe_vert_armed.setText("ALT G/S", PFE_Color.PFE_COLOR_ARMED); break;
+        	case 8 : pfe_vert_armed.setTextValue("ALT", " G/S", PFE_Color.PFE_COLOR_MANAGED); break;
+        	case 9 : pfe_vert_armed.setText("ALT FINAL", PFE_Color.PFE_COLOR_ARMED); break;        	
+        	case 10 : pfe_vert_armed.setTextValue("ALT", " FINAL", PFE_Color.PFE_COLOR_MANAGED); break;
+        	case 11 : pfe_vert_armed.setText("DES G/S", PFE_Color.PFE_COLOR_ARMED); break;
+        	case 12 : pfe_vert_armed.setText("DES FINAL", PFE_Color.PFE_COLOR_ARMED); break;
+        }       
+        pfe_vert_armed.paint(g2);
+        
+
+        // Autopilote lateral mode
+        String ap_lateral_mode="Lat " + this.avionics.jar_a320neo_ap_lateral_mode();
+        switch (this.avionics.jar_a320neo_ap_lateral_mode()) {
+			case 0 : pfe_lat_mode.clearText(); break; 
+			case 1 : pfe_lat_mode.setText("RWY", PFE_Color.PFE_COLOR_ACTIVE); break; 
+       		case 2 : pfe_lat_mode.setText("RWY TRK", PFE_Color.PFE_COLOR_ACTIVE);break; 
+    		case 3 : pfe_lat_mode.setText("HDG", PFE_Color.PFE_COLOR_ACTIVE); break; 
+    		case 4 : pfe_lat_mode.setText("TRACK", PFE_Color.PFE_COLOR_ACTIVE); break; 
+    		case 5 : pfe_lat_mode.setText("NAV", PFE_Color.PFE_COLOR_ACTIVE); break; 
+    		case 6 : pfe_lat_mode.setText("LOC*", PFE_Color.PFE_COLOR_ACTIVE); break;
+    		case 7 : pfe_lat_mode.setText("LOC", PFE_Color.PFE_COLOR_ACTIVE); break;
+    		case 8 : pfe_lat_mode.setText("APP NAV", PFE_Color.PFE_COLOR_ACTIVE); break;
+    		case 9 : pfe_lat_mode.setText("GA TRK", PFE_Color.PFE_COLOR_ACTIVE); break;
+    		default : pfe_lat_mode.setText(ap_lateral_mode, PFE_Color.PFE_COLOR_ACTIVE); 
+    		}
+        
+        if (col_2_3) { 
+        	// integer enum_values {"", "LAND", "FLARE", "ROLL OUT", "FINAL APP"}
+        	switch (this.avionics.jar_a320neo_ap_common_mode()) {
+        		case 1 : final_mode = "LAND";
+        		case 2 : final_mode = "FLARE";
+        		case 3 : final_mode = "ROLL OUT";
+        		case 4 : final_mode = "FINAL APP";
+        		default : final_mode = "";
+        	}
+        	drawFinalMode(g2, 0, final_mode, false, pfd_gc.pfd_active_color);
+        } else {
+        	pfe_lat_mode.paint(g2);       	
+        }
+
+        // Autopilote lateral armed mode
+        switch (this.avionics.jar_a320neo_ap_lateral_armed()) {
+    		case 0 : pfe_lat_armed.clearText(); break;
+    		case 1 : pfe_lat_armed.setText("NAV", PFE_Color.PFE_COLOR_ARMED); break;   		
+    		case 2 : pfe_lat_armed.setText("LOC", PFE_Color.PFE_COLOR_ARMED); break;
+    		case 3 : pfe_lat_armed.setText("APP NAV", PFE_Color.PFE_COLOR_ARMED); break;
+    		case 4 : pfe_lat_armed.setText("NAV", PFE_Color.PFE_COLOR_ARMED); break;
+    		case 5 : pfe_lat_armed.setText("LOC", PFE_Color.PFE_COLOR_ARMED); break;
+    		case 6 : pfe_lat_armed.setText("APP NAV", PFE_Color.PFE_COLOR_ARMED); break;
+    		case 7 : pfe_lat_armed.setText("NAV", PFE_Color.PFE_COLOR_ARMED); break;
+    		case 8 : pfe_lat_armed.setText("LOC", PFE_Color.PFE_COLOR_ARMED); break;
+    		case 9 : pfe_lat_armed.setText("APP NAV", PFE_Color.PFE_COLOR_ARMED); break;   		
+    		default : pfe_lat_armed.setText("? "+this.avionics.qpac_ap_lateral_armed(), PFE_Color.PFE_COLOR_ARMED);
+        }
+        pfe_lat_armed.paint(g2);
+    
+        
+        // A/THR LIMITED (on ECAM - this is not FCOM)
+        /*
+        if (this.avionics.jar_a320neo_athr_limited()!=0 ) {       	
+        	pfe_thrust_message.setText("A/THR LIMITED", PFE_Color.PFE_COLOR_CAUTION);
+        }
+        */
+
+        // TODO : TOGA LK and A.FLOOR
+        /*
+        String str_thr_warning = "THR MSG " + this.avionics.qpac_fma_thr_warning();       
+        if (this.avionics.jar_a320neo_fma_thr_warning()==1) { 
+        	str_thr_warning = "LVR CLB";        	
+        	pfe_thrust_message.setText("LVR CLB", PFE_Color.PFE_COLOR_MARK);
+        } else if (this.avionics.jar_a320neo_fma_thr_warning()==4) { 
+        	str_thr_warning = "THR LK";
+        	pfe_thrust_message.setText("THR LK", PFE_Color.PFE_COLOR_CAUTION);
+        } else if (this.avionics.jar_a320neo_fma_thr_warning()==2) { 
+        	str_thr_warning = "LVR MCT";
+        	pfe_thrust_message.setText("LVR MCT", PFE_Color.PFE_COLOR_MARK);
+        } else if (this.avionics.jar_a320neo_fma_thr_warning()==3) { 
+        	str_thr_warning = "LVR ASYM";
+        	pfe_thrust_message.setText("LVR ASYM", PFE_Color.PFE_COLOR_CAUTION);
+        } else if  (this.avionics.jar_a320neo_fma_thr_warning()>4) {
+        	pfe_thrust_message.setText(str_thr_warning, PFE_Color.PFE_COLOR_CAUTION);
+        } else if (this.avionics.jar_a320neo_athr_limited()!=0 ) {     
+            // A/THR LIMITED (on ECAM - this is not FCOM)
+            pfe_thrust_message.setText("A/THR LIMITED", PFE_Color.PFE_COLOR_CAUTION);
+//        } else if (this.avionics.jar_a320neo_presel_clb() > 0 && (ap_phase == 1)) {
+//        	str_thr_warning = "SPEED SEL: "+this.avionics.qpac_presel_clb();
+//        	pfe_thrust_message.setText(str_thr_warning, PFE_Color.PFE_COLOR_ARMED);
+//       	} else if (this.avionics.jar_a320neo_presel_crz() > 0 && (ap_phase == 2)) {
+//        	str_thr_warning = "SPEED SEL: "+this.avionics.qpac_presel_crz();
+//        	pfe_thrust_message.setText(str_thr_warning, PFE_Color.PFE_COLOR_ARMED);
+       	} else pfe_thrust_message.clearText();
+        pfe_thrust_message.paint(g2);
+        */
+        // TODO : display : qpac_presel_mach()
+        
+        // Manual Lever modes
+        String str_man = "MAN";
+        
+        // Autothrust (it's not autothrottle !!!)
+        String str_thr_mode = "A/THR"; 
+        switch (this.avionics.jar_a320neo_athr_mode()) {
+        case 0 : pfe_thrust.clearText(); break;
+        case 1 : pfe_thrust.setText(str_man, "TOGA", PFE_Color.PFE_COLOR_MARK); 
+        		 pfe_thrust.setFrame();
+        		 break; 
+        case 2 : 
+    			 String str_speed_val = "+"+this.avionics.jar_a320neo_flex_temp();
+    			 pfe_thrust.setTextValue(str_man, "FLX ", str_speed_val, PFE_Color.PFE_COLOR_MARK);
+    			 pfe_thrust.setFrame();
+    			 break;
+        case 3 : pfe_thrust.setText(str_man, "MCT", PFE_Color.PFE_COLOR_MARK); 
+        		 pfe_thrust.setFrameColor(PFE_Color.PFE_COLOR_CAUTION);
+        		 pfe_thrust.setFrame();
+        		 break;
+        case 4 : pfe_thrust.setText(str_man, "THR", PFE_Color.PFE_COLOR_MARK);
+        		 pfe_thrust.setFrameColor(PFE_Color.PFE_COLOR_ALARM); 
+        		 pfe_thrust.setFrame();
+        		 break;
+        case 5 : pfe_thrust.setText("THR MCT", PFE_Color.PFE_COLOR_ACTIVE); break;
+        case 6 : pfe_thrust.setText("THR CLB", PFE_Color.PFE_COLOR_ACTIVE); break;
+        case 7 : pfe_thrust.setText("THR IDLE", PFE_Color.PFE_COLOR_ACTIVE); break;
+        case 8 : pfe_thrust.setText("THR LVR", PFE_Color.PFE_COLOR_ACTIVE); break;
+        case 9 : pfe_thrust.setText("SPEED", PFE_Color.PFE_COLOR_ACTIVE); break;
+        case 10 : pfe_thrust.setText("MACH", PFE_Color.PFE_COLOR_ACTIVE); break;
+        case 11 : pfe_thrust.setText("A FLOOR", PFE_Color.PFE_COLOR_ACTIVE);  
+        		  pfe_thrust.setFrameColor(PFE_Color.PFE_COLOR_CAUTION);
+        		  break; 
+        case 12 : pfe_thrust.setText("TOGA LK", PFE_Color.PFE_COLOR_ACTIVE); 
+        		  pfe_thrust.setFrameColor(PFE_Color.PFE_COLOR_CAUTION);
+        		  break; 
+        }
+    	pfe_thrust.paint(g2);
+    	
+    	// A/THR display on column 5
+    	if (this.avionics.jar_a320neo_thr_mode()==1) {
+    		pfe_athr.setText(str_thr_mode, PFE_Color.PFE_COLOR_ARMED);
+    	}  else if (this.avionics.jar_a320neo_thr_mode()==2) {
+    		pfe_athr.setText(str_thr_mode, PFE_Color.PFE_COLOR_MARK);
+    	} else {
+    		pfe_athr.clearText();
+    	}
+    	pfe_athr.paint(g2);
+        
+        
+        // Minimums
+    	
+        // int appr_type = this.avionics.jar_a320neo_appr_type();
+        int appr_type = 0;
+        if (ap_phase == 4 || ap_phase == 5 ) {
+        	String str_dh_mda ="";       
+        	String str_dh_mda_value ="";             
+        	switch (appr_type) {
+        	case 0: 
+        		if (this.avionics.jar_a320neo_appr_dh() > 0.0f) { 
+        			str_dh_mda = "DH ";
+        			str_dh_mda_value = "" + (int)Math.round(this.avionics.jar_a320neo_appr_dh());
+        			// draw2Mode(g2, 3, 2, str_dh_mda, str_dh_mda_value, false, pfd_gc.pfd_markings_color, pfd_gc.pfd_armed_color);
+        			pfe_land_minimums.setTextValue("DH ", str_dh_mda_value, PFE_Color.PFE_COLOR_MARK);
+        		} else {
+        			pfe_land_minimums.setText("NO DH", PFE_Color.PFE_COLOR_MARK);
+        		}
+        		break;
+        	case 1: 
+        		str_dh_mda = "MDA "; 
+        		str_dh_mda_value = "" + (int)Math.round(this.avionics.jar_a320neo_appr_mda());         	
+        		// draw2Mode(g2, 3, 2, str_dh_mda, str_dh_mda_value, false, pfd_gc.pfd_markings_color, pfd_gc.pfd_armed_color);
+        		pfe_land_minimums.setTextValue("MDA ", str_dh_mda_value, PFE_Color.PFE_COLOR_MARK);
+        		break;
+        	case 2: 
+        		str_dh_mda = "BARO ";
+        		str_dh_mda_value = "" + this.aircraft.da_bug(); 
+        		// draw2Mode(g2, 3, 2, str_dh_mda, str_dh_mda_value, false, pfd_gc.pfd_markings_color, pfd_gc.pfd_armed_color);
+        		pfe_land_minimums.setTextValue("BARO ", str_dh_mda_value, PFE_Color.PFE_COLOR_MARK);
+        		break;
+        	}      	
+        } else pfe_land_minimums.clearText();
+        pfe_land_minimums.paint(g2);
+        
+        // Landing capabilities
+        /*
+        String ldg_cap_1 = "";
+        String ldg_cap_2 = "";
+        if ( this.avionics.qpac_npa_no_points()==2 && this.avionics.qpac_npa_valid()>0 && this.avionics.qpac_ap_vertical_mode()==8 ) {
+        	pfe_land_cat.setText("F-APP", PFE_Color.PFE_COLOR_MARK);
+        	pfe_land_mode.setText("+RAW", PFE_Color.PFE_COLOR_MARK);
+            ldg_cap_1 = "F-APP";
+            ldg_cap_2 = "+RAW";
+        } else if ( (ap_phase < 6) && (appr_type == 0) && (this.avionics.qpac_appr_illuminated() || this.avionics.qpac_loc_illuminated()) ) {
+        	if (dual_ap) { 
+            	pfe_land_cat.setText("CAT 3", PFE_Color.PFE_COLOR_MARK);
+            	pfe_land_mode.setText("DUAL", PFE_Color.PFE_COLOR_MARK);
+        		ldg_cap_2="DUAL"; ldg_cap_1="CAT 3";
+        	} else {
+        		if (single_ap) { 
+        			ldg_cap_2="SINGLE";
+        			pfe_land_mode.setText("SINGLE", PFE_Color.PFE_COLOR_MARK);
+        		} else { 
+        			pfe_land_mode.clearText(); 
+        		}
+        		ldg_cap_1="CAT 1";
+            	pfe_land_cat.setText("CAT 1", PFE_Color.PFE_COLOR_MARK);
+            	
+        	}
+        } else {
+        	pfe_land_cat.clearText();
+        	pfe_land_mode.clearText();
+        }
+        pfe_land_cat.paint(g2);
+        pfe_land_mode.paint(g2);
+        */
+  
         
     }
 

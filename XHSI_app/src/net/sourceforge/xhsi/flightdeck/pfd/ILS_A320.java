@@ -294,16 +294,21 @@ public class ILS_A320 extends PFDSubcomponent {
         boolean on_loc=false; 
         // Test lateral navigation mode
         if (this.avionics.is_qpac()) { 
-        		on_loc = this.avionics.qpac_ap_lateral_mode() == 7;
+        	on_loc = this.avionics.qpac_ap_lateral_mode() == 7;
         } else {
         	on_loc = ra < 1000; 
         }
+        // Do not flash GS if vertical mode not on GS
+        boolean on_gs=false;
+        if (this.avionics.is_qpac()) { 
+    		on_gs = this.avionics.qpac_ap_vertical_mode() == 7;
+        } 
         	
-        if ((Math.abs(cdi_value) > 2.0f || Math.abs(gs_value) > 2.0f) && (! two_dots_exceeded ) && on_loc && (ra>15)) {
+        if ((Math.abs(cdi_value) > 2.0f || Math.abs(gs_value) > 2.0f) && (! two_dots_exceeded ) && on_gs && (ra>15)) {
         	two_dots_exceeded = true;
         	two_dots_exceeded_start_time = System.currentTimeMillis();        	
         } 
-        if ((Math.abs(cdi_value) < 2.0f && Math.abs(gs_value) < 2.0f) || (!on_loc) || (ra <= 15)) {
+        if ((Math.abs(cdi_value) < 2.0f && Math.abs(gs_value) < 2.0f) || (!on_gs) || (ra <= 15)) {
         	two_dots_exceeded = false;
         	symbols_flashing = false;
         }
@@ -320,11 +325,11 @@ public class ILS_A320 extends PFDSubcomponent {
             loc_scale_flashing = true;          
         }  
 
-        if ((! gs_exceeded ) && on_loc && ((Math.abs(gs_value) > 1.0f) && (ra > 100)) ) {
+        if ((! gs_exceeded ) && on_gs && ((Math.abs(gs_value) > 1.0f) && (ra > 100)) ) {
         	gs_exceeded = true;
         	gs_exceeded_start_time = System.currentTimeMillis();
         } 
-        if ((Math.abs(gs_value) < 1.0f) || (!on_loc) || (ra <= 15)) {
+        if ((Math.abs(gs_value) < 1.0f) || (!on_gs) || (ra <= 15)) {
         	gs_exceeded = false;
         	gs_scale_flashing = false;
         }

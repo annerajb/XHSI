@@ -474,13 +474,64 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_EFIS_ND_SYMBOLS=1054;
     // Failures flags
     public static final int QPAC_FAILURES=1055;
+    // Brakes
+    public static final int QPAC_AUTO_BRAKE_LEVEL=1056;
 
     // IDs reserved for QPAC up to 1199
 
     // JarDesign Airbus A320neo
     public static final int JAR_A320NEO_STATUS=1200;
-    public static final int JAR_A320NEO_FCU=1201;
-    public static final int JAR_A320NEO_FCU_BARO=1202;
+    
+    // FMS
+    public static final int JAR_A320NEO_PRESEL_CRZ=1201;
+    public static final int JAR_A320NEO_PRESEL_CLB=1202;
+    public static final int JAR_A320NEO_PRESEL_MACH=1203;
+    public static final int JAR_A320NEO_TRANS_ALT=1204;
+    // Approach
+    public static final int JAR_A320NEO_APPR=1205;
+    public static final int JAR_A320NEO_APPR_TYPE=1206;
+    public static final int JAR_A320NEO_APPR_DH=1207;
+    public static final int JAR_A320NEO_APPR_MDA=1208;
+    public static final int JAR_A320NEO_FMA_CAT=1209;
+    public static final int JAR_A320NEO_FMA_DUAL=1210;
+    public static final int JAR_A320NEO_FMA_DH=1211;
+    // FCU
+    public static final int JAR_A320NEO_FCU=1212;
+    public static final int JAR_A320NEO_FCU_BARO=1213;
+    // Auto-pilot
+    public static final int JAR_A320NEO_AP_PHASE=1214;
+    public static final int JAR_A320NEO_AP_VERTICAL_MODE=1215;
+    public static final int JAR_A320NEO_AP_VERTICAL_ARMED=1216;
+    public static final int JAR_A320NEO_AP_LATERAL_MODE=1217;
+    public static final int JAR_A320NEO_AP_LATERAL_ARMED=1218;
+    public static final int JAR_A320NEO_AP_COMMON_MODE=1219;
+    public static final int JAR_A320NEO_ALT_IS_CSTR=1220;
+    public static final int JAR_A320NEO_CONSTRAINT_ALT=1221;
+    // Auto-Thrust
+    public static final int JAR_A320NEO_ATHR_MODE=1222;
+    public static final int JAR_A320NEO_THR_MODE=1223;
+    public static final int JAR_A320NEO_ATHR_LIMITED=1224;
+    public static final int JAR_A320NEO_THR_LEVER_MODE=1225;
+    public static final int JAR_A320NEO_FMA_THR_WARNING=1226;
+    public static final int JAR_A320NEO_FLEX_TEMP=1227;
+    // ILS (1230 - 1239)
+    // V Speeds
+    public static final int JAR_A320NEO_V1=1240;
+    public static final int JAR_A320NEO_VR=1241;
+    public static final int JAR_A320NEO_VMO=1242;
+    public static final int JAR_A320NEO_VLS=1243;
+    public static final int JAR_A320NEO_VF=1244;
+    public static final int JAR_A320NEO_VS=1245;
+    public static final int JAR_A320NEO_V_GREEN_DOT=1246;
+    public static final int JAR_A320NEO_ALPHA_PROT=1247;
+    public static final int JAR_A320NEO_ALPHA_MAX=1248;
+    // EFIS (1250-1254)
+    public static final int JAR_A320NEO_ND_MODE=1250;
+    // FAILURES
+    public static final int JAR_A320NEO_FAILURES=1255;
+    // BRAKES
+    public static final int JAR_A320NEO_AUTO_BRAKE_LEVEL=1256;
+
     
     // Plugin Version
     public static final int PLUGIN_VERSION_ID = 999;

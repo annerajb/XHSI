@@ -1331,7 +1331,6 @@ public class XPlaneAvionics implements Avionics, Observer {
     public int qpac_vls() {
         return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_VLS));
     }    
-    
     public int qpac_vs() {
         return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_VS));
     }    
@@ -1351,19 +1350,144 @@ public class XPlaneAvionics implements Avionics, Observer {
     public float qpac_failures() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FAILURES);
     }
+
     
     // JAR Design A320 neo
     public boolean is_jar_a320neo() {
     	return ( sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_STATUS) > 0.0f );
     }
-    
-    public boolean jar_a320neo_fcu_metric_alt() {
-    	return ( sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FCU) > 0.0f );
-    }
-   
+    // BARO  
     public boolean jar_a320neo_baro_unit() {
     	return ( sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FCU_BARO) > 0.0f );
     }
+    // Auto-pilot    
+    public boolean jar_a320neo_ap1() {   	
+    	int jar_a320neo_ap_fd_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FCU));
+    	return (jar_a320neo_ap_fd_data & 0x100) > 0 ? true : false; 	
+
+    }
+    public boolean jar_a320neo_ap2() {
+    	int jar_a320neo_ap_fd_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FCU));
+    	return (jar_a320neo_ap_fd_data & 0x80) > 0 ? true : false; 	
+
+    }
+    public boolean jar_a320neo_fd() {
+    	int jar_a320neo_ap_fd_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FCU));
+    	return (jar_a320neo_ap_fd_data & 0x04) > 0 ? true : false; 	
+    }
+    public int jar_a320neo_ap_phase() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AP_PHASE));
+    }
+    public int jar_a320neo_ap_common_mode() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AP_COMMON_MODE));
+    }
+    public int jar_a320neo_ap_vertical_mode() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AP_VERTICAL_MODE));
+    }   
+    public int jar_a320neo_ap_vertical_armed() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AP_VERTICAL_ARMED));
+    }
+    public int jar_a320neo_ap_lateral_mode() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AP_LATERAL_MODE));
+    }
+    public int jar_a320neo_ap_lateral_armed() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AP_LATERAL_ARMED));
+    }
+    // Approach
+    public boolean jar_a320neo_appr_illuminated() {
+    	int jar_a320neo_ap_appr_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_APPR));
+    	return  (jar_a320neo_ap_appr_data  & 0x01) > 0 ? true : false;
+    }
+    public boolean jar_a320neo_loc_illuminated() {
+    	int jar_a320neo_ap_appr_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_APPR));
+    	return  (jar_a320neo_ap_appr_data  & 0x02) > 0 ? true : false;
+    }
+    public float jar_a320neo_appr_mda() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_APPR_MDA);
+    }   
+    public float jar_a320neo_appr_dh() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_APPR_MDA);
+    }   
+    // FCU
+    public boolean jar_a320neo_fcu_hdg_trk() {
+    	int jar_a320neo_fcu_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FCU));
+    	return (jar_a320neo_fcu_data & 0x01) > 0 ? true : false;
+    }    
+    public boolean jar_a320neo_fcu_metric_alt() {
+    	int jar_a320neo_fcu_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FCU));
+    	return (jar_a320neo_fcu_data & 0x02) > 0 ? true : false;
+    }    
+    public boolean jar_a320neo_fcu_vs_dashed() {
+    	int jar_a320neo_fcu_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FCU));
+    	return (jar_a320neo_fcu_data & 0x04) > 0 ? true : false;
+    }    
+    public boolean jar_a320neo_fcu_spd_dashed() {
+    	int jar_a320neo_fcu_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FCU));
+    	return (jar_a320neo_fcu_data & 0x08) > 0 ? true : false;
+    }    
+    public boolean jar_a320neo_fcu_spd_managed() {
+    	int jar_a320neo_fcu_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FCU));
+    	return (jar_a320neo_fcu_data & 0x10) > 0 ? true : false;
+    }    
+    public boolean jar_a320neo_fcu_hdg_dashed() {
+    	int jar_a320neo_fcu_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FCU));
+    	return (jar_a320neo_fcu_data & 0x20) > 0 ? true : false;
+    }    
+    public boolean jar_a320neo_fcu_hdg_managed() {
+    	int jar_a320neo_fcu_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FCU));
+    	return (jar_a320neo_fcu_data & 0x40) > 0 ? true : false;
+    }    
+    public boolean jar_a320neo_fcu_alt_managed() {
+    	int jar_a320neo_fcu_data = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FCU));
+    	return (jar_a320neo_fcu_data & 0x80) > 0 ? true : false;
+    }   
+    // Auto-Thrust
+    public int jar_a320neo_athr_mode() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_ATHR_MODE));
+    }
+    public int jar_a320neo_thr_mode() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_THR_MODE));
+    }
+    public int jar_a320neo_athr_limited() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_ATHR_LIMITED));
+    }
+    public int jar_a320neo_thr_lever_mode() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_THR_LEVER_MODE));
+    }
+    public int jar_a320neo_fma_thr_warning() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FMA_THR_WARNING));
+    }
+    public int jar_a320neo_flex_temp() {
+    	return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FLEX_TEMP));
+    }
+    // V Speeds   
+    public int jar_a320neo_v1() {
+        return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_V1));
+    }
+    public int jar_a320neo_vr() {
+        return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_VR));
+    }    
+    public int jar_a320neo_vmo() {
+        return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_VMO));
+    }    
+    public int jar_a320neo_vls() {
+        return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_VLS));
+    }        
+    public int jar_a320neo_vs() {
+        return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_VS));
+    }    
+    public int jar_a320neo_vf() {
+        return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_VF));
+    }    
+    public int jar_a320neo_v_green_dot() {
+        return Math.round( sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_V_GREEN_DOT));
+    }    
+    public int jar_a320neo_alpha_prot() {
+        return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_ALPHA_PROT));
+    }    
+    public int jar_a320neo_alpha_max() {
+        return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_ALPHA_MAX));
+    } 
     
     // UMFC
     public boolean has_ufmc() {

@@ -402,7 +402,13 @@ public class XPlaneAircraft implements Aircraft {
     }
 
     public int auto_brake() {
-        return ((int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_SWITCHES_AUTO_BRAKE_LEVEL)) - 1;
+    	if (this.avionics.is_qpac()) {
+    		return ((int)sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_AUTO_BRAKE_LEVEL));
+    	} else  if (this.avionics.is_jar_a320neo()) {
+    		return ((int)sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AUTO_BRAKE_LEVEL));
+    	} else 	{
+    		return ((int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_SWITCHES_AUTO_BRAKE_LEVEL)) - 1;
+    	}
     }
 
     public float get_Vso() {
