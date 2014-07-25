@@ -126,11 +126,11 @@ public class Annunciators extends AnnunSubcomponent {
         // PARK BRK
         if ( this.aircraft.battery() ) {
             float parking_brake = this.aircraft.get_parking_brake();
-            if ( ! this .aircraft.on_ground() && ( parking_brake > 0.01f ) ) {
+            if ( ! this .aircraft.on_ground() && ( parking_brake > 0.01f ) && ! this.aircraft.gear_is_up() ) {
                 annun_color = annun_gc.warning_color;
-            } else if ( parking_brake > 0.51f ) {
+            } else if ( ( parking_brake > 0.51f ) && ! this.aircraft.gear_is_up() ) {
                 annun_color = annun_gc.caution_color;
-            } else if ( parking_brake > 0.01f ) {
+            } else if ( ( parking_brake > 0.01f ) && ! this.aircraft.gear_is_up() ) {
                 annun_color = annun_gc.unusual_color;
             } else {
                 annun_color = off_color;

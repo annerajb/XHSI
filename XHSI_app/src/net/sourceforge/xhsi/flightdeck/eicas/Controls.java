@@ -22,8 +22,7 @@
 package net.sourceforge.xhsi.flightdeck.eicas;
 
 //import java.awt.BasicStroke;
-//import java.awt.Color;
-//import java.awt.Color;
+import java.awt.Color;
 import java.awt.Component;
 //import java.awt.GradientPaint;
 import java.awt.Graphics2D;
@@ -79,6 +78,7 @@ public class Controls extends EICASSubcomponent {
             draw_trim(g2);
             draw_flaps_speedbrake(g2);
             draw_gears(g2);
+            draw_parkbrake(g2);
             draw_autobrake(g2);
             
         }
@@ -357,6 +357,31 @@ public class Controls extends EICASSubcomponent {
         
         }
         
+    }
+
+    
+    private void draw_parkbrake(Graphics2D g2) {
+        
+        Color park_color = null;
+        
+        float parking_brake = this.aircraft.get_parking_brake();
+        if ( ! this .aircraft.on_ground() && ( parking_brake > 0.01f ) &&  ! this.aircraft.gear_is_up() ) {
+            park_color = eicas_gc.warning_color;
+        } else if ( ( parking_brake > 0.51f ) && ! this.aircraft.gear_is_up() ) {
+            park_color = eicas_gc.caution_color;
+        } else if ( ( parking_brake > 0.01f ) && ! this.aircraft.gear_is_up() ) {
+            park_color = eicas_gc.unusual_color;
+        }
+
+        if ( park_color != null ) {
+            g2.setFont(eicas_gc.font_s);
+            g2.setColor(park_color);
+            if ( ! this.aircraft.has_retractable_gear() ) {
+                g2.drawString("PARKBRK", eicas_gc.gear_x - eicas_gc.get_text_width(g2, eicas_gc.font_s, "PARKBRK")/2, eicas_gc.gear_y + eicas_gc.line_height_s);
+            } else {
+                g2.drawString("P", eicas_gc.gear_x - eicas_gc.get_text_width(g2, eicas_gc.font_s, "P")/2, eicas_gc.gear_y + eicas_gc.line_height_s*26/8);
+            }
+        }
     }
 
     
