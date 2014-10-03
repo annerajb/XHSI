@@ -112,7 +112,7 @@ public class ADI_A320 extends PFDSubcomponent {
 		int scale = pfd_gc.adi_pitchscale;
         int ra = Math.round(this.aircraft.agl_m() * 3.28084f); // Radio altitude
         boolean airborne = ! this.aircraft.on_ground();
-        boolean protections = this.avionics.is_qpac();
+        boolean protections = this.avionics.is_qpac() || this.avionics.is_jar_a320neo();
         int mark_size = left * 6/10;
         float alt_f_range = 1100.0f;
         int gnd_y = pfd_gc.adi_cy + Math.round( (this.aircraft.agl_m() * 3.28084f) * pfd_gc.tape_height / alt_f_range );
@@ -145,7 +145,10 @@ public class ADI_A320 extends PFDSubcomponent {
 		if ( this.avionics.is_qpac()) { 
 			fd_on = this.avionics.qpac_fd_on();
 			// if (this.avionics.qpac_fd1_hor_bar() == -1.0f) fd_on = false;
-			if (this.avionics.qpac_fcu_hdg_trk() && !this.aircraft.on_ground()) { fd_on = false; path_director_on = true; }			
+			if (this.avionics.qpac_fcu_hdg_trk() && !this.aircraft.on_ground()) { fd_on = false; path_director_on = true; }
+		}
+		if ( this.avionics.is_jar_a320neo() ) {			
+			if (this.avionics.jar_a320neo_fcu_hdg_trk() && !this.aircraft.on_ground()) { fd_on = false; path_director_on = true; }		
 		}
 		if (pitch > 25.0f || pitch < -13.0f || Math.abs(bank) > 45.0f) { fd_on=false; path_director_on=false; }		
 		// TODO: FCOM 1.27.20p3 FD bars are removed when pitch > 25°up or pitch < 13° down restored when pitch between 10° down and 22°up
@@ -424,6 +427,9 @@ public class ADI_A320 extends PFDSubcomponent {
 		if ( this.avionics.is_qpac()) { 
 			fpv_on = this.avionics.qpac_fcu_hdg_trk() && ! this.aircraft.on_ground();						
 		}
+		if ( this.avionics.is_jar_a320neo()) { 
+			fpv_on = this.avionics.jar_a320neo_fcu_hdg_trk() && ! this.aircraft.on_ground();						
+		}
 		if ( fpv_on ) {
 			int dx = (int)(down * this.aircraft.drift() / scale);
 			int dy = (int)(down * this.aircraft.aoa() / scale);
@@ -540,6 +546,8 @@ public class ADI_A320 extends PFDSubcomponent {
 		boolean ap_on;
 		if (this.avionics.is_qpac()) {
 			ap_on = this.avionics.qpac_ap1() || this.avionics.qpac_ap2();
+		} else if (this.avionics.is_jar_a320neo()) {
+			ap_on = this.avionics.jar_a320neo_ap1() || this.avionics.jar_a320neo_ap2();
 		} else {
 			ap_on = this.avionics.autopilot_mode() > 1;
 		}
@@ -558,8 +566,9 @@ public class ADI_A320 extends PFDSubcomponent {
 				else if ((fd_on) && (!ap_on) ) fd_engagement = FDEngagement.FD ;
 				else if ((!fd_on) && (ap_on) ) fd_engagement = FDEngagement.AP ;
 				else fd_engagement = FDEngagement.FD_AP;
-		// Detect AP reversion only for QPAC
+		// Detect AP reversion only for QPAC or JARDesign
 		if (this.avionics.is_qpac()) {
+			// v_mode == 107 stands for V/S or FPA
 			int v_mode=this.avionics.qpac_ap_vertical_mode();		
 			if (v_mode==107 && fd_reversion == FDReversion.NORMAL) {
 				// This is a mode reversion to V/S
@@ -568,6 +577,16 @@ public class ADI_A320 extends PFDSubcomponent {
 				fd_reversion = FDReversion.VS;				
 			}
 			if (v_mode != 107) fd_reversion =  FDReversion.NORMAL;
+		} else if (this.avionics.is_jar_a320neo()) {
+			// v_mode == 13 and 14 stands for V/S or FPA
+			int v_mode=this.avionics.jar_a320neo_ap_vertical_mode();
+			if ((v_mode == 13 || v_mode == 14) && fd_reversion == FDReversion.NORMAL) {
+				// This is a mode reversion to V/S
+				fd_flashing_start = System.currentTimeMillis();
+				fd_flashing = true;
+				fd_reversion = FDReversion.VS;				
+			}
+			if (v_mode != 13 && v_mode != 14) fd_reversion =  FDReversion.NORMAL;
 		}
 		// Flashing command
 		boolean fd_display_bars = true;

@@ -216,6 +216,9 @@ public class HSI_A320 extends PFDSubcomponent {
 		if (this.avionics.is_qpac() && this.avionics.qpac_fcu_hdg_managed()) {
 			hdg_bug_on = false;
 			g2.setColor(pfd_gc.pfd_managed_color);
+		} else if (this.avionics.is_jar_a320neo() && this.avionics.jar_a320neo_fcu_hdg_managed()) {
+			hdg_bug_on = false;
+			g2.setColor(pfd_gc.pfd_managed_color);			
 		} else {
 			g2.setColor(pfd_gc.pfd_selected_color);	
 		}

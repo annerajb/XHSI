@@ -65,6 +65,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     //private JComboBox simcom_combobox;
     private JTextField aptnav_dir_textfield;
     private JTextField port_textfield;
+    private JTextField group_textfield;
+    private JCheckBox multicast_checkbox;
     private JComboBox loglevel_combobox;
     private JComboBox operator_combobox;
     private String operators[] = { XHSIPreferences.PILOT, XHSIPreferences.COPILOT, XHSIPreferences.INSTRUCTOR };
@@ -207,6 +209,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         this.aptnav_dir_textfield.setText(preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR));
         this.port_textfield.setText(preferences.get_preference(XHSIPreferences.PREF_PORT));
+        this.group_textfield.setText(preferences.get_preference(XHSIPreferences.PREF_GROUP));
+        this.multicast_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_MULTICAST).equalsIgnoreCase("true"));;
 
         for (int i=0; i<loglevels.length; i++) {
             if (logger.getLevel() == loglevels[i]) {
@@ -513,6 +517,41 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridwidth = 1;
         dialog_line++;
 
+        // Multicast group
+        cons.gridx = 0;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        system_panel.add(new JLabel("Multicast group (default 239.255.0.120) (*)", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.group_textfield = new JTextField(16);
+        system_panel.add(this.group_textfield, cons);
+        dialog_line++;
+
+        // some info concerning Multicast group
+        dialog_line++;
+        cons.gridx = 2;
+        cons.gridy = dialog_line;
+        //cons.gridwidth = 3;
+        cons.anchor = GridBagConstraints.WEST;
+        system_panel.add(new JLabel("(please choose a local range address inside 239.xxx.xxx.xxx)", JLabel.TRAILING), cons);
+        cons.gridwidth = 1;
+        dialog_line++;
+        
+        // Multicast group
+        cons.gridx = 0;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        system_panel.add(new JLabel("Enable multicast", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.multicast_checkbox = new JCheckBox("  (experimental - restart requiered)");
+        system_panel.add(this.multicast_checkbox, cons);
+        dialog_line++;
+        
+        
         // Empty line for spacing
         cons.gridx = 0;
         cons.gridwidth = 1;
@@ -1727,6 +1766,12 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             if ( this.port_textfield.getText().equals(this.preferences.get_preference(XHSIPreferences.PREF_PORT)) == false )
                 this.preferences.set_preference(XHSIPreferences.PREF_PORT, this.port_textfield.getText());
 
+            if ( this.group_textfield.getText().equals(this.preferences.get_preference(XHSIPreferences.PREF_GROUP)) == false )
+                this.preferences.set_preference(XHSIPreferences.PREF_GROUP, this.group_textfield.getText());
+
+            if ( this.multicast_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_MULTICAST).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_MULTICAST, this.multicast_checkbox.isSelected()?"true":"false");
+            
             if ( ! operators[this.operator_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_INSTRUMENT_POSITION)) )
                 this.preferences.set_preference(XHSIPreferences.PREF_INSTRUMENT_POSITION, operators[this.operator_combobox.getSelectedIndex()]);
 

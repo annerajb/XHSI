@@ -94,6 +94,7 @@ public class EICASComponent extends Component implements Observer, PreferencesOb
         subcomponents.add(new SubPanelLines(model_factory, eicas_gc, this));
         subcomponents.add(new EICASFail(model_factory, eicas_gc, this));
         subcomponents.add(new EICASInstrumentFrame(model_factory, eicas_gc));
+        subcomponents.add(new ECAM_Engines(model_factory, eicas_gc, this));
 
         this.repaint();
 
@@ -120,7 +121,7 @@ public class EICASComponent extends Component implements Observer, PreferencesOb
         g2.setBackground(eicas_gc.background_color);
 
         // send Graphics object to eicas_gc to recompute positions, if necessary because the panel has been resized or a mode setting has been changed
-        eicas_gc.update_config( g2, this.avionics.power() );
+        eicas_gc.update_config( g2, this.avionics.power(), this.avionics.get_instrument_style() );
 
         // rotate the display
         XHSIPreferences.Orientation orientation = XHSIPreferences.get_instance().get_panel_orientation( this.eicas_gc.display_unit );

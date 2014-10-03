@@ -82,7 +82,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 7";
+    private static final String RELEASE = "2.0 Beta 8 alpha 1";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -185,7 +185,10 @@ public class XHSI implements ActionListener {
             logger.info("recording flight session to '" + rec_file + "' ...");
 
             XPlaneFlightSessionRecorder recorder = new XPlaneFlightSessionRecorder(rec_file, rec_rate);
-            XPlaneUDPReceiver udp_receiver = new XPlaneUDPReceiver( Integer.parseInt(preferences.get_preference(XHSIPreferences.PREF_PORT)) );
+            // XPlaneUDPReceiver udp_receiver = new XPlaneUDPReceiver( Integer.parseInt(preferences.get_preference(XHSIPreferences.PREF_PORT)) );
+            XPlaneUDPReceiver udp_receiver = new XPlaneUDPReceiver( Integer.parseInt(preferences.get_preference(XHSIPreferences.PREF_PORT)), 
+            		preferences.get_preference(XHSIPreferences.PREF_MULTICAST).equals("true"),
+            		preferences.get_preference(XHSIPreferences.PREF_GROUP) );
             udp_receiver.add_reception_observer(recorder);
             this.running_threads.add(recorder);
             recorder.start();
@@ -239,7 +242,10 @@ public class XHSI implements ActionListener {
 
                 // Communicating with X-Plane/XHSI_plugin
                 XPlaneUDPSender udp_sender = new XPlaneUDPSender();
-                XPlaneUDPReceiver udp_receiver = new XPlaneUDPReceiver( Integer.parseInt(preferences.get_preference(XHSIPreferences.PREF_PORT)) );
+                // XPlaneUDPReceiver udp_receiver = new XPlaneUDPReceiver( Integer.parseInt(preferences.get_preference(XHSIPreferences.PREF_PORT)) );
+                XPlaneUDPReceiver udp_receiver = new XPlaneUDPReceiver( Integer.parseInt(preferences.get_preference(XHSIPreferences.PREF_PORT)),
+                		preferences.get_preference(XHSIPreferences.PREF_MULTICAST).equals("true"),
+                		preferences.get_preference(XHSIPreferences.PREF_GROUP) );
                 XPlaneDataPacketDecoder decoder = new XPlaneDataPacketDecoder(model_instance);
                 udp_receiver.add_reception_observer(decoder);
                 XPlaneSimDataRepository.replaying = false;
