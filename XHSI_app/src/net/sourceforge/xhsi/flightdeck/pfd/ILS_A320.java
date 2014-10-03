@@ -295,14 +295,18 @@ public class ILS_A320 extends PFDSubcomponent {
         // Test lateral navigation mode
         if (this.avionics.is_qpac()) { 
         	on_loc = this.avionics.qpac_ap_lateral_mode() == 7;
-        } else {
+        } else if (this.avionics.is_jar_a320neo()) {
+        	on_loc = this.avionics.jar_a320neo_ap_lateral_mode() == 7;
+        } else {        
         	on_loc = ra < 1000; 
         }
         // Do not flash GS if vertical mode not on GS
         boolean on_gs=false;
         if (this.avionics.is_qpac()) { 
     		on_gs = this.avionics.qpac_ap_vertical_mode() == 7;
-        } 
+        } else if (this.avionics.is_jar_a320neo()) {
+        	on_gs = this.avionics.jar_a320neo_ap_vertical_mode() == 12;
+        }
         	
         if ((Math.abs(cdi_value) > 2.0f || Math.abs(gs_value) > 2.0f) && (! two_dots_exceeded ) && on_gs && (ra>15)) {
         	two_dots_exceeded = true;

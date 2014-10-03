@@ -42,6 +42,8 @@ public class XHSIPreferences {
     public static final String PREF_APTNAV_DIR = "aptnav.dir";
     public static final String PREF_REPLAY_DELAY_PER_FRAME = "replay.steps.delay";
     public static final String PREF_PORT = "port";
+    public static final String PREF_GROUP = "multicast.group";
+    public static final String PREF_MULTICAST = "multicast.enable";
     public static final String PREF_LOGLEVEL = "loglevel";
     public static final String PREF_INSTRUMENT_POSITION = "instrument.position";
     public static final String PREF_DISPLAY_STATUSBAR = "display.statusbar";
@@ -853,7 +855,17 @@ public class XHSIPreferences {
             this.preferences.setProperty(PREF_PORT, "49020");
             this.unsaved_changes = true;
         }
+        
+        if ( ! this.preferences.containsKey(PREF_GROUP) ) {
+            this.preferences.setProperty(PREF_GROUP, "239.255.0.120");
+            this.unsaved_changes = true;
+        }
 
+        if ( ! this.preferences.containsKey(PREF_MULTICAST) ) {
+            this.preferences.setProperty(PREF_MULTICAST, "false");
+            this.unsaved_changes = true;
+        }
+        
         if ( ! this.preferences.containsKey(PREF_APTNAV_DIR) ) {
             this.preferences.setProperty(PREF_APTNAV_DIR, ".");
             this.unsaved_changes = true;

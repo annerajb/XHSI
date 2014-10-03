@@ -36,25 +36,33 @@ import net.sourceforge.xhsi.XHSIStatus;
 
 public class XPlaneUDPReceiver extends StoppableThread {
 
-    DatagramSocket datagram_socket;
+    // DatagramSocket datagram_socket;
+    MulticastSocket datagram_socket;
     byte[] receive_buffer;
     ArrayList reception_observers;
     boolean has_reception;
     boolean sender_known;
+    boolean multicast_recv;
     //XPlaneUDPSender udp_sender = null;
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
 
-    public XPlaneUDPReceiver(int listen_port) throws Exception {
+    public XPlaneUDPReceiver(int listen_port, boolean multicast, String group_str) throws Exception {
         super();
         this.receive_buffer = new byte[5000];
-        this.datagram_socket = new DatagramSocket(listen_port);
+        // this.datagram_socket = new DatagramSocket(listen_port);
+        this.datagram_socket = new MulticastSocket(listen_port);
         this.datagram_socket.setSoTimeout(1000);
         this.reception_observers = new ArrayList();
         this.keep_running = true;
         this.has_reception = true;
         this.sender_known = false;
+        this.multicast_recv = multicast;
+        if ( multicast ) {
+        	InetAddress group = InetAddress.getByName(group_str);        	
+        	this.datagram_socket.joinGroup(group);
+        } 
     }
 
 

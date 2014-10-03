@@ -55,6 +55,9 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
+    public boolean airbus_style;
+    public boolean boeing_style;
+    
     public int eicas_size;
     public int dials_width;
     public int prim_dials_height;
@@ -132,7 +135,7 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
 //    }
 
 
-    public void update_config(Graphics2D g2, boolean power) {
+    public void update_config(Graphics2D g2, boolean power, int instrument_style) {
 
         if (this.resized
                 || this.reconfig
@@ -150,6 +153,11 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
             // some subcomponents need to be reminded to redraw imediately
             this.reconfigured = true;
 
+            // Setup instrument style
+            airbus_style = ( instrument_style == Avionics.STYLE_AIRBUS );
+            boeing_style = ! ( instrument_style == Avionics.STYLE_AIRBUS );
+            
+            
             eicas_size = Math.min(panel_rect.width, panel_rect.height);
 
             // the dials take +/-60% of the width

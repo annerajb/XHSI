@@ -781,6 +781,35 @@ public class FMA_A320 extends PFDSubcomponent {
     	
         String fma_str = "ERROR";       
         
+        fma_str = "AP Vert M: " + this.avionics.jar_a320neo_ap_vertical_mode();
+        drawDMode(g2,0,0,fma_str);
+        fma_str = "AP Vert A: " + this.avionics.jar_a320neo_ap_vertical_armed();
+        drawDMode(g2,0,1,fma_str);
+        fma_str = "AP Lat M: " + this.avionics.jar_a320neo_ap_lateral_mode();
+        drawDMode(g2,0,2,fma_str);
+        fma_str = "AP Lat A:" + this.avionics.jar_a320neo_ap_lateral_armed();
+        drawDMode(g2,0,3,fma_str);
+        fma_str = "AP Com M: " + this.avionics.jar_a320neo_ap_common_mode();
+        drawDMode(g2,0,4,fma_str);
+        fma_str = "MDA: " + this.avionics.jar_a320neo_appr_mda();
+        drawDMode(g2,0,5,fma_str);
+        fma_str = "DH: " + this.avionics.jar_a320neo_appr_dh();
+        drawDMode(g2,0,6,fma_str);
+        
+        fma_str = "SPD Managed : " + this.avionics.jar_a320neo_fcu_spd_managed();
+        drawDMode(g2,2,1,fma_str);
+        fma_str = "HDG Managed : " + this.avionics.jar_a320neo_fcu_hdg_managed();
+        drawDMode(g2,2,2,fma_str);
+        
+        fma_str = "THR Mode : " + this.avionics.jar_a320neo_thr_mode();
+        drawDMode(g2,4,0,fma_str);
+        fma_str = "ATHR Mode : " + this.avionics.jar_a320neo_athr_mode();
+        drawDMode(g2,4,1,fma_str);
+        fma_str = "Flex : " + this.avionics.jar_a320neo_flex_temp();
+        drawDMode(g2,4,2,fma_str);
+        
+        
+        
         // AP Engaged
         String ap_str = "";       
         boolean dual_ap = this.avionics.jar_a320neo_ap1() && this.avionics.jar_a320neo_ap2();
@@ -818,7 +847,7 @@ public class FMA_A320 extends PFDSubcomponent {
         	case 6 : str_ap_phase="GO ARROUND"; break;
       	   	case 7 : str_ap_phase="DONE"; break; 	
         }
-        // drawDMode(g2,1,0,str_ap_phase);
+        drawDMode(g2,1,0,str_ap_phase);
         
         // Autopilote vertical mode
         boolean col_2_3 = this.avionics.jar_a320neo_ap_common_mode() > 0; 
@@ -832,7 +861,7 @@ public class FMA_A320 extends PFDSubcomponent {
         	case 3 : ap_vertical_mode="OP CLB"; break;
         	case 4 : ap_vertical_mode="ALT*"; break;
         	case 5 : ap_vertical_mode="ALT CST*"; break;
-        	case 6 : ap_vertical_mode="ALT*"; break;
+        	case 6 : ap_vertical_mode="ALT"; break;
         	case 7 : ap_vertical_mode="ALT CST"; break;
            	case 8 : ap_vertical_mode="ALT CRZ"; break;            	
         	case 9 : ap_vertical_mode="DES"; break;
@@ -968,7 +997,7 @@ public class FMA_A320 extends PFDSubcomponent {
         
         // Autothrust (it's not autothrottle !!!)
         String str_thr_mode = "A/THR"; 
-        switch (this.avionics.jar_a320neo_athr_mode()) {
+        switch (this.avionics.jar_a320neo_thr_mode()) {
         case 0 : pfe_thrust.clearText(); break;
         case 1 : pfe_thrust.setText(str_man, "TOGA", PFE_Color.PFE_COLOR_MARK); 
         		 pfe_thrust.setFrame();
@@ -1002,9 +1031,9 @@ public class FMA_A320 extends PFDSubcomponent {
     	pfe_thrust.paint(g2);
     	
     	// A/THR display on column 5
-    	if (this.avionics.jar_a320neo_thr_mode()==1) {
+    	if (this.avionics.jar_a320neo_athr_mode()==1) {
     		pfe_athr.setText(str_thr_mode, PFE_Color.PFE_COLOR_ARMED);
-    	}  else if (this.avionics.jar_a320neo_thr_mode()==2) {
+    	}  else if (this.avionics.jar_a320neo_athr_mode()==2) {
     		pfe_athr.setText(str_thr_mode, PFE_Color.PFE_COLOR_MARK);
     	} else {
     		pfe_athr.clearText();

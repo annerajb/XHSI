@@ -245,6 +245,14 @@ public class GraphicsConfig implements ComponentListener {
     public Color fpv_color;
     public Color clock_color;
     
+    // ECAM COLORS
+    public Color ecam_caution_color;
+    public Color ecam_warning_color;
+    public Color ecam_normal_color;
+    public Color ecam_markings_color;
+    public Color ecam_action_color;
+    public Color ecam_special_color;
+    
     // PFD colors - used to managed PFD lightening
     public Color pfd_armed_color;
     public Color pfd_managed_color;
@@ -582,6 +590,14 @@ public class GraphicsConfig implements ComponentListener {
             fpv_color = Color.LIGHT_GRAY;
             clock_color = color_khaki;
             
+            // ECAM COLORS
+        	ecam_warning_color = Color.red;
+        	ecam_caution_color = color_amber;
+        	ecam_normal_color = Color.green;
+        	ecam_markings_color = Color.white;
+        	ecam_action_color = Color.cyan;
+        	ecam_special_color = Color.magenta;        	
+            
             // PFD colors - used to managed PFD lightening
             if ( this.settings.style == Avionics.STYLE_AIRBUS ) {
                 // PFD colors Airbus Style 
@@ -679,6 +695,14 @@ public class GraphicsConfig implements ComponentListener {
             fpv_color = Color.WHITE;
             clock_color = Color.WHITE;
             
+            // ECAM COLORS
+        	ecam_warning_color = Color.red;
+        	ecam_caution_color = color_amber;
+        	ecam_normal_color = Color.green;
+        	ecam_markings_color = Color.white;
+        	ecam_action_color = Color.cyan;
+        	ecam_special_color = Color.magenta;
+        	
             // PFD Colors - used to managed PFD lightening
             if ( this.settings.style == Avionics.STYLE_AIRBUS ) {
                 // PFD colors Airbus Style 
