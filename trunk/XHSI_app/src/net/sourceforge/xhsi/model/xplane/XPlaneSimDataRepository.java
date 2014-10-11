@@ -597,7 +597,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public void tick_updates() {
         this.updates += 1;
         for (int i=0; i<this.observers.size(); i++) {
-            logger.fine("Updating observer "+i);
+            logger.finest("Updating observer "+i);
             ((Observer) this.observers.get(i)).update();
         }
     }

@@ -186,7 +186,8 @@ public class RefSourceLabel extends NDSubcomponent {
                 int crs_text_x = source_label_x + nd_gc.get_text_width(g2, nd_gc.font_small, crs_label1);
                 //g2.setColor(crs_color);
                 g2.setColor(nd_gc.top_text_color);
-                if ( ( ! this.preferences.get_auto_frontcourse() ) && ( src_type == TYPE_ILS ) || ( src_type == TYPE_LOC ) ) {
+                if ( ( ! this.preferences.is_auto_frontcourse_to_obs() ) && ( ( src_type == TYPE_ILS ) || ( src_type == TYPE_LOC ) ) ) {
+                    // I don't remember why this is depending on the setting to adjust the OBS automatically to the Localizer frontcourse!
                     g2.setFont(nd_gc.font_tiny);
                     g2.drawString(crs_label2, source_label_x, source_label_y);
                     g2.setFont(nd_gc.font_small);

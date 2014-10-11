@@ -923,7 +923,7 @@ public class XPlaneAvionics implements Avionics, Observer {
     public float nav1_obs() { 
         float obs = normalize( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_NAV1_OBS_DEGM) );
         float crs = normalize( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_NAV1_COURSE_DEGM) );
-        if ( xhsi_preferences.get_auto_frontcourse() && get_nav_radio(1).freq_is_localizer() && ( Math.round(obs*10.0f) != Math.round(crs*10.0f) ) ) {
+        if ( xhsi_preferences.is_auto_frontcourse_to_obs() && get_nav_radio(1).freq_is_localizer() && ( Math.round(obs*10.0f) != Math.round(crs*10.0f) ) ) {
             set_nav1_obs( crs );
         }
         return obs;
@@ -932,7 +932,7 @@ public class XPlaneAvionics implements Avionics, Observer {
     public float nav2_obs() {
         float obs = normalize( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_NAV2_OBS_DEGM) );
         float crs = normalize( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_NAV2_COURSE_DEGM) );
-        if ( xhsi_preferences.get_auto_frontcourse() && get_nav_radio(2).freq_is_localizer() && ( Math.round(obs*10.0f) != Math.round(crs*10.0f) ) ) {
+        if ( xhsi_preferences.is_auto_frontcourse_to_obs() && get_nav_radio(2).freq_is_localizer() && ( Math.round(obs*10.0f) != Math.round(crs*10.0f) ) ) {
             set_nav2_obs( crs );
         }
         return obs;
