@@ -82,7 +82,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 8 alpha 1";
+    private static final String RELEASE = "2.0 Beta 8 Alpha 2";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -365,6 +365,7 @@ public class XHSI implements ActionListener {
                     this.preferences.add_subsciption(eicas_ui, XHSIPreferences.PREF_ANTI_ALIAS);
                     this.preferences.add_subsciption(eicas_ui, XHSIPreferences.PREF_DU_PREPEND);
                     this.preferences.add_subsciption(eicas_ui, XHSIPreferences.PREF_USE_POWER);
+                    this.preferences.add_subsciption(eicas_ui, XHSIPreferences.PREF_INSTRUMENT_STYLE);
                     break;
                 case XHSIInstrument.MFD_ID :
                     // EFB
@@ -376,6 +377,7 @@ public class XHSI implements ActionListener {
                     this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_ANTI_ALIAS);
                     this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_DU_PREPEND);
                     this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_USE_POWER);
+                    this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_INSTRUMENT_STYLE);
                     break;
                 case XHSIInstrument.ANNUN_ID :
                     // Annunciators
@@ -386,6 +388,7 @@ public class XHSI implements ActionListener {
                     this.preferences.add_subsciption(annun_ui, XHSIPreferences.PREF_ANTI_ALIAS);
                     this.preferences.add_subsciption(annun_ui, XHSIPreferences.PREF_DU_PREPEND);
                     this.preferences.add_subsciption(annun_ui, XHSIPreferences.PREF_USE_POWER);
+                    this.preferences.add_subsciption(annun_ui, XHSIPreferences.PREF_INSTRUMENT_STYLE);
                     break;
                 case XHSIInstrument.CLOCK_ID :
                     // Clock
@@ -397,6 +400,7 @@ public class XHSI implements ActionListener {
                     this.preferences.add_subsciption(clock_ui, XHSIPreferences.PREF_ANTI_ALIAS);
                     this.preferences.add_subsciption(clock_ui, XHSIPreferences.PREF_DU_PREPEND);
                     this.preferences.add_subsciption(clock_ui, XHSIPreferences.PREF_USE_POWER);
+                    this.preferences.add_subsciption(clock_ui, XHSIPreferences.PREF_INSTRUMENT_STYLE);
                     break;
             }
         }

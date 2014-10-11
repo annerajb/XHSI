@@ -60,8 +60,9 @@ public class XPlaneUDPReceiver extends StoppableThread {
         this.sender_known = false;
         this.multicast_recv = multicast;
         if ( multicast ) {
-        	InetAddress group = InetAddress.getByName(group_str);        	
-        	this.datagram_socket.joinGroup(group);
+            logger.config("Joining multicast group " + group_str);
+            InetAddress group = InetAddress.getByName(group_str);        	
+            this.datagram_socket.joinGroup(group);
         } 
     }
 
@@ -74,7 +75,7 @@ public class XPlaneUDPReceiver extends StoppableThread {
     public DatagramPacket receiveXPlanePacket() throws IOException {
         DatagramPacket packet = new DatagramPacket(receive_buffer, receive_buffer.length);
         datagram_socket.receive(packet);
-        logger.fine("Receiving from port " + packet.getPort());
+        logger.finest("Receiving from port " + packet.getAddress().getHostAddress() + ":" + packet.getPort());
         if ( ! sender_known ) {
             // intercept the sender's (X-Plane's) address and port
             InetAddress orig_address = packet.getAddress();

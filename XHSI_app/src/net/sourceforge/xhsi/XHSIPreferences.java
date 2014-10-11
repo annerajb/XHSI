@@ -500,7 +500,7 @@ public class XHSIPreferences {
      * @return            - Set CRS automatically to Localizer's frontcourse
      *
      */
-    public boolean get_auto_frontcourse() {
+    public boolean is_auto_frontcourse_to_obs() {
         return get_preference(PREF_AUTO_FRONTCOURSE).equalsIgnoreCase("true");
     }
 

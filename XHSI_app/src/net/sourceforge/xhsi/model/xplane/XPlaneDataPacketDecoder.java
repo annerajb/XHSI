@@ -167,9 +167,9 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
             }
 
             if ( packet_type.equals("ADCD") ) {
-                logger.fine("Ticking updates");
+                logger.finest("Ticking updates");
                 this.xplane_data_repository.tick_updates();
-                logger.fine("Updates ticked");
+//                logger.finest("Updates ticked");
             }
 
             

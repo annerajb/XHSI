@@ -30,7 +30,7 @@ import java.io.*;
 
 public class XPlaneUDPSender {
 
-    DatagramSocket datagram_socket = null;
+    /*DatagramSocket*/ MulticastSocket datagram_socket = null;
     byte[] send_buffer;
     boolean destination_known;
     InetAddress destination_address;
@@ -57,14 +57,14 @@ public class XPlaneUDPSender {
     }
 
 
-    public void setDestination(DatagramSocket socket, InetAddress address, int port) {
+    public void setDestination(/*DatagramSocket*/ MulticastSocket socket, InetAddress address, int port) {
 
         // the UDP receiver intercepted X-Plane's IP-address and port
         this.destination_known = true;
         this.datagram_socket = socket;
         this.destination_address = address;
         this.destination_port = port;
-        logger.info("Received first packet from port : " + port);
+        logger.config("Received first packet from " + address.getHostAddress() + ":" + port);
 
     }
 
@@ -87,7 +87,7 @@ public class XPlaneUDPSender {
                 DatagramPacket packet = new DatagramPacket(byte_array, byte_array_stream.size(), this.destination_address, this.destination_port);
                 // this.datagram_socket = new DatagramSocket(); no, we already have an open socket...
                 this.datagram_socket.send(packet);
-                logger.fine("Datapoint packet sent!");
+                logger.fine("Datapoint packet sent: ID=" + id + "  Value=" + value);
             } catch (IOException ioe) {
                 logger.warning("Caught error while sending a datapoint packet! (" + ioe.toString() + ")");
             }
