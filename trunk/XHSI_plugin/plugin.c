@@ -56,6 +56,7 @@
 
 #define XPLM200 1
 
+#include "XPLMPlugin.h"
 #include "XPLMProcessing.h"
 #include "XPLMDataAccess.h"
 #include "XPLMUtilities.h"
@@ -107,6 +108,10 @@ PLUGIN_API int XPluginStart(
 	strcpy(outName, PLUGIN_VERSION_TEXT);
 	strcpy(outSig, "xhsi.plugin");
 	strcpy(outDesc, "This plugin communicates with XHSI application instances over UDP.");
+
+	// Use Posix-style paths
+	XPLMEnableFeature("XPLM_USE_NATIVE_PATHS", 1);
+
 
 	// Find the datarefs we want to send and receive
 	findDataRefs();

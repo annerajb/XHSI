@@ -2,8 +2,8 @@
 // Global constants ============================
 
 // version info
-#define PLUGIN_VERSION_TEXT "XHSI Plugin 2.0 Beta 7"
-#define PLUGIN_VERSION_NUMBER 20007
+#define PLUGIN_VERSION_TEXT "XHSI Plugin 2.0 Beta 8"
+#define PLUGIN_VERSION_NUMBER 20008
 
 
 // max number of IP/UDP destinations
@@ -17,8 +17,8 @@
 
 
 // config file name
-#if IBM
-#define CFG_FILE "Resources\\plugins\\XHSI_plugin.cfg"
-#else
+// #if IBM
+// #define CFG_FILE "Resources\\plugins\\XHSI_plugin.cfg"
+// #else
 #define CFG_FILE "Resources/plugins/XHSI_plugin.cfg"
-#endif
+// #endif
