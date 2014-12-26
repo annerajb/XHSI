@@ -207,9 +207,9 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
 
             int nb_of_entries = data_stream.readInt();
 
-            if (this.received_fms_packet == false)
-                logger.fine("... FMCx contains " + nb_of_entries + " FMS entries");
-            logger.finest("... FMC" + packet_type.charAt(3) + " contains " + nb_of_entries + " FMS entries");
+//            if (this.received_fms_packet == false)
+//                logger.fine("... FMCx contains " + nb_of_entries + " FMS entries");
+            logger.warning("... FMC" + packet_type.charAt(3) + " contains " + nb_of_entries + " FMS entries");
 
             int displayed_entry_index = data_stream.readInt();
             int active_entry_index = data_stream.readInt();
@@ -228,7 +228,7 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
             boolean descending = false;
 
             int packet_entries = ( nb_of_entries - offset > 50 ) ? 50 : nb_of_entries - offset;
-//logger.warning("... we will read " + packet_entries + " FMS entries");
+logger.warning("... we will read " + packet_entries + " FMS entries");
 
             for (int i=0; i<packet_entries; i++) {
 

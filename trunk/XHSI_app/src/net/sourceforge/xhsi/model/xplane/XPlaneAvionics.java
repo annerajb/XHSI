@@ -202,8 +202,12 @@ public class XPlaneAvionics implements Avionics, Observer {
             return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_ADF2_FREQ_HZ);
         else if ( radio_num == RADIO_COM1 )
             return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_COM1_FREQ_HZ);
+        else if ( radio_num == RADIO_COM1_833 )
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_RADIOS_ACTUATORS_COM1_FREQUENCY_HZ_833);
         else if ( radio_num == RADIO_COM2 )
             return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_COM2_FREQ_HZ);
+        else if ( radio_num == RADIO_COM2_833 )
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_RADIOS_ACTUATORS_COM2_FREQUENCY_HZ_833);
         else if ( radio_num == RADIO_NAV1_STDBY )
             return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_NAV1_STDBY_FREQ_HZ);
         else if ( radio_num == RADIO_NAV2_STDBY )
@@ -214,8 +218,12 @@ public class XPlaneAvionics implements Avionics, Observer {
             return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_ADF2_STDBY_FREQ_HZ);
         else if ( radio_num == RADIO_COM1_STDBY )
             return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_COM1_STDBY_FREQ_HZ);
+        else if ( radio_num == RADIO_COM1_STDBY_833 )
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_RADIOS_ACTUATORS_COM1_STANDBY_FREQUENCY_HZ_833);
         else if ( radio_num == RADIO_COM2_STDBY )
             return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_COM2_STDBY_FREQ_HZ);
+        else if ( radio_num == RADIO_COM2_STDBY_833 )
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_RADIOS_ACTUATORS_COM2_STANDBY_FREQUENCY_HZ_833);
         else
             return 0.0f;
 
@@ -1628,6 +1636,13 @@ public class XPlaneAvionics implements Avionics, Observer {
     public void set_clock_mode(int new_clock_mode) {
 
         udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT2_CLOCK_TIMER_MODE, (float) new_clock_mode );
+
+    }
+
+
+    public void chr_control(int chr_action) {
+
+        udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_CHR_CONTROL, (float) chr_action );
 
     }
 

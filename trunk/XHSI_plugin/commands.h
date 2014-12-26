@@ -41,6 +41,10 @@ extern XPLMCommandRef x737_app_toggle;
 extern XPLMCommandRef x737_althld_toggle;
 extern XPLMCommandRef x737_vs_toggle;
 
+extern XPLMCommandRef chr_start_stop_reset;
+extern XPLMCommandRef chr_start_stop;
+extern XPLMCommandRef chr_reset;
+
 
 void registerCommands(void);
 void unregisterCommands(void);
