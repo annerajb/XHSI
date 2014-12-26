@@ -56,23 +56,31 @@ public interface Avionics {
 
     public static final int CLOCK_MODE_UTC = 0;
     public static final int CLOCK_MODE_LT = 1;
+    public static final int CHR_CONTROL_START_STOP_RESET = 0;
+    public static final int CHR_CONTROL_START_STOP = 1;
+    public static final int CHR_CONTROL_RESET = 2;
 
     public static final int MFD_MODE_ARPT = 0;
     public static final int MFD_MODE_FPLN = 1;
     public static final int MFD_MODE_EICAS = 2;
+    public static final int MFD_MODE_RTU = 3;
 
     public static final int RADIO_NAV1 = 1;
     public static final int RADIO_NAV2 = 2;
     public static final int RADIO_ADF1 = 3;
     public static final int RADIO_ADF2 = 4;
     public static final int RADIO_COM1 = 5;
+    public static final int RADIO_COM1_833 = 105;
     public static final int RADIO_COM2 = 6;
+    public static final int RADIO_COM2_833 = 106;
     public static final int RADIO_NAV1_STDBY = -1;
     public static final int RADIO_NAV2_STDBY = -2;
     public static final int RADIO_ADF1_STDBY = -3;
     public static final int RADIO_ADF2_STDBY = -4;
     public static final int RADIO_COM1_STDBY = -5;
+    public static final int RADIO_COM1_STDBY_833 = -105;
     public static final int RADIO_COM2_STDBY = -6;
+    public static final int RADIO_COM2_STDBY_833 = -106;
 
     
     /**
@@ -716,6 +724,8 @@ public interface Avionics {
     public void set_xpdr_mode(int new_xpdr_mode);
 
     public void set_clock_mode(int new_clock_mode);
+
+    public void chr_control(int chr_action);
 
     public void set_show_arpt(boolean new_arpt);
 

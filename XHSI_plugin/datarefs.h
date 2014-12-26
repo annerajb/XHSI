@@ -120,6 +120,11 @@ extern XPLMDataRef  com1_stdby_freq_hz;
 extern XPLMDataRef  com2_freq_hz;
 extern XPLMDataRef  com2_stdby_freq_hz;
 
+extern XPLMDataRef  com1_frequency_hz_833;
+extern XPLMDataRef  com1_standby_frequency_hz_833;
+extern XPLMDataRef  com2_frequency_hz_833;
+extern XPLMDataRef  com2_standby_frequency_hz_833;
+
 extern XPLMDataRef  autopilot_state;
 extern XPLMDataRef  autopilot_vertical_velocity;
 extern XPLMDataRef  autopilot_altitude;

@@ -156,6 +156,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     
     public static final String ACTION_CLOCK_UTC = "UTC";
     public static final String ACTION_CLOCK_LT = "Local Time";
+    public static final String ACTION_CHR_START_STOP_RESET = "CHR Start/Stop/Reset";
 
     public static final int ENGINE_TYPE_N1 = 0;
     public static final int ENGINE_TYPE_EPR = 1;
@@ -1050,7 +1051,14 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // keep a reference
         this.radio_button_clock_lt = radio_button_menu_item;
 
-        // add the "Source" menu to the menubar
+        xhsi_clock_menu.addSeparator();
+
+        menu_item = new JMenuItem(XHSISettings.ACTION_CHR_START_STOP_RESET);
+        menu_item.setToolTipText("Start/Stop/Reset the chronograph");
+        menu_item.addActionListener(this);
+        xhsi_clock_menu.add(menu_item);
+
+        // add the "Clock" menu to the menubar
         menu_bar.add(xhsi_clock_menu);
 
 
@@ -1281,6 +1289,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         } else if (command.equals(XHSISettings.ACTION_CLOCK_LT)) {
             clock_mode = Avionics.CLOCK_MODE_LT;
             this.avionics.set_clock_mode(clock_mode);
+        } else if (command.equals(XHSISettings.ACTION_CHR_START_STOP_RESET)) {
+            this.avionics.chr_control(Avionics.CHR_CONTROL_START_STOP_RESET);
 
         } else {
             for (int i=0; i<this.range_list.length; i++) {

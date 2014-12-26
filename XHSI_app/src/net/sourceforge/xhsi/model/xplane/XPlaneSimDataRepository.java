@@ -139,6 +139,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT_RADIOS_COM1_STDBY_FREQ_HZ = 145;
     public static final int SIM_COCKPIT_RADIOS_COM2_FREQ_HZ = 146;
     public static final int SIM_COCKPIT_RADIOS_COM2_STDBY_FREQ_HZ = 147;
+    // for the 8.33KHz spacing, see 194-197 below
     public static final int SIM_COCKPIT_RADIOS_STDBY_FLIP = 148; // to send commands to the plugin
 
 
@@ -178,7 +179,15 @@ public class XPlaneSimDataRepository implements SimDataRepository {
 
     // Clock mode
     public static final int SIM_COCKPIT2_CLOCK_TIMER_MODE = 190; // 0 = GMT, 1 = Local Time, 2 = Date, 3 = Timer
+    public static final int XHSI_CHR_CONTROL = 191; // to send commands to the plugin 1=Start/Stop/Reset, 2=Start/Stop, 3=Reset
 
+    
+    // COM1 & 2 using 8.33kHz spacing
+    public static final int SIM_COCKPIT2_RADIOS_ACTUATORS_COM1_FREQUENCY_HZ_833 = 194;
+    public static final int SIM_COCKPIT2_RADIOS_ACTUATORS_COM1_STANDBY_FREQUENCY_HZ_833 = 195;
+    public static final int SIM_COCKPIT2_RADIOS_ACTUATORS_COM2_FREQUENCY_HZ_833 = 196;
+    public static final int SIM_COCKPIT2_RADIOS_ACTUATORS_COM2_STANDBY_FREQUENCY_HZ_833 = 197;
+   
     
     // EFIS
     public static final int SIM_COCKPIT_SWITCHES_HSI_SELECTOR = 200; // 0=NAV1, 1=NAV2, 2=GPS

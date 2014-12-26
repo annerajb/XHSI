@@ -577,6 +577,19 @@ int createAvionicsPacket(void) {
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(com2_stdby_freq_hz));
 	i++;
 
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_RADIOS_ACTUATORS_COM1_FREQUENCY_HZ_833);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(com1_frequency_hz_833));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_RADIOS_ACTUATORS_COM1_STANDBY_FREQUENCY_HZ_833);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(com1_standby_frequency_hz_833));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_RADIOS_ACTUATORS_COM2_FREQUENCY_HZ_833);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(com2_frequency_hz_833));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_RADIOS_ACTUATORS_COM2_STANDBY_FREQUENCY_HZ_833);
+	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(com2_standby_frequency_hz_833));
+	i++;
+
 
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_RADIOS_TRANSPONDER_MODE);
 	sim_packet.sim_data_points[i].value =  custom_htonf((float) XPLMGetDatai(transponder_mode));

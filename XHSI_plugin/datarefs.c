@@ -193,6 +193,11 @@ XPLMDataRef  com1_stdby_freq_hz;
 XPLMDataRef  com2_freq_hz;
 XPLMDataRef  com2_stdby_freq_hz;
 
+XPLMDataRef  com1_frequency_hz_833;
+XPLMDataRef  com1_standby_frequency_hz_833;
+XPLMDataRef  com2_frequency_hz_833;
+XPLMDataRef  com2_standby_frequency_hz_833;
+
 XPLMDataRef  autopilot_state;
 XPLMDataRef  autopilot_vertical_velocity;
 XPLMDataRef  autopilot_altitude;
@@ -1460,10 +1465,15 @@ void findDataRefs(void) {
 	adf2_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/adf2_nav_id");
 	//gps_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/gps_nav_id");
 
-	com1_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com1_freq_hz");  // int
-	com1_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com1_stdby_freq_hz");  // int
-	com2_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com2_freq_hz");  // int
-	com2_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com2_stdby_freq_hz");  // int
+	com1_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com1_freq_hz");              // int (x100 MHz)
+	com1_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com1_stdby_freq_hz");  // int (x100 MHz)
+	com2_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com2_freq_hz");              // int (x100 MHz)
+	com2_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com2_stdby_freq_hz");  // int (x100 MHz)
+
+	com1_frequency_hz_833 = XPLMFindDataRef("sim/cockpit2/radios/actuators/com1_frequency_hz_833");                  // int (x1000 MHz)
+	com1_standby_frequency_hz_833 = XPLMFindDataRef("sim/cockpit2/radios/actuators/com1_standby_frequency_hz_833");  // int (x1000 MHz)
+	com2_frequency_hz_833 = XPLMFindDataRef("sim/cockpit2/radios/actuators/com2_frequency_hz_833");                  // int (x1000 MHz)
+	com2_standby_frequency_hz_833 = XPLMFindDataRef("sim/cockpit2/radios/actuators/com2_standby_frenquency_hz_833"); // int (x1000 MHz)
 
 	// AP
 	autopilot_state = XPLMFindDataRef("sim/cockpit/autopilot/autopilot_state");
@@ -2040,6 +2050,23 @@ void writeDataRef(int id, float value) {
             XPLMSetDatai(com2_stdby_freq_hz, (int)value);
             break;
 
+	// COM with 8.33kHz spacing
+        case SIM_COCKPIT2_RADIOS_ACTUATORS_COM1_FREQUENCY_HZ_833 :
+            XPLMSetDatai(com1_frequency_hz_833, (int)value);
+            break;
+
+        case SIM_COCKPIT2_RADIOS_ACTUATORS_COM1_STANDBY_FREQUENCY_HZ_833 :
+            XPLMSetDatai(com1_standby_frequency_hz_833, (int)value);
+            break;
+
+        case SIM_COCKPIT2_RADIOS_ACTUATORS_COM2_FREQUENCY_HZ_833 :
+            XPLMSetDatai(com2_frequency_hz_833, (int)value);
+            break;
+
+        case SIM_COCKPIT2_RADIOS_ACTUATORS_COM2_STANDBY_FREQUENCY_HZ_833 :
+            XPLMSetDatai(com2_standby_frequency_hz_833, (int)value);
+            break;
+
         // NAV
         case SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ :
             XPLMSetDatai(nav1_freq_hz, (int)value);
@@ -2097,6 +2124,21 @@ void writeDataRef(int id, float value) {
                     break;
                 case 7 :
 					XPLMCommandOnce(sim_transponder_transponder_ident);
+                    break;
+            }
+            break;
+
+        // control chronograph (special case; don't set datarefs but trigger commands...)
+        case XHSI_CHRONOGRAPH_CONTROL :
+            switch ((int)value) {
+                case 0 :
+                    XPLMCommandOnce(chr_start_stop_reset);
+                    break;
+                case 1 :
+                    XPLMCommandOnce(chr_start_stop);
+                    break;
+                case 2 :
+                    XPLMCommandOnce(chr_reset);
                     break;
             }
             break;
