@@ -82,7 +82,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 8 Alpha 3";
+    private static final String RELEASE = "2.0 Beta 8 Alpha 4";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -762,7 +762,7 @@ public class XHSI implements ActionListener {
                     "  ND - Navigation Display\n" +
                     "  EICAS - Engine Instruments\n" +
                     "  MFD - Airport Chart / Flight Plan / Lower EICAS\n" +
-                    "  Clock / Chronometer\n" +
+                    "  Clock / Chrongraph\n" +
                     "  Annunciators - Gear, Flaps, etc...\n" +
                     "\n" +
                     "http://xhsi.sourceforge.net\n" +
@@ -773,7 +773,8 @@ public class XHSI implements ActionListener {
                     "2009-2014 Marc Rogiers\n" +
                     "2014 Nicolas Carel\n" +
                     "\n" +
-                    "running on " + this.ip_host,
+                    "Using Java " + System.getProperty("java.version") + "\n" +
+                    "Running on " + this.ip_host,
                     "About XHSI",
                     JOptionPane.INFORMATION_MESSAGE);
 
