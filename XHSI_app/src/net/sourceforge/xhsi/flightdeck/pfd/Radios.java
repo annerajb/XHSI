@@ -76,9 +76,11 @@ public class Radios extends PFDSubcomponent {
     private void drawFrequencies(Graphics2D g2) {
 
         DecimalFormat navcom_format = new DecimalFormat("000.00");
+        DecimalFormat com833_format = new DecimalFormat("000.000");
         DecimalFormatSymbols format_symbols = navcom_format.getDecimalFormatSymbols();
         format_symbols.setDecimalSeparator('.');
         navcom_format.setDecimalFormatSymbols(format_symbols);
+        com833_format.setDecimalFormatSymbols(format_symbols);
         DecimalFormat adf_format = new DecimalFormat("000");
         DecimalFormat xpdr_format = new DecimalFormat("0000");
 
@@ -163,19 +165,37 @@ public class Radios extends PFDSubcomponent {
         g2.setFont(pfd_gc.font_m);
         g2.drawString("COM1", pfd_gc.comradios_left + pfd_gc.digit_width_l/2, line_1_l);
         g2.setFont(pfd_gc.font_s);
-        g2.drawString(navcom_format.format(this.avionics.get_radio_freq(Avionics.RADIO_COM1)/100.0f), pfd_gc.comradios_left + pfd_gc.digit_width_l, line_1_a);
+        if ( this.avionics.com1_is_833() ) {
+            g2.drawString(com833_format.format(this.avionics.get_radio_freq(Avionics.RADIO_COM1_833)/1000.0f), pfd_gc.comradios_left + pfd_gc.digit_width_s/2, line_1_a);
+        } else {
+            g2.drawString(navcom_format.format(this.avionics.get_radio_freq(Avionics.RADIO_COM1)/100.0f), pfd_gc.comradios_left + pfd_gc.digit_width_l, line_1_a);
+        }
         g2.setColor(pfd_gc.dim_markings_color);
         g2.setFont(pfd_gc.font_xs);
-        g2.drawString(navcom_format.format(this.avionics.get_radio_freq(Avionics.RADIO_COM1_STDBY)/100.0f), pfd_gc.comradios_left + pfd_gc.digit_width_l, line_1_s);
+        if ( this.avionics.com1_standby_is_833() ) {
+            g2.drawString(com833_format.format(this.avionics.get_radio_freq(Avionics.RADIO_COM1_STDBY_833)/1000.0f), pfd_gc.comradios_left + pfd_gc.digit_width_s/2, line_1_s);
+        } else {
+            g2.drawString(navcom_format.format(this.avionics.get_radio_freq(Avionics.RADIO_COM1_STDBY)/100.0f), pfd_gc.comradios_left + pfd_gc.digit_width_l, line_1_s);
+        }
 
         g2.setColor(pfd_gc.markings_color);
         g2.setFont(pfd_gc.font_m);
         g2.drawString("COM2", pfd_gc.comradios_left + pfd_gc.digit_width_l/2, line_2_l);
         g2.setFont(pfd_gc.font_s);
-        g2.drawString(navcom_format.format(this.avionics.get_radio_freq(Avionics.RADIO_COM2)/100.0f), pfd_gc.comradios_left + pfd_gc.digit_width_l, line_2_a);
+        //g2.drawString(navcom_format.format(this.avionics.get_radio_freq(Avionics.RADIO_COM2)/100.0f), pfd_gc.comradios_left + pfd_gc.digit_width_l, line_2_a);
+        if ( this.avionics.com2_is_833() ) {
+            g2.drawString(com833_format.format(this.avionics.get_radio_freq(Avionics.RADIO_COM2_833)/1000.0f), pfd_gc.comradios_left + pfd_gc.digit_width_s/2, line_2_a);
+        } else {
+            g2.drawString(navcom_format.format(this.avionics.get_radio_freq(Avionics.RADIO_COM2)/100.0f), pfd_gc.comradios_left + pfd_gc.digit_width_l, line_2_a);
+        }
         g2.setColor(pfd_gc.dim_markings_color);
         g2.setFont(pfd_gc.font_xs);
-        g2.drawString(navcom_format.format(this.avionics.get_radio_freq(Avionics.RADIO_COM2_STDBY)/100.0f), pfd_gc.comradios_left + pfd_gc.digit_width_l, line_2_s);
+        //g2.drawString(navcom_format.format(this.avionics.get_radio_freq(Avionics.RADIO_COM2_STDBY)/100.0f), pfd_gc.comradios_left + pfd_gc.digit_width_l, line_2_s);
+        if ( this.avionics.com2_standby_is_833() ) {
+            g2.drawString(com833_format.format(this.avionics.get_radio_freq(Avionics.RADIO_COM2_STDBY_833)/1000.0f), pfd_gc.comradios_left + pfd_gc.digit_width_s/2, line_2_s);
+        } else {
+            g2.drawString(navcom_format.format(this.avionics.get_radio_freq(Avionics.RADIO_COM2_STDBY)/100.0f), pfd_gc.comradios_left + pfd_gc.digit_width_l, line_2_s);
+        }
 
         g2.setColor(pfd_gc.markings_color);
         g2.setFont(pfd_gc.font_m);

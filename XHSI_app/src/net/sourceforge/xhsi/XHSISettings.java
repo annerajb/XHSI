@@ -4,7 +4,7 @@
 * Add HSI settings options to the menu bar, handle the commands that the
 * menu selections generate and keep static variables with the settings
 * 
-* Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2009-2014  Marc Rogiers (marrog.123@gmail.com)
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -153,6 +153,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_MFD_ARPT_CHART = "Airport Chart";
     public static final String ACTION_MFD_FPLN = "Flight Plan";
     public static final String ACTION_MFD_LOWER_EICAS = "Lower EICAS";
+    public static final String ACTION_MFD_RTU = "Radio Tuning Unit";
     
     public static final String ACTION_CLOCK_UTC = "UTC";
     public static final String ACTION_CLOCK_LT = "Local Time";
@@ -269,8 +270,9 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     //private FuelDialog fuel_dialog;
 
     private JRadioButtonMenuItem radio_button_mfd_arpt;
-    private JRadioButtonMenuItem radio_button_mfd_eicas;
     private JRadioButtonMenuItem radio_button_mfd_fpln;
+    private JRadioButtonMenuItem radio_button_mfd_eicas;
+    private JRadioButtonMenuItem radio_button_mfd_rtu;
 
     private JRadioButtonMenuItem radio_button_clock_utc;
     private JRadioButtonMenuItem radio_button_clock_lt;
@@ -1013,8 +1015,6 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // keep a reference
         this.radio_button_mfd_fpln = radio_button_menu_item;
 
-        xhsi_mfd_menu.addSeparator();
-
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_LOWER_EICAS);
         radio_button_menu_item.setToolTipText("Lower EICAS");
         radio_button_menu_item.addActionListener(this);
@@ -1023,6 +1023,15 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         xhsi_mfd_menu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_mfd_eicas = radio_button_menu_item;
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_RTU);
+        radio_button_menu_item.setToolTipText("Radio Tuning Unit");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
+        mfd_group.add(radio_button_menu_item);
+        xhsi_mfd_menu.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_mfd_rtu = radio_button_menu_item;
 
         // add the "MFD" menu to the menubar
         menu_bar.add(xhsi_mfd_menu);
@@ -1282,6 +1291,9 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         } else if (command.equals(XHSISettings.ACTION_MFD_LOWER_EICAS)) {
             mfd_mode = Avionics.MFD_MODE_EICAS;
             this.avionics.set_mfd_mode(mfd_mode);
+        } else if (command.equals(XHSISettings.ACTION_MFD_RTU)) {
+            mfd_mode = Avionics.MFD_MODE_RTU;
+            this.avionics.set_mfd_mode(mfd_mode);
 
         } else if (command.equals(XHSISettings.ACTION_CLOCK_UTC)) {
             clock_mode = Avionics.CLOCK_MODE_UTC;
@@ -1395,10 +1407,12 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_mfd_arpt.setSelected( new_mfd_mode == Avionics.MFD_MODE_ARPT );
         this.radio_button_mfd_fpln.setSelected( new_mfd_mode == Avionics.MFD_MODE_FPLN );
         this.radio_button_mfd_eicas.setSelected( new_mfd_mode == Avionics.MFD_MODE_EICAS );
+        this.radio_button_mfd_rtu.setSelected( new_mfd_mode == Avionics.MFD_MODE_RTU );
         switchable = prefs.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_SWITCHABLE) || prefs.get_preference(XHSIPreferences.PREF_INSTRUMENT_POSITION).equals(XHSIPreferences.INSTRUCTOR);
         this.radio_button_mfd_arpt.setEnabled( switchable );
         this.radio_button_mfd_fpln.setEnabled( switchable );
         this.radio_button_mfd_eicas.setEnabled( switchable );
+        this.radio_button_mfd_rtu.setEnabled( switchable );
 
         boolean new_clock_mode = avionics.clock_shows_utc();
         this.radio_button_clock_utc.setSelected(new_clock_mode);

@@ -300,6 +300,30 @@ public interface Avionics {
 
 
     /**
+     * @return boolean - COM1 is tuned to a 8.33kHz spaced channel
+     */
+    public boolean com1_is_833();
+
+    
+    /**
+     * @return boolean - COM1 STANDBY is tuned to a 8.33kHz spaced channel
+     */
+    public boolean com1_standby_is_833();
+
+    
+    /**
+     * @return boolean - COM2 is tuned to a 8.33kHz spaced channel
+     */
+    public boolean com2_is_833();
+
+    
+    /**
+     * @return boolean - COM2 STANDBY is tuned to a 8.33kHz spaced channel
+     */
+    public boolean com2_standby_is_833();
+
+    
+    /**
      * @return int - MFD mode (0=arpt, 1=fpln, 2=eicas)
      */
     public int get_mfd_mode();

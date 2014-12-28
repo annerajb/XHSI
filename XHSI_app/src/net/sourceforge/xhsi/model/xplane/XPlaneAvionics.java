@@ -280,6 +280,23 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
 
 
+    public boolean com1_is_833() {
+        return ( (int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_RADIOS_ACTUATORS_COM1_FREQUENCY_HZ_833) % 25 ) != 0;
+    }
+    
+    public boolean com1_standby_is_833() {
+        return ( (int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_RADIOS_ACTUATORS_COM1_STANDBY_FREQUENCY_HZ_833) % 25 ) != 0;
+    }
+    
+    public boolean com2_is_833() {
+        return ( (int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_RADIOS_ACTUATORS_COM2_FREQUENCY_HZ_833) % 25 ) != 0;
+    }
+    
+    public boolean com2_standby_is_833() {
+        return ( (int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_RADIOS_ACTUATORS_COM2_STANDBY_FREQUENCY_HZ_833) % 25 ) != 0;
+    }
+    
+    
     public int get_instrument_style() {
 
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
