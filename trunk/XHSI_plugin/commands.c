@@ -69,10 +69,10 @@
 #define MINS_RADIO 0
 #define MINS_BARO 1
 
-//#define MFD_TAXI 0
 #define MFD_ARPT 0
 #define MFD_FPLN 1
 #define MFD_EICAS 2
+#define MFD_RTU 3
 
 
 XPLMCommandRef mode_app;
@@ -330,10 +330,10 @@ XPLMCommandRef chr_reset;
 XPLMCommandRef timer_start_stop;
 XPLMCommandRef timer_reset;
 
-//XPLMCommandRef mfd_mode_taxi;
 XPLMCommandRef mfd_mode_arpt;
 XPLMCommandRef mfd_mode_fpln;
 XPLMCommandRef mfd_mode_eicas;
+XPLMCommandRef mfd_mode_rtu;
 XPLMCommandRef mfd_mode_down;
 XPLMCommandRef mfd_mode_up;
 XPLMCommandRef mfd_mode_cycle;
@@ -1471,12 +1471,12 @@ XPLMCommandCallback_f mfd_handler(XPLMCommandRef inCommand, XPLMCommandPhase inP
         else if ( i == UP )
         {
             i = XPLMGetDatai(mfd_mode) + 1;
-            if (i>2) i = 2;
+            if (i>3) i = 3;
         }
         else if ( i == CYCLE )
         {
             i = XPLMGetDatai(mfd_mode) + 1;
-            if (i>2) i = 0;
+            if (i>3) i = 0;
         }
         XPLMSetDatai(mfd_mode, i);
     }
@@ -2200,14 +2200,14 @@ void registerCommands(void) {
     // xhsi/mfd/...
 
     // MFD mode
-//    mfd_mode_taxi = XPLMCreateCommand("xhsi/mfd/mode_taxi", "MFD mode Taxi Chart");
-//    XPLMRegisterCommandHandler(mfd_mode_taxi, (XPLMCommandCallback_f)mfd_handler, 1, (void *)MFD_TAXI);
     mfd_mode_arpt = XPLMCreateCommand("xhsi/mfd/mode_arpt", "MFD mode Airport Chart");
     XPLMRegisterCommandHandler(mfd_mode_arpt, (XPLMCommandCallback_f)mfd_handler, 1, (void *)MFD_ARPT);
     mfd_mode_fpln = XPLMCreateCommand("xhsi/mfd/mode_fpln", "MFD mode Flight Plan");
     XPLMRegisterCommandHandler(mfd_mode_fpln, (XPLMCommandCallback_f)mfd_handler, 1, (void *)MFD_FPLN);
     mfd_mode_eicas = XPLMCreateCommand("xhsi/mfd/mode_eicas", "MFD mode Lower EICAS");
     XPLMRegisterCommandHandler(mfd_mode_eicas, (XPLMCommandCallback_f)mfd_handler, 1, (void *)MFD_EICAS);
+    mfd_mode_eicas = XPLMCreateCommand("xhsi/mfd/mode_rtu", "MFD mode Radio Tuning Unit");
+    XPLMRegisterCommandHandler(mfd_mode_eicas, (XPLMCommandCallback_f)mfd_handler, 1, (void *)MFD_RTU);
     mfd_mode_down = XPLMCreateCommand("xhsi/mfd/mode_down", "Previous MFD mode");
     XPLMRegisterCommandHandler(mfd_mode_down, (XPLMCommandCallback_f)mfd_handler, 1, (void *)DOWN);
     mfd_mode_up = XPLMCreateCommand("xhsi/mfd/mode_up", "Next MFD mode");
@@ -2573,10 +2573,10 @@ void unregisterCommands(void) {
 
 
     // MFD mode
-//    XPLMUnregisterCommandHandler(mfd_mode_taxi, (XPLMCommandCallback_f)mfd_handler, 1, (void *)MFD_TAXI);
     XPLMUnregisterCommandHandler(mfd_mode_arpt, (XPLMCommandCallback_f)mfd_handler, 1, (void *)MFD_ARPT);
     XPLMUnregisterCommandHandler(mfd_mode_fpln, (XPLMCommandCallback_f)mfd_handler, 1, (void *)MFD_FPLN);
     XPLMUnregisterCommandHandler(mfd_mode_eicas, (XPLMCommandCallback_f)mfd_handler, 1, (void *)MFD_EICAS);
+    XPLMUnregisterCommandHandler(mfd_mode_rtu, (XPLMCommandCallback_f)mfd_handler, 1, (void *)MFD_RTU);
     XPLMUnregisterCommandHandler(mfd_mode_down, (XPLMCommandCallback_f)mfd_handler, 1, (void *)DOWN);
     XPLMUnregisterCommandHandler(mfd_mode_up, (XPLMCommandCallback_f)mfd_handler, 1, (void *)UP);
     XPLMUnregisterCommandHandler(mfd_mode_cycle, (XPLMCommandCallback_f)mfd_handler, 1, (void *)CYCLE);
