@@ -93,7 +93,7 @@ public class RadioTuningUnit extends MFDSubcomponent {
 
     private void drawRadios(Graphics2D g2) {
 
-        g2.setColor(mfd_gc.markings_color);
+        g2.setColor(mfd_gc.dim_markings_color);
         g2.setFont(mfd_gc.font_xxl);
 
         int x_l = mfd_gc.panel_rect.x + mfd_gc.mfd_size*25/1000;
@@ -104,10 +104,10 @@ public class RadioTuningUnit extends MFDSubcomponent {
         int y_4 = y_3 + mfd_gc.mfd_size/4;
         int x_w = mfd_gc.mfd_size*450/1000;
         int y_h = mfd_gc.mfd_size*175/1000;
-        int r = mfd_gc.mfd_size*35/1000;
+        int r = mfd_gc.mfd_size*50/1000;
         
         Stroke original_stroke = g2.getStroke();
-        g2.setStroke(new BasicStroke(3.0f * mfd_gc.scaling_factor));
+        g2.setStroke(new BasicStroke(1.0f * mfd_gc.scaling_factor));
 
         g2.drawRoundRect(x_l, y_1, x_w, y_h, r, r);
         g2.drawRoundRect(x_r, y_1, x_w, y_h, r, r);

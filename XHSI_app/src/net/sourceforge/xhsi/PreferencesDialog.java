@@ -156,7 +156,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private String fuel_units[] = { XHSIPreferences.FUEL_UNITS_SWITCHABLE, XHSIPreferences.FUEL_UNITS_KG, XHSIPreferences.FUEL_UNITS_LBS, XHSIPreferences.FUEL_UNITS_USG, XHSIPreferences.FUEL_UNITS_LTR };
 
     private JComboBox mfd_mode_combobox;
-    private String mfd_modes[] = { XHSIPreferences.MFD_MODE_SWITCHABLE, /*XHSIPreferences.MFD_MODE_TAXI_CHART,*/ XHSIPreferences.MFD_MODE_ARPT_CHART , XHSIPreferences.MFD_MODE_FPLN, XHSIPreferences.MFD_MODE_LOWER_EICAS };
+    private String mfd_modes[] = { XHSIPreferences.MFD_MODE_SWITCHABLE, XHSIPreferences.MFD_MODE_ARPT_CHART , XHSIPreferences.MFD_MODE_FPLN, XHSIPreferences.MFD_MODE_LOWER_EICAS, XHSIPreferences.MFD_MODE_RTU };
     private JComboBox arpt_chart_color_combobox;
     private String arpt_chart_colors[] = { XHSIPreferences.ARPT_DIAGRAM_COLOR_AUTO, XHSIPreferences.ARPT_DIAGRAM_COLOR_DAY, XHSIPreferences.ARPT_DIAGRAM_COLOR_NIGHT };
 
@@ -1577,6 +1577,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.mfd_mode_combobox.addItem("Airport Chart");
         this.mfd_mode_combobox.addItem("Flight Plan");
         this.mfd_mode_combobox.addItem("Lower EICAS");
+        this.mfd_mode_combobox.addItem("RTU Display");
         this.mfd_mode_combobox.addActionListener(this);
         mfd_options_panel.add(this.mfd_mode_combobox, cons);
         dialog_line++;

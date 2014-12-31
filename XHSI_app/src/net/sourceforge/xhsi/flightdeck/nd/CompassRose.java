@@ -82,8 +82,8 @@ public class CompassRose extends NDSubcomponent {
 
                 // Compass rose for all modes except PLAN
 
-                int min_visible_heading = round_to_ten(this.aircraft.track() - nd_gc.half_view_angle);
-                int max_visible_heading = round_to_ten(this.aircraft.track() + nd_gc.half_view_angle) + 5;
+                int min_visible_heading = round_to_ten(this.aircraft.track() - nd_gc.half_view_angle)      - 10;
+                int max_visible_heading = round_to_ten(this.aircraft.track() + nd_gc.half_view_angle) + 5  + 10;
 
                 float map_up;
                 if ( nd_gc.hdg_up ) {
@@ -163,6 +163,12 @@ public class CompassRose extends NDSubcomponent {
                     g2.drawLine(nd_gc.map_center_x - nd_gc.rose_radius - mark_length, nd_gc.map_center_y, nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y);
                     g2.drawLine(nd_gc.map_center_x + nd_gc.rose_radius, nd_gc.map_center_y, nd_gc.map_center_x + nd_gc.rose_radius + mark_length, nd_gc.map_center_y);
                     g2.setTransform(original_at);
+                } else {
+                    // in expanded mode, clip left and right
+                    if ( this.preferences.get_draw_only_inside_rose() ) {
+                        g2.clearRect(0, 0, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, nd_gc.frame_size.height);
+                        g2.clearRect(nd_gc.map_center_x + nd_gc.sixty_deg_hlimit, 0, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, nd_gc.frame_size.height);
+                    }
                 }
 
             } else {

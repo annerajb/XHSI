@@ -161,6 +161,7 @@ public class XHSIPreferences {
     public static final String MFD_MODE_ARPT_CHART = "artp_chart";
     public static final String MFD_MODE_FPLN = "fpln";
     public static final String MFD_MODE_LOWER_EICAS = "lower_eicas";
+    public static final String MFD_MODE_RTU = "rtu";
 
     // for PREF_ARPT_CHART_COLOR
     public static final String ARPT_DIAGRAM_COLOR_AUTO = "auto";

@@ -91,13 +91,14 @@ public class NDComponent extends Component implements Observer, PreferencesObser
         subcomponents.add(new CDUFixHolding(model_factory, nd_gc, this));
         subcomponents.add(new PositionTrendVector(model_factory, nd_gc));
         subcomponents.add(new ClipRoseArea(model_factory, nd_gc, this));
+        subcomponents.add(new APHeading(model_factory, nd_gc));
         subcomponents.add(new CompassRose(model_factory, nd_gc));
         subcomponents.add(new GS(model_factory, nd_gc, this));
         subcomponents.add(new ForegroundMessages(model_factory, nd_gc, this));
         subcomponents.add(new SpeedsLabel(model_factory, nd_gc));
         subcomponents.add(new DestinationLabel(model_factory, nd_gc, this));
         subcomponents.add(new HeadingLabel(model_factory, nd_gc, this));
-        subcomponents.add(new APHeading(model_factory, nd_gc));
+        // moved up subcomponents.add(new APHeading(model_factory, nd_gc));
         subcomponents.add(new RadioHeadingArrows(model_factory, nd_gc));
         subcomponents.add(new RadioLabel(model_factory, nd_gc, this));
         subcomponents.add(new RefSourceLabel(model_factory, nd_gc, this));
