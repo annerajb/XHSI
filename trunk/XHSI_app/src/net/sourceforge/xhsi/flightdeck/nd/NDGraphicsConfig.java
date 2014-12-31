@@ -87,6 +87,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int big_tick_length;
     public int small_tick_length;
     public Area inner_rose_area;
+    public int sixty_deg_hlimit;
 
     private int map_mode;
     private int map_submode;
@@ -231,23 +232,27 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             this.big_tick_length = (int) (20 * shrink_scaling_factor);
             this.small_tick_length = this.big_tick_length / 3;
 
-            if (this.pixel_distance_plane_bottom_screen >= (this.rose_radius - this.big_tick_length)) {
-                // Complete rose
-                this.half_view_angle = 180.0f;
-            } else if (this.pixel_distance_plane_lower_left_corner > (this.rose_radius - this.big_tick_length)) {
-                // Rose visible below aircraft position
-                half_view_angle = (float) (180.0f - Math.toDegrees(Math.acos((1.0f * pixel_distance_plane_bottom_screen) / (1.0f * (this.rose_radius - this.big_tick_length)))));
-            } else {
-                // Rose visible only above aircraft position
-                half_view_angle = (float) (90.0f - Math.toDegrees(Math.acos((1.0f * this.frame_size.width) / (2.0f * (this.rose_radius - this.big_tick_length)))));
-            }
+            // what is all this about?
+            //if (this.pixel_distance_plane_bottom_screen >= (this.rose_radius - this.big_tick_length)) {
+            //    // Complete rose
+            //    this.half_view_angle = 180.0f;
+            //} else if (this.pixel_distance_plane_lower_left_corner > (this.rose_radius - this.big_tick_length)) {
+            //    // Rose visible below aircraft position
+            //    half_view_angle = (float) (180.0f - Math.toDegrees(Math.acos((1.0f * pixel_distance_plane_bottom_screen) / (1.0f * (this.rose_radius - this.big_tick_length)))));
+            //} else {
+            //    // Rose visible only above aircraft position
+            //    half_view_angle = (float) (90.0f - Math.toDegrees(Math.acos((1.0f * this.frame_size.width) / (2.0f * (this.rose_radius - this.big_tick_length)))));
+            //}
+            // let's keep it simple!
+            half_view_angle = 60.0f;
 
-            rose_thickness = 1;
+            rose_thickness = 2;
             this.inner_rose_area = new Area(new Ellipse2D.Float(
                     map_center_x - rose_radius + rose_thickness,
                     map_center_y - rose_radius + rose_thickness,
                     (rose_radius * 2) - (rose_thickness * 2),
                     (rose_radius * 2) - (rose_thickness * 2)));
+            this.sixty_deg_hlimit = (int)(Math.sin(Math.PI/3.0) * rose_radius);
 
 
             // clear the flags

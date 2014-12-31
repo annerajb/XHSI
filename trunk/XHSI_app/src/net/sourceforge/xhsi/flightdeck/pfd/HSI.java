@@ -60,6 +60,7 @@ public class HSI extends PFDSubcomponent {
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     private DecimalFormat degrees_formatter;
+    private DecimalFormat hms_formatter;
     private DecimalFormat integer_formatter;
     private DecimalFormat one_decimal_formatter;
     private DecimalFormatSymbols format_symbols;
@@ -84,6 +85,7 @@ public class HSI extends PFDSubcomponent {
         super(model_factory, hsi_gc, parent_component);
 
         degrees_formatter = new DecimalFormat("000");
+        hms_formatter = new DecimalFormat("00");
         integer_formatter = new DecimalFormat("0");
         one_decimal_formatter = new DecimalFormat("0.0");
         format_symbols = one_decimal_formatter.getDecimalFormatSymbols();
@@ -102,6 +104,7 @@ public class HSI extends PFDSubcomponent {
             drawHSISource(g2);
             drawHSI(g2);
             drawWind(g2);
+            drawTime(g2);
         }
     }
 
@@ -641,6 +644,45 @@ public class HSI extends PFDSubcomponent {
             g2.setFont(pfd_gc.font_s);
             g2.drawString(dest_id, src_x, src_y);
 
+        }
+
+    }
+    
+    
+    private void drawTime(Graphics2D g2) {
+        
+        if ( pfd_gc.panel_rect.height*75 > pfd_gc.panel_rect.width*100 ) {
+
+            String time_label = "ERR";
+            String time_str = "99:99";
+            float chr_time = this.aircraft.timer_elapsed_time();
+
+            if ( chr_time == 0.0f ) {
+
+                time_label = this.avionics.clock_shows_utc() ? "UTC" : "LT";
+                int current_time = this.avionics.clock_shows_utc() ? (int)this.aircraft.sim_time_zulu() : (int)this.aircraft.sim_time_local();
+                int hh = current_time / 3600;
+                int mm = ( current_time / 60 ) % 60;
+                int ss = current_time % 60;
+                time_str = hms_formatter.format(hh) + ":" + hms_formatter.format(mm);
+
+            } else {
+
+                time_label = "CHR";
+                int timer = (int)chr_time;
+                int mins = timer / 60 % 60;
+                int secs = timer % 60;
+                time_str = hms_formatter.format(mins) + ":" + hms_formatter.format(secs);
+
+            }
+
+            g2.setColor(pfd_gc.markings_color);
+            g2.setFont(pfd_gc.font_m);
+            int time_x = pfd_gc.panel_rect.x + pfd_gc.panel_rect.width - pfd_gc.digit_width_m;
+            int time_y = pfd_gc.panel_rect.y + pfd_gc.panel_rect.height - pfd_gc.line_height_m;
+            g2.drawString(time_label, time_x - pfd_gc.get_text_width(g2, pfd_gc.font_m, time_label), time_y - pfd_gc.line_height_m);
+            g2.drawString(time_str, time_x - pfd_gc.get_text_width(g2, pfd_gc.font_m, time_str), time_y);
+            
         }
 
     }

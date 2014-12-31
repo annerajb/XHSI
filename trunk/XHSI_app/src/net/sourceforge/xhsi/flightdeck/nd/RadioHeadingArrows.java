@@ -27,6 +27,7 @@ package net.sourceforge.xhsi.flightdeck.nd;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 
@@ -46,6 +47,9 @@ public class RadioHeadingArrows extends NDSubcomponent {
     NavigationRadio selected_nav_radio2;
 
     AffineTransform original_at;
+    Shape original_clip;
+    boolean clipped;
+    
 
     public RadioHeadingArrows(ModelFactory model_factory, NDGraphicsConfig hsi_gc) {
         super(model_factory, hsi_gc);
@@ -55,6 +59,11 @@ public class RadioHeadingArrows extends NDSubcomponent {
 
         if ( nd_gc.powered && ! nd_gc.mode_plan && ( ! avionics.efis_shows_pos() || ( nd_gc.mode_classic_hsi ) ) ) {
 
+            if ( this.preferences.get_draw_only_inside_rose() && ! nd_gc.mode_centered ) {
+                clip(g2, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, 0, nd_gc.sixty_deg_hlimit*2, nd_gc.frame_size.height);
+                clipped = true;
+            } else clipped = false;
+                
             int arrow_length = (int) Math.min(60, nd_gc.shrink_scaling_factor * 60);
             int arrow_base_width = (int) Math.min(25, nd_gc.shrink_scaling_factor * 25);
             float drift;
@@ -98,6 +107,8 @@ public class RadioHeadingArrows extends NDSubcomponent {
 
         }
 
+        if ( clipped ) unclip(g2);
+        
     }
 
 
@@ -116,6 +127,17 @@ public class RadioHeadingArrows extends NDSubcomponent {
     }
 
 
+    private void clip(Graphics2D g2, int clip_x, int clip_y, int clip_w, int clip_h) {
+        this.original_clip = g2.getClip();
+        g2.setClip(clip_x, clip_y, clip_w, clip_h);
+    }
+    
+    
+    private void unclip(Graphics2D g2) {
+        g2.setClip(original_clip);
+    }
+    
+    
     private void draw_nav1_arrow(Graphics2D g2, float deflection, int length, int base_width) {
         rotate(g2, deflection);
         RadioHeadingArrowsHelper.draw_nav1_forward_arrow(g2, nd_gc.map_center_x, nd_gc.rose_y_offset, length, base_width);

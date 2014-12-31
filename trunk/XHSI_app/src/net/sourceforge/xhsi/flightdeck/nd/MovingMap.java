@@ -1134,7 +1134,8 @@ public class MovingMap extends NDSubcomponent {
             if ( nd_gc.mode_centered || nd_gc.mode_plan ) {
                 g2.drawOval( nd_gc.map_center_x - radius, nd_gc.map_center_y - radius, radius*2, radius*2 );
             } else {
-                g2.draw(new Arc2D.Float( nd_gc.map_center_x - radius, nd_gc.map_center_y - radius, radius*2, radius*2, 0, 180.0f, Arc2D.OPEN ) );
+//                g2.draw(new Arc2D.Float( nd_gc.map_center_x - radius, nd_gc.map_center_y - radius, radius*2, radius*2, 0.0f, 180.0f, Arc2D.OPEN ) );
+                g2.draw(new Arc2D.Float( nd_gc.map_center_x - radius, nd_gc.map_center_y - radius, radius*2, radius*2, 30.0f, 120.0f, Arc2D.OPEN ) );
             }
         }
 

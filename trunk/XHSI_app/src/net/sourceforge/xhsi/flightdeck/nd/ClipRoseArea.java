@@ -59,6 +59,10 @@ public class ClipRoseArea extends NDSubcomponent {
                 panel.subtract(nd_gc.inner_rose_area);
                 g2.setColor(nd_gc.background_color);
                 g2.fill(panel);
+                if ( ! nd_gc.mode_plan && ! nd_gc.mode_centered ) {
+                    g2.clearRect(0, 0, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, nd_gc.frame_size.height);
+                    g2.clearRect(nd_gc.map_center_x + nd_gc.sixty_deg_hlimit, 0, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, nd_gc.frame_size.height);
+                }
             } else {
                 // leave at least the top of the window uncluttered
                 g2.clearRect(0,0, nd_gc.frame_size.width, nd_gc.rose_y_offset);

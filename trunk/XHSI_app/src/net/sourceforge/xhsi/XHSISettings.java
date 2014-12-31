@@ -153,7 +153,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_MFD_ARPT_CHART = "Airport Chart";
     public static final String ACTION_MFD_FPLN = "Flight Plan";
     public static final String ACTION_MFD_LOWER_EICAS = "Lower EICAS";
-    public static final String ACTION_MFD_RTU = "Radio Tuning Unit";
+    public static final String ACTION_MFD_RTU = "RTU Display";
     
     public static final String ACTION_CLOCK_UTC = "UTC";
     public static final String ACTION_CLOCK_LT = "Local Time";
@@ -1025,7 +1025,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_mfd_eicas = radio_button_menu_item;
 
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_RTU);
-        radio_button_menu_item.setToolTipText("Radio Tuning Unit");
+        radio_button_menu_item.setToolTipText("Radio Tuning Unit Display");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
         mfd_group.add(radio_button_menu_item);
