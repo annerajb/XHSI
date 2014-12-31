@@ -86,6 +86,7 @@ public class XHSIPreferences {
     public static final String PREF_DRAW_RUNWAYS = "draw.runways";
     public static final String PREF_AIRBUS_MODES = "airbus.modes";
     public static final String PREF_DRAW_RANGE_ARCS = "draw.range.arcs";
+    public static final String PREF_LIMIT_ARCS_60DEG = "nd.limit.arcs.60deg";
     public static final String PREF_MODE_MISMATCH_CAUTION = "mode.mismatch.caution";
     public static final String PREF_TCAS_ALWAYS_ON = "tcas.always.on";
     public static final String PREF_CLASSIC_HSI = "classic.hsi";
@@ -328,7 +329,6 @@ public class XHSIPreferences {
      *
      */
     public boolean get_panel_active(int i) {
-//logger.warning("Panel "+i+"="+get_preference(PREF_DU_PREPEND + i + PREF_DU_ACTIVE));
         return get_preference(PREF_DU_PREPEND + i + PREF_DU_ACTIVE).equalsIgnoreCase("true");
     }
 
@@ -544,6 +544,14 @@ public class XHSIPreferences {
      */
     public boolean get_draw_range_arcs() {
         return get_preference(PREF_DRAW_RANGE_ARCS).equalsIgnoreCase("true");
+    }
+
+    /**
+     * @return            - Limit the arcs in Expanded mode to 60 degrees
+     *
+     */
+    public boolean get_limit_arcs_at_60() {
+        return get_preference(PREF_LIMIT_ARCS_60DEG).equalsIgnoreCase("true");
     }
 
     /**
@@ -1044,6 +1052,11 @@ public class XHSIPreferences {
 
         if ( ! this.preferences.containsKey(PREF_DRAW_RANGE_ARCS) ) {
             this.preferences.setProperty(PREF_DRAW_RANGE_ARCS, "true");
+            this.unsaved_changes = true;
+        }
+
+        if ( ! this.preferences.containsKey(PREF_LIMIT_ARCS_60DEG) ) {
+            this.preferences.setProperty(PREF_LIMIT_ARCS_60DEG, "false");
             this.unsaved_changes = true;
         }
 
