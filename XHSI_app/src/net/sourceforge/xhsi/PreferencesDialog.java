@@ -114,6 +114,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox draw_bezier_pavements_checkbox;
     private JCheckBox airbus_modes_checkbox;
     private JCheckBox draw_range_arcs_checkbox;
+    private JCheckBox limit_arcs_60deg_checkbox;
     private JCheckBox use_more_color_checkbox;
     private JCheckBox mode_mismatch_caution_checkbox;
     private JCheckBox tcas_always_on_checkbox;
@@ -308,6 +309,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.draw_rwy_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_DRAW_RUNWAYS).equalsIgnoreCase("true"));
 
         this.draw_range_arcs_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_DRAW_RANGE_ARCS).equalsIgnoreCase("true"));
+
+        this.limit_arcs_60deg_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_LIMIT_ARCS_60DEG).equalsIgnoreCase("true"));
 
         this.mode_mismatch_caution_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_MODE_MISMATCH_CAUTION).equalsIgnoreCase("true"));
 
@@ -1356,6 +1359,20 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         nd_options_panel.add(this.draw_range_arcs_checkbox, cons);
         dialog_line++;
 
+        // Limit arcs in expanded mode to 60 degrees
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        nd_options_panel.add(new JLabel("Limit arcs in expanded mode to 60\u00B0", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.limit_arcs_60deg_checkbox = new JCheckBox("  (applies only with option \"Draw map only inside the compass rose\" set)");
+        nd_options_panel.add(this.limit_arcs_60deg_checkbox, cons);
+        dialog_line++;
+
         // Draw runways at lowest map ranges
         cons.gridx = 0;
         cons.gridwidth = 1;
@@ -1863,6 +1880,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
             if ( this.draw_range_arcs_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_DRAW_RANGE_ARCS).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_DRAW_RANGE_ARCS, this.draw_range_arcs_checkbox.isSelected()?"true":"false");
+
+            if ( this.limit_arcs_60deg_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_LIMIT_ARCS_60DEG).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_LIMIT_ARCS_60DEG, this.limit_arcs_60deg_checkbox.isSelected()?"true":"false");
 
             if ( this.mode_mismatch_caution_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_MODE_MISMATCH_CAUTION).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_MODE_MISMATCH_CAUTION, this.mode_mismatch_caution_checkbox.isSelected()?"true":"false");

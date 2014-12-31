@@ -50,8 +50,8 @@ public class CompassRose extends NDSubcomponent {
     }
 
 
-    public int round_to_ten(float number) {
-        return Math.round(number / 10) * 10;
+    public int round_to_five(float number) {
+        return Math.round(number / 5) * 5;
     }
 
 
@@ -66,6 +66,12 @@ public class CompassRose extends NDSubcomponent {
                 hdg_text_height = (int) (nd_gc.get_text_height(g2, nd_gc.font_medium)*0.8f);
             }
 
+            float left_right_angle = nd_gc.half_view_angle;
+            if ( ! nd_gc.mode_plan && ! nd_gc.mode_centered && this.preferences.get_draw_only_inside_rose() && this.preferences.get_limit_arcs_at_60() ) {
+                left_right_angle = 60.0f;
+            }
+            if ( nd_gc.mode_centered ) left_right_angle = 180.0f;
+            
             g2.setColor(nd_gc.markings_color);
             if ( ! nd_gc.mode_centered ) {
                 g2.drawArc(
@@ -73,8 +79,8 @@ public class CompassRose extends NDSubcomponent {
                         nd_gc.map_center_y - nd_gc.rose_radius,
                         nd_gc.rose_radius*2,
                         nd_gc.rose_radius*2,
-                        (int)(nd_gc.half_view_angle + 90),
-                        (int)(nd_gc.half_view_angle * -2)
+                        (int)(left_right_angle + 90.0f),
+                        (int)(left_right_angle * -2.0f)
                 );
             }
 
@@ -82,8 +88,8 @@ public class CompassRose extends NDSubcomponent {
 
                 // Compass rose for all modes except PLAN
 
-                int min_visible_heading = round_to_ten(this.aircraft.track() - nd_gc.half_view_angle)      - 10;
-                int max_visible_heading = round_to_ten(this.aircraft.track() + nd_gc.half_view_angle) + 5  + 10;
+                int min_visible_heading = round_to_five(this.aircraft.track() - left_right_angle + 2.5f);
+                int max_visible_heading = round_to_five(this.aircraft.track() + left_right_angle - 2.5f);
 
                 float map_up;
                 if ( nd_gc.hdg_up ) {
@@ -97,7 +103,7 @@ public class CompassRose extends NDSubcomponent {
                     map_up = 0.0f;
                 }
 
-                double rotation_offset = (-1 * nd_gc.half_view_angle)  + (min_visible_heading - (map_up - nd_gc.half_view_angle));
+                double rotation_offset = (-1.0f * left_right_angle)  + (min_visible_heading - (map_up - left_right_angle));
 
                 AffineTransform original_at = g2.getTransform();
 
@@ -165,7 +171,7 @@ public class CompassRose extends NDSubcomponent {
                     g2.setTransform(original_at);
                 } else {
                     // in expanded mode, clip left and right
-                    if ( this.preferences.get_draw_only_inside_rose() ) {
+                    if ( this.preferences.get_draw_only_inside_rose() && this.preferences.get_limit_arcs_at_60() ) {
                         g2.clearRect(0, 0, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, nd_gc.frame_size.height);
                         g2.clearRect(nd_gc.map_center_x + nd_gc.sixty_deg_hlimit, 0, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, nd_gc.frame_size.height);
                     }

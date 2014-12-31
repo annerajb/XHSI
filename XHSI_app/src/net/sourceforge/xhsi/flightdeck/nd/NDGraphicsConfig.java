@@ -244,7 +244,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             //    half_view_angle = (float) (90.0f - Math.toDegrees(Math.acos((1.0f * this.frame_size.width) / (2.0f * (this.rose_radius - this.big_tick_length)))));
             //}
             // let's keep it simple!
-            half_view_angle = 60.0f;
+            half_view_angle = 90.0f;
 
             rose_thickness = 2;
             this.inner_rose_area = new Area(new Ellipse2D.Float(
