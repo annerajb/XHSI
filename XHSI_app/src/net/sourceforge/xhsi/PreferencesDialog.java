@@ -4,7 +4,7 @@
  * Dialog for setting preferences.
  * 
  * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
- * Copyright (C) 2010-2014  Marc Rogiers (marrog.123@gmail.com)
+ * Copyright (C) 2010-2015  Marc Rogiers (marrog.123@gmail.com)
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -439,6 +439,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.ipadx = 10;
         cons.ipady = 0;
         cons.insets = new Insets(2, 5, 0, 0);
+        cons.gridwidth = 1;
 
         int dialog_line = 0;
 
@@ -468,7 +469,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridx = 0;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
-        system_panel.add(new JLabel("AptNav Resources directory", JLabel.TRAILING), cons);
+        system_panel.add(new JLabel("X-Plane directory", JLabel.TRAILING), cons);
         cons.gridx = 2;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
@@ -483,12 +484,12 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         browse_button.addActionListener(this);
         system_panel.add(browse_button, cons);
         dialog_line++;
-        cons.gridx = 0;
+        
+        cons.gridx = 2;
         cons.gridy = dialog_line;
-        cons.gridwidth = 3;
-        cons.anchor = GridBagConstraints.EAST;
-        system_panel.add(new JLabel("(can be X-Plane base directory, or directory where AptNav20yymmXP900.zip has been unzipped)", JLabel.TRAILING), cons);
         cons.gridwidth = 1;
+        cons.anchor = GridBagConstraints.WEST;
+        system_panel.add(new JLabel("(can be the local X-Plane directory, or shared over the network)", JLabel.TRAILING), cons);
         dialog_line++;
 
         // Empty line for spacing
@@ -514,12 +515,30 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         dialog_line++;
         cons.gridx = 2;
         cons.gridy = dialog_line;
-        //cons.gridwidth = 3;
+        cons.gridwidth = 1;
         cons.anchor = GridBagConstraints.WEST;
         system_panel.add(new JLabel("(must match XHSI_plugin's Destination UDP port)", JLabel.TRAILING), cons);
-        cons.gridwidth = 1;
         dialog_line++;
 
+        // Empty line for spacing
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        system_panel.add(new JLabel(" ", JLabel.TRAILING), cons);
+        dialog_line++;
+
+        // Multicast
+        cons.gridx = 0;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        system_panel.add(new JLabel("Enable multicast (*)", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.multicast_checkbox = new JCheckBox("  (experimental)");
+        system_panel.add(this.multicast_checkbox, cons);
+        dialog_line++;
+        
         // Multicast group
         cons.gridx = 0;
         cons.gridy = dialog_line;
@@ -536,25 +555,11 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         dialog_line++;
         cons.gridx = 2;
         cons.gridy = dialog_line;
-        //cons.gridwidth = 3;
-        cons.anchor = GridBagConstraints.WEST;
-        system_panel.add(new JLabel("(please choose a local range address inside 239.xxx.xxx.xxx)", JLabel.TRAILING), cons);
         cons.gridwidth = 1;
-        dialog_line++;
-        
-        // Multicast group
-        cons.gridx = 0;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.EAST;
-        system_panel.add(new JLabel("Enable multicast", JLabel.TRAILING), cons);
-        cons.gridx = 2;
-        cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
-        this.multicast_checkbox = new JCheckBox("  (experimental - restart requiered)");
-        system_panel.add(this.multicast_checkbox, cons);
+        system_panel.add(new JLabel("(choose a multicast group address in the 239.xxx.yyy.zzz range)", JLabel.TRAILING), cons);
         dialog_line++;
-        
-        
+                
         // Empty line for spacing
         cons.gridx = 0;
         cons.gridwidth = 1;
@@ -572,15 +577,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.anchor = GridBagConstraints.WEST;
         this.loglevel_combobox = new JComboBox();
         for ( int i=0; i!=loglevels.length; i++) this.loglevel_combobox.addItem( loglevels[i] );
-//        this.loglevel_combobox.addItem("Off");
-//        this.loglevel_combobox.addItem("Severe");
-//        this.loglevel_combobox.addItem("Warning");
-//        this.loglevel_combobox.addItem("Info");
-//        this.loglevel_combobox.addItem("Configuration");
-//        this.loglevel_combobox.addItem("Fine");
-//        this.loglevel_combobox.addItem("Finer");
-//        this.loglevel_combobox.addItem("Finest");
-//        this.loglevel_combobox.addActionListener(this);
         system_panel.add(this.loglevel_combobox, cons);
         dialog_line++;
 
@@ -676,7 +672,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridwidth = 3;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
-        this.panel_locked_checkbox = new JCheckBox(" (values below...)");
+        this.panel_locked_checkbox = new JCheckBox("  (values below...)");
         this.panel_locked_checkbox.setActionCommand("locktoggle");
         this.panel_locked_checkbox.addActionListener(this);
         windows_panel.add(this.panel_locked_checkbox, cons);
@@ -812,7 +808,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridwidth = 3;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
-        //windows_panel.add(crewmembers_panel, cons);
         windows_panel.add(sub_panel, cons);
         dialog_line++;
 
@@ -854,6 +849,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
         graphics_panel.add(new JLabel("Border style", JLabel.TRAILING), cons);
+        
         cons.gridx = 2;
         cons.gridwidth = 3;
         cons.gridy = dialog_line;
@@ -873,6 +869,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
         graphics_panel.add(new JLabel("Border color", JLabel.TRAILING), cons);
+        
         cons.gridx = 2;
         cons.gridwidth = 3;
         cons.gridy = dialog_line;
@@ -897,6 +894,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
         graphics_panel.add(new JLabel("Use more color nuances", JLabel.TRAILING), cons);
+        
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
@@ -911,6 +909,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
         graphics_panel.add(new JLabel("Bold fonts", JLabel.TRAILING), cons);
+        
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
@@ -925,6 +924,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
         graphics_panel.add(new JLabel("Anti-aliasing", JLabel.TRAILING), cons);
+        
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
@@ -939,6 +939,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
         graphics_panel.add(new JLabel("Draw taxiways and aprons using bezier curves", JLabel.TRAILING), cons);
+        
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
@@ -969,17 +970,17 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.ipadx = 10;
         cons.ipady = 0;
         cons.insets = new Insets(2, 5, 0, 0);
+        cons.gridwidth = 1;
 
         int dialog_line = 0;
 
         // instrument style
         cons.gridx = 0;
-        cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
         avionics_options_panel.add(new JLabel("Instrument style", JLabel.TRAILING), cons);
+        
         cons.gridx = 2;
-        cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
         this.instrument_style_combobox = new JComboBox();
@@ -992,31 +993,29 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         
         // Empty line for spacing
         cons.gridx = 0;
-        cons.gridwidth = 1;
         cons.gridy = dialog_line;
         avionics_options_panel.add(new JLabel(" ", JLabel.TRAILING), cons);
         dialog_line++;
 
         // Minimum runway length
         cons.gridx = 0;
-        cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
         avionics_options_panel.add(new JLabel("Airport minimum runway length", JLabel.TRAILING), cons);
+        
         cons.gridx = 2;
-        cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
         this.min_rwy_textfield = new JTextField(4);
         avionics_options_panel.add(this.min_rwy_textfield, cons);
         dialog_line++;
+        
         cons.gridx = 0;
-        cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
         avionics_options_panel.add(new JLabel("Runway length units", JLabel.TRAILING), cons);
+        
         cons.gridx = 2;
-        cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
         this.rwy_units_combobox = new JComboBox();
@@ -1025,16 +1024,15 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.rwy_units_combobox.addActionListener(this);
         avionics_options_panel.add(this.rwy_units_combobox, cons);
         dialog_line++;
-        cons.gridx = 0;
-        cons.gridwidth = 3;
+        
+        cons.gridx = 2;
         cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.EAST;
+        cons.anchor = GridBagConstraints.WEST;
         avionics_options_panel.add(new JLabel("(override of minimum runway length and units possible with datarefs)", JLabel.TRAILING), cons);
         dialog_line++;
 
         // Empty line for spacing
         cons.gridx = 0;
-        cons.gridwidth = 1;
         cons.gridy = dialog_line;
         avionics_options_panel.add(new JLabel(" ", JLabel.TRAILING), cons);
         dialog_line++;
@@ -1044,6 +1042,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
         avionics_options_panel.add(new JLabel("Use battery and avionics power", JLabel.TRAILING), cons);
+        
         cons.gridx = 2;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
@@ -1053,19 +1052,17 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         // Empty line for spacing
         cons.gridx = 0;
-        cons.gridwidth = 1;
         cons.gridy = dialog_line;
         avionics_options_panel.add(new JLabel(" ", JLabel.TRAILING), cons);
         dialog_line++;
 
         // Auto-set CRS for LOC/ILS
         cons.gridx = 0;
-        cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
         avionics_options_panel.add(new JLabel("Auto-sync CRS for LOC/ILS", JLabel.TRAILING), cons);
+        
         cons.gridx = 2;
-        cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
         this.auto_frontcourse_checkbox = new JCheckBox("  (set the CRS (=OBS) automatically to the Localizer or ILS frontcourse)");
@@ -1074,7 +1071,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         // Empty line for spacing
         cons.gridx = 0;
-        cons.gridwidth = 1;
         cons.gridy = dialog_line;
         avionics_options_panel.add(new JLabel(" ", JLabel.TRAILING), cons);
         dialog_line++;
@@ -1084,6 +1080,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
         avionics_options_panel.add(new JLabel("HSI source", JLabel.TRAILING), cons);
+        
         cons.gridx = 2;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
