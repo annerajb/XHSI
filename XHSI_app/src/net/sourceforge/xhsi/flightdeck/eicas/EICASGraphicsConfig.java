@@ -140,13 +140,14 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
         if (this.resized
                 || this.reconfig
                 || (this.powered != power)
+                || (this.style != instrument_style)
             ) {
             // one of the settings has been changed
 
-            // remember the avionics power settings
+            // remember the new settings
             this.powered = power;
+            this.style = instrument_style;
 
-//logger.warning("EICAS update_config");
             // general instrument config
             super.update_config(g2);
 

@@ -11,6 +11,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSISettings;
+import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 
 public class ECAM_Engines extends EICASSubcomponent {
@@ -49,7 +50,7 @@ public class ECAM_Engines extends EICASSubcomponent {
 
     public void paint(Graphics2D g2) {
 
-        if ( eicas_gc.airbus_style && eicas_gc.powered && ( this.aircraft.num_engines() > 0 ) ) {
+        if ( ( this.avionics.get_instrument_style() == Avionics.STYLE_AIRBUS ) && eicas_gc.powered && ( this.aircraft.num_engines() > 0 ) ) {
 //if ( true ) {
 
             this.inhibit = ( this.aircraft.agl_m() < 1000.0f / 3.28084f );
@@ -105,7 +106,7 @@ public class ECAM_Engines extends EICASSubcomponent {
                     }
                 }
 
-            } else /* most be jet */ {
+            } else /* must be jet */ {
 
                 for (int i=0; i<num_eng; i++) {
 //                    prim_dial_x[i] = eicas_gc.panel_rect.x + eicas_gc.dials_width*50/100/cols + i*eicas_gc.dials_width/cols;

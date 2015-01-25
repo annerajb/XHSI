@@ -82,7 +82,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 8 Alpha 8";
+    private static final String RELEASE = "2.0 Beta 8 Alpha 9";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -441,7 +441,7 @@ public class XHSI implements ActionListener {
             try {
                 thread.join(1000);
             } catch (Exception e) {
-                logger.warning("Could not shutdown thread. (" + e.toString());
+                logger.warning("Could not shutdown thread. (" + e.toString() + ")");
             }
         }
 

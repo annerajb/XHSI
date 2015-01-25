@@ -134,7 +134,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             ) {
             // one of the settings has been changed
 
-            // remember the avionics power settings
+            // remember the new settings
             this.powered = power;
             this.style = instrument_style;
             
