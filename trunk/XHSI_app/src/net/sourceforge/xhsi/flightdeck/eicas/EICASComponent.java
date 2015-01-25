@@ -209,7 +209,7 @@ public class EICASComponent extends Component implements Observer, PreferencesOb
 
     public void preference_changed(String key) {
 
-        logger.finest("Preference changed");
+        logger.config("Preference changed: " + key);
         // if (key.equals(XHSIPreferences.PREF_USE_MORE_COLOR)) {
         // Don't bother checking the preference key that was changed, just reconfig...
         this.eicas_gc.reconfig = true;
