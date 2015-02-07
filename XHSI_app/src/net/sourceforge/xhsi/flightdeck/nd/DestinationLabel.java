@@ -126,10 +126,13 @@ public class DestinationLabel extends NDSubcomponent {
                 }
             } else if ( source == Avionics.HSI_SOURCE_GPS ) {
                 NavigationRadio radio = this.avionics.get_gps_radio();
-                dest_navobj = (NavigationObject)FMS.get_instance().get_active_waypoint();
-                dest_ete = radio.get_ete();
-                dest_dist = radio.get_distance();
-                if (dest_navobj != null) dest_name = dest_navobj.name;
+                FMS the_fms = FMS.get_instance();
+                if ( the_fms.is_active() ) {
+                    dest_navobj = (NavigationObject)the_fms.get_active_waypoint();
+                    dest_ete = radio.get_ete();
+                    dest_dist = radio.get_distance();
+                    if (dest_navobj != null) dest_name = dest_navobj.name;
+                }
             }
 
             this.destination_active = (dest_navobj != null);
