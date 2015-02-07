@@ -990,7 +990,7 @@ public class MovingMap extends NDSubcomponent {
                 entry = (FMSEntry) this.fms.get_entry(i);
                 if ( i < (nb_of_entries-1) ) {
                     next_entry = (FMSEntry) this.fms.get_entry(i+1);
-                    if ( ( next_entry != null ) && next_entry.active ) {
+                    if ( entry.active || ( ( next_entry != null ) && next_entry.active ) ) {
                         inactive = false;
                     }
                 } else {
