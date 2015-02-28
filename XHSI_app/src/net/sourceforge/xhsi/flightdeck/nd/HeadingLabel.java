@@ -188,9 +188,8 @@ public class HeadingLabel extends NDSubcomponent {
                 );
             } else {
                 // map style ND
-//                g2.setColor(nd_gc.markings_color);
-//                g2.setColor(nd_gc.dim_markings_color);
-                g2.setColor(nd_gc.range_arc_color);
+//                g2.setColor(nd_gc.range_arc_color);
+                g2.setColor(nd_gc.dim_markings_color);
                 int tick_halfwidth = (int)(5 * nd_gc.scaling_factor);
                 g2.drawLine(
                     nd_gc.map_center_x, nd_gc.map_center_y - (nd_gc.rose_radius*3/16),
@@ -207,7 +206,8 @@ public class HeadingLabel extends NDSubcomponent {
                         nd_gc.map_center_x + tick_halfwidth, nd_gc.map_center_y - (nd_gc.rose_radius/4) );
                 }
                 // a label at half the range
-                g2.setFont(nd_gc.font_medium);
+                g2.setFont(nd_gc.font_xs);
+                g2.setColor(nd_gc.dim_markings_color);
                 int range = nd_gc.map_range;
                 String ctr_ranges[] = {"2.5", "5", "10", "20", "40", "80", "160"};
                 String exp_ranges[] = {"5", "10", "20", "40", "80", "160", "320"};
@@ -230,7 +230,7 @@ public class HeadingLabel extends NDSubcomponent {
                 }
                 g2.drawString(
                     range_text,
-                    nd_gc.map_center_x - nd_gc.get_text_width(g2, nd_gc.font_medium, range_text) - 4,
+                    nd_gc.map_center_x - nd_gc.get_text_width(g2, nd_gc.font_xs, range_text) - 4,
                     nd_gc.map_center_y - (nd_gc.rose_radius / 2) - (nd_gc.get_text_height(g2, g2.getFont()) / 2) + 5
                 );
             }

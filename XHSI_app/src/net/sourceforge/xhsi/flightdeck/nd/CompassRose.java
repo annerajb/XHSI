@@ -200,6 +200,8 @@ public class CompassRose extends NDSubcomponent {
                 String zoomin_ctr_ranges[] = {"0.025", "0.05", "0.10", "0.20", "0.40", "0.80", "1.60"};
                 String zoomin_exp_ranges[] = {"0.05", "0.10", "0.20", "0.40", "0.80", "1.60", "3.20"};
                 String range_text;
+                g2.setFont(nd_gc.font_xs);
+                g2.setColor(nd_gc.dim_markings_color);
                 int range_index = this.avionics.map_range_index();
                 if ( nd_gc.map_zoomin )
                     range_text = zoomin_exp_ranges[range_index];
@@ -207,8 +209,8 @@ public class CompassRose extends NDSubcomponent {
                     range_text = exp_ranges[range_index];
                 g2.drawString(
                     range_text,
-                    nd_gc.map_center_x - nd_gc.get_text_width(g2, nd_gc.font_medium, range_text) / 2,
-                    nd_gc.map_center_y - nd_gc.rose_radius + nd_gc.line_height_medium
+                    nd_gc.map_center_x - nd_gc.get_text_width(g2, nd_gc.font_xs, range_text) / 2,
+                    nd_gc.map_center_y - nd_gc.rose_radius + nd_gc.line_height_xs
                 );
                 if ( nd_gc.map_zoomin )
                     range_text = zoomin_ctr_ranges[range_index];
@@ -216,16 +218,16 @@ public class CompassRose extends NDSubcomponent {
                     range_text = ctr_ranges[range_index];
                 g2.drawString(
                     range_text,
-                    nd_gc.map_center_x - nd_gc.get_text_width(g2, nd_gc.font_medium, range_text) / 2,
-                    nd_gc.map_center_y - nd_gc.rose_radius/2 + nd_gc.line_height_medium
+                    nd_gc.map_center_x - nd_gc.get_text_width(g2, nd_gc.font_xs, range_text) / 2,
+                    nd_gc.map_center_y - nd_gc.rose_radius/2 + nd_gc.line_height_xs
                 );
 
                 g2.setColor(nd_gc.heading_labels_color);
-                g2.setFont(nd_gc.font_medium);
-                g2.drawString("N", nd_gc.map_center_x - nd_gc.max_char_advance_medium/2, nd_gc.map_center_y - nd_gc.rose_radius - 10);
-                g2.drawString("E", nd_gc.map_center_x + nd_gc.rose_radius + 10, nd_gc.map_center_y + nd_gc.line_height_medium/2);
-                g2.drawString("S", nd_gc.map_center_x - nd_gc.max_char_advance_medium/2, nd_gc.map_center_y + nd_gc.rose_radius + 10 + nd_gc.line_height_medium - 3);
-                g2.drawString("W", nd_gc.map_center_x - nd_gc.rose_radius - 10 - nd_gc.max_char_advance_medium, nd_gc.map_center_y + nd_gc.line_height_medium/2);
+                g2.setFont(nd_gc.font_xs);
+                g2.drawString("N", nd_gc.map_center_x - nd_gc.max_char_advance_xs/2, nd_gc.map_center_y - nd_gc.rose_radius - 10);
+                g2.drawString("E", nd_gc.map_center_x + nd_gc.rose_radius + 10, nd_gc.map_center_y + nd_gc.line_height_xs/2);
+                g2.drawString("S", nd_gc.map_center_x - nd_gc.max_char_advance_xs/2, nd_gc.map_center_y + nd_gc.rose_radius + 10 + nd_gc.line_height_xs - 3);
+                g2.drawString("W", nd_gc.map_center_x - nd_gc.rose_radius - 10 - nd_gc.max_char_advance_xs, nd_gc.map_center_y + nd_gc.line_height_xs/2);
 
             }
 

@@ -1003,11 +1003,11 @@ public class XHSIPreferences {
         }
 
         if ( ! this.preferences.containsKey(PREF_BOLD_FONTS) ) {
-            if ( isMac() ) {
-                this.preferences.setProperty(PREF_BOLD_FONTS, "false");
-            } else {
+//            if ( isMac() ) {
+//                this.preferences.setProperty(PREF_BOLD_FONTS, "false");
+//            } else {
                 this.preferences.setProperty(PREF_BOLD_FONTS, "true");
-            }
+//            }
             this.unsaved_changes = true;
         }
 
