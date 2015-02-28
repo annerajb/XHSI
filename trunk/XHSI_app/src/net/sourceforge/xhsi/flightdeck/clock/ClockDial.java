@@ -215,10 +215,10 @@ public class ClockDial extends ClockSubcomponent {
         int d_r = clock_gc.clock_square.width*18/64;
         int d_rx = d_r * 82 /100;
         int d_ry = d_r / 2;
-        int d_h = clock_gc.line_height_yl/2;
-        int d_f = clock_gc.line_height_yl*1/8;
-        int d_w = clock_gc.digit_width_yl;
-        g2.setFont(clock_gc.font_yl);
+        int d_h = clock_gc.line_height_xxxl/2;
+        int d_f = clock_gc.line_height_xxxl*1/8;
+        int d_w = clock_gc.digit_width_xxxl;
+        g2.setFont(clock_gc.font_xxxl);
         g2.drawString("60", clock_x - d_w, clock_y - d_r + d_h - d_f);
         g2.drawString("10", clock_x + d_rx - d_w, clock_y - d_ry + d_h - d_f);
         g2.drawString("20", clock_x + d_rx - d_w, clock_y + d_ry + d_h - d_f);

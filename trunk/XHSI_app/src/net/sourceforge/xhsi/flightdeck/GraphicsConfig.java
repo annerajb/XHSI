@@ -300,10 +300,10 @@ public class GraphicsConfig implements ComponentListener {
     public int max_char_advance_zl;
     public int digit_width_zl;
 
-    public Font font_yl;
-    public int line_height_yl;
-    public int max_char_advance_yl;
-    public int digit_width_yl;
+    public Font font_xxxl;
+    public int line_height_xxxl;
+    public int max_char_advance_xxxl;
+    public int digit_width_xxxl;
 
     public Font font_xxl;
     public int line_height_xxl;
@@ -339,6 +339,11 @@ public class GraphicsConfig implements ComponentListener {
     public int line_height_xxs;
     public int max_char_advance_xxs;
     public int digit_width_xxs;
+
+    public Font font_xxxs;
+    public int line_height_xxxs;
+    public int max_char_advance_xxxs;
+    public int digit_width_xxxs;
 
     public Font font_normal;
     public int line_height_normal;
@@ -423,7 +428,7 @@ public class GraphicsConfig implements ComponentListener {
                 this.font_medium = new Font( this.font_name, Font.BOLD, 16);
                 this.font_large = new Font( this.font_name, Font.PLAIN, 24);
                 this.font_zl = new Font( this.font_name, Font.PLAIN, Math.round(64.0f * scale));
-                this.font_yl = new Font( this.font_name, Font.PLAIN, Math.round(32.0f * scale));
+                this.font_xxxl = new Font( this.font_name, Font.PLAIN, Math.round(32.0f * scale));
                 this.font_xxl = new Font( this.font_name, Font.BOLD, Math.round(24.0f * scale));
                 this.font_xl = new Font( this.font_name, Font.BOLD, Math.round(21.0f * scale));
                 this.font_l = new Font( this.font_name, Font.BOLD, Math.round(18.0f * scale));
@@ -431,6 +436,7 @@ public class GraphicsConfig implements ComponentListener {
                 this.font_s = new Font( this.font_name, Font.BOLD, Math.round(14.0f * scale));
                 this.font_xs = new Font( this.font_name, Font.BOLD, Math.round(12.0f * scale));
                 this.font_xxs = new Font( this.font_name, Font.BOLD, Math.round(10.0f * scale));
+                this.font_xxxs = new Font( this.font_name, Font.BOLD, Math.round(8.0f * scale));
                 this.font_normal = new Font( this.font_name, Font.BOLD, Math.round(14.0f * scale));
             } else {
                 this.font_statusbar = new Font(this.font_name, Font.PLAIN, 9);
@@ -439,7 +445,7 @@ public class GraphicsConfig implements ComponentListener {
                 this.font_medium = new Font( this.font_name, Font.PLAIN, 16);
                 this.font_large = new Font( this.font_name, Font.PLAIN, 24);
                 this.font_zl = new Font( this.font_name, Font.PLAIN, Math.round(64.0f * scale));
-                this.font_yl = new Font( this.font_name, Font.PLAIN, Math.round(32.0f * scale));
+                this.font_xxxl = new Font( this.font_name, Font.PLAIN, Math.round(32.0f * scale));
                 this.font_xxl = new Font( this.font_name, Font.PLAIN, Math.round(24.0f * scale));
                 this.font_xl = new Font( this.font_name, Font.PLAIN, Math.round(21.0f * scale));
                 this.font_l = new Font( this.font_name, Font.PLAIN, Math.round(18.0f * scale));
@@ -447,6 +453,7 @@ public class GraphicsConfig implements ComponentListener {
                 this.font_s = new Font( this.font_name, Font.PLAIN, Math.round(14.0f * scale));
                 this.font_xs = new Font( this.font_name, Font.PLAIN, Math.round(12.0f * scale));
                 this.font_xxs = new Font( this.font_name, Font.PLAIN, Math.round(10.0f * scale));
+                this.font_xxxs = new Font( this.font_name, Font.PLAIN, Math.round(8.0f * scale));
                 this.font_normal = new Font( this.font_name, Font.PLAIN, Math.round(14.0f * scale));
             }
 
@@ -479,10 +486,10 @@ public class GraphicsConfig implements ComponentListener {
             this.max_char_advance_zl = fm.stringWidth("WW") - fm.stringWidth("W");
             this.digit_width_zl =  fm.stringWidth("88") - fm.stringWidth("8");
 
-            fm = g2.getFontMetrics(this.font_yl);
-            this.line_height_yl = fm.getAscent();
-            this.max_char_advance_yl = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_yl =  fm.stringWidth("88") - fm.stringWidth("8");
+            fm = g2.getFontMetrics(this.font_xxxl);
+            this.line_height_xxxl = fm.getAscent();
+            this.max_char_advance_xxxl = fm.stringWidth("WW") - fm.stringWidth("W");
+            this.digit_width_xxxl =  fm.stringWidth("88") - fm.stringWidth("8");
 
             fm = g2.getFontMetrics(this.font_xxl);
             this.line_height_xxl = fm.getAscent();
@@ -518,6 +525,11 @@ public class GraphicsConfig implements ComponentListener {
             this.line_height_xxs = fm.getAscent();
             this.max_char_advance_xxs = fm.stringWidth("WW") - fm.stringWidth("W");
             this.digit_width_xxs =  fm.stringWidth("88") - fm.stringWidth("8");
+
+            fm = g2.getFontMetrics(this.font_xxxs);
+            this.line_height_xxxs = fm.getAscent();
+            this.max_char_advance_xxxs = fm.stringWidth("WW") - fm.stringWidth("W");
+            this.digit_width_xxxs =  fm.stringWidth("88") - fm.stringWidth("8");
 
             fm = g2.getFontMetrics(this.font_normal);
             this.line_height_normal = fm.getAscent();
@@ -567,7 +579,7 @@ public class GraphicsConfig implements ComponentListener {
 //                hsb[2] *= 0.25f;
 //                markings_color = Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
             dim_markings_color = Color.LIGHT_GRAY;
-            range_arc_color = Color.GRAY; // was: Color.GRAY.darker()
+            range_arc_color = Color.DARK_GRAY; // was: Color.GRAY
             dim_label_color = Color.DARK_GRAY;
             normal_color = color_lime;
             unusual_color = color_deepskyblue;
@@ -674,7 +686,7 @@ public class GraphicsConfig implements ComponentListener {
             deviation_scale_color = Color.LIGHT_GRAY;
             markings_color = Color.WHITE;
             dim_markings_color = Color.LIGHT_GRAY;
-            range_arc_color = Color.GRAY.brighter();
+            range_arc_color = Color.GRAY; // was: Color.GRAY.brighter()
             dim_label_color = Color.BLACK;
             normal_color = color_lime;
             unusual_color = color_deepskyblue;
