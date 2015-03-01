@@ -182,7 +182,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 
             // position of the plane and size of the rose
             this.map_center_x = this.frame_size.width / 2;
-            this.rose_y_offset = 50 + 4 + this.border_top;
+//            this.rose_y_offset = 50 + 4 + this.border_top;
+            this.rose_y_offset = 3 * this.line_height_m + this.border_top;
             //if ( ( (this.map_mode == Avionics.EFIS_MAP_CENTERED) && (this.map_submode != Avionics.EFIS_MAP_NAV) ) || (this.map_submode == Avionics.EFIS_MAP_PLN) ) {
             if ( this.mode_centered || this.mode_plan ) {
                 // CENTERED (or PLAN)
@@ -202,20 +203,20 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 
 
             // labels at the left
-            this.left_label_x = this.border_left + 10;
+            this.left_label_x = this.border_left + Math.round(10.0f * this.scaling_factor);
             //this.left_label_arpt_y = Math.max( this.frame_size.height - this.border_bottom - 240, this.frame_size.height/2 + 24 );
-            this.left_label_arpt_y = this.frame_size.height - this.border_bottom - 240;
-            this.left_label_wpt_y = this.left_label_arpt_y + this.line_height_small + 3;
-            this.left_label_vor_y = this.left_label_wpt_y + this.line_height_small + 3;
-            this.left_label_ndb_y = this.left_label_vor_y + this.line_height_small + 3;
-            this.left_label_pos_y = this.left_label_ndb_y + this.line_height_small + 3;
-            this.left_label_data_y = this.left_label_pos_y + this.line_height_small + 3;
-            this.left_label_tfc_y = this.left_label_data_y + this.line_height_small + 3;
-            this.left_label_taonly_y = this.left_label_tfc_y + this.line_height_tiny + 2;
-            this.left_label_xpdr_y = this.left_label_taonly_y + this.line_height_tiny + 2;
+            this.left_label_arpt_y = this.frame_size.height*6/10;
+            this.left_label_wpt_y = this.left_label_arpt_y + this.line_height_xs*10/8;
+            this.left_label_vor_y = this.left_label_wpt_y + this.line_height_xs*10/8;
+            this.left_label_ndb_y = this.left_label_vor_y + this.line_height_xs*10/8;
+            this.left_label_pos_y = this.left_label_ndb_y + this.line_height_xs*10/8;
+            this.left_label_data_y = this.left_label_pos_y + this.line_height_xs*10/8;
+            this.left_label_tfc_y = this.left_label_data_y + this.line_height_xs*10/8;
+            this.left_label_taonly_y = this.left_label_tfc_y + this.line_height_xxs*10/8;
+            this.left_label_xpdr_y = this.left_label_taonly_y + this.line_height_xxs*10/8;
 
             // labels at the right
-            this.right_label_x = this.frame_size.width - this.border_right - 20;
+            this.right_label_x = this.frame_size.width - this.border_right - Math.round(20.0f * this.scaling_factor);
             this.right_label_tcas_y = this.frame_size.height * 7 / 16;
             this.right_label_disagree_y = this.frame_size.height / 3;
 
