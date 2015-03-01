@@ -1464,20 +1464,21 @@ public class MovingMap extends NDSubcomponent {
         }
 
         // identifier
-        //g2.drawString(localizer.ilt, x + 12, y + 3);
+        int x11 = Math.round(11.0f*nd_gc.grow_scaling_factor);
+        int y4 = Math.round(4.0f*nd_gc.grow_scaling_factor);
         int y_offset;
         if ( avionics.efis_shows_data() ) {
-            y_offset = is_the_twin ? 4 + nd_gc.line_height_tiny + nd_gc.line_height_small : -4;
-            g2.setFont(nd_gc.font_tiny);
-            g2.drawString(localizer.name, x - 11 - nd_gc.get_text_width(g2, nd_gc.font_tiny, localizer.name), y + y_offset - nd_gc.line_height_small);
+            y_offset = is_the_twin ? y4 + nd_gc.line_height_xxs + nd_gc.line_height_xs : -y4;
+            g2.setFont(nd_gc.font_xxs);
+            g2.drawString(localizer.name, x - x11 - nd_gc.get_text_width(g2, nd_gc.font_xxs, localizer.name), y + y_offset - nd_gc.line_height_xs);
         } else {
-            y_offset = is_the_twin ? 4 + nd_gc.line_height_small : -4;
+            y_offset = is_the_twin ? y4 + nd_gc.line_height_xs : -y4;
         }
-        g2.setFont(nd_gc.font_small);
-        g2.drawString(localizer.ilt, x - 11 - nd_gc.get_text_width(g2, nd_gc.font_small, localizer.ilt), y + y_offset);
+        g2.setFont(nd_gc.font_xs);
+        g2.drawString(localizer.ilt, x - x11 - nd_gc.get_text_width(g2, nd_gc.font_xs, localizer.ilt), y + y_offset);
         if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
-            g2.setFont(nd_gc.font_tiny);
-            g2.drawString(MovingMap.vor_freq_formatter.format(localizer.frequency), x - 11 - nd_gc.get_text_width(g2, nd_gc.font_tiny, " 000.00 "), y + y_offset + nd_gc.line_height_tiny);
+            g2.setFont(nd_gc.font_xxs);
+            g2.drawString(MovingMap.vor_freq_formatter.format(localizer.frequency), x - x11 - nd_gc.get_text_width(g2, nd_gc.font_xxs, "000.00"), y + y_offset + nd_gc.line_height_xxs);
         }
 
         Stroke original_stroke = g2.getStroke();
@@ -1486,9 +1487,10 @@ public class MovingMap extends NDSubcomponent {
 
         if ( ( nd_gc.map_range < 160 ) || nd_gc.map_zoomin ) {
 
-            if ( ( nd_gc.map_range < 40 ) || nd_gc.map_zoomin ) {
+            if ( avionics.efis_shows_data() && ( ( nd_gc.map_range < 40 ) || nd_gc.map_zoomin ) ) {
                 // the exact location of the Localizer
-                g2.drawOval(x-4, y-4, 8, 8);
+                int c4 = Math.round(3.0f*nd_gc.grow_scaling_factor);
+                g2.drawOval(x-c4, y-c4, 2*c4, 2*c4);
             }
 
             // Boeing style: the localizer centerline and two short paralel lines representing the runway
@@ -1502,15 +1504,16 @@ public class MovingMap extends NDSubcomponent {
             g2.drawLine(x, y+rwy_frontcourse, x, y+localizer_extension);
 
             g2.setTransform(original_at);
-            if ( localizer.has_dme && ( ( nd_gc.map_range < 40 ) || nd_gc.map_zoomin ) ) {
+            if ( avionics.efis_shows_data() && localizer.has_dme && ( ( nd_gc.map_range < 40 ) || nd_gc.map_zoomin ) ) {
                 // the exact location of the DME
                 g2.rotate(Math.toRadians(this.map_up), dme_x, dme_y);
                 g2.setStroke(new BasicStroke(stroke_width));
-                g2.drawRect(dme_x-3, dme_y-3, 6, 6);
+                int r3 = Math.round(2.0f*nd_gc.grow_scaling_factor);
+                g2.drawRect(dme_x-r3, dme_y-r3, 2*r3, 2*r3);
             }
         } else {
             // just short line for the localizer when map map_range >= 160
-            g2.drawLine(x, y, x, y+60);
+            g2.drawLine(x, y, x, y+Math.round(60.0f*nd_gc.grow_scaling_factor));
         }
 
         // DME arc
@@ -1542,7 +1545,7 @@ public class MovingMap extends NDSubcomponent {
             g2.drawString(airport.icao_code, x + x12, y + y12);
             if ( this.avionics.efis_shows_data() ) {
                 g2.setFont(nd_gc.font_xxs);
-                g2.drawString(elev, x + x12, y + y12 + nd_gc.line_height_xs);
+                g2.drawString(elev, x + x12, y + y12 + nd_gc.line_height_xxs);
             }
             g2.setTransform(original_at);
     }

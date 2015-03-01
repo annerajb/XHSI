@@ -565,7 +565,7 @@ public class GraphicsConfig implements ComponentListener {
             data_label_color = color_pastelhotpink;
             fmc_active_color = color_hotpink;
             fmc_disp_color = Color.WHITE;
-            fmc_other_color = Color.GRAY;
+            fmc_other_color = Color.LIGHT_GRAY;
             altitude_arc_color = color_yellowgreen;
             fmc_ll_active_color = color_yellowgreen.brighter();
             fmc_ll_disp_color = color_yellowgreen;

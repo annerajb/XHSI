@@ -60,12 +60,13 @@ public class HeadingLabel extends NDSubcomponent {
         if ( nd_gc.powered && ! nd_gc.mode_plan ) {
 
             // int y = nd_gc.border_top + nd_gc.line_height_large;
-            int heading_box_bottom_y = nd_gc.border_top + nd_gc.line_height_large;
+            int heading_text_y = nd_gc.border_top + nd_gc.line_height_xl;
+            int heading_box_bottom_y = nd_gc.border_top + nd_gc.line_height_xl*10/8;
             int rose_top_y = this.nd_gc.map_center_y - nd_gc.rose_radius;
             int center_x = this.nd_gc.map_center_x;
             int center_y = this.nd_gc.map_center_y;
-            int plane_width = (int) (30 * nd_gc.shrink_scaling_factor);
-            int plane_height = (int) (plane_width * 1.5);
+            int plane_width = Math.round(20.0f * nd_gc.scaling_factor);
+            int plane_height = Math.round(30.0f * nd_gc.scaling_factor);
 
             // heading or track
             String up_label;
@@ -109,36 +110,31 @@ public class HeadingLabel extends NDSubcomponent {
     //            null);
 
             //int width = 200;
-            int x_points_heading_box[] = { nd_gc.map_center_x-36, nd_gc.map_center_x-36, nd_gc.map_center_x+36, nd_gc.map_center_x+36 };
-            int y_points_heading_box[] = { nd_gc.border_top+0, nd_gc.border_top+30, nd_gc.border_top+30, nd_gc.border_top+0 };
+            int box_d_x = nd_gc.digit_width_xl*225/100;
+            int x_points_heading_box[] = { nd_gc.map_center_x - box_d_x, nd_gc.map_center_x - box_d_x, nd_gc.map_center_x + box_d_x, nd_gc.map_center_x + box_d_x };
+            int y_points_heading_box[] = { nd_gc.border_top + 2, heading_box_bottom_y, heading_box_bottom_y, nd_gc.border_top + 2 };
 
             // TRK and MAG labels
             g2.setColor(nd_gc.heading_labels_color);
-            g2.setFont(nd_gc.font_medium);
-            if ( nd_gc.panel_rect.width >= 405 ) {
-                if (nd_gc.panel_rect.width < 450) {
-                    up_label = up_label.substring(0, 1);
-                }
-                g2.drawString(up_label , nd_gc.map_center_x - 43 - nd_gc.get_text_width(g2, nd_gc.font_medium, up_label), nd_gc.border_top + nd_gc.line_height_medium + 2);
-            }
-            if ( nd_gc.panel_rect.width >= 405 ) {
-//                g2.drawString( (nd_gc.panel_rect.width >= 480) ? "MAG" : "M" , nd_gc.map_center_x + 43, nd_gc.border_top + nd_gc.line_height_medium);
-                g2.drawString( (nd_gc.panel_rect.width >= 485) ? "MAG" : "M" , nd_gc.map_center_x + 43, nd_gc.border_top + nd_gc.line_height_medium + 2);
-            }
+            g2.setFont(nd_gc.font_m);
+            g2.drawString(up_label , nd_gc.map_center_x - nd_gc.digit_width_xl*3 - nd_gc.get_text_width(g2, nd_gc.font_m, up_label), heading_text_y);
+            g2.drawString("MAG", nd_gc.map_center_x + nd_gc.digit_width_xl*3, heading_text_y);
 
             // surrounding box and value
             g2.setColor(nd_gc.top_text_color);
             g2.drawPolyline(x_points_heading_box, y_points_heading_box, 4);
-            g2.clearRect(center_x - 34, nd_gc.border_top, 68, heading_box_bottom_y - nd_gc.border_top);
-            g2.setFont(nd_gc.font_large);
+            //g2.clearRect(center_x - 34, nd_gc.border_top, 68, heading_text_y - nd_gc.border_top);
+            g2.setFont(nd_gc.font_xl);
             DecimalFormat degrees_formatter = new DecimalFormat("000");
             String text = degrees_formatter.format( mag_value );
-            g2.drawString(text , center_x - 3*nd_gc.digit_width_large/2, heading_box_bottom_y - 3);
+            g2.drawString(text , center_x - 3*nd_gc.digit_width_xl/2, heading_text_y);
 
             // current heading pointer
             if ( ! nd_gc.mode_classic_hsi ) {
-                int hdg_pointer_height = (int) Math.min(16,18 * nd_gc.shrink_scaling_factor);
-                int hdg_pointer_width = (int) (10.0f * nd_gc.shrink_scaling_factor);
+//                int hdg_pointer_height = (int) Math.min(16,18 * nd_gc.shrink_scaling_factor);
+//                int hdg_pointer_width = (int) (10.0f * nd_gc.shrink_scaling_factor);
+                int hdg_pointer_height = Math.round(30.0f * nd_gc.scaling_factor / 2.0f);
+                int hdg_pointer_width = Math.round(30.0f * nd_gc.scaling_factor / 3.0f);
                 int x_points_hdg_pointer[] = { center_x, center_x-hdg_pointer_width, center_x+hdg_pointer_width };
                 int y_points_hdg_pointer[] = { nd_gc.rose_y_offset - 1, nd_gc.rose_y_offset - hdg_pointer_height, nd_gc.rose_y_offset - hdg_pointer_height };
                 rotate(g2, hdg_pointer);
@@ -167,8 +163,10 @@ public class HeadingLabel extends NDSubcomponent {
             if ( nd_gc.mode_classic_hsi ) {
                 // old style HSI
                 // drift angle pointer in APP CTR and VOR CTR modes
-                int pointer_height = (int)(nd_gc.big_tick_length / 2);
-                int pointer_width = (int)(nd_gc.big_tick_length / 3);
+//                int pointer_height = (int)(nd_gc.big_tick_length / 2);
+//                int pointer_width = (int)(nd_gc.big_tick_length / 3);
+                int pointer_height = Math.round(20.0f * nd_gc.scaling_factor / 2.0f);
+                int pointer_width = Math.round(20.0f * nd_gc.scaling_factor / 3.0f);
                 g2.setColor(nd_gc.aircraft_color);
                 g2.drawLine(
                     nd_gc.map_center_x, nd_gc.map_center_y - nd_gc.rose_radius,

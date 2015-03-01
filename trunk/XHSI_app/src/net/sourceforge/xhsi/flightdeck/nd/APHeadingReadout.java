@@ -59,10 +59,10 @@ public class APHeadingReadout extends NDSubcomponent {
             String hdg_text = degrees_formatter.format( Math.round(this.avionics.heading_bug()) ) + " H";
 
             int hdg_x = nd_gc.border_left + nd_gc.panel_rect.width*157/600;
-            int hdg_y = nd_gc.border_top + nd_gc.line_height_medium + 2;
+            int hdg_y = nd_gc.border_top + nd_gc.line_height_xl;
             
             g2.setColor(nd_gc.heading_bug_color);
-            g2.setFont(nd_gc.font_medium);
+            g2.setFont(nd_gc.font_m);
             g2.drawString(hdg_text, hdg_x, hdg_y);
 
         }

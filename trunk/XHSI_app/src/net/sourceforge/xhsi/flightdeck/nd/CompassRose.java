@@ -59,12 +59,10 @@ public class CompassRose extends NDSubcomponent {
 
         if ( nd_gc.powered ) {
 
-            // calculate text widths and heights only once
-            if (this.hdg_text_height == 0) {
-                two_digit_hdg_text_width = (int) nd_gc.get_text_width(g2, nd_gc.font_medium, "33");
-                one_digit_hdg_text_width = (int) nd_gc.get_text_width(g2, nd_gc.font_medium, "8");
-                hdg_text_height = (int) (nd_gc.get_text_height(g2, nd_gc.font_medium)*0.8f);
-            }
+            // calculate text widths and heights
+            two_digit_hdg_text_width = (int) nd_gc.get_text_width(g2, nd_gc.font_m, "33");
+            one_digit_hdg_text_width = (int) nd_gc.get_text_width(g2, nd_gc.font_m, "8");
+            hdg_text_height = (int) (nd_gc.get_text_height(g2, nd_gc.font_m)*0.8f);
 
             float left_right_angle = nd_gc.half_view_angle;
             if ( ! nd_gc.mode_plan && ! nd_gc.mode_centered && this.preferences.get_draw_only_inside_rose() && this.preferences.get_limit_arcs_at_60() ) {
@@ -117,7 +115,7 @@ public class CompassRose extends NDSubcomponent {
 
                 Graphics g = (Graphics) g2;
                 int tick_length = 0;
-                g2.setFont(nd_gc.font_medium);
+                g2.setFont(nd_gc.font_m); // was: medium
                 for (int angle = min_visible_heading; angle <= max_visible_heading; angle += 5) {
                     if (angle % 10 == 0) {
                         tick_length = nd_gc.big_tick_length;
@@ -223,11 +221,11 @@ public class CompassRose extends NDSubcomponent {
                 );
 
                 g2.setColor(nd_gc.heading_labels_color);
-                g2.setFont(nd_gc.font_xs);
+                g2.setFont(nd_gc.font_s);
                 g2.drawString("N", nd_gc.map_center_x - nd_gc.max_char_advance_xs/2, nd_gc.map_center_y - nd_gc.rose_radius - 10);
-                g2.drawString("E", nd_gc.map_center_x + nd_gc.rose_radius + 10, nd_gc.map_center_y + nd_gc.line_height_xs/2);
-                g2.drawString("S", nd_gc.map_center_x - nd_gc.max_char_advance_xs/2, nd_gc.map_center_y + nd_gc.rose_radius + 10 + nd_gc.line_height_xs - 3);
-                g2.drawString("W", nd_gc.map_center_x - nd_gc.rose_radius - 10 - nd_gc.max_char_advance_xs, nd_gc.map_center_y + nd_gc.line_height_xs/2);
+                g2.drawString("E", nd_gc.map_center_x + nd_gc.rose_radius + 10, nd_gc.map_center_y + nd_gc.line_height_s/2);
+                g2.drawString("S", nd_gc.map_center_x - nd_gc.max_char_advance_s/2, nd_gc.map_center_y + nd_gc.rose_radius + 10 + nd_gc.line_height_s - 3);
+                g2.drawString("W", nd_gc.map_center_x - nd_gc.rose_radius - 10 - nd_gc.max_char_advance_s, nd_gc.map_center_y + nd_gc.line_height_s/2);
 
             }
 
