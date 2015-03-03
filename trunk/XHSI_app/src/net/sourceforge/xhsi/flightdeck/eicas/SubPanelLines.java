@@ -58,8 +58,9 @@ public class SubPanelLines extends EICASSubcomponent {
 
 
     public void paint(Graphics2D g2) {
+    	boolean primaries = this.preferences.get_eicas_primary_only();
 
-        if ( eicas_gc.powered && ! this.preferences.get_eicas_primary_only() ) {
+        if ( eicas_gc.powered && !primaries && eicas_gc.boeing_style ) {
 
             g2.setColor(eicas_gc.color_boeingcyan);
             g2.drawLine(eicas_gc.panel_rect.x + eicas_gc.panel_rect.width - eicas_gc.alerts_w*33/32, eicas_gc.panel_rect.y + eicas_gc.panel_rect.height/100, eicas_gc.panel_rect.x + eicas_gc.panel_rect.width - eicas_gc.alerts_w*33/32, eicas_gc.panel_rect.y + eicas_gc.panel_rect.height*99/100);
@@ -67,6 +68,40 @@ public class SubPanelLines extends EICASSubcomponent {
             g2.drawLine(eicas_gc.panel_rect.x + eicas_gc.panel_rect.width - eicas_gc.alerts_w*33/32 + eicas_gc.panel_rect.width/100, eicas_gc.panel_rect.y + eicas_gc.panel_rect.height - eicas_gc.hyd_dials_height, eicas_gc.panel_rect.x + eicas_gc.panel_rect.width*99/100, eicas_gc.panel_rect.y + eicas_gc.panel_rect.height - eicas_gc.hyd_dials_height);
 
         }
+        if ( eicas_gc.powered && eicas_gc.airbus_style ) {
+        	g2.setColor(eicas_gc.ecam_markings_color);
+        	
+        	// Horiz left segment
+        	g2.drawLine ( eicas_gc.panel_rect.x + eicas_gc.dials_width*8/100,
+        			eicas_gc.panel_rect.y + eicas_gc.prim_dials_height ,
+        			eicas_gc.panel_rect.x + eicas_gc.dials_width*94/100,
+        			eicas_gc.panel_rect.y + eicas_gc.prim_dials_height );
+            
+        	// Horiz right segment
+        	if (primaries) {
+        		g2.drawLine ( eicas_gc.panel_rect.x + eicas_gc.dials_width*105/100,
+        				eicas_gc.panel_rect.y + eicas_gc.prim_dials_height ,
+        				eicas_gc.panel_rect.x + eicas_gc.panel_rect.width*92/100,
+        				eicas_gc.panel_rect.y + eicas_gc.prim_dials_height );
+        	}
+
+        	// Vert lower segment 
+        	g2.drawLine ( eicas_gc.panel_rect.x + eicas_gc.dials_width, 
+        			eicas_gc.panel_rect.y  + eicas_gc.prim_dials_height*107/100,  
+        			eicas_gc.panel_rect.x + eicas_gc.dials_width, 
+        			eicas_gc.panel_rect.y  + eicas_gc.panel_rect.height *90/100);
+        	
+        	if (eicas_gc.ecam_version == 1) { 
+        		// Vert upper segment 
+        		g2.drawLine ( eicas_gc.panel_rect.x + eicas_gc.dials_width, 
+        				eicas_gc.panel_rect.y + eicas_gc.prim_dials_height * 47/100,
+        				eicas_gc.panel_rect.x + eicas_gc.dials_width,
+        				eicas_gc.panel_rect.y + eicas_gc.prim_dials_height *93/100 );            		
+        	} 
+
+        }
+
+
 
     }
 
