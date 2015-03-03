@@ -54,10 +54,12 @@ import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
 public class EICASGraphicsConfig extends GraphicsConfig implements ComponentListener {
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
+    public int num_eng = 0; 
 
     public boolean airbus_style;
     public boolean boeing_style;
-    
+    public int ecam_version = 1;
+      
     public int eicas_size;
     public int dials_width;
     public int prim_dials_height;
@@ -119,7 +121,10 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
     public int gear_y;
     public int autbrk_x;
     public int autbrk_y;
-
+    public int prim_dial_x[] = new int[8];
+    public int seco_dial_x[] = new int[8];
+    public int memo_x;
+    public int memo_y;
 
     public EICASGraphicsConfig(Component root_component, int du) {
         super(root_component);
@@ -135,19 +140,26 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
 //    }
 
 
-    public void update_config(Graphics2D g2, boolean power, int instrument_style) {
+    public void update_config(Graphics2D g2, boolean power, int instrument_style, int nb_engines) {
 
         if (this.resized
                 || this.reconfig
                 || (this.powered != power)
                 || (this.style != instrument_style)
+                || (this.num_eng !=  nb_engines)
             ) {
             // one of the settings has been changed
 
-            // remember the new settings
+            // remember the avionics power settings
             this.powered = power;
+            
+            // remember the instrument style
             this.style = instrument_style;
+            
+            // remember the number of engines
+            this.num_eng = nb_engines;
 
+//logger.warning("EICAS update_config");
             // general instrument config
             super.update_config(g2);
 
@@ -161,13 +173,125 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
             
             eicas_size = Math.min(panel_rect.width, panel_rect.height);
 
-            // the dials take +/-60% of the width
-            dials_width = panel_rect.width*575/1000;
-            dial_main1_y = panel_rect.y + eicas_size*17/100;
-            dial_main2_y = panel_rect.y + eicas_size*36/100;
-            dial_main3_y = panel_rect.y + eicas_size*55/100;
-            dial_main4_y = panel_rect.y + eicas_size*73/100;
-            dial_main5_y = panel_rect.y + eicas_size*89/100;
+            int cols = Math.max(num_eng, 2);
+
+            
+            if (boeing_style) {
+                for (int i=0; i<cols; i++) {
+                    prim_dial_x[i] = panel_rect.x + dials_width*50/100/cols + i*dials_width/cols;
+                    seco_dial_x[i] = alerts_x0 + i*alerts_w/cols + (alerts_w/cols*15/16)/2;
+                }
+            	// the dials take +/-60% of the width
+            	dials_width = panel_rect.width*575/1000;
+            	dial_main1_y = panel_rect.y + eicas_size*17/100;
+            	dial_main2_y = panel_rect.y + eicas_size*36/100;
+            	dial_main3_y = panel_rect.y + eicas_size*55/100;
+            	dial_main4_y = panel_rect.y + eicas_size*73/100;
+            	dial_main5_y = panel_rect.y + eicas_size*89/100;
+                dial_r[0] = 0; // no radius for 0 engines
+                dial_r[1] = Math.min(eicas_size*9/100, panel_rect.width*9/100); // dial radius when there is 1 engine
+                dial_r[2] = Math.min(eicas_size*9/100, panel_rect.width*9/100); // dial radius when there are 2 engines
+                dial_r[3] = Math.min(eicas_size*9/100, panel_rect.width*75/1000); // etc...
+                dial_r[4] = Math.min(eicas_size*9/100, panel_rect.width*525/10000);
+                dial_r[5] = Math.min(eicas_size*9/100, panel_rect.width*5/100);
+                dial_r[6] = Math.min(eicas_size*9/100, panel_rect.width*45/1000);
+                dial_r[7] = Math.min(eicas_size*9/100, panel_rect.width*4/100);
+                dial_r[8] = Math.min(eicas_size*9/100, panel_rect.width*325/10000);
+                prim_dials_height = eicas_size*73/100 + dial_r[2];
+                // 644/1000 
+                hyd_dials_height = eicas_size*25/100;
+                dial_font[0] = null;
+                dial_font[1] = font_xxl;
+                dial_font_w[1] = digit_width_xxl;
+                dial_font_h[1] = line_height_xxl;
+                dial_font[2] = font_xxl;
+                dial_font_w[2] = digit_width_xxl;
+                dial_font_h[2] = line_height_xxl;
+                dial_font[3] = font_m;
+                dial_font_w[3] = digit_width_m;
+                dial_font_h[3] = line_height_m;
+                dial_font[4] = font_s;
+                dial_font_w[4] = digit_width_s;
+                dial_font_h[4] = line_height_s;
+                dial_font[5] = font_s;
+                dial_font_w[5] = digit_width_s;
+                dial_font_h[5] = line_height_s;
+                dial_font[6] = font_xs;
+                dial_font_w[6] = digit_width_xs;
+                dial_font_h[6] = line_height_xs;
+                dial_font[7] = font_xs;
+                dial_font_w[7] = digit_width_xs;
+                dial_font_h[7] = line_height_xs;
+                dial_font[8] = font_xxs;
+                dial_font_w[8] = digit_width_xxs;
+                dial_font_h[8] = line_height_xxs;
+
+            } else {
+            	// Airbus style
+                for (int i=0; i<cols; i++) {
+                    prim_dial_x[i] = panel_rect.x + dials_width*65/1000 + dials_width*50/100/cols + i*dials_width/cols;
+                    seco_dial_x[i] = alerts_x0 + i*alerts_w/cols + (alerts_w/cols*15/16)/2;
+                }
+
+            	// the dials take +/-60% of the width in V1 software with 2 engines
+            	// otherwise, dials takes 100% of the width
+            	if (this.num_eng <= 2) {
+            		dials_width = panel_rect.width*600/1000; 
+            		// TODO : add a preference panel option for version 2 with 2 engines
+            		this.ecam_version = 1;
+                    prim_dials_height = eicas_size*630/1000;
+                    hyd_dials_height = eicas_size*25/100;
+            	} else {
+            		dials_width = panel_rect.width;
+            		this.ecam_version = 2;
+                    prim_dials_height = eicas_size*644/1000;
+                    hyd_dials_height = eicas_size*25/100;
+            	}
+            		
+            	dial_main1_y = panel_rect.y + eicas_size*17/100;
+            	dial_main2_y = panel_rect.y + eicas_size*33/100;
+            	dial_main3_y = panel_rect.y + eicas_size*48/100;
+            	dial_main4_y = panel_rect.y + eicas_size*58/100;
+            	dial_main5_y = panel_rect.y + eicas_size*65/100;
+                dial_r[0] = 0; // no radius for 0 engines
+                dial_r[1] = Math.min(eicas_size*9/100, dials_width*250/1000); // dial radius when there is 1 engine
+                dial_r[2] = Math.min(eicas_size*9/100, dials_width*250/1000); // dial radius when there are 2 engines
+                dial_r[3] = Math.min(eicas_size*9/100, dials_width*250/1000); // etc...
+                dial_r[4] = Math.min(eicas_size*9/100, dials_width*200/1000);
+                dial_r[5] = Math.min(eicas_size*7/100, dials_width*140/1000);
+                dial_r[6] = Math.min(eicas_size*7/100, dials_width*110/1000);
+                dial_r[7] = Math.min(eicas_size*6/100, dials_width* 90/1000);
+                dial_r[8] = Math.min(eicas_size*6/100, dials_width* 60/1000);
+                dial_font[0] = null;
+                dial_font[1] = font_xl;
+                dial_font_w[1] = digit_width_xl;
+                dial_font_h[1] = line_height_xl;
+                dial_font[2] = font_xl;
+                dial_font_w[2] = digit_width_xl;
+                dial_font_h[2] = line_height_xl;
+                dial_font[3] = font_m;
+                dial_font_w[3] = digit_width_m;
+                dial_font_h[3] = line_height_m;
+                dial_font[4] = font_s;
+                dial_font_w[4] = digit_width_s;
+                dial_font_h[4] = line_height_s;
+                dial_font[5] = font_s;
+                dial_font_w[5] = digit_width_s;
+                dial_font_h[5] = line_height_s;
+                dial_font[6] = font_xs;
+                dial_font_w[6] = digit_width_xs;
+                dial_font_h[6] = line_height_xs;
+                dial_font[7] = font_xs;
+                dial_font_w[7] = digit_width_xs;
+                dial_font_h[7] = line_height_xs;
+                dial_font[8] = font_xxs;
+                dial_font_w[8] = digit_width_xxs;
+                dial_font_h[8] = line_height_xxs;
+            }
+            memo_x = panel_rect.x + panel_rect.width*630/1000;
+            memo_y = panel_rect.y + prim_dials_height + line_height_l * 2;
+            		
+            
             //dial_ng_y = panel_rect.y + eicas_size*87/100;
             dial_oil_p_y = panel_rect.y + eicas_size*29/100;
             dial_oil_t_y = panel_rect.y + eicas_size*44/100;
@@ -175,42 +299,7 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
             dial_vib_y = panel_rect.y + eicas_size*65/100;
             dial_hyd_p_y = panel_rect.y + panel_rect.height - eicas_size*16/100;
             dial_hyd_q_y = panel_rect.y + panel_rect.height - eicas_size*6/100;
-            dial_r[0] = 0; // no radius for 0 engines
-            dial_r[1] = Math.min(eicas_size*9/100, panel_rect.width*9/100); // dial radius when there is 1 engine
-            dial_r[2] = Math.min(eicas_size*9/100, panel_rect.width*9/100); // dial radius when there are 2 engines
-            dial_r[3] = Math.min(eicas_size*9/100, panel_rect.width*75/1000); // etc...
-            dial_r[4] = Math.min(eicas_size*9/100, panel_rect.width*525/10000);
-            dial_r[5] = Math.min(eicas_size*9/100, panel_rect.width*5/100);
-            dial_r[6] = Math.min(eicas_size*9/100, panel_rect.width*45/1000);
-            dial_r[7] = Math.min(eicas_size*9/100, panel_rect.width*4/100);
-            dial_r[8] = Math.min(eicas_size*9/100, panel_rect.width*325/10000);
-            prim_dials_height = eicas_size*73/100 + dial_r[2];
-            hyd_dials_height = eicas_size*25/100;
-            dial_font[0] = null;
-            dial_font[1] = font_xxl;
-            dial_font_w[1] = digit_width_xxl;
-            dial_font_h[1] = line_height_xxl;
-            dial_font[2] = font_xxl;
-            dial_font_w[2] = digit_width_xxl;
-            dial_font_h[2] = line_height_xxl;
-            dial_font[3] = font_m;
-            dial_font_w[3] = digit_width_m;
-            dial_font_h[3] = line_height_m;
-            dial_font[4] = font_s;
-            dial_font_w[4] = digit_width_s;
-            dial_font_h[4] = line_height_s;
-            dial_font[5] = font_s;
-            dial_font_w[5] = digit_width_s;
-            dial_font_h[5] = line_height_s;
-            dial_font[6] = font_xs;
-            dial_font_w[6] = digit_width_xs;
-            dial_font_h[6] = line_height_xs;
-            dial_font[7] = font_xs;
-            dial_font_w[7] = digit_width_xs;
-            dial_font_h[7] = line_height_xs;
-            dial_font[8] = font_xxs;
-            dial_font_w[8] = digit_width_xxs;
-            dial_font_h[8] = line_height_xxs;
+
 
             // TAT and Thrust Mode
             divtext_y = panel_rect.y + eicas_size*40/1000;
@@ -224,26 +313,61 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
             alert_y[0] = panel_rect.y + eicas_size*5/100;
             alert_y[1] = alert_y[0] + alert_h;
             alert_y[2] = alert_y[1] + alert_h;
-
             fuel_r = eicas_size*40/100*20/100;
-            fuel_primary_x[0] = alerts_x0 + alerts_w/2;
-            fuel_primary_x[1] = alerts_x0 + alerts_w/2 - fuel_r*5/4;
-            fuel_primary_x[2] = alerts_x0 + alerts_w/2 + fuel_r*5/4;
-            fuel_primary_y[0] = panel_rect.y + panel_rect.height - fuel_r*3;
-            fuel_primary_y[1] = panel_rect.y + panel_rect.height - fuel_r;
-            fuel_primary_y[2] = fuel_primary_y[1];
+            
+            if (boeing_style) {
+                fuel_primary_x[0] = alerts_x0 + alerts_w/2;
+                fuel_primary_x[1] = alerts_x0 + alerts_w/2 - fuel_r*5/4;
+                fuel_primary_x[2] = alerts_x0 + alerts_w/2 + fuel_r*5/4;
+                fuel_primary_y[0] = panel_rect.y + panel_rect.height - fuel_r*3;
+                fuel_primary_y[1] = panel_rect.y + panel_rect.height - fuel_r;
+                fuel_primary_y[2] = fuel_primary_y[1];
+                fuel_compact_x[0] = panel_rect.x + dials_width/2;
+                fuel_compact_x[1] = fuel_compact_x[0] - fuel_r*9/4;
+                fuel_compact_x[2] = fuel_compact_x[0] + fuel_r*9/4;
+                fuel_compact_y[0] = panel_rect.y + panel_rect.height - fuel_r*19/16;
+                fuel_compact_y[1] = panel_rect.y + panel_rect.height - fuel_r*14/16;
+                fuel_compact_y[2] = fuel_compact_y[1];
+                
+                controls_x = panel_rect.x + panel_rect.width * 80/100 - eicas_size * 20/100;
+                controls_w = eicas_size * 39/100;
+                controls_y = alert_y[2] + alert_h + eicas_size * 4/100;
+                controls_h = eicas_size * 39/100;
+            } else {
+            	// Airbus style
+            	// fuel_primary is the text coordinates
 
-            fuel_compact_x[0] = panel_rect.x + dials_width/2;
-            fuel_compact_x[1] = fuel_compact_x[0] - fuel_r*9/4;
-            fuel_compact_x[2] = fuel_compact_x[0] + fuel_r*9/4;
-            fuel_compact_y[0] = panel_rect.y + panel_rect.height - fuel_r*19/16;
-            fuel_compact_y[1] = panel_rect.y + panel_rect.height - fuel_r*14/16;
-            fuel_compact_y[2] = fuel_compact_y[1];
+                if (this.num_eng <= 2) {
+                	fuel_primary_x[0] = panel_rect.x + panel_rect.width * 634/1000;
+                	fuel_primary_x[1] = panel_rect.x + panel_rect.width * 813/1000;
+                	fuel_primary_x[2] = panel_rect.x + panel_rect.width * 860/1000;
+                	fuel_primary_y[0] = panel_rect.y + panel_rect.height * 355/1000;
+                	fuel_primary_y[1] = panel_rect.y + panel_rect.height * 355/1000;
+                	fuel_primary_y[2] = panel_rect.y + panel_rect.height * 355/1000;
+                } else {
+                	fuel_primary_x[0] = panel_rect.x + panel_rect.width * 5/100;
+                	fuel_primary_x[1] = panel_rect.x + panel_rect.width * 23/100;
+                	fuel_primary_x[2] = panel_rect.x + panel_rect.width * 28/100;
+                	fuel_primary_y[0] = panel_rect.y + panel_rect.height * 635/1000;
+                	fuel_primary_y[1] = panel_rect.y + panel_rect.height * 635/1000;
+                	fuel_primary_y[2] = panel_rect.y + panel_rect.height * 635/1000;
+                }
+                fuel_compact_x[0] = panel_rect.x + panel_rect.width * 5/100;
+                fuel_compact_x[1] = panel_rect.x + panel_rect.width * 23/100;
+                fuel_compact_x[2] = panel_rect.x + panel_rect.width * 28/100;
+                fuel_compact_y[0] = panel_rect.y + panel_rect.height * 685/1000;
+                fuel_compact_y[1] = panel_rect.y + panel_rect.height * 685/1000;
+                fuel_compact_y[2] = panel_rect.y + panel_rect.height * 685/1000;
+                
+                controls_x = panel_rect.x + panel_rect.width * 80/100 - eicas_size * 20/100;
+                controls_w = eicas_size * 39/100;
+                controls_y = panel_rect.y + prim_dials_height - eicas_size * 40 /100;
+                controls_h = eicas_size * 39/100;
+            }
 
-            controls_x = panel_rect.x + panel_rect.width * 80/100 - eicas_size * 20/100;
-            controls_w = eicas_size * 39/100;
-            controls_y = alert_y[2] + alert_h + eicas_size * 4/100;
-            controls_h = eicas_size * 39/100;
+
+
+
             
             trim_txt_x = controls_x + controls_w*57/100;
             trim_txt_y = controls_y + controls_h*68/100;

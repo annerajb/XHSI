@@ -55,7 +55,7 @@ public class Fuel extends EICASSubcomponent {
 
 
     public void paint(Graphics2D g2) {
-        if ( eicas_gc.powered ) {
+        if ( eicas_gc.boeing_style && eicas_gc.powered ) {
             drawFuel(g2);
         }
     }
