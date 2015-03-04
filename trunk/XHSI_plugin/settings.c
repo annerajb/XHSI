@@ -10,8 +10,8 @@
 #include "XPLMNavigation.h"
 #include "XPLMDisplay.h"
 #include "XPLMMenus.h"
-#include "XPWidgets.h"
-#include "XPStandardWidgets.h"
+//#include "XPWidgets.h"
+//#include "XPStandardWidgets.h"
 
 
 #include "globals.h"

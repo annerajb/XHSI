@@ -219,6 +219,7 @@ extern XPLMDataRef  yoke_roll_ratio;
 extern XPLMDataRef  elevator_trim;
 extern XPLMDataRef  aileron_trim;
 extern XPLMDataRef  rudder_trim;
+extern XPLMDataRef  slat_deploy;
 
 
 extern XPLMDataRef  num_tanks;
