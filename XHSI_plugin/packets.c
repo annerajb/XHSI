@@ -340,6 +340,9 @@ int createADCPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_RUDDER_TRIM);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(rudder_trim));
 	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_CONTROLS_SLATRAT);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(slat_deploy));
+	i++;
 
     XPLMGetDatavf(gear_deploy, gear_ratio, 0, gears);
 	for (g=0; g<gears; g++) {
@@ -1773,25 +1776,25 @@ int createStaticPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_POSITION_NEAREST_ARPT);
 	latf = (float) XPLMGetDatad(latitude);
 	lonf = (float) XPLMGetDatad(longitude);
-    arpt_navref = XPLMFindNavAid(
-        NULL, // inNameFragment
-        NULL, // inIDFragment
-        &latf,
-        &lonf,
-        NULL, // inFrequency
-        xplm_Nav_Airport);
-    XPLMGetNavAidInfo(
-        arpt_navref,
-        NULL, // outType
-        NULL, // outLatitude
-        NULL, // outLongitude
-        NULL, // outHeight
-        NULL, // outFrequency
-        NULL, // outHeading
-        arpt_id,
-        NULL, // outName
-        NULL); // outReg
-    strncpy( (char *)&sim_packet.sim_data_points[i].value, arpt_id, 4 );
+        arpt_navref = XPLMFindNavAid(
+            NULL, // inNameFragment
+            NULL, // inIDFragment
+            &latf,
+            &lonf,
+            NULL, // inFrequency
+            xplm_Nav_Airport);
+        XPLMGetNavAidInfo(
+            arpt_navref,
+            NULL, // outType
+            NULL, // outLatitude
+            NULL, // outLongitude
+            NULL, // outHeight
+            NULL, // outFrequency
+            NULL, // outHeading
+            arpt_id,
+            NULL, // outName
+            NULL); // outReg
+        strncpy( (char *)&sim_packet.sim_data_points[i].value, arpt_id, 4 );
 	i++;
 
 

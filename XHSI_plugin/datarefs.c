@@ -14,8 +14,8 @@
 #include "XPLMDisplay.h"
 #include "XPLMMenus.h"
 #include "XPLMPlugin.h"
-#include "XPWidgets.h"
-#include "XPStandardWidgets.h"
+//#include "XPWidgets.h"
+//#include "XPStandardWidgets.h"
 
 
 #include "commands.h"
@@ -289,6 +289,7 @@ XPLMDataRef  yoke_roll_ratio;
 XPLMDataRef  elevator_trim;
 XPLMDataRef  aileron_trim;
 XPLMDataRef  rudder_trim;
+XPLMDataRef  slat_deploy;
 
 XPLMDataRef  num_tanks;
 XPLMDataRef  num_engines;
@@ -1571,9 +1572,10 @@ void findDataRefs(void) {
     gear_deploy = XPLMFindDataRef("sim/flightmodel2/gear/deploy_ratio");
     yoke_pitch_ratio = XPLMFindDataRef("sim/cockpit2/controls/yoke_pitch_ratio");
     yoke_roll_ratio = XPLMFindDataRef("sim/cockpit2/controls/yoke_roll_ratio");
-	elevator_trim = XPLMFindDataRef("sim/cockpit2/controls/elevator_trim");
-	aileron_trim = XPLMFindDataRef("sim/cockpit2/controls/aileron_trim");
-	rudder_trim = XPLMFindDataRef("sim/cockpit2/controls/rudder_trim");
+    elevator_trim = XPLMFindDataRef("sim/cockpit2/controls/elevator_trim");
+    aileron_trim = XPLMFindDataRef("sim/cockpit2/controls/aileron_trim");
+    rudder_trim = XPLMFindDataRef("sim/cockpit2/controls/rudder_trim");
+    slat_deploy = XPLMFindDataRef("sim/flightmodel/controls/slatrat");
 	
 
     // Engines and fuel
