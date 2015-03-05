@@ -339,6 +339,10 @@ public class XPlaneAircraft implements Aircraft {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_RUDDER_TRIM);
     }
 
+    public float get_slat_position() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_CONTROLS_SLATRAT);
+    }
+    
     public float get_flap_position() {
         // sim data for handle and real position are reversed
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_FLAP_HANDLE_DEPLOY_RATIO);

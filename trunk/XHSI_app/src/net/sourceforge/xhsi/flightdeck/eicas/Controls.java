@@ -202,6 +202,7 @@ public class Controls extends EICASSubcomponent {
         float speedbrake = this.aircraft.get_speed_brake();
         boolean sbrk_armed = this.aircraft.speed_brake_armed();
         boolean sbrk_eq = this.aircraft.has_speed_brake();
+        float slats = this.aircraft.get_slat_position();
 
         AffineTransform original_at = g2.getTransform();
         
@@ -229,21 +230,23 @@ public class Controls extends EICASSubcomponent {
         g2.fillPolygon(wing_section_x, wing_section_y, 7);
 
         
-        // flaps arc
-        g2.setColor(eicas_gc.dim_markings_color);
-        g2.drawArc(eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.flaps_l - 1, eicas_gc.wing_y - eicas_gc.flaps_l - 1, eicas_gc.flaps_l*2 + 2, eicas_gc.flaps_l*2 + 2, 0-5, -60);
-        g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l, eicas_gc.wing_y + eicas_gc.wing_h/2, eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l - eicas_gc.controls_w/2*8/100, eicas_gc.wing_y + eicas_gc.wing_h/2);
-        if ( detents >= 2 ) {
-            double rotang = Math.toRadians(60.0d / detents);
-            for ( int i=0; i!=detents; i++) {
-                g2.rotate(rotang, eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.wing_y);
-                g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l, eicas_gc.wing_y + eicas_gc.wing_h/2, eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l - eicas_gc.controls_w/2*4/100, eicas_gc.wing_y + eicas_gc.wing_h/2);
+        if ( flaps > 0.0f ) {
+            // flaps arc
+            g2.setColor(eicas_gc.dim_markings_color);
+            g2.drawArc(eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.flaps_l - 1, eicas_gc.wing_y - eicas_gc.flaps_l - 1, eicas_gc.flaps_l*2 + 2, eicas_gc.flaps_l*2 + 2, 0-5, -60);
+            g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l, eicas_gc.wing_y + eicas_gc.wing_h/2, eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l - eicas_gc.controls_w/2*8/100, eicas_gc.wing_y + eicas_gc.wing_h/2);
+            if ( detents >= 2 ) {
+                double rotang = Math.toRadians(60.0d / detents);
+                for ( int i=0; i!=detents; i++) {
+                    g2.rotate(rotang, eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.wing_y);
+                    g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l, eicas_gc.wing_y + eicas_gc.wing_h/2, eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l - eicas_gc.controls_w/2*4/100, eicas_gc.wing_y + eicas_gc.wing_h/2);
+                }
+                g2.setTransform(original_at);
             }
+            g2.rotate(Math.toRadians(60), eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.wing_y);
+            g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l, eicas_gc.wing_y + eicas_gc.wing_h/2, eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l - eicas_gc.controls_w/2*8/100, eicas_gc.wing_y + eicas_gc.wing_h/2);
             g2.setTransform(original_at);
         }
-        g2.rotate(Math.toRadians(60), eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.wing_y);
-        g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l, eicas_gc.wing_y + eicas_gc.wing_h/2, eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l - eicas_gc.controls_w/2*8/100, eicas_gc.wing_y + eicas_gc.wing_h/2);
-        g2.setTransform(original_at);
         
         // flaps handle
         g2.setColor(eicas_gc.dim_markings_color);
@@ -272,18 +275,26 @@ public class Controls extends EICASSubcomponent {
         g2.setFont(eicas_gc.font_s);
         g2.drawString("FLAPS", eicas_gc.wing_x, eicas_gc.wing_y + eicas_gc.line_height_s*10/4);
 
+        if ( slats > 0.0f ) {
+            if ( slats == 1.0f ) g2.setColor(eicas_gc.normal_color);
+            else g2.setColor(eicas_gc.caution_color);
+            g2.setFont(eicas_gc.font_xxs);
+            g2.drawString("S", eicas_gc.wing_x - eicas_gc.max_char_advance_xxs, eicas_gc.wing_y + eicas_gc.line_height_xxs);
+        }
         
         if ( sbrk_eq ) {
             
-            // speedbrake arc
-            g2.setColor(eicas_gc.dim_markings_color);
-            g2.drawArc(eicas_gc.spdbrk_x - eicas_gc.spdbrk_w - 1, eicas_gc.spdbrk_y - eicas_gc.spdbrk_w - 1, eicas_gc.spdbrk_w*2 + 2, eicas_gc.spdbrk_w*2 + 2, 0, 80);
-            g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.spdbrk_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.spdbrk_y);
-            g2.rotate(Math.toRadians(-40), eicas_gc.spdbrk_x, eicas_gc.spdbrk_y);
-            g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.spdbrk_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.spdbrk_y);
-            g2.rotate(Math.toRadians(-40), eicas_gc.spdbrk_x, eicas_gc.spdbrk_y);
-            g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.spdbrk_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.spdbrk_y);
-            g2.setTransform(original_at);
+            if ( speedbrake > 0.01f ) {
+                // speedbrake arc
+                g2.setColor(eicas_gc.dim_markings_color);
+                g2.drawArc(eicas_gc.spdbrk_x - eicas_gc.spdbrk_w - 1, eicas_gc.spdbrk_y - eicas_gc.spdbrk_w - 1, eicas_gc.spdbrk_w*2 + 2, eicas_gc.spdbrk_w*2 + 2, 0, 90);
+                g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.spdbrk_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.spdbrk_y);
+                g2.rotate(Math.toRadians(-30), eicas_gc.spdbrk_x, eicas_gc.spdbrk_y);
+                g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.spdbrk_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.spdbrk_y);
+                g2.rotate(Math.toRadians(-30), eicas_gc.spdbrk_x, eicas_gc.spdbrk_y);
+                g2.drawLine(eicas_gc.wing_x + eicas_gc.wing_w, eicas_gc.spdbrk_y, eicas_gc.wing_x + eicas_gc.wing_w - eicas_gc.controls_w/2*6/100, eicas_gc.spdbrk_y);
+                g2.setTransform(original_at);
+            }
         
             //speedbrake
             int[] spdbrk_triangle_x = {
@@ -305,7 +316,7 @@ public class Controls extends EICASSubcomponent {
             } else {
                 g2.setColor(eicas_gc.markings_color);
             }
-            g2.rotate(Math.toRadians(-80*speedbrake), eicas_gc.spdbrk_x, eicas_gc.spdbrk_y);
+            g2.rotate(Math.toRadians(-60*speedbrake), eicas_gc.spdbrk_x, eicas_gc.spdbrk_y);
             g2.fillOval(eicas_gc.spdbrk_x - eicas_gc.spdbrk_h/2, eicas_gc.spdbrk_y - eicas_gc.spdbrk_h/2, eicas_gc.spdbrk_h, eicas_gc.spdbrk_h);
             g2.fillPolygon(spdbrk_triangle_x, spdbrk_triangle_y, 3);
             g2.setTransform(original_at);

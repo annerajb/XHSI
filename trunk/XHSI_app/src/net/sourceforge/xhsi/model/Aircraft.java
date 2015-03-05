@@ -376,6 +376,12 @@ public interface Aircraft {
 
 
     /**
+     * @return float - slats position
+     */
+    public float get_slat_position();
+
+
+    /**
      * @return float - flaps position
      */
     public float get_flap_position();
