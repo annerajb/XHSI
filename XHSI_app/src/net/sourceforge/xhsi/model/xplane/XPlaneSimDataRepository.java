@@ -290,6 +290,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT2_CONTROLS_ELEVATOR_TRIM = 392;
     public static final int SIM_COCKPIT2_CONTROLS_AILERON_TRIM = 393;
     public static final int SIM_COCKPIT2_CONTROLS_RUDDER_TRIM = 394;
+    public static final int SIM_FLIGHTMODEL_CONTROLS_SLATRAT = 395;
 
     // Fuel, engines, etc...
     public static final int SIM_AIRCRAFT_OVERFLOW_ACF_NUM_TANKS = 400;
