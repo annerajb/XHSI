@@ -593,7 +593,6 @@ int createAvionicsPacket(void) {
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(com2_standby_frequency_hz_833));
 	i++;
 
-
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_RADIOS_TRANSPONDER_MODE);
 	sim_packet.sim_data_points[i].value =  custom_htonf((float) XPLMGetDatai(transponder_mode));
 	i++;
@@ -1311,6 +1310,10 @@ int createCustomAvionicsPacket(void) {
         i++;
     }
 
+
+    sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_STATUS);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) jar_a320_neo_ready );
+    i++;
     if ( jar_a320_neo_ready ) {
 
         // Approach
@@ -1776,25 +1779,25 @@ int createStaticPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_POSITION_NEAREST_ARPT);
 	latf = (float) XPLMGetDatad(latitude);
 	lonf = (float) XPLMGetDatad(longitude);
-        arpt_navref = XPLMFindNavAid(
-            NULL, // inNameFragment
-            NULL, // inIDFragment
-            &latf,
-            &lonf,
-            NULL, // inFrequency
-            xplm_Nav_Airport);
-        XPLMGetNavAidInfo(
-            arpt_navref,
-            NULL, // outType
-            NULL, // outLatitude
-            NULL, // outLongitude
-            NULL, // outHeight
-            NULL, // outFrequency
-            NULL, // outHeading
-            arpt_id,
-            NULL, // outName
-            NULL); // outReg
-        strncpy( (char *)&sim_packet.sim_data_points[i].value, arpt_id, 4 );
+    arpt_navref = XPLMFindNavAid(
+        NULL, // inNameFragment
+        NULL, // inIDFragment
+        &latf,
+        &lonf,
+        NULL, // inFrequency
+        xplm_Nav_Airport);
+    XPLMGetNavAidInfo(
+        arpt_navref,
+        NULL, // outType
+        NULL, // outLatitude
+        NULL, // outLongitude
+        NULL, // outHeight
+        NULL, // outFrequency
+        NULL, // outHeading
+        arpt_id,
+        NULL, // outName
+        NULL); // outReg
+    strncpy( (char *)&sim_packet.sim_data_points[i].value, arpt_id, 4 );
 	i++;
 
 
