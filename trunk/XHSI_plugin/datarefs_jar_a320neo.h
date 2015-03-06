@@ -21,13 +21,33 @@ extern XPLMDataRef jar_a320_neo_lvlch_dot;
 extern XPLMDataRef jar_a320_neo_spd_managed;
 extern XPLMDataRef jar_a320_neo_alt_managed;
 
+// Baro
+extern XPLMDataRef jar_a320_neo_baro_flash;
+// integer
+
 // Autopilot and FD
 extern XPLMDataRef jar_a320_neo_ap_phase;
 extern XPLMDataRef jar_a320_neo_ap1;
 extern XPLMDataRef jar_a320_neo_ap2;
 extern XPLMDataRef jar_a320_neo_ils;
 extern XPLMDataRef jar_a320_neo_fd;
-// JARDesign A320Neo is using X-Plane flight director
+
+// JARDesign A320Neo is using X-Plane flight director but there are datarefs...
+// FD Bars
+XPLMDataRef jar_a320_neo_fd_h_show;
+// integer
+XPLMDataRef jar_a320_neo_fd_pitch;
+// float
+XPLMDataRef jar_a320_neo_fd_v_show;
+// integer
+XPLMDataRef jar_a320_neo_fd_roll;
+// float
+XPLMDataRef jar_a320_neo_fd_y_show;
+// integer
+XPLMDataRef jar_a320_neo_fd_yaw_dot;
+// float
+
+
 
 // Vertical and horizontal modes
 extern XPLMDataRef jar_a320_neo_com_mode;
@@ -82,6 +102,11 @@ extern XPLMDataRef jar_a320_neo_autobrake_max;
 // FMS
 extern XPLMDataRef jar_a320_neo_fms_tr_alt;
 // integer : transition altitude
+// V-DEV indicator
+extern XPLMDataRef jar_a320_neo_yoyo_on;
+// integer globalPropertyi("sim/custom/yoyo_on"))
+extern XPLMDataRef jar_a320_neo_vdev;
+// float	globalPropertyf("sim/custom/vdev"))
 
 // V-Speeds (absolute values in knots)
 extern XPLMDataRef jar_a320_neo_vls;

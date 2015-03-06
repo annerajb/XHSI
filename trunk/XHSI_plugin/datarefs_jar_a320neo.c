@@ -37,12 +37,23 @@ XPLMDataRef jar_a320_neo_lvlch_dot;
 XPLMDataRef jar_a320_neo_spd_managed;
 XPLMDataRef jar_a320_neo_alt_managed;
 
+// Baro
+XPLMDataRef jar_a320_neo_baro_flash;
+
 // Autopilot and FD
 XPLMDataRef jar_a320_neo_ap_phase;
 XPLMDataRef jar_a320_neo_ap1;
 XPLMDataRef jar_a320_neo_ap2;
 XPLMDataRef jar_a320_neo_ils;
 XPLMDataRef jar_a320_neo_fd;
+
+// FD Bars
+XPLMDataRef jar_a320_neo_fd_h_show; // globalPropertyi("sim/custom/xap/pfd/myfd_h_show"))
+XPLMDataRef jar_a320_neo_fd_pitch; // globalPropertyf("sim/cockpit2/autopilot/flight_director_pitch_deg"))
+XPLMDataRef jar_a320_neo_fd_v_show; // globalPropertyi("sim/custom/xap/pfd/myfd_v_show"))
+XPLMDataRef jar_a320_neo_fd_roll; // globalPropertyf("sim/cockpit2/autopilot/flight_director_roll_deg"))
+XPLMDataRef jar_a320_neo_fd_y_show; // globalPropertyi("sim/custom/xap/pfd/myfd_y_show"))
+XPLMDataRef jar_a320_neo_fd_yaw_dot; // globalPropertyf("sim/cockpit2/radios/indicators/nav1_hdef_dots_pilot"))
 
 // Vertical and horizontal modes
 XPLMDataRef jar_a320_neo_com_mode;
@@ -75,6 +86,8 @@ XPLMDataRef jar_a320_neo_autobrake_max;
 
 // FMS
 XPLMDataRef jar_a320_neo_fms_tr_alt;
+XPLMDataRef jar_a320_neo_yoyo_on;
+XPLMDataRef jar_a320_neo_vdev;
 
 // V-Speeds
 XPLMDataRef jar_a320_neo_vls;
@@ -116,6 +129,14 @@ void findJarA320NeoDataRefs(void) {
             jar_a320_neo_ils = XPLMFindDataRef("sim/custom/xap/fcu/ils");
             jar_a320_neo_fd = XPLMFindDataRef("sim/custom/xap/fcu/fd");
 
+            // FD Bars
+            jar_a320_neo_fd_h_show = XPLMFindDataRef("sim/custom/xap/pfd/myfd_h_show");
+            jar_a320_neo_fd_pitch = XPLMFindDataRef("sim/cockpit2/autopilot/flight_director_pitch_deg");
+            jar_a320_neo_fd_v_show = XPLMFindDataRef("sim/custom/xap/pfd/myfd_v_show");
+            jar_a320_neo_fd_roll = XPLMFindDataRef("sim/cockpit2/autopilot/flight_director_roll_deg");
+            jar_a320_neo_fd_y_show = XPLMFindDataRef("sim/custom/xap/pfd/myfd_y_show");
+            jar_a320_neo_fd_yaw_dot = XPLMFindDataRef("sim/cockpit2/radios/indicators/nav1_hdef_dots_pilot");
+
             // Vertical and horizontal modes
             jar_a320_neo_com_mode = XPLMFindDataRef("sim/custom/xap/ap/common_mode");
             jar_a320_neo_vert_mode = XPLMFindDataRef("sim/custom/xap/ap/vert_mode");
@@ -133,6 +154,8 @@ void findJarA320NeoDataRefs(void) {
             jar_a320_neo_lvlch_dot = XPLMFindDataRef("sim/custom/xap/fcu/lvlch_dot");
             jar_a320_neo_spd_managed = XPLMFindDataRef("sim/custom/xap/ap/spdmanaged");
             // jar_a320_neo_alt_managed = XPLMFindDataRef("sim/custom/xap/");
+            // Baro
+            jar_a320_neo_baro_flash = XPLMFindDataRef("sim/custom/xap/pfd/baro_flash");
 
             // Landing capabilities
             jar_a320_neo_fma_cat_mode = XPLMFindDataRef("sim/custom/xap/fma/cat_mode");
@@ -161,6 +184,9 @@ void findJarA320NeoDataRefs(void) {
 
             // FMS
             jar_a320_neo_fms_tr_alt = XPLMFindDataRef("sim/custom/xap/ap/trans_alt");
+            jar_a320_neo_yoyo_on = XPLMFindDataRef("sim/custom/yoyo_on");
+            jar_a320_neo_vdev = XPLMFindDataRef("sim/custom/vdev");
+
 
             // V-Speeds
             jar_a320_neo_vls = XPLMFindDataRef("sim/custom/xap/pfd/vls_knots");
