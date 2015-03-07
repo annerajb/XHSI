@@ -166,15 +166,7 @@ public class RefSourceLabel extends NDSubcomponent {
 
             }
 
-            // int text_width = nd_gc.get_text_width(g2, nd_gc.font_medium, "XXX 9  ");
-            //int text_width = nd_gc.get_text_width(g2, nd_gc.font_s, source_label);
-//            int source_label_x = Math.min(
-//                    nd_gc.frame_size.width - nd_gc.border_right - (nd_gc.max_char_advance_medium * 5) - text_width,
-//                    nd_gc.map_center_x + nd_gc.panel_rect.width/4
-//                    );
-//            int source_label_y = nd_gc.border_top + nd_gc.line_height_medium + 2;
-            //int source_label_x = nd_gc.map_center_x - text_width/2;
-            int source_label_x = nd_gc.panel_rect.x + nd_gc.panel_rect.width*15/20;
+            int source_label_x = nd_gc.panel_rect.x + nd_gc.panel_rect.width*72/100;
             int source_label_y = nd_gc.panel_rect.y + nd_gc.line_height_m;
             
             g2.setColor(this.label_color);

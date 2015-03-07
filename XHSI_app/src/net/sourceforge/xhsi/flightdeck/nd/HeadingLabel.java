@@ -109,7 +109,6 @@ public class HeadingLabel extends NDSubcomponent {
     //            nd_gc.border_top,
     //            null);
 
-            //int width = 200;
             int box_d_x = nd_gc.digit_width_xl*225/100;
             int x_points_heading_box[] = { nd_gc.map_center_x - box_d_x, nd_gc.map_center_x - box_d_x, nd_gc.map_center_x + box_d_x, nd_gc.map_center_x + box_d_x };
             int y_points_heading_box[] = { nd_gc.border_top + 2, heading_box_bottom_y, heading_box_bottom_y, nd_gc.border_top + 2 };
