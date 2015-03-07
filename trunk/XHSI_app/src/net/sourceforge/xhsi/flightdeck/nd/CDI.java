@@ -56,11 +56,11 @@ public class CDI extends NDSubcomponent {
 
     private void drawCDI(Graphics2D g2, boolean steam_hsi) {
 
-        int dot_r = Math.round(3.0f * nd_gc.grow_scaling_factor);
-        int bar_w = (int)(5*nd_gc.grow_scaling_factor);
-        int dot_dist = ( steam_hsi ) ? nd_gc.rose_radius/4 : Math.round(35.0f * nd_gc.grow_scaling_factor);
-        int fromto_h = (int)(21*nd_gc.grow_scaling_factor);
-        int fromto_w = (int)(15*nd_gc.grow_scaling_factor);
+        int dot_r = Math.round(3.0f * nd_gc.scaling_factor);
+        int bar_w = (int)(5*nd_gc.scaling_factor);
+        int dot_dist = ( steam_hsi ) ? nd_gc.rose_radius/4 : Math.round(35.0f * nd_gc.scaling_factor);
+        int fromto_h = (int)(21*nd_gc.scaling_factor);
+        int fromto_w = (int)(15*nd_gc.scaling_factor);
 	float dash[] = { 24.0f, 6.0f };
         int source = this.avionics.hsi_source();
         float cdi_value = 0.0f;
@@ -224,7 +224,7 @@ public class CDI extends NDSubcomponent {
                 to_from_y = c_y+radius*1/16;
             }
             g2.setColor(nd_gc.deviation_scale_color);
-            g2.setFont(nd_gc.font_medium);
+            g2.setFont(nd_gc.font_xl);
             g2.drawString(to_from, to_from_x, to_from_y);
         }
 
