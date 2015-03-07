@@ -23,8 +23,10 @@
 */
 package net.sourceforge.xhsi.flightdeck.nd;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
@@ -43,7 +45,7 @@ public class SpeedsLabel extends NDSubcomponent {
     private static final long serialVersionUID = 1L;
     //int wind_dir_arrow_x;
     //int wind_dir_arrow_y;
-    int wind_dir_arrow_length = 30;
+    //int wind_dir_arrow_length = 30;
     float relative_wind_direction;
 
     private DecimalFormat degrees_formatter;
@@ -64,7 +66,7 @@ public class SpeedsLabel extends NDSubcomponent {
 
     private void drawSpeeds(Graphics2D g2) {
 
-        int line_height_medium = nd_gc.line_height_medium;
+        int line_height = nd_gc.line_height_m;
 
         int wind_speed = (int) Math.round( aircraft_environment.wind_speed() );
 //wind_speed = 15;
@@ -83,89 +85,81 @@ public class SpeedsLabel extends NDSubcomponent {
 
         //int three_digits_width = nd_gc.max_char_advance_medium * 3;
 
-        int gs_label_x = nd_gc.border_left + (int)(10*nd_gc.grow_scaling_factor);
-        int gs_x = gs_label_x + 2 + nd_gc.get_text_width(g2, nd_gc.font_small,"GS");
-        int tas_label_x = gs_x + nd_gc.get_text_width(g2, nd_gc.font_medium, "123\u00A0\u00A0"); // \u00A0 is Unicode non-breaking space
-        int tas_x = tas_label_x + 2 + nd_gc.get_text_width(g2, nd_gc.font_small,"TAS");
-        int wind_dir_x = gs_label_x;
-        // int wind_speed_x = wind_dir_x + three_digits_width + 10;
-        int wind_speed_x = wind_dir_x + nd_gc.get_text_width(g2, nd_gc.font_medium, "123\u00B0"); // \u00B0 is Unicode degree symbol
+        int gs_label_x = nd_gc.border_left + (int)(10*nd_gc.scaling_factor);
+        int gs_x = gs_label_x + 2 + nd_gc.get_text_width(g2, nd_gc.font_xs,"GS");
+        int tas_label_x = gs_x + nd_gc.get_text_width(g2, nd_gc.font_m, "999   "); // \u00A0 is Unicode non-breaking space
+        int tas_x = tas_label_x + 2 + nd_gc.get_text_width(g2, nd_gc.font_xs,"TAS");
+        int speeds_y = nd_gc.border_top + line_height;
+        
+        int wind_x = gs_label_x;
+        int wind_y = nd_gc.border_top + line_height*24/10;
+        
+        int wind_dir_arrow_length = Math.round(40.0f * nd_gc.scaling_factor);
+        int arrow_head = Math.round(3.0f * nd_gc.scaling_factor);
+        int wind_dir_arrow_cx = wind_x + wind_dir_arrow_length/2;
+        int wind_dir_arrow_cy = wind_y + line_height*2/10 + wind_dir_arrow_length*1/8 + wind_dir_arrow_length/2;
 
-        int wind_dir_arrow_x = nd_gc.border_left + (wind_dir_arrow_length / 2) + (int)(10*nd_gc.grow_scaling_factor);
-        int wind_dir_arrow_y = nd_gc.border_top + (2 * nd_gc.line_height_medium + 5) + (wind_dir_arrow_length / 2) + 10;
-
-        g2.clearRect(0, 0, 140, 45);
+        //g2.clearRect(0, 0, nd_gc.border_left + nd_gc.digit_width_m*15, wind_y + line_height*2/10);
 
         g2.setColor(nd_gc.top_text_color);
-        g2.setFont(this.nd_gc.font_small);
-        g2.drawString("GS", gs_label_x, nd_gc.border_top + line_height_medium);
-        g2.setFont(this.nd_gc.font_medium);
-        g2.drawString("" + (int) Math.round(aircraft.ground_speed()), gs_x,nd_gc.border_top + line_height_medium);
+        g2.setFont(this.nd_gc.font_xs);
+        g2.drawString("GS", gs_label_x, speeds_y);
+        g2.setFont(this.nd_gc.font_m);
+        g2.drawString("" + Math.round(aircraft.ground_speed()), gs_x, speeds_y);
 
-        if ( nd_gc.panel_rect.width >= 380 ) {
-            g2.setFont(this.nd_gc.font_small);
-            g2.drawString("TAS", tas_label_x, nd_gc.border_top + line_height_medium);
-            g2.setFont(this.nd_gc.font_medium);
-            g2.drawString("" + (int) Math.round(aircraft.true_air_speed()), tas_x,nd_gc.border_top + line_height_medium);
-        }
+        g2.setFont(this.nd_gc.font_xs);
+        g2.drawString("TAS", tas_label_x, speeds_y);
+        g2.setFont(this.nd_gc.font_m);
+        g2.drawString("" + Math.round(aircraft.true_air_speed()), tas_x, speeds_y);
 
-        //g2.setColor(Color.LIGHT_GRAY);
         g2.setColor(nd_gc.wind_color);
-        String wind_dir_text = null;
-        String wind_speed_text = null;
-        int wind_dir = (int) Math.round(wind_direction + this.aircraft.magnetic_variation());
-        if (wind_dir<0) {
+        String wind_text = null;
+        int wind_dir = Math.round(wind_direction + this.aircraft.magnetic_variation());
+        if (wind_dir < 0) {
             wind_dir += 360;
         }
         wind_dir %= 360;
-        if (wind_speed > 4) {
-            wind_dir_text = degrees_formatter.format(wind_dir) + "\u00B0";
-            wind_speed_text = "/ " + wind_speed;
-        } else {
-            wind_dir_text = "---\u00B0";
-            wind_speed_text="/ --";
+        if (wind_dir == 0) {
+            wind_dir = 360;
         }
-        g2.drawString(
-                wind_dir_text,
-                wind_dir_x,
-                nd_gc.border_top + line_height_medium * 2 + 5
-            );
-        g2.drawString(
-                wind_speed_text,
-                wind_speed_x,
-                nd_gc.border_top + line_height_medium * 2 + 5
-            );
+        if (wind_speed > 4) {
+            wind_text = degrees_formatter.format(wind_dir) + "\u00B0" + "/" + wind_speed;
+        } else {
+            wind_text = "---\u00B0" + "/--";
+        }
+        g2.drawString(wind_text, wind_x, wind_y);
 
         // wind direction arrow
         if (wind_speed > 4) {
-//if (true) {
             
+            g2.clearRect(0, wind_y, wind_x + wind_dir_arrow_length*10/8, wind_dir_arrow_length*11/8);
+
+            Stroke original_stroke = g2.getStroke();
+            g2.setStroke(new BasicStroke(2.0f * nd_gc.scaling_factor, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             AffineTransform original_at = null;
             original_at = g2.getTransform();
-            AffineTransform rotate = AffineTransform.getRotateInstance(
-                    Math.toRadians((double) (wind_direction - map_up + this.aircraft.magnetic_variation())),
-                    wind_dir_arrow_x,
-                    wind_dir_arrow_y);
+            AffineTransform rotate = AffineTransform.getRotateInstance(Math.toRadians((double) (wind_direction - map_up + this.aircraft.magnetic_variation())),
+                    wind_dir_arrow_cx,
+                    wind_dir_arrow_cy);
             g2.transform(rotate);
 
-            GeneralPath polyline;
-//            g2.draw(new Line2D.Double(wind_dir_arrow_x, wind_dir_arrow_y - (wind_dir_arrow_length/2),
-//                                                               wind_dir_arrow_x, wind_dir_arrow_y + (wind_dir_arrow_length/2)));
-//            polyline = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 2);
-//            polyline.moveTo (wind_dir_arrow_x - 5, wind_dir_arrow_y + (wind_dir_arrow_length/2) - 5);
-//            polyline.lineTo(wind_dir_arrow_x, wind_dir_arrow_y + (wind_dir_arrow_length/2));
-//            polyline.lineTo(wind_dir_arrow_x + 5, wind_dir_arrow_y + (wind_dir_arrow_length/2) - 5);
-            polyline = new GeneralPath(GeneralPath.WIND_NON_ZERO, 2);
-            polyline.moveTo (wind_dir_arrow_x, wind_dir_arrow_y - (wind_dir_arrow_length/2));
-            polyline.lineTo(wind_dir_arrow_x, wind_dir_arrow_y + (wind_dir_arrow_length/2));
-            polyline.lineTo(wind_dir_arrow_x + 5, wind_dir_arrow_y + (wind_dir_arrow_length/2) - 5);
-            g2.draw(polyline);
-            polyline = new GeneralPath(GeneralPath.WIND_NON_ZERO, 2);
-            polyline.moveTo (wind_dir_arrow_x, wind_dir_arrow_y - (wind_dir_arrow_length/2));
-            polyline.lineTo(wind_dir_arrow_x, wind_dir_arrow_y + (wind_dir_arrow_length/2));
-            polyline.lineTo(wind_dir_arrow_x - 5, wind_dir_arrow_y + (wind_dir_arrow_length/2) - 5);
-            g2.draw(polyline);
+//            GeneralPath polyline;
+//            polyline = new GeneralPath(GeneralPath.WIND_NON_ZERO, 2);
+//            polyline.moveTo (wind_dir_arrow_cx, wind_dir_arrow_cy - (wind_dir_arrow_length/2));
+//            polyline.lineTo(wind_dir_arrow_cx, wind_dir_arrow_cy + (wind_dir_arrow_length/2));
+//            polyline.lineTo(wind_dir_arrow_cx + 5, wind_dir_arrow_cy + (wind_dir_arrow_length/2) - 5);
+//            g2.draw(polyline);
+//            polyline = new GeneralPath(GeneralPath.WIND_NON_ZERO, 2);
+//            polyline.moveTo (wind_dir_arrow_cx, wind_dir_arrow_cy - (wind_dir_arrow_length/2));
+//            polyline.lineTo(wind_dir_arrow_cx, wind_dir_arrow_cy + (wind_dir_arrow_length/2));
+//            polyline.lineTo(wind_dir_arrow_cx - 5, wind_dir_arrow_cy + (wind_dir_arrow_length/2) - 5);
+//            g2.draw(polyline);
+            g2.drawLine(wind_dir_arrow_cx, wind_dir_arrow_cy - (wind_dir_arrow_length/2), wind_dir_arrow_cx, wind_dir_arrow_cy + (wind_dir_arrow_length/2));
+            g2.drawLine(wind_dir_arrow_cx, wind_dir_arrow_cy + (wind_dir_arrow_length/2), wind_dir_arrow_cx + arrow_head, wind_dir_arrow_cy + (wind_dir_arrow_length/2) - arrow_head);
+            g2.drawLine(wind_dir_arrow_cx, wind_dir_arrow_cy + (wind_dir_arrow_length/2), wind_dir_arrow_cx - arrow_head, wind_dir_arrow_cy + (wind_dir_arrow_length/2) - arrow_head);
+            
             g2.setTransform(original_at);
+            g2.setStroke(original_stroke);
 
         }
 

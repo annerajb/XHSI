@@ -60,8 +60,8 @@ public class HeadingLabel extends NDSubcomponent {
         if ( nd_gc.powered && ! nd_gc.mode_plan ) {
 
             // int y = nd_gc.border_top + nd_gc.line_height_large;
-            int heading_text_y = nd_gc.border_top + nd_gc.line_height_xl;
-            int heading_box_bottom_y = nd_gc.border_top + nd_gc.line_height_xl*10/8;
+            int heading_text_y = nd_gc.border_top + nd_gc.line_height_xl*10/8;
+            int heading_box_bottom_y = nd_gc.border_top + nd_gc.line_height_xl*12/8;
             int rose_top_y = this.nd_gc.map_center_y - nd_gc.rose_radius;
             int center_x = this.nd_gc.map_center_x;
             int center_y = this.nd_gc.map_center_y;
@@ -191,7 +191,7 @@ public class HeadingLabel extends NDSubcomponent {
                 int tick_halfwidth = (int)(5 * nd_gc.scaling_factor);
                 g2.drawLine(
                     nd_gc.map_center_x, nd_gc.map_center_y - (nd_gc.rose_radius*3/16),
-                    nd_gc.map_center_x, rose_top_y + 2);
+                    nd_gc.map_center_x, heading_box_bottom_y); // was: , rose_top_y + 2 )
                 if ( ! XHSIPreferences.get_instance().get_draw_range_arcs() ) {
                     g2.drawLine(
                         nd_gc.map_center_x - tick_halfwidth, nd_gc.map_center_y - (nd_gc.rose_radius*3/4),
