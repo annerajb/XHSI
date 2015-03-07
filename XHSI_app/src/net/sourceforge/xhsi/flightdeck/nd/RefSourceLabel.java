@@ -98,9 +98,8 @@ public class RefSourceLabel extends NDSubcomponent {
 
     public void paint(Graphics2D g2) {
 
-        if ( nd_gc.powered
+        if ( nd_gc.powered ) {
 //                && ( ( this.avionics.map_submode() == Avionics.EFIS_MAP_APP ) || ( this.avionics.map_submode() == Avionics.EFIS_MAP_VOR ) )
-                && ( nd_gc.panel_rect.width >= 450 ) ) {
 
             DecimalFormat degrees_formatter = new DecimalFormat("000");
 
@@ -167,36 +166,39 @@ public class RefSourceLabel extends NDSubcomponent {
 
             }
 
-            int text_width = nd_gc.get_text_width(g2, nd_gc.font_medium, "XXX 9  ");
-//            int source_label_x = (nd_gc.map_center_x + nd_gc.frame_size.width - nd_gc.border_right - text_width ) / 2 - 4;
-//            int source_label_x = nd_gc.frame_size.width - nd_gc.border_right - (nd_gc.max_char_advance_medium * 5) - text_width;
-            int source_label_x = Math.min(
-                    nd_gc.frame_size.width - nd_gc.border_right - (nd_gc.max_char_advance_medium * 5) - text_width,
-                    nd_gc.map_center_x + nd_gc.panel_rect.width/4
-                    );
-            int source_label_y = nd_gc.border_top + nd_gc.line_height_medium + 2;
-
+            // int text_width = nd_gc.get_text_width(g2, nd_gc.font_medium, "XXX 9  ");
+            //int text_width = nd_gc.get_text_width(g2, nd_gc.font_s, source_label);
+//            int source_label_x = Math.min(
+//                    nd_gc.frame_size.width - nd_gc.border_right - (nd_gc.max_char_advance_medium * 5) - text_width,
+//                    nd_gc.map_center_x + nd_gc.panel_rect.width/4
+//                    );
+//            int source_label_y = nd_gc.border_top + nd_gc.line_height_medium + 2;
+            //int source_label_x = nd_gc.map_center_x - text_width/2;
+            int source_label_x = nd_gc.panel_rect.x + nd_gc.panel_rect.width*15/20;
+            int source_label_y = nd_gc.panel_rect.y + nd_gc.line_height_m;
+            
             g2.setColor(this.label_color);
-            g2.setFont(nd_gc.font_medium);
+            g2.setFont(nd_gc.font_m);
             g2.drawString(source_label, source_label_x, source_label_y);
 
             if ( detailed ) {
 
-                source_label_y += nd_gc.line_height_small + 1;
-                int crs_text_x = source_label_x + nd_gc.get_text_width(g2, nd_gc.font_small, crs_label1);
+                source_label_y += nd_gc.line_height_xs;
+                int crs_text_x = source_label_x + nd_gc.get_text_width(g2, nd_gc.font_xxxs, crs_label1);
                 //g2.setColor(crs_color);
                 g2.setColor(nd_gc.top_text_color);
                 if ( ( ! this.preferences.is_auto_frontcourse_to_obs() ) && ( ( src_type == TYPE_ILS ) || ( src_type == TYPE_LOC ) ) ) {
                     // I don't remember why this is depending on the setting to adjust the OBS automatically to the Localizer frontcourse!
-                    g2.setFont(nd_gc.font_tiny);
+                    // Display the localizer's frontcourse
+                    g2.setFont(nd_gc.font_xxxs);
                     g2.drawString(crs_label2, source_label_x, source_label_y);
-                    g2.setFont(nd_gc.font_small);
+                    g2.setFont(nd_gc.font_xs);
                     g2.drawString(crs_text2, crs_text_x, source_label_y);
-                    source_label_y += nd_gc.line_height_small + 1;
+                    source_label_y += nd_gc.line_height_xs;
                 }
-                g2.setFont(nd_gc.font_tiny);
+                g2.setFont(nd_gc.font_xxxs);
                 g2.drawString(crs_label1, source_label_x, source_label_y);
-                g2.setFont(nd_gc.font_small);
+                g2.setFont(nd_gc.font_xs);
                 g2.drawString(crs_text1, crs_text_x, source_label_y);
 
             }

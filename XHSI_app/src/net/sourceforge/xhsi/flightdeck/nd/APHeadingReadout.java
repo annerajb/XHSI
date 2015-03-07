@@ -50,16 +50,15 @@ public class APHeadingReadout extends NDSubcomponent {
 
     public void paint(Graphics2D g2) {
 
-        if ( nd_gc.powered
+        if ( nd_gc.powered ) {
 //                && ( ( this.avionics.map_submode() == Avionics.EFIS_MAP_APP ) || ( this.avionics.map_submode() == Avionics.EFIS_MAP_VOR ) )
-                && ( nd_gc.panel_rect.width >= 560 ) ) {
 
             DecimalFormat degrees_formatter = new DecimalFormat("000");
 
             String hdg_text = degrees_formatter.format( Math.round(this.avionics.heading_bug()) ) + " H";
 
             int hdg_x = nd_gc.border_left + nd_gc.panel_rect.width*157/600;
-            int hdg_y = nd_gc.border_top + nd_gc.line_height_xl;
+            int hdg_y = nd_gc.border_top + nd_gc.line_height_xl*10/8;
             
             g2.setColor(nd_gc.heading_bug_color);
             g2.setFont(nd_gc.font_m);

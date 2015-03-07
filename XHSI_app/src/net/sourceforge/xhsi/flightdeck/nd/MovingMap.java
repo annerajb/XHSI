@@ -1012,7 +1012,7 @@ public class MovingMap extends NDSubcomponent {
                 for (int i = 1; i < this.tcas.total; i++) {
                     if ( this.tcas.alarm[i] != TCAS.NONE ) {
 
-                        int tfc_size = (int)(7.0f * nd_gc.grow_scaling_factor);
+                        int tfc_size = (int)(7.0f * nd_gc.scaling_factor);
                         
                         int tfc_x = lon_to_x( this.tcas.lon[i] );
                         int tfc_y = lat_to_y( this.tcas.lat[i] );
@@ -1215,11 +1215,11 @@ public class MovingMap extends NDSubcomponent {
         // just a big hexagon for VOR without DME
 //        int x_points_hexagon[] = { x-4, x+4, x+8, x+4, x-4, x-8 };
 //        int y_points_hexagon[] = { y-7, y-7, y, y+7, y+7, y };
-        int x4 = Math.round(4.0f*nd_gc.grow_scaling_factor);
-        int x8 = Math.round(8.0f*nd_gc.grow_scaling_factor);
-        int x12= Math.round(12.0f*nd_gc.grow_scaling_factor);
-        int y7 = Math.round(7.0f*nd_gc.grow_scaling_factor);
-        int y12= Math.round(12.0f*nd_gc.grow_scaling_factor);
+        int x4 = Math.round(4.0f*nd_gc.scaling_factor);
+        int x8 = Math.round(8.0f*nd_gc.scaling_factor);
+        int x12= Math.round(12.0f*nd_gc.scaling_factor);
+        int y7 = Math.round(7.0f*nd_gc.scaling_factor);
+        int y12= Math.round(12.0f*nd_gc.scaling_factor);
         int x_points_hexagon[] = { x-x4, x+x4, x+x8, x+x4, x-x4, x-x8 };
         int y_points_hexagon[] = { y-y7, y-y7, y, y+y7, y+y7, y };
 
@@ -1242,10 +1242,10 @@ public class MovingMap extends NDSubcomponent {
             g2.setTransform(original_at);
             g2.rotate(Math.toRadians( course + vor.offset ), x, y);
             Stroke original_stroke = g2.getStroke();
-            //g2.setStroke(new BasicStroke(1.0f*nd_gc.grow_scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, longdashes, 0.0f));
+            //g2.setStroke(new BasicStroke(1.0f*nd_gc.scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, longdashes, 0.0f));
             g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
             g.drawLine(x, y, x, y + course_line);
-            //g2.setStroke(new BasicStroke(1.0f*nd_gc.grow_scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, shortdashes, 0.0f));
+            //g2.setStroke(new BasicStroke(1.0f*nd_gc.scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, shortdashes, 0.0f));
             g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?shortdashes_1:shortdashes_2, 0.0f));
             g.drawLine(x, y - course_line, x, y);
             g2.setStroke(original_stroke);
@@ -1260,16 +1260,16 @@ public class MovingMap extends NDSubcomponent {
         int course_line = (int) (vordme.range * this.pixels_per_nm);
 
         // a somewhat smaller hexagon with 3 leaves for VOR with DME
-        int x3 = Math.round(3.0f*nd_gc.grow_scaling_factor);
-        int x6 = Math.round(6.0f*nd_gc.grow_scaling_factor);
-        int x8 = Math.round(8.0f*nd_gc.grow_scaling_factor);
-        int x11 = Math.round(11.0f*nd_gc.grow_scaling_factor);
-        int x12 = Math.round(12.0f*nd_gc.grow_scaling_factor);
+        int x3 = Math.round(3.0f*nd_gc.scaling_factor);
+        int x6 = Math.round(6.0f*nd_gc.scaling_factor);
+        int x8 = Math.round(8.0f*nd_gc.scaling_factor);
+        int x11 = Math.round(11.0f*nd_gc.scaling_factor);
+        int x12 = Math.round(12.0f*nd_gc.scaling_factor);
         int y3 = x3;
-        int y5 = Math.round(5.0f*nd_gc.grow_scaling_factor);
+        int y5 = Math.round(5.0f*nd_gc.scaling_factor);
         int y8 = x8;
         int y11 = x11;
-        int y12 = Math.round(12.0f*nd_gc.grow_scaling_factor);
+        int y12 = Math.round(12.0f*nd_gc.scaling_factor);
         int x_points_hexagon[] = { x-x3, x+x3, x+x6, x+x3, x-x3, x-x6 };
         int y_points_hexagon[] = { y-y5, y-y5, y, y+y5, y+y5, y };
         int x_points_ul_leaf[] = { x-x6, x-x3, x-x8, x-x11 };
@@ -1302,10 +1302,10 @@ public class MovingMap extends NDSubcomponent {
                 // the selected course and reciprocal
                 g2.setTransform(original_at);
                 g2.rotate(Math.toRadians( course + vordme.offset ), x, y);
-                //g2.setStroke(new BasicStroke(1.0f*nd_gc.grow_scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, shortdashes, 0.0f));
+                //g2.setStroke(new BasicStroke(1.0f*nd_gc.scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, shortdashes, 0.0f));
                 g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?shortdashes_1:shortdashes_2, 0.0f));
                 g.drawLine(x, y - course_line, x, y);
-                //g2.setStroke(new BasicStroke(1.0f*nd_gc.grow_scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, longdashes, 0.0f));
+                //g2.setStroke(new BasicStroke(1.0f*nd_gc.scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, longdashes, 0.0f));
                 g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
                 g.drawLine(x, y, x, y + course_line);
             }
@@ -1323,16 +1323,16 @@ public class MovingMap extends NDSubcomponent {
     private void drawDME(Graphics2D g2, int x, int y, RadioNavBeacon dme, int bank, float dme_radius) {
 
         // a sort-of-Y-symbol for a standalone DME or TACAN
-        int x3 = Math.round(3.0f*nd_gc.grow_scaling_factor);
-        int x6 = Math.round(6.0f*nd_gc.grow_scaling_factor);
-        int x8 = Math.round(8.0f*nd_gc.grow_scaling_factor);
-        int x11 = Math.round(11.0f*nd_gc.grow_scaling_factor);
-        int x12 = Math.round(12.0f*nd_gc.grow_scaling_factor);
+        int x3 = Math.round(3.0f*nd_gc.scaling_factor);
+        int x6 = Math.round(6.0f*nd_gc.scaling_factor);
+        int x8 = Math.round(8.0f*nd_gc.scaling_factor);
+        int x11 = Math.round(11.0f*nd_gc.scaling_factor);
+        int x12 = Math.round(12.0f*nd_gc.scaling_factor);
         int y3 = x3;
-        int y5 = Math.round(5.0f*nd_gc.grow_scaling_factor);
+        int y5 = Math.round(5.0f*nd_gc.scaling_factor);
         int y8 = x8;
-        int y11 = Math.round(11.0f*nd_gc.grow_scaling_factor);
-        int y12 = Math.round(12.0f*nd_gc.grow_scaling_factor);
+        int y11 = Math.round(11.0f*nd_gc.scaling_factor);
+        int y12 = Math.round(12.0f*nd_gc.scaling_factor);
         int x_points[] = { x+x6, x+x11, x+x8, x+x3, x-x3, x-x8, x-x11, x-x6, x-x3, x-x3,  x+x3, x+x3 };
         int y_points[] = { y,   y-y3,  y-y8, y-y5, y-y5, y-y8, y-y3,  y,   y+y5, y+y11, y+y11, y+y5 };
 
@@ -1352,7 +1352,7 @@ public class MovingMap extends NDSubcomponent {
         }
         if ( bank > 0 ) {
             Stroke original_stroke = g2.getStroke();
-            //g2.setStroke(new BasicStroke(1.0f*nd_gc.grow_scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, longdashes, 0.0f));
+            //g2.setStroke(new BasicStroke(1.0f*nd_gc.scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, longdashes, 0.0f));
             g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
             if ( dme_radius > 0 ) {
                 // g2.rotate(Math.toRadians(-this.map_up), x, y);
@@ -1380,11 +1380,11 @@ public class MovingMap extends NDSubcomponent {
         //g.drawOval(x-8,y-8,16,16);
 
         // alternative 2: a small circle surrounded by dots
-        int c4 = Math.round(3.0f*nd_gc.grow_scaling_factor);
-        int c7 = Math.round(5.5f*nd_gc.grow_scaling_factor);
-        int c10 = Math.round(8.0f*nd_gc.grow_scaling_factor);
-        int x12 = Math.round(12.0f*nd_gc.grow_scaling_factor);
-        int y12 = Math.round(12.0f*nd_gc.grow_scaling_factor);
+        int c4 = Math.round(3.0f*nd_gc.scaling_factor);
+        int c7 = Math.round(5.5f*nd_gc.scaling_factor);
+        int c10 = Math.round(8.0f*nd_gc.scaling_factor);
+        int x12 = Math.round(12.0f*nd_gc.scaling_factor);
+        int y12 = Math.round(12.0f*nd_gc.scaling_factor);
         Stroke original_stroke = g2.getStroke();
         g2.setStroke(new BasicStroke(2.0f));
         g2.drawOval(x-c4, y-c4, 2*c4, 2*c4);
@@ -1406,11 +1406,11 @@ public class MovingMap extends NDSubcomponent {
 
     private void drawFix(Graphics2D g2, int x, int y, Fix fix) {
 
-        int x5 = Math.round(5.0f*nd_gc.grow_scaling_factor);
-        int x12 = Math.round(12.0f*nd_gc.grow_scaling_factor);
-        int y3 = Math.round(3.0f*nd_gc.grow_scaling_factor);
-        int y6 = Math.round(6.0f*nd_gc.grow_scaling_factor);
-        int y12 = Math.round(12.0f*nd_gc.grow_scaling_factor);
+        int x5 = Math.round(5.0f*nd_gc.scaling_factor);
+        int x12 = Math.round(12.0f*nd_gc.scaling_factor);
+        int y3 = Math.round(3.0f*nd_gc.scaling_factor);
+        int y6 = Math.round(6.0f*nd_gc.scaling_factor);
+        int y12 = Math.round(12.0f*nd_gc.scaling_factor);
         int x_points_triangle[] = { x-x5, x+x5, x };
         int y_points_triangle[] = { y+y3, y+y3, y-y6  };
 
@@ -1464,8 +1464,8 @@ public class MovingMap extends NDSubcomponent {
         }
 
         // identifier
-        int x11 = Math.round(11.0f*nd_gc.grow_scaling_factor);
-        int y4 = Math.round(4.0f*nd_gc.grow_scaling_factor);
+        int x11 = Math.round(11.0f*nd_gc.scaling_factor);
+        int y4 = Math.round(4.0f*nd_gc.scaling_factor);
         int y_offset;
         if ( avionics.efis_shows_data() ) {
             y_offset = is_the_twin ? y4 + nd_gc.line_height_xxs + nd_gc.line_height_xs : -y4;
@@ -1489,7 +1489,7 @@ public class MovingMap extends NDSubcomponent {
 
             if ( avionics.efis_shows_data() && ( ( nd_gc.map_range < 40 ) || nd_gc.map_zoomin ) ) {
                 // the exact location of the Localizer
-                int c4 = Math.round(3.0f*nd_gc.grow_scaling_factor);
+                int c4 = Math.round(3.0f*nd_gc.scaling_factor);
                 g2.drawOval(x-c4, y-c4, 2*c4, 2*c4);
             }
 
@@ -1508,12 +1508,12 @@ public class MovingMap extends NDSubcomponent {
                 // the exact location of the DME
                 g2.rotate(Math.toRadians(this.map_up), dme_x, dme_y);
                 g2.setStroke(new BasicStroke(stroke_width));
-                int r3 = Math.round(2.0f*nd_gc.grow_scaling_factor);
+                int r3 = Math.round(2.0f*nd_gc.scaling_factor);
                 g2.drawRect(dme_x-r3, dme_y-r3, 2*r3, 2*r3);
             }
         } else {
             // just short line for the localizer when map map_range >= 160
-            g2.drawLine(x, y, x, y+Math.round(60.0f*nd_gc.grow_scaling_factor));
+            g2.drawLine(x, y, x, y+Math.round(60.0f*nd_gc.scaling_factor));
         }
 
         // DME arc
@@ -1531,9 +1531,9 @@ public class MovingMap extends NDSubcomponent {
 
 
     private void drawAirport(Graphics2D g2, int x, int y, Airport airport, String elev) {
-            int c9 = Math.round(9.0f*nd_gc.grow_scaling_factor);
-            int x12 = Math.round(12.0f*nd_gc.grow_scaling_factor);
-            int y12 = Math.round(12.0f*nd_gc.grow_scaling_factor);
+            int c9 = Math.round(9.0f*nd_gc.scaling_factor);
+            int x12 = Math.round(12.0f*nd_gc.scaling_factor);
+            int y12 = Math.round(12.0f*nd_gc.scaling_factor);
             AffineTransform original_at = g2.getTransform();
             Stroke original_stroke = g2.getStroke();
             g2.rotate(Math.toRadians(this.map_up), x, y);
@@ -1597,7 +1597,7 @@ public class MovingMap extends NDSubcomponent {
                 g2.setColor(nd_gc.fmc_active_color);
             }
             Stroke original_stroke = g2.getStroke();
-            //g2.setStroke(new BasicStroke(1.0f*nd_gc.grow_scaling_factor));
+            //g2.setStroke(new BasicStroke(1.0f*nd_gc.scaling_factor));
             g2.setStroke(new BasicStroke(1.5f));
             g2.drawLine(x,y, lon_to_x(next_entry.lon), lat_to_y(next_entry.lat));
             g2.setStroke(original_stroke);
@@ -1607,12 +1607,12 @@ public class MovingMap extends NDSubcomponent {
         float max_dist = this.preferences.get_draw_only_inside_rose() ? nd_gc.rose_radius : nd_gc.rose_radius * 1.5f;
         if ( dist < max_dist ) {
 
-            int s3 = Math.round(2.0f*nd_gc.grow_scaling_factor);
-            int s13 = Math.round(12.0f*nd_gc.grow_scaling_factor);
-            int c4 = Math.round(4.0f*nd_gc.grow_scaling_factor);
-            int c6 = Math.round(6.0f*nd_gc.grow_scaling_factor);
-            int x12 = Math.round(12.0f*nd_gc.grow_scaling_factor);
-            int y12 = Math.round(12.0f*nd_gc.grow_scaling_factor);
+            int s3 = Math.round(2.0f*nd_gc.scaling_factor);
+            int s13 = Math.round(12.0f*nd_gc.scaling_factor);
+            int c4 = Math.round(4.0f*nd_gc.scaling_factor);
+            int c6 = Math.round(6.0f*nd_gc.scaling_factor);
+            int x12 = Math.round(12.0f*nd_gc.scaling_factor);
+            int y12 = Math.round(12.0f*nd_gc.scaling_factor);
             int x_points_star[] = { x-s3, x, x+s3, x+s13, x+s3, x, x-s3, x-s13, x-s3 };
             int y_points_star[] = { y-s3, y-s13, y-s3, y, y+s3, y+s13, y+s3, y, y-s3 };
 
