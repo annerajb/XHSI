@@ -1403,7 +1403,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
-        nd_options_panel.add(new JLabel("Display navaid frequencies on the map", JLabel.TRAILING), cons);
+        nd_options_panel.add(new JLabel("Display navaid frequencies and airport altitudes on the map", JLabel.TRAILING), cons);
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
