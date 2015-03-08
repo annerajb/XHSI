@@ -1543,7 +1543,7 @@ public class MovingMap extends NDSubcomponent {
             g2.setStroke(original_stroke);
             g2.setFont(nd_gc.font_xs);
             g2.drawString(airport.icao_code, x + x12, y + y12);
-            if ( this.avionics.efis_shows_data() ) {
+            if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
                 g2.setFont(nd_gc.font_xxs);
                 g2.drawString(elev, x + x12, y + y12 + nd_gc.line_height_xxs);
             }

@@ -251,24 +251,20 @@ public class RadioLabel extends NDSubcomponent {
 
             radio_info_box_width = nd_gc.digit_width_m * 9;
             if (this.selected_radio1 != null) {
-                if ((this.left_radio_box_buf_image == null) || (radio1_box_info == null) ) {
-                    this.radio1_box_info = new RadioBoxInfo(this.selected_radio1);
-                    this.left_radio_box_buf_image = create_buffered_image(radio_info_box_width, radio_info_box_height);
-                    Graphics2D gImg = get_graphics(this.left_radio_box_buf_image);
-                    draw_radio_box_info(gImg, this.radio1_box_info, nd_gc.digit_width_m, 1, radio_info_box_width - nd_gc.digit_width_m);
-                    gImg.dispose();
-                }
+                this.radio1_box_info = new RadioBoxInfo(this.selected_radio1);
+                this.left_radio_box_buf_image = create_buffered_image(radio_info_box_width, radio_info_box_height);
+                Graphics2D gImg = get_graphics(this.left_radio_box_buf_image);
+                draw_radio_box_info(gImg, this.radio1_box_info, nd_gc.digit_width_m, 1, radio_info_box_width - nd_gc.digit_width_m);
+                gImg.dispose();
                 g2.drawImage(this.left_radio_box_buf_image, this.nd_gc.border_left, radio_label_y, null);
             }
 
             if (this.selected_radio2 != null) {
-                if ((this.right_radio_box_buf_image == null) || (radio2_box_info == null) ) {
-                    this.radio2_box_info = new RadioBoxInfo(this.selected_radio2);
-                    this.right_radio_box_buf_image = create_buffered_image(radio_info_box_width, radio_info_box_height);
-                    Graphics2D gImg = get_graphics(this.right_radio_box_buf_image);
-                    draw_radio_box_info(gImg, this.radio2_box_info, nd_gc.digit_width_m * 25/10, 2, nd_gc.digit_width_m);
-                    gImg.dispose();
-                }
+                this.radio2_box_info = new RadioBoxInfo(this.selected_radio2);
+                this.right_radio_box_buf_image = create_buffered_image(radio_info_box_width, radio_info_box_height);
+                Graphics2D gImg = get_graphics(this.right_radio_box_buf_image);
+                draw_radio_box_info(gImg, this.radio2_box_info, nd_gc.digit_width_m * 25/10, 2, nd_gc.digit_width_m);
+                gImg.dispose();
                 g2.drawImage(this.right_radio_box_buf_image, this.nd_gc.frame_size.width - this.nd_gc.border_right - radio_info_box_width, radio_label_y, null);
             }
 
