@@ -72,30 +72,30 @@ public class SubPanelLines extends EICASSubcomponent {
         	g2.setColor(eicas_gc.ecam_markings_color);
         	
         	// Horiz left segment
-        	g2.drawLine ( eicas_gc.panel_rect.x + eicas_gc.dials_width*8/100,
+        	g2.drawLine ( eicas_gc.panel_rect.x + eicas_gc.ecam_messages_w*8/100,
         			eicas_gc.panel_rect.y + eicas_gc.prim_dials_height ,
-        			eicas_gc.panel_rect.x + eicas_gc.dials_width*94/100,
+        			eicas_gc.panel_rect.x + eicas_gc.ecam_messages_w*94/100,
         			eicas_gc.panel_rect.y + eicas_gc.prim_dials_height );
             
         	// Horiz right segment
         	if (primaries) {
-        		g2.drawLine ( eicas_gc.panel_rect.x + eicas_gc.dials_width*105/100,
+        		g2.drawLine ( eicas_gc.panel_rect.x + eicas_gc.ecam_messages_w*105/100,
         				eicas_gc.panel_rect.y + eicas_gc.prim_dials_height ,
         				eicas_gc.panel_rect.x + eicas_gc.panel_rect.width*92/100,
         				eicas_gc.panel_rect.y + eicas_gc.prim_dials_height );
         	}
 
         	// Vert lower segment 
-        	g2.drawLine ( eicas_gc.panel_rect.x + eicas_gc.dials_width, 
+        	g2.drawLine ( eicas_gc.panel_rect.x + eicas_gc.ecam_messages_w, 
         			eicas_gc.panel_rect.y  + eicas_gc.prim_dials_height*107/100,  
-        			eicas_gc.panel_rect.x + eicas_gc.dials_width, 
+        			eicas_gc.panel_rect.x + eicas_gc.ecam_messages_w, 
         			eicas_gc.panel_rect.y  + eicas_gc.panel_rect.height *90/100);
         	
         	if (eicas_gc.ecam_version == 1) { 
         		// Vert upper segment 
-        		g2.drawLine ( eicas_gc.panel_rect.x + eicas_gc.dials_width, 
+        		g2.drawLine ( eicas_gc.panel_rect.x + eicas_gc.ecam_messages_w, 
         				eicas_gc.panel_rect.y + eicas_gc.prim_dials_height * 47/100,
-        				eicas_gc.panel_rect.x + eicas_gc.dials_width,
+        				eicas_gc.panel_rect.x + eicas_gc.ecam_messages_w,
         				eicas_gc.panel_rect.y + eicas_gc.prim_dials_height *93/100 );            		
         	} 
 

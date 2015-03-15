@@ -99,7 +99,8 @@ public class ECAM_Memo extends EICASSubcomponent {
 
     public void paint(Graphics2D g2) {
 
-        if ( eicas_gc.powered && eicas_gc.airbus_style ) {        	
+        if ( eicas_gc.powered && eicas_gc.airbus_style 
+        	 && this.preferences.get_eicas_primary_only() && (!this.preferences.get_eicas_draw_controls() || eicas_gc.ecam_version ==1)) {        	
         	DrawXHSIEcamMemo(g2);
         	/*
         	if (this.avionics.is_qpac()) {
@@ -146,23 +147,29 @@ public class ECAM_Memo extends EICASSubcomponent {
         	ememo_status[EMEMO_PARK_BRK] = false; 
         }
         
-        // SPEED BRK
+        // SPEED BRK DEPLOYED OR ARMED 
         if ( this.aircraft.battery() ) {
             float speed_brake = this.aircraft.get_speed_brake();
             if ( speed_brake > 0.51f ) {
                 ememo_color[EMEMO_SPEED_BRK ] = eicas_gc.ecam_warning_color;
                 ememo_status[EMEMO_SPEED_BRK ] = true;
+                ememo_status[EMEMO_GND_SPLRS_ARMED ] = false;
             } else if ( ( ( ! this.avionics.is_cl30() ) && ( speed_brake > 0.01f ) ) || ( ( this.avionics.is_cl30() ) && ( speed_brake > 0.033f ) ) ) {
                 ememo_color[EMEMO_SPEED_BRK ] = eicas_gc.ecam_caution_color;
                 ememo_status[EMEMO_SPEED_BRK ] = true;
+                ememo_status[EMEMO_GND_SPLRS_ARMED ] = false;
             } else if ( this.aircraft.speed_brake_armed() ) {
-                ememo_color[EMEMO_SPEED_BRK ] = eicas_gc.ecam_normal_color;
-                ememo_status[EMEMO_SPEED_BRK ] = true;
+                ememo_color[EMEMO_GND_SPLRS_ARMED ] = eicas_gc.ecam_normal_color;
+                ememo_status[EMEMO_GND_SPLRS_ARMED ] = true;
+                ememo_status[EMEMO_SPEED_BRK ] = false;
             } else {
                 ememo_status[EMEMO_SPEED_BRK ] = false;
+                ememo_status[EMEMO_GND_SPLRS_ARMED ] = false;
             }
         } else {
         	ememo_status[EMEMO_SPEED_BRK ] = false;
+            ememo_status[EMEMO_GND_SPLRS_ARMED ] = false;
+
         }
         
         // AUTO BRK

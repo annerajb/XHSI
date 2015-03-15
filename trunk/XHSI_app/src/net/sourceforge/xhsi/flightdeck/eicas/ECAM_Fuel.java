@@ -47,6 +47,7 @@ public class ECAM_Fuel extends EICASSubcomponent {
         else /* if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_LTR ) */ units_str = XHSIPreferences.FUEL_UNITS_LTR;
 
         if (primaries && !draw_ctrl) {
+        // if (eicas_gc.ecam_version==1) {
         	g2.setColor(eicas_gc.ecam_markings_color);
         	g2.drawString("FOB:", eicas_gc.fuel_primary_x[0], eicas_gc.fuel_primary_y[0]);
 
