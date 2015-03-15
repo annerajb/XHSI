@@ -324,6 +324,12 @@ public interface Avionics {
 
     
     /**
+     * @return boolean - Contacting ATC
+     */
+    public boolean contact_atc();
+
+    
+    /**
      * @return int - MFD mode (0=arpt, 1=fpln, 2=eicas)
      */
     public int get_mfd_mode();
@@ -524,6 +530,12 @@ public interface Avionics {
      */
     public int transponder_code();
 
+    /**
+     * @return boolean - Transponder IDENT
+     */
+    public boolean transponder_ident();
+
+    
     /**
      * @return boolean - clock show UTC
      */

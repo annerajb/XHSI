@@ -141,6 +141,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT_RADIOS_COM2_STDBY_FREQ_HZ = 147;
     // for the 8.33KHz spacing, see 194-197 below
     public static final int SIM_COCKPIT_RADIOS_STDBY_FLIP = 148; // to send commands to the plugin
+    public static final int XHSI_RTU_CONTACT_ATC = 149;
 
 
     // AP
@@ -175,6 +176,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     // Transponder
     public static final int SIM_COCKPIT_RADIOS_TRANSPONDER_MODE = 180; // 0=OFF, 1=STDBY, 2=ON, 3=TEST
     public static final int SIM_COCKPIT_RADIOS_TRANSPONDER_CODE = 181;
+    public static final int SIM_COCKPIT_RADIOS_TRANSPONDER_ID = 182;
 
 
     // Clock mode

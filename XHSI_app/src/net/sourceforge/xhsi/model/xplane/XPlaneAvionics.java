@@ -296,7 +296,11 @@ public class XPlaneAvionics implements Avionics, Observer {
         return ( (int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_RADIOS_ACTUATORS_COM2_STANDBY_FREQUENCY_HZ_833) % 25 ) != 0;
     }
     
+    public boolean contact_atc() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_RTU_CONTACT_ATC) != 0.0f;
+    };
     
+
     public int get_instrument_style() {
 
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
@@ -941,6 +945,12 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     }
 
+    public boolean transponder_ident() {
+
+        return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_TRANSPONDER_ID) != 0.0f;
+
+    };
+    
     public boolean clock_shows_utc() {
         return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CLOCK_TIMER_MODE) == 0.0f );
     }
