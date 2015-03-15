@@ -154,6 +154,7 @@ extern XPLMDataRef  autopilot_heading_roll_mode;
 
 extern XPLMDataRef	transponder_mode;
 extern XPLMDataRef	transponder_code;
+extern XPLMDataRef	transponder_id;
 
 
 extern XPLMDataRef	efis_map_range_selector;
@@ -277,6 +278,7 @@ extern XPLMDataRef  engine_epr;
 extern XPLMDataRef  xhsi_instrument_style;
 extern XPLMDataRef  xhsi_rwy_length_min;
 extern XPLMDataRef  xhsi_rwy_units;
+extern XPLMDataRef  xhsi_rtu_contact_atc;
 
 
 // custom datarefs - EICAS
