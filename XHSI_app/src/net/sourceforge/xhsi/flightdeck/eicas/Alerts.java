@@ -71,7 +71,7 @@ public class Alerts extends EICASSubcomponent {
 
 
     public void paint(Graphics2D g2) {
-        if ( eicas_gc.powered ) {
+        if ( eicas_gc.powered && eicas_gc.boeing_style) {
             drawAlerts(g2);
         }
     }
