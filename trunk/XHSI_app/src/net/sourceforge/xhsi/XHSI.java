@@ -82,7 +82,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 8 Alpha 17";
+    private static final String RELEASE = "2.0 Beta 8 Alpha 18";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
