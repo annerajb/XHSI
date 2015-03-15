@@ -34,6 +34,7 @@
 XPLMDataRef xhsi_instrument_style;
 XPLMDataRef xhsi_rwy_length_min;
 XPLMDataRef xhsi_rwy_units;
+XPLMDataRef xhsi_rtu_contact_atc;
 
 // custom datarefs - EICAS
 XPLMDataRef  engine_type;
@@ -227,6 +228,7 @@ XPLMDataRef  autopilot_heading_roll_mode;
 
 XPLMDataRef  transponder_mode;
 XPLMDataRef  transponder_code;
+XPLMDataRef  transponder_id;
 
 
 XPLMDataRef	 efis_map_range_selector;
@@ -708,6 +710,17 @@ void	setCopilotMapRange100(void* inRefcon, int inValue)
       copilot_map_zoomin = inValue;
 }
 
+// xhsi/rtu/contact_atc
+int contact_atc;
+int     getContactATC(void* inRefcon)
+{
+     return contact_atc;
+}
+void	setContactATC(void* inRefcon, int inValue)
+{
+      contact_atc = inValue;
+}
+
 
 
 
@@ -936,6 +949,13 @@ void registerGeneralDataRefs(void) {
                                         getRwyUnits, setRwyUnits,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
+    // xhsi/rtu/contact_atc
+    xhsi_rtu_contact_atc = XPLMRegisterDataAccessor("xhsi/rtu/contact_atc",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                                   // Writable
+                                        getContactATC, setContactATC,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
     XPLMDebugString("XHSI: custom General DataRefs registered\n");
 
 }
@@ -1037,6 +1057,7 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/map_zoomin");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/da_bug");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/mins_mode");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rtu/contact_atc");
     }
 
     return 0.0f;
@@ -1314,6 +1335,9 @@ void unregisterGeneralDataRefs(void) {
     // xhsi/rwy_units
     XPLMUnregisterDataAccessor(xhsi_rwy_units);
 
+    // xhsi/rtu/contact_atc
+    XPLMUnregisterDataAccessor(xhsi_rtu_contact_atc);
+
 }
 
 void unregisterEICASDataRefs(void) {
@@ -1507,6 +1531,7 @@ void findDataRefs(void) {
 	// Transponder
 	transponder_mode = XPLMFindDataRef("sim/cockpit/radios/transponder_mode");	// int
 	transponder_code = XPLMFindDataRef("sim/cockpit/radios/transponder_code");	// int
+	transponder_id = XPLMFindDataRef("sim/cockpit/radios/transponder_id");	// int
 
 
 	// EFIS
