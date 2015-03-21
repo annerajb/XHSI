@@ -352,7 +352,9 @@ public class ECAM_Engines extends EICASSubcomponent {
         scalePen(g2);
 
         float n1_value = this.aircraft.get_N1(pos);
+        float throttle_value = this.aircraft.get_throttle(pos)*100.0f;
         float n1_dial = Math.min(n1_value, 110.0f) / 100.0f;
+        float throttle_dial = Math.min(throttle_value, 110.0f) / 100.0f;
         float epr_value = this.aircraft.get_EPR(pos);
         String n1_str = with_epr ? three_decimals_format.format(epr_value) : one_decimal_format.format(n1_value);
 
@@ -419,7 +421,12 @@ public class ECAM_Engines extends EICASSubcomponent {
         g2.drawLine(eicas_gc.prim_dial_x[pos], n1_y, eicas_gc.prim_dial_x[pos]+n1_r*12/10, n1_y);
         g2.setTransform(original_at);
 
-
+        // Throttle
+        g2.rotate(Math.toRadians(Math.round(throttle_dial*deg_norm_range)-deg_start), eicas_gc.prim_dial_x[pos], n1_y);
+        g2.setColor(eicas_gc.ecam_action_color);
+        g2.drawOval(eicas_gc.prim_dial_x[pos]+n1_r*11/10, n1_y, n1_r/8, n1_r/8);
+        g2.setTransform(original_at);
+        
         // value box
         if ( num < 5 ) {
         	// Don't draw the box when more than 4 engines

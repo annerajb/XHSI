@@ -95,6 +95,9 @@ public class XPlaneAircraft implements Aircraft {
     public float bank() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_PHI); }
     public float yoke_pitch() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_YOKE_PITCH_RATIO); }
     public float yoke_roll() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_YOKE_ROLL_RATIO); }
+    public float rudder_hdg() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_YOKE_HDG_RATIO); }
+    public float brk_pedal_left() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_LEFT_BRK_RATIO); }
+    public float brk_pedal_right() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_RIGHT_BRK_RATIO); }
 
 
     public float track() {
@@ -702,7 +705,11 @@ public class XPlaneAircraft implements Aircraft {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_ENGINE_ENGN_EPR_ + engine);
     }
 
+    public float get_throttle(int engine) {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_ENGINE_ACTUATORS_THROTTLE_RATIO_ + engine);
+    }
 
+    
     public float get_min_rwy_length() {
         float dataref_rwy_len = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_RWY_LENGTH_MIN);
         if ( dataref_rwy_len > 0.0f ) {

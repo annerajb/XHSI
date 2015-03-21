@@ -246,7 +246,7 @@ public class FMA_A320 extends PFDSubcomponent {
     	// This function displays an Airbus FMA with X-Plane builtin autopilot
 
         String fma_str = "ERROR";
-
+              
         // Autothrottle
         if ( this.avionics.autothrottle_on() ) {        
             pfe_thrust.setText("SPEED", PFE_Color.PFE_COLOR_ACTIVE);
@@ -376,7 +376,8 @@ public class FMA_A320 extends PFDSubcomponent {
 
     private void drawA320FMA(Graphics2D g2) {
 
-        String fma_str = "ERROR";
+        // String fma_str = "ERROR";
+          
         /*
         fma_str = "CRZ " + this.avionics.qpac_presel_crz();
         drawDMode(g2,0,0,fma_str);
@@ -779,6 +780,8 @@ public class FMA_A320 extends PFDSubcomponent {
 
     	// JAR Design A320 Neo
     	
+    	// Debugging
+    	/*
         String fma_str = "ERROR";       
         
         fma_str = "AP Vert M: " + this.avionics.jar_a320neo_ap_vertical_mode();
@@ -807,7 +810,7 @@ public class FMA_A320 extends PFDSubcomponent {
         drawDMode(g2,4,1,fma_str);
         fma_str = "Flex : " + this.avionics.jar_a320neo_flex_temp();
         drawDMode(g2,4,2,fma_str);
-        
+        */
         
         
         // AP Engaged
