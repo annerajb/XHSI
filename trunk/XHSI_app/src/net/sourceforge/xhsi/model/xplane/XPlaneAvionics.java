@@ -300,6 +300,10 @@ public class XPlaneAvionics implements Avionics, Observer {
         return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_RTU_CONTACT_ATC) != 0.0f;
     };
     
+    public int rtu_selected_radio() {
+        return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_RTU_SELECTED_RADIO);
+    };
+    
 
     public int get_instrument_style() {
 
