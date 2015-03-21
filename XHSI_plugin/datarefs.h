@@ -217,10 +217,14 @@ extern XPLMDataRef  speedbrake_ratio;
 extern XPLMDataRef  gear_deploy;
 extern XPLMDataRef  yoke_pitch_ratio;
 extern XPLMDataRef  yoke_roll_ratio;
+extern XPLMDataRef  yoke_hdg_ratio;
 extern XPLMDataRef  elevator_trim;
 extern XPLMDataRef  aileron_trim;
 extern XPLMDataRef  rudder_trim;
 extern XPLMDataRef  slat_deploy;
+extern XPLMDataRef  right_brake_ratio;
+extern XPLMDataRef  left_brake_ratio;
+
 
 
 extern XPLMDataRef  num_tanks;
@@ -242,6 +246,8 @@ extern XPLMDataRef  fuel_flow;
 extern XPLMDataRef  oil_p_ratio;
 extern XPLMDataRef  oil_t_ratio;
 extern XPLMDataRef  oil_q_ratio;
+extern XPLMDataRef  throttle_ratio;
+
 // for VIB
 extern XPLMDataRef  vib_running;
 extern XPLMDataRef  vib_n1_low;
@@ -267,6 +273,12 @@ extern XPLMDataRef  piston_mpr;
 // EPR
 extern XPLMDataRef  engine_epr;
 
+// APU
+extern XPLMDataRef  apu_n1;
+extern XPLMDataRef  apu_gen_amp;
+extern XPLMDataRef  apu_running;
+extern XPLMDataRef  apu_gen_on;
+extern XPLMDataRef  apu_starter;
 
 //// TCAS
 //extern XPLMDataRef  relative_bearing_degs;
