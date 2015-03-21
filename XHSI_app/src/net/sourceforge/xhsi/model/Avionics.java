@@ -330,6 +330,12 @@ public interface Avionics {
 
     
     /**
+     * @return int - Selected radio on the RTU
+     */
+    public int rtu_selected_radio();
+
+    
+    /**
      * @return int - MFD mode (0=arpt, 1=fpln, 2=eicas)
      */
     public int get_mfd_mode();

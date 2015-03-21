@@ -35,6 +35,7 @@ XPLMDataRef xhsi_instrument_style;
 XPLMDataRef xhsi_rwy_length_min;
 XPLMDataRef xhsi_rwy_units;
 XPLMDataRef xhsi_rtu_contact_atc;
+XPLMDataRef xhsi_rtu_selected_radio;
 
 // custom datarefs - EICAS
 XPLMDataRef  engine_type;
@@ -732,6 +733,17 @@ void	setContactATC(void* inRefcon, int inValue)
       contact_atc = inValue;
 }
 
+// xhsi/rtu/selected_radio
+int selected_radio;
+int     getSelectedRadio(void* inRefcon)
+{
+     return selected_radio;
+}
+void	setSelectedRadio(void* inRefcon, int inValue)
+{
+      selected_radio = inValue;
+}
+
 
 
 void registerPilotDataRefs(void) {
@@ -966,6 +978,13 @@ void registerGeneralDataRefs(void) {
                                         getContactATC, setContactATC,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
+    // xhsi/rtu/selected_radio
+    xhsi_rtu_selected_radio = XPLMRegisterDataAccessor("xhsi/rtu/selected_radio",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                                   // Writable
+                                        getSelectedRadio, setSelectedRadio,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
     XPLMDebugString("XHSI: custom General DataRefs registered\n");
 
 }
@@ -1068,6 +1087,7 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/da_bug");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/mins_mode");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rtu/contact_atc");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rtu/selected_radio");
     }
 
     return 0.0f;
@@ -1094,6 +1114,12 @@ float initGeneralCallback(
 
     // Runway length units 0:Meters 1:Feet (has no effect when min_rwy_lentgh==0)
     XPLMSetDatai(xhsi_rwy_units, 0);
+
+    // This dataref is normally set by a XPLMCommand intercept (see commands.c))
+    XPLMSetDatai(xhsi_rtu_contact_atc, 0);
+
+    // No radio selected in the RTU
+    XPLMSetDatai(xhsi_rtu_selected_radio, 0);
 
 
     XPLMDebugString("XHSI: custom general DataRefs initialized\n");
@@ -1348,6 +1374,9 @@ void unregisterGeneralDataRefs(void) {
     // xhsi/rtu/contact_atc
     XPLMUnregisterDataAccessor(xhsi_rtu_contact_atc);
 
+    // xhsi/rtu/selected_radio
+    XPLMUnregisterDataAccessor(xhsi_rtu_selected_radio);
+    
 }
 
 void unregisterEICASDataRefs(void) {
@@ -1508,7 +1537,7 @@ void findDataRefs(void) {
 	com1_frequency_hz_833 = XPLMFindDataRef("sim/cockpit2/radios/actuators/com1_frequency_hz_833");                  // int (x1000 MHz)
 	com1_standby_frequency_hz_833 = XPLMFindDataRef("sim/cockpit2/radios/actuators/com1_standby_frequency_hz_833");  // int (x1000 MHz)
 	com2_frequency_hz_833 = XPLMFindDataRef("sim/cockpit2/radios/actuators/com2_frequency_hz_833");                  // int (x1000 MHz)
-	com2_standby_frequency_hz_833 = XPLMFindDataRef("sim/cockpit2/radios/actuators/com2_standby_frenquency_hz_833"); // int (x1000 MHz)
+	com2_standby_frequency_hz_833 = XPLMFindDataRef("sim/cockpit2/radios/actuators/com2_standby_frequency_hz_833"); // int (x1000 MHz)
 
 	// AP
 	autopilot_state = XPLMFindDataRef("sim/cockpit/autopilot/autopilot_state");
