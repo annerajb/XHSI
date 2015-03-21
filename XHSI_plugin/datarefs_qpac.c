@@ -66,6 +66,9 @@ XPLMDataRef qpac_flex_temp;
 XPLMDataRef qpac_presel_crz;
 XPLMDataRef qpac_presel_clb;
 XPLMDataRef qpac_presel_mach;
+XPLMDataRef qpac_thr_rating_type;
+XPLMDataRef qpac_thr_rating_n1;
+XPLMDataRef qpac_throttle_input;
 // ILS Sig and Deviation Capt. and FO
 XPLMDataRef qpac_loc_val_capt;
 XPLMDataRef qpac_loc_on_capt;
@@ -127,7 +130,9 @@ XPLMDataRef qpac_co_efis_nd_range;
 XPLMDataRef qpac_autobrake_low;
 XPLMDataRef qpac_autobrake_med;
 XPLMDataRef qpac_autobrake_max;
-
+// Flaps and slats
+XPLMDataRef qpac_flaps_request_pos;
+XPLMDataRef qpac_slats_request_pos;
 
 int qpac_ready = 0;
 int qpac_version = 0;
@@ -197,6 +202,9 @@ void findQpacDataRefs(void) {
             qpac_presel_crz = XPLMFindDataRef("AirbusFBW/Presel_CRZ");
             qpac_presel_clb = XPLMFindDataRef("AirbusFBW/Presel_CLB");
             qpac_presel_mach = XPLMFindDataRef("AirbusFBW/PreselMach");
+            qpac_thr_rating_type = XPLMFindDataRef("AirbusFBW/THRRatingType");
+            qpac_thr_rating_n1 = XPLMFindDataRef("AirbusFBW/THRRatingN1");
+            qpac_throttle_input = XPLMFindDataRef("AirbusFBW/throttle_input");
             // ILS Sig and Deviation Capt. and FO
             qpac_loc_val_capt = XPLMFindDataRef("AirbusFBW/LOCvalCapt");
             qpac_loc_on_capt = XPLMFindDataRef("AirbusFBW/LOConCapt");
@@ -258,6 +266,10 @@ void findQpacDataRefs(void) {
             qpac_autobrake_low = XPLMFindDataRef("AirbusFBW/AutoBrkLow");
             qpac_autobrake_med = XPLMFindDataRef("AirbusFBW/AutoBrkMed");
             qpac_autobrake_max = XPLMFindDataRef("AirbusFBW/AutoBrkMax");
+            // Flaps and slats
+            qpac_flaps_request_pos = XPLMFindDataRef("AirbusFBW/FlapsRequestPos");
+            qpac_slats_request_pos = XPLMFindDataRef("AirbusFBW/SlatsRequestPos");
+
         }
     }
 }
