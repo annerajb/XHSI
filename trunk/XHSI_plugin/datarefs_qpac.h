@@ -49,6 +49,9 @@ extern XPLMDataRef qpac_athr_limited;
 extern XPLMDataRef qpac_thr_lever_mode;
 extern XPLMDataRef qpac_fma_thr_warning;
 extern XPLMDataRef qpac_flex_temp;
+extern XPLMDataRef qpac_thr_rating_type;
+extern XPLMDataRef qpac_thr_rating_n1;
+extern XPLMDataRef qpac_throttle_input;
 // ILS Sig and Deviation Capt. and FO
 extern XPLMDataRef qpac_loc_val_capt;
 extern XPLMDataRef qpac_loc_on_capt;
@@ -110,6 +113,9 @@ extern XPLMDataRef qpac_co_efis_nd_range;
 extern XPLMDataRef qpac_autobrake_low;
 extern XPLMDataRef qpac_autobrake_med;
 extern XPLMDataRef qpac_autobrake_max;
+// Flaps and slats
+extern XPLMDataRef qpac_flaps_request_pos;
+extern XPLMDataRef qpac_slats_request_pos;
 
 extern int qpac_ready;
 
