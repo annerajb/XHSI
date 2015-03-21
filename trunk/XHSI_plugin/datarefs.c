@@ -288,10 +288,13 @@ XPLMDataRef  speedbrake_ratio;
 XPLMDataRef  gear_deploy;
 XPLMDataRef  yoke_pitch_ratio;
 XPLMDataRef  yoke_roll_ratio;
+XPLMDataRef  yoke_hdg_ratio;
 XPLMDataRef  elevator_trim;
 XPLMDataRef  aileron_trim;
 XPLMDataRef  rudder_trim;
 XPLMDataRef  slat_deploy;
+XPLMDataRef  right_brake_ratio;
+XPLMDataRef  left_brake_ratio;
 
 XPLMDataRef  num_tanks;
 XPLMDataRef  num_engines;
@@ -312,6 +315,8 @@ XPLMDataRef  fuel_flow;
 XPLMDataRef  oil_p_ratio;
 XPLMDataRef  oil_t_ratio;
 XPLMDataRef  oil_q_ratio;
+XPLMDataRef  throttle_ratio;
+
 // for VIB
 XPLMDataRef  vib_running;
 XPLMDataRef  vib_n1_low;
@@ -337,6 +342,12 @@ XPLMDataRef  piston_mpr;
 // EPR
 XPLMDataRef  engine_epr;
 
+// APU
+XPLMDataRef  apu_n1;
+XPLMDataRef  apu_gen_amp;
+XPLMDataRef  apu_running;
+XPLMDataRef  apu_gen_on;
+XPLMDataRef  apu_starter;
 
 //// TCAS
 //XPLMDataRef relative_bearing_degs;
@@ -720,7 +731,6 @@ void	setContactATC(void* inRefcon, int inValue)
 {
       contact_atc = inValue;
 }
-
 
 
 
@@ -1597,10 +1607,13 @@ void findDataRefs(void) {
     gear_deploy = XPLMFindDataRef("sim/flightmodel2/gear/deploy_ratio");
     yoke_pitch_ratio = XPLMFindDataRef("sim/cockpit2/controls/yoke_pitch_ratio");
     yoke_roll_ratio = XPLMFindDataRef("sim/cockpit2/controls/yoke_roll_ratio");
+    yoke_hdg_ratio = XPLMFindDataRef("sim/cockpit2/controls/yoke_heading_ratio");
     elevator_trim = XPLMFindDataRef("sim/cockpit2/controls/elevator_trim");
     aileron_trim = XPLMFindDataRef("sim/cockpit2/controls/aileron_trim");
     rudder_trim = XPLMFindDataRef("sim/cockpit2/controls/rudder_trim");
     slat_deploy = XPLMFindDataRef("sim/flightmodel/controls/slatrat");
+    right_brake_ratio = XPLMFindDataRef("sim/cockpit2/controls/right_brake_ratio");
+    left_brake_ratio = XPLMFindDataRef("sim/cockpit2/controls/left_brake_ratio");
 	
 
     // Engines and fuel
@@ -1623,6 +1636,7 @@ void findDataRefs(void) {
     oil_p_ratio = XPLMFindDataRef("sim/flightmodel/engine/ENGN_oil_press");
     oil_t_ratio = XPLMFindDataRef("sim/flightmodel/engine/ENGN_oil_temp");
     oil_q_ratio = XPLMFindDataRef("sim/cockpit2/engine/indicators/oil_quantity_ratio");
+    throttle_ratio = XPLMFindDataRef("sim/cockpit2/engine/actuators/throttle_ratio");
     // for VIB
     vib_running = XPLMFindDataRef("sim/flightmodel/engine/ENGN_running");
     vib_n1_low = XPLMFindDataRef("sim/cockpit/warnings/annunciators/N1_low");
@@ -1647,7 +1661,12 @@ void findDataRefs(void) {
     piston_mpr = XPLMFindDataRef("sim/flightmodel/engine/ENGN_MPR");
 	// EPR
     engine_epr = XPLMFindDataRef("sim/flightmodel/engine/ENGN_EPR");
-
+    // APU
+    apu_n1 = XPLMFindDataRef("sim/cockpit2/electrical/APU_N1_percent");
+    apu_gen_amp = XPLMFindDataRef("sim/cockpit2/electrical/APU_generator_amps");
+    apu_running = XPLMFindDataRef("sim/cockpit2/electrical/APU_running");
+    apu_gen_on = XPLMFindDataRef("sim/cockpit2/electrical/APU_generator_on");
+    apu_starter = XPLMFindDataRef("sim/cockpit2/electrical/APU_starter_switch");
 
 //	// TCAS
 //	relative_bearing_degs = XPLMFindDataRef("sim/cockpit2/tcas/indicators/relative_bearing_degs");

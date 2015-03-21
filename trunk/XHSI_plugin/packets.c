@@ -331,6 +331,9 @@ int createADCPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_YOKE_ROLL_RATIO);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(yoke_roll_ratio));
 	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_YOKE_HDG_RATIO);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(yoke_hdg_ratio));
+	i++;
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_ELEVATOR_TRIM);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(elevator_trim));
 	i++;
@@ -343,6 +346,13 @@ int createADCPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_CONTROLS_SLATRAT);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(slat_deploy));
 	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_RIGHT_BRK_RATIO);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(right_brake_ratio));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_LEFT_BRK_RATIO);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(left_brake_ratio));
+	i++;
+
 
     XPLMGetDatavf(gear_deploy, gear_ratio, 0, gears);
 	for (g=0; g<gears; g++) {
@@ -1160,6 +1170,16 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_flex_temp));
         i++;
 
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_THR_RATING_TYPE);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_thr_rating_type));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_THR_RATING_N1);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_thr_rating_n1));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_THROTTLE_INPUT);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_throttle_input));
+        i++;
+
         // ILS Sig and Deviation Capt. and FO
         qpac_ils =	
         		XPLMGetDatai(qpac_ils_on_fo) << 5 |
@@ -1314,6 +1334,13 @@ int createCustomAvionicsPacket(void) {
         	}
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_AUTO_BRAKE_LEVEL);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) auto_brake_level );
+        i++;
+        // Flaps and slats
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FLAPS_REQ_POS);
+        sim_packet.sim_data_points[i].value = custom_htonf( (float) XPLMGetDatai(qpac_flaps_request_pos) );
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_SLATS_REQ_POS);
+        sim_packet.sim_data_points[i].value = custom_htonf( (float) XPLMGetDatai(qpac_slats_request_pos) );
         i++;
     }
 
@@ -1615,6 +1642,13 @@ int createEnginesPacket(void) {
         i++;
 	}
 
+    XPLMGetDatavf(throttle_ratio, engifloat, 0, engines);
+	for (e=0; e<engines; e++) {
+        sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_ENGINE_ACTUATORS_THROTTLE_RATIO_ + e);
+        sim_packet.sim_data_points[i].value = custom_htonf( engifloat[e] );
+        i++;
+	}
+
     XPLMGetDatavi(vib_running, runs, 0, engines);
     XPLMGetDatavi(vib_n1_low, n1lows, 0, engines);
     XPLMGetDatavi(vib_n1_high, n1highs, 0, engines);
@@ -1627,6 +1661,9 @@ int createEnginesPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf( (float) vib );
         i++;
 	}
+
+	// Ignitors (ignition_key, igniter_on, ignition_on) - to send as an 8 bits field for the 3 datarefs
+	// Fadec to send as an 8 bits field
 
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO1);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(hyd_p_1));
