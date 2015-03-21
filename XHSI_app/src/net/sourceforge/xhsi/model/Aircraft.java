@@ -22,6 +22,8 @@
 */
 package net.sourceforge.xhsi.model;
 
+import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
+
 public interface Aircraft {
 
     /**
@@ -109,6 +111,18 @@ public interface Aircraft {
      * @return float - Yoke roll ratio (-1.0f to +1.0f)
      */
     public float yoke_roll();
+
+    /**
+     * @return float - Rudder heading ratio (-1.0f to +1.0f)
+     */
+    public float rudder_hdg();
+
+    /**
+     * @return float - Left and Right Pedal deflection (0.0f to +1.0f)
+     */
+    public float brk_pedal_left();
+    public float brk_pedal_right();
+
     
     /**
      * Returns the magnetic track of the aircraft in degrees. If ground_speed
@@ -735,7 +749,11 @@ public interface Aircraft {
      */
     public float get_EPR(int engine);
 
-
+    /**
+     * @return float - Engine Throttle ratio
+     */
+    public float get_throttle(int engine);
+    
     /**
      * @return float - Minimum runway length
      */

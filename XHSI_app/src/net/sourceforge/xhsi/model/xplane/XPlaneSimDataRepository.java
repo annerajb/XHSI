@@ -289,11 +289,14 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_FLIGHTMODEL2_GEAR_DEPLOY_RATIO_ = 370; // array of 10 floats
     public static final int SIM_COCKPIT2_CONTROLS_YOKE_PITCH_RATIO = 390;
     public static final int SIM_COCKPIT2_CONTROLS_YOKE_ROLL_RATIO = 391;
+    public static final int SIM_COCKPIT2_CONTROLS_YOKE_HDG_RATIO = 396;
     public static final int SIM_COCKPIT2_CONTROLS_ELEVATOR_TRIM = 392;
     public static final int SIM_COCKPIT2_CONTROLS_AILERON_TRIM = 393;
     public static final int SIM_COCKPIT2_CONTROLS_RUDDER_TRIM = 394;
     public static final int SIM_FLIGHTMODEL_CONTROLS_SLATRAT = 395;
-
+    public static final int SIM_COCKPIT2_CONTROLS_LEFT_BRK_RATIO = 397;
+    public static final int SIM_COCKPIT2_CONTROLS_RIGHT_BRK_RATIO = 398;
+    
     // Fuel, engines, etc...
     public static final int SIM_AIRCRAFT_OVERFLOW_ACF_NUM_TANKS = 400;
     public static final int SIM_AIRCRAFT_ENGINE_ACF_NUM_ENGINES = 401;
@@ -330,7 +333,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_PROPMODE_ = 580;
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_MPR_ = 590;
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_EPR_ = 600;
-
+    public static final int SIM_COCKPIT2_ENGINE_ACTUATORS_THROTTLE_RATIO_ = 610;
+    
     // UFMC
     public static final int UFMC_STATUS = 700;
     // UFMC V-speeds
@@ -449,6 +453,9 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_THR_LEVER_MODE=1022;
     public static final int QPAC_FMA_THR_WARNING=1023;
     public static final int QPAC_FLEX_TEMP=1024;
+    public static final int QPAC_THR_RATING_TYPE=1059;
+    public static final int QPAC_THR_RATING_N1=1060;
+    public static final int QPAC_THROTTLE_INPUT=1061;
     // ILS Sig and Deviation Capt. and FO
     public static final int QPAC_ILS_FLAGS=1025;
     public static final int QPAC_LOC_VAL_CAPT=1026;
@@ -488,6 +495,9 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_FAILURES=1055;
     // Brakes
     public static final int QPAC_AUTO_BRAKE_LEVEL=1056;
+    // FLAPS and SLATS
+    public static final int QPAC_FLAPS_REQ_POS=1057;
+    public static final int QPAC_SLATS_REQ_POS=1058;
 
     // IDs reserved for QPAC up to 1199
 
