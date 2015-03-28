@@ -121,7 +121,7 @@ public class MovingMap extends NDSubcomponent {
         this.nor = NavigationObjectRepository.get_instance();
 
         MovingMap.vor_freq_formatter = new DecimalFormat("000.00");
-        MovingMap.ndb_freq_formatter = new DecimalFormat("000");
+        MovingMap.ndb_freq_formatter = new DecimalFormat("0000");
         DecimalFormatSymbols symbols = vor_freq_formatter.getDecimalFormatSymbols();
         symbols.setDecimalSeparator('.');
         MovingMap.vor_freq_formatter.setDecimalFormatSymbols(symbols);

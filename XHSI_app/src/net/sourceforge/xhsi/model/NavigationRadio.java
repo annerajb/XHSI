@@ -292,7 +292,7 @@ public class NavigationRadio {
     private void update_radio_data() {
         float current_freq = this.sim_data_repository.get_sim_float(this.sim_data_id_freq);
         String current_nav_id = this.sim_data_repository.get_sim_string(this.sim_data_id_nav_id);
-        if (current_freq > 1000.0f) {
+        if (current_freq > 10000.0f) {
             current_freq = (current_freq/100.0f);
         }
         // if the frequency has changed, or we were not tuned to any radionavaid, or we got out of (multiplied) range; then search for a radionavaid again...
