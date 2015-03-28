@@ -74,6 +74,48 @@
 #define MFD_EICAS 2
 #define MFD_RTU 3
 
+#define RTU_SELECT_NONE 0
+#define RTU_SELECT_COM1 1
+#define RTU_SELECT_NAV1 2
+#define RTU_SELECT_ADF1 3
+#define RTU_SELECT_XPDR 4
+#define RTU_SELECT_TCAS 5
+#define RTU_SELECT_ADF2 6
+#define RTU_SELECT_NAV2 7
+#define RTU_SELECT_COM2 8
+#define RTU_SELECT_CYCLE 9
+#define RTU_COARSE_DOWN -1000
+#define RTU_COARSE_UP +1000
+#define RTU_FINE_DOWN -999
+#define RTU_FINE_UP +999
+#define RTU_FLIP_SELECTED 10
+#define RTU_SELECT_FLIP_COM1 11
+#define RTU_SELECT_FLIP_NAV1 12
+#define RTU_SELECT_FLIP_ADF1 13
+#define RTU_SELECT_FLIP_XPDR 14
+#define RTU_SELECT_FLIP_TCAS 15
+#define RTU_SELECT_FLIP_ADF2 16
+#define RTU_SELECT_FLIP_NAV2 17
+#define RTU_SELECT_FLIP_COM2 18
+
+#define XPDR_MODE_UP +1
+#define XPDR_MODE_DOWN -1
+#define XPDR_MODE_CYCLE 0
+#define XPDR_CODE_HUNDREDS_UP +100
+#define XPDR_CODE_HUNDREDS_DOWN -100
+#define XPDR_CODE_UNITS_UP +99
+#define XPDR_CODE_UNITS_DOWN -99
+
+#define ADF1 10000
+#define ADF1_STBY 19000
+#define ADF2 20000
+#define ADF2_STBY 29000
+#define ADF_HUNDREDS_UP 100
+#define ADF_HUNDREDS_DOWN 900
+#define ADF_UNITS_UP 1
+#define ADF_UNITS_DOWN 9
+
+
 
 XPLMCommandRef mode_app;
 XPLMCommandRef mode_vor;
@@ -348,6 +390,72 @@ XPLMCommandRef adf1_standy_flip;
 XPLMCommandRef adf2_standy_flip;
 XPLMCommandRef sim_transponder_transponder_ident;
 XPLMCommandRef contact_atc_cmd;
+XPLMCommandRef stby_com1_coarse_down;
+XPLMCommandRef stby_com1_coarse_up;
+XPLMCommandRef stby_com1_fine_down_833;
+XPLMCommandRef stby_com1_fine_up_833;
+XPLMCommandRef stby_com2_coarse_down;
+XPLMCommandRef stby_com2_coarse_up;
+XPLMCommandRef stby_com2_fine_down_833;
+XPLMCommandRef stby_com2_fine_up_833;
+XPLMCommandRef stby_nav1_coarse_down;
+XPLMCommandRef stby_nav1_coarse_up;
+XPLMCommandRef stby_nav1_fine_down;
+XPLMCommandRef stby_nav1_fine_up;
+XPLMCommandRef stby_nav2_coarse_down;
+XPLMCommandRef stby_nav2_coarse_up;
+XPLMCommandRef stby_nav2_fine_down;
+XPLMCommandRef stby_nav2_fine_up;
+
+XPLMCommandRef rtu_select_none;
+XPLMCommandRef rtu_select_com1;
+XPLMCommandRef rtu_select_nav1;
+XPLMCommandRef rtu_select_adf1;
+XPLMCommandRef rtu_select_xpdr;
+XPLMCommandRef rtu_select_tcas;
+XPLMCommandRef rtu_select_adf2;
+XPLMCommandRef rtu_select_nav2;
+XPLMCommandRef rtu_select_com2;
+XPLMCommandRef rtu_select_flip_com1;
+XPLMCommandRef rtu_select_flip_nav1;
+XPLMCommandRef rtu_select_flip_adf1;
+XPLMCommandRef rtu_select_flip_xpdr;
+XPLMCommandRef rtu_select_flip_tcas;
+XPLMCommandRef rtu_select_flip_adf2;
+XPLMCommandRef rtu_select_flip_nav2;
+XPLMCommandRef rtu_select_flip_com2;
+XPLMCommandRef rtu_select_cycle;
+XPLMCommandRef rtu_flip_selected;
+XPLMCommandRef rtu_coarse_down;
+XPLMCommandRef rtu_coarse_up;
+XPLMCommandRef rtu_fine_down;
+XPLMCommandRef rtu_fine_up;
+
+XPLMCommandRef xpdr_mode_up;
+XPLMCommandRef xpdr_mode_down;
+XPLMCommandRef xpdr_mode_cycle;
+
+XPLMCommandRef xpdr_code_hundreds_up;
+XPLMCommandRef xpdr_code_hundreds_down;
+XPLMCommandRef xpdr_code_units_up;
+XPLMCommandRef xpdr_code_units_down;
+
+XPLMCommandRef adf1_hundreds_up;
+XPLMCommandRef adf1_hundreds_down;
+XPLMCommandRef adf1_units_up;
+XPLMCommandRef adf1_units_down;
+XPLMCommandRef adf1_stby_hundreds_up;
+XPLMCommandRef adf1_stby_hundreds_down;
+XPLMCommandRef adf1_stby_units_up;
+XPLMCommandRef adf1_stby_units_down;
+XPLMCommandRef adf2_hundreds_up;
+XPLMCommandRef adf2_hundreds_down;
+XPLMCommandRef adf2_units_up;
+XPLMCommandRef adf2_units_down;
+XPLMCommandRef adf2_stby_hundreds_up;
+XPLMCommandRef adf2_stby_hundreds_down;
+XPLMCommandRef adf2_stby_units_up;
+XPLMCommandRef adf2_stby_units_down;
 
 
 // for an MCP
@@ -1705,6 +1813,397 @@ XPLMCommandCallback_f contact_atc_handler (XPLMCommandRef inCommand, XPLMCommand
 }
 
 
+// Transponder
+XPLMCommandCallback_f xpdr_handler (XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int mode = XPLMGetDatai(transponder_mode);
+        int code = XPLMGetDatai(transponder_code);
+        int code_units = code % 10;
+        code /= 10;
+        int code_tens = code % 10;
+        code /= 10;
+        int code_hundreds = code % 10;
+        code /= 10;
+        int code_thousands = code % 10;
+        int i = (int)((intptr_t)inRefcon);
+        switch ( i )
+        {
+            case XPDR_MODE_UP :
+                mode += 1;
+                if (mode > 4) mode = 4;
+                break;
+            case XPDR_MODE_DOWN :
+                mode -= 1;
+                if (mode < 0) mode = 0;
+                break;
+            case XPDR_MODE_CYCLE :
+                mode += 1;
+                if (mode > 4) mode = 0;
+                break;
+            case XPDR_CODE_HUNDREDS_UP :
+                code_hundreds += 1;
+                if (code_hundreds > 7)
+                {
+                    code_hundreds = 0;
+                    code_thousands += 1;
+                    if (code_thousands > 7)
+                        code_thousands = 0;
+                }
+                break;
+            case XPDR_CODE_HUNDREDS_DOWN :
+                code_hundreds -= 1;
+                if (code_hundreds < 0)
+                {
+                    code_hundreds = 7;
+                    code_thousands -= 1;
+                    if (code_thousands < 0)
+                        code_thousands = 7;
+                }
+                break;
+            case XPDR_CODE_UNITS_UP :
+                code_units += 1;
+                if (code_units > 7)
+                {
+                    code_units = 0;
+                    code_tens += 1;
+                    if (code_tens > 7)
+                        code_tens = 0;
+                }
+                break;
+            case XPDR_CODE_UNITS_DOWN :
+                code_units -= 1;
+                if (code_units < 0)
+                {
+                    code_units = 7;
+                    code_tens -= 1;
+                    if (code_tens < 0)
+                        code_tens = 7;
+                }
+                break;
+        }
+        XPLMSetDatai(transponder_mode, mode);
+        XPLMSetDatai(transponder_code, code_thousands * 1000 + code_hundreds * 100 + code_tens * 10 + code_units);
+    }
+}
+
+
+// ADF tuning
+XPLMCommandCallback_f adf_handler (XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        XPLMDataRef radioref;
+        int i = (int)((intptr_t)inRefcon);
+        int action = i % 1000;
+        int radio = i - action;
+        switch ( radio )
+        {
+            case ADF1 :
+                radioref = adf1_freq_hz;
+                break;
+            case ADF1_STBY :
+                radioref = adf1_stdby_freq_hz;
+                break;
+            case ADF2 :
+                radioref = adf2_freq_hz;
+                break;
+            case ADF2_STBY :
+                radioref = adf2_stdby_freq_hz;
+                break;
+        }
+        int freq = XPLMGetDatai(radioref);
+        int freq_units = freq % 10;
+        freq /= 10;
+        int freq_tens = freq % 10;
+        freq /= 10;
+        int freq_hundreds = freq % 10;
+        freq /= 10;
+        int freq_thousands = freq % 10;
+        switch ( action )
+        {
+            case ADF_HUNDREDS_UP :
+                if ( freq_thousands != 1 || freq_hundreds != 9 )
+                {
+                    freq_hundreds += 1;
+                    if (freq_hundreds > 9)
+                    {
+                        freq_hundreds = 0;
+                        freq_thousands += 1;
+                        if (freq_thousands > 1)
+                            freq_thousands = 1;
+                    }
+                }
+                break;
+            case ADF_HUNDREDS_DOWN :
+                if ( freq_thousands != 0 || freq_hundreds != 1)
+                {
+                    freq_hundreds -= 1;
+                    if (freq_hundreds < 0)
+                    {
+                        freq_hundreds = 9;
+                        freq_thousands -= 1;
+                        if (freq_thousands < 0)
+                            freq_thousands = 0;
+                    }
+                }
+                break;
+            case ADF_UNITS_UP :
+                freq_units += 1;
+                if (freq_units > 9)
+                {
+                    freq_units = 0;
+                    freq_tens += 1;
+                    if (freq_tens > 9)
+                        freq_tens = 0;
+                }
+                break;
+            case ADF_UNITS_DOWN :
+                freq_units -= 1;
+                if (freq_units < 0)
+                {
+                    freq_units = 9;
+                    freq_tens -= 1;
+                    if (freq_tens < 0)
+                        freq_tens = 9;
+                }
+                break;
+        }
+        XPLMSetDatai(radioref, freq_thousands * 1000 + freq_hundreds * 100 + freq_tens * 10 + freq_units);
+    }
+}
+
+
+// RTU
+XPLMCommandCallback_f rtu_handler (XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int sel;
+        int i = (int)((intptr_t)inRefcon);
+        switch ( i )
+        {
+            case RTU_SELECT_NONE :
+            case RTU_SELECT_COM1 :
+            case RTU_SELECT_NAV1 :
+            case RTU_SELECT_ADF1 :
+            case RTU_SELECT_XPDR :
+            case RTU_SELECT_TCAS :
+            case RTU_SELECT_ADF2 :
+            case RTU_SELECT_NAV2 :
+            case RTU_SELECT_COM2 :
+                XPLMSetDatai(xhsi_rtu_selected_radio, i);
+                break;
+                
+            case RTU_SELECT_FLIP_COM1 :
+                if (XPLMGetDatai(xhsi_rtu_selected_radio) == RTU_SELECT_COM1) XPLMCommandOnce(com1_standy_flip);
+                else XPLMSetDatai(xhsi_rtu_selected_radio, RTU_SELECT_COM1);
+                break;
+                
+            case RTU_SELECT_FLIP_NAV1 :
+                if (XPLMGetDatai(xhsi_rtu_selected_radio) == RTU_SELECT_NAV1) XPLMCommandOnce(nav1_standy_flip);
+                else XPLMSetDatai(xhsi_rtu_selected_radio, RTU_SELECT_NAV1);
+                break;
+                
+            case RTU_SELECT_FLIP_ADF1 :
+                if (XPLMGetDatai(xhsi_rtu_selected_radio) == RTU_SELECT_ADF1) XPLMCommandOnce(adf1_standy_flip);
+                else XPLMSetDatai(xhsi_rtu_selected_radio, RTU_SELECT_ADF1);
+                break;
+                
+            case RTU_SELECT_FLIP_XPDR :
+                if (XPLMGetDatai(xhsi_rtu_selected_radio) == RTU_SELECT_XPDR) XPLMCommandOnce(sim_transponder_transponder_ident);
+                else XPLMSetDatai(xhsi_rtu_selected_radio, RTU_SELECT_XPDR);
+                break;
+                
+            case RTU_SELECT_FLIP_TCAS :
+                if (XPLMGetDatai(xhsi_rtu_selected_radio) == RTU_SELECT_TCAS) XPLMCommandOnce(xpdr_mode_cycle);
+                else XPLMSetDatai(xhsi_rtu_selected_radio, RTU_SELECT_TCAS);
+                break;
+                
+            case RTU_SELECT_FLIP_ADF2 :
+                if (XPLMGetDatai(xhsi_rtu_selected_radio) == RTU_SELECT_ADF2) XPLMCommandOnce(adf2_standy_flip);
+                else XPLMSetDatai(xhsi_rtu_selected_radio, RTU_SELECT_ADF2);
+                break;
+                
+            case RTU_SELECT_FLIP_NAV2 :
+                if (XPLMGetDatai(xhsi_rtu_selected_radio) == RTU_SELECT_NAV2) XPLMCommandOnce(nav2_standy_flip);
+                else XPLMSetDatai(xhsi_rtu_selected_radio, RTU_SELECT_NAV2);
+                break;
+                
+            case RTU_SELECT_FLIP_COM2 :
+                if (XPLMGetDatai(xhsi_rtu_selected_radio) == RTU_SELECT_COM2) XPLMCommandOnce(com2_standy_flip);
+                else XPLMSetDatai(xhsi_rtu_selected_radio, RTU_SELECT_COM2);
+                break;
+                
+            case RTU_SELECT_CYCLE :
+                sel = XPLMGetDatai(xhsi_rtu_selected_radio);
+                sel += 1;
+                if (sel > 8) sel = 0;
+                XPLMSetDatai(xhsi_rtu_selected_radio,sel);
+                break;
+                
+            case RTU_FLIP_SELECTED :
+                sel = XPLMGetDatai(xhsi_rtu_selected_radio);
+                switch ( sel )
+                {
+                    case RTU_SELECT_COM1 :
+                        XPLMCommandOnce(com1_standy_flip);
+                        break;
+                    case RTU_SELECT_NAV1 :
+                        XPLMCommandOnce(nav1_standy_flip);
+                        break;
+                    case RTU_SELECT_ADF1 :
+                        XPLMCommandOnce(adf1_standy_flip);
+                        break;
+                    case RTU_SELECT_XPDR :
+                        XPLMCommandOnce(sim_transponder_transponder_ident);
+                        break;
+                    case RTU_SELECT_TCAS :
+                        XPLMCommandOnce(xpdr_mode_cycle);
+                        break;
+                    case RTU_SELECT_ADF2 :
+                        XPLMCommandOnce(adf2_standy_flip);
+                        break;
+                    case RTU_SELECT_NAV2 :
+                        XPLMCommandOnce(nav2_standy_flip);
+                        break;
+                    case RTU_SELECT_COM2 :
+                        XPLMCommandOnce(com2_standy_flip);
+                        break;
+                }
+                break;
+                
+            case RTU_COARSE_DOWN :
+                sel = XPLMGetDatai(xhsi_rtu_selected_radio);
+                switch ( sel )
+                {
+                    case RTU_SELECT_COM1 :
+                        XPLMCommandOnce(stby_com1_coarse_down);
+                        break;
+                    case RTU_SELECT_NAV1 :
+                        XPLMCommandOnce(stby_nav1_coarse_down);
+                        break;
+                    case RTU_SELECT_ADF1 :
+                        XPLMCommandOnce(adf1_stby_hundreds_down);
+                        break;
+                    case RTU_SELECT_XPDR :
+                        XPLMCommandOnce(xpdr_code_hundreds_down);
+                        break;
+                    case RTU_SELECT_TCAS :
+                        XPLMCommandOnce(xpdr_mode_down);
+                        break;
+                    case RTU_SELECT_ADF2 :
+                        XPLMCommandOnce(adf2_stby_hundreds_down);
+                        break;
+                    case RTU_SELECT_NAV2 :
+                        XPLMCommandOnce(stby_nav2_coarse_down);
+                        break;
+                    case RTU_SELECT_COM2 :
+                        XPLMCommandOnce(stby_nav2_coarse_down);
+                        break;
+                }
+                break;
+                
+            case RTU_COARSE_UP :
+                sel = XPLMGetDatai(xhsi_rtu_selected_radio);
+                switch ( sel )
+                {
+                    case RTU_SELECT_COM1 :
+                        XPLMCommandOnce(stby_com1_coarse_up);
+                        break;
+                    case RTU_SELECT_NAV1 :
+                        XPLMCommandOnce(stby_nav1_coarse_up);
+                        break;
+                    case RTU_SELECT_ADF1 :
+                        XPLMCommandOnce(adf1_stby_hundreds_up);
+                        break;
+                    case RTU_SELECT_XPDR :
+                        XPLMCommandOnce(xpdr_code_hundreds_up);
+                        break;
+                    case RTU_SELECT_TCAS :
+                        XPLMCommandOnce(xpdr_mode_up);
+                        break;
+                    case RTU_SELECT_ADF2 :
+                        XPLMCommandOnce(adf2_stby_hundreds_up);
+                        break;
+                    case RTU_SELECT_NAV2 :
+                        XPLMCommandOnce(stby_nav2_coarse_up);
+                        break;
+                    case RTU_SELECT_COM2 :
+                        XPLMCommandOnce(stby_nav2_coarse_up);
+                        break;
+                }
+                break;
+                
+            case RTU_FINE_DOWN :
+                sel = XPLMGetDatai(xhsi_rtu_selected_radio);
+                switch ( sel )
+                {
+                    case RTU_SELECT_COM1 :
+                        XPLMCommandOnce(stby_com1_fine_down_833);
+                        break;
+                    case RTU_SELECT_NAV1 :
+                        XPLMCommandOnce(stby_nav1_fine_down);
+                        break;
+                    case RTU_SELECT_ADF1 :
+                        XPLMCommandOnce(adf1_stby_units_down);
+                        break;
+                    case RTU_SELECT_XPDR :
+                        XPLMCommandOnce(xpdr_code_units_down);
+                        break;
+                    case RTU_SELECT_TCAS :
+                        XPLMCommandOnce(xpdr_mode_down);
+                        break;
+                    case RTU_SELECT_ADF2 :
+                        XPLMCommandOnce(adf2_stby_units_down);
+                        break;
+                    case RTU_SELECT_NAV2 :
+                        XPLMCommandOnce(stby_nav2_fine_down);
+                        break;
+                    case RTU_SELECT_COM2 :
+                        XPLMCommandOnce(stby_com2_fine_down_833);
+                        break;
+                }
+                break;
+                
+            case RTU_FINE_UP :
+                sel = XPLMGetDatai(xhsi_rtu_selected_radio);
+                switch ( sel )
+                {
+                    case RTU_SELECT_COM1 :
+                        XPLMCommandOnce(stby_com1_fine_up_833);
+                        break;
+                    case RTU_SELECT_NAV1 :
+                        XPLMCommandOnce(stby_nav1_fine_up);
+                        break;
+                    case RTU_SELECT_ADF1 :
+                        XPLMCommandOnce(adf1_stby_units_up);
+                        break;
+                    case RTU_SELECT_XPDR :
+                        XPLMCommandOnce(xpdr_code_units_up);
+                        break;
+                    case RTU_SELECT_TCAS :
+                        XPLMCommandOnce(xpdr_mode_up);
+                        break;
+                    case RTU_SELECT_ADF2 :
+                        XPLMCommandOnce(adf2_stby_units_up);
+                        break;
+                    case RTU_SELECT_NAV2 :
+                        XPLMCommandOnce(stby_nav2_fine_up);
+                        break;
+                    case RTU_SELECT_COM2 :
+                        XPLMCommandOnce(stby_com2_fine_up_833);
+                        break;
+                }
+                break;
+                
+        }
+    }
+}
+
+
+
 void registerCommands(void) {
 
     XPLMDebugString("XHSI: creating custom commands and registering custom command handlers\n");
@@ -2249,24 +2748,24 @@ void registerCommands(void) {
     XPLMRegisterCommandHandler(nav2_sync, (XPLMCommandCallback_f)nav_sync_handler, 1, (void *)2);
 
 
-	// xhsi/nd_.../range_auto
+    // xhsi/nd_.../range_auto
 
-	// xhsi/nd_pilot/range_auto
-	auto_range_pilot = XPLMCreateCommand("xhsi/nd_pilot/range_auto", "Auto ND map range");
-	XPLMRegisterCommandHandler(auto_range_pilot, (XPLMCommandCallback_f)auto_range_handler, 1, (void *)EFIS_PILOT);
-	// xhsi/nd_copilot/range_auto
-	auto_range_copilot = XPLMCreateCommand("xhsi/nd_copilot/range_auto", "Auto ND map range - copilot");
-	XPLMRegisterCommandHandler(auto_range_copilot, (XPLMCommandCallback_f)auto_range_handler, 1, (void *)EFIS_COPILOT);
+    // xhsi/nd_pilot/range_auto
+    auto_range_pilot = XPLMCreateCommand("xhsi/nd_pilot/range_auto", "Auto ND map range");
+    XPLMRegisterCommandHandler(auto_range_pilot, (XPLMCommandCallback_f)auto_range_handler, 1, (void *)EFIS_PILOT);
+    // xhsi/nd_copilot/range_auto
+    auto_range_copilot = XPLMCreateCommand("xhsi/nd_copilot/range_auto", "Auto ND map range - copilot");
+    XPLMRegisterCommandHandler(auto_range_copilot, (XPLMCommandCallback_f)auto_range_handler, 1, (void *)EFIS_COPILOT);
 
 
-	// xhsi/nd_ext_range_.../ext_range_auto
+    // xhsi/nd_ext_range_.../ext_range_auto
 
-	// xhsi/nd_ext_range_pilot/ext_range_auto
-	auto_ext_range_pilot = XPLMCreateCommand("xhsi/nd_ext_range_pilot/ext_range_auto", "Auto ND extended map range");
-	XPLMRegisterCommandHandler(auto_ext_range_pilot, (XPLMCommandCallback_f)auto_ext_range_handler, 1, (void *)EFIS_PILOT);
-	// xhsi/nd_ext_range_copilot/ext_range_auto
-	auto_ext_range_copilot = XPLMCreateCommand("xhsi/nd_ext_range_copilot/ext_range_auto", "Auto ND extended map range - copilot");
-	XPLMRegisterCommandHandler(auto_ext_range_copilot, (XPLMCommandCallback_f)auto_ext_range_handler, 1, (void *)EFIS_COPILOT);
+    // xhsi/nd_ext_range_pilot/ext_range_auto
+    auto_ext_range_pilot = XPLMCreateCommand("xhsi/nd_ext_range_pilot/ext_range_auto", "Auto ND extended map range");
+    XPLMRegisterCommandHandler(auto_ext_range_pilot, (XPLMCommandCallback_f)auto_ext_range_handler, 1, (void *)EFIS_PILOT);
+    // xhsi/nd_ext_range_copilot/ext_range_auto
+    auto_ext_range_copilot = XPLMCreateCommand("xhsi/nd_ext_range_copilot/ext_range_auto", "Auto ND extended map range - copilot");
+    XPLMRegisterCommandHandler(auto_ext_range_copilot, (XPLMCommandCallback_f)auto_ext_range_handler, 1, (void *)EFIS_COPILOT);
 
 
     // xhsi/clock/...
@@ -2280,11 +2779,6 @@ void registerCommands(void) {
     XPLMRegisterCommandHandler(chr_reset, (XPLMCommandCallback_f)clock_handler, 1, (void *)2);
 
     
-    // special case: intercept a standard X-Plane command
-    contact_atc_cmd = XPLMCreateCommand("sim/operation/contact_atc", "Contact ATC");
-    XPLMRegisterCommandHandler(contact_atc_cmd, (XPLMCommandCallback_f)contact_atc_handler, 1, (void *)0);
-
-
     // special case: use these existing commands to control the chronometer
     timer_start_stop = XPLMFindCommand("sim/instruments/timer_start_stop");
     timer_reset = XPLMFindCommand("sim/instruments/timer_reset");
@@ -2298,8 +2792,141 @@ void registerCommands(void) {
     com2_standy_flip = XPLMFindCommand("sim/radios/com2_standy_flip");
     adf1_standy_flip = XPLMFindCommand("sim/radios/adf1_standy_flip");
     adf2_standy_flip = XPLMFindCommand("sim/radios/adf2_standy_flip");
-	sim_transponder_transponder_ident = XPLMFindCommand("sim/transponder/transponder_ident");
+    sim_transponder_transponder_ident = XPLMFindCommand("sim/transponder/transponder_ident");
+    
 
+    // special case: use these existing commands for the RTU
+    stby_com1_coarse_down = XPLMFindCommand("sim/radios/stby_com1_coarse_down");
+    stby_com1_coarse_up = XPLMFindCommand("sim/radios/stby_com1_coarse_up");
+    stby_com1_fine_down_833 = XPLMFindCommand("sim/radios/stby_com1_fine_down_833");
+    stby_com1_fine_up_833 = XPLMFindCommand("sim/radios/stby_com1_fine_up_833");
+    stby_com2_coarse_down = XPLMFindCommand("sim/radios/stby_com2_coarse_down");
+    stby_com2_coarse_up = XPLMFindCommand("sim/radios/stby_com2_coarse_up");
+    stby_com2_fine_down_833 = XPLMFindCommand("sim/radios/stby_com2_fine_down_833");
+    stby_com2_fine_up_833 = XPLMFindCommand("sim/radios/stby_com2_fine_up_833");
+    stby_nav1_coarse_down = XPLMFindCommand("sim/radios/stby_nav1_coarse_down");
+    stby_nav1_coarse_up = XPLMFindCommand("sim/radios/stby_nav1_coarse_up");
+    stby_nav1_fine_down = XPLMFindCommand("sim/radios/stby_nav1_fine_down");
+    stby_nav1_fine_up = XPLMFindCommand("sim/radios/stby_nav1_fine_up");
+    stby_nav2_coarse_down = XPLMFindCommand("sim/radios/stby_nav2_coarse_down");
+    stby_nav2_coarse_up = XPLMFindCommand("sim/radios/stby_nav2_coarse_up");
+    stby_nav2_fine_down = XPLMFindCommand("sim/radios/stby_nav2_fine_down");
+    stby_nav2_fine_up = XPLMFindCommand("sim/radios/stby_nav2_fine_up");
+    
+    
+    // special case: intercept a standard X-Plane command
+    contact_atc_cmd = XPLMCreateCommand("sim/operation/contact_atc", "Contact ATC");
+    XPLMRegisterCommandHandler(contact_atc_cmd, (XPLMCommandCallback_f)contact_atc_handler, 1, (void *)0);
+
+
+    // RTU select
+    rtu_select_none = XPLMCreateCommand("xhsi/rtu/select_none", "RTU select none");
+    XPLMRegisterCommandHandler(rtu_select_none, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_NONE);
+    rtu_select_com1 = XPLMCreateCommand("xhsi/rtu/select_com1", "RTU select COM1");
+    XPLMRegisterCommandHandler(rtu_select_com1, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_COM1);
+    rtu_select_nav1 = XPLMCreateCommand("xhsi/rtu/select_nav1", "RTU select NAV1");
+    XPLMRegisterCommandHandler(rtu_select_nav1, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_NAV1);
+    rtu_select_adf1 = XPLMCreateCommand("xhsi/rtu/select_adf1", "RTU select ADF1");
+    XPLMRegisterCommandHandler(rtu_select_adf1, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_ADF1);
+    rtu_select_xpdr = XPLMCreateCommand("xhsi/rtu/select_xpdr", "RTU select XPDR");
+    XPLMRegisterCommandHandler(rtu_select_xpdr, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_XPDR);
+    rtu_select_tcas = XPLMCreateCommand("xhsi/rtu/select_tcas", "RTU select TCAS");
+    XPLMRegisterCommandHandler(rtu_select_tcas, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_TCAS);
+    rtu_select_adf2 = XPLMCreateCommand("xhsi/rtu/select_adf2", "RTU select ADF2");
+    XPLMRegisterCommandHandler(rtu_select_adf2, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_ADF2);
+    rtu_select_nav2 = XPLMCreateCommand("xhsi/rtu/select_nav2", "RTU select NAV2");
+    XPLMRegisterCommandHandler(rtu_select_nav2, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_NAV2);
+    rtu_select_com2 = XPLMCreateCommand("xhsi/rtu/select_com2", "RTU select COM2");
+    XPLMRegisterCommandHandler(rtu_select_com2, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_COM2);
+    // RTU select/flip
+    rtu_select_flip_com1 = XPLMCreateCommand("xhsi/rtu/select_flip_com1", "RTU select/flip COM1");
+    XPLMRegisterCommandHandler(rtu_select_flip_com1, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_FLIP_COM1);
+    rtu_select_flip_nav1 = XPLMCreateCommand("xhsi/rtu/select_flip_nav1", "RTU select/flip NAV1");
+    XPLMRegisterCommandHandler(rtu_select_flip_nav1, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_FLIP_NAV1);
+    rtu_select_flip_adf1 = XPLMCreateCommand("xhsi/rtu/select_flip_adf1", "RTU select/flip ADF1");
+    XPLMRegisterCommandHandler(rtu_select_flip_adf1, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_FLIP_ADF1);
+    rtu_select_flip_xpdr = XPLMCreateCommand("xhsi/rtu/select_flip_xpdr", "RTU select/ident XPDR");
+    XPLMRegisterCommandHandler(rtu_select_flip_xpdr, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_FLIP_XPDR);
+    rtu_select_flip_tcas = XPLMCreateCommand("xhsi/rtu/select_flip_tcas", "RTU select/cycle TCAS");
+    XPLMRegisterCommandHandler(rtu_select_flip_tcas, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_FLIP_TCAS);
+    rtu_select_flip_adf2 = XPLMCreateCommand("xhsi/rtu/select_flip_adf2", "RTU select/flip ADF2");
+    XPLMRegisterCommandHandler(rtu_select_flip_adf2, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_FLIP_ADF2);
+    rtu_select_flip_nav2 = XPLMCreateCommand("xhsi/rtu/select_flip_nav2", "RTU select/flip NAV2");
+    XPLMRegisterCommandHandler(rtu_select_flip_nav2, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_FLIP_NAV2);
+    rtu_select_flip_com2 = XPLMCreateCommand("xhsi/rtu/select_flip_com2", "RTU select/flip COM2");
+    XPLMRegisterCommandHandler(rtu_select_flip_com2, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_FLIP_COM2);
+    // RTU cycle selection RTU_SELECT_CYCLE
+    rtu_select_cycle = XPLMCreateCommand("xhsi/rtu/select_cycle", "RTU select next radio");
+    XPLMRegisterCommandHandler(rtu_select_cycle, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_CYCLE);
+    // RTU flip selected
+    rtu_flip_selected = XPLMCreateCommand("xhsi/rtu/flip_selected", "RTU flip selected radio");
+    XPLMRegisterCommandHandler(rtu_flip_selected, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_FLIP_SELECTED);
+    // RTU tuning
+    rtu_coarse_down = XPLMCreateCommand("xhsi/rtu/coarse_down", "RTU coarse down");
+    XPLMRegisterCommandHandler(rtu_coarse_down, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_COARSE_DOWN);
+    rtu_coarse_up = XPLMCreateCommand("xhsi/rtu/coarse_up", "RTU coarse up");
+    XPLMRegisterCommandHandler(rtu_coarse_up, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_COARSE_UP);
+    rtu_fine_down = XPLMCreateCommand("xhsi/rtu/fine_down", "RTU fine down");
+    XPLMRegisterCommandHandler(rtu_fine_down, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_FINE_DOWN);
+    rtu_fine_up = XPLMCreateCommand("xhsi/rtu/fine_up", "RTU fine up");
+    XPLMRegisterCommandHandler(rtu_fine_up, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_FINE_UP);
+    
+    // XPDR mode
+    xpdr_mode_up = XPLMCreateCommand("xhsi/xpdr/mode_up", "XPDR mode up");
+    XPLMRegisterCommandHandler(xpdr_mode_up, (XPLMCommandCallback_f)xpdr_handler, 1, (void *)XPDR_MODE_UP);
+    xpdr_mode_down = XPLMCreateCommand("xhsi/xpdr/mode_down", "XPDR mode down");
+    XPLMRegisterCommandHandler(xpdr_mode_down, (XPLMCommandCallback_f)xpdr_handler, 1, (void *)XPDR_MODE_DOWN);
+    xpdr_mode_cycle = XPLMCreateCommand("xhsi/xpdr/mode_cycle", "XPDR mode cycle");
+    XPLMRegisterCommandHandler(xpdr_mode_cycle, (XPLMCommandCallback_f)xpdr_handler, 1, (void *)XPDR_MODE_CYCLE);
+    // XPDR code
+    xpdr_code_hundreds_up = XPLMCreateCommand("xhsi/xpdr/code_hundreds_up", "XPDR code hundreds(thousands) up");
+    XPLMRegisterCommandHandler(xpdr_code_hundreds_up, (XPLMCommandCallback_f)xpdr_handler, 1, (void *)XPDR_CODE_HUNDREDS_UP);
+    xpdr_code_hundreds_down = XPLMCreateCommand("xhsi/xpdr/code_hundreds_down", "XPDR code hundreds(thousands) down");
+    XPLMRegisterCommandHandler(xpdr_code_hundreds_down, (XPLMCommandCallback_f)xpdr_handler, 1, (void *)XPDR_CODE_HUNDREDS_DOWN);
+    xpdr_code_units_up = XPLMCreateCommand("xhsi/xpdr/code_units_up", "XPDR code units(tens) up");
+    XPLMRegisterCommandHandler(xpdr_code_units_up, (XPLMCommandCallback_f)xpdr_handler, 1, (void *)XPDR_CODE_UNITS_UP);
+    xpdr_code_units_down = XPLMCreateCommand("xhsi/xpdr/code_units_down", "XPDR code units(tens) down");
+    XPLMRegisterCommandHandler(xpdr_code_units_down, (XPLMCommandCallback_f)xpdr_handler, 1, (void *)XPDR_CODE_UNITS_DOWN);
+    
+    // ADF tuning
+    // ADF1
+    adf1_hundreds_up = XPLMCreateCommand("xhsi/adf/adf1_hundreds_up", "ADF1 hundreds(thousands) up");
+    XPLMRegisterCommandHandler(adf1_hundreds_up, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF1 + ADF_HUNDREDS_UP));
+    adf1_hundreds_down = XPLMCreateCommand("xhsi/adf/adf1_hundreds_down", "ADF1 hundreds(thousands) down");
+    XPLMRegisterCommandHandler(adf1_hundreds_down, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF1 + ADF_HUNDREDS_DOWN));
+    adf1_units_up = XPLMCreateCommand("xhsi/adf/adf1_units_up", "ADF1 units(tens) up");
+    XPLMRegisterCommandHandler(adf1_units_up, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF1 + ADF_UNITS_UP));
+    adf1_units_down = XPLMCreateCommand("xhsi/adf/adf1_units_down", "ADF1 units(tens) down");
+    XPLMRegisterCommandHandler(adf1_units_down, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF1 + ADF_UNITS_DOWN));
+    // ADF1 standby
+    adf1_stby_hundreds_up = XPLMCreateCommand("xhsi/adf/adf1_stby_hundreds_up", "Standby ADF1 hundreds(thousands) up");
+    XPLMRegisterCommandHandler(adf1_stby_hundreds_up, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF1_STBY + ADF_HUNDREDS_UP));
+    adf1_stby_hundreds_down = XPLMCreateCommand("xhsi/adf/adf1_stby_hundreds_down", "Standby ADF1 hundreds(thousands) down");
+    XPLMRegisterCommandHandler(adf1_stby_hundreds_down, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF1_STBY + ADF_HUNDREDS_DOWN));
+    adf1_stby_units_up = XPLMCreateCommand("xhsi/adf/adf1_stby_units_up", "Standby ADF1 units(tens) up");
+    XPLMRegisterCommandHandler(adf1_stby_units_up, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF1_STBY + ADF_UNITS_UP));
+    adf1_stby_units_down = XPLMCreateCommand("xhsi/adf/adf1_stby_units_down", "Standby ADF1 units(tens) down");
+    XPLMRegisterCommandHandler(adf1_stby_units_down, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF1_STBY + ADF_UNITS_DOWN));
+    // ADF2
+    adf2_hundreds_up = XPLMCreateCommand("xhsi/adf/adf2_hundreds_up", "ADF2 hundreds(thousands) up");
+    XPLMRegisterCommandHandler(adf2_hundreds_up, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF2 + ADF_HUNDREDS_UP));
+    adf2_hundreds_down = XPLMCreateCommand("xhsi/adf/adf2_hundreds_down", "ADF2 hundreds(thousands) down");
+    XPLMRegisterCommandHandler(adf2_hundreds_down, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF2 + ADF_HUNDREDS_DOWN));
+    adf2_units_up = XPLMCreateCommand("xhsi/adf/adf2_units_up", "ADF2 units(tens) up");
+    XPLMRegisterCommandHandler(adf2_units_up, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF2 + ADF_UNITS_UP));
+    adf2_units_down = XPLMCreateCommand("xhsi/adf/adf2_units_down", "ADF2 units(tens) down");
+    XPLMRegisterCommandHandler(adf2_units_down, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF2 + ADF_UNITS_DOWN));
+    // ADF2 standby
+    adf2_stby_hundreds_up = XPLMCreateCommand("xhsi/adf/adf2_stby_hundreds_up", "Standby ADF2 hundreds(thousands) up");
+    XPLMRegisterCommandHandler(adf2_stby_hundreds_up, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF2_STBY + ADF_HUNDREDS_UP));
+    adf2_stby_hundreds_down = XPLMCreateCommand("xhsi/adf/adf2_stby_hundreds_down", "Standby ADF2 hundreds(thousands) down");
+    XPLMRegisterCommandHandler(adf2_stby_hundreds_down, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF2_STBY + ADF_HUNDREDS_DOWN));
+    adf2_stby_units_up = XPLMCreateCommand("xhsi/adf/adf2_stby_units_up", "Standby ADF2 units(tens) up");
+    XPLMRegisterCommandHandler(adf2_stby_units_up, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF2_STBY + ADF_UNITS_UP));
+    adf2_stby_units_down = XPLMCreateCommand("xhsi/adf/adf2_stby_units_down", "Standby ADF2 units(tens) down");
+    XPLMRegisterCommandHandler(adf2_stby_units_down, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF2_STBY + ADF_UNITS_DOWN));
+    
+    
     // special case: use these existing commands for an MCP
     sim_autopilot_fdir_servos_toggle = XPLMFindCommand("sim/autopilot/fdir_servos_toggle");
     sim_autopilot_autothrottle_toggle = XPLMFindCommand("sim/autopilot/autothrottle_toggle");

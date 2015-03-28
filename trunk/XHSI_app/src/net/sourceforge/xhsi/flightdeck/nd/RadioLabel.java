@@ -220,7 +220,7 @@ public class RadioLabel extends NDSubcomponent {
         this.nor = NavigationObjectRepository.get_instance();
 
         RadioLabel.nav_freq_formatter = new DecimalFormat("000.00");
-        RadioLabel.adf_freq_formatter = new DecimalFormat("000");
+        RadioLabel.adf_freq_formatter = new DecimalFormat("0000");
         RadioLabel.near_dme_formatter = new DecimalFormat("0.0");
         RadioLabel.far_dme_formatter = new DecimalFormat("0");
         DecimalFormatSymbols symbols = nav_freq_formatter.getDecimalFormatSymbols();

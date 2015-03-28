@@ -1406,26 +1406,26 @@ void findDataRefs(void) {
 
     XPLMDebugString("XHSI: referencing standard DataRefs\n");
 
-	// Aircraft position
-	groundspeed = XPLMFindDataRef("sim/flightmodel/position/groundspeed");
-	true_airspeed = XPLMFindDataRef("sim/flightmodel/position/true_airspeed");
-	magpsi = XPLMFindDataRef("sim/flightmodel/position/magpsi");
-	hpath = XPLMFindDataRef("sim/flightmodel/position/hpath");
-	latitude = XPLMFindDataRef("sim/flightmodel/position/latitude");	// double
-	longitude = XPLMFindDataRef("sim/flightmodel/position/longitude");	// double
-	phi = XPLMFindDataRef("sim/flightmodel/position/phi");
-	r = XPLMFindDataRef("sim/flightmodel/position/R");
-	magvar = XPLMFindDataRef("sim/flightmodel/position/magnetic_variation");
-	msl = XPLMFindDataRef("sim/flightmodel/position/elevation");
-	agl = XPLMFindDataRef("sim/flightmodel/position/y_agl");
-	theta = XPLMFindDataRef("sim/flightmodel/position/theta");
-	vpath = XPLMFindDataRef("sim/flightmodel/position/vpath");
-	alpha = XPLMFindDataRef("sim/flightmodel/position/alpha");
-	beta = XPLMFindDataRef("sim/flightmodel/position/beta");
+    // Aircraft position
+    groundspeed = XPLMFindDataRef("sim/flightmodel/position/groundspeed");
+    true_airspeed = XPLMFindDataRef("sim/flightmodel/position/true_airspeed");
+    magpsi = XPLMFindDataRef("sim/flightmodel/position/magpsi");
+    hpath = XPLMFindDataRef("sim/flightmodel/position/hpath");
+    latitude = XPLMFindDataRef("sim/flightmodel/position/latitude");	// double
+    longitude = XPLMFindDataRef("sim/flightmodel/position/longitude");	// double
+    phi = XPLMFindDataRef("sim/flightmodel/position/phi");
+    r = XPLMFindDataRef("sim/flightmodel/position/R");
+    magvar = XPLMFindDataRef("sim/flightmodel/position/magnetic_variation");
+    msl = XPLMFindDataRef("sim/flightmodel/position/elevation");
+    agl = XPLMFindDataRef("sim/flightmodel/position/y_agl");
+    theta = XPLMFindDataRef("sim/flightmodel/position/theta");
+    vpath = XPLMFindDataRef("sim/flightmodel/position/vpath");
+    alpha = XPLMFindDataRef("sim/flightmodel/position/alpha");
+    beta = XPLMFindDataRef("sim/flightmodel/position/beta");
     on_ground = XPLMFindDataRef("sim/flightmodel/failures/onground_any");
 
 
-	// Instruments
+    // Instruments
 //	vh_ind_fpm = XPLMFindDataRef("sim/flightmodel/position/vh_ind_fpm");
 //	h_ind = XPLMFindDataRef("sim/flightmodel/misc/h_ind");
     airspeed_pilot = XPLMFindDataRef("sim/cockpit2/gauges/indicators/airspeed_kts_pilot");
@@ -1461,7 +1461,7 @@ void findDataRefs(void) {
     battery_on = XPLMFindDataRef("sim/cockpit/electrical/battery_on");
     cockpit_lights_on = XPLMFindDataRef("sim/cockpit/electrical/cockpit_lights_on");
 
-	// Lights
+    // Lights
     beacon_lights_on = XPLMFindDataRef("sim/cockpit/electrical/beacon_lights_on");
     landing_lights_on = XPLMFindDataRef("sim/cockpit/electrical/landing_lights_on");
     nav_lights_on = XPLMFindDataRef("sim/cockpit/electrical/nav_lights_on");
@@ -1470,87 +1470,87 @@ void findDataRefs(void) {
 
     pitot_heat_on = XPLMFindDataRef("sim/cockpit/switches/pitot_heat_on");
 
-	// Radios
-	nav1_freq_hz = XPLMFindDataRef("sim/cockpit/radios/nav1_freq_hz");  // int
-	nav2_freq_hz = XPLMFindDataRef("sim/cockpit/radios/nav2_freq_hz");	// int
-	adf1_freq_hz = XPLMFindDataRef("sim/cockpit/radios/adf1_freq_hz");  // int
-	adf2_freq_hz = XPLMFindDataRef("sim/cockpit/radios/adf2_freq_hz");  // int
-	nav1_dir_degt = XPLMFindDataRef("sim/cockpit/radios/nav1_dir_degt");
-	nav2_dir_degt = XPLMFindDataRef("sim/cockpit/radios/nav2_dir_degt");
-	adf1_dir_degt = XPLMFindDataRef("sim/cockpit/radios/adf1_dir_degt");
-	adf2_dir_degt = XPLMFindDataRef("sim/cockpit/radios/adf2_dir_degt");
-	nav1_dme_dist_m = XPLMFindDataRef("sim/cockpit/radios/nav1_dme_dist_m");
-	nav2_dme_dist_m = XPLMFindDataRef("sim/cockpit/radios/nav2_dme_dist_m");
-	adf1_dme_dist_m = XPLMFindDataRef("sim/cockpit/radios/adf1_dme_dist_m");
-	adf2_dme_dist_m = XPLMFindDataRef("sim/cockpit/radios/adf2_dme_dist_m");
-	nav1_obs_degm = XPLMFindDataRef("sim/cockpit/radios/nav1_obs_degm");
-	nav2_obs_degm = XPLMFindDataRef("sim/cockpit/radios/nav2_obs_degm");
+    // Radios
+    nav1_freq_hz = XPLMFindDataRef("sim/cockpit/radios/nav1_freq_hz");  // int
+    nav2_freq_hz = XPLMFindDataRef("sim/cockpit/radios/nav2_freq_hz");	// int
+    adf1_freq_hz = XPLMFindDataRef("sim/cockpit/radios/adf1_freq_hz");  // int
+    adf2_freq_hz = XPLMFindDataRef("sim/cockpit/radios/adf2_freq_hz");  // int
+    nav1_dir_degt = XPLMFindDataRef("sim/cockpit/radios/nav1_dir_degt");
+    nav2_dir_degt = XPLMFindDataRef("sim/cockpit/radios/nav2_dir_degt");
+    adf1_dir_degt = XPLMFindDataRef("sim/cockpit/radios/adf1_dir_degt");
+    adf2_dir_degt = XPLMFindDataRef("sim/cockpit/radios/adf2_dir_degt");
+    nav1_dme_dist_m = XPLMFindDataRef("sim/cockpit/radios/nav1_dme_dist_m");
+    nav2_dme_dist_m = XPLMFindDataRef("sim/cockpit/radios/nav2_dme_dist_m");
+    adf1_dme_dist_m = XPLMFindDataRef("sim/cockpit/radios/adf1_dme_dist_m");
+    adf2_dme_dist_m = XPLMFindDataRef("sim/cockpit/radios/adf2_dme_dist_m");
+    nav1_obs_degm = XPLMFindDataRef("sim/cockpit/radios/nav1_obs_degm");
+    nav2_obs_degm = XPLMFindDataRef("sim/cockpit/radios/nav2_obs_degm");
 
-	nav1_course_degm = XPLMFindDataRef("sim/cockpit/radios/nav1_course_degm");
-	nav2_course_degm = XPLMFindDataRef("sim/cockpit/radios/nav2_course_degm");
-	nav1_cdi = XPLMFindDataRef("sim/cockpit/radios/nav1_CDI");
-	nav2_cdi = XPLMFindDataRef("sim/cockpit/radios/nav2_CDI");
-	nav1_hdef_dot = XPLMFindDataRef("sim/cockpit/radios/nav1_hdef_dot");
-	nav2_hdef_dot = XPLMFindDataRef("sim/cockpit/radios/nav2_hdef_dot");
-	nav1_fromto = XPLMFindDataRef("sim/cockpit/radios/nav1_fromto");
-	nav2_fromto = XPLMFindDataRef("sim/cockpit/radios/nav2_fromto");
-	nav1_vdef_dot = XPLMFindDataRef("sim/cockpit/radios/nav1_vdef_dot");
-	nav2_vdef_dot = XPLMFindDataRef("sim/cockpit/radios/nav2_vdef_dot");
+    nav1_course_degm = XPLMFindDataRef("sim/cockpit/radios/nav1_course_degm");
+    nav2_course_degm = XPLMFindDataRef("sim/cockpit/radios/nav2_course_degm");
+    nav1_cdi = XPLMFindDataRef("sim/cockpit/radios/nav1_CDI");
+    nav2_cdi = XPLMFindDataRef("sim/cockpit/radios/nav2_CDI");
+    nav1_hdef_dot = XPLMFindDataRef("sim/cockpit/radios/nav1_hdef_dot");
+    nav2_hdef_dot = XPLMFindDataRef("sim/cockpit/radios/nav2_hdef_dot");
+    nav1_fromto = XPLMFindDataRef("sim/cockpit/radios/nav1_fromto");
+    nav2_fromto = XPLMFindDataRef("sim/cockpit/radios/nav2_fromto");
+    nav1_vdef_dot = XPLMFindDataRef("sim/cockpit/radios/nav1_vdef_dot");
+    nav2_vdef_dot = XPLMFindDataRef("sim/cockpit/radios/nav2_vdef_dot");
 
-	gps_dir_degt = XPLMFindDataRef("sim/cockpit/radios/gps_dir_degt");
-	gps_dme_dist_m = XPLMFindDataRef("sim/cockpit/radios/gps_dme_dist_m");
-	gps_course_degtm = XPLMFindDataRef("sim/cockpit/radios/gps_course_degtm");
-	gps_hdef_dot = XPLMFindDataRef("sim/cockpit/radios/gps_hdef_dot");
-	gps_fromto = XPLMFindDataRef("sim/cockpit/radios/gps_fromto");
-	gps_vdef_dot = XPLMFindDataRef("sim/cockpit/radios/gps_vdef_dot");
+    gps_dir_degt = XPLMFindDataRef("sim/cockpit/radios/gps_dir_degt");
+    gps_dme_dist_m = XPLMFindDataRef("sim/cockpit/radios/gps_dme_dist_m");
+    gps_course_degtm = XPLMFindDataRef("sim/cockpit/radios/gps_course_degtm");
+    gps_hdef_dot = XPLMFindDataRef("sim/cockpit/radios/gps_hdef_dot");
+    gps_fromto = XPLMFindDataRef("sim/cockpit/radios/gps_fromto");
+    gps_vdef_dot = XPLMFindDataRef("sim/cockpit/radios/gps_vdef_dot");
 
-	nav1_dme_time_secs = XPLMFindDataRef("sim/cockpit/radios/nav1_dme_time_secs");
-	nav2_dme_time_secs = XPLMFindDataRef("sim/cockpit/radios/nav2_dme_time_secs");
-	gps_dme_time_secs = XPLMFindDataRef("sim/cockpit/radios/gps_dme_time_secs");
+    nav1_dme_time_secs = XPLMFindDataRef("sim/cockpit/radios/nav1_dme_time_secs");
+    nav2_dme_time_secs = XPLMFindDataRef("sim/cockpit/radios/nav2_dme_time_secs");
+    gps_dme_time_secs = XPLMFindDataRef("sim/cockpit/radios/gps_dme_time_secs");
 
 //	nav1_dme_nm = XPLMFindDataRef("sim/cockpit2/radios/indicators/nav1_dme_distance_nm");
 //	nav2_dme_nm = XPLMFindDataRef("sim/cockpit2/radios/indicators/nav2_dme_distance_nm");
 //	gps_dme_nm = XPLMFindDataRef("sim/cockpit2/radios/indicators/gps_dme_distance_nm");
-	hsi_dme_nm_pilot = XPLMFindDataRef("sim/cockpit2/radios/indicators/hsi_dme_distance_nm_pilot");
-	hsi_dme_nm_copilot = XPLMFindDataRef("sim/cockpit2/radios/indicatorshsi_dme_distance_nm_copilot/");
+    hsi_dme_nm_pilot = XPLMFindDataRef("sim/cockpit2/radios/indicators/hsi_dme_distance_nm_pilot");
+    hsi_dme_nm_copilot = XPLMFindDataRef("sim/cockpit2/radios/indicatorshsi_dme_distance_nm_copilot/");
 
     outer_marker = XPLMFindDataRef("sim/cockpit2/radios/indicators/outer_marker_lit");
     middle_marker = XPLMFindDataRef("sim/cockpit2/radios/indicators/middle_marker_lit");
     inner_marker = XPLMFindDataRef("sim/cockpit2/radios/indicators/inner_marker_lit");
 
-	nav1_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/nav1_stdby_freq_hz");  // int
-	nav2_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/nav2_stdby_freq_hz");	// int
-	adf1_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/adf1_stdby_freq_hz");  // int
-	adf2_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/adf2_stdby_freq_hz");  // int
+    nav1_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/nav1_stdby_freq_hz");  // int
+    nav2_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/nav2_stdby_freq_hz");  // int
+    adf1_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/adf1_stdby_freq_hz");  // int
+    adf2_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/adf2_stdby_freq_hz");  // int
 
-	nav1_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/nav1_nav_id");
-	nav2_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/nav2_nav_id");
-	adf1_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/adf1_nav_id");
-	adf2_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/adf2_nav_id");
-	//gps_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/gps_nav_id");
+    nav1_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/nav1_nav_id");
+    nav2_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/nav2_nav_id");
+    adf1_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/adf1_nav_id");
+    adf2_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/adf2_nav_id");
+    //gps_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/gps_nav_id");
 
-	com1_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com1_freq_hz");              // int (x100 MHz)
-	com1_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com1_stdby_freq_hz");  // int (x100 MHz)
-	com2_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com2_freq_hz");              // int (x100 MHz)
-	com2_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com2_stdby_freq_hz");  // int (x100 MHz)
+    com1_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com1_freq_hz");              // int (x100 MHz)
+    com1_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com1_stdby_freq_hz");  // int (x100 MHz)
+    com2_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com2_freq_hz");              // int (x100 MHz)
+    com2_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com2_stdby_freq_hz");  // int (x100 MHz)
 
-	com1_frequency_hz_833 = XPLMFindDataRef("sim/cockpit2/radios/actuators/com1_frequency_hz_833");                  // int (x1000 MHz)
-	com1_standby_frequency_hz_833 = XPLMFindDataRef("sim/cockpit2/radios/actuators/com1_standby_frequency_hz_833");  // int (x1000 MHz)
-	com2_frequency_hz_833 = XPLMFindDataRef("sim/cockpit2/radios/actuators/com2_frequency_hz_833");                  // int (x1000 MHz)
-	com2_standby_frequency_hz_833 = XPLMFindDataRef("sim/cockpit2/radios/actuators/com2_standby_frequency_hz_833"); // int (x1000 MHz)
+    com1_frequency_hz_833 = XPLMFindDataRef("sim/cockpit2/radios/actuators/com1_frequency_hz_833");                  // int (x1000 MHz)
+    com1_standby_frequency_hz_833 = XPLMFindDataRef("sim/cockpit2/radios/actuators/com1_standby_frequency_hz_833");  // int (x1000 MHz)
+    com2_frequency_hz_833 = XPLMFindDataRef("sim/cockpit2/radios/actuators/com2_frequency_hz_833");                  // int (x1000 MHz)
+    com2_standby_frequency_hz_833 = XPLMFindDataRef("sim/cockpit2/radios/actuators/com2_standby_frequency_hz_833"); // int (x1000 MHz)
 
-	// AP
-	autopilot_state = XPLMFindDataRef("sim/cockpit/autopilot/autopilot_state");
-	autopilot_vertical_velocity = XPLMFindDataRef("sim/cockpit/autopilot/vertical_velocity");
-	autopilot_altitude = XPLMFindDataRef("sim/cockpit/autopilot/altitude");
-	autopilot_approach_selector = XPLMFindDataRef("sim/cockpit/autopilot/approach_selector");
-	autopilot_heading_mag = XPLMFindDataRef("sim/cockpit/autopilot/heading_mag");
-	autopilot_airspeed = XPLMFindDataRef("sim/cockpit/autopilot/airspeed");
-	autopilot_airspeed_is_mach = XPLMFindDataRef("sim/cockpit/autopilot/airspeed_is_mach");
+    // AP
+    autopilot_state = XPLMFindDataRef("sim/cockpit/autopilot/autopilot_state");
+    autopilot_vertical_velocity = XPLMFindDataRef("sim/cockpit/autopilot/vertical_velocity");
+    autopilot_altitude = XPLMFindDataRef("sim/cockpit/autopilot/altitude");
+    autopilot_approach_selector = XPLMFindDataRef("sim/cockpit/autopilot/approach_selector");
+    autopilot_heading_mag = XPLMFindDataRef("sim/cockpit/autopilot/heading_mag");
+    autopilot_airspeed = XPLMFindDataRef("sim/cockpit/autopilot/airspeed");
+    autopilot_airspeed_is_mach = XPLMFindDataRef("sim/cockpit/autopilot/airspeed_is_mach");
     autopilot_fd_pitch = XPLMFindDataRef("sim/cockpit/autopilot/flight_director_pitch");
     autopilot_fd_roll = XPLMFindDataRef("sim/cockpit/autopilot/flight_director_roll");
     autopilot_mode = XPLMFindDataRef("sim/cockpit/autopilot/autopilot_mode");
-	autopilot_autothrottle_enabled = XPLMFindDataRef("sim/cockpit2/autopilot/autothrottle_enabled");
+    autopilot_autothrottle_enabled = XPLMFindDataRef("sim/cockpit2/autopilot/autothrottle_enabled");
     autopilot_autothrottle_on = XPLMFindDataRef("sim/cockpit2/autopilot/autothrottle_on");
     autopilot_hdg_status = XPLMFindDataRef("sim/cockpit2/autopilot/heading_status");
     autopilot_lnav_status = XPLMFindDataRef("sim/cockpit2/autopilot/nav_status");
@@ -1564,41 +1564,41 @@ void findDataRefs(void) {
     autopilot_roll_status = XPLMFindDataRef("sim/cockpit2/autopilot/roll_status");
     autopilot_pitch_status = XPLMFindDataRef("sim/cockpit2/autopilot/pitch_status");
     autopilot_backcourse_status = XPLMFindDataRef("sim/cockpit2/autopilot/backcourse_status");
-	autopilot_heading_roll_mode = XPLMFindDataRef("sim/cockpit/autopilot/heading_roll_mode");
+    autopilot_heading_roll_mode = XPLMFindDataRef("sim/cockpit/autopilot/heading_roll_mode");
 
 
-	// Transponder
-	transponder_mode = XPLMFindDataRef("sim/cockpit/radios/transponder_mode");	// int
-	transponder_code = XPLMFindDataRef("sim/cockpit/radios/transponder_code");	// int
-	transponder_id = XPLMFindDataRef("sim/cockpit/radios/transponder_id");	// int
+    // Transponder
+    transponder_mode = XPLMFindDataRef("sim/cockpit/radios/transponder_mode");	// int
+    transponder_code = XPLMFindDataRef("sim/cockpit/radios/transponder_code");	// int
+    transponder_id = XPLMFindDataRef("sim/cockpit/radios/transponder_id");	// int
 
 
-	// EFIS
-	hsi_selector = XPLMFindDataRef("sim/cockpit/switches/HSI_selector");	// int
-	efis_map_range_selector = XPLMFindDataRef("sim/cockpit/switches/EFIS_map_range_selector");	// int
-	efis_dme_1_selector = XPLMFindDataRef("sim/cockpit/switches/EFIS_dme_1_selector");		// int
-	efis_dme_2_selector = XPLMFindDataRef("sim/cockpit/switches/EFIS_dme_2_selector");		// int
-	efis_shows_weather = XPLMFindDataRef("sim/cockpit/switches/EFIFS_shows_weather");		// int
-	efis_shows_tcas = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_tcas");				// int
-	efis_shows_airports = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_airports");		// int
-	efis_shows_waypoints = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_waypoints");	// int
-	efis_shows_vors = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_VORs");				// int
-	efis_shows_ndbs = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_NDBs");				// int
-	efis_map_mode = XPLMFindDataRef("sim/cockpit/switches/EFIS_map_mode");	// int
-	efis_map_submode = XPLMFindDataRef("sim/cockpit/switches/EFIS_map_submode");	// int
+    // EFIS
+    hsi_selector = XPLMFindDataRef("sim/cockpit/switches/HSI_selector");	// int
+    efis_map_range_selector = XPLMFindDataRef("sim/cockpit/switches/EFIS_map_range_selector");	// int
+    efis_dme_1_selector = XPLMFindDataRef("sim/cockpit/switches/EFIS_dme_1_selector");		// int
+    efis_dme_2_selector = XPLMFindDataRef("sim/cockpit/switches/EFIS_dme_2_selector");		// int
+    efis_shows_weather = XPLMFindDataRef("sim/cockpit/switches/EFIFS_shows_weather");		// int
+    efis_shows_tcas = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_tcas");				// int
+    efis_shows_airports = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_airports");		// int
+    efis_shows_waypoints = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_waypoints");	// int
+    efis_shows_vors = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_VORs");				// int
+    efis_shows_ndbs = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_NDBs");				// int
+    efis_map_mode = XPLMFindDataRef("sim/cockpit/switches/EFIS_map_mode");	// int
+    efis_map_submode = XPLMFindDataRef("sim/cockpit/switches/EFIS_map_submode");	// int
 
 
-	// Environment
-	wind_speed_kt = XPLMFindDataRef("sim/weather/wind_speed_kt");
-	wind_direction_degt = XPLMFindDataRef("sim/weather/wind_direction_degt");
-	zulu_time_sec = XPLMFindDataRef("sim/time/zulu_time_sec");
-	local_time_sec = XPLMFindDataRef("sim/time/local_time_sec");
-	oat = XPLMFindDataRef("sim/weather/temperature_ambient_c");
-	sound_speed = XPLMFindDataRef("sim/weather/speed_sound_ms");
+    // Environment
+    wind_speed_kt = XPLMFindDataRef("sim/weather/wind_speed_kt");
+    wind_direction_degt = XPLMFindDataRef("sim/weather/wind_direction_degt");
+    zulu_time_sec = XPLMFindDataRef("sim/time/zulu_time_sec");
+    local_time_sec = XPLMFindDataRef("sim/time/local_time_sec");
+    oat = XPLMFindDataRef("sim/weather/temperature_ambient_c");
+    sound_speed = XPLMFindDataRef("sim/weather/speed_sound_ms");
     timer_is_running = XPLMFindDataRef("sim/time/timer_is_running_sec");
     elapsed_time_sec = XPLMFindDataRef("sim/time/timer_elapsed_time_sec");
     flight_time_sec = XPLMFindDataRef("sim/time/total_flight_time_sec");
-	clock_timer_mode = XPLMFindDataRef("sim/cockpit2/clock_timer/timer_mode");
+    clock_timer_mode = XPLMFindDataRef("sim/cockpit2/clock_timer/timer_mode");
 
 
     // Aircraft constants
@@ -1654,7 +1654,7 @@ void findDataRefs(void) {
     fuel_pressure = XPLMFindDataRef("sim/cockpit2/annunciators/fuel_pressure");
     total_fuel = XPLMFindDataRef("sim/flightmodel/weight/m_fuel_total");
     fuel_quantity = XPLMFindDataRef("sim/cockpit2/fuel/fuel_quantity");
-	fuel_capacity = XPLMFindDataRef("sim/aircraft/weight/acf_m_fuel_tot");
+    fuel_capacity = XPLMFindDataRef("sim/aircraft/weight/acf_m_fuel_tot");
     engine_n1 = XPLMFindDataRef("sim/flightmodel/engine/ENGN_N1_");
     engine_egt_percent = XPLMFindDataRef("sim/flightmodel/engine/ENGN_EGT");
     engine_egt_value = XPLMFindDataRef("sim/flightmodel/engine/ENGN_EGT_c");
