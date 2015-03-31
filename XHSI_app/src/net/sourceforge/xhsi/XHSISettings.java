@@ -150,11 +150,22 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 //    public static final String ACTION_SET_FUEL_CAPACITY = "Set fuel capacity ...";
     public static final String ACTION_RESET_MAX_FF = "Reset max FF";
 
-    public static final String ACTION_MFD_ARPT_CHART = "Airport Chart";
-    public static final String ACTION_MFD_FPLN = "Flight Plan";
+    public static final String ACTION_MFD_ARPT_CHART  = "Airport Chart";
+    public static final String ACTION_MFD_FPLN        = "Flight Plan";
     public static final String ACTION_MFD_LOWER_EICAS = "Lower EICAS";
-    public static final String ACTION_MFD_RTU = "RTU Display";
-    
+    public static final String ACTION_MFD_RTU         = "RTU Display";
+    public static final String ACTION_MFD_APU         = "APU";
+    public static final String ACTION_MFD_FCTL        = "Flight Controls";
+    public static final String ACTION_MFD_ELEC        = "Elec Systems";
+    public static final String ACTION_MFD_WHEEL       = "Wheels";
+    public static final String ACTION_MFD_CRUIZE      = "Cruize Panel";
+    public static final String ACTION_MFD_DOOR_OXY    = "Doors and oxygen";
+    public static final String ACTION_MFD_BLEED       = "Bleed air";
+    public static final String ACTION_MFD_COND        = "Air conditionning";
+    public static final String ACTION_MFD_FUEL        = "Fuel";
+    public static final String ACTION_MFD_CAB_PRESS   = "Cabin pressure";
+    public static final String ACTION_MFD_HYDR        = "Hydrolic systems";
+       
     public static final String ACTION_CLOCK_UTC = "UTC";
     public static final String ACTION_CLOCK_LT = "Local Time";
     public static final String ACTION_CHR_START_STOP_RESET = "CHR Start/Stop/Reset";
@@ -273,7 +284,18 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JRadioButtonMenuItem radio_button_mfd_fpln;
     private JRadioButtonMenuItem radio_button_mfd_eicas;
     private JRadioButtonMenuItem radio_button_mfd_rtu;
-
+    private JRadioButtonMenuItem radio_button_mfd_apu;
+    private JRadioButtonMenuItem radio_button_mfd_fctl;
+    private JRadioButtonMenuItem radio_button_mfd_elec;
+    private JRadioButtonMenuItem radio_button_mfd_wheels;
+    private JRadioButtonMenuItem radio_button_mfd_cruize;
+    private JRadioButtonMenuItem radio_button_mfd_door_oxy;
+    private JRadioButtonMenuItem radio_button_mfd_bleed;
+    private JRadioButtonMenuItem radio_button_mfd_cond;
+    private JRadioButtonMenuItem radio_button_mfd_fuel;
+    private JRadioButtonMenuItem radio_button_mfd_cab_press;
+    private JRadioButtonMenuItem radio_button_mfd_hydr;
+    
     private JRadioButtonMenuItem radio_button_clock_utc;
     private JRadioButtonMenuItem radio_button_clock_lt;
 
@@ -1033,6 +1055,15 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // keep a reference
         this.radio_button_mfd_rtu = radio_button_menu_item;
 
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_APU);
+        radio_button_menu_item.setToolTipText("Auxiliary Power Unit");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
+        mfd_group.add(radio_button_menu_item);
+        xhsi_mfd_menu.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_mfd_apu = radio_button_menu_item;
+        
         // add the "MFD" menu to the menubar
         menu_bar.add(xhsi_mfd_menu);
 
@@ -1294,6 +1325,9 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         } else if (command.equals(XHSISettings.ACTION_MFD_RTU)) {
             mfd_mode = Avionics.MFD_MODE_RTU;
             this.avionics.set_mfd_mode(mfd_mode);
+        } else if (command.equals(XHSISettings.ACTION_MFD_APU)) {
+            mfd_mode = Avionics.MFD_MODE_APU;
+            this.avionics.set_mfd_mode(mfd_mode);
 
         } else if (command.equals(XHSISettings.ACTION_CLOCK_UTC)) {
             clock_mode = Avionics.CLOCK_MODE_UTC;
@@ -1408,11 +1442,13 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_mfd_fpln.setSelected( new_mfd_mode == Avionics.MFD_MODE_FPLN );
         this.radio_button_mfd_eicas.setSelected( new_mfd_mode == Avionics.MFD_MODE_EICAS );
         this.radio_button_mfd_rtu.setSelected( new_mfd_mode == Avionics.MFD_MODE_RTU );
+        this.radio_button_mfd_apu.setSelected( new_mfd_mode == Avionics.MFD_MODE_APU );
         switchable = prefs.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_SWITCHABLE) || prefs.get_preference(XHSIPreferences.PREF_INSTRUMENT_POSITION).equals(XHSIPreferences.INSTRUCTOR);
         this.radio_button_mfd_arpt.setEnabled( switchable );
         this.radio_button_mfd_fpln.setEnabled( switchable );
         this.radio_button_mfd_eicas.setEnabled( switchable );
         this.radio_button_mfd_rtu.setEnabled( switchable );
+        this.radio_button_mfd_apu.setEnabled( switchable );
 
         boolean new_clock_mode = avionics.clock_shows_utc();
         this.radio_button_clock_utc.setSelected(new_clock_mode);

@@ -55,6 +55,11 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
+    public boolean airbus_style;
+    public boolean boeing_style;
+    public int ecam_version = 1;
+    public int num_eng = 0; 
+    
     public int mfd_size;
 
     public int dial_n2_y;
@@ -73,6 +78,24 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int tape_h;
 
     
+    // ECAM Lower : Common indicators
+    public int ec_base_line;
+    
+    public int ec_line1; 
+    public int ec_line2;
+    public int ec_line3;
+    public int ec_sep1;
+    public int ec_sep2;
+    public int ec_col1;
+    public int ec_col1_val;            
+    public int ec_col1_unit;
+    public int ec_col2;
+    public int ec_col2_ctr;
+    public int ec_col3;
+    public int ec_col3_val;
+    public int ec_col3_unit;
+    
+    
     
     public MFDGraphicsConfig(Component root_component, int du) {
         super(root_component);
@@ -88,23 +111,52 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
 //    }
 
 
-    public void update_config(Graphics2D g2, boolean power) {
+    public void update_config(Graphics2D g2, boolean power, int instrument_style, int nb_engines) {
 
         if (this.resized
                 || this.reconfig
+                || (this.style != instrument_style)
+                || (this.num_eng !=  nb_engines)
                 || (this.powered != power)
             ) {
             // one of the settings has been changed
 
+            // remember the instrument style
+            this.style = instrument_style;
+            
             // remember the avionics power settings
             this.powered = power;
 //logger.warning("MFD update_config");
             super.update_config(g2);
 
+            // Setup instrument style
+            airbus_style = ( instrument_style == Avionics.STYLE_AIRBUS );
+            boeing_style = ! ( instrument_style == Avionics.STYLE_AIRBUS );
+            
             // some subcomponents need to be reminded to redraw imediately
             this.reconfigured = true;
 
             mfd_size = Math.min(panel_rect.width, panel_rect.height);
+            
+            if (airbus_style) { mfd_size = Math.min(panel_rect.width, panel_rect.height- line_height_l*4); }
+            
+            // ECAM Lower Common indicators
+            ec_base_line = panel_rect.y + panel_rect.height - line_height_l*4;
+            
+            ec_line1 = ec_base_line + line_height_l; 
+            ec_line2 = ec_base_line + line_height_l*2;
+            ec_line3 = ec_base_line + line_height_l*3;
+            ec_sep1 = panel_rect.x + panel_rect.width * 330/1000;
+            ec_sep2 = panel_rect.x + panel_rect.width * 660/1000;
+            ec_col1 = panel_rect.x + digit_width_l*2;
+            ec_col1_val = panel_rect.x + digit_width_l*8;            
+            ec_col1_unit = panel_rect.x + digit_width_l*12;
+            ec_col2 = ec_sep1 + digit_width_l;
+            ec_col2_ctr = ec_sep1 + (ec_sep2-ec_sep1)/2;
+            ec_col3 = ec_sep2 + digit_width_l;
+            ec_col3_val = ec_col3 + digit_width_l*4;
+            ec_col3_unit = ec_col3 + digit_width_l*14;
+            
 
             dial_n2_y = panel_rect.y + mfd_size*12/100;
             dial_ng_y = dial_n2_y;

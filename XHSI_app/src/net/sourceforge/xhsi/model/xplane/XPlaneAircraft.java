@@ -93,6 +93,7 @@ public class XPlaneAircraft implements Aircraft {
 //    public float indicated_vv() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_VH_IND_FPM); }
     public float pitch() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_THETA); }
     public float bank() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_PHI); }
+    public float g_load() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_FORCES_G_LOAD); }
     public float yoke_pitch() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_YOKE_PITCH_RATIO); }
     public float yoke_roll() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_YOKE_ROLL_RATIO); }
     public float rudder_hdg() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_YOKE_HDG_RATIO); }
@@ -269,6 +270,10 @@ public class XPlaneAircraft implements Aircraft {
     public float tat() {
         return ( (oat() + 273.15f ) * ( 1 + ( (1.4f-1.0f)/2.0f*1.0f*mach()*mach()) ) ) - 273.15f;
     }
+    
+    public float isa() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_WEATHER_TEMPERATURE_SEALEVEL_C);
+    } 
 
     public float mach() {
         return true_air_speed() / sound_speed();
@@ -501,6 +506,10 @@ public class XPlaneAircraft implements Aircraft {
 //    public void set_fuel_capacity(float capacity) {
 //        this.fuel_capacity = capacity;
 //    }
+    
+    public float gross_weight() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_WEIGHT_M_TOTAL);
+    }
 
     public float fuel_multiplier() {
         
@@ -535,7 +544,10 @@ public class XPlaneAircraft implements Aircraft {
             } else {
                 ref = 0.0f;
             }
-        } else if ( this.avionics.has_ufmc() ) {
+        } else if ( this.avionics.is_qpac() ) {                
+            ref = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_THR_RATING_N1);            
+            }
+        else if ( this.avionics.has_ufmc() ) {
             if ( engine == 0 ) {
                 ref = sim_data.get_sim_float(XPlaneSimDataRepository.UFMC_N1_1);
             } else if ( engine == 1 ) {
@@ -553,12 +565,21 @@ public class XPlaneAircraft implements Aircraft {
         return ref;
     }
 
-    public String get_thrust_mode() {
-
+    public String get_thrust_mode() {    	
         if ( this.avionics.is_x737() ) {
             return XPlaneAircraft.x737_thrust_modes[ (int) sim_data.get_sim_float(XPlaneSimDataRepository.X737_N1_PHASE) ];
         } else if ( ( this.avionics.is_cl30() ) && ( this.reverser_position(0) == 0.0f ) ) {
             return XPlaneAircraft.cl30_thrust_modes[ (int) sim_data.get_sim_float(XPlaneSimDataRepository.CL30_CARETS) ];
+        } else if ( this.avionics.is_qpac() ) {
+        	int qpac_thr_rtype = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_THR_RATING_TYPE);
+        	switch (qpac_thr_rtype) {
+        	case 0 : return "";
+        	case 1 : return "CL";
+        	case 2 : return "MCT";
+        	case 3 : return "TOGA";
+        	case 4 : return "FLX";
+        	default : return "-";
+        	}    	
         } else {
             return "";
         }
@@ -750,4 +771,66 @@ public class XPlaneAircraft implements Aircraft {
     }
 
 
+    // Auxiliary Power Unit (APU)
+    public boolean has_apu(){
+    	return true;
+    }
+    
+    public float apu_n1() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.APU_N1);
+    }
+    
+    public float apu_gen_amp() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.APU_GEN_AMP);
+    }
+
+    public float apu_egt() {
+    	// APU EGT is simulated as a segmented curve is start mode. Peak EGT depends on TAT.
+    	// In shutdown mode, it's a linear function of N1
+    	float n1 = apu_n1();
+    	float base_egt = oat()+5;
+    	float peak_egt = 500 + (float) Math.max(oat(), (oat()-isa())*6.6 );
+    	float stab_egt = 340 + (float) Math.max(oat(), (oat()-isa())*2.5 );
+    	float egt = oat()+5;
+    	if (apu_starter()>1) {
+    		if (n1 < 15) { 
+    			egt = base_egt;
+    		} else if (n1 < 30) {
+    			// base to peak (n1 between 15 and 30)
+    			egt = base_egt + (peak_egt-base_egt) *((n1-15)/15); 
+    		} else if (n1 < 99) {
+    			// peak to stab (n1 between 30 and 100 - EGT decreasing)
+    			egt = stab_egt + (peak_egt-stab_egt) * ((70-n1)/70);
+    		} else {
+    			egt = stab_egt;
+    		}
+    	} else if (apu_running()) {
+    		egt = stab_egt;
+    	} else if (n1 > 1.0) {
+    		// shutdown sequence
+    		egt = Math.max (n1/100 * stab_egt, base_egt);
+    	}
+    	return egt;
+    }
+    
+    public boolean apu_running() {
+    	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.APU_STATUS);
+    	return (( apu_status & 0x10) > 0);
+    }
+
+    public boolean apu_gen_on() {
+    	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.APU_STATUS);
+    	return (( apu_status & 0x04) > 0);
+   	
+    }
+    
+    public int apu_starter() {
+    	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.APU_STATUS);
+    	return ( apu_status & 0x03);
+    }
+    
+    // Bleed Air
+    public boolean has_bleed_air() {
+    	return true;
+    }
 }
