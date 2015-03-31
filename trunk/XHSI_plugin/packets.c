@@ -162,7 +162,9 @@ int createADCPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_FAILURES_ONGROUND_ANY);
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(on_ground));
 	i++;
-
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_FORCES_G_LOAD );
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(g_load));
+	i++;
 
 //	sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_POSITION_VH_IND_FPM);
 //	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(vh_ind_fpm));
@@ -208,6 +210,7 @@ int createADCPacket(void) {
 	i++;
 
 
+
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_WEATHER_WIND_SPEED_KT);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(wind_speed_kt));
 	i++;
@@ -223,6 +226,12 @@ int createADCPacket(void) {
 	i++;
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_WEATHER_TEMPERATURE_AMBIENT_C);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(oat));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_WEATHER_TEMPERATURE_SEALEVEL_C);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(isa));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_WEATHER_TEMPERATURE_LE_C);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(tat));
 	i++;
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_WEATHER_SPEED_SOUND_MS);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(sound_speed));
@@ -401,6 +410,7 @@ int createAvionicsPacket(void) {
 //	float gear_ratio[10];
 	int std_gauges_failures_pilot;
 	int std_gauges_failures_copilot;
+	int apu_status;
 
 	strncpy(sim_packet.packet_id, "AVIO", 4);
 
@@ -827,6 +837,19 @@ int createAvionicsPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_AUTOPILOT_HEADING_ROLL_MODE);
 	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(autopilot_heading_roll_mode));
 	i++;
+
+	// APU
+	// TODO : send only when data has been modified - i.e. when APU off, don't send
+    sim_packet.sim_data_points[i].id = custom_htoni(APU_N1);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(apu_n1));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(APU_GEN_AMP);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(apu_gen_amp));
+    i++;
+    apu_status = XPLMGetDatai(apu_running) << 4 | XPLMGetDatai(apu_gen_on) << 2 | XPLMGetDatai(apu_starter);
+    sim_packet.sim_data_points[i].id = custom_htoni(APU_STATUS);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) apu_status);
+    i++;
 
 	// now we know the number of datapoints
 	sim_packet.nb_of_sim_data_points = custom_htoni( i );
@@ -1566,6 +1589,9 @@ int createEnginesPacket(void) {
 	i++;
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_WEIGHT_ACF_M_FUEL_TOT);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(fuel_capacity));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_WEIGHT_M_TOTAL);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(m_total));
 	i++;
 	
     XPLMGetDatavf(fuel_quantity, fuelfloat, 0, tanks);
