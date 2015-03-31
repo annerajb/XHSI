@@ -106,6 +106,7 @@ XPLMDataRef  ra_bug_copilot;
 XPLMDataRef  baro_pilot;
 XPLMDataRef  baro_copilot;
 XPLMDataRef  airspeed_acceleration;
+XPLMDataRef  g_load;
 
 //Instruments failures pilot
 XPLMDataRef  sim_op_fail_rel_ss_ahz;
@@ -250,6 +251,8 @@ XPLMDataRef	 wind_direction_degt;
 XPLMDataRef  zulu_time_sec;
 XPLMDataRef  local_time_sec;
 XPLMDataRef  oat;
+XPLMDataRef  isa;
+XPLMDataRef  tat;
 XPLMDataRef  sound_speed;
 XPLMDataRef  timer_is_running;
 XPLMDataRef  elapsed_time_sec;
@@ -306,6 +309,7 @@ XPLMDataRef  fuel_pressure;
 XPLMDataRef  total_fuel;
 XPLMDataRef  fuel_quantity;
 XPLMDataRef  fuel_capacity;
+XPLMDataRef  m_total;
 XPLMDataRef  engine_n1;
 XPLMDataRef  engine_egt_percent;
 XPLMDataRef  engine_egt_value;
@@ -1440,6 +1444,7 @@ void findDataRefs(void) {
     baro_pilot = XPLMFindDataRef("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_pilot");
     baro_copilot = XPLMFindDataRef("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot");
     airspeed_acceleration = XPLMFindDataRef("sim/cockpit2/gauges/indicators/airspeed_acceleration_kts_sec_pilot");
+    g_load =  XPLMFindDataRef("sim/flightmodel/forces/g_nrml");
 
     //Instruments failures pilot
     sim_op_fail_rel_ss_ahz = XPLMFindDataRef("sim/operation/failures/rel_ss_ahz");
@@ -1588,13 +1593,15 @@ void findDataRefs(void) {
     efis_map_submode = XPLMFindDataRef("sim/cockpit/switches/EFIS_map_submode");	// int
 
 
-    // Environment
-    wind_speed_kt = XPLMFindDataRef("sim/weather/wind_speed_kt");
-    wind_direction_degt = XPLMFindDataRef("sim/weather/wind_direction_degt");
-    zulu_time_sec = XPLMFindDataRef("sim/time/zulu_time_sec");
-    local_time_sec = XPLMFindDataRef("sim/time/local_time_sec");
-    oat = XPLMFindDataRef("sim/weather/temperature_ambient_c");
-    sound_speed = XPLMFindDataRef("sim/weather/speed_sound_ms");
+	// Environment
+	wind_speed_kt = XPLMFindDataRef("sim/weather/wind_speed_kt");
+	wind_direction_degt = XPLMFindDataRef("sim/weather/wind_direction_degt");
+	zulu_time_sec = XPLMFindDataRef("sim/time/zulu_time_sec");
+	local_time_sec = XPLMFindDataRef("sim/time/local_time_sec");
+	oat = XPLMFindDataRef("sim/weather/temperature_ambient_c");
+	isa = XPLMFindDataRef("sim/weather/temperature_sealevel_c");
+	tat = XPLMFindDataRef("sim/weather/temperature_le_c");
+	sound_speed = XPLMFindDataRef("sim/weather/speed_sound_ms");
     timer_is_running = XPLMFindDataRef("sim/time/timer_is_running_sec");
     elapsed_time_sec = XPLMFindDataRef("sim/time/timer_elapsed_time_sec");
     flight_time_sec = XPLMFindDataRef("sim/time/total_flight_time_sec");
@@ -1655,6 +1662,7 @@ void findDataRefs(void) {
     total_fuel = XPLMFindDataRef("sim/flightmodel/weight/m_fuel_total");
     fuel_quantity = XPLMFindDataRef("sim/cockpit2/fuel/fuel_quantity");
     fuel_capacity = XPLMFindDataRef("sim/aircraft/weight/acf_m_fuel_tot");
+	m_total = XPLMFindDataRef("sim/flightmodel/weight/m_total");
     engine_n1 = XPLMFindDataRef("sim/flightmodel/engine/ENGN_N1_");
     engine_egt_percent = XPLMFindDataRef("sim/flightmodel/engine/ENGN_EGT");
     engine_egt_value = XPLMFindDataRef("sim/flightmodel/engine/ENGN_EGT_c");

@@ -31,6 +31,7 @@ extern XPLMDataRef  ra_bug_copilot;
 extern XPLMDataRef  baro_pilot;
 extern XPLMDataRef  baro_copilot;
 extern XPLMDataRef  airspeed_acceleration;
+extern XPLMDataRef  g_load;
 
 //Instruments failures pilot
 extern XPLMDataRef  sim_op_fail_rel_ss_ahz;
@@ -176,6 +177,8 @@ extern XPLMDataRef	wind_direction_degt;
 extern XPLMDataRef  zulu_time_sec;
 extern XPLMDataRef  local_time_sec;
 extern XPLMDataRef  oat;
+extern XPLMDataRef  tat;
+extern XPLMDataRef  isa;
 extern XPLMDataRef  sound_speed;
 extern XPLMDataRef  timer_is_running;
 extern XPLMDataRef  elapsed_time_sec;
@@ -236,6 +239,7 @@ extern XPLMDataRef  fuel_pressure;
 extern XPLMDataRef  total_fuel;
 extern XPLMDataRef  fuel_quantity;
 extern XPLMDataRef  fuel_capacity;
+extern XPLMDataRef  m_total;
 extern XPLMDataRef  engine_n1;
 extern XPLMDataRef  engine_egt_percent;
 extern XPLMDataRef  engine_egt_value;
