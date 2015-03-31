@@ -145,6 +145,8 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
     public Point ecam_slats_bullet[] = new Point[MAX_DETENTS];
     public int ecam_messages_w;
     public int eng_label_x;
+    public int ref_n1_x;
+    public int ref_n1_y;
     
 
     public EICASGraphicsConfig(Component root_component, int du) {
@@ -395,6 +397,9 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                 ecam_flaps_box_y = panel_rect.y + panel_rect.height * 355/1000;
                 ecam_flaps_box_w = panel_rect.width * 350/1000;
                 ecam_flaps_box_h = panel_rect.height * 200/1000;
+                // Ref N1 values set but not used
+                ref_n1_x = panel_rect.x + panel_rect.width * 500/1000;
+                ref_n1_y = panel_rect.y + panel_rect.height * 10/1000 + line_height_m;
             } else {
             	// Airbus style
             	// fuel_primary is the text coordinates
@@ -454,6 +459,9 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                 		f_angle += f_rotang;
                 		s_angle += s_rotang;
                 	}
+                    // Ref N1 values on the right panel
+                    ref_n1_x = panel_rect.x + panel_rect.width * 610/1000;
+                    ref_n1_y = panel_rect.y + prim_dials_height * 350/1000 + line_height_l;
                 		              	
                 } else {
                 	// Airbus software version 2
@@ -498,6 +506,9 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                 		ecam_flaps_bullet[i].setLocation(ecam_flaps_center_x + ecam_flaps_w * i / (detents+1), ecam_flaps_center_y + ecam_flaps_h * i / (detents+1));
                 		ecam_slats_bullet[i].setLocation(ecam_slats_center_x - ecam_slats_w * i / (detents+1), ecam_slats_center_y + ecam_slats_h * i / (detents+1));
                 	}
+                    // Ref N1 values
+                    ref_n1_x = panel_rect.x + panel_rect.width * 500/1000;
+                    ref_n1_y = panel_rect.y + panel_rect.height * 10/1000 + line_height_m;
                 }
             }
             

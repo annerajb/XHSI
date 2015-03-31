@@ -53,6 +53,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_FLIGHTMODEL_POSITION_BETA = 14; // yaw ( = slip or drift ? )
     public static final int SIM_FLIGHTMODEL_FAILURES_ONGROUND_ANY = 15; // It was misplaced and is not really a failure, you can use that to indicate when the wheels are on the ground
     public static final int XHSI_FLIGHTMODEL_POSITION_NEAREST_ARPT = 10016;
+    public static final int SIM_FLIGHTMODEL_FORCES_G_LOAD = 17;
 
 
 
@@ -82,7 +83,9 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT_ELECTRICAL_AVIONICS_ON = 80;
     public static final int SIM_COCKPIT_ELECTRICAL_BATTERY_ON = 81;
     public static final int SIM_COCKPIT_ELECTRICAL_COCKPIT_LIGHTS_ON = 82;
-
+    public static final int APU_N1 = 83;
+    public static final int APU_GEN_AMP = 84;
+    public static final int APU_STATUS = 85;
 
     // Radios
     public static final int SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ = 100;
@@ -250,6 +253,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_TIME_LOCAL_TIME_SEC = 303;
     public static final int SIM_WEATHER_TEMPERATURE_AMBIENT_C = 304;
     public static final int SIM_WEATHER_SPEED_SOUND_MS = 305;
+    public static final int SIM_WEATHER_TEMPERATURE_SEALEVEL_C = 309;
+    public static final int SIM_WEATHER_TEMPERATURE_LE_C = 310;
     // Timers
     public static final int SIM_TIME_TIMER_IS_RUNNING_SEC = 306;
     public static final int SIM_TIME_TIMER_ELAPSED_TIME_SEC = 307;
@@ -310,6 +315,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT2_ANNUNCIATORS_FUEL_PRESSURE = 405;  // bitfield
     public static final int SIM_FLIGHTMODEL_WEIGHT_M_FUEL_TOTAL = 406;
     public static final int SIM_AIRCRAFT_WEIGHT_ACF_M_FUEL_TOT = 407;
+    public static final int SIM_FLIGHTMODEL_WEIGHT_M_TOTAL = 408; // Gross Weight
     public static final int SIM_COCKPIT2_FUEL_QUANTITY_ = 410; // 410..418 : array
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_N1_ = 420; // array
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_EGT_ = 430; // array

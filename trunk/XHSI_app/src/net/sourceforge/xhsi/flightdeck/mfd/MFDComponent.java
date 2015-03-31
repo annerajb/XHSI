@@ -89,6 +89,8 @@ public class MFDComponent extends Component implements Observer, PreferencesObse
         subcomponents.add(new DestinationAirport(model_factory, mfd_gc, this));
         subcomponents.add(new FMSRoute(model_factory, mfd_gc, this));
         subcomponents.add(new LowerEicas(model_factory, mfd_gc, this));
+        subcomponents.add(new LowerEcamCommon(model_factory, mfd_gc, this));
+        subcomponents.add(new APU(model_factory, mfd_gc, this));
         subcomponents.add(new RadioTuningUnit(model_factory, mfd_gc, this));
         subcomponents.add(new MFDFail(model_factory, mfd_gc, this));
         subcomponents.add(new MFDInstrumentFrame(model_factory, mfd_gc));
@@ -118,7 +120,7 @@ public class MFDComponent extends Component implements Observer, PreferencesObse
         g2.setBackground(mfd_gc.background_color);
 //logger.warning("MFDComponent drawAll calling update_config");
         // send Graphics object to mfd_gc to recompute positions, if necessary because the panel has been resized or a mode setting has been changed
-        mfd_gc.update_config( g2, this.avionics.power() );
+        mfd_gc.update_config( g2, this.avionics.power(), this.avionics.get_instrument_style(), this.aircraft.num_engines() );
 
         // rotate the display
         XHSIPreferences.Orientation orientation = XHSIPreferences.get_instance().get_panel_orientation( this.mfd_gc.display_unit );

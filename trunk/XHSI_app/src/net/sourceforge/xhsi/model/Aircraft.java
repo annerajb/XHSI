@@ -25,6 +25,8 @@ package net.sourceforge.xhsi.model;
 import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 
 public interface Aircraft {
+	
+	public enum ValveStatus { VALVE_OPEN, VALVE_CLOSED, VALVE_OPEN_FAILED, VALVE_CLOSED_FAILED };
 
     /**
      * @return boolean - battery power is on
@@ -100,6 +102,11 @@ public interface Aircraft {
      * @return float - roll angle of the aircraft in degrees
      */
     public float bank();
+
+    /**
+     * @return float - g load factor - 1.0 is standard earth attraction 
+     */
+    public float g_load();
 
     /**
      * @return float - Yoke pitch ratio (-1.0f to +1.0f)
@@ -210,6 +217,11 @@ public interface Aircraft {
      */
     public float tat();
 
+    /**
+     * @return float - temperature at sealevel
+     */
+    public float isa();
+    
     /**
      * @return float - mach number
      */
@@ -588,7 +600,11 @@ public interface Aircraft {
     public float fuel_multiplier();
     
 //    public void set_fuel_capacity(float capacity);
-
+    
+    /**
+     * @return float - Gross Weight (kg)
+     */
+    public float gross_weight();
 
     /**
      * @return float - Engine N1 %
@@ -760,6 +776,7 @@ public interface Aircraft {
     public float get_min_rwy_length();
 
 
+    // TODO : Check if boolean is appropriate 
     /**
      * @return boolean - Runway length in meters
      */
@@ -777,5 +794,45 @@ public interface Aircraft {
      */
     public void set_nearest_arpt(String nrst_arpt);
 
+    /**
+     * @return boolean - Aircraft has Auxiliary Power Unit (APU)
+     */
+    public boolean has_apu();
+  
+    /**
+     * @return Float - Auxiliary Power Unit (APU) N1
+     */
+    public float apu_n1();
+    
+    /**
+     * @return Float - Auxiliary Power Unit (APU) EGT
+     */
+    public float apu_egt();
+    
+    /**
+     * @return Float - Auxiliary Power Unit (APU) Generator output current (Amp)
+     */
+    public float apu_gen_amp();
+    
+    /**
+     * @return boolean - Auxiliary Power Unit (APU) - True if APU is running
+     */   
+    public boolean apu_running();
 
+    /**
+     * @return boolean - Auxiliary Power Unit (APU) - True if APU generator is available
+     */   
+    public boolean apu_gen_on();
+    
+    /**
+     * @return int - Auxiliary Power Unit (APU) starter position (0, 1 or 2)
+     */  
+    public int apu_starter();
+    
+    /**
+     * @return boolean - Aircraft has Bleed Air Circuits (ENG & APU)
+     */
+    public boolean has_bleed_air();
+  
+    
 }
