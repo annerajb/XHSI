@@ -789,7 +789,7 @@ public class XPlaneAircraft implements Aircraft {
     	// In shutdown mode, it's a linear function of N1
     	float n1 = apu_n1();
     	float base_egt = oat()+5;
-    	float peak_egt = 500 + (float) Math.max(oat(), (oat()-isa())*6.6 );
+    	float peak_egt = 600 + (float) Math.max(oat(), (oat()-isa())*5.5 );
     	float stab_egt = 340 + (float) Math.max(oat(), (oat()-isa())*2.5 );
     	float egt = oat()+5;
     	if (apu_starter()>1) {
@@ -799,8 +799,8 @@ public class XPlaneAircraft implements Aircraft {
     			// base to peak (n1 between 15 and 30)
     			egt = base_egt + (peak_egt-base_egt) *((n1-15)/15); 
     		} else if (n1 < 99) {
-    			// peak to stab (n1 between 30 and 100 - EGT decreasing)
-    			egt = stab_egt + (peak_egt-stab_egt) * ((70-n1)/70);
+    			// peak to stab (n1 between 30 and 99 - EGT decreasing)
+    			egt = stab_egt + (peak_egt-stab_egt) * ((99-n1)/69);
     		} else {
     			egt = stab_egt;
     		}
