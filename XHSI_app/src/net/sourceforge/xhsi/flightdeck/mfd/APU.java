@@ -100,7 +100,7 @@ public class APU extends MFDSubcomponent {
         		int volt = v_avail ? Math.round(aircraft.apu_n1()/100*115) : 0;
         		int freq = v_avail ? Math.round(aircraft.apu_n1()/100*400) : 0;
         		int apu_elec_x = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*150/1000;
-        		int apu_elec_y = mfd_gc.panel_rect.y + mfd_gc.mfd_size*140/1000;        	
+        		int apu_elec_y = mfd_gc.panel_rect.y + mfd_gc.mfd_size*180/1000;        	
         		drawElec(g2,"APU GEN", start, load, volt, freq, apu_elec_x, apu_elec_y);
 
         		// Bleed 
@@ -108,12 +108,12 @@ public class APU extends MFDSubcomponent {
         			// Bleed Bloc
         			int psi = avail ? 40 : 0;
         			int apu_bleed_x = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*700/1000;
-        			int apu_bleed_y = mfd_gc.panel_rect.y + mfd_gc.mfd_size*210/1000;
+        			int apu_bleed_y = mfd_gc.panel_rect.y + mfd_gc.mfd_size*250/1000;
         			drawBleed(g2,"BLEED", start, psi, apu_bleed_x, apu_bleed_y);
 
         			// Bleed Valve Bloc
         			int apu_bleed_valve_x = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*700/1000 + mfd_gc.digit_width_l * 4;
-        			int apu_bleed_valve_y = mfd_gc.panel_rect.y + mfd_gc.mfd_size*150/1000;
+        			int apu_bleed_valve_y = mfd_gc.panel_rect.y + mfd_gc.mfd_size*190/1000;
 
         			ValveStatus apu_bleed_status = avail ? ValveStatus.VALVE_OPEN : ValveStatus.VALVE_CLOSED ;
         			drawValve(g2, apu_bleed_status, apu_bleed_valve_x, apu_bleed_valve_y);
@@ -137,8 +137,8 @@ public class APU extends MFDSubcomponent {
                 // N1
                 String ind_str1 =  "N1";
                 String ind_str2 =  "%" ;
-                int ind_middle = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*400/1000;
-                int ind_y = mfd_gc.panel_rect.y + mfd_gc.mfd_size*550/1000;
+                int ind_middle = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*365/1000;
+                int ind_y = mfd_gc.panel_rect.y + mfd_gc.mfd_size*510/1000;
                 int ind_x1 = ind_middle - mfd_gc.get_text_width(g2, mfd_gc.font_m, ind_str1)/2;
                 int ind_x2 = ind_middle - mfd_gc.get_text_width(g2, mfd_gc.font_m, ind_str2)/2;
                 g2.setFont(mfd_gc.font_l);
@@ -150,7 +150,7 @@ public class APU extends MFDSubcomponent {
                 // EGT
                 ind_str1 =  "EGT";
                 ind_str2 =  "°c" ;                
-                ind_y = mfd_gc.panel_rect.y + mfd_gc.mfd_size*850/1000;
+                ind_y = mfd_gc.panel_rect.y + mfd_gc.mfd_size*820/1000;
                 ind_x1 = ind_middle - mfd_gc.get_text_width(g2, mfd_gc.font_m, ind_str1)/2;
                 ind_x2 = ind_middle - mfd_gc.get_text_width(g2, mfd_gc.font_m, ind_str2)/2;
                 g2.setFont(mfd_gc.font_l);
@@ -167,7 +167,7 @@ public class APU extends MFDSubcomponent {
         		if (mfd_gc.airbus_style) { drawAirbusN1(g2,0,1,false); } else { drawBoeingN1(g2,0,1,false); }
 
         		// EGT Gauge
-        		if (mfd_gc.airbus_style) { drawAirbusEGT(g2,0,1); } else { drawBoeingEGT(g2,0,1); }
+        		if (mfd_gc.airbus_style) { drawAirbusEGT(g2,0,1, !avail); } else { drawBoeingEGT(g2,0,1); }
 
 
         		// AVAIL indicator
@@ -448,10 +448,9 @@ public class APU extends MFDSubcomponent {
         AffineTransform original_at = g2.getTransform();
         scalePen(g2);
 
-        float n1_value = this.aircraft.apu_n1();
-        float throttle_value = this.aircraft.get_throttle(pos)*100.0f;
-        float n1_dial = Math.min(n1_value, 110.0f) / 100.0f;
-        float throttle_dial = Math.min(throttle_value, 110.0f) / 100.0f;
+        float n1_value = this.aircraft.apu_n1();        
+        float n1_dial = Math.min(n1_value, 110.0f) / 100.0f;    
+        boolean n1_disabled = this.aircraft.apu_n1() < 1.0 && aircraft.apu_starter()==0;
         
         // N1 String - no decimal
         String n1_str = "" + Math.round(n1_value);
@@ -460,11 +459,13 @@ public class APU extends MFDSubcomponent {
         int n1_r = mfd_gc.dial_r[num];
         int n1_box_y = n1_y - n1_r/8;
         
-        int deg_start = 225;
-        int deg_caution = 25;
-        int deg_warning = 0;
-        int deg_norm_range = deg_start-deg_caution;
-        int deg_warn_range = deg_caution-deg_warning;
+        int deg_start = 225; 	// Gauge starting position
+        int deg_full  = 75;     // Gauge full (100%)
+        int deg_warning = 70;   // Gauge red sector (warning) 
+        int deg_end = 50;       // Gauge end
+        int deg_norm_range = deg_start-deg_warning;
+        int deg_warn_range = deg_warning-deg_end;
+        int deg_full_range = deg_start-deg_full;   // Deg range from 0 to 100%
 
         if ( n1_dial <= 1.02f ) {
             // inhibit caution or warning below 1000ft
@@ -481,7 +482,7 @@ public class APU extends MFDSubcomponent {
         g2.rotate(Math.toRadians(360-deg_start), prim_dial_x[pos], n1_y);
         for (int i=0; i<=2; i++) {
             g2.drawLine(prim_dial_x[pos]+n1_r*14/16, n1_y, prim_dial_x[pos]+n1_r-1, n1_y);
-            g2.rotate(Math.toRadians(deg_norm_range/2), prim_dial_x[pos], n1_y);
+            g2.rotate(Math.toRadians(deg_full_range/2), prim_dial_x[pos], n1_y);
         }
         g2.setTransform(original_at);
         
@@ -495,7 +496,7 @@ public class APU extends MFDSubcomponent {
         	n1_digit_x = prim_dial_x[pos] + (int)(Math.cos(Math.toRadians(n1_digit_angle))*n1_r*9/16);
         	n1_digit_y = n1_y + (int)(Math.sin(Math.toRadians(n1_digit_angle))*n1_r*9/16);
         	g2.drawString(Integer.toString(i), n1_digit_x - mfd_gc.digit_width_m/2, n1_digit_y+mfd_gc.line_height_m*3/8);
-        	n1_digit_angle += deg_norm_range;
+        	n1_digit_angle += deg_full_range;
         }
 
 
@@ -503,7 +504,12 @@ public class APU extends MFDSubcomponent {
         g2.drawArc(prim_dial_x[pos]-n1_r, n1_y-n1_r, 2*n1_r, 2*n1_r, deg_start, -deg_norm_range);
         g2.setColor(mfd_gc.ecam_warning_color);
         // g2.drawArc(mfd_gc.prim_dial_x[pos]-n1_r, n1_y-n1_r, 2*n1_r, 2*n1_r, -200, -20);
-        g2.drawArc(prim_dial_x[pos]-n1_r, n1_y-n1_r, 2*n1_r, 2*n1_r, deg_caution, -deg_warn_range);
+        g2.drawArc(prim_dial_x[pos]-n1_r, n1_y-n1_r, 2*n1_r, 2*n1_r, deg_warning, -deg_warn_range);
+        // N1 max target
+        g2.setColor(mfd_gc.ecam_caution_color);
+        g2.rotate(Math.toRadians(360-deg_warning), prim_dial_x[pos], n1_y);
+        g2.drawLine(prim_dial_x[pos]+n1_r*18/16, n1_y, prim_dial_x[pos]+n1_r+1, n1_y);
+        g2.setTransform(original_at);
         
         //g2.rotate(Math.toRadians(220), mfd_gc.prim_dial_x[pos], n1_y);
         //g2.setColor(mfd_gc.warning_color);
@@ -511,11 +517,12 @@ public class APU extends MFDSubcomponent {
         //g2.setTransform(original_at);
 
         // needle
-        // g2.rotate(Math.toRadians(Math.round(n1_dial*200.0f)), mfd_gc.prim_dial_x[pos], n1_y);
-        g2.rotate(Math.toRadians(Math.round(n1_dial*deg_norm_range)-deg_start), prim_dial_x[pos], n1_y);
-        g2.setColor(mfd_gc.ecam_normal_color);
-        g2.drawLine(prim_dial_x[pos], n1_y, prim_dial_x[pos]+n1_r*12/10, n1_y);
-        g2.setTransform(original_at);
+        if (!n1_disabled) {
+        	g2.rotate(Math.toRadians(Math.round(n1_dial*deg_full_range)-deg_start), prim_dial_x[pos], n1_y);
+        	g2.setColor(mfd_gc.ecam_normal_color);
+        	g2.drawLine(prim_dial_x[pos], n1_y, prim_dial_x[pos]+n1_r*12/10, n1_y);
+        	g2.setTransform(original_at);
+        }
         
         // no value box for APU gauges in Airbus style
 
@@ -527,6 +534,10 @@ public class APU extends MFDSubcomponent {
         } else {
         	g2.setColor(mfd_gc.ecam_warning_color);
         }
+        if (n1_disabled) { 
+        	n1_str="XX";
+        	g2.setColor(mfd_gc.ecam_caution_color);
+        }
         g2.setFont(mfd_gc.dial_font[num]);
         g2.drawString(n1_str, prim_dial_x[pos]- mfd_gc.dial_font_w[num] + mfd_gc.dial_font_w[num]*31/10-mfd_gc.get_text_width(g2, mfd_gc.dial_font[num], n1_str),
         		n1_box_y+mfd_gc.dial_font_h[num]*140/100);
@@ -536,7 +547,7 @@ public class APU extends MFDSubcomponent {
 
     }
     
-    private void drawAirbusEGT(Graphics2D g2, int pos, int num) {
+    private void drawAirbusEGT(Graphics2D g2, int pos, int num, boolean stabilized) {
 
         AffineTransform original_at = g2.getTransform();
         scalePen(g2);
@@ -544,18 +555,28 @@ public class APU extends MFDSubcomponent {
         float egt_percent = this.aircraft.apu_egt() / 10.0f;
         float egt_dial = Math.min(egt_percent, 110.0f) / 100.0f;
         int egt_value = Math.round(this.aircraft.apu_egt());
-//egt_value=500;
+        boolean egt_disabled = this.aircraft.apu_n1() < 1.0 && aircraft.apu_starter()==0;
 
         int egt_x = prim_dial_x[pos];
         int egt_y = mfd_gc.panel_rect.y + mfd_gc.mfd_size*850/1000;
         int egt_r = mfd_gc.dial_r[num];
-        
+        /*
         int deg_start = 180;
-        int deg_caution = 25;
+        int deg_caution = stabilized ? 60 : 25;
         int deg_warning = 0;
         int deg_norm_range = deg_start-deg_caution;
         int deg_warn_range = deg_caution-deg_warning;
+        */
 
+        int deg_zero  = 300;	// Gauge zero (0%)
+        int deg_start = 225; 	// Gauge starting position white sector
+        int deg_full  = 50;     // Gauge full (100%)
+        int deg_warning = stabilized ? 45 : 120;   // Gauge red sector (warning) 
+        int deg_end = 25;       // Gauge end
+        int deg_norm_range = deg_start-deg_warning;
+        int deg_warn_range = deg_warning-deg_end;
+        int deg_full_range = deg_zero-deg_full;   // Deg range from 0 to 100%
+        
         if ( egt_dial <= 1.0f ) {
             // inhibit caution or warning below 1000ft
             g2.setColor(mfd_gc.instrument_background_color);
@@ -564,25 +585,58 @@ public class APU extends MFDSubcomponent {
         } else {
             g2.setColor(mfd_gc.warning_color.darker().darker());
         }
-        // g2.fillArc(egt_x-egt_r, egt_y-egt_r, 2*egt_r, 2*egt_r, 0, -Math.round(egt_dial*200.0f));
-
         
 
         g2.setColor(mfd_gc.ecam_markings_color);
         g2.drawArc(egt_x-egt_r, egt_y-egt_r, 2*egt_r, 2*egt_r, deg_start, -deg_norm_range);
         g2.setColor(mfd_gc.ecam_warning_color);
-        g2.drawArc(egt_x-egt_r, egt_y-egt_r, 2*egt_r, 2*egt_r, deg_caution, -deg_warn_range);
+        g2.drawArc(egt_x-egt_r, egt_y-egt_r, 2*egt_r, 2*egt_r, deg_warning, -deg_warn_range);
+        g2.setTransform(original_at);
+        // EGT max target
+        g2.setColor(mfd_gc.ecam_caution_color);
+        g2.rotate(Math.toRadians(360-deg_warning), prim_dial_x[pos], egt_y);
+        g2.drawLine(prim_dial_x[pos]+egt_r*18/16, egt_y, prim_dial_x[pos]+egt_r+1, egt_y);
         g2.setTransform(original_at);
 
-        // needle
-        //g2.rotate(Math.toRadians(Math.round(egt_dial*200.0f)), egt_x, egt_y);
-        g2.rotate(Math.toRadians(Math.round(egt_dial*deg_norm_range)-deg_start), prim_dial_x[pos], egt_y);
-        g2.setColor(mfd_gc.ecam_normal_color);
-        g2.drawLine(egt_x+egt_r/2, egt_y, egt_x+egt_r-2, egt_y);
+        
+        // scale markings every 50%
+        g2.setColor(mfd_gc.dim_markings_color);
+        g2.rotate(Math.toRadians(360-deg_zero), prim_dial_x[pos], egt_y);
+        for (int i=0; i<=10; i++) {
+        	if (i==3 || i==7 || i==10) {
+        		g2.drawLine(prim_dial_x[pos]+egt_r*14/16, egt_y, prim_dial_x[pos]+egt_r-1, egt_y);
+        	}
+            g2.rotate(Math.toRadians(deg_full_range/10), prim_dial_x[pos], egt_y);
+        }
         g2.setTransform(original_at);
+        
+        // scale number 3, 7 and 10
+        g2.setFont(mfd_gc.font_m);
+        int n1_digit_x;
+        int n1_digit_y;
+        int n1_digit_angle = 360-deg_zero;
+        // int n1_digit_angle = 360-deg_start;
+        for (int i=0; i<=10; i+=1) {
+        	n1_digit_x = prim_dial_x[pos] + (int)(Math.cos(Math.toRadians(n1_digit_angle))*egt_r*9/16);
+        	n1_digit_y = egt_y + (int)(Math.sin(Math.toRadians(n1_digit_angle))*egt_r*9/16);
+        	if (i==3 || i==7 || i==10) {
+        		g2.drawString(Integer.toString(i), n1_digit_x - mfd_gc.digit_width_m/2, n1_digit_y+mfd_gc.line_height_m*3/8);
+        	}
+        	n1_digit_angle += deg_full_range/10;
+        }
+        
+        // needle
+        if (!egt_disabled) {
+        	int egt_needle_deg = Math.max(Math.round(egt_dial*deg_full_range)-deg_zero , -deg_start);
+        	g2.rotate(Math.toRadians(egt_needle_deg), prim_dial_x[pos], egt_y);
+        	g2.setColor(mfd_gc.ecam_normal_color);
+        	g2.drawLine(egt_x, egt_y, egt_x+egt_r-2, egt_y);
+        	g2.setTransform(original_at);
+        }
              
         
         // value
+        String egt_str = Integer.toString(egt_value);
         egt_y -= egt_r/8;       
         if ( egt_dial <= 1.0f ) {
         	// inhibit caution or warning below 1000ft
@@ -592,10 +646,13 @@ public class APU extends MFDSubcomponent {
         } else {
         	g2.setColor(mfd_gc.ecam_warning_color);
         }
-        g2.setFont(mfd_gc.dial_font[num]);
-        String egt_str = Integer.toString(egt_value);
+        if (egt_disabled) { 
+        	egt_str="XX";
+        	g2.setColor(mfd_gc.ecam_caution_color);
+        }
+        g2.setFont(mfd_gc.dial_font[num]);        
         g2.drawString(egt_str, egt_x - mfd_gc.dial_font_w[num]*22/10 +mfd_gc.dial_font_w[num]*44/10-mfd_gc.get_text_width(g2, mfd_gc.dial_font[num], egt_str),
-        		egt_y+mfd_gc.dial_font_h[num]*52/100);
+        		egt_y+mfd_gc.dial_font_h[num]*140/100);
         
 
         resetPen(g2);
