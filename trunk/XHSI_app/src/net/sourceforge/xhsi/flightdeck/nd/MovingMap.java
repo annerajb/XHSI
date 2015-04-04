@@ -996,6 +996,8 @@ public class MovingMap extends NDSubcomponent {
                 } else {
                     next_entry = null;
                 }
+                
+                // don't draw the 
                 draw_FMS_entry(g2, entry, next_entry, inactive);
             }
         }
@@ -1589,6 +1591,22 @@ public class MovingMap extends NDSubcomponent {
         int x = lon_to_x(entry.lon);
         int y = lat_to_y(entry.lat);
 
+        if ( ( entry.index == 0 ) && ( entry.active ) ) {
+            // draw a line to the entry with index zero, if it is our active waypoint
+            // this did't happen with the legacy default FMS, but happens with the GNS 430/530
+            AffineTransform original_at = g2.getTransform();
+            Stroke original_stroke = g2.getStroke();
+
+            g2.setStroke(new BasicStroke(1.5f));
+            g2.setColor(nd_gc.fmc_active_color);
+            g2.rotate( Math.toRadians( this.avionics.gps_course() - this.aircraft.magnetic_variation() ), x, y );
+            // draw the line from the point that the aircraft is supposed to be on track
+            g2.drawLine(x,y, x, y + (int)(this.avionics.get_gps_radio().get_distance() * this.pixels_per_nm) );
+            
+            g2.setStroke(original_stroke);
+            g2.setTransform(original_at);
+        }
+        
         if ( (next_entry != null) && ( ! next_entry.name.equals("NTFND") ) ) {
             // draw a line to the next waypoint
             if ( inactive ) {

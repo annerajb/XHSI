@@ -247,7 +247,8 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
                     is_active = ( offset+i == active_entry_index );
 
                     // leg distance
-                    if ( offset+i == 0 ) {
+                    if ( ( offset+i == 0 ) && ( ! is_active ) ) {
+                        // this is only for the legacy default FMS, where the entry with index zero was never an actual waypoint
                         leg_dist = 0;
                     } else {
                         leg_dist = CoordinateSystem.rough_distance(lat, lon, last_lat, last_lon);
