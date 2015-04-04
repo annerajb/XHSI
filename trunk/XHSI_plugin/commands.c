@@ -1932,6 +1932,7 @@ XPLMCommandCallback_f xpdr_handler (XPLMCommandRef inCommand, XPLMCommandPhase i
         XPLMSetDatai(transponder_mode, mode);
         XPLMSetDatai(transponder_code, code_thousands * 1000 + code_hundreds * 100 + code_tens * 10 + code_units);
     }
+    return (XPLMCommandCallback_f)1;
 }
 
 
@@ -2018,6 +2019,7 @@ XPLMCommandCallback_f adf_handler (XPLMCommandRef inCommand, XPLMCommandPhase in
         }
         XPLMSetDatai(radioref, freq_thousands * 1000 + freq_hundreds * 100 + freq_tens * 10 + freq_units);
     }
+    return (XPLMCommandCallback_f)1;
 }
 
 
@@ -2246,6 +2248,7 @@ XPLMCommandCallback_f rtu_handler (XPLMCommandRef inCommand, XPLMCommandPhase in
                 
         }
     }
+    return (XPLMCommandCallback_f)1;
 }
 
 
