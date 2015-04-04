@@ -2662,7 +2662,7 @@ void registerCommands(void) {
     XPLMRegisterCommandHandler(copilot_sta_on, (XPLMCommandCallback_f)copilot_sta_handler, 1, (void *)ON);
     copilot_sta_off = XPLMCreateCommand("xhsi/nd_copilot/sta_off", "ND symbols STA off - copilot");
     XPLMRegisterCommandHandler(copilot_sta_off, (XPLMCommandCallback_f)copilot_sta_handler, 1, (void *)OFF);
-    copilot_sta_toggle = XPLMCreateCommand("xhsi/nd_copilot/sta_cycle", "Cycle ND symbols STA - copilot");
+    copilot_sta_cycle = XPLMCreateCommand("xhsi/nd_copilot/sta_cycle", "Cycle ND symbols STA - copilot");
     XPLMRegisterCommandHandler(copilot_sta_cycle, (XPLMCommandCallback_f)copilot_sta_handler, 1, (void *)CYCLE);
 
     // copilot declutter : progressively hide map symbols
