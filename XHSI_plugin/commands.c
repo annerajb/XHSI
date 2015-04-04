@@ -220,6 +220,8 @@ XPLMCommandRef sta_on;
 XPLMCommandRef sta_off;
 XPLMCommandRef sta_cycle;
 
+XPLMCommandRef declutter_cycle;
+
 XPLMCommandRef data_toggle;
 XPLMCommandRef data_on;
 XPLMCommandRef data_off;
@@ -339,6 +341,8 @@ XPLMCommandRef copilot_sta_toggle;
 XPLMCommandRef copilot_sta_on;
 XPLMCommandRef copilot_sta_off;
 XPLMCommandRef copilot_sta_cycle;
+
+XPLMCommandRef copilot_declutter_cycle;
 
 XPLMCommandRef copilot_data_toggle;
 XPLMCommandRef copilot_data_on;
@@ -945,6 +949,27 @@ XPLMCommandCallback_f sta_handler(XPLMCommandRef inCommand, XPLMCommandPhase inP
     return (XPLMCommandCallback_f)1;
 }
 
+// declutter
+XPLMCommandCallback_f declutter_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        //int i = (int)((intptr_t)inRefcon);
+        if ( XPLMGetDatai(efis_shows_waypoints) ) XPLMSetDatai(efis_shows_waypoints, 0);
+        else if ( XPLMGetDatai(efis_shows_ndbs) ) XPLMSetDatai(efis_shows_ndbs, 0);
+        else if ( XPLMGetDatai(efis_shows_vors) ) XPLMSetDatai(efis_shows_vors, 0);
+        else if ( XPLMGetDatai(efis_shows_airports) ) XPLMSetDatai(efis_shows_airports, 0);
+        else {
+            XPLMSetDatai(efis_shows_airports, 1);
+            XPLMSetDatai(efis_shows_vors, 1);
+            XPLMSetDatai(efis_shows_ndbs, 1);
+            XPLMSetDatai(efis_shows_waypoints, 1);
+        }
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+
 // data = route data
 XPLMCommandCallback_f data_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
 {
@@ -1480,6 +1505,27 @@ XPLMCommandCallback_f copilot_sta_handler(XPLMCommandRef inCommand, XPLMCommandP
     }
     return (XPLMCommandCallback_f)1;
 }
+
+// copilot declutter
+XPLMCommandCallback_f copilot_declutter_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        //int i = (int)((intptr_t)inRefcon);
+        if ( XPLMGetDatai(efis_copilot_shows_waypoints) ) XPLMSetDatai(efis_copilot_shows_waypoints, 0);
+        else if ( XPLMGetDatai(efis_copilot_shows_ndbs) ) XPLMSetDatai(efis_copilot_shows_ndbs, 0);
+        else if ( XPLMGetDatai(efis_copilot_shows_vors) ) XPLMSetDatai(efis_copilot_shows_vors, 0);
+        else if ( XPLMGetDatai(efis_copilot_shows_airports) ) XPLMSetDatai(efis_copilot_shows_airports, 0);
+        else {
+            XPLMSetDatai(efis_copilot_shows_airports, 1);
+            XPLMSetDatai(efis_copilot_shows_vors, 1);
+            XPLMSetDatai(efis_copilot_shows_ndbs, 1);
+            XPLMSetDatai(efis_copilot_shows_waypoints, 1);
+        }
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
 
 // copilot data = route data
 XPLMCommandCallback_f copilot_data_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
@@ -2359,6 +2405,10 @@ void registerCommands(void) {
     sta_toggle = XPLMCreateCommand("xhsi/nd_pilot/sta_cycle", "Cycle ND symbols STA");
     XPLMRegisterCommandHandler(sta_toggle, (XPLMCommandCallback_f)sta_handler, 1, (void *)CYCLE);
 
+    // declutter : progressively hide map symbols
+    declutter_cycle = XPLMCreateCommand("xhsi/nd_pilot/declutter", "ND declutter");
+    XPLMRegisterCommandHandler(declutter_cycle, (XPLMCommandCallback_f)declutter_handler, 1, (void *)CYCLE);
+
     // data = route data
     data_toggle = XPLMCreateCommand("xhsi/nd_pilot/data_toggle", "Toggle ND symbols DATA");
     XPLMRegisterCommandHandler(data_toggle, (XPLMCommandCallback_f)data_handler, 1, (void *)TOGGLE);
@@ -2614,6 +2664,10 @@ void registerCommands(void) {
     XPLMRegisterCommandHandler(copilot_sta_off, (XPLMCommandCallback_f)copilot_sta_handler, 1, (void *)OFF);
     copilot_sta_toggle = XPLMCreateCommand("xhsi/nd_copilot/sta_cycle", "Cycle ND symbols STA - copilot");
     XPLMRegisterCommandHandler(copilot_sta_cycle, (XPLMCommandCallback_f)copilot_sta_handler, 1, (void *)CYCLE);
+
+    // copilot declutter : progressively hide map symbols
+    copilot_declutter_cycle = XPLMCreateCommand("xhsi/nd_copilot/declutter", "ND declutter - copilot");
+    XPLMRegisterCommandHandler(copilot_declutter_cycle, (XPLMCommandCallback_f)copilot_declutter_handler, 1, (void *)CYCLE);
 
     // copilot data = route data
     copilot_data_toggle = XPLMCreateCommand("xhsi/nd_copilot/data_toggle", "Toggle ND symbols DATA - copilot");
@@ -3083,6 +3137,9 @@ void unregisterCommands(void) {
     XPLMUnregisterCommandHandler(sta_off, (XPLMCommandCallback_f)sta_handler, 1, (void *)OFF);
     XPLMUnregisterCommandHandler(sta_cycle, (XPLMCommandCallback_f)sta_handler, 1, (void *)CYCLE);
 
+    // declutter
+    XPLMUnregisterCommandHandler(declutter_cycle, (XPLMCommandCallback_f)declutter_handler, 1, (void *)CYCLE);
+
     // data = route data
     XPLMUnregisterCommandHandler(data_toggle, (XPLMCommandCallback_f)data_handler, 1, (void *)TOGGLE);
     XPLMUnregisterCommandHandler(data_on, (XPLMCommandCallback_f)data_handler, 1, (void *)ON);
@@ -3213,6 +3270,9 @@ void unregisterCommands(void) {
     XPLMUnregisterCommandHandler(copilot_sta_off, (XPLMCommandCallback_f)copilot_sta_handler, 1, (void *)OFF);
     XPLMUnregisterCommandHandler(copilot_sta_cycle, (XPLMCommandCallback_f)copilot_sta_handler, 1, (void *)CYCLE);
 
+    // copilot declutter
+    XPLMUnregisterCommandHandler(copilot_declutter_cycle, (XPLMCommandCallback_f)copilot_declutter_handler, 1, (void *)CYCLE);
+
     // copilot data
     XPLMUnregisterCommandHandler(copilot_data_toggle, (XPLMCommandCallback_f)copilot_data_handler, 1, (void *)TOGGLE);
     XPLMUnregisterCommandHandler(copilot_data_on, (XPLMCommandCallback_f)copilot_data_handler, 1, (void *)ON);
@@ -3240,13 +3300,13 @@ void unregisterCommands(void) {
     XPLMUnregisterCommandHandler(nav2_sync, (XPLMCommandCallback_f)nav_sync_handler, 1, (void *)2);
 
 
-	// range_auto
-	XPLMUnregisterCommandHandler(auto_range_pilot, (XPLMCommandCallback_f)auto_range_handler, 1, (void *)EFIS_PILOT);
-	XPLMUnregisterCommandHandler(auto_range_copilot, (XPLMCommandCallback_f)auto_range_handler, 1, (void *)EFIS_COPILOT);
+    // range_auto
+    XPLMUnregisterCommandHandler(auto_range_pilot, (XPLMCommandCallback_f)auto_range_handler, 1, (void *)EFIS_PILOT);
+    XPLMUnregisterCommandHandler(auto_range_copilot, (XPLMCommandCallback_f)auto_range_handler, 1, (void *)EFIS_COPILOT);
 
-	// ext_range_auto
-	XPLMUnregisterCommandHandler(auto_ext_range_pilot, (XPLMCommandCallback_f)auto_ext_range_handler, 1, (void *)EFIS_PILOT);
-	XPLMUnregisterCommandHandler(auto_ext_range_copilot, (XPLMCommandCallback_f)auto_ext_range_handler, 1, (void *)EFIS_COPILOT);
+    // ext_range_auto
+    XPLMUnregisterCommandHandler(auto_ext_range_pilot, (XPLMCommandCallback_f)auto_ext_range_handler, 1, (void *)EFIS_PILOT);
+    XPLMUnregisterCommandHandler(auto_ext_range_copilot, (XPLMCommandCallback_f)auto_ext_range_handler, 1, (void *)EFIS_COPILOT);
 
 
     // chronometer
@@ -3257,6 +3317,67 @@ void unregisterCommands(void) {
     // cancel the interception of a standard X-Plane command
     XPLMUnregisterCommandHandler(contact_atc_cmd, (XPLMCommandCallback_f)contact_atc_handler, 1, (void *)0);
 
+    // RTU select
+    XPLMUnregisterCommandHandler(rtu_select_none, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_NONE);
+    XPLMUnregisterCommandHandler(rtu_select_com1, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_COM1);
+    XPLMUnregisterCommandHandler(rtu_select_nav1, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_NAV1);
+    XPLMUnregisterCommandHandler(rtu_select_adf1, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_ADF1);
+    XPLMUnregisterCommandHandler(rtu_select_xpdr, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_XPDR);
+    XPLMUnregisterCommandHandler(rtu_select_tcas, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_TCAS);
+    XPLMUnregisterCommandHandler(rtu_select_adf2, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_ADF2);
+    XPLMUnregisterCommandHandler(rtu_select_nav2, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_NAV2);
+    XPLMUnregisterCommandHandler(rtu_select_com2, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_COM2);
+    // RTU select/flip
+    XPLMUnregisterCommandHandler(rtu_select_flip_com1, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_FLIP_COM1);
+    XPLMUnregisterCommandHandler(rtu_select_flip_nav1, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_FLIP_NAV1);
+    XPLMUnregisterCommandHandler(rtu_select_flip_adf1, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_FLIP_ADF1);
+    XPLMUnregisterCommandHandler(rtu_select_flip_xpdr, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_FLIP_XPDR);
+    XPLMUnregisterCommandHandler(rtu_select_flip_tcas, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_FLIP_TCAS);
+    XPLMUnregisterCommandHandler(rtu_select_flip_adf2, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_FLIP_ADF2);
+    XPLMUnregisterCommandHandler(rtu_select_flip_nav2, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_FLIP_NAV2);
+    XPLMUnregisterCommandHandler(rtu_select_flip_com2, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_FLIP_COM2);
+    // RTU cycle selection RTU_SELECT_CYCLE
+    XPLMUnregisterCommandHandler(rtu_select_cycle, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_CYCLE);
+    // RTU flip selected
+    XPLMUnregisterCommandHandler(rtu_flip_selected, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_FLIP_SELECTED);
+    // RTU tuning
+    XPLMUnregisterCommandHandler(rtu_coarse_down, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_COARSE_DOWN);
+    XPLMUnregisterCommandHandler(rtu_coarse_up, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_COARSE_UP);
+    XPLMUnregisterCommandHandler(rtu_fine_down, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_FINE_DOWN);
+    XPLMUnregisterCommandHandler(rtu_fine_up, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_FINE_UP);
+    
+    // XPDR mode
+    XPLMUnregisterCommandHandler(xpdr_mode_up, (XPLMCommandCallback_f)xpdr_handler, 1, (void *)XPDR_MODE_UP);
+    XPLMUnregisterCommandHandler(xpdr_mode_down, (XPLMCommandCallback_f)xpdr_handler, 1, (void *)XPDR_MODE_DOWN);
+    XPLMUnregisterCommandHandler(xpdr_mode_cycle, (XPLMCommandCallback_f)xpdr_handler, 1, (void *)XPDR_MODE_CYCLE);
+    // XPDR code
+    XPLMUnregisterCommandHandler(xpdr_code_hundreds_up, (XPLMCommandCallback_f)xpdr_handler, 1, (void *)XPDR_CODE_HUNDREDS_UP);
+    XPLMUnregisterCommandHandler(xpdr_code_hundreds_down, (XPLMCommandCallback_f)xpdr_handler, 1, (void *)XPDR_CODE_HUNDREDS_DOWN);
+    XPLMUnregisterCommandHandler(xpdr_code_units_up, (XPLMCommandCallback_f)xpdr_handler, 1, (void *)XPDR_CODE_UNITS_UP);
+    XPLMUnregisterCommandHandler(xpdr_code_units_down, (XPLMCommandCallback_f)xpdr_handler, 1, (void *)XPDR_CODE_UNITS_DOWN);
+    
+    // ADF tuning
+    // ADF1
+    XPLMUnregisterCommandHandler(adf1_hundreds_up, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF1 + ADF_HUNDREDS_UP));
+    XPLMUnregisterCommandHandler(adf1_hundreds_down, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF1 + ADF_HUNDREDS_DOWN));
+    XPLMUnregisterCommandHandler(adf1_units_up, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF1 + ADF_UNITS_UP));
+    XPLMUnregisterCommandHandler(adf1_units_down, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF1 + ADF_UNITS_DOWN));
+    // ADF1 standby
+    XPLMUnregisterCommandHandler(adf1_stby_hundreds_up, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF1_STBY + ADF_HUNDREDS_UP));
+    XPLMUnregisterCommandHandler(adf1_stby_hundreds_down, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF1_STBY + ADF_HUNDREDS_DOWN));
+    XPLMUnregisterCommandHandler(adf1_stby_units_up, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF1_STBY + ADF_UNITS_UP));
+    XPLMUnregisterCommandHandler(adf1_stby_units_down, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF1_STBY + ADF_UNITS_DOWN));
+    // ADF2
+    XPLMUnregisterCommandHandler(adf2_hundreds_up, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF2 + ADF_HUNDREDS_UP));
+    XPLMUnregisterCommandHandler(adf2_hundreds_down, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF2 + ADF_HUNDREDS_DOWN));
+    XPLMUnregisterCommandHandler(adf2_units_up, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF2 + ADF_UNITS_UP));
+    XPLMUnregisterCommandHandler(adf2_units_down, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF2 + ADF_UNITS_DOWN));
+    // ADF2 standby
+    XPLMUnregisterCommandHandler(adf2_stby_hundreds_up, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF2_STBY + ADF_HUNDREDS_UP));
+    XPLMUnregisterCommandHandler(adf2_stby_hundreds_down, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF2_STBY + ADF_HUNDREDS_DOWN));
+    XPLMUnregisterCommandHandler(adf2_stby_units_up, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF2_STBY + ADF_UNITS_UP));
+    XPLMUnregisterCommandHandler(adf2_stby_units_down, (XPLMCommandCallback_f)adf_handler, 1, (void *)(ADF2_STBY + ADF_UNITS_DOWN));
+    
 
     XPLMDebugString("XHSI: custom command handlers unregistered\n");
 
