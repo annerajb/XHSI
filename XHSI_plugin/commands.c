@@ -2402,8 +2402,8 @@ void registerCommands(void) {
     XPLMRegisterCommandHandler(sta_on, (XPLMCommandCallback_f)sta_handler, 1, (void *)ON);
     sta_off = XPLMCreateCommand("xhsi/nd_pilot/sta_off", "ND symbols STA off");
     XPLMRegisterCommandHandler(sta_off, (XPLMCommandCallback_f)sta_handler, 1, (void *)OFF);
-    sta_toggle = XPLMCreateCommand("xhsi/nd_pilot/sta_cycle", "Cycle ND symbols STA");
-    XPLMRegisterCommandHandler(sta_toggle, (XPLMCommandCallback_f)sta_handler, 1, (void *)CYCLE);
+    sta_cycle = XPLMCreateCommand("xhsi/nd_pilot/sta_cycle", "Cycle ND symbols STA");
+    XPLMRegisterCommandHandler(sta_cycle, (XPLMCommandCallback_f)sta_handler, 1, (void *)CYCLE);
 
     // declutter : progressively hide map symbols
     declutter_cycle = XPLMCreateCommand("xhsi/nd_pilot/declutter", "ND declutter");
@@ -2748,7 +2748,6 @@ void registerCommands(void) {
     XPLMRegisterCommandHandler(b737cl_copilot_mode_ctrmap, (XPLMCommandCallback_f)b737cl_copilot_mode_handler, 1, (void *)B737CL_CTR_MAP);
     b737cl_copilot_mode_plan = XPLMCreateCommand("xhsi/nd_b737classic_copilot/mode_plan", "B737-Classic mode PLAN - copilot");
     XPLMRegisterCommandHandler(b737cl_copilot_mode_plan, (XPLMCommandCallback_f)b737cl_copilot_mode_handler, 1, (void *)B737CL_PLAN);
-
 
 
     // xhsi/pfd_copilot/...
@@ -3150,6 +3149,16 @@ void unregisterCommands(void) {
     XPLMUnregisterCommandHandler(pos_on, (XPLMCommandCallback_f)pos_handler, 1, (void *)ON);
     XPLMUnregisterCommandHandler(pos_off, (XPLMCommandCallback_f)pos_handler, 1, (void *)OFF);
 
+    // xhsi/pfd_pilot/...
+    // mins mode
+    XPLMUnregisterCommandHandler(mins_toggle, (XPLMCommandCallback_f)mins_mode_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(mins_radio, (XPLMCommandCallback_f)mins_mode_handler, 1, (void *)MINS_RADIO);
+    XPLMUnregisterCommandHandler(mins_baro, (XPLMCommandCallback_f)mins_mode_handler, 1, (void *)MINS_BARO);
+    // mins value
+    XPLMUnregisterCommandHandler(mins_reset, (XPLMCommandCallback_f)mins_value_handler, 1, (void *)OFF);
+    XPLMUnregisterCommandHandler(mins_down, (XPLMCommandCallback_f)mins_value_handler, 1, (void *)DOWN);
+    XPLMUnregisterCommandHandler(mins_up, (XPLMCommandCallback_f)mins_value_handler, 1, (void *)UP);
+
 
     // copilot commands
     // copilot ctr
@@ -3282,6 +3291,17 @@ void unregisterCommands(void) {
     XPLMUnregisterCommandHandler(copilot_pos_toggle, (XPLMCommandCallback_f)copilot_pos_handler, 1, (void *)TOGGLE);
     XPLMUnregisterCommandHandler(copilot_pos_on, (XPLMCommandCallback_f)copilot_pos_handler, 1, (void *)ON);
     XPLMUnregisterCommandHandler(copilot_pos_off, (XPLMCommandCallback_f)copilot_pos_handler, 1, (void *)OFF);
+
+
+    // xhsi/pfd_copilot/...
+    // copilot mins mode
+    XPLMUnregisterCommandHandler(copilot_mins_toggle, (XPLMCommandCallback_f)copilot_mins_mode_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(copilot_mins_radio, (XPLMCommandCallback_f)copilot_mins_mode_handler, 1, (void *)MINS_RADIO);
+    XPLMUnregisterCommandHandler(copilot_mins_baro, (XPLMCommandCallback_f)copilot_mins_mode_handler, 1, (void *)MINS_BARO);
+    // copilot mins value
+    XPLMUnregisterCommandHandler(copilot_mins_reset, (XPLMCommandCallback_f)copilot_mins_value_handler, 1, (void *)OFF);
+    XPLMUnregisterCommandHandler(copilot_mins_down, (XPLMCommandCallback_f)copilot_mins_value_handler, 1, (void *)DOWN);
+    XPLMUnregisterCommandHandler(copilot_mins_up, (XPLMCommandCallback_f)copilot_mins_value_handler, 1, (void *)UP);
 
 
     // MFD mode
