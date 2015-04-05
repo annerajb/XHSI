@@ -810,6 +810,11 @@ public interface Aircraft {
     public float apu_egt();
     
     /**
+     * @return Float - Auxiliary Power Unit (APU) EGT Warning limit
+     */
+    public float apu_egt_limit();
+    
+    /**
      * @return Float - Auxiliary Power Unit (APU) Generator output current (Amp)
      */
     public float apu_gen_amp();

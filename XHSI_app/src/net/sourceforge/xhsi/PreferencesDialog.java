@@ -1592,6 +1592,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.mfd_mode_combobox.addItem("Flight Plan");
         this.mfd_mode_combobox.addItem("Lower EICAS");
         this.mfd_mode_combobox.addItem("RTU Display");
+        this.mfd_mode_combobox.addItem("APU");
+        this.mfd_mode_combobox.addItem("Flight Controls");
+        // TODO: more MFD pages
         this.mfd_mode_combobox.addActionListener(this);
         mfd_options_panel.add(this.mfd_mode_combobox, cons);
         dialog_line++;

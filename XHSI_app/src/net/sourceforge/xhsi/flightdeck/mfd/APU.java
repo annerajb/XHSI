@@ -135,10 +135,10 @@ public class APU extends MFDSubcomponent {
 
         		// Legends
                 // N1
-                String ind_str1 =  "N1";
+                String ind_str1 =  "N";
                 String ind_str2 =  "%" ;
                 int ind_middle = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*365/1000;
-                int ind_y = mfd_gc.panel_rect.y + mfd_gc.mfd_size*510/1000;
+                int ind_y = mfd_gc.panel_rect.y + mfd_gc.mfd_size*490/1000;
                 int ind_x1 = ind_middle - mfd_gc.get_text_width(g2, mfd_gc.font_m, ind_str1)/2;
                 int ind_x2 = ind_middle - mfd_gc.get_text_width(g2, mfd_gc.font_m, ind_str2)/2;
                 g2.setFont(mfd_gc.font_l);
@@ -150,7 +150,7 @@ public class APU extends MFDSubcomponent {
                 // EGT
                 ind_str1 =  "EGT";
                 ind_str2 =  "°c" ;                
-                ind_y = mfd_gc.panel_rect.y + mfd_gc.mfd_size*820/1000;
+                ind_y = mfd_gc.panel_rect.y + mfd_gc.mfd_size*800/1000;
                 ind_x1 = ind_middle - mfd_gc.get_text_width(g2, mfd_gc.font_m, ind_str1)/2;
                 ind_x2 = ind_middle - mfd_gc.get_text_width(g2, mfd_gc.font_m, ind_str2)/2;
                 g2.setFont(mfd_gc.font_l);
@@ -171,33 +171,34 @@ public class APU extends MFDSubcomponent {
 
 
         		// AVAIL indicator
+        		// TODO : if A/C is not an Airbus, use "ON BUS" indicator
         		if (avail) {
         			String avail_str="AVAIL";
         			int avail_x=mfd_gc.panel_rect.x + mfd_gc.panel_rect.width/2;
         			int avail_y=mfd_gc.panel_rect.y + mfd_gc.line_height_xl*32/10;
         			g2.setColor(mfd_gc.ecam_normal_color);
-        			g2.setFont(mfd_gc.font_l);
-        			g2.drawString( avail_str, avail_x - mfd_gc.get_text_width(g2, mfd_gc.font_l, avail_str)/2, avail_y);		
+        			g2.setFont(mfd_gc.font_xl);
+        			g2.drawString( avail_str, avail_x - mfd_gc.get_text_width(g2, mfd_gc.font_xl, avail_str)/2, avail_y);		
         		}
 
         		// FLAP indicator
         		if (flap) {
         			String avail_str="FLAP OPEN";
-        			int flap_x=mfd_gc.panel_rect.x + mfd_gc.panel_rect.width/2;
+        			int flap_x=mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*3/4;
         			int flap_y=mfd_gc.panel_rect.y + mfd_gc.mfd_size*70/100;
         			g2.setColor(mfd_gc.ecam_normal_color);
-        			g2.setFont(mfd_gc.font_l);
-        			g2.drawString( avail_str, flap_x, flap_y);		
+        			g2.setFont(mfd_gc.font_xl);
+        			g2.drawString( avail_str, flap_x- mfd_gc.get_text_width(g2, mfd_gc.font_xl, avail_str)/2, flap_y);		
         		}     
 
         		// STARTER indicator (not for airbus...)
         		if (this.aircraft.apu_starter()>1) {
         			String avail_str="START";
-        			int flap_x=mfd_gc.panel_rect.x + mfd_gc.panel_rect.width/2;
-        			int flap_y=mfd_gc.panel_rect.y + mfd_gc.mfd_size*60/100;
+        			int flap_x=mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*3/4;
+        			int flap_y=mfd_gc.panel_rect.y + mfd_gc.mfd_size*65/100;
         			g2.setColor(mfd_gc.ecam_normal_color);
-        			g2.setFont(mfd_gc.font_l);
-        			g2.drawString( avail_str, flap_x, flap_y);		
+        			g2.setFont(mfd_gc.font_xl);
+        			g2.drawString( avail_str, flap_x - mfd_gc.get_text_width(g2, mfd_gc.font_xl, avail_str)/2, flap_y);		
         		}     
         	} else {
         		// No APU
@@ -215,7 +216,7 @@ public class APU extends MFDSubcomponent {
 
     private void drawElec(Graphics2D g2, String bloc_str, boolean display_values, int load, int volt, int freq, int x, int y) {
     	int w = mfd_gc.digit_width_m * 8;
-    	int h = mfd_gc.line_height_m * 5;
+    	int h = mfd_gc.line_height_l * 9/2;
         g2.setColor(mfd_gc.ecam_markings_color);
         g2.setFont(mfd_gc.font_m);
         g2.drawRect(x,y,w,h);
@@ -229,10 +230,11 @@ public class APU extends MFDSubcomponent {
         g2.drawPolygon(tri_x, tri_y, 3);
         
         // Legends
-        g2.setColor(mfd_gc.ecam_action_color);       
-        g2.drawString("%",  x+w-mfd_gc.digit_width_m*2, y + mfd_gc.line_height_m *2);
-        g2.drawString("V",  x+w-mfd_gc.digit_width_m*2, y + mfd_gc.line_height_m *3);
-        g2.drawString("Hz", x+w-mfd_gc.digit_width_m*2, y + mfd_gc.line_height_m *4);
+        g2.setColor(mfd_gc.ecam_action_color);
+        g2.setFont(mfd_gc.font_s);
+        g2.drawString("%",  x+w-mfd_gc.digit_width_m*2, y + mfd_gc.line_height_l *2);
+        g2.drawString("V",  x+w-mfd_gc.digit_width_m*2, y + mfd_gc.line_height_l *3);
+        g2.drawString("Hz", x+w-mfd_gc.digit_width_m*2, y + mfd_gc.line_height_l *4);
         
         // Values
         if (display_values) {
@@ -240,12 +242,13 @@ public class APU extends MFDSubcomponent {
         	String str_freq = ""+freq;
         	String str_load = ""+load;
         	if (freq==0) { str_freq = "XX"; }
+        	g2.setFont(mfd_gc.font_l);
         	g2.setColor(mfd_gc.ecam_normal_color);       
-        	g2.drawString(str_load,  x+w-mfd_gc.digit_width_m*3 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_load), y + mfd_gc.line_height_m *2);
+        	g2.drawString(str_load,  x+w-mfd_gc.digit_width_m*5/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, str_load), y + mfd_gc.line_height_l *2);
         	if (volt<105) {g2.setColor(mfd_gc.ecam_caution_color); } else { g2.setColor(mfd_gc.ecam_normal_color); }
-        	g2.drawString(str_volt,  x+w-mfd_gc.digit_width_m*3 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_volt) , y + mfd_gc.line_height_m *3);
+        	g2.drawString(str_volt,  x+w-mfd_gc.digit_width_m*5/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, str_volt) , y + mfd_gc.line_height_l *3);
         	if (freq<390) {g2.setColor(mfd_gc.ecam_caution_color); } else { g2.setColor(mfd_gc.ecam_normal_color); }
-        	g2.drawString(str_freq, x+w-mfd_gc.digit_width_m*3 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_freq), y + mfd_gc.line_height_m *4);
+        	g2.drawString(str_freq, x+w-mfd_gc.digit_width_m*5/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, str_freq), y + mfd_gc.line_height_l *4);
         }
     }
     
@@ -258,8 +261,9 @@ public class APU extends MFDSubcomponent {
         g2.drawString( bloc_str, x + w/2 - mfd_gc.get_text_width(g2, mfd_gc.font_m, bloc_str)/2, y + mfd_gc.line_height_m );
                
         // Legends
-        g2.setColor(mfd_gc.ecam_action_color);       
-        g2.drawString("PSI",  x+w-mfd_gc.digit_width_m*3, y + mfd_gc.line_height_m *2);
+        g2.setColor(mfd_gc.ecam_action_color);
+        g2.setFont(mfd_gc.font_s);
+        g2.drawString("PSI",  x+w-mfd_gc.digit_width_m*3, y + mfd_gc.line_height_l *2);
         
         // Values
         if (display_values) {
@@ -267,7 +271,8 @@ public class APU extends MFDSubcomponent {
         	g2.setColor(mfd_gc.ecam_normal_color);       
         	if (psi==0) { str_psi = "XX"; }
         	if (psi<10) {g2.setColor(mfd_gc.ecam_caution_color); } else { g2.setColor(mfd_gc.ecam_normal_color); }
-        	g2.drawString(str_psi,  x+w-mfd_gc.digit_width_m*4 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_psi) , y + mfd_gc.line_height_m *2);
+        	g2.setFont(mfd_gc.font_l);
+        	g2.drawString(str_psi,  x+w-mfd_gc.digit_width_m*4 - mfd_gc.get_text_width(g2, mfd_gc.font_l, str_psi) , y + mfd_gc.line_height_l *2);
         }
     }
  
@@ -555,6 +560,7 @@ public class APU extends MFDSubcomponent {
         float egt_percent = this.aircraft.apu_egt() / 10.0f;
         float egt_dial = Math.min(egt_percent, 110.0f) / 100.0f;
         int egt_value = Math.round(this.aircraft.apu_egt());
+        int egt_limit = Math.round(this.aircraft.apu_egt_limit());
         boolean egt_disabled = this.aircraft.apu_n1() < 1.0 && aircraft.apu_starter()==0;
 
         int egt_x = prim_dial_x[pos];
@@ -571,11 +577,12 @@ public class APU extends MFDSubcomponent {
         int deg_zero  = 300;	// Gauge zero (0%)
         int deg_start = 225; 	// Gauge starting position white sector
         int deg_full  = 50;     // Gauge full (100%)
-        int deg_warning = stabilized ? 45 : 120;   // Gauge red sector (warning) 
+        int deg_full_range = deg_zero-deg_full;   // Deg range from 0 to 100%
+        // int deg_warning = stabilized ? 45 : 120;   // Gauge red sector (warning)
+        int deg_warning = deg_zero - egt_limit*deg_full_range/1000;   // Gauge red sector (warning) 
         int deg_end = 25;       // Gauge end
         int deg_norm_range = deg_start-deg_warning;
         int deg_warn_range = deg_warning-deg_end;
-        int deg_full_range = deg_zero-deg_full;   // Deg range from 0 to 100%
         
         if ( egt_dial <= 1.0f ) {
             // inhibit caution or warning below 1000ft

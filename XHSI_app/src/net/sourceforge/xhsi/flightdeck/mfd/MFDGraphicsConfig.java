@@ -76,11 +76,12 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int dial_font_w[] = new int[9];
     public int dial_font_h[] = new int[9];
     public int tape_h;
+    public int dial_x[] = new int[8];
+    public int tape_x[] = new int[8];
 
     
     // ECAM Lower : Common indicators
-    public int ec_base_line;
-    
+    public int ec_base_line;  
     public int ec_line1; 
     public int ec_line2;
     public int ec_line3;
@@ -95,7 +96,47 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int ec_col3_val;
     public int ec_col3_unit;
     
+    // ECAM Lower : Fuel
+    public int fuel_r;
+    public int fuel_primary_x[] = new int[5];
+    public int fuel_primary_y[] = new int[5];
+    public int fuel_total_x;
+    public int fuel_total_y;
+    public int fuel_flow_y;
+    public Font fuel_eng_font;
+    public int fuel_eng_font_w;
+    public int fuel_eng_font_h;
     
+    // ECAM Lower : Flight controls
+    public int controls_x;
+    public int controls_w;
+    public int controls_y;
+    public int controls_h;
+    public int trim_txt_x;
+    public int trim_txt_y;
+    public int lat_trim_x;
+    public int lat_trim_w;
+    public int lat_trim_y;
+    public int lat_trim_h;
+    public int yaw_trim_y;
+    public int pitch_trim_x;
+    public int pitch_trim_w;
+    public int pitch_trim_y;
+    public int pitch_trim_h;
+    public int wing_x;
+    public int wing_y;
+    public int wing_h;
+    public int wing_w;
+    public int flaps_l;
+    public int spdbrk_h;
+    public int spdbrk_w;
+    public int spdbrk_x;
+    public int spdbrk_y;
+    public int gear_x;
+    public int gear_w;
+    public int gear_y;
+    public int autbrk_x;
+    public int autbrk_y;
     
     public MFDGraphicsConfig(Component root_component, int du) {
         super(root_component);
@@ -120,14 +161,18 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
                 || (this.powered != power)
             ) {
             // one of the settings has been changed
-
+        	
+            //logger.warning("MFD update_config");
+            super.update_config(g2);
+            
             // remember the instrument style
             this.style = instrument_style;
             
             // remember the avionics power settings
             this.powered = power;
-//logger.warning("MFD update_config");
-            super.update_config(g2);
+            
+            // remember the number of engines
+            this.num_eng = nb_engines;
 
             // Setup instrument style
             airbus_style = ( instrument_style == Avionics.STYLE_AIRBUS );
@@ -157,6 +202,46 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             ec_col3_val = ec_col3 + digit_width_l*4;
             ec_col3_unit = ec_col3 + digit_width_l*14;
             
+            // FUEL
+            fuel_r = mfd_size*40/100*20/100;
+            fuel_primary_x[0] = panel_rect.x + panel_rect.width/2;
+            fuel_primary_x[1] = panel_rect.x + panel_rect.width/2 - fuel_r*6/4;
+            fuel_primary_x[2] = panel_rect.x + panel_rect.width/2 + fuel_r*6/4;
+            fuel_primary_x[3] = panel_rect.x + panel_rect.width/2 - fuel_r*17/4;
+            fuel_primary_x[4] = panel_rect.x + panel_rect.width/2 + fuel_r*17/4;
+            fuel_primary_y[0] = panel_rect.y + mfd_size/2 - fuel_r*3;
+            fuel_primary_y[1] = panel_rect.y + mfd_size/2 - fuel_r;
+            fuel_primary_y[2] = fuel_primary_y[1];
+            fuel_primary_y[3] = fuel_primary_y[1];
+            fuel_primary_y[4] = fuel_primary_y[1];
+            fuel_total_x = panel_rect.x + panel_rect.width*1/20;
+            fuel_total_y = panel_rect.y + mfd_size*90/100;
+            fuel_flow_y = panel_rect.y + mfd_size*70/100;
+            if (nb_engines <5) {
+            	fuel_eng_font = font_l;
+                fuel_eng_font_w = digit_width_l;
+                fuel_eng_font_h = line_height_l;
+            } else {
+            	fuel_eng_font = font_s;
+                fuel_eng_font_w = digit_width_s;
+                fuel_eng_font_h = line_height_s;
+            }
+            
+            
+            // Lower EICAS dials
+            
+            int cols = Math.max(nb_engines, 2);
+            if ( cols == 2 ) {
+                dial_x[0] = panel_rect.x + panel_rect.width*30/100;
+                tape_x[0] = dial_x[0] + dial_r[2]/2;
+                dial_x[1] = panel_rect.x + panel_rect.width*70/100;
+                tape_x[1] = dial_x[1] - dial_r[2]/2;
+            } else {
+                for (int i=0; i<cols; i++) {
+                    dial_x[i] = panel_rect.x + panel_rect.width*50/100/cols + i*panel_rect.width*9/10/cols;
+                    tape_x[i] = dial_x[i] - dial_r[cols]/2;
+                }
+            }
 
             dial_n2_y = panel_rect.y + mfd_size*12/100;
             dial_ng_y = dial_n2_y;
@@ -201,6 +286,44 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             dial_font_h[8] = line_height_xxs;
             tape_h = mfd_size*14/100;
             
+            // Flight controls
+            controls_x = panel_rect.x + panel_rect.width * 10/100 ;
+            controls_w = panel_rect.width * 80/100;
+            controls_y = panel_rect.y + mfd_size * 10/100;
+            controls_h = mfd_size * 80/100;
+            
+            trim_txt_x = controls_x + controls_w*57/100;
+            trim_txt_y = controls_y + controls_h*68/100;
+            
+            lat_trim_x = controls_x + controls_w*2/100;
+            lat_trim_w = controls_w/2;
+            lat_trim_y = controls_y + controls_h*64/100;
+            lat_trim_h = controls_h/2;
+            
+            yaw_trim_y = lat_trim_y + lat_trim_h*6/10;
+            
+            pitch_trim_x = controls_x + controls_w*70/100;
+            pitch_trim_w = controls_w/2;
+            pitch_trim_y = controls_y + controls_h*64/100;
+            pitch_trim_h = controls_h*5/16;
+            
+            wing_x = controls_x + controls_w*8/100;
+            wing_y = controls_y + controls_h*9/32;
+            wing_h = controls_h*3/100;
+            wing_w = controls_w*26/100;
+            flaps_l = controls_w*18/100;
+            spdbrk_h = controls_h*3/100;
+            spdbrk_w = controls_w*12/100;
+            spdbrk_x = wing_x + wing_w - spdbrk_w;
+            spdbrk_y = wing_y - wing_h/2;
+            
+            gear_x = controls_x + controls_w*80/100;
+            gear_w = controls_w*10/100;
+            gear_y = controls_y + controls_h*1/16;
+            autbrk_x = gear_x;
+            autbrk_y = controls_y + controls_h*6/16;
+
+            
         }
 
     }
@@ -239,3 +362,4 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
 
 
 }
+

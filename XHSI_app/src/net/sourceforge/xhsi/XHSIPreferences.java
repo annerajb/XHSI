@@ -163,7 +163,10 @@ public class XHSIPreferences {
     public static final String MFD_MODE_FPLN = "fpln";
     public static final String MFD_MODE_LOWER_EICAS = "lower_eicas";
     public static final String MFD_MODE_RTU = "rtu";
-
+    public static final String MFD_MODE_APU = "apu";
+    public static final String MFD_MODE_FCTL = "fctl";
+    //TODO: more MFD pages
+    
     // for PREF_ARPT_CHART_COLOR
     public static final String ARPT_DIAGRAM_COLOR_AUTO = "auto";
     public static final String ARPT_DIAGRAM_COLOR_DAY = "day";
