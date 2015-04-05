@@ -63,12 +63,13 @@ public interface Avionics {
     public static final int MFD_MODE_ARPT = 0;
     public static final int MFD_MODE_FPLN = 1;
     public static final int MFD_MODE_EICAS = 2; // MFD_MODE_ENGINE
+    public static final int MFD_MODE_ENGINE = 2; // MFD_MODE_EICAS
     public static final int MFD_MODE_RTU = 3;
-    public static final int MFD_MODE_APU = 4;
+    public static final int MFD_MODE_SYS = 4; // SYS on Boeing, CRUIZE on Airbus
     public static final int MFD_MODE_FCTL = 5;
-    public static final int MFD_MODE_ELEC = 6;
-    public static final int MFD_MODE_WHEEL = 7;
-    public static final int MFD_MODE_CRUIZE = 8;
+    public static final int MFD_MODE_APU = 6;
+    public static final int MFD_MODE_ELEC = 7;
+    public static final int MFD_MODE_WHEELS = 8;
     public static final int MFD_MODE_DOOR_OXY = 9;
     public static final int MFD_MODE_BLEED = 10;
     public static final int MFD_MODE_COND = 11;

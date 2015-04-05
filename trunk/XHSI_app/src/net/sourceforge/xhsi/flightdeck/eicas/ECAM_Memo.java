@@ -128,6 +128,15 @@ public class ECAM_Memo extends EICASSubcomponent {
     	String memo_str;
     	g2.setFont(eicas_gc.font_l);        
     	
+    	// APU
+    	if (this.aircraft.apu_gen_on()) {
+    		ememo_color[EMEMO_APU_AVAIL] = eicas_gc.ecam_normal_color;
+    		ememo_status[EMEMO_APU_AVAIL] = true;
+    	} else {
+    		ememo_status[EMEMO_APU_AVAIL] = false;
+    		ememo_status[EMEMO_APU_BLEED] = false;
+    	}
+    	
         // PARK BRK
         if ( this.aircraft.battery() ) {
             float parking_brake = this.aircraft.get_parking_brake();

@@ -812,6 +812,23 @@ public class XPlaneAircraft implements Aircraft {
     	}
     	return egt;
     }
+  
+    public float apu_egt_limit() {
+    	// EGT limit is 1050°c during startup sequence
+    	// At the end of the startup, smoothly goes to 705°
+    	// stay at 705° during shutdown sequence
+    	// at the end of the shutdown sequence, back to 1050°
+    	float egt_limit=1050.0f;
+    	float n1 = apu_n1();
+    	if (apu_running()) {
+    		if (n1 > 60) {
+    			egt_limit = 1050 - (1050-705)*(n1-60)/40;
+    		} 
+    	} else if (n1 > 1) {
+    		egt_limit=705;
+    	}
+    	return egt_limit;
+    }
     
     public boolean apu_running() {
     	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.APU_STATUS);
@@ -833,4 +850,10 @@ public class XPlaneAircraft implements Aircraft {
     public boolean has_bleed_air() {
     	return true;
     }
+    
+    public int bleed_air_mode() {
+    	return 0;
+    }
+
+    
 }
