@@ -88,6 +88,10 @@ public class APHeading extends NDSubcomponent {
                 polyline.lineTo(nd_gc.map_center_x + heading_bug_width/2, nd_gc.rose_y_offset);
                 polyline.lineTo (nd_gc.map_center_x - heading_bug_width/2, nd_gc.rose_y_offset);
                 g2.draw(polyline);
+                if ( this.avionics.ap_hdg_sel_on() || ( this.avionics.is_x737() && this.avionics.x737_hdg() > 0 ) ) {
+                    g2.fill(polyline);
+                }
+                
 
                 if ( ! nd_gc.mode_classic_hsi ) {
                     // dotted line from plane to heading bug, not for APP CTR or VOR CTR
