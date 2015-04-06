@@ -318,6 +318,9 @@ public class HSI extends PFDSubcomponent {
         };
         g2.setColor(pfd_gc.heading_bug_color);
         g2.drawPolygon(bug_x, bug_y, 8);
+        if ( this.avionics.ap_hdg_sel_on() || ( this.avionics.is_x737() && this.avionics.x737_hdg() > 0 ) ) {
+            g2.fillPolygon(bug_x, bug_y, 8);
+        }
 
         g2.setTransform(original_at);
 
