@@ -61,7 +61,7 @@ void findPaA320DataRefs(void) {
         	pa_a320_ready = 1;
         	pa_a320_version = 150;
 
-            XPLMDebugString("XHSI: finding Peter Aircraft DataRefs\n");
+            XPLMDebugString("XHSI: using Peter Aircraft DataRefs\n");
 
             pa_a320_baro_hide = XPLMFindDataRef("com/petersaircraft/airbus/QNH_flash");
             pa_a320_fcu_metric_alt = XPLMFindDataRef("com/petersaircraft/airbus/metric_alt_show");

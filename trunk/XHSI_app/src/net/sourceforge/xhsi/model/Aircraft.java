@@ -26,7 +26,12 @@ import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 
 public interface Aircraft {
 	
-	public enum ValveStatus { VALVE_OPEN, VALVE_CLOSED, VALVE_OPEN_FAILED, VALVE_CLOSED_FAILED };
+    public enum ValveStatus { VALVE_OPEN, VALVE_CLOSED, VALVE_OPEN_FAILED, VALVE_CLOSED_FAILED };
+
+    /**
+     * @return String - aircraft_registration
+     */
+    public String aircraft_registration();
 
     /**
      * @return boolean - battery power is on
@@ -543,6 +548,18 @@ public interface Aircraft {
      * @return float - Vle: max landing gear extended
      */
     public float get_Vle();
+
+
+    /**
+     * @return float - Vmca: min control speed when airborne
+     */
+    public float get_Vmca();
+
+
+    /**
+     * @return float - Vyse: best rate of climb speed with a single operating engine in a light, twin-engine aircraft
+     */
+    public float get_Vyse();
 
 
     /**

@@ -163,7 +163,7 @@ void findQpacDataRefs(void) {
             qpac_ready = 1;
             qpac_version = 110;
 
-            XPLMDebugString("XHSI: finding QPAC AirbusFBW DataRefs\n");
+            XPLMDebugString("XHSI: using QPAC AirbusFBW DataRefs\n");
 
             // Autopilot
             qpac_ap1 = XPLMFindDataRef("AirbusFBW/AP1Engage");

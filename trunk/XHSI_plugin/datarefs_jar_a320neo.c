@@ -120,7 +120,7 @@ void findJarA320NeoDataRefs(void) {
 
         	jar_a320_neo_ready = 1;
 
-            XPLMDebugString("XHSI: finding JarDesign A320 Neo DataRefs\n");
+            XPLMDebugString("XHSI: using JarDesign A320 Neo DataRefs\n");
 
             // Autopilot and FD
             jar_a320_neo_ap_phase =  XPLMFindDataRef("sim/custom/xap/fly_phase");

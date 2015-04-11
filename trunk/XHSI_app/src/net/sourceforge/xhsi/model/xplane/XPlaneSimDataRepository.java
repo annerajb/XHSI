@@ -271,6 +271,10 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_AIRCRAFT_OVERFLOW_ACF_VLE = 326;
     public static final int SIM_AIRCRAFT_PARTS_ACF_SBRKEQ = 327;
     public static final int SIM_AIRCRAFT_GEAR_ACF_GEAR_RETRACT = 328;
+    public static final int SIM_AIRCRAFT_OVERFLOW_ACF_VMCA = 329;
+    public static final int SIM_AIRCRAFT_OVERFLOW_ACF_VYSE = 330;
+    public static final int SIM_AIRCRAFT_VIEW_ACF_TAILNUM_0_3 = 10331;
+    public static final int SIM_AIRCRAFT_VIEW_ACF_TAILNUM_4_7 = 10332;
 
 
 

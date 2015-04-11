@@ -283,13 +283,15 @@ public class RadioTuningUnit extends MFDSubcomponent {
         if ( radio_select == 4 ) {
             g2.setColor(mfd_gc.unusual_color);
             int code_w = mfd_gc.get_text_width(g2, mfd_gc.font_xxl, code_str);
-            g2.drawRect(x_l_fa - num_w/2, y_4_f - line_h, code_w/2 + num_w/2, line_h * 10/8);
-            g2.drawRect(x_l_fa + code_w/2, y_4_f - line_h, code_w/2 + num_w/2, line_h * 10/8);
+            g2.drawRect(x_l_fa - num_w/2, y_4_f - line_h, code_w/2 + num_w/2 - 1, line_h * 10/8);
+            g2.drawRect(x_l_fa + code_w/2 + 1, y_4_f - line_h, code_w/2 + num_w/2 - 1, line_h * 10/8);
         }
         if ( radio_select == 5 ) {
             g2.setColor(mfd_gc.unusual_color);
             g2.drawRect(x_r_fa - num_w/4, y_4_f - line_h, mfd_gc.get_text_width(g2, mfd_gc.font_xxl, mode_str) + num_w/2, line_h * 10/8);
         }
+        g2.setColor(mfd_gc.dim_markings_color);
+        g2.drawString(this.aircraft.aircraft_registration(), x_r_fs, y_4_f);
         
         g2.setColor(mfd_gc.unusual_color);
         int activity_x = x_l + mfd_gc.mfd_size*275/1000;

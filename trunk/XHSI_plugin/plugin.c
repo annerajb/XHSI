@@ -4,8 +4,9 @@
 * This X-Plane plugin sends X-Plane simulator data to an XHSI
 * application instance via UDP.
 *
-* Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
-* Copyright (C) 2009-2011  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2007-2009  Georg Gruetter (gruetter@gmail.com)
+* Copyright (C) 2009-2015  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2014-2015  Nicolas Carel
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -77,6 +78,7 @@
 #include "datarefs_qpac.h"
 #include "datarefs_pa_a320.h"
 #include "datarefs_jar_a320neo.h"
+#include "datarefs_pilotedge.h"
 #include "ui.h"
 #include "net.h"
 #include "packets.h"
@@ -98,49 +100,49 @@ int		    xhsi_send_enabled;
 // X-Plane SDK API methods -----------------------------------
 
 PLUGIN_API int XPluginStart(
-						char *		outName,
-						char *		outSig,
-						char *		outDesc) {
+        char *      outName,
+        char *      outSig,
+        char *      outDesc) {
 
-	XPLMDebugString(PLUGIN_VERSION_TEXT);
-	XPLMDebugString("\n");
+    XPLMDebugString(PLUGIN_VERSION_TEXT);
+    XPLMDebugString("\n");
 
-	strcpy(outName, PLUGIN_VERSION_TEXT);
-	strcpy(outSig, "xhsi.plugin");
-	strcpy(outDesc, "This plugin communicates with XHSI application instances over UDP.");
+    strcpy(outName, PLUGIN_VERSION_TEXT);
+    strcpy(outSig, "xhsi.plugin");
+    strcpy(outDesc, "This plugin communicates with XHSI application instances over UDP.");
 
-	// Use Posix-style paths
-	XPLMEnableFeature("XPLM_USE_NATIVE_PATHS", 1);
+    // Use Posix-style paths
+    XPLMEnableFeature("XPLM_USE_NATIVE_PATHS", 1);
 
 
-	// Find the datarefs we want to send and receive
-	findDataRefs();
-	findXfmcDataRefs();
+    // Find the datarefs we want to send and receive
+    findDataRefs();
+    findXfmcDataRefs();
 
-	// Register custom X-Plane datarefs
-	registerPilotDataRefs();
-	registerCopilotDataRefs();
-	registerGeneralDataRefs();
-	registerEICASDataRefs();
-	registerMFDDataRefs();
+    // Register custom X-Plane datarefs
+    registerPilotDataRefs();
+    registerCopilotDataRefs();
+    registerGeneralDataRefs();
+    registerEICASDataRefs();
+    registerMFDDataRefs();
 
-	// register custom X-Plane commands
-	registerCommands();
+    // register custom X-Plane commands
+    registerCommands();
 
-	// read config file or use defaults
-	initSettings();
+    // read config file or use defaults
+    initSettings();
 
-	createUI();
+    createUI();
 
-	return 1;
+    return 1;
 
 }
 
 
 PLUGIN_API int XPluginEnable(void) {
 
-	xhsi_send_enabled = 1;
-	xhsi_plugin_enabled = 1;
+    xhsi_send_enabled = 1;
+    xhsi_plugin_enabled = 1;
 
     XPLMDebugString("XHSI: enabling...\n");
 
@@ -148,7 +150,7 @@ PLUGIN_API int XPluginEnable(void) {
         return 0;
     }
 
-	setAddresses();
+    setAddresses();
 
     bindSocket();
 
@@ -157,180 +159,187 @@ PLUGIN_API int XPluginEnable(void) {
 
     XPLMDebugString("XHSI: registering flightloop callbacks\n");
 
-	// register flight loop callbacks
-	XPLMRegisterFlightLoopCallback(
-							sendADCCallback,
-							-1.0f,
-							NULL);
+    // register flight loop callbacks
+    XPLMRegisterFlightLoopCallback(
+            sendADCCallback,
+            -1.0f,
+            NULL);
 
-	XPLMRegisterFlightLoopCallback(
-							sendAvionicsCallback,
-							-1.0f,
-							NULL);
+    XPLMRegisterFlightLoopCallback(
+            sendAvionicsCallback,
+            -1.0f,
+            NULL);
 
-	XPLMRegisterFlightLoopCallback(
-							sendStaticCallback,
-							-1.0f,
-							NULL);
+    XPLMRegisterFlightLoopCallback(
+            sendStaticCallback,
+            -1.0f,
+            NULL);
 
-	XPLMRegisterFlightLoopCallback(
-							sendEnginesCallback,
-							-1.0f,
-							NULL);
+    XPLMRegisterFlightLoopCallback(
+            sendEnginesCallback,
+            -1.0f,
+            NULL);
 
-	XPLMRegisterFlightLoopCallback(
-							sendFmsCallback,
-							-1.0f,
-							NULL);
+    XPLMRegisterFlightLoopCallback(
+            sendFmsCallback,
+            -1.0f,
+            NULL);
 
-	XPLMRegisterFlightLoopCallback(
-							sendTcasCallback,
-							-1.0f,
-							NULL);
+    XPLMRegisterFlightLoopCallback(
+            sendTcasCallback,
+            -1.0f,
+            NULL);
 
-	XPLMRegisterFlightLoopCallback(
-							receiveCallback,
-							-100.0f,
-							NULL);
+    XPLMRegisterFlightLoopCallback(
+            receiveCallback,
+            -100.0f,
+            NULL);
 
-	// initialize custom X-Plane datarefs
-	XPLMRegisterFlightLoopCallback(
-							initGeneralCallback,
-							-1.0f,
-							NULL);
-	XPLMRegisterFlightLoopCallback(
-							initPilotCallback,
-							-1.0f,
-							NULL);
-	XPLMRegisterFlightLoopCallback(
-							initCopilotCallback,
-							-1.0f,
-							NULL);
-	XPLMRegisterFlightLoopCallback(
-							initEICASCallback,
-							-1.0f,
-							NULL);
-	XPLMRegisterFlightLoopCallback(
-							initMFDCallback,
-							-1.0f,
-							NULL);
+    // initialize custom X-Plane datarefs
+    XPLMRegisterFlightLoopCallback(
+            initGeneralCallback,
+            -1.0f,
+            NULL);
+    XPLMRegisterFlightLoopCallback(
+            initPilotCallback,
+            -1.0f,
+            NULL);
+    XPLMRegisterFlightLoopCallback(
+            initCopilotCallback,
+            -1.0f,
+            NULL);
+    XPLMRegisterFlightLoopCallback(
+            initEICASCallback,
+            -1.0f,
+            NULL);
+    XPLMRegisterFlightLoopCallback(
+            initMFDCallback,
+            -1.0f,
+            NULL);
 
     // UFMC
     XPLMRegisterFlightLoopCallback(
-							checkUFMCCallback,
-							-1.0f,
-							NULL);
+            checkUFMCCallback,
+            -1.0f,
+            NULL);
 
     // X737
     XPLMRegisterFlightLoopCallback(
-							checkX737Callback,
-							-1.0f,
-							NULL);
+            checkX737Callback,
+            -1.0f,
+            NULL);
 
     // CL30
     XPLMRegisterFlightLoopCallback(
-							checkCL30Callback,
-							-1.0f,
-							NULL);
+            checkCL30Callback,
+            -1.0f,
+            NULL);
+
+    // PilotEdge
+    XPLMRegisterFlightLoopCallback(
+            checkPilotEdgeCallback,
+            -1.0f,
+            NULL);
 
     // QPAC AirbusFBW
     XPLMRegisterFlightLoopCallback(
-                           checkQpacCallback,
-                           -1.0f,
-                           NULL);
+            checkQpacCallback,
+            -1.0f,
+            NULL);
     // Peter Aircraf Airbus A320
     XPLMRegisterFlightLoopCallback(
-                           checkPaA320Callback,
-                           -1.0f,
-                           NULL);
+            checkPaA320Callback,
+            -1.0f,
+            NULL);
     // JarDesign Airbus A320neo Aircraft
     XPLMRegisterFlightLoopCallback(
-    					   checkJarA320NeoCallback,
-                           -1.0f,
-                           NULL);
+            checkJarA320NeoCallback,
+            -1.0f,
+            NULL);
 
     // X-FMC
     XPLMRegisterFlightLoopCallback(
-                           sendXfmcCallback,
-                           -1.0f,
-                           NULL);
+            sendXfmcCallback,
+            -1.0f,
+            NULL);
 
     // Notify DataRefEditor of our custom DataRefs
     XPLMRegisterFlightLoopCallback(
-                           notifyDataRefEditorCallback,
-                           -1.0f,
-                           NULL);
+            notifyDataRefEditorCallback,
+            -1.0f,
+            NULL);
 
 
     XPLMDebugString("XHSI: flightloop callbacks registered\n");
 
-	return 1;
+    return 1;
 
 }
 
 
 PLUGIN_API void XPluginReceiveMessage(
-					XPLMPluginID	inFromWho,
-					long			inMessage,
-					void *			inParam) {
+        XPLMPluginID	inFromWho,
+        long		inMessage,
+        void *		inParam) {
     // nop
 }
 
 
 PLUGIN_API void XPluginDisable(void) {
 
-	XPLMDebugString("XHSI: disabling...\n");
+    XPLMDebugString("XHSI: disabling...\n");
 
     XPLMDebugString("XHSI: unregistering flightloop callbacks\n");
 
-	XPLMUnregisterFlightLoopCallback(sendADCCallback, NULL);
-	XPLMUnregisterFlightLoopCallback(sendAvionicsCallback, NULL);
-	XPLMUnregisterFlightLoopCallback(sendEnginesCallback, NULL);
-	XPLMUnregisterFlightLoopCallback(sendStaticCallback, NULL);
-	XPLMUnregisterFlightLoopCallback(sendFmsCallback, NULL);
-	XPLMUnregisterFlightLoopCallback(sendTcasCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(sendADCCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(sendAvionicsCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(sendEnginesCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(sendStaticCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(sendFmsCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(sendTcasCallback, NULL);
 
-	XPLMUnregisterFlightLoopCallback(receiveCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(receiveCallback, NULL);
 
-	XPLMUnregisterFlightLoopCallback(initPilotCallback, NULL);
-	XPLMUnregisterFlightLoopCallback(initCopilotCallback, NULL);
-	XPLMUnregisterFlightLoopCallback(initEICASCallback, NULL);
-	XPLMUnregisterFlightLoopCallback(initMFDCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(initPilotCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(initCopilotCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(initEICASCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(initMFDCallback, NULL);
 
-	XPLMUnregisterFlightLoopCallback(checkUFMCCallback, NULL);
-	XPLMUnregisterFlightLoopCallback(checkX737Callback, NULL);
-	XPLMUnregisterFlightLoopCallback(checkCL30Callback, NULL);
-	XPLMUnregisterFlightLoopCallback(checkQpacCallback, NULL);
-	XPLMUnregisterFlightLoopCallback(checkPaA320Callback, NULL);
-	XPLMUnregisterFlightLoopCallback(checkJarA320NeoCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(checkUFMCCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(checkX737Callback, NULL);
+    XPLMUnregisterFlightLoopCallback(checkCL30Callback, NULL);
+    XPLMUnregisterFlightLoopCallback(checkPilotEdgeCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(checkQpacCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(checkPaA320Callback, NULL);
+    XPLMUnregisterFlightLoopCallback(checkJarA320NeoCallback, NULL);
 
     XPLMUnregisterFlightLoopCallback(sendXfmcCallback, NULL);
 
     XPLMDebugString("XHSI: flightloop callbacks unregistered\n");
 
-	closeSocket();
+    closeSocket();
 
-	XPLMDebugString("XHSI: disabled\n");
+    XPLMDebugString("XHSI: disabled\n");
 
-	xhsi_plugin_enabled = 0;
-	xhsi_send_enabled = 0;
+    xhsi_plugin_enabled = 0;
+    xhsi_send_enabled = 0;
 
 }
 
 
 PLUGIN_API void	XPluginStop(void) {
 
-	// unregister custom X-Plane commands
-	unregisterCommands();
+    // unregister custom X-Plane commands
+    unregisterCommands();
 
     // unregister custom X-Plane datarefs
- 	unregisterPilotDataRefs();
- 	unregisterCopilotDataRefs();
-	unregisterGeneralDataRefs();
- 	unregisterEICASDataRefs();
- 	unregisterMFDDataRefs();
+    unregisterPilotDataRefs();
+    unregisterCopilotDataRefs();
+    unregisterGeneralDataRefs();
+    unregisterEICASDataRefs();
+    unregisterMFDDataRefs();
 
-	destroyUI();
+    destroyUI();
 
 }
 
