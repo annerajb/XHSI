@@ -96,6 +96,7 @@ public class XHSIPreferences {
     public static final String PREF_COLORED_HSI_COURSE = "pfd.colored.hsi.course";
     public static final String PREF_ND_NAVAID_FREQ = "nd.navaid.frequencies";
     public static final String PREF_ND_WRITE_AP_HDG = "nd.write.ap.heading";
+    public static final String PREF_ND_SHOW_CLOCK = "nd.show.clock";
 
     // PFD options
     public static final String PREF_HORIZON_STYLE = "horizon.style";
@@ -105,6 +106,7 @@ public class XHSIPreferences {
     public static final String PREF_DRAW_AOA = "draw.aoa";
     public static final String PREF_PFD_DRAW_RADIOS = "pfd.draw.radios";
     public static final String PREF_PFD_ADI_CENTERED = "pfd.adi.centered";
+    public static final String PREF_PFD_DRAW_TWINSPEEDS = "pfd.draw.twinspeeds";
 
     // EICAS options
     public static final String PREF_EICAS_LAYOUT = "eicas.layout";
@@ -638,11 +640,20 @@ public class XHSIPreferences {
     }
 
     /**
-     * @return            - Display the navaid frequencies on the map when DATA is on
+     * @return            - Write the AP HDG at the top
      *
      */
     public boolean get_nd_write_ap_hdg() {
         return get_preference(PREF_ND_WRITE_AP_HDG).equalsIgnoreCase("true");
+    }
+
+    
+    /**
+     * @return            - Display the Clock/Chronograph
+     *
+     */
+    public boolean get_nd_show_clock() {
+        return get_preference(PREF_ND_SHOW_CLOCK).equalsIgnoreCase("true");
     }
 
     
@@ -734,6 +745,14 @@ public class XHSIPreferences {
      */
     public boolean get_pfd_adi_centered() {
         return get_preference(PREF_PFD_ADI_CENTERED).equalsIgnoreCase("true");
+    }
+
+    /**
+     * @return            - Draw Radios
+     *
+     */
+    public boolean get_pfd_draw_twinspeeds() {
+        return get_preference(PREF_PFD_DRAW_TWINSPEEDS).equalsIgnoreCase("true");
     }
     
     
@@ -1113,6 +1132,11 @@ public class XHSIPreferences {
             this.unsaved_changes = true;
         }
 
+        if ( ! this.preferences.containsKey(PREF_ND_SHOW_CLOCK) ) {
+            this.preferences.setProperty(PREF_ND_SHOW_CLOCK, "true");
+            this.unsaved_changes = true;
+        }
+
         
         // PFD
 
@@ -1150,7 +1174,12 @@ public class XHSIPreferences {
             this.preferences.setProperty(PREF_PFD_ADI_CENTERED, "false");
             this.unsaved_changes = true;
         }
-       
+
+        if ( ! this.preferences.containsKey(PREF_PFD_DRAW_TWINSPEEDS) ) {
+            this.preferences.setProperty(PREF_PFD_DRAW_TWINSPEEDS, "false");
+            this.unsaved_changes = true;
+        }
+
         // EICAS
         
         if ( ! this.preferences.containsKey(PREF_EICAS_LAYOUT) ) {

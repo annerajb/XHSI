@@ -136,6 +136,7 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
                     // a string of 4 bytes
                     string_data = new String(sim_data, 8+(i*8)+4, 4).trim();
                     data_stream.skipBytes(4);
+//logger.warning("STRING:"+data_point_id+"="+string_data);
                     this.xplane_data_repository.store_sim_string(data_point_id, string_data);
 //                } else if ( data_point_id >= 5000 ) {
 //                    // Int

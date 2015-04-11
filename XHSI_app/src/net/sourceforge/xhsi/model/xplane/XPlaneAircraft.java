@@ -65,6 +65,10 @@ public class XPlaneAircraft implements Aircraft {
         return this.environment;
     }
 
+    public String aircraft_registration() {
+        return sim_data.get_sim_string(XPlaneSimDataRepository.SIM_AIRCRAFT_VIEW_ACF_TAILNUM_0_3) + sim_data.get_sim_string(XPlaneSimDataRepository.SIM_AIRCRAFT_VIEW_ACF_TAILNUM_4_7);
+    }
+    
     public boolean battery() {
         if ( XHSIPreferences.get_instance().get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ||
                 ! XHSIPreferences.get_instance().get_use_power() ) {
@@ -449,6 +453,14 @@ public class XPlaneAircraft implements Aircraft {
 
     public float get_Vle() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_OVERFLOW_ACF_VLE);
+    }
+
+    public float get_Vmca() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_OVERFLOW_ACF_VMCA);
+    }
+
+    public float get_Vyse() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_OVERFLOW_ACF_VYSE);
     }
 
     public int num_engines() {

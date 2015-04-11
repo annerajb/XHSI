@@ -55,7 +55,7 @@ void findCL30DataRefs(void) {
 
             cl30_ready = 1;
 
-            XPLMDebugString("XHSI: registering DDenn Design Bombardier Challenger 300 DataRefs\n");
+            XPLMDebugString("XHSI: using DDenn Design Bombardier Challenger 300 DataRefs\n");
 
             cl30_v1 = XPLMFindDataRef("cl300/refspds_v1");
             cl30_vr = XPLMFindDataRef("cl300/refspds_vr");

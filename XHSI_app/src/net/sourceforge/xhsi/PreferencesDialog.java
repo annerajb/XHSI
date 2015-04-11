@@ -125,6 +125,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox bold_fonts_checkbox;
     private JCheckBox nd_navaid_frequencies;
     private JCheckBox nd_write_ap_hdg;
+    private JCheckBox nd_show_clock;
     private JCheckBox arpt_chart_nav_dest;
 
     private int du_pos_x[] = new int[MAX_WINS];
@@ -145,6 +146,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox colored_hsi_course_checkbox;
     private JCheckBox draw_radios_checkbox;
     private JCheckBox adi_centered_checkbox;
+    private JCheckBox draw_twinspeeds_checkbox;
   
     private JComboBox eicas_layout_combobox;
     private final String[] eicas_layouts = { XHSIPreferences.EICAS_LAYOUT_PRIMARY, XHSIPreferences.EICAS_LAYOUT_PRIMARY_AND_CONTROLS, XHSIPreferences.EICAS_LAYOUT_FULL };
@@ -330,6 +332,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         this.nd_write_ap_hdg.setSelected(preferences.get_preference(XHSIPreferences.PREF_ND_WRITE_AP_HDG).equalsIgnoreCase("true"));
 
+        this.nd_show_clock.setSelected(preferences.get_preference(XHSIPreferences.PREF_ND_SHOW_CLOCK).equalsIgnoreCase("true"));
+
 
         // PFD Options (3)
 
@@ -356,6 +360,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.draw_radios_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_RADIOS).equalsIgnoreCase("true"));
 
         this.adi_centered_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_ADI_CENTERED).equalsIgnoreCase("true"));
+
+        this.draw_twinspeeds_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_TWINSPEEDS).equalsIgnoreCase("true"));
 
 
         // EICAS Options (5)
@@ -1218,6 +1224,20 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         pfd_options_panel.add(this.adi_centered_checkbox, cons);
         dialog_line++;
 
+        // Draw Vmca (red) and Vyse (blue) lines
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        pfd_options_panel.add(new JLabel("Draw Vmca (red) and Vyse (blue) lines", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.draw_twinspeeds_checkbox = new JCheckBox();
+        pfd_options_panel.add(this.draw_twinspeeds_checkbox, cons);
+        dialog_line++;
+
         
 //        // A reminder
 //        cons.gridx = 2;
@@ -1424,6 +1444,20 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.anchor = GridBagConstraints.WEST;
         this.nd_write_ap_hdg = new JCheckBox("  (if the window is wide enough)");
         nd_options_panel.add(this.nd_write_ap_hdg, cons);
+        dialog_line++;
+
+        // Show the Clock/Chronograph at the bottom
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        nd_options_panel.add(new JLabel("Show the Clock/Chronograph at the bottom", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.nd_show_clock = new JCheckBox();
+        nd_options_panel.add(this.nd_show_clock, cons);
         dialog_line++;
 
 //        // A reminder
@@ -1911,6 +1945,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             if ( this.nd_write_ap_hdg.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_ND_WRITE_AP_HDG).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_ND_WRITE_AP_HDG, this.nd_write_ap_hdg.isSelected()?"true":"false");
 
+            if ( this.nd_show_clock.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_ND_SHOW_CLOCK).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_ND_SHOW_CLOCK, this.nd_show_clock.isSelected()?"true":"false");
+
 
             // PFD options
 
@@ -1934,6 +1971,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
             if ( this.adi_centered_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_PFD_ADI_CENTERED).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_PFD_ADI_CENTERED, this.adi_centered_checkbox.isSelected()?"true":"false");
+
+            if ( this.draw_twinspeeds_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_TWINSPEEDS).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_PFD_DRAW_TWINSPEEDS, this.draw_twinspeeds_checkbox.isSelected()?"true":"false");
 
 
             // EICAS options

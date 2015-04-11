@@ -285,6 +285,24 @@ public class SpeedTape extends PFDSubcomponent {
             }
             
         }
+        
+        
+        if ( this.preferences.get_pfd_draw_twinspeeds() ) {
+            // Vmca
+            float vmca = this.aircraft.get_Vmca();
+            if ( vmca > 0.0f ) {
+                int v_y = pfd_gc.adi_cy - Math.round( (vmca - ias) * pfd_gc.tape_height / 100.0f );
+                g2.setColor(pfd_gc.warning_color);
+                g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*7/8, v_y, pfd_gc.speedtape_left + pfd_gc.tape_width + pfd_gc.tape_width*5/16, v_y);
+            }
+            // Vyse
+            float vyse = this.aircraft.get_Vyse();
+            if ( vyse > 0.0f ) {
+                int v_y = pfd_gc.adi_cy - Math.round( (vyse - ias) * pfd_gc.tape_height / 100.0f );
+                g2.setColor(pfd_gc.unusual_color);
+                g2.drawLine(pfd_gc.speedtape_left + pfd_gc.tape_width*7/8, v_y, pfd_gc.speedtape_left + pfd_gc.tape_width + pfd_gc.tape_width*5/16, v_y);
+            }
+        }
 
         
         // AP speed bug and value readout

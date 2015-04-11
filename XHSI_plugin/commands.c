@@ -83,7 +83,9 @@
 #define RTU_SELECT_ADF2 6
 #define RTU_SELECT_NAV2 7
 #define RTU_SELECT_COM2 8
-#define RTU_SELECT_CYCLE 9
+#define RTU_SELECT_CYCLE 100
+#define RTU_SELECT_DOWN 101
+#define RTU_SELECT_UP 102
 #define RTU_COARSE_DOWN -1000
 #define RTU_COARSE_UP +1000
 #define RTU_FINE_DOWN -999
@@ -429,6 +431,8 @@ XPLMCommandRef rtu_select_flip_adf2;
 XPLMCommandRef rtu_select_flip_nav2;
 XPLMCommandRef rtu_select_flip_com2;
 XPLMCommandRef rtu_select_cycle;
+XPLMCommandRef rtu_select_down;
+XPLMCommandRef rtu_select_up;
 XPLMCommandRef rtu_flip_selected;
 XPLMCommandRef rtu_coarse_down;
 XPLMCommandRef rtu_coarse_up;
@@ -2091,6 +2095,20 @@ XPLMCommandCallback_f rtu_handler (XPLMCommandRef inCommand, XPLMCommandPhase in
                 XPLMSetDatai(xhsi_rtu_selected_radio,sel);
                 break;
                 
+            case RTU_SELECT_DOWN :
+                sel = XPLMGetDatai(xhsi_rtu_selected_radio);
+                sel -= 1;
+                if (sel < 0) sel = 0;
+                XPLMSetDatai(xhsi_rtu_selected_radio,sel);
+                break;
+                
+            case RTU_SELECT_UP :
+                sel = XPLMGetDatai(xhsi_rtu_selected_radio);
+                sel += 1;
+                if (sel > 8) sel = 8;
+                XPLMSetDatai(xhsi_rtu_selected_radio,sel);
+                break;
+                
             case RTU_FLIP_SELECTED :
                 sel = XPLMGetDatai(xhsi_rtu_selected_radio);
                 switch ( sel )
@@ -2105,7 +2123,7 @@ XPLMCommandCallback_f rtu_handler (XPLMCommandRef inCommand, XPLMCommandPhase in
                         XPLMCommandOnce(adf1_standy_flip);
                         break;
                     case RTU_SELECT_XPDR :
-                        XPLMCommandOnce(sim_transponder_transponder_ident);
+                        // not realistic... XPLMCommandOnce(sim_transponder_transponder_ident);
                         break;
                     case RTU_SELECT_TCAS :
                         XPLMCommandOnce(xpdr_mode_cycle);
@@ -2912,8 +2930,14 @@ void registerCommands(void) {
     rtu_select_flip_com2 = XPLMCreateCommand("xhsi/rtu/select_flip_com2", "RTU select/flip COM2");
     XPLMRegisterCommandHandler(rtu_select_flip_com2, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_FLIP_COM2);
     // RTU cycle selection RTU_SELECT_CYCLE
-    rtu_select_cycle = XPLMCreateCommand("xhsi/rtu/select_cycle", "RTU select next radio");
+    rtu_select_cycle = XPLMCreateCommand("xhsi/rtu/select_cycle", "RTU cycle through the radios");
     XPLMRegisterCommandHandler(rtu_select_cycle, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_CYCLE);
+    // RTU down selection RTU_SELECT_DOWN
+    rtu_select_down = XPLMCreateCommand("xhsi/rtu/select_down", "RTU select previous radio");
+    XPLMRegisterCommandHandler(rtu_select_down, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_DOWN);
+    // RTU up selection RTU_SELECT_UP
+    rtu_select_up = XPLMCreateCommand("xhsi/rtu/select_up", "RTU select next radio");
+    XPLMRegisterCommandHandler(rtu_select_up, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_UP);
     // RTU flip selected
     rtu_flip_selected = XPLMCreateCommand("xhsi/rtu/flip_selected", "RTU flip selected radio");
     XPLMRegisterCommandHandler(rtu_flip_selected, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_FLIP_SELECTED);
