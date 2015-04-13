@@ -191,11 +191,22 @@ public class ECAM_Flaps extends EICASSubcomponent {
  
         // Slats position
         g2.setColor(eicas_gc.ecam_normal_color);
+        double slats_angle = Math.toRadians(80*slats);
+        double slats_angle_t = Math.toRadians(40*slats);
+		int s_tx = (int) Math.round(slats_w * Math.sin(slats_angle)); 
+	    int s_ty = (int) Math.round(-slats_h * Math.cos(slats_angle));
+//	    int s_dy = (int) Math.round(-slats_h * Math.cos(slats_angle) + flaps_h*25*Math.sin(slats_angle)/100);
+	    int s_dy = (int) Math.round(-slats_h * Math.cos(slats_angle));
+
         // double s_angle = -Math.toRadians(90*slats-90);
         // g2.translate(eicas_gc.ecam_slats_center_x + slats_w * Math.cos(s_angle), eicas_gc.ecam_slats_center_y + slats_h * Math.sin(s_angle));
         g2.rotate(-Math.toRadians(90*slats), eicas_gc.ecam_slats_center_x, eicas_gc.ecam_slats_center_y);
         g2.drawPolygon(slats_triangle_x, slats_triangle_y, 3);
         g2.setTransform(original_at);
+        g2.drawLine(eicas_gc.ecam_flaps_box_x + eicas_gc.ecam_flaps_box_w*33/100, eicas_gc.ecam_flaps_box_y + eicas_gc.ecam_flaps_box_h*38/100 - 1 ,
+    			eicas_gc.ecam_slats_center_x - s_tx, eicas_gc.ecam_slats_center_y+s_dy);
+
+        
     }
     
     

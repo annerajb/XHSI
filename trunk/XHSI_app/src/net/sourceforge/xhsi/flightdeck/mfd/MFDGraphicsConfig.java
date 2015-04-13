@@ -137,6 +137,55 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int gear_y;
     public int autbrk_x;
     public int autbrk_y;
+    // Airbus Flight Controls
+    public int fctl_mid_x;  
+    public int fctl_dx_wing_box;
+    public int fctl_dx_wing_a; 
+    public int fctl_dx_wing_b; 
+    public int fctl_dx_wing_c; 
+    public int fctl_dx_ail; 
+    public int fctl_dx_elev; 
+    public int fctl_dx_mid_box;
+    public int fctl_dx_elev_box; 
+    public int fctl_dx_elev_txt;
+    public int fctl_dx_ail_box1; 
+    public int fctl_dx_ail_box2;
+    public int fctl_dx_ail_txt;
+    public int fctl_dx_ail_end;
+    public int fctl_dx_rud_a; 
+    public int fctl_dx_rud_b; 
+    public int fctl_dx_rud_c; 
+    public int fctl_dx_pitch_box; 
+    public int fctl_dx_box_width;
+    public int fctl_dx_tri;
+    public int fctl_y_wing_box;
+    public int fctl_y_wing_top;
+    public int fctl_y_wing_mid1; 
+    public int fctl_y_wing_mid2; 
+    public int fctl_y_wing_bottom;
+    public int fctl_dy_wing_mark;
+    public int fctl_y_ail_top;
+    public int fctl_y_ail_bottom;
+    public int fctl_y_ail_box_top; 
+    public int fctl_dy_ail_end;
+    public int fctl_y_pitch_box_top;
+    public int fctl_y_pitch_txt;
+    public int fctl_y_elev_top;
+    public int fctl_y_elev_bottom;
+    public int fctl_y_rud_top;
+    public int fctl_y_rud_mid1;
+    public int fctl_y_rud_mid2;
+    public int fctl_y_rud_bottom;
+    public int fctl_y_rud_box_top;
+    public int fctl_y_elev_box_top;
+    public int fctl_box_height;
+    public int fctl_y_rud_bullet;
+    public int fctl_r_rud_arc;
+    public int fctl_r_rud_bullet;
+    public int fctl_y_rud_arc_top;
+    public int fctl_y_rud_arc_end;
+    public int fctl_dy_tri;
+    
     
     public MFDGraphicsConfig(Component root_component, int du) {
         super(root_component);
@@ -287,10 +336,10 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             tape_h = mfd_size*14/100;
             
             // Flight controls
-            controls_x = panel_rect.x + panel_rect.width * 10/100 ;
-            controls_w = panel_rect.width * 80/100;
-            controls_y = panel_rect.y + mfd_size * 10/100;
-            controls_h = mfd_size * 80/100;
+            controls_x = panel_rect.x + panel_rect.width * 30/100 ;
+            controls_w = panel_rect.width * 40/100;
+            controls_y = panel_rect.y + mfd_size * 50/100;
+            controls_h = mfd_size * 45/100;
             
             trim_txt_x = controls_x + controls_w*57/100;
             trim_txt_y = controls_y + controls_h*68/100;
@@ -322,6 +371,55 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             gear_y = controls_y + controls_h*1/16;
             autbrk_x = gear_x;
             autbrk_y = controls_y + controls_h*6/16;
+            
+            // Airbus Flight Controls
+            fctl_mid_x = panel_rect.x + panel_rect.width / 2;  // middle axis
+            fctl_dx_wing_box = panel_rect.width * 53/1000; // middle text box
+            fctl_dx_wing_a = panel_rect.width * 38/1000; // wing
+            fctl_dx_wing_b = panel_rect.width * 113/1000; // wing
+            fctl_dx_wing_c = panel_rect.width * 421/1000; // wing
+            fctl_dx_ail = panel_rect.width * 383/1000; // aileron
+            fctl_dx_elev = panel_rect.width * 226/1000; // elevators
+            fctl_dx_elev_txt = panel_rect.width * 316/1000; // elevators legend
+            fctl_dx_mid_box = panel_rect.width * 53/1000; // wing
+            fctl_dx_elev_box = panel_rect.width * 278/1000; // elevator text box
+            fctl_dx_ail_box1 = panel_rect.width * 267/1000; // inner aileron text box
+            fctl_dx_ail_box2 = panel_rect.width * 429/1000; // outer aileron text box
+            fctl_dx_ail_txt = panel_rect.width * 458/1000; // aileron legend 
+            fctl_dx_ail_end = panel_rect.width * 9/1000; // aileron end box
+            fctl_dx_rud_a = panel_rect.width * 60/1000; // rudder
+            fctl_dx_rud_b = panel_rect.width * 120/1000; // rudder
+            fctl_dx_rud_c = panel_rect.width * 173/1000; // rudder
+            fctl_dx_pitch_box = panel_rect.width * 120/1000; // rudder
+            fctl_dx_box_width = panel_rect.width * 67/1000; // hydrolic box width
+            fctl_dx_tri = mfd_size * 30/1000;
+            fctl_y_wing_box = panel_rect.y + mfd_size * 25/1000;
+            fctl_y_wing_top = panel_rect.y + mfd_size * 67/1000;
+            fctl_y_wing_mid1 = panel_rect.y + mfd_size * 133/1000; 
+            fctl_y_wing_mid2 = panel_rect.y + mfd_size * 150/1000; 
+            fctl_y_wing_bottom = panel_rect.y + mfd_size * 200/1000;
+            fctl_dy_wing_mark = mfd_size * 8/1000;
+            fctl_y_ail_top = panel_rect.y + mfd_size * 229/1000;
+            fctl_y_ail_bottom = panel_rect.y + mfd_size * 492/1000;
+            fctl_y_ail_box_top = panel_rect.y + mfd_size * 433/1000;            
+            fctl_dy_ail_end = mfd_size * 20/1000;
+            fctl_y_pitch_box_top = panel_rect.y + mfd_size * 508/1000;
+            fctl_y_pitch_txt = panel_rect.y + mfd_size * 583/1000;
+            fctl_y_elev_top = panel_rect.y + mfd_size * 592/1000;
+            fctl_y_elev_bottom = panel_rect.y + mfd_size * 842/1000;
+            fctl_y_rud_top = panel_rect.y + mfd_size * 591/1000;
+            fctl_y_rud_mid1 = panel_rect.y + mfd_size * 625/1000;
+            fctl_y_rud_mid2 = panel_rect.y + mfd_size * 642/1000;
+            fctl_y_rud_bottom = panel_rect.y + mfd_size * 667/1000;
+            fctl_y_rud_box_top = panel_rect.y + mfd_size * 692/1000;
+            fctl_y_rud_bullet = panel_rect.y + mfd_size * 808/1000;
+            fctl_y_elev_box_top = panel_rect.y + mfd_size * 742/1000;
+            fctl_box_height = mfd_size * 42/1000;  // font_heigth
+            fctl_r_rud_arc = mfd_size * 200/1000;
+            fctl_r_rud_bullet = mfd_size * 29/1000;
+            fctl_y_rud_arc_top = panel_rect.y + mfd_size * 717/1000;
+            fctl_y_rud_arc_end = panel_rect.y + mfd_size * 912/1000; 
+            fctl_dy_tri = mfd_size * 20/1000;
 
             
         }

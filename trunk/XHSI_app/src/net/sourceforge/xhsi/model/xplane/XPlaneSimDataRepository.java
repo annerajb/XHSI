@@ -274,8 +274,12 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_AIRCRAFT_OVERFLOW_ACF_VMCA = 329;
     public static final int SIM_AIRCRAFT_OVERFLOW_ACF_VYSE = 330;
     public static final int SIM_AIRCRAFT_VIEW_ACF_TAILNUM_0_3 = 10331;
-    public static final int SIM_AIRCRAFT_VIEW_ACF_TAILNUM_4_7 = 10332;
-
+    public static final int SIM_AIRCRAFT_VIEW_ACF_TAILNUM_4_7 = 10332;    
+    public static final int SIM_AIRCRAFT_CONTROLS_ACL_ELEV_DN = 333;
+    public static final int SIM_AIRCRAFT_CONTROLS_ACL_ELEV_UP = 334;
+    public static final int SIM_AIRCRAFT_CONTROLS_ACL_AIL_UP = 335;
+    public static final int SIM_AIRCRAFT_CONTROLS_ACL_AIL_DN = 336;
+    public static final int SIM_AIRCRAFT_CONTROLS_ACL_RUDDER_LR = 337;
 
 
     // Controls & annunciators
@@ -348,6 +352,13 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_MPR_ = 590;
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_EPR_ = 600;
     public static final int SIM_COCKPIT2_ENGINE_ACTUATORS_THROTTLE_RATIO_ = 610;
+    
+    // Control surface positions : rudder, elevators, ailerons, spoilers
+    public static final int SIM_FLIGHTMODEL_CONTROLS_RUDDER = 620;
+    public static final int SIM_FLIGHTMODEL_CONTROLS_LEFT_ELEV = 621;
+    public static final int SIM_FLIGHTMODEL_CONTROLS_RIGHT_ELEV = 622;
+    public static final int SIM_FLIGHTMODEL_CONTROLS_LEFT_AIL = 623;
+    public static final int SIM_FLIGHTMODEL_CONTROLS_RIGHT_AIL = 624;
     
     // UFMC
     public static final int UFMC_STATUS = 700;
