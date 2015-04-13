@@ -55,30 +55,440 @@ public class FlightControls extends MFDSubcomponent {
 		if ( mfd_gc.powered && avionics.get_mfd_mode() == Avionics.MFD_MODE_FCTL) {
 			// Page ID
 			drawPageID(g2, "FCTL");
+			/* 
             g2.setColor(mfd_gc.instrument_background_color);
             g2.drawRect(mfd_gc.controls_x, mfd_gc.controls_y, mfd_gc.controls_w, mfd_gc.controls_h);
             g2.drawLine(mfd_gc.controls_x, mfd_gc.controls_y + mfd_gc.controls_h/2, mfd_gc.controls_x + mfd_gc.controls_w, mfd_gc.controls_y + mfd_gc.controls_h/2);
             g2.drawLine(mfd_gc.controls_x + mfd_gc.controls_w*60/100, mfd_gc.controls_y, mfd_gc.controls_x + mfd_gc.controls_w*60/100, mfd_gc.controls_y + mfd_gc.controls_h/2);
             g2.drawLine(mfd_gc.controls_x + mfd_gc.controls_w*60/100, mfd_gc.controls_y + mfd_gc.controls_h*30/100, mfd_gc.controls_x + mfd_gc.controls_w, mfd_gc.controls_y + mfd_gc.controls_h*30/100);
-			
-            draw_trim(g2);
-            draw_flaps_speedbrake(g2);
-            draw_gears(g2);
-            draw_parkbrake(g2);
-            draw_autobrake(g2);
+            */
+			draw_airbus_speedbrake(g2);
+			draw_airbus_aileron(g2);
+			draw_airbus_elevator(g2);
+			draw_airbus_rudder(g2);
+			draw_airbus_pitch_trim(g2);
+			draw_airbus_roll_trim(g2);
+            //draw_trim(g2);
+            //draw_flaps_speedbrake(g2);
+            //draw_gears(g2);
+            //draw_parkbrake(g2);
+            //draw_autobrake(g2);
 		}
 	}
 
     
     private void drawPageID(Graphics2D g2, String page_str) {
         g2.setColor(mfd_gc.ecam_markings_color);
-        g2.setFont(mfd_gc.font_xl);
-    	int page_id_x = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width/2 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, page_str)/2;
-    	int page_id_y = mfd_gc.panel_rect.y + mfd_gc.line_height_xl * 11/10;     	
+        g2.setFont(mfd_gc.font_xxl);
+    	int page_id_x = mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, page_str)/2;
+    	int page_id_y = mfd_gc.panel_rect.y + mfd_gc.line_height_xxl * 11/10;     	
         g2.drawString(page_str, page_id_x, page_id_y);
-        g2.drawLine(page_id_x, page_id_y + mfd_gc.line_height_xl/8, page_id_x + mfd_gc.get_text_width(g2, mfd_gc.font_xl, page_str), page_id_y + mfd_gc.line_height_m/8);
+        g2.drawLine(page_id_x, page_id_y + mfd_gc.line_height_xl/8, page_id_x + mfd_gc.get_text_width(g2, mfd_gc.font_xxl, page_str), page_id_y + mfd_gc.line_height_m/8);
     }
   
+    private void draw_airbus_speedbrake(Graphics2D g2) {
+    	g2.setColor(mfd_gc.ecam_markings_color);
+    	g2.drawLine(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_wing_b, mfd_gc.fctl_y_wing_top, 
+    			    mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_wing_c, mfd_gc.fctl_y_wing_mid1 );
+    	g2.drawLine(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_wing_b, mfd_gc.fctl_y_wing_top, 
+    			    mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_wing_b, mfd_gc.fctl_y_wing_top + mfd_gc.fctl_dy_wing_mark);
+    	g2.drawLine(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_wing_c, mfd_gc.fctl_y_wing_mid1, 
+			        mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_wing_c, mfd_gc.fctl_y_wing_mid1 + mfd_gc.fctl_dy_wing_mark );
+    	
+    	g2.drawLine(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_wing_a, mfd_gc.fctl_y_wing_mid2, 
+			        mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_wing_c, mfd_gc.fctl_y_wing_bottom );
+    	g2.drawLine(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_wing_a, mfd_gc.fctl_y_wing_mid2, 
+    			    mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_wing_a, mfd_gc.fctl_y_wing_mid2 - mfd_gc.fctl_dy_wing_mark );
+    	g2.drawLine(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_wing_c, mfd_gc.fctl_y_wing_bottom , 
+    			    mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_wing_c, mfd_gc.fctl_y_wing_bottom - mfd_gc.fctl_dy_wing_mark );
+    	
+    	g2.drawLine(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_b, mfd_gc.fctl_y_wing_top, 
+    			mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_c, mfd_gc.fctl_y_wing_mid1 );
+    	g2.drawLine(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_b, mfd_gc.fctl_y_wing_top, 
+    			mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_b, mfd_gc.fctl_y_wing_top + mfd_gc.fctl_dy_wing_mark);
+    	g2.drawLine(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_c, mfd_gc.fctl_y_wing_mid1, 
+    			mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_c, mfd_gc.fctl_y_wing_mid1 + mfd_gc.fctl_dy_wing_mark );
+
+    	g2.drawLine(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_a, mfd_gc.fctl_y_wing_mid2, 
+    			mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_c, mfd_gc.fctl_y_wing_bottom );
+    	g2.drawLine(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_a, mfd_gc.fctl_y_wing_mid2, 
+    			mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_a, mfd_gc.fctl_y_wing_mid2 - mfd_gc.fctl_dy_wing_mark );
+    	g2.drawLine(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_c, mfd_gc.fctl_y_wing_bottom , 
+    			mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_c, mfd_gc.fctl_y_wing_bottom - mfd_gc.fctl_dy_wing_mark );
+    	
+    	// "SPD BRK"
+    	g2.setFont(mfd_gc.font_xl);
+    	String spd_brk_str="SPD BRK";
+    	g2.drawString(spd_brk_str, mfd_gc.fctl_mid_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, spd_brk_str)/2 , mfd_gc.fctl_y_ail_top);
+
+    	// Hydrolic box "GBY"
+    	// Text in green is circuit ok, amber when low pressure (<2000 psi)
+    	g2.setColor(mfd_gc.color_airbusgray.darker());
+    	g2.fillRect(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_box , mfd_gc.fctl_y_wing_box, mfd_gc.fctl_dx_wing_box*2, mfd_gc.fctl_box_height);
+    	g2.setFont(mfd_gc.font_l);
+    	String hyd_str="GBY";
+    	g2.setColor(mfd_gc.ecam_normal_color);
+    	g2.drawString(hyd_str, 
+    			  mfd_gc.fctl_mid_x - mfd_gc.get_text_width(g2, mfd_gc.font_l, hyd_str)/2 ,
+    			  mfd_gc.fctl_y_wing_box + mfd_gc.line_height_l);
+    	
+    	// indicators
+    	float speedbrake = this.aircraft.get_speed_brake();
+    	int spd_dy = Math.round(speedbrake * mfd_gc.mfd_size * 50/1000);
+    	g2.setColor(mfd_gc.ecam_normal_color);
+    	g2.drawLine(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_c , mfd_gc.fctl_y_wing_mid2, 
+    				 mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_c, mfd_gc.fctl_y_wing_mid2 - spd_dy);
+    }
+    
+    private void draw_speed_brake_arrow(Graphics2D g2, int pos, int status){
+    	if (status > 1) {
+    		g2.setColor(mfd_gc.ecam_caution_color);
+    	} else {
+    		g2.setColor(mfd_gc.ecam_normal_color);
+    	}    	
+    }
+    
+    private void draw_airbus_aileron(Graphics2D g2) {
+    	int aileron_range = Math.round(this.aircraft.get_aileron_max_up() + this.aircraft.get_aileron_max_down());
+    	int aileron_mark = mfd_gc.fctl_y_ail_top + (mfd_gc.fctl_y_ail_bottom-mfd_gc.fctl_y_ail_top)*Math.round(this.aircraft.get_aileron_max_up())/aileron_range;
+    	int left_aileron = aileron_mark + Math.round(this.aircraft.get_left_aileron_pos()*(mfd_gc.fctl_y_ail_bottom-mfd_gc.fctl_y_ail_top)/aileron_range);
+    	int right_aileron = aileron_mark + Math.round(this.aircraft.get_right_aileron_pos()*(mfd_gc.fctl_y_ail_bottom-mfd_gc.fctl_y_ail_top)/aileron_range);
+    	
+    	g2.setColor(mfd_gc.ecam_markings_color);
+    	// right
+    	g2.drawLine(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_ail, mfd_gc.fctl_y_ail_top + mfd_gc.fctl_dy_ail_end, 
+    			    mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_ail, mfd_gc.fctl_y_ail_bottom - mfd_gc.fctl_dy_ail_end);
+    	g2.drawRect(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_ail - mfd_gc.fctl_dx_ail_end/2, mfd_gc.fctl_y_ail_top, mfd_gc.fctl_dx_ail_end, mfd_gc.fctl_dy_ail_end);
+    	g2.drawRect(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_ail - mfd_gc.fctl_dx_ail_end/2, mfd_gc.fctl_y_ail_bottom - mfd_gc.fctl_dy_ail_end, mfd_gc.fctl_dx_ail_end, mfd_gc.fctl_dy_ail_end);
+    	g2.drawLine(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_ail - mfd_gc.fctl_dx_ail_end/3, aileron_mark,
+    				mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_ail + mfd_gc.fctl_dx_ail_end/3, aileron_mark);
+    	// "R AIL"
+    	g2.setFont(mfd_gc.font_xl);
+    	String ail_str="R";
+    	g2.drawString(ail_str, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_ail_txt - mfd_gc.get_text_width(g2, mfd_gc.font_xl, ail_str)/2 , mfd_gc.fctl_y_ail_top + mfd_gc.line_height_l * 6/4);
+    	ail_str="AIL";
+    	g2.drawString(ail_str, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_ail_txt - mfd_gc.get_text_width(g2, mfd_gc.font_xl, ail_str)/2 , mfd_gc.fctl_y_ail_top + mfd_gc.line_height_l * 11/4);
+    	
+    	// left
+    	g2.drawLine(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail, mfd_gc.fctl_y_ail_top + mfd_gc.fctl_dy_ail_end, 
+    			    mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail, mfd_gc.fctl_y_ail_bottom - mfd_gc.fctl_dy_ail_end);
+    	g2.drawRect(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail - mfd_gc.fctl_dx_ail_end/2, mfd_gc.fctl_y_ail_top, mfd_gc.fctl_dx_ail_end, mfd_gc.fctl_dy_ail_end);
+    	g2.drawRect(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail - mfd_gc.fctl_dx_ail_end/2, mfd_gc.fctl_y_ail_bottom - mfd_gc.fctl_dy_ail_end, mfd_gc.fctl_dx_ail_end, mfd_gc.fctl_dy_ail_end);
+    	g2.drawLine(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail - mfd_gc.fctl_dx_ail_end/3, aileron_mark,
+					mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail + mfd_gc.fctl_dx_ail_end/3, aileron_mark);
+
+    	// "L AIL"
+    	g2.setFont(mfd_gc.font_xl);
+    	ail_str="L";
+    	g2.drawString(ail_str, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail_txt - mfd_gc.get_text_width(g2, mfd_gc.font_xl, ail_str)/2 , mfd_gc.fctl_y_ail_top + mfd_gc.line_height_l * 6/4);
+    	ail_str="AIL";
+    	g2.drawString(ail_str, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail_txt - mfd_gc.get_text_width(g2, mfd_gc.font_xl, ail_str)/2 , mfd_gc.fctl_y_ail_top + mfd_gc.line_height_l * 11/4);
+    	
+    	// 4 hydrolic box
+    	// Hydrolic box "GBY"
+    	// Text in green is circuit ok, amber when low pressure (<2000 psi)
+    	// LEFT 1
+    	g2.setColor(mfd_gc.color_airbusgray.darker());
+    	g2.fillRect(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail_box1 - mfd_gc.fctl_dx_box_width , mfd_gc.fctl_y_ail_box_top,
+    			    mfd_gc.fctl_dx_box_width, mfd_gc.fctl_box_height);
+    	g2.setFont(mfd_gc.font_l);
+    	String hyd_str="BG";
+    	g2.setColor(mfd_gc.ecam_normal_color);
+    	g2.drawString(hyd_str, 
+    			  mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail_box1 - mfd_gc.fctl_dx_box_width/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, hyd_str)/2 ,
+    			  mfd_gc.fctl_y_ail_box_top + mfd_gc.line_height_l);
+
+    	// LEFT 2
+    	g2.setColor(mfd_gc.color_airbusgray.darker());
+    	g2.fillRect(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail_box2 - mfd_gc.fctl_dx_box_width , mfd_gc.fctl_y_ail_box_top,
+    			    mfd_gc.fctl_dx_box_width, mfd_gc.fctl_box_height);
+    	g2.setFont(mfd_gc.font_l);
+    	hyd_str="BY";
+    	g2.setColor(mfd_gc.ecam_normal_color);
+    	g2.drawString(hyd_str, 
+    			  mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail_box2 - mfd_gc.fctl_dx_box_width/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, hyd_str)/2 ,
+    			  mfd_gc.fctl_y_ail_box_top + mfd_gc.line_height_l);
+
+    	// RIGHT 1
+    	g2.setColor(mfd_gc.color_airbusgray.darker());
+    	g2.fillRect(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_ail_box1  , mfd_gc.fctl_y_ail_box_top,
+    			    mfd_gc.fctl_dx_box_width, mfd_gc.fctl_box_height);
+    	g2.setFont(mfd_gc.font_l);
+    	hyd_str="BG";
+    	g2.setColor(mfd_gc.ecam_normal_color);
+    	g2.drawString(hyd_str, 
+    			  mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_ail_box1 + mfd_gc.fctl_dx_box_width/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, hyd_str)/2 ,
+    			  mfd_gc.fctl_y_ail_box_top + mfd_gc.line_height_l);
+
+    	// RIGHT 2
+    	g2.setColor(mfd_gc.color_airbusgray.darker());
+    	g2.fillRect(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_ail_box2  , mfd_gc.fctl_y_ail_box_top,
+    			    mfd_gc.fctl_dx_box_width, mfd_gc.fctl_box_height);
+    	g2.setFont(mfd_gc.font_l);
+    	hyd_str="BY";
+    	g2.setColor(mfd_gc.ecam_normal_color);
+    	g2.drawString(hyd_str, 
+    			  mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_ail_box2 + mfd_gc.fctl_dx_box_width/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, hyd_str)/2 ,
+    			  mfd_gc.fctl_y_ail_box_top + mfd_gc.line_height_l);
+
+    	// Aileron position
+    	int r_ail_tri_x [] = { 
+    			mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_ail - mfd_gc.fctl_dx_tri, 
+    			mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_ail, 
+    			mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_ail - mfd_gc.fctl_dx_tri
+    	};
+    	int l_ail_tri_x [] = { 
+    			mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail + mfd_gc.fctl_dx_tri, 
+    			mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail, 
+    			mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail + mfd_gc.fctl_dx_tri
+    	};
+    	int r_ail_tri_y [] = {
+    			right_aileron + mfd_gc.fctl_dy_tri,
+    			right_aileron,
+    			right_aileron - mfd_gc.fctl_dy_tri
+    	};
+    	int l_ail_tri_y [] = {
+    			left_aileron + mfd_gc.fctl_dy_tri,
+    			left_aileron,
+    			left_aileron - mfd_gc.fctl_dy_tri
+    	};
+    	g2.setColor(mfd_gc.ecam_normal_color);
+    	g2.drawPolygon(r_ail_tri_x, r_ail_tri_y, 3);
+    	g2.drawPolygon(l_ail_tri_x, l_ail_tri_y, 3);
+    	
+    	
+    }
+
+   
+    private void draw_airbus_elevator(Graphics2D g2) {
+    	int elevator_range = Math.round(this.aircraft.get_elev_max_up() + this.aircraft.get_elev_max_down());
+    	int elevator_mark = mfd_gc.fctl_y_elev_top + (mfd_gc.fctl_y_elev_bottom-mfd_gc.fctl_y_elev_top)*Math.round(this.aircraft.get_elev_max_up())/elevator_range;
+    	int left_elevator = elevator_mark + Math.round(this.aircraft.get_left_elev_pos()*(mfd_gc.fctl_y_elev_bottom-mfd_gc.fctl_y_elev_top)/elevator_range);
+    	int right_elevator = elevator_mark + Math.round(this.aircraft.get_right_elev_pos()*(mfd_gc.fctl_y_elev_bottom-mfd_gc.fctl_y_elev_top)/elevator_range);
+    	
+    	g2.setColor(mfd_gc.ecam_markings_color);
+    	// right elevator
+    	g2.drawLine(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_elev, mfd_gc.fctl_y_elev_top, 
+    			    mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_elev, mfd_gc.fctl_y_elev_bottom );
+    	g2.drawRect(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_elev, mfd_gc.fctl_y_elev_top, mfd_gc.fctl_dx_ail_end, mfd_gc.fctl_dy_ail_end);
+    	g2.drawRect(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_elev, mfd_gc.fctl_y_elev_bottom - mfd_gc.fctl_dy_ail_end, mfd_gc.fctl_dx_ail_end, mfd_gc.fctl_dy_ail_end);
+    	g2.drawLine(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_elev - mfd_gc.fctl_dx_ail_end/3, elevator_mark,
+    				mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_elev + mfd_gc.fctl_dx_ail_end/3, elevator_mark);
+
+    	// "R EVEL"
+    	g2.setFont(mfd_gc.font_xl);
+    	String ail_str="R";
+    	g2.drawString(ail_str, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_elev_txt - mfd_gc.get_text_width(g2, mfd_gc.font_xl, ail_str)/2 , mfd_gc.fctl_y_elev_top + mfd_gc.line_height_l * 6/4);
+    	ail_str="ELEV";
+    	g2.drawString(ail_str, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_elev_txt - mfd_gc.get_text_width(g2, mfd_gc.font_xl, ail_str)/2 , mfd_gc.fctl_y_elev_top + mfd_gc.line_height_l * 11/4);
+    	
+    	// left elevator
+    	g2.drawLine(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_elev, mfd_gc.fctl_y_elev_top, 
+    			    mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_elev, mfd_gc.fctl_y_elev_bottom );
+    	g2.drawRect(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_elev - mfd_gc.fctl_dx_ail_end, mfd_gc.fctl_y_elev_top, mfd_gc.fctl_dx_ail_end, mfd_gc.fctl_dy_ail_end);
+    	g2.drawRect(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_elev - mfd_gc.fctl_dx_ail_end, mfd_gc.fctl_y_elev_bottom - mfd_gc.fctl_dy_ail_end, mfd_gc.fctl_dx_ail_end, mfd_gc.fctl_dy_ail_end);
+    	g2.drawLine(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_elev - mfd_gc.fctl_dx_ail_end/3, elevator_mark,
+				    mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_elev + mfd_gc.fctl_dx_ail_end/3, elevator_mark);
+    	
+    	// "L EVEL"
+    	g2.setFont(mfd_gc.font_xl);
+    	ail_str="L";
+    	g2.drawString(ail_str, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_elev_txt - mfd_gc.get_text_width(g2, mfd_gc.font_xl, ail_str)/2 , mfd_gc.fctl_y_elev_top + mfd_gc.line_height_l * 6/4);
+    	ail_str="ELEV";
+    	g2.drawString(ail_str, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_elev_txt - mfd_gc.get_text_width(g2, mfd_gc.font_xl, ail_str)/2 , mfd_gc.fctl_y_elev_top + mfd_gc.line_height_l * 11/4);
+    	
+    	// 2 hydrolic box
+    	// Hydrolic box "GY"
+    	// Text in green is circuit ok, amber when low pressure (<2000 psi)
+    	// LEFT
+    	g2.setColor(mfd_gc.color_airbusgray.darker());
+    	g2.fillRect(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_elev_box - mfd_gc.fctl_dx_box_width , mfd_gc.fctl_y_elev_box_top,
+    			    mfd_gc.fctl_dx_box_width, mfd_gc.fctl_box_height);
+    	g2.setFont(mfd_gc.font_l);
+    	String hyd_str="BG";
+    	g2.setColor(mfd_gc.ecam_normal_color);
+    	g2.drawString(hyd_str, 
+    			  mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_elev_box - mfd_gc.fctl_dx_box_width/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, hyd_str)/2 ,
+    			  mfd_gc.fctl_y_elev_box_top + mfd_gc.line_height_l);
+    	// RIGHT
+    	g2.setColor(mfd_gc.color_airbusgray.darker());
+    	g2.fillRect(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_elev_box , mfd_gc.fctl_y_elev_box_top,
+    			    mfd_gc.fctl_dx_box_width, mfd_gc.fctl_box_height);
+    	g2.setFont(mfd_gc.font_l);
+    	hyd_str="YB";
+    	g2.setColor(mfd_gc.ecam_normal_color);
+    	g2.drawString(hyd_str, 
+    			  mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_elev_box + mfd_gc.fctl_dx_box_width/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, hyd_str)/2 ,
+    			  mfd_gc.fctl_y_elev_box_top + mfd_gc.line_height_l);   	
+    	
+    	// Elevators position
+    	int r_elev_tri_x [] = { 
+    			mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_elev - mfd_gc.fctl_dx_tri, 
+    			mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_elev, 
+    			mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_elev - mfd_gc.fctl_dx_tri
+    	};
+    	int l_elev_tri_x [] = { 
+    			mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_elev + mfd_gc.fctl_dx_tri, 
+    			mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_elev, 
+    			mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_elev + mfd_gc.fctl_dx_tri
+    	};
+    	int r_elev_tri_y [] = {
+    			right_elevator + mfd_gc.fctl_dy_tri,
+    			right_elevator,
+    			right_elevator - mfd_gc.fctl_dy_tri
+    	};
+    	int l_elev_tri_y [] = {
+    			left_elevator + mfd_gc.fctl_dy_tri,
+    			left_elevator,
+    			left_elevator - mfd_gc.fctl_dy_tri
+    	};
+    	g2.setColor(mfd_gc.ecam_normal_color);
+    	g2.drawPolygon(r_elev_tri_x, r_elev_tri_y, 3);
+    	g2.drawPolygon(l_elev_tri_x, l_elev_tri_y, 3);
+    	
+    }
+   
+    
+    private void draw_airbus_rudder(Graphics2D g2) {
+    	//int rudder_range = Math.round(this.aircraft.get_rudder_max_lr());
+    	int rudder_range = 30;
+    	int yaw = Math.round( this.aircraft.get_yaw_trim() * -rudder_range );
+    	int rudder = Math.round(this.aircraft.get_rudder_pos()*-45/rudder_range);
+    	AffineTransform original_at = g2.getTransform();
+    	g2.setColor(mfd_gc.ecam_markings_color);
+    	g2.setFont(mfd_gc.font_xl);
+    	String rudder_str = "RUD";
+    	g2.drawString(rudder_str, mfd_gc.fctl_mid_x - mfd_gc.get_text_width(g2, mfd_gc.font_xl, rudder_str)/2, mfd_gc.fctl_y_rud_box_top - mfd_gc.line_height_l);
+
+    	// Hydrolic box "GBY"
+    	// Text in green is circuit ok, amber when low pressure (<2000 psi)
+    	g2.setColor(mfd_gc.color_airbusgray.darker());
+    	g2.fillRect(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_box , mfd_gc.fctl_y_rud_box_top, mfd_gc.fctl_dx_wing_box*2, mfd_gc.fctl_box_height);
+    	g2.setFont(mfd_gc.font_l);
+    	String hyd_str="GBY";
+    	g2.setColor(mfd_gc.ecam_normal_color);
+    	g2.drawString(hyd_str, 
+    			  mfd_gc.fctl_mid_x - mfd_gc.get_text_width(g2, mfd_gc.font_l, hyd_str)/2 ,
+    			  mfd_gc.fctl_y_rud_box_top + mfd_gc.line_height_l);
+    
+    	
+    	// right elevator
+    	g2.setColor(mfd_gc.ecam_markings_color);
+    	g2.drawLine(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_rud_b, mfd_gc.fctl_y_rud_top, 
+    			    mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_rud_c, mfd_gc.fctl_y_rud_mid1 );
+    	g2.drawLine(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_rud_c, mfd_gc.fctl_y_rud_mid1, 
+			        mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_rud_c, mfd_gc.fctl_y_rud_bottom );
+    	g2.drawLine(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_rud_c, mfd_gc.fctl_y_rud_bottom, 
+			        mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_rud_a, mfd_gc.fctl_y_rud_mid2 );
+    	// left elevator
+    	g2.drawLine(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_rud_b, mfd_gc.fctl_y_rud_top, 
+    			    mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_rud_c, mfd_gc.fctl_y_rud_mid1 );
+    	g2.drawLine(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_rud_c, mfd_gc.fctl_y_rud_mid1, 
+			        mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_rud_c, mfd_gc.fctl_y_rud_bottom );
+    	g2.drawLine(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_rud_c, mfd_gc.fctl_y_rud_bottom, 
+			        mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_rud_a, mfd_gc.fctl_y_rud_mid2 );
+    	
+    	// Rudder arc
+    	g2.drawArc(mfd_gc.fctl_mid_x - mfd_gc.fctl_r_rud_arc, mfd_gc.fctl_y_rud_arc_top - mfd_gc.fctl_r_rud_arc,
+    			mfd_gc.fctl_r_rud_arc*2, mfd_gc.fctl_r_rud_arc*2,
+    			-45, -90);
+    	
+        // Rudder arc ends
+    	g2.rotate(Math.toRadians(45), mfd_gc.fctl_mid_x, mfd_gc.fctl_y_rud_arc_top);
+    	g2.drawRect(mfd_gc.fctl_mid_x, mfd_gc.fctl_y_rud_arc_top + mfd_gc.fctl_r_rud_arc, mfd_gc.fctl_dy_ail_end, mfd_gc.fctl_dx_ail_end );
+    	g2.rotate(Math.toRadians(-90), mfd_gc.fctl_mid_x, mfd_gc.fctl_y_rud_arc_top);
+    	g2.drawRect(mfd_gc.fctl_mid_x-mfd_gc.fctl_dy_ail_end, mfd_gc.fctl_y_rud_arc_top + mfd_gc.fctl_r_rud_arc, mfd_gc.fctl_dy_ail_end, mfd_gc.fctl_dx_ail_end );
+    	g2.setTransform(original_at);
+    	
+    	// Trim (blue target)
+    	g2.setColor(mfd_gc.ecam_action_color);
+    	g2.rotate(Math.toRadians(yaw), mfd_gc.fctl_mid_x, mfd_gc.fctl_y_rud_arc_top);
+    	g2.fillRect(mfd_gc.fctl_mid_x - mfd_gc.fctl_dy_ail_end/2, mfd_gc.fctl_y_rud_arc_top + mfd_gc.fctl_r_rud_arc, mfd_gc.fctl_dy_ail_end, mfd_gc.fctl_dx_ail_end+2 );
+    	g2.setTransform(original_at);
+    	
+    	// Rudder position
+    	g2.setColor(mfd_gc.ecam_normal_color);
+    	g2.rotate(Math.toRadians(rudder), mfd_gc.fctl_mid_x, mfd_gc.fctl_y_rud_arc_top);
+    	g2.drawArc(mfd_gc.fctl_mid_x - mfd_gc.fctl_r_rud_bullet/2 , mfd_gc.fctl_y_rud_bullet - mfd_gc.fctl_r_rud_bullet/2 , mfd_gc.fctl_r_rud_bullet, mfd_gc.fctl_r_rud_bullet, 0, 180);
+    	g2.drawLine(mfd_gc.fctl_mid_x - mfd_gc.fctl_r_rud_bullet/2, mfd_gc.fctl_y_rud_bullet, mfd_gc.fctl_mid_x, mfd_gc.fctl_y_rud_arc_end );
+    	g2.drawLine(mfd_gc.fctl_mid_x + mfd_gc.fctl_r_rud_bullet/2, mfd_gc.fctl_y_rud_bullet, mfd_gc.fctl_mid_x, mfd_gc.fctl_y_rud_arc_end );
+    	g2.setTransform(original_at);
+    	
+
+    }
+  
+    private void draw_airbus_pitch_trim(Graphics2D g2) {
+    	int pitch = Math.round( this.aircraft.get_pitch_trim() * 100.0f );
+    	g2.setColor(mfd_gc.ecam_markings_color);
+    	g2.setFont(mfd_gc.font_xl);
+    	String pitch_str = "PITCH TRIM  ";
+    	g2.drawString(pitch_str, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_pitch_box - mfd_gc.get_text_width(g2, mfd_gc.font_xl, pitch_str), mfd_gc.fctl_y_pitch_box_top + mfd_gc.line_height_l);
+    	
+    	// hydrolic box
+       	g2.setColor(mfd_gc.color_airbusgray.darker());
+    	g2.fillRect(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_pitch_box, mfd_gc.fctl_y_pitch_box_top,
+    			    mfd_gc.fctl_dx_box_width, mfd_gc.fctl_box_height);
+    	g2.setFont(mfd_gc.font_l);
+    	String hyd_str="GY";
+    	g2.setColor(mfd_gc.ecam_normal_color);
+    	g2.drawString(hyd_str, 
+    			  mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_pitch_box + mfd_gc.fctl_dx_box_width/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, hyd_str)/2 ,
+    			  mfd_gc.fctl_y_pitch_box_top + mfd_gc.line_height_l);
+
+    	// Pitch Value
+    	g2.setColor(mfd_gc.ecam_normal_color);
+    	String pitch_val_str = one_decimal_format.format(Math.abs(pitch/10.0f));
+        g2.drawString(pitch_val_str, mfd_gc.fctl_mid_x - mfd_gc.get_text_width(g2, mfd_gc.font_l, pitch_val_str), mfd_gc.fctl_y_pitch_txt);
+        g2.setColor(mfd_gc.ecam_action_color);        
+        g2.drawString("°", mfd_gc.fctl_mid_x, mfd_gc.fctl_y_pitch_txt);
+        g2.setColor(mfd_gc.ecam_normal_color);
+        if ( pitch > 0 ) g2.drawString(" UP", mfd_gc.fctl_mid_x + mfd_gc.digit_width_l, mfd_gc.fctl_y_pitch_txt);
+        if ( pitch < 0 ) g2.drawString(" DN", mfd_gc.fctl_mid_x + mfd_gc.digit_width_l, mfd_gc.fctl_y_pitch_txt);
+  
+    }
+    
+    private void draw_airbus_roll_trim(Graphics2D g2) {
+    	// For Airbus style - but not for Airbus aircrafts 
+    	// Airbus does not have roll pitch
+    	int roll = Math.round( this.aircraft.get_roll_trim() * 100.0f );
+    	int rtrim_x = mfd_gc.fctl_mid_x - mfd_gc.lat_trim_w/2;
+    	int rtrim_y = mfd_gc.fctl_y_ail_box_top - mfd_gc.line_height_l;
+    	AffineTransform original_at = g2.getTransform();
+    	g2.setColor(mfd_gc.ecam_markings_color);
+    	g2.setFont(mfd_gc.font_xl);
+    	String pitch_str = "ROLL TRIM";
+    	g2.drawString(pitch_str, mfd_gc.fctl_mid_x - mfd_gc.get_text_width(g2, mfd_gc.font_xl, pitch_str)/2, mfd_gc.fctl_y_ail_box_top - mfd_gc.line_height_l*2);
+    	
+        g2.setColor(mfd_gc.dim_markings_color);
+        g2.drawArc(rtrim_x - 1, rtrim_y - 1, mfd_gc.lat_trim_w + 2, mfd_gc.lat_trim_h + 2, 45, 90);
+        g2.drawLine(mfd_gc.fctl_mid_x, rtrim_y, mfd_gc.fctl_mid_x, rtrim_y + mfd_gc.lat_trim_h*8/100);
+        g2.rotate(Math.toRadians(45), mfd_gc.fctl_mid_x, rtrim_y + mfd_gc.lat_trim_h/2);
+        g2.drawLine(mfd_gc.fctl_mid_x, rtrim_y, mfd_gc.fctl_mid_x, rtrim_y + mfd_gc.lat_trim_h*8/100);
+        g2.rotate(Math.toRadians(-90), mfd_gc.fctl_mid_x, rtrim_y + mfd_gc.lat_trim_h/2);
+        g2.drawLine(mfd_gc.fctl_mid_x, rtrim_y, mfd_gc.fctl_mid_x, rtrim_y + mfd_gc.lat_trim_h*8/100);
+        g2.setTransform(original_at);
+        g2.rotate(Math.toRadians(23), mfd_gc.fctl_mid_x, rtrim_y + mfd_gc.lat_trim_h/2);
+        g2.drawLine(mfd_gc.fctl_mid_x, rtrim_y, mfd_gc.fctl_mid_x, rtrim_y + mfd_gc.lat_trim_h*4/100);
+        g2.rotate(Math.toRadians(-46), mfd_gc.fctl_mid_x, rtrim_y + mfd_gc.lat_trim_h/2);
+        g2.drawLine(mfd_gc.fctl_mid_x, rtrim_y, mfd_gc.fctl_mid_x, rtrim_y + mfd_gc.lat_trim_h*4/100);
+        g2.setTransform(original_at);
+
+        int[] roll_triangle_x = {
+            mfd_gc.fctl_mid_x,
+            mfd_gc.fctl_mid_x - mfd_gc.lat_trim_w*4/100,
+            mfd_gc.fctl_mid_x + mfd_gc.lat_trim_w*4/100
+        };
+        int[] roll_triangle_y = {
+        		mfd_gc.fctl_y_ail_box_top,
+        		mfd_gc.fctl_y_ail_box_top + mfd_gc.lat_trim_w*8/100,
+        		mfd_gc.fctl_y_ail_box_top + mfd_gc.lat_trim_w*8/100
+        };
+        g2.rotate(Math.toRadians(roll*45/100), mfd_gc.fctl_mid_x, mfd_gc.fctl_y_ail_box_top + mfd_gc.lat_trim_h/2);
+        g2.setColor(mfd_gc.normal_color);
+        g2.drawPolygon(roll_triangle_x, roll_triangle_y, 3);
+        g2.setTransform(original_at);
+
+    }    
     
     private void draw_trim(Graphics2D g2) {
         

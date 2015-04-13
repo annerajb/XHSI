@@ -350,7 +350,47 @@ public class XPlaneAircraft implements Aircraft {
     public float get_yaw_trim() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_RUDDER_TRIM);
     }
+    
+    public float get_left_elev_pos() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_CONTROLS_LEFT_ELEV);
+    }
+    
+    public float get_right_elev_pos() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_CONTROLS_RIGHT_ELEV);
+    }
+    
+    public float get_left_aileron_pos() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_CONTROLS_LEFT_AIL);
+    }
+    
+    public float get_right_aileron_pos() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_CONTROLS_RIGHT_AIL);
+    }
+    
+    public float get_rudder_pos() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_CONTROLS_RUDDER);
+    }
 
+    public float get_aileron_max_up() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_CONTROLS_ACL_AIL_UP);
+    }
+
+    public float get_aileron_max_down() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_CONTROLS_ACL_AIL_DN);
+    }
+
+    public float get_elev_max_up() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_CONTROLS_ACL_ELEV_UP);
+    }
+
+    public float get_elev_max_down() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_CONTROLS_ACL_ELEV_DN);
+    }
+
+    public float get_rudder_max_lr() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_CONTROLS_ACL_RUDDER_LR);
+    }
+       
     public float get_slat_position() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_CONTROLS_SLATRAT);
     }
@@ -383,6 +423,47 @@ public class XPlaneAircraft implements Aircraft {
 
     public float get_parking_brake() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_PARKING_BRAKE_RATIO);
+    }
+    
+    public int seat_belt_sign () {
+    	// bits 7 and 8 
+    	int lights_signs = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_LIGHTS));
+    	return (lights_signs >> 8) & 0x03;
+    }
+    
+    public int no_smoking_sign () {
+    	// bits 5 and 6
+    	int lights_signs = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_LIGHTS));
+    	return (lights_signs >> 6) & 0x03;    	
+    }
+    
+    public boolean landing_lights_on () {
+    	// bit 1
+    	int lights_signs = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_LIGHTS));
+    	return (lights_signs & 0x02) > 0 ? true : false;    	
+    }
+    
+    public boolean landing_taxi_lights_on () {
+    	// bit 4
+    	int lights_signs = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_LIGHTS));
+    	return (lights_signs & 0x10) > 0 ? true : false;    	
+    }
+    
+    public boolean beacon_on () {
+    	// bit 0
+    	int lights_signs = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_LIGHTS));
+    	return (lights_signs & 0x01) > 0 ? true : false;   	
+    }
+    
+    public boolean nav_lights_on () {
+    	// bit 2
+    	int lights_signs = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_LIGHTS));
+    	return (lights_signs & 0x04) > 0 ? true : false;    	
+    }
+    public boolean strobe_lights_on () {
+    	// bit 3
+    	int lights_signs = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_LIGHTS));
+    	return (lights_signs & 0x08) > 0 ? true : false;   	
     }
 
     public boolean stall_warning() {

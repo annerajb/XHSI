@@ -405,6 +405,55 @@ public interface Aircraft {
      */
     public float get_yaw_trim();
 
+    /**
+     * @return float - left elevator position
+     */
+    public float get_left_elev_pos();
+    
+    /**
+     * @return float - right elevator position
+     */
+    public float get_right_elev_pos();
+    
+    /**
+     * @return float - left aileron position
+     */
+    public float get_left_aileron_pos();
+    
+    /**
+     * @return float - right aileron position
+     */
+    public float get_right_aileron_pos();    
+    
+    /**
+     * @return float - rudder elevator position
+     */
+    public float get_rudder_pos();
+
+    /**
+     * @return float - aileron max angle up
+     */
+    public float get_aileron_max_up();
+
+    /**
+     * @return float - aileron max angle down
+     */
+    public float get_aileron_max_down();
+    
+    /**
+     * @return float - elevator max angle up
+     */
+    public float get_elev_max_up();
+
+    /**
+     * @return float - elevator max angle down
+     */
+    public float get_elev_max_down();
+    
+    /**
+     * @return float - rudder max angle left and right
+     */
+    public float get_rudder_max_lr();
 
     /**
      * @return float - slats position
@@ -453,6 +502,22 @@ public interface Aircraft {
      */
     public float get_parking_brake();
 
+    
+    /**
+     * @return int - signs : 0=off, 1=auto, 2=on 
+     */
+    public int seat_belt_sign(); 
+    public int no_smoking_sign();
+    
+    /**
+     * @return boolean - Lights 
+     */
+    public boolean landing_lights_on();
+    public boolean landing_taxi_lights_on();
+    public boolean beacon_on();
+    public boolean nav_lights_on();
+    public boolean strobe_lights_on();
+    
 
     /**
      * @return boolean - Stall warning

@@ -125,6 +125,7 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
     public int autbrk_y;
     public int prim_dial_x[] = new int[8];
     public int seco_dial_x[] = new int[8];
+    public int message_x;
     public int memo_x;
     public int memo_y;
     public int detents=0;
@@ -347,6 +348,7 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                 dial_font_w[8] = digit_width_xxs;
                 dial_font_h[8] = line_height_xxs;
             }
+            message_x = panel_rect.x + panel_rect.width*40/1000;
             memo_x = panel_rect.x + panel_rect.width*630/1000;
             memo_y = panel_rect.y + prim_dials_height + line_height_l * 2;
             		

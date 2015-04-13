@@ -126,7 +126,31 @@ public class ECAM_Memo extends EICASSubcomponent {
     private void DrawXHSIEcamMemo(Graphics2D g2) {
     	
     	String memo_str;
+		boolean takeoff_inhibit = false;
+		boolean landing_inhibit = false;
+		boolean takeoff_memo = false;
+		boolean landing_memo = false;
+		
     	g2.setFont(eicas_gc.font_l);        
+    	
+    	// T.O. INHIBIT
+    	// T.O. INHIBIT from takeoff thrust up to 1500 feet AGL on Airbus 
+    	// T.O. INHIBIT for General Aviation should be up to 500 feet
+
+    	if (this.aircraft.on_ground() ) { 
+    		// and at least one engine on
+    		// and wasn't airbone since last engine off
+    		// and more than 120 seconds since last engine start
+    		// and throttle lever percent < 40%
+    		takeoff_inhibit = true;
+    	}
+    		
+    	
+    	
+    	// LDG INHIBIT
+    	// below 750 feet AGL till on ground on Airbus
+    	// should be bellow 300 feet AGL on General Aviation
+    	
     	
     	// APU
     	if (this.aircraft.apu_gen_on()) {
@@ -242,7 +266,36 @@ public class ECAM_Memo extends EICASSubcomponent {
         	ememo_status[EMEMO_AUTO_BRK_MAX] = false;
         }
     	
+        if ( this.aircraft.no_smoking_sign() > 0 ) {
+        	ememo_status[EMEMO_NO_SMOKING] = true;
+        	ememo_color[EMEMO_NO_SMOKING] = eicas_gc.ecam_normal_color;
+        } else {
+        	ememo_status[EMEMO_NO_SMOKING] = false;
+        }
 
+        if ( this.aircraft.seat_belt_sign() > 0 ) {
+        	ememo_status[EMEMO_SEAT_BELTS] = true;
+        	ememo_color[EMEMO_SEAT_BELTS] = eicas_gc.ecam_normal_color;
+        } else {
+        	ememo_status[EMEMO_SEAT_BELTS] = false;
+        }
+
+        if ( this.aircraft.landing_lights_on() ) {
+        	ememo_status[EMEMO_LDG_LT] = true;
+        	ememo_color[EMEMO_LDG_LT] = eicas_gc.ecam_normal_color;
+        } else {
+        	ememo_status[EMEMO_LDG_LT] = false;
+        }
+        
+        if ( ! this.aircraft.strobe_lights_on() && ! this.aircraft.on_ground() ) {
+        	ememo_status[EMEMO_STROBE_LT_OFF] = true;
+        	ememo_color[EMEMO_STROBE_LT_OFF] = eicas_gc.ecam_caution_color;
+        } else {
+        	ememo_status[EMEMO_STROBE_LT_OFF] = false;
+        }
+        
+        
+        
         // display the first 8 lines of the pop list
         for (int i=0, line=0; i < MAX_EMEMO_MSG && line < 8; i++) {
         	if (ememo_status[i]) { 
