@@ -133,6 +133,15 @@ XPLMDataRef nav_lights_on;
 XPLMDataRef strobe_lights_on;
 XPLMDataRef taxi_light_on;
 
+// For the ECAM messages no smoking and belts + light switches commands
+XPLMDataRef  landing_lights; 	// sim/cockpit2/switches/landing_lights_on boolean
+XPLMDataRef  nav_lights;  		// sim/cockpit2/switches/navigation_lights_on boolean
+XPLMDataRef  no_smoking; 	    // sim/cockpit2/switches/no_smoking integer (0=off, 1=auto, 2=on)
+XPLMDataRef  fasten_seat_belts; // sim/cockpit2/switches/fasten_seat_belts integer (0=off, 1=auto, 2=on)
+XPLMDataRef  strobe_lights; 	// sim/cockpit2/switches/strobe_light_on boolean
+XPLMDataRef  taxi_lights; 	    // sim/cockpit2/switches/taxi_light_on boolean
+XPLMDataRef  beacon_lights; 	// sim/cockpit2/switches/beacon_on boolean
+
 XPLMDataRef pitot_heat_on;
 
 XPLMDataRef nav1_freq_hz;
@@ -356,6 +365,74 @@ XPLMDataRef apu_gen_amp;
 XPLMDataRef apu_running;
 XPLMDataRef apu_gen_on;
 XPLMDataRef apu_starter;
+
+
+/*
+ * Datarefs - futur use in MFD pages
+ */
+// Bleed Air
+// XPLMDataRef  acf_full_bleed_air;  // sim/aircraft/overflow/acf_has_full_bleed_air
+/* useless
+XPLMDataRef  bleed_air_fail;  // sim/cockpit2/annunciators/bleed_air_fail [8]
+XPLMDataRef  bleed_air_off;  // sim/cockpit2/annunciators/bleed_air_off [8]
+*/
+
+// Electrical
+// Aircraft constants
+XPLMDataRef  acf_batteries; 	// sim/aircraft/electrical/num_batteries integer
+XPLMDataRef  acf_buses; 		// sim/aircraft/electrical/num_buses integer
+XPLMDataRef  acf_generators; 	// sim/aircraft/electrical/num_generators integer
+XPLMDataRef  acf_inverters; 	// sim/aircraft/electrical/num_inverters integer
+// Batteries
+XPLMDataRef  elec_battery_on; 				// sim/cockpit2/electrical/battery_on boolean [0/8]
+XPLMDataRef  elec_battery_amps; 			// sim/cockpit2/electrical/battery_amps float [0/8]
+XPLMDataRef  elec_voltage_actual_volts; 	// sim/cockpit2/electrical/battery_actual_volts float [0/8]
+XPLMDataRef  elec_voltage_indicated_volts; 	// sim/cockpit2/electrical/battery_indicated_volts float [0/8]
+// Generator
+XPLMDataRef  elec_generator_on; 	// sim/cockpit2/electrical/generator_on boolean [0/8]
+XPLMDataRef  elec_generator_amps; 	// sim/cockpit2/electrical/generator_amps float [0/8]
+// GPU
+XPLMDataRef  elec_gpu_on; 			// sim/cockpit2/electrical/generator_on boolean
+XPLMDataRef  elec_gpu_amps; 		// sim/cockpit2/electrical/generator_on boolean
+// Inverters
+XPLMDataRef  elec_inverter_on; 		// sim/cockpit2/electrical/inverter_on boolean [0/2]
+// Buses
+XPLMDataRef  elec_bus_load_amps; 	// sim/cockpit2/electrical/bus_load_amps float [0/6]
+XPLMDataRef  elec_bus_volts; 		// sim/cockpit2/electrical/bus_volts float [0/6]
+// RAM air turbin
+XPLMDataRef  ram_air_turbin; 		// sim/cockpit2/switches/ram_air_turbin_on boolean
+
+
+
+// Control surfaces position
+XPLMDataRef  left_elevator_pos; 	// sim/flightmodel/controls/hstab1_elv1def float [-30 to +15]
+XPLMDataRef  right_elevator_pos; 	// sim/flightmodel/controls/hstab2_elv1def float
+XPLMDataRef  rudder_pos; 			// sim/flightmodel/controls/vstab1_rud1def float [-30 to +30°]
+								// sim/flightmodel/controls/rdruddef [-30 to +30°]
+								// sim/flightmodel/controls/ldruddef [-30 to +30°]
+
+// Spoilers (1L to 4L and 1R to 4R)
+XPLMDataRef  spoiler_3l;  		// sim/flightmodel/controls/wing3l_spo1def float [0 to +40°]
+// Ailron (on airbus - ailrons_4l / cesna 172P ailron 1l)
+XPLMDataRef  ailron_4l;  		// sim/flightmodel/controls/wing4l_ail1def float [-25 to +25°]
+
+// Left and right ailerons
+XPLMDataRef  right_aileron_pos; // -  sim/flightmodel/controls/rail1def [-30 to +30°]
+XPLMDataRef  left_aileron_pos;  // -  sim/flightmodel/controls/lail1def [-30 to +30°]
+
+// Control surfaces limits
+XPLMDataRef acf_controls_elev_dn;
+XPLMDataRef acf_controls_elev_up;
+XPLMDataRef acf_controls_ail_dn;
+XPLMDataRef acf_controls_ail_up;
+XPLMDataRef acf_controls_rudder_lr;
+
+
+
+/*
+ * END of datarefs not yet exported
+ */
+
 
 //// TCAS
 //XPLMDataRef relative_bearing_degs;
@@ -1475,6 +1552,16 @@ void findDataRefs(void) {
     nav_lights_on = XPLMFindDataRef("sim/cockpit/electrical/nav_lights_on");
     strobe_lights_on = XPLMFindDataRef("sim/cockpit/electrical/strobe_lights_on");
     taxi_light_on = XPLMFindDataRef("sim/cockpit/electrical/taxi_light_on");
+	// Lights and PAX signs
+    // For the ECAM messages landing lights, smoking, belts
+    beacon_lights = XPLMFindDataRef("sim/cockpit2/switches/beacon_on");
+    landing_lights = XPLMFindDataRef("sim/cockpit2/switches/landing_lights");
+    nav_lights = XPLMFindDataRef("sim/cockpit2/switches/navigation_lights_on");
+    strobe_lights = XPLMFindDataRef("sim/cockpit2/switches/strobe_light_on");
+    taxi_lights = XPLMFindDataRef("sim/cockpit2/switches/taxi_light_on");
+    no_smoking = XPLMFindDataRef("sim/cockpit2/switches/no_smoking");
+    fasten_seat_belts = XPLMFindDataRef("sim/cockpit2/switches/fasten_seat_belts");
+
 
     pitot_heat_on = XPLMFindDataRef("sim/cockpit/switches/pitot_heat_on");
 
@@ -1624,6 +1711,12 @@ void findDataRefs(void) {
     acf_vmca = XPLMFindDataRef("sim/aircraft/overflow/acf_Vmca");
     acf_vyse = XPLMFindDataRef("sim/aircraft/overflow/acf_Vyse");
     acf_tailnum = XPLMFindDataRef("sim/aircraft/view/acf_tailnum");
+    // Control surfaces limits (constant)
+    acf_controls_elev_dn = XPLMFindDataRef("sim/aircraft/controls/acf_elev_dn");
+    acf_controls_elev_up = XPLMFindDataRef("sim/aircraft/controls/acf_elev_up");
+    acf_controls_ail_dn = XPLMFindDataRef("sim/aircraft/controls/acf_ail1_dn");
+    acf_controls_ail_up = XPLMFindDataRef("sim/aircraft/controls/acf_ail1_up");
+    acf_controls_rudder_lr = XPLMFindDataRef("sim/aircraft/controls/acf_rudder_lr");
 
 
     // Controls & annunciators
@@ -1656,7 +1749,16 @@ void findDataRefs(void) {
     slat_deploy = XPLMFindDataRef("sim/flightmodel/controls/slatrat");
     right_brake_ratio = XPLMFindDataRef("sim/cockpit2/controls/right_brake_ratio");
     left_brake_ratio = XPLMFindDataRef("sim/cockpit2/controls/left_brake_ratio");
-	
+
+    // Control surfaces positions
+    left_elevator_pos = XPLMFindDataRef("sim/flightmodel/controls/hstab1_elv1def");
+    right_elevator_pos = XPLMFindDataRef("sim/flightmodel/controls/hstab2_elv1def");
+    rudder_pos = XPLMFindDataRef("sim/flightmodel/controls/vstab1_rud1def");
+    // Aileron position is complex. May depends on the wing parameters in Plane Maker
+    // This is working only for Cesna172P in a first step
+    right_aileron_pos = XPLMFindDataRef("sim/flightmodel/controls/rail1def");
+    left_aileron_pos = XPLMFindDataRef("sim/flightmodel/controls/lail1def");
+
 
     // Engines and fuel
     num_tanks = XPLMFindDataRef("sim/aircraft/overflow/acf_num_tanks");
@@ -1710,6 +1812,32 @@ void findDataRefs(void) {
     apu_running = XPLMFindDataRef("sim/cockpit2/electrical/APU_running");
     apu_gen_on = XPLMFindDataRef("sim/cockpit2/electrical/APU_generator_on");
     apu_starter = XPLMFindDataRef("sim/cockpit2/electrical/APU_starter_switch");
+    // Electrical
+    // Aircraft constants
+    acf_batteries  = XPLMFindDataRef("sim/aircraft/electrical/num_batteries");
+    acf_buses = XPLMFindDataRef("sim/aircraft/electrical/num_buses integer");
+    acf_generators = XPLMFindDataRef("sim/aircraft/electrical/num_generators");
+    acf_inverters = XPLMFindDataRef("sim/aircraft/electrical/num_inverters");
+    // Batteries
+    elec_battery_on = XPLMFindDataRef("sim/cockpit2/electrical/battery_on");
+    elec_battery_amps = XPLMFindDataRef("sim/cockpit2/electrical/battery_amps");
+    elec_voltage_actual_volts = XPLMFindDataRef("sim/cockpit2/electrical/battery_actual_volts");
+    elec_voltage_indicated_volts = XPLMFindDataRef("sim/cockpit2/electrical/battery_indicated_volts");
+    // Generator
+    elec_generator_on = XPLMFindDataRef("sim/cockpit2/electrical/generator_on");
+    elec_generator_amps = XPLMFindDataRef("sim/cockpit2/electrical/generator_amps");
+    // GPU
+    elec_gpu_on = XPLMFindDataRef("sim/cockpit2/electrical/generator_on");
+    elec_gpu_amps = XPLMFindDataRef("sim/cockpit2/electrical/generator_on");
+    // Inverters
+    elec_inverter_on = XPLMFindDataRef("sim/cockpit2/electrical/inverter_on");
+    // Buses
+    elec_bus_load_amps = XPLMFindDataRef("sim/cockpit2/electrical/bus_load_amps");
+    elec_bus_volts = XPLMFindDataRef("sim/cockpit2/electrical/bus_volts");
+    // RAM air turbin
+    ram_air_turbin = XPLMFindDataRef("sim/cockpit2/switches/ram_air_turbin_on");
+
+
 
 //	// TCAS
 //	relative_bearing_degs = XPLMFindDataRef("sim/cockpit2/tcas/indicators/relative_bearing_degs");

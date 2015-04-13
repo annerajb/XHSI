@@ -116,6 +116,14 @@ extern XPLMDataRef qpac_autobrake_max;
 // Flaps and slats
 extern XPLMDataRef qpac_flaps_request_pos;
 extern XPLMDataRef qpac_slats_request_pos;
+// Left and right ailerons
+extern XPLMDataRef qpac_right_aileron_pos;
+extern XPLMDataRef qpac_left_aileron_pos;
+// Spoilers
+extern XPLMDataRef qpac_spoilers_array;
+// Hydrolics
+extern XPLMDataRef qpac_hydrolic_pressure_array;
+
 
 extern int qpac_ready;
 

@@ -133,6 +133,13 @@ XPLMDataRef qpac_autobrake_max;
 // Flaps and slats
 XPLMDataRef qpac_flaps_request_pos;
 XPLMDataRef qpac_slats_request_pos;
+// Left and right ailerons
+XPLMDataRef qpac_right_aileron_pos;
+XPLMDataRef qpac_left_aileron_pos;
+// Spoilers
+XPLMDataRef qpac_spoilers_array;
+// Hydrolics
+XPLMDataRef qpac_hydrolic_pressure_array;
 
 int qpac_ready = 0;
 int qpac_version = 0;
@@ -269,6 +276,13 @@ void findQpacDataRefs(void) {
             // Flaps and slats
             qpac_flaps_request_pos = XPLMFindDataRef("AirbusFBW/FlapsRequestPos");
             qpac_slats_request_pos = XPLMFindDataRef("AirbusFBW/SlatsRequestPos");
+            // Ailerons
+            qpac_right_aileron_pos = XPLMFindDataRef("sim/flightmodel/controls/wing4r_ail1def");
+            qpac_left_aileron_pos = XPLMFindDataRef("sim/flightmodel/controls/wing4l_ail1def");
+            // Spoilers
+            qpac_spoilers_array = XPLMFindDataRef("AirbusFBW/SDSpoilerArray");
+            // Hydrolics
+            qpac_hydrolic_pressure_array = XPLMFindDataRef("AirbusFBW/HydSysPressArray");
 
         }
     }

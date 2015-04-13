@@ -58,6 +58,15 @@ extern XPLMDataRef nav_lights_on;
 extern XPLMDataRef strobe_lights_on;
 extern XPLMDataRef taxi_light_on;
 
+extern XPLMDataRef landing_lights;
+extern XPLMDataRef nav_lights;
+extern XPLMDataRef no_smoking;
+extern XPLMDataRef fasten_seat_belts;
+extern XPLMDataRef strobe_lights;
+extern XPLMDataRef taxi_lights;
+extern XPLMDataRef beacon_lights;
+
+
 extern XPLMDataRef pitot_heat_on;
 
 extern XPLMDataRef nav1_freq_hz;
@@ -286,6 +295,44 @@ extern XPLMDataRef apu_gen_amp;
 extern XPLMDataRef apu_running;
 extern XPLMDataRef apu_gen_on;
 extern XPLMDataRef apu_starter;
+
+// Elec systems
+// Aircraft constants
+extern XPLMDataRef  acf_batteries;
+extern XPLMDataRef  acf_buses;
+extern XPLMDataRef  acf_generators;
+extern XPLMDataRef  acf_inverters;
+// Batteries
+extern XPLMDataRef  elec_battery_on;
+extern XPLMDataRef  elec_battery_amps;
+extern XPLMDataRef  elec_voltage_actual_volts;
+extern XPLMDataRef  elec_voltage_indicated_volts;
+// Generator
+extern XPLMDataRef  elec_generator_on;
+extern XPLMDataRef  elec_generator_amps;
+// GPU
+extern XPLMDataRef  elec_gpu_on;
+extern XPLMDataRef  elec_gpu_amps;
+// Inverters
+extern XPLMDataRef  elec_inverter_on;
+// Buses
+extern XPLMDataRef  elec_bus_load_amps;
+extern XPLMDataRef  elec_bus_volts;
+// RAM air turbin
+extern XPLMDataRef  ram_air_turbin;
+
+// Control surfaces
+extern XPLMDataRef  left_elevator_pos;
+extern XPLMDataRef  right_elevator_pos;
+extern XPLMDataRef  rudder_pos;
+extern XPLMDataRef  right_aileron_pos;
+extern XPLMDataRef  left_aileron_pos;
+// Control surfaces limits
+extern XPLMDataRef acf_controls_elev_dn;
+extern XPLMDataRef acf_controls_elev_up;
+extern XPLMDataRef acf_controls_ail_dn;
+extern XPLMDataRef acf_controls_ail_up;
+extern XPLMDataRef acf_controls_rudder_lr;
 
 //// TCAS
 //extern XPLMDataRef relative_bearing_degs;
