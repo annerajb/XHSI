@@ -98,12 +98,13 @@ void decodeIncomingPacket(void) {
 
 int createADCPacket(void) {
 
-    int i = 0;
-    int packet_size;
-    int g;
-    int gears;
-    int gear_type[10];
-    float gear_ratio[10];
+	int i = 0;
+	int packet_size;
+	int g;
+	int gears;
+	int lights_signs;
+	int gear_type[10];
+	float gear_ratio[10];
 
     strncpy(sim_packet.packet_id, "ADCD", 4);
 
@@ -279,21 +280,29 @@ int createADCPacket(void) {
     i++;
 
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_LIGHTS);
-    if(x737_ready){
-        sim_packet.sim_data_points[i].value = custom_htonf((float)
+    /* lights and signs based on switches positions
+    lights_signs = XPLMGetDatai(landing_light) << 4 | XPLMGetDatai(navigation_light) << 3 |
+    		XPLMGetDatai(no_smoking) << 2 | XPLMGetDatai(fasten_seat_belts) << 1 |
+    		XPLMGetDatai(strobe_lights) << 1 | XPLMGetDatai(taxi_lights) | XPLMGetDatai(beacon) ;
+    */
+    if (x737_ready) {
+    	lights_signs =
             (XPLMGetDatai(x737_beacon_light_switch) +
             XPLMGetDatai(x737_left_fixed_land_light_switch) * 2 +
             (XPLMGetDatai(x737_position_light_switch) != 0 ? 4 : 0) +
             (XPLMGetDatai(x737_position_light_switch) == -1 ? 8 : 0) +
-            XPLMGetDatai(x737_taxi_light_switch) * 16));
+            XPLMGetDatai(x737_taxi_light_switch) * 16);
     } else {
-        sim_packet.sim_data_points[i].value = custom_htonf((float)
-            (XPLMGetDatai(beacon_lights_on) +
-            XPLMGetDatai(landing_lights_on) * 2 +
-            XPLMGetDatai(nav_lights_on) * 4 +
-            XPLMGetDatai(strobe_lights_on) * 8 +
-            XPLMGetDatai(taxi_light_on) * 16));
+    	lights_signs =
+            XPLMGetDatai(beacon_lights_on) |
+            XPLMGetDatai(landing_lights_on)   << 1 |
+            XPLMGetDatai(nav_lights_on)       << 2 |
+            XPLMGetDatai(strobe_lights_on)    << 3 |
+            XPLMGetDatai(taxi_light_on)       << 4 |
+            XPLMGetDatai(no_smoking)          << 6 |
+            XPLMGetDatai(fasten_seat_belts)   << 8;
     }
+    sim_packet.sim_data_points[i].value = custom_htonf((float) lights_signs);
     i++;
 
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_FLAP_RATIO);
@@ -362,6 +371,38 @@ int createADCPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_LEFT_BRK_RATIO);
     sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(left_brake_ratio));
     i++;
+	// Ctrls surfaces
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_CONTROLS_LEFT_ELEV);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(left_elevator_pos));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_CONTROLS_RIGHT_ELEV);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(right_elevator_pos));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_CONTROLS_RUDDER);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(rudder_pos));
+	i++;
+	if ( qpac_ready ) {
+		sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_CONTROLS_LEFT_AIL);
+		sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_left_aileron_pos));
+		i++;
+		sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_CONTROLS_RIGHT_AIL);
+		sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_right_aileron_pos));
+		i++;
+	} else if (pa_a320_ready) {
+		sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_CONTROLS_LEFT_AIL);
+		sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(pa_a320_left_aileron_pos));
+		i++;
+		sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_CONTROLS_RIGHT_AIL);
+		sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(pa_a320_right_aileron_pos));
+		i++;
+	} else	{
+		sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_CONTROLS_LEFT_AIL);
+		sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(left_aileron_pos));
+		i++;
+		sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_CONTROLS_RIGHT_AIL);
+		sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(right_aileron_pos));
+		i++;
+	}
 
 
     XPLMGetDatavf(gear_deploy, gear_ratio, 0, gears);
@@ -398,8 +439,7 @@ int createADCPacket(void) {
         sprintf(msg, "XHSI: max packet size so far (ADCD): %d\n", max_packet_size);
         XPLMDebugString(msg);
     }
-
-    return packet_size;
+	return packet_size;
 
 }
 
@@ -1920,6 +1960,22 @@ int createStaticPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_OVERFLOW_ACF_VYSE);
     sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(acf_vyse));
     i++;
+
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_CONTROLS_ACL_ELEV_DN);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(acf_controls_elev_dn));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_CONTROLS_ACL_ELEV_UP);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(acf_controls_elev_up));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_CONTROLS_ACL_AIL_DN);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(acf_controls_ail_dn));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_CONTROLS_ACL_AIL_UP);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(acf_controls_ail_up));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_CONTROLS_ACL_RUDDER_LR);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(acf_controls_rudder_lr));
+	i++;
 
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_STYLE);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(xhsi_instrument_style));
