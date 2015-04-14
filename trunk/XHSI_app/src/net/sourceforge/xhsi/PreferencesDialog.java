@@ -1442,7 +1442,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
-        this.nd_write_ap_hdg = new JCheckBox("  (if the window is wide enough)");
+        this.nd_write_ap_hdg = new JCheckBox();
         nd_options_panel.add(this.nd_write_ap_hdg, cons);
         dialog_line++;
 
