@@ -50,7 +50,7 @@ public class APHeadingReadout extends NDSubcomponent {
 
     public void paint(Graphics2D g2) {
 
-        if ( nd_gc.powered ) {
+        if ( nd_gc.powered && this.preferences.get_nd_write_ap_hdg() ) {
 //                && ( ( this.avionics.map_submode() == Avionics.EFIS_MAP_APP ) || ( this.avionics.map_submode() == Avionics.EFIS_MAP_VOR ) )
 
             DecimalFormat degrees_formatter = new DecimalFormat("000");
