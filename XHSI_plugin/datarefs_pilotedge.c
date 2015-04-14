@@ -7,15 +7,9 @@
 
 #define XPLM200 1
 
-//#include "XPLMProcessing.h"
 #include "XPLMDataAccess.h"
 #include "XPLMUtilities.h"
-//#include "XPLMNavigation.h"
-//#include "XPLMDisplay.h"
-//#include "XPLMMenus.h"
-//#include "XPWidgets.h"
-//#include "XPStandardWidgets.h"
-
+#include "XPLMPlugin.h"
 
 
 // DataRefs for the PilotEdge plugin

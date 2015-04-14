@@ -273,8 +273,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_AIRCRAFT_GEAR_ACF_GEAR_RETRACT = 328;
     public static final int SIM_AIRCRAFT_OVERFLOW_ACF_VMCA = 329;
     public static final int SIM_AIRCRAFT_OVERFLOW_ACF_VYSE = 330;
-    public static final int SIM_AIRCRAFT_VIEW_ACF_TAILNUM_0_3 = 10331;
-    public static final int SIM_AIRCRAFT_VIEW_ACF_TAILNUM_4_7 = 10332;    
+    public static final int SIM_AIRCRAFT_VIEW_ACF_TAILNUM_0_3 = 10331; // the 4 first characters of the aircraft registration
+    public static final int SIM_AIRCRAFT_VIEW_ACF_TAILNUM_4_7 = 10332; // the next 4 characters of the aircraft registration
     public static final int SIM_AIRCRAFT_CONTROLS_ACL_ELEV_DN = 333;
     public static final int SIM_AIRCRAFT_CONTROLS_ACL_ELEV_UP = 334;
     public static final int SIM_AIRCRAFT_CONTROLS_ACL_AIL_UP = 335;

@@ -253,7 +253,7 @@ public class RadioTuningUnit extends MFDSubcomponent {
         g2.drawString(adf_formatter.format(this.avionics.get_radio_freq(Avionics.RADIO_ADF1_STDBY)), x_l_fs, y_3_f);
         if ( radio_select == 3 ) {
             g2.setColor(mfd_gc.unusual_color);
-            g2.drawRect(x_l_fs - num_w/4, y_3_f - line_h, num2_w + num_w/4, line_h * 10/8);
+            g2.drawRect(x_l_fs - num_w/4, y_3_f - line_h, num2_w + num_w/4 - 1, line_h * 10/8);
             g2.drawRect(x_l_fs + num2_w, y_3_f - line_h, num2_w + num_w/4, line_h * 10/8);
         }
 
@@ -264,7 +264,7 @@ public class RadioTuningUnit extends MFDSubcomponent {
         g2.drawString(adf_formatter.format(this.avionics.get_radio_freq(Avionics.RADIO_ADF2_STDBY)), x_r_fs, y_3_f);
         if ( radio_select == 6 ) {
             g2.setColor(mfd_gc.unusual_color);
-            g2.drawRect(x_r_fs - num_w/4, y_3_f - line_h, num2_w + num_w/4, line_h * 10/8);
+            g2.drawRect(x_r_fs - num_w/4, y_3_f - line_h, num2_w + num_w/4 - 1, line_h * 10/8);
             g2.drawRect(x_r_fs + num2_w, y_3_f - line_h, num2_w + num_w/4, line_h * 10/8);
         }
 
