@@ -121,8 +121,51 @@ extern XPLMDataRef qpac_right_aileron_pos;
 extern XPLMDataRef qpac_left_aileron_pos;
 // Spoilers
 extern XPLMDataRef qpac_spoilers_array;
+// ELAC and SEC
+extern XPLMDataRef qpac_fcc_avail_array;
+// Rudder limits
+extern XPLMDataRef qpac_rudder_limit_pos;
 // Hydrolics
-extern XPLMDataRef qpac_hydrolic_pressure_array;
+extern XPLMDataRef qpac_hyd_pressure_array;
+extern XPLMDataRef qpac_hyd_pump_array;
+extern XPLMDataRef qpac_hyd_rat_mode;
+extern XPLMDataRef qpac_hyd_y_elec_mode;
+extern XPLMDataRef qpac_hyd_ptu_mode;
+extern XPLMDataRef qpac_hyd_sys_qty_array;
+// fire valve : sim/cockpit2/engine/fire_estinguisher_on[0,1] boolean
+// Cabin Pressure
+extern XPLMDataRef qpac_cabin_delta_p;
+extern XPLMDataRef qpac_cabin_alt;
+extern XPLMDataRef qpac_cabin_vs;
+extern XPLMDataRef qpac_outflow_valve;
+// ENG lower ECAM
+extern XPLMDataRef qpac_ewd_start_mode;
+extern XPLMDataRef qpac_start_valve_array;
+extern XPLMDataRef qpac_nacelle_temp_array;
+// COND
+extern XPLMDataRef qpac_cond_hot_air_valve;
+extern XPLMDataRef qpac_cond_cockpit_trim;
+extern XPLMDataRef qpac_cond_zone1_trim;
+extern XPLMDataRef qpac_cond_zone2_trim;
+// Bleed
+extern XPLMDataRef qpac_bleed_intercon;
+extern XPLMDataRef qpac_bleed_x;
+extern XPLMDataRef qpac_bleed_apu;
+extern XPLMDataRef qpac_bleed_eng1;
+extern XPLMDataRef qpac_bleed_eng2;
+extern XPLMDataRef qpac_bleed_eng1_hp;
+extern XPLMDataRef qpac_bleed_eng2_hp;
+extern XPLMDataRef qpac_bleed_pack1_fcu;
+extern XPLMDataRef qpac_bleed_pack2_fcu;
+extern XPLMDataRef qpac_bleed_pack1_flow;
+extern XPLMDataRef qpac_bleed_pack2_flow;
+extern XPLMDataRef qpac_bleed_pack1_temp;
+extern XPLMDataRef qpac_bleed_pack2_temp;
+extern XPLMDataRef qpac_bleed_ram_air;
+// APU
+extern XPLMDataRef qpac_apu_egt;
+extern XPLMDataRef qpac_apu_egt_limit;
+
 
 
 extern int qpac_ready;

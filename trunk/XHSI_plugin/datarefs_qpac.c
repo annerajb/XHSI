@@ -138,8 +138,50 @@ XPLMDataRef qpac_right_aileron_pos;
 XPLMDataRef qpac_left_aileron_pos;
 // Spoilers
 XPLMDataRef qpac_spoilers_array;
+// ELAC and SEC
+XPLMDataRef qpac_fcc_avail_array;
+// Rudder limits
+XPLMDataRef qpac_rudder_limit_pos;
 // Hydrolics
-XPLMDataRef qpac_hydrolic_pressure_array;
+XPLMDataRef qpac_hyd_pressure_array;
+XPLMDataRef qpac_hyd_pump_array;
+XPLMDataRef qpac_hyd_rat_mode;
+XPLMDataRef qpac_hyd_y_elec_mode;
+XPLMDataRef qpac_hyd_ptu_mode;
+XPLMDataRef qpac_hyd_sys_qty_array;
+// fire valve : sim/cockpit2/engine/fire_estinguisher_on[0,1] boolean
+// Cabin Pressure
+XPLMDataRef qpac_cabin_delta_p;
+XPLMDataRef qpac_cabin_alt;
+XPLMDataRef qpac_cabin_vs;
+XPLMDataRef qpac_outflow_valve;
+// ENG lower ECAM
+XPLMDataRef qpac_ewd_start_mode;
+XPLMDataRef qpac_start_valve_array;
+XPLMDataRef qpac_nacelle_temp_array;
+// COND
+XPLMDataRef qpac_cond_hot_air_valve;
+XPLMDataRef qpac_cond_cockpit_trim;
+XPLMDataRef qpac_cond_zone1_trim;
+XPLMDataRef qpac_cond_zone2_trim;
+// Bleed
+XPLMDataRef qpac_bleed_intercon;
+XPLMDataRef qpac_bleed_x;
+XPLMDataRef qpac_bleed_apu;
+XPLMDataRef qpac_bleed_eng1;
+XPLMDataRef qpac_bleed_eng2;
+XPLMDataRef qpac_bleed_eng1_hp;
+XPLMDataRef qpac_bleed_eng2_hp;
+XPLMDataRef qpac_bleed_pack1_fcu;
+XPLMDataRef qpac_bleed_pack2_fcu;
+XPLMDataRef qpac_bleed_pack1_flow;
+XPLMDataRef qpac_bleed_pack2_flow;
+XPLMDataRef qpac_bleed_pack1_temp;
+XPLMDataRef qpac_bleed_pack2_temp;
+XPLMDataRef qpac_bleed_ram_air;
+// APU
+XPLMDataRef qpac_apu_egt;
+XPLMDataRef qpac_apu_egt_limit;
 
 int qpac_ready = 0;
 int qpac_version = 0;
@@ -281,8 +323,50 @@ void findQpacDataRefs(void) {
             qpac_left_aileron_pos = XPLMFindDataRef("sim/flightmodel/controls/wing4l_ail1def");
             // Spoilers
             qpac_spoilers_array = XPLMFindDataRef("AirbusFBW/SDSpoilerArray");
+            // ELAC and SEC
+            qpac_fcc_avail_array = XPLMFindDataRef("AirbusFBW/FCCAvailArray");
+            // Rudder limits
+            qpac_rudder_limit_pos = XPLMFindDataRef("AirbusFBW/RTLPosition");
             // Hydrolics
-            qpac_hydrolic_pressure_array = XPLMFindDataRef("AirbusFBW/HydSysPressArray");
+            qpac_hyd_pressure_array = XPLMFindDataRef("AirbusFBW/HydSysPressArray");
+            qpac_hyd_pump_array = XPLMFindDataRef("AirbusFBW/HydPumpArray");
+            qpac_hyd_rat_mode = XPLMFindDataRef("AirbusFBW/HydRATMode");
+            qpac_hyd_y_elec_mode = XPLMFindDataRef("AirbusFBW/HydYElecMode");
+            qpac_hyd_ptu_mode = XPLMFindDataRef("AirbusFBW/HydPTUMode");
+            qpac_hyd_sys_qty_array = XPLMFindDataRef("AirbusFBW/HydSysQtyArray");
+            // fire valve : sim/cockpit2/engine/fire_estinguisher_on[0,1] boolean
+            // Cabin Pressure
+            qpac_cabin_delta_p = XPLMFindDataRef("AirbusFBW/CabinDeltaP");
+            qpac_cabin_alt = XPLMFindDataRef("AirbusFBW/CabinAlt");
+            qpac_cabin_vs = XPLMFindDataRef("AirbusFBW/CabinVS");
+            qpac_outflow_valve = XPLMFindDataRef("AirbusFBW/OutflowValve");
+            // ENG lower ECAM
+            qpac_ewd_start_mode = XPLMFindDataRef("AirbusFBW/EWDStartMode");
+            qpac_start_valve_array = XPLMFindDataRef("AirbusFBW/StartValveArray");
+            qpac_nacelle_temp_array = XPLMFindDataRef("AirbusFBW/NacelleTempArray");
+            // COND
+            qpac_cond_hot_air_valve = XPLMFindDataRef("AirbusFBW/HotAirValve");
+            qpac_cond_cockpit_trim = XPLMFindDataRef("AirbusFBW/CockpitTrim");
+            qpac_cond_zone1_trim = XPLMFindDataRef("AirbusFBW/Zone1Trim");
+            qpac_cond_zone2_trim = XPLMFindDataRef("AirbusFBW/Zone2Trim");
+            // Bleed
+            qpac_bleed_intercon = XPLMFindDataRef("AirbusFBW/BleedIntercon");
+            qpac_bleed_x = XPLMFindDataRef("AirbusFBW/XBleedInd");
+            qpac_bleed_apu = XPLMFindDataRef("AirbusFBW/APUBleedInd");
+            qpac_bleed_eng1 = XPLMFindDataRef("AirbusFBW/ENG1BleedInd");
+            qpac_bleed_eng2 = XPLMFindDataRef("AirbusFBW/ENG2BleedInd");
+            qpac_bleed_eng1_hp = XPLMFindDataRef("AirbusFBW/ENG1HPBleedInd");
+            qpac_bleed_eng2_hp = XPLMFindDataRef("AirbusFBW/ENG2HPBleedInd");
+            qpac_bleed_pack1_fcu = XPLMFindDataRef("AirbusFBW/Pack1FCUInd");
+            qpac_bleed_pack2_fcu = XPLMFindDataRef("AirbusFBW/Pack2FCUInd");
+            qpac_bleed_pack1_flow = XPLMFindDataRef("AirbusFBW/Pack1Flow");
+            qpac_bleed_pack2_flow = XPLMFindDataRef("AirbusFBW/Pack2Flow");
+            qpac_bleed_pack1_temp = XPLMFindDataRef("AirbusFBW/Pack1Temp");
+            qpac_bleed_pack2_temp = XPLMFindDataRef("AirbusFBW/Pack2Temp");
+            qpac_bleed_ram_air = XPLMFindDataRef("AirbusFBW/RamAirValueSD");
+            // APU
+            qpac_apu_egt = XPLMFindDataRef("AirbusFBW/");
+            qpac_apu_egt_limit = XPLMFindDataRef("AirbusFBW/");
 
         }
     }
