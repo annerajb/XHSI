@@ -150,10 +150,6 @@ public class MovingMap extends NDSubcomponent {
 
             // drawing the map over the scale rings
             drawMap(g2, nd_gc.max_range);
-
-            // Clock/Chronograph
-            if ( this.preferences.get_nd_show_clock() )
-                drawTime(g2);
             
         }
 
@@ -1716,42 +1712,6 @@ public class MovingMap extends NDSubcomponent {
 
             g2.setTransform(original_at);
         }
-    }
-
-
-    private void drawTime(Graphics2D g2) {
-        
-        String time_label = "ERR";
-        String time_str = "99:99";
-        float chr_time = this.aircraft.timer_elapsed_time();
-
-        if ( chr_time == 0.0f ) {
-
-            time_label = this.avionics.clock_shows_utc() ? "UTC" : "LT";
-            int current_time = this.avionics.clock_shows_utc() ? (int)this.aircraft.sim_time_zulu() : (int)this.aircraft.sim_time_local();
-            int hh = current_time / 3600;
-            int mm = ( current_time / 60 ) % 60;
-            int ss = current_time % 60;
-            time_str = hms_formatter.format(hh) + ":" + hms_formatter.format(mm);
-
-        } else {
-
-            time_label = "CHR";
-            int timer = (int)chr_time;
-            int mins = timer / 60 % 60;
-            int secs = timer % 60;
-            time_str = hms_formatter.format(mins) + ":" + hms_formatter.format(secs);
-
-        }
-
-        g2.setColor(nd_gc.markings_color);
-        g2.setFont(nd_gc.font_s);
-        int time_x = nd_gc.map_center_x + nd_gc.digit_width_s/2;
-        int time_y = nd_gc.panel_rect.y + nd_gc.panel_rect.height - nd_gc.line_height_s/2;
-        g2.clearRect(nd_gc.map_center_x - nd_gc.digit_width_s*6, time_y - nd_gc.line_height_s, nd_gc.digit_width_s*12, nd_gc.line_height_s*2);
-        g2.drawString(time_label, time_x - nd_gc.get_text_width(g2, nd_gc.font_s, time_label) - nd_gc.digit_width_s, time_y);
-        g2.drawString(time_str, time_x, time_y);
-
     }
 
 
