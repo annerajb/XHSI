@@ -27,6 +27,7 @@ import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 public interface Aircraft {
 	
     public enum ValveStatus { VALVE_OPEN, VALVE_CLOSED, VALVE_OPEN_FAILED, VALVE_CLOSED_FAILED };
+    public enum SpoilerStatus { RETRACTED, EXTENDED, FAILED, JAMMED };
 
     /**
      * @return String - aircraft_registration
@@ -496,7 +497,21 @@ public interface Aircraft {
      */
     public boolean speed_brake_armed();
 
-
+    /**
+     * @return int - number of spoilers
+     */
+    public int num_spoilers();
+    
+    /**
+     * @return float - spoiler deflection ration
+     */
+    public float get_spoiler_pos(int pos);
+    
+    /**
+     * @return float - spoiler status
+     */    
+    public SpoilerStatus get_spoiler_status(int pos);    
+    
     /**
      * @return float - Parking Brake
      */
@@ -921,5 +936,19 @@ public interface Aircraft {
      */
     public boolean has_bleed_air();
   
+    /**
+     * @return Float - Cabin altitude in feet
+     */
+    public float cabin_altitude();
+    
+    /**
+     * @return Float - Cabin delta pressure (psi ratio)
+     */
+    public float cabin_delta_p();
+
+    /**
+     * @return Float - Cabin pressure vertical speed (feet / minute)
+     */
+    public float cabin_vs();
     
 }

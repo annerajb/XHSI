@@ -421,6 +421,34 @@ public class XPlaneAircraft implements Aircraft {
         return ( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_PARTS_ACF_SBRKEQ) != 0.0f );
     }
 
+    public int num_spoilers() {
+    	return has_speed_brake() ? 1 : 0;
+    }
+    
+    public float get_spoiler_pos(int pos) {
+    	return get_speed_brake();
+    }
+    
+    public SpoilerStatus get_spoiler_status(int pos) {
+    	int spoiler = 0;
+    	if ((this.avionics.is_qpac())) {
+    		if (pos<5) {
+    			spoiler = (Math.round(XPlaneSimDataRepository.QPAC_SPOILERS_LEFT) >> (pos*2)) & 0x03 ;
+    		} else {
+    			spoiler = (Math.round(XPlaneSimDataRepository.QPAC_SPOILERS_RIGHT) >> ((pos-5)*2)) & 0x03 ;
+    		}
+    		switch (spoiler) {
+    		case 0: return SpoilerStatus.RETRACTED;
+    		case 1: return SpoilerStatus.EXTENDED;
+    		case 2: return SpoilerStatus.FAILED;
+    		default: return SpoilerStatus.JAMMED;
+    		}
+
+    	} else {
+    	return get_speed_brake() > 0.1f ? SpoilerStatus.EXTENDED : SpoilerStatus.RETRACTED ;
+    	}
+    }
+    
     public float get_parking_brake() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_PARKING_BRAKE_RATIO);
     }
@@ -731,15 +759,29 @@ public class XPlaneAircraft implements Aircraft {
 
     public float get_hyd_press(int circuit) {
         float h_p;
-        if ( circuit == 1 )
-            h_p = sim_data.get_sim_float(XPlaneSimDataRepository.SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO1);
-        else
-            h_p = sim_data.get_sim_float(XPlaneSimDataRepository.SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO2);
-        // most values seem to be in the range 3000-3600
-        if ( h_p > 5000.0f )
-            return 3333.0f / 5000.0f;
-        else
-            return h_p / 5000.0f;
+        // TODO: QPAC hyd pressure
+        if ( this.avionics.is_qpac() ) {
+        	switch (circuit) {
+        		case 0 : h_p = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_HYD_G_PRESS);
+        				 break;
+        		case 1 : h_p = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_HYD_Y_PRESS);
+				 		 break;
+        		case 2 : h_p = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_HYD_B_PRESS);
+				 		 break;
+				default : h_p = 0.0f;
+        	}
+        	return h_p / 5000.0f;
+        } else {
+        	if ( circuit == 1 )
+        		h_p = sim_data.get_sim_float(XPlaneSimDataRepository.SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO1);
+        	else
+        		h_p = sim_data.get_sim_float(XPlaneSimDataRepository.SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO2);
+        	// most values seem to be in the range 3000-3600
+        	if ( h_p > 5000.0f )
+        		return 3333.0f / 5000.0f;
+        	else
+        		return h_p / 5000.0f;
+        }
     }
 
     public float get_hyd_quant(int circuit) {
@@ -947,6 +989,20 @@ public class XPlaneAircraft implements Aircraft {
     public int bleed_air_mode() {
     	return 0;
     }
+
+    // Cabin pressurization
+    public float cabin_altitude() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_PRESSURIZATION_CABIN_ALT);
+    }
+    
+    public float cabin_delta_p() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_PRESSURIZATION_CABIN_DELTA_P);
+    }
+    
+    public float cabin_vs() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_PRESSURIZATION_CABIN_VVI);
+    }
+
 
     
 }

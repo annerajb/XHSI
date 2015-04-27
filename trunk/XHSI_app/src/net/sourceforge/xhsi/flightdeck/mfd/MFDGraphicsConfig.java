@@ -185,6 +185,69 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int fctl_y_rud_arc_top;
     public int fctl_y_rud_arc_end;
     public int fctl_dy_tri;
+    public int fctl_dx_spoiler;
+    public int fctl_dy_spoiler;
+    public int fctl_dx_spoiler_arrow;
+    public int fctl_dy_spoiler_arrow;
+    public int fctl_y_spoiler_top;
+    public int fctl_y_spoiler_bottom;    
+    public int fctl_dx_spoiler_bdr;
+    public int fctl_dx_spoiler_ctr;
+    // Airbus Air Conditionning
+    // Legends
+    public int cond_temp_legend_x;
+    public int cond_temp_legend_y;
+    public int cond_page_legend_x;
+    // Cabin
+    public int cab_hot_air_edge_x;
+    public int cab_hot_air_valve_x;
+    public int cab_aft_x;
+    public int cab_aft_dx;
+    public int cab_zone2_x; 
+    public int cab_cockpit_x;
+    public int cab_noose_x;
+    public int cab_zone1_x;
+    public int cab_front_x;
+    public int cab_gauge1_x;
+    public int cab_gauge2_x;		
+    public int cab_gauge3_x;
+    public int cab_seg1_x1;
+    public int cab_seg1_x2;
+    public int cab_seg2_x1;
+    public int cab_seg2_x2;
+    public int cab_top_y;
+    public int cab_zone2_y;
+    public int cab_temp_y;
+    public int cab_cockpit_y;
+    public int cab_middle_y;
+    public int cab_noose_y;
+    public int cab_bottom_y;
+    public int cab_gauge_legend_y;
+    public int cab_gauge_y;
+    public int cab_hot_air_y;
+    // Valves
+    public int cond_valve_r;
+    // Gauges
+    public int cond_gauge_r;
+    // Cargo
+    public int cargo_front_x;
+    public int cargo_gauge_x;
+    public int cargo_aft_x;
+    public int cargo_hot_air_valve_x;
+    public int cargo_hot_air_aft_x;
+    public int cargo_x1;
+    public int cargo_x2;
+    public int cargo_hot_air_y;
+    public int cargo_top_y;
+    public int cargo_outlet_valve_y;
+    public int cargo_inlet_valve_y;
+    public int cargo_bottom_y;
+    public int cargo_gauge_y;
+    public int cargo_y1;
+    public int cargo_y2;
+    public int cargo_inlet_top_y;
+    public int cargo_temp_y;
+    
     
     
     public MFDGraphicsConfig(Component root_component, int du) {
@@ -235,21 +298,21 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             if (airbus_style) { mfd_size = Math.min(panel_rect.width, panel_rect.height- line_height_l*4); }
             
             // ECAM Lower Common indicators
-            ec_base_line = panel_rect.y + panel_rect.height - line_height_l*4;
+            ec_base_line = panel_rect.y + panel_rect.height - line_height_xl*7/3;
             
-            ec_line1 = ec_base_line + line_height_l; 
-            ec_line2 = ec_base_line + line_height_l*2;
-            ec_line3 = ec_base_line + line_height_l*3;
+            ec_line1 = ec_base_line + line_height_xl; 
+            ec_line2 = ec_base_line + line_height_xl*2;
+            ec_line3 = ec_base_line + line_height_xl*3;
             ec_sep1 = panel_rect.x + panel_rect.width * 330/1000;
             ec_sep2 = panel_rect.x + panel_rect.width * 660/1000;
-            ec_col1 = panel_rect.x + digit_width_l*2;
-            ec_col1_val = panel_rect.x + digit_width_l*8;            
-            ec_col1_unit = panel_rect.x + digit_width_l*12;
-            ec_col2 = ec_sep1 + digit_width_l;
+            ec_col1 = panel_rect.x + digit_width_xl*2;
+            ec_col1_val = panel_rect.x + digit_width_xl*8;            
+            ec_col1_unit = panel_rect.x + digit_width_xl*11;
+            ec_col2 = ec_sep1 + digit_width_xl;
             ec_col2_ctr = ec_sep1 + (ec_sep2-ec_sep1)/2;
-            ec_col3 = ec_sep2 + digit_width_l;
-            ec_col3_val = ec_col3 + digit_width_l*4;
-            ec_col3_unit = ec_col3 + digit_width_l*14;
+            ec_col3 = ec_sep2 + digit_width_xl;
+            ec_col3_val = ec_col3 + digit_width_xl*4;
+            ec_col3_unit = ec_col3 + digit_width_xl*10;
             
             // FUEL
             fuel_r = mfd_size*40/100*20/100;
@@ -420,8 +483,73 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             fctl_y_rud_arc_top = panel_rect.y + mfd_size * 717/1000;
             fctl_y_rud_arc_end = panel_rect.y + mfd_size * 912/1000; 
             fctl_dy_tri = mfd_size * 20/1000;
-
+            // TODO : to fix
+            fctl_dx_spoiler = mfd_size * 14/1000;
+            fctl_dy_spoiler = mfd_size * 42/1000;
+            fctl_dx_spoiler_arrow = mfd_size * 10/1000;
+            fctl_dy_spoiler_arrow = mfd_size * 15/1000;
+            fctl_y_spoiler_top = panel_rect.y + mfd_size * 133/1000;
+            fctl_y_spoiler_bottom = panel_rect.y + mfd_size * 183/1000;
+            fctl_dx_spoiler_bdr = panel_rect.width * 390/1000;
+            fctl_dx_spoiler_ctr = panel_rect.width * 53/1000;
             
+            // Airbus Air Conditionning
+            cond_temp_legend_x = panel_rect.x + panel_rect.width * 733/1000;
+            cond_temp_legend_y = panel_rect.y + mfd_size * 54/1000;
+            cond_page_legend_x = panel_rect.x + panel_rect.width * 42/1000;
+
+            // Cabin
+            cab_hot_air_edge_x = panel_rect.x + panel_rect.width * 924/1000;
+            cab_hot_air_valve_x = panel_rect.x + panel_rect.width * 863/1000;
+            cab_aft_x = panel_rect.x + panel_rect.width * 760/1000;
+            cab_aft_dx = panel_rect.width * 69/1000;
+            cab_zone2_x = panel_rect.x + panel_rect.width * 573/1000; 
+            cab_cockpit_x = panel_rect.x + panel_rect.width * 92/1000;
+            cab_noose_x = panel_rect.x + panel_rect.width * 23/1000;
+            cab_zone1_x = panel_rect.x + panel_rect.width * 317/1000;
+            cab_front_x = panel_rect.x + panel_rect.width * 137/1000;
+            cab_gauge1_x = panel_rect.x + panel_rect.width * 191/1000;
+            cab_gauge2_x = panel_rect.x + panel_rect.width * 447/1000;		
+            cab_gauge3_x = panel_rect.x + panel_rect.width * 703/1000;
+            cab_seg1_x1 = panel_rect.x + panel_rect.width * 244/1000;
+            cab_seg1_x2 = panel_rect.x + panel_rect.width * 397/1000;
+            cab_seg2_x1 = panel_rect.x + panel_rect.width * 496/1000;
+            cab_seg2_x2 = panel_rect.x + panel_rect.width * 649/1000;
+            cab_top_y = panel_rect.y + mfd_size * 134/1000;
+            cab_zone2_y = panel_rect.y + mfd_size * 188/1000;
+            cab_temp_y = panel_rect.y + mfd_size * 232/1000;
+            
+            cab_cockpit_y = panel_rect.y + mfd_size * 161/1000;
+            cab_middle_y = panel_rect.y + mfd_size * 210/1000;
+            cab_noose_y = panel_rect.y + mfd_size * 223/1000;
+            cab_bottom_y = panel_rect.y + mfd_size * 286/1000;
+            cab_gauge_legend_y = panel_rect.y + mfd_size * 384/1000;
+            cab_gauge_y = panel_rect.y + mfd_size * 420/1000;
+            cab_hot_air_y = panel_rect.y + mfd_size * 469/1000;
+            
+            // Valves
+            cond_valve_r = mfd_size * 35/1000;
+            // Gauges
+            cond_gauge_r = mfd_size * 80/1000;
+            // Cargo
+            cargo_front_x = panel_rect.x + panel_rect.width * 538/1000;
+            cargo_gauge_x = panel_rect.x + panel_rect.width * 695/1000;
+            cargo_aft_x = panel_rect.x + panel_rect.width * 802/1000;
+            cargo_hot_air_valve_x = panel_rect.x + panel_rect.width * 870/1000;
+            cargo_hot_air_aft_x = panel_rect.x + panel_rect.width * 935/1000;
+            cargo_x1 = panel_rect.x + panel_rect.width * 637/1000;
+            cargo_x2 = panel_rect.x + panel_rect.width * 740/1000;
+            cargo_hot_air_y = panel_rect.y + mfd_size * 915/1000;
+            cargo_top_y = panel_rect.y + mfd_size * 540/1000;
+            cargo_outlet_valve_y = panel_rect.y + mfd_size * 605/1000;
+            cargo_inlet_valve_y = panel_rect.y + mfd_size * 750/1000;
+            cargo_bottom_y = panel_rect.y + mfd_size * 670/1000;
+            cargo_gauge_y = panel_rect.y + mfd_size * 888/1000;
+            cargo_y1 = cargo_top_y  + (cargo_bottom_y - cargo_top_y) / 2 - cond_valve_r ;
+            cargo_y2 = cargo_top_y  + (cargo_bottom_y - cargo_top_y) / 2 + cond_valve_r ;
+            cargo_inlet_top_y = panel_rect.y + mfd_size * 696/1000;
+            cargo_temp_y = panel_rect.y + mfd_size * 612/1000;
+
         }
 
     }

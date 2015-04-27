@@ -90,7 +90,7 @@ public class LowerEcamCommon extends MFDSubcomponent {
             
             // Temperatures (left)
             // line 1 : TAT
-            g2.setFont(mfd_gc.font_l);
+            g2.setFont(mfd_gc.font_xl);
             g2.setColor(mfd_gc.ecam_markings_color);
             g2.drawString("TAT", mfd_gc.ec_col1, mfd_gc.ec_line1);
             String tat_str = "" + Math.round(this.aircraft.tat());
@@ -101,7 +101,7 @@ public class LowerEcamCommon extends MFDSubcomponent {
             g2.drawString("°c", mfd_gc.ec_col1_unit, mfd_gc.ec_line1);
             
             // line 2 : SAT
-            g2.setFont(mfd_gc.font_l);
+            g2.setFont(mfd_gc.font_xl);
             g2.setColor(mfd_gc.ecam_markings_color);
             g2.drawString("SAT", mfd_gc.ec_col1, mfd_gc.ec_line2);
             String oat_str = "" + Math.round(this.aircraft.oat());
@@ -112,7 +112,8 @@ public class LowerEcamCommon extends MFDSubcomponent {
             g2.drawString("°c", mfd_gc.ec_col1_unit, mfd_gc.ec_line2);
 
             // line 3 : ISA (version 2 only)
-            g2.setFont(mfd_gc.font_l);
+            /*
+            g2.setFont(mfd_gc.font_xl);
             g2.setColor(mfd_gc.ecam_markings_color);
             g2.drawString("ISA", mfd_gc.ec_col1, mfd_gc.ec_line3);
             String isa_str = "" + Math.round(this.aircraft.isa());
@@ -121,6 +122,7 @@ public class LowerEcamCommon extends MFDSubcomponent {
             g2.setFont(mfd_gc.font_m);
             g2.setColor(mfd_gc.ecam_action_color);
             g2.drawString("°c", mfd_gc.ec_col1_unit, mfd_gc.ec_line3);
+            */
             
             
             // Clock and G.Load (middle)            
@@ -128,6 +130,7 @@ public class LowerEcamCommon extends MFDSubcomponent {
             // line 1 : G.Load
             String g_load_str = "G.LOAD  "+one_decimal_format.format(this.aircraft.g_load())+" g";
             if ((this.aircraft.g_load() > 1.4 || this.aircraft.g_load() < 0.7) && !inhibit) {
+            	g2.setFont(mfd_gc.font_l);
             	g2.setColor(mfd_gc.ecam_caution_color);
             	g2.drawString (g_load_str, mfd_gc.ec_col2_ctr - mfd_gc.get_text_width(g2, mfd_gc.font_l, g_load_str)/2, mfd_gc.ec_line1);
             }           
@@ -140,22 +143,23 @@ public class LowerEcamCommon extends MFDSubcomponent {
             
             String h_str = "XX";
             String m_str = "XX";
-            g2.setFont(mfd_gc.font_l);
+            g2.setFont(mfd_gc.font_xxl);
             g2.setColor(mfd_gc.ecam_caution_color);
             h_str = hms_formatter.format(hh);
             g2.setColor(mfd_gc.ecam_normal_color);           
-            g2.drawString (h_str, mfd_gc.ec_col2_ctr - mfd_gc.digit_width_l*3, mfd_gc.ec_line2);
+            g2.drawString (h_str, mfd_gc.ec_col2_ctr - mfd_gc.digit_width_xl*3, mfd_gc.ec_line2);
             g2.setFont(mfd_gc.font_m);
             g2.setColor(mfd_gc.ecam_action_color);
             g2.drawString ("H", mfd_gc.ec_col2_ctr, mfd_gc.ec_line2);
             g2.setColor(mfd_gc.ecam_caution_color);
             m_str = hms_formatter.format(mm);
+            g2.setFont(mfd_gc.font_xl);
             g2.setColor(mfd_gc.ecam_normal_color);
             g2.drawString (m_str, mfd_gc.ec_col2_ctr + mfd_gc.digit_width_l*2, mfd_gc.ec_line2);
                         
             // GW (right)
             // line 1 : GW
-            g2.setFont(mfd_gc.font_l);
+            g2.setFont(mfd_gc.font_xl);
             g2.setColor(mfd_gc.ecam_markings_color);
             g2.drawString("GW", mfd_gc.ec_col3, mfd_gc.ec_line1);
             String gw_str = "XX";

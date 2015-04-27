@@ -360,6 +360,11 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_FLIGHTMODEL_CONTROLS_LEFT_AIL = 623;
     public static final int SIM_FLIGHTMODEL_CONTROLS_RIGHT_AIL = 624;
     
+    // Cabin Pressure
+    public static final int SIM_COCKPIT2_PRESSURIZATION_CABIN_DELTA_P=625;
+    public static final int SIM_COCKPIT2_PRESSURIZATION_CABIN_ALT=626;
+    public static final int SIM_COCKPIT2_PRESSURIZATION_CABIN_VVI=627;
+    
     // UFMC
     public static final int UFMC_STATUS = 700;
     // UFMC V-speeds
@@ -523,7 +528,20 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     // FLAPS and SLATS
     public static final int QPAC_FLAPS_REQ_POS=1057;
     public static final int QPAC_SLATS_REQ_POS=1058;
-
+    // SPOILERS
+    public static final int QPAC_SPOILERS_LEFT=1062;
+    public static final int QPAC_SPOILERS_RIGHT=1063;
+    // ELAC and SEC FCC
+    public static final int QPAC_FCC=1064;
+    // Rudder limit
+    public static final int QPAC_RUDDER_LIMIT=1065;
+    // Hydrolic
+    public static final int QPAC_HYD_B_PRESS=1066;
+    public static final int QPAC_HYD_G_PRESS=1067;
+    public static final int QPAC_HYD_Y_PRESS=1068;
+    public static final int QPAC_HYD_B_QTY=1069;
+    public static final int QPAC_HYD_G_QTY=1070;
+    public static final int QPAC_HYD_Y_QTY=1071;
     // IDs reserved for QPAC up to 1199
 
     // JarDesign Airbus A320neo
