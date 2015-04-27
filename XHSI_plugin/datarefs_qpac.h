@@ -165,6 +165,10 @@ extern XPLMDataRef qpac_bleed_ram_air;
 // APU
 extern XPLMDataRef qpac_apu_egt;
 extern XPLMDataRef qpac_apu_egt_limit;
+// ECAM SD page selection
+extern XPLMDataRef qpac_sd_page;
+extern XPLMDataRef qpac_clear_illuminated;
+
 
 
 

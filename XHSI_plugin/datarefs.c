@@ -427,6 +427,10 @@ XPLMDataRef acf_controls_ail_dn;
 XPLMDataRef acf_controls_ail_up;
 XPLMDataRef acf_controls_rudder_lr;
 
+// Pressurization
+XPLMDataRef cabin_altitude;
+XPLMDataRef cabin_vvi;
+XPLMDataRef cabin_delta_p;
 
 
 /*
@@ -1836,8 +1840,10 @@ void findDataRefs(void) {
     elec_bus_volts = XPLMFindDataRef("sim/cockpit2/electrical/bus_volts");
     // RAM air turbin
     ram_air_turbin = XPLMFindDataRef("sim/cockpit2/switches/ram_air_turbin_on");
-
-
+    // Pressurization
+    cabin_altitude = XPLMFindDataRef("sim/cockpit2/pressurization/cabin_altitude_ft");
+    cabin_vvi = XPLMFindDataRef("sim/cockpit2/pressurization/cabin_vvi_fpm");
+    cabin_delta_p = XPLMFindDataRef("sim/cockpit2/pressurization/pressure_differential_psi");
 
 //	// TCAS
 //	relative_bearing_degs = XPLMFindDataRef("sim/cockpit2/tcas/indicators/relative_bearing_degs");
