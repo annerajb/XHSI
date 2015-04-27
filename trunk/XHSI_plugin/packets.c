@@ -893,6 +893,30 @@ int createAvionicsPacket(void) {
     sim_packet.sim_data_points[i].value = custom_htonf((float) apu_status);
     i++;
 
+    // Cabin Pressure
+    if (qpac_ready) {
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_DELTA_P);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cabin_delta_p));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_ALT);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cabin_alt));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_VVI);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cabin_vs));
+    	i++;
+
+    } else {
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_DELTA_P);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(cabin_delta_p));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_ALT);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(cabin_altitude));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_VVI);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(cabin_vvi));
+    	i++;
+    }
+
     // now we know the number of datapoints
     sim_packet.nb_of_sim_data_points = custom_htoni( i );
 
@@ -912,6 +936,7 @@ int createAvionicsPacket(void) {
 int createCustomAvionicsPacket(void) {
 
     int i = 0;
+    int j = 0;
     int packet_size;
     char nav_id_bytes[4];
     char qpac_ils_char[12];
@@ -920,6 +945,12 @@ int createCustomAvionicsPacket(void) {
     int ap_appr;
     int qpac_ils;
     int qpac_failures;
+    int qpac_spoilers_tab[20];
+    int qpac_spoilers;
+    int qpac_fcc_tab[5];
+    int qpac_fcc;
+    float qpac_hyd_press_tab[3];
+    float qpac_hyd_qty_tab[3];
     int auto_brake_level;
     int pa_a320_failures;
 
@@ -1411,6 +1442,111 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_SLATS_REQ_POS);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) XPLMGetDatai(qpac_slats_request_pos) );
         i++;
+
+        // ECAM
+        // Spoilers qpac_spoilers, transmitted in a 2 bits field set
+        if (qpac_spoilers_array != NULL) {
+        	XPLMGetDatavi(qpac_spoilers_array, qpac_spoilers_tab, 0, 10);
+        	qpac_spoilers = qpac_spoilers_tab[0] |
+        			qpac_spoilers_tab[1] << 2 |
+        			qpac_spoilers_tab[2] << 4 |
+        			qpac_spoilers_tab[3] << 6 |
+        			qpac_spoilers_tab[4] << 8 ;
+         	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_SPOILERS_LEFT);
+        	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_spoilers );
+        	i++;
+        	qpac_spoilers = qpac_spoilers_tab[5] |
+        			qpac_spoilers_tab[6] << 2 |
+        			qpac_spoilers_tab[7] << 4 |
+        			qpac_spoilers_tab[8] << 6 |
+        			qpac_spoilers_tab[9] << 8 ;
+        	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_SPOILERS_RIGHT);
+        	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_spoilers );
+        	i++;
+        }
+
+
+    	// ELAC and SEC control computers
+    	XPLMGetDatavi(qpac_fcc_avail_array, qpac_fcc_tab, 0, 5);
+    	qpac_fcc = 0;
+        for (j=0; j<5; j++) {
+        	qpac_fcc |= (qpac_fcc_tab[j] & 0x01) << j;
+        }
+    	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FCC);
+    	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fcc );
+    	i++;
+
+    	// Rudder limit
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ALPHA_MAX);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_rudder_limit_pos));
+        i++;
+
+        // Hydrolics
+        XPLMGetDatavf(qpac_hyd_pressure_array, qpac_hyd_press_tab, 0, 3);
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_HYD_G_PRESS);
+        sim_packet.sim_data_points[i].value = custom_htonf(qpac_hyd_press_tab[0]);
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_HYD_Y_PRESS);
+        sim_packet.sim_data_points[i].value = custom_htonf(qpac_hyd_press_tab[1]);
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_HYD_B_PRESS);
+        sim_packet.sim_data_points[i].value = custom_htonf(qpac_hyd_press_tab[2]);
+        i++;
+
+        XPLMGetDatavf(qpac_hyd_sys_qty_array, qpac_hyd_qty_tab, 0, 3);
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_HYD_G_QTY);
+        sim_packet.sim_data_points[i].value = custom_htonf(qpac_hyd_qty_tab[0]);
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_HYD_Y_QTY);
+        sim_packet.sim_data_points[i].value = custom_htonf(qpac_hyd_qty_tab[1]);
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_HYD_B_QTY);
+        sim_packet.sim_data_points[i].value = custom_htonf(qpac_hyd_qty_tab[2]);
+        i++;
+
+        /*
+        // Hydrolics
+        qpac_hyd_pressure_array = XPLMFindDataRef("AirbusFBW/HydSysPressArray");
+        qpac_hyd_pump_array = XPLMFindDataRef("AirbusFBW/HydPumpArray");
+        qpac_hyd_sys_qty_array = XPLMFindDataRef("AirbusFBW/HydSysQtyArray");
+        qpac_hyd_rat_mode = XPLMFindDataRef("AirbusFBW/HydRATMode");
+        qpac_hyd_y_elec_mode = XPLMFindDataRef("AirbusFBW/HydYElecMode");
+        qpac_hyd_ptu_mode = XPLMFindDataRef("AirbusFBW/HydPTUMode");
+
+        // fire valve : sim/cockpit2/engine/fire_estinguisher_on[0,1] boolean
+        // Cabin Pressure
+        qpac_cabin_delta_p = XPLMFindDataRef("AirbusFBW/CabinDeltaP");
+        qpac_cabin_alt = XPLMFindDataRef("AirbusFBW/CabinAlt");
+        qpac_cabin_vs = XPLMFindDataRef("AirbusFBW/CabinVS");
+        qpac_outflow_valve = XPLMFindDataRef("AirbusFBW/OutflowValve");
+        // ENG lower ECAM
+        qpac_ewd_start_mode = XPLMFindDataRef("AirbusFBW/EWDStartMode");
+        qpac_start_valve_array = XPLMFindDataRef("AirbusFBW/StartValveArray");
+        qpac_nacelle_temp_array = XPLMFindDataRef("AirbusFBW/NacelleTempArray");
+        // COND
+        qpac_cond_hot_air_valve = XPLMFindDataRef("AirbusFBW/HotAirValve");
+        qpac_cond_cockpit_trim = XPLMFindDataRef("AirbusFBW/CockpitTrim");
+        qpac_cond_zone1_trim = XPLMFindDataRef("AirbusFBW/Zone1Trim");
+        qpac_cond_zone2_trim = XPLMFindDataRef("AirbusFBW/Zone2Trim");
+        // Bleed
+        qpac_bleed_intercon = XPLMFindDataRef("AirbusFBW/BleedIntercon");
+        qpac_bleed_x = XPLMFindDataRef("AirbusFBW/XBleedInd");
+        qpac_bleed_apu = XPLMFindDataRef("AirbusFBW/APUBleedInd");
+        qpac_bleed_eng1 = XPLMFindDataRef("AirbusFBW/ENG1BleedInd");
+        qpac_bleed_eng2 = XPLMFindDataRef("AirbusFBW/ENG2BleedInd");
+        qpac_bleed_eng1_hp = XPLMFindDataRef("AirbusFBW/ENG1HPBleedInd");
+        qpac_bleed_eng2_hp = XPLMFindDataRef("AirbusFBW/ENG2HPBleedInd");
+        qpac_bleed_pack1_fcu = XPLMFindDataRef("AirbusFBW/Pack1FCUInd");
+        qpac_bleed_pack2_fcu = XPLMFindDataRef("AirbusFBW/Pack2FCUInd");
+        qpac_bleed_pack1_flow = XPLMFindDataRef("AirbusFBW/Pack1Flow");
+        qpac_bleed_pack2_flow = XPLMFindDataRef("AirbusFBW/Pack2Flow");
+        qpac_bleed_pack1_temp = XPLMFindDataRef("AirbusFBW/Pack1Temp");
+        qpac_bleed_pack2_temp = XPLMFindDataRef("AirbusFBW/Pack2Temp");
+        qpac_bleed_ram_air = XPLMFindDataRef("AirbusFBW/RamAirValueSD");
+        // APU
+        qpac_apu_egt = XPLMFindDataRef("AirbusFBW/");
+        qpac_apu_egt_limit = XPLMFindDataRef("AirbusFBW/");
+    	*/
     }
 
 

@@ -334,6 +334,11 @@ extern XPLMDataRef acf_controls_ail_dn;
 extern XPLMDataRef acf_controls_ail_up;
 extern XPLMDataRef acf_controls_rudder_lr;
 
+// Pressurization
+extern XPLMDataRef cabin_altitude;
+extern XPLMDataRef cabin_vvi;
+extern XPLMDataRef cabin_delta_p;
+
 //// TCAS
 //extern XPLMDataRef relative_bearing_degs;
 //extern XPLMDataRef relative_distance_mtrs;

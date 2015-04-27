@@ -182,6 +182,9 @@ XPLMDataRef qpac_bleed_ram_air;
 // APU
 XPLMDataRef qpac_apu_egt;
 XPLMDataRef qpac_apu_egt_limit;
+// ECAM SD page selection
+XPLMDataRef qpac_sd_page;
+XPLMDataRef qpac_clear_illuminated;
 
 int qpac_ready = 0;
 int qpac_version = 0;
@@ -367,6 +370,12 @@ void findQpacDataRefs(void) {
             // APU
             qpac_apu_egt = XPLMFindDataRef("AirbusFBW/");
             qpac_apu_egt_limit = XPLMFindDataRef("AirbusFBW/");
+            // ECAM SD page selection
+            qpac_sd_page = XPLMFindDataRef("AirbusFBW/SDPage");
+            qpac_clear_illuminated = XPLMFindDataRef("AirbusFBW/CLRillum");
+
+
+
 
         }
     }
