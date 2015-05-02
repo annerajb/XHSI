@@ -82,7 +82,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 8 Alpha 23";
+    private static final String RELEASE = "2.0 Beta 8 Alpha 24";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -761,7 +761,7 @@ public class XHSI implements ActionListener {
                     "  PFD - Primary Flight Display\n" +
                     "  ND - Navigation Display\n" +
                     "  EICAS - Engine Instruments\n" +
-                    "  MFD - Airport Chart / Flight Plan / Lower EICAS\n" +
+                    "  MFD - Airport Chart / Flight Plan / Lower EICAS / etc...\n" +
                     "  Clock / Chrongraph\n" +
                     "  Annunciators - Gear, Flaps, etc...\n" +
                     "\n" +
