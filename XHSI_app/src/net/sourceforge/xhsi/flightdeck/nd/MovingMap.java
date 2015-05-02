@@ -116,6 +116,126 @@ public class MovingMap extends NDSubcomponent {
     private static TaxiChart taxi = new TaxiChart();
 
     
+    private interface Projection {
+//        public void setScale(float ppnm);
+        public void setAcf(float acf_lat, float acf_lon);
+        public void setPoint(float lat, float lon);
+        public int getX();
+        public int getY();
+    }
+    
+// If we need to go back from the Azimuthal Equidistant projection to the Cylindrical projection, we can just use this class
+//    private class CylindricalProjection implements Projection {
+//        
+//        private float c_lat;
+//        private float c_lon;
+//
+//        private int map_x;
+//        private int map_y;
+//        
+//    
+//        public CylindricalProjection() {
+//            
+//        }
+//        
+////        public void setScale(float ppnm) {
+////            nmpix = ppnm;
+////        }
+//
+//        public void setAcf(float acf_lat, float acf_lon) {
+//            // interesting, but not used...
+//            c_lat = acf_lat;
+//            c_lon = acf_lon;
+//        }
+//        
+//        public void setPoint(float lat, float lon) {
+//            map_x = cylindrical_lon_to_x(lon);
+//            map_y = cylindrical_lat_to_y(lat);
+//        }
+//        
+//        public int getX() {
+//            return map_x;
+//        }
+//        
+//        public int getY() {
+//            return map_y;
+//        }
+//        
+//    }
+    
+    private class AzimuthalEquidistantProjection implements Projection {
+        
+//        private float nm_pix;
+        private double phi1;
+        private double sin_phi1;
+        private double cos_phi1;
+        private double lambda0;
+        
+        private double phi;
+        private double sin_phi;
+        private double cos_phi;
+        private double lambda;
+        private double d_lambda;
+        private double sin_d_lambda;
+        private double cos_d_lambda;
+        
+        // private double cos_rho;
+        // private double tan_theta;
+        private double rho;
+        private double theta;
+        
+        private float x;
+        private float y;
+        
+    
+        public AzimuthalEquidistantProjection() {
+            
+        }
+        
+//        public void setScale(float ppnm) {
+//            nm_pix = ppnm;
+//        }
+
+        public void setAcf(float acf_lat, float acf_lon) {
+            phi1 = Math.toRadians(acf_lat);
+            lambda0 = Math.toRadians(acf_lon);
+            sin_phi1 = Math.sin(phi1);
+            cos_phi1 = Math.cos(phi1);
+        }
+        
+        public void setPoint(float lat, float lon) {
+            phi = Math.toRadians(lat);
+            lambda = Math.toRadians(lon);
+            sin_phi = Math.sin(phi);
+            cos_phi = Math.cos(phi);
+            d_lambda = lambda - lambda0;
+            sin_d_lambda = Math.sin(d_lambda);
+            cos_d_lambda = Math.cos(d_lambda);
+            // cos_rho = sin_phi1 * sin_phi + cos_phi1 * cos_phi * cos_d_lambda;
+            // tan_theta = cos_phi * sin_d_lambda / ( cos_phi1 * sin_phi - sin_phi1 * cos_phi * cos_d_lambda );
+            rho = Math.acos(sin_phi1 * sin_phi + cos_phi1 * cos_phi * cos_d_lambda);
+            theta = Math.atan2(cos_phi1 * sin_phi - sin_phi1 * cos_phi * cos_d_lambda, cos_phi * sin_d_lambda);
+            x = (float)(rho * Math.sin(theta));
+            y = - (float)(rho * Math.cos(theta));
+        }
+        
+        public int getX() {
+            
+            return Math.round(nd_gc.map_center_x - y * 180.0f / (float)Math.PI * 60.0f * pixels_per_nm);
+        
+        }
+        
+        public int getY() {
+            
+            return Math.round(nd_gc.map_center_y - x * 180.0f / (float)Math.PI * 60.0f * pixels_per_nm);
+        
+        }
+        
+    }
+    
+    private Projection map_projection = new AzimuthalEquidistantProjection();
+    
+    
     public MovingMap(ModelFactory model_factory, NDGraphicsConfig hsi_gc, Component parent_component) {
         
         super(model_factory, hsi_gc, parent_component);
@@ -288,9 +408,6 @@ public class MovingMap extends NDSubcomponent {
                 float acf_lat = this.aircraft.lat();
                 float acf_lon = this.aircraft.lon();
 
-// huh?
-//                if ( this.avionics.map_mode() == Avionics.EFIS_MAP_EXPANDED ) {
-//                }
 
                 if ( taxi.border != null ) {
 
@@ -739,6 +856,7 @@ public class MovingMap extends NDSubcomponent {
         this.center_lat = this.aircraft.lat();
         this.center_lon = this.aircraft.lon();
 
+        // for the PLAN mode, the center of the map can be displayed or active FMS waypoint
         if ( nd_gc.mode_plan ) {
             if ( ( ! this.preferences.get_plan_aircraft_center() ) && this.fms.is_active() ) {
                 FMSEntry entry = (FMSEntry) this.fms.get_displayed_waypoint();
@@ -756,6 +874,9 @@ public class MovingMap extends NDSubcomponent {
         this.pixels_per_nm = (float)nd_gc.rose_radius / radius_scale; // float for better precision
         if ( nd_gc.map_zoomin ) this.pixels_per_nm *= 100.0f;
 
+//        this.map_projection.setScale(this.pixels_per_nm);
+        this.map_projection.setAcf(this.center_lat, this.center_lon);
+        
         // determine max and min lat/lon in viewport to only draw those
         // elements that can be displayed
         float delta_lat = radius_scale * CoordinateSystem.deg_lat_per_nm();
@@ -791,24 +912,26 @@ public class MovingMap extends NDSubcomponent {
                 nd_gc.map_center_y)
         );
 
-//        // a grid of latitude and longitude lines
-//        if (DRAW_LAT_LON_GRID) {
-//            g2.setFont(nd_gc.font_tiny);
-//            g2.setColor(nd_gc.color_ground);
-//            for (float i=(float)Math.round(this.center_lon)- 2.0f; i<= (float)Math.round(this.center_lon) + 2.0f; i+=0.1f) {
-//                g2.drawLine(
-//                    lon_to_x(i), -300,
-//                    lon_to_x(i), nd_gc.frame_size.height+300);
-//                g2.drawString("" + Math.round(i*10)/10.0f, lon_to_x(i) + 2, (int)(nd_gc.frame_size.height *0.7));
-//            }
-//            for (float i=(float)Math.round(this.center_lat)- 2.0f; i<= (float)Math.round(this.center_lat) + 2.0f; i+=0.1f) {
-//                g2.drawLine(
-//                    -300, lat_to_y(i),
-//                    nd_gc.frame_size.width+300, lat_to_y(i));
-//                g2.drawString("" + Math.round(i*10)/10.0f, (int)(nd_gc.frame_size.height*0.7), lat_to_y(i) -2);
-//            }
-//        } // end of DRAW_LAT_LON_GRID
+        
+        // a grid of latitude and longitude dots
+        if (DRAW_LAT_LON_GRID) {
+            g2.setColor(nd_gc.color_ground);
+            int mean_lat = Math.round(this.center_lat);
+            int mean_lon = Math.round(this.center_lon);
+            
+            int gridrange = nd_gc.map_range/60;
+            for (int i=-gridrange; i<=gridrange; i++) {
+                for (int j=-gridrange; j<=gridrange; j++) {
+                    map_projection.setPoint((mean_lat + j), (mean_lon + i));
+                    int x0 = map_projection.getX();
+                    int y0 = map_projection.getY();
+                    g2.drawRect(x0-1, y0-1, 2, 2);
+                }
+            }
+            
+        } // end of DRAW_LAT_LON_GRID
 
+        
         g2.setFont(nd_gc.font_small);
 
         if ( nd_gc.mode_fullmap ) {
@@ -868,8 +991,9 @@ public class MovingMap extends NDSubcomponent {
             RadioNavBeacon nav1 = this.avionics.get_tuned_navaid(1);
             if (nav1 != null) {
                 float obs1 = this.avionics.nav1_obs();
-                int x1 = lon_to_x(nav1.lon);
-                int y1 = lat_to_y(nav1.lat);
+                map_projection.setPoint(nav1.lat, nav1.lon);
+                int x1 = map_projection.getX();
+                int y1 = map_projection.getX();
                 if ( nav1.type == RadioNavBeacon.TYPE_VOR) {
                     if ( nav1.has_dme )
                         drawVORDME(g2, x1, y1, nav1, 1, obs1, XHSISettings.get_instance().dme1_radius);
@@ -891,8 +1015,9 @@ public class MovingMap extends NDSubcomponent {
             RadioNavBeacon nav2 = this.avionics.get_tuned_navaid(2);
             if (nav2 != null) {
                 float obs2 = this.avionics.nav2_obs();
-                int x2 = lon_to_x(nav2.lon);
-                int y2 = lat_to_y(nav2.lat);
+                map_projection.setPoint(nav2.lat, nav2.lon);
+                int x2 = map_projection.getX();
+                int y2 = map_projection.getX();
                 if ( nav2.type == RadioNavBeacon.TYPE_VOR) {
                     if ( nav2.has_dme )
                         drawVORDME(g2, x2, y2, nav2, 2, obs2, XHSISettings.get_instance().dme2_radius);
@@ -939,10 +1064,12 @@ public class MovingMap extends NDSubcomponent {
                 if ( loc_obj.has_twin ) {
                     twin_loc_obj = (Localizer) nor.find_tuned_nav_object(loc_obj.lat, loc_obj.lon, loc_obj.frequency, loc_obj.twin_ilt);
                     if (twin_loc_obj != null) {
-                        drawLocalizer(g2, lon_to_x(twin_loc_obj.lon), lat_to_y(twin_loc_obj.lat), twin_loc_obj, 1, selected, false, true, loc_dme_radius);
+                        map_projection.setPoint(twin_loc_obj.lat, twin_loc_obj.lon);
+                        drawLocalizer(g2, map_projection.getX(), map_projection.getY(), twin_loc_obj, 1, selected, false, true, loc_dme_radius);
                     }
                 }
-                drawLocalizer(g2, lon_to_x(loc_obj.lon), lat_to_y(loc_obj.lat), loc_obj, 1, selected, loc_receiving, false, loc_dme_radius);
+                map_projection.setPoint(loc_obj.lat, loc_obj.lon);
+                drawLocalizer(g2, map_projection.getX(), map_projection.getY(), loc_obj, 1, selected, loc_receiving, false, loc_dme_radius);
 //                if ( nd_gc.mode_fullmap ) {
 //                    // whatever the map map_range, we draw the airport of this localizer
 //                    ARPT dest_arpt = (ARPT)nor.get_airport(((Localizer) loc_obj).airport, loc_obj.lat, loc_obj.lon);
@@ -969,10 +1096,12 @@ public class MovingMap extends NDSubcomponent {
                 if ( loc_obj.has_twin ) {
                     twin_loc_obj = (Localizer) nor.find_tuned_nav_object(loc_obj.lat, loc_obj.lon, loc_obj.frequency, loc_obj.twin_ilt);
                     if (twin_loc_obj != null) {
-                        drawLocalizer(g2, lon_to_x(twin_loc_obj.lon), lat_to_y(twin_loc_obj.lat), twin_loc_obj, 2, selected, false, true, loc_dme_radius);
+                        map_projection.setPoint(twin_loc_obj.lat, twin_loc_obj.lon);
+                        drawLocalizer(g2, map_projection.getX(), map_projection.getY(), twin_loc_obj, 2, selected, false, true, loc_dme_radius);
                     }
                 }
-                drawLocalizer(g2, lon_to_x(loc_obj.lon), lat_to_y(loc_obj.lat), (Localizer) loc_obj, 2, selected, loc_receiving, false, loc_dme_radius);
+                map_projection.setPoint(loc_obj.lat, loc_obj.lon);
+                drawLocalizer(g2, map_projection.getX(), map_projection.getY(), loc_obj, 2, selected, loc_receiving, false, loc_dme_radius);
 //                if ( nd_gc.mode_fullmap ) {
 //                    // whatever the map map_range, we draw the airport of this localizer
 //                    ARPT dest_arpt = (ARPT)nor.get_airport(((Localizer) loc_obj).airport, loc_obj.lat, loc_obj.lon);
@@ -1017,8 +1146,9 @@ public class MovingMap extends NDSubcomponent {
 
                         int tfc_size = (int)(7.0f * nd_gc.scaling_factor);
                         
-                        int tfc_x = lon_to_x( this.tcas.lon[i] );
-                        int tfc_y = lat_to_y( this.tcas.lat[i] );
+                        map_projection.setPoint(this.tcas.lat[i], this.tcas.lon[i]);
+                        int tfc_x = map_projection.getX();
+                        int tfc_y = map_projection.getX();
                         AffineTransform pre_tcas_at = g2.getTransform();
                         g2.rotate(Math.toRadians(this.map_up), tfc_x, tfc_y);
                         int diamond_x[] = { tfc_x, tfc_x+tfc_size, tfc_x, tfc_x-tfc_size };
@@ -1068,8 +1198,9 @@ public class MovingMap extends NDSubcomponent {
 
         if ( nd_gc.mode_plan ) {
             // moving aircraft symbol
-            int px = lon_to_x(this.aircraft.lon());
-            int py = lat_to_y(this.aircraft.lat());
+            map_projection.setPoint(this.aircraft.lat(), this.aircraft.lon());
+            int px = map_projection.getX();
+            int py = map_projection.getY();
             int ps = Math.round(2.0f * nd_gc.grow_scaling_factor);
             int cy = 105;
             int plan_x[] = {
@@ -1161,8 +1292,9 @@ public class MovingMap extends NDSubcomponent {
         for (int i=0; i<nav_objects.size(); i++) {
 
             navobj = (NavigationObject)nav_objects.get(i);
-            int x = lon_to_x(navobj.lon);
-            int y = lat_to_y(navobj.lat);
+            map_projection.setPoint(navobj.lat, navobj.lon);
+            int x = map_projection.getX();
+            int y = map_projection.getY();
             double dist = Math.hypot( x - nd_gc.map_center_x, y - nd_gc.map_center_y );
             float max_dist = this.preferences.get_draw_only_inside_rose() ? nd_gc.rose_radius : nd_gc.rose_radius * 1.5f;
             if ( dist < max_dist ) {
@@ -1190,6 +1322,9 @@ public class MovingMap extends NDSubcomponent {
                     
                     if ( ((Airport)navobj).longest >= min_rwy ) {
                         drawAirport(g2, x, y, (Airport)navobj, ""+((Airport)navobj).elev);
+                        //bad_proj.setAcf(this.center_lat, this.center_lon);
+                        //bad_proj.setPoint(navobj.lat, navobj.lon);
+                        //drawTestAirport(g2, bad_proj.getX(), bad_proj.getY(), (Airport)navobj, ""+((Airport)navobj).elev);
                     }
                         
                 } else if ( type == NavigationObject.NO_TYPE_RUNWAY )
@@ -1201,12 +1336,12 @@ public class MovingMap extends NDSubcomponent {
     }
 
 
-    private int lon_to_x(float lon) {
+    private int cylindrical_lon_to_x(float lon) {
         return Math.round(nd_gc.map_center_x + ((lon - this.center_lon)*pixels_per_deg_lon));
     }
 
 
-    private int lat_to_y(float lat) {
+    private int cylindrical_lat_to_y(float lat) {
         return Math.round(nd_gc.map_center_y + ((this.center_lat - lat)*pixels_per_deg_lat));
     }
 
@@ -1448,8 +1583,9 @@ public class MovingMap extends NDSubcomponent {
         int dme_x = 0;
         int dme_y = 0;
         if ( localizer.has_dme ) {
-            dme_x = lon_to_x(localizer.dme_lon);
-            dme_y = lat_to_y(localizer.dme_lat);
+            map_projection.setPoint(localizer.dme_lat, localizer.dme_lon);
+            dme_x = map_projection.getX();
+            dme_y = map_projection.getY();
         }
 
         AffineTransform original_at = g2.getTransform();
@@ -1554,6 +1690,27 @@ public class MovingMap extends NDSubcomponent {
     }
 
 
+    private void drawTestAirport(Graphics2D g2, int x, int y, Airport airport, String elev) {
+            int c9 = Math.round(9.0f*nd_gc.scaling_factor);
+            int x12 = Math.round(12.0f*nd_gc.scaling_factor);
+            int y12 = Math.round(12.0f*nd_gc.scaling_factor);
+            AffineTransform original_at = g2.getTransform();
+            Stroke original_stroke = g2.getStroke();
+            g2.rotate(Math.toRadians(this.map_up), x, y);
+            g2.setStroke(new BasicStroke(3.0f));
+            g2.setColor(nd_gc.warning_color);
+            g2.drawOval(x-c9, y-c9, 2*c9, 2*c9); // with a thicker line and somewhat bigger symbol than the navaids...
+            g2.setStroke(original_stroke);
+            g2.setFont(nd_gc.font_xs);
+            g2.drawString(airport.icao_code, x + x12, y + y12);
+            if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
+                g2.setFont(nd_gc.font_xxs);
+                g2.drawString(elev, x + x12, y + y12 + nd_gc.line_height_xxs);
+            }
+            g2.setTransform(original_at);
+    }
+
+
     private void drawRunway(Graphics2D g2, int x, int y, Runway runway) {
 
         if ( ! runway.name.equals(this.active_chart_str) ) {
@@ -1575,7 +1732,13 @@ public class MovingMap extends NDSubcomponent {
                 g.setColor(nd_gc.snow_color);
             else
                 g.setColor(nd_gc.hard_color);
-            g.drawLine(lon_to_x(runway.lon1), lat_to_y(runway.lat1), lon_to_x(runway.lon2), lat_to_y(runway.lat2));
+            map_projection.setPoint(runway.lat1, runway.lon1);
+            int x1 = map_projection.getX();
+            int y1 = map_projection.getY();
+            map_projection.setPoint(runway.lat2, runway.lon2);
+            int x2 = map_projection.getX();
+            int y2 = map_projection.getY();
+            g.drawLine(x1, y1, x2, y2);
             g2.setStroke(original_stroke);
             g2.setTransform(original_at);
 
@@ -1589,8 +1752,9 @@ public class MovingMap extends NDSubcomponent {
 //        DecimalFormat eta_hours_formatter = new DecimalFormat("00");
 //        DecimalFormat eta_minutes_formatter = new DecimalFormat("00");
 
-        int x = lon_to_x(entry.lon);
-        int y = lat_to_y(entry.lat);
+        map_projection.setPoint(entry.lat, entry.lon);
+        int x = map_projection.getX();
+        int y = map_projection.getY();
 
         if ( ( entry.index == 0 ) && ( entry.active ) ) {
             // draw a line to the entry with index zero, if it is our active waypoint
@@ -1618,7 +1782,8 @@ public class MovingMap extends NDSubcomponent {
             Stroke original_stroke = g2.getStroke();
             //g2.setStroke(new BasicStroke(1.0f*nd_gc.scaling_factor));
             g2.setStroke(new BasicStroke(1.5f));
-            g2.drawLine(x,y, lon_to_x(next_entry.lon), lat_to_y(next_entry.lat));
+            map_projection.setPoint(next_entry.lat, next_entry.lon);
+            g2.drawLine(x,y, map_projection.getX(), map_projection.getY());
             g2.setStroke(original_stroke);
         }
 
