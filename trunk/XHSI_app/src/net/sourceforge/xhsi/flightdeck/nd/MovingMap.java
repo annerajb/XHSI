@@ -993,7 +993,7 @@ public class MovingMap extends NDSubcomponent {
                 float obs1 = this.avionics.nav1_obs();
                 map_projection.setPoint(nav1.lat, nav1.lon);
                 int x1 = map_projection.getX();
-                int y1 = map_projection.getX();
+                int y1 = map_projection.getY();
                 if ( nav1.type == RadioNavBeacon.TYPE_VOR) {
                     if ( nav1.has_dme )
                         drawVORDME(g2, x1, y1, nav1, 1, obs1, XHSISettings.get_instance().dme1_radius);
@@ -1017,7 +1017,7 @@ public class MovingMap extends NDSubcomponent {
                 float obs2 = this.avionics.nav2_obs();
                 map_projection.setPoint(nav2.lat, nav2.lon);
                 int x2 = map_projection.getX();
-                int y2 = map_projection.getX();
+                int y2 = map_projection.getY();
                 if ( nav2.type == RadioNavBeacon.TYPE_VOR) {
                     if ( nav2.has_dme )
                         drawVORDME(g2, x2, y2, nav2, 2, obs2, XHSISettings.get_instance().dme2_radius);
