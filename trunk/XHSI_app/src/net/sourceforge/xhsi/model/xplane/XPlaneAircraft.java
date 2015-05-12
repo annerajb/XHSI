@@ -196,7 +196,11 @@ public class XPlaneAircraft implements Aircraft {
     public int qnh() {
         return Math.round( altimeter_in_hg() * 1013.0f / 29.92f );
     }
-
+    
+    public int qnh(boolean pilot) {
+        return Math.round( altimeter_in_hg(pilot) * 1013.0f / 29.92f );
+    }
+    
     public float altimeter_in_hg() {
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
             // copilot
@@ -206,7 +210,17 @@ public class XPlaneAircraft implements Aircraft {
             return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_GAUGES_ACTUATORS_BAROMETER_SETTING_IN_HG_PILOT);
         }
     }
-
+    
+    public float altimeter_in_hg(boolean pilot) {
+        if ( ! pilot ) {
+            // copilot
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_GAUGES_ACTUATORS_BAROMETER_SETTING_IN_HG_COPILOT);
+        } else {
+            // pilot or instructor
+            return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_GAUGES_ACTUATORS_BAROMETER_SETTING_IN_HG_PILOT);
+        }
+    }
+    
     public float airspeed_acceleration() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_GAUGES_INDICATORS_AIRSPEED_ACCELERATION);
     }
@@ -428,15 +442,11 @@ public class XPlaneAircraft implements Aircraft {
     public float get_spoiler_pos(int pos) {
     	return get_speed_brake();
     }
-    
-    public SpoilerStatus get_spoiler_status(int pos) {
+  
+    public SpoilerStatus get_spoiler_status_left(int pos) {
     	int spoiler = 0;
     	if ((this.avionics.is_qpac())) {
-    		if (pos<5) {
-    			spoiler = (Math.round(XPlaneSimDataRepository.QPAC_SPOILERS_LEFT) >> (pos*2)) & 0x03 ;
-    		} else {
-    			spoiler = (Math.round(XPlaneSimDataRepository.QPAC_SPOILERS_RIGHT) >> ((pos-5)*2)) & 0x03 ;
-    		}
+    		spoiler = (Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_SPOILERS_LEFT)) >> (pos*2)) & 0x03 ;
     		switch (spoiler) {
     		case 0: return SpoilerStatus.RETRACTED;
     		case 1: return SpoilerStatus.EXTENDED;
@@ -448,7 +458,23 @@ public class XPlaneAircraft implements Aircraft {
     	return get_speed_brake() > 0.1f ? SpoilerStatus.EXTENDED : SpoilerStatus.RETRACTED ;
     	}
     }
-    
+
+    public SpoilerStatus get_spoiler_status_right(int pos) {
+    	int spoiler = 0;
+    	if ((this.avionics.is_qpac())) {
+    		spoiler = (Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_SPOILERS_RIGHT)) >> (pos*2)) & 0x03 ;
+    		switch (spoiler) {
+    		case 0: return SpoilerStatus.RETRACTED;
+    		case 1: return SpoilerStatus.EXTENDED;
+    		case 2: return SpoilerStatus.FAILED;
+    		default: return SpoilerStatus.JAMMED;
+    		}
+
+    	} else {
+    	return get_speed_brake() > 0.1f ? SpoilerStatus.EXTENDED : SpoilerStatus.RETRACTED ;
+    	}
+    }
+       
     public float get_parking_brake() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_PARKING_BRAKE_RATIO);
     }
@@ -980,7 +1006,39 @@ public class XPlaneAircraft implements Aircraft {
     	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.APU_STATUS);
     	return ( apu_status & 0x03);
     }
-    
+
+    public boolean ram_air_gen_on() {
+    	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.APU_STATUS);
+    	return (( apu_status & 0x20) > 0);   	
+    }
+
+    public boolean gpu_gen_on() {
+    	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.APU_STATUS);
+    	return (( apu_status & 0x40) > 0);
+   	
+    }
+
+    public float gpu_gen_amps() {
+    	// float sim_data.get_sim_float(XPlaneSimDataRepository.GPU_AMPS);
+    	return 0.0f;
+   	}
+
+    public int num_batteries() {
+    	return (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_ELECTRICAL_NUM_BATTERIES);
+    }
+
+    public int num_buses() {
+    	return (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_ELECTRICAL_NUM_BUSES);
+    }
+
+    public int num_generators() {
+    	return (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_ELECTRICAL_NUM_GENERATORS);
+    }
+
+    public int num_inverters() {
+    	return (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_ELECTRICAL_NUM_INVERTERS);
+    }
+
     // Bleed Air
     public boolean has_bleed_air() {
     	return true;

@@ -197,11 +197,13 @@ public interface Aircraft {
      * @return int - qnh setting for pilot or copilot
      */
     public int qnh();
+    public int qnh(boolean pilot);
 
     /**
      * @return int - qnh setting for pilot or copilot
      */
     public float altimeter_in_hg();
+    public float altimeter_in_hg(boolean pilot);
 
     /**
      * @return float - ASI trend kts/s
@@ -508,10 +510,15 @@ public interface Aircraft {
     public float get_spoiler_pos(int pos);
     
     /**
-     * @return float - spoiler status
+     * @return float - left wing spoiler status
      */    
-    public SpoilerStatus get_spoiler_status(int pos);    
-    
+    public SpoilerStatus get_spoiler_status_left(int pos);    
+
+    /**
+     * @return float - right wing spoiler status
+     */    
+    public SpoilerStatus get_spoiler_status_right(int pos);    
+   
     /**
      * @return float - Parking Brake
      */
@@ -930,6 +937,41 @@ public interface Aircraft {
      * @return int - Auxiliary Power Unit (APU) starter position (0, 1 or 2)
      */  
     public int apu_starter();
+
+    /**
+     * @return boolean - Emergency Ram Air Generator On 
+     */  
+    public boolean ram_air_gen_on();
+
+    /**
+     * @return boolean - Ground Power Unit Generator On 
+     */  
+    public boolean gpu_gen_on();
+    
+    /**
+     * @return float - Ground Power Unit Generator Amps 
+     */  
+    public float gpu_gen_amps();
+
+    /**
+     * @return int - Number of batteries 
+     */  
+    public int num_batteries();
+    
+    /**
+     * @return int - Number of electric buses 
+     */  
+    public int num_buses();
+
+    /**
+     * @return int - Number of generators (may differ from number of engines) 
+     */  
+    public int num_generators();
+
+    /**
+     * @return int - Number of inverters 
+     */  
+    public int num_inverters();    
     
     /**
      * @return boolean - Aircraft has Bleed Air Circuits (ENG & APU)

@@ -193,6 +193,18 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int fctl_y_spoiler_bottom;    
     public int fctl_dx_spoiler_bdr;
     public int fctl_dx_spoiler_ctr;
+    public int fctl_dx_spoiler_step;
+    public int fctl_dy_spoiler_step;
+    // FCC : Flight Control Computers
+    public int fctl_dx_fcc_top;
+    public int fctl_dx_fcc_bottom;
+    public int fctl_dy_fcc_right;
+    public int fctl_dy_fcc_step;
+    public int fctl_dx_fcc_step;
+    public int fctl_dx_fcc_left;
+    public int fctl_dx_fcc_right;
+    public int fctl_y_fcc_bottom;
+    
     // Airbus Air Conditionning
     // Legends
     public int cond_temp_legend_x;
@@ -248,6 +260,76 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int cargo_inlet_top_y;
     public int cargo_temp_y;
     
+    // ELEC
+    public int elec_page_legend_x;
+    public int elec_page_legend_y;
+    // Main generators
+    public int elec_gen1_x;
+    public int elec_gen2_x;
+    public int elec_gen_y;
+    public int elec_gen_h;
+    public int elec_gen_w;
+    // Batteries
+    public int elec_bat1_x;
+    public int elec_bat2_x;
+    public int elec_bat_y;
+    public int elec_bat_h;
+    public int elec_bat_w;
+    // Transverters
+    public int elec_tr1_x;
+    public int elec_tr2_x;
+    public int elec_tr_y;
+    public int elec_tr_h;
+    public int elec_tr_w;
+    // Auxiliary
+    public int elec_apugen_x;
+    public int elec_extpwr_x;
+    public int elec_ext_apu_y;
+    public int elec_ext_apu_h;
+    public int elec_ext_apu_w;
+    // Emergency
+    public int elec_ess_tr_emerg_y;
+    public int elec_ess_tr_x;
+    public int elec_emerg_x;
+    public int elec_emerg_w;
+    public int elec_ess_tr_w;
+    // Buses
+    public int elec_ac1_box_x;
+    public int elec_ac2_box_x;
+    public int elec_ac_box_w;
+    public int elec_ac_box_y;
+    public int elec_dc1_box_x;
+    public int elec_dc2_box_x;
+    public int elec_dc_box_w;
+    public int elec_dc_box_y;
+    public int elec_dc_bat_ess_box_x;
+    public int elec_dc_bat_ess_box_w;
+    public int elec_dc_bat_box_y;
+    public int elec_dc_ess_y;
+    public int elec_dc_ess_box_y;
+    public int elec_ac_ess_box_x; 
+    public int elec_ac_ess_box_y;
+    public int elec_ac_ess_box_w;
+    public int elec_ac_ess_y;
+    public int elec_ac1_x;
+    public int elec_ac2_x;
+    public int elec_dc_bat_x;
+    public int elec_dc_bat_y;
+    public int elec_ess_tr_bus_x;
+    public int elec_emer_gen_bus_x;
+    public int elec_bus_box_h;
+    public int elec_aux_y;
+    // IDG temperature
+    public int elec_idg_y;
+    
+    // Hydrolic
+    public int hyd_1_x;
+    public int hyd_2_x;
+    public int hyd_3_x;
+    public int hyd_pump_w;
+    public int hyd_pump_h;
+    public int hyd_1_2_pump_y;
+    public int hyd_3_pump_y;
     
     
     public MFDGraphicsConfig(Component root_component, int du) {
@@ -490,8 +572,20 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             fctl_dy_spoiler_arrow = mfd_size * 15/1000;
             fctl_y_spoiler_top = panel_rect.y + mfd_size * 133/1000;
             fctl_y_spoiler_bottom = panel_rect.y + mfd_size * 183/1000;
+            // TODO : to divide by real spoilers number - 1
+            fctl_dy_spoiler_step = (fctl_y_spoiler_bottom - fctl_y_spoiler_top) / 4;
             fctl_dx_spoiler_bdr = panel_rect.width * 390/1000;
             fctl_dx_spoiler_ctr = panel_rect.width * 53/1000;
+            fctl_dx_spoiler_step = (fctl_dx_spoiler_bdr- fctl_dx_spoiler_ctr ) / 4;
+            // FCC : Flight Control Computers
+            fctl_dx_fcc_top =  panel_rect.width * 11/1000;
+            fctl_dx_fcc_bottom = panel_rect.width * 143/1000;
+            fctl_dy_fcc_right = mfd_size * 54/1000;
+            fctl_dy_fcc_step = mfd_size * 31/1000;
+            fctl_dx_fcc_step = panel_rect.width * 45/1000;
+            fctl_dx_fcc_left = panel_rect.width * 105/1000;
+            fctl_dx_fcc_right = panel_rect.width * 162/1000;
+            fctl_y_fcc_bottom = panel_rect.y + mfd_size * 313/1000;
             
             // Airbus Air Conditionning
             cond_temp_legend_x = panel_rect.x + panel_rect.width * 733/1000;
@@ -550,6 +644,82 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             cargo_inlet_top_y = panel_rect.y + mfd_size * 696/1000;
             cargo_temp_y = panel_rect.y + mfd_size * 612/1000;
 
+            // ELEC
+            elec_page_legend_x = panel_rect.x + panel_rect.width * 5/1000;
+            elec_page_legend_y = panel_rect.y + mfd_size * 58/1000;
+            // Main generators
+            elec_gen1_x = panel_rect.x + panel_rect.width * 15/1000;
+            elec_gen2_x = panel_rect.x + panel_rect.width * 824/1000;
+            elec_gen_y = panel_rect.y + mfd_size * 661/1000;
+            elec_gen_h = mfd_size * 201/1000;
+            elec_gen_w = panel_rect.width * 160/1000;
+            // Batteries
+            elec_bat1_x = panel_rect.x + panel_rect.width * 210/1000;
+            elec_bat2_x = panel_rect.x + panel_rect.width * 630/1000;
+            elec_bat_y = panel_rect.y + mfd_size * 18/1000;
+            elec_bat_h = mfd_size * 152/1000;
+            elec_bat_w = panel_rect.width * 130/1000;
+            // Transverters
+            elec_tr1_x = panel_rect.x + panel_rect.width * 38/1000;
+            elec_tr2_x = panel_rect.x + panel_rect.width * 809/1000;
+            elec_tr_y = panel_rect.y + mfd_size * 331/1000;
+            elec_tr_h = mfd_size * 152/1000;
+            elec_tr_w = panel_rect.width * 130/1000;
+            // Auxiliary
+            elec_apugen_x = panel_rect.x + panel_rect.width * 351/1000;
+            elec_extpwr_x = panel_rect.x + panel_rect.width * 588/1000;
+            elec_ext_apu_y = panel_rect.y + mfd_size * 710/1000;
+            elec_ext_apu_h = mfd_size * 152/1000;
+            elec_ext_apu_w = panel_rect.width * 183/1000;
+            // Emergency
+            elec_ess_tr_emerg_y = mfd_size * 348/1000;;
+            elec_ess_tr_x = panel_rect.x + panel_rect.width * 298/1000;
+            elec_emerg_x = panel_rect.x + panel_rect.width * 504/1000;
+            elec_emerg_w = panel_rect.width * 214/1000;
+            elec_ess_tr_w = panel_rect.width * 160/1000;
+            // Buses
+            elec_ac1_box_x = panel_rect.x + panel_rect.width * 8/1000;
+            elec_ac2_box_x = panel_rect.x + panel_rect.width * 740/1000;
+            elec_ac_box_w = panel_rect.width * 244/1000;
+            elec_ac_box_y = panel_rect.y + mfd_size * 545/1000;
+            elec_dc1_box_x = panel_rect.x + panel_rect.width * 27/1000;
+            elec_dc2_box_x = panel_rect.x + panel_rect.width * 794/1000;
+            elec_dc_box_w = panel_rect.width * 153/1000;
+            elec_dc_box_y = panel_rect.y + mfd_size * 179/1000;
+
+            elec_dc_bat_ess_box_x = panel_rect.x + panel_rect.width * 405/1000;
+            elec_dc_bat_ess_box_w = panel_rect.width * 156/1000;
+            elec_dc_bat_box_y = panel_rect.y + mfd_size * 67/1000;
+            elec_dc_ess_y = panel_rect.y + mfd_size * 196/1000;
+            elec_dc_ess_box_y = panel_rect.y + mfd_size * 232/1000;
+            elec_ac_ess_box_x = panel_rect.x + panel_rect.width * 374/1000;
+            elec_ac_ess_box_w = panel_rect.width * 244/1000;
+            elec_ac_ess_box_y = panel_rect.y + mfd_size * 558/1000;
+            elec_ac_ess_y = panel_rect.y + mfd_size * 576/1000;
+            elec_ac1_x = panel_rect.x + panel_rect.width * 103/1000;
+            elec_ac2_x = panel_rect.x + panel_rect.width * 874/1000;
+            elec_ac_box_y = panel_rect.y + mfd_size * 545/1000;
+
+            elec_dc_bat_x = panel_rect.x + panel_rect.width * 427/1000;
+            elec_dc_bat_y = panel_rect.y + mfd_size * 94/1000;
+            elec_ess_tr_bus_x = panel_rect.x + panel_rect.width * 435/1000;
+            elec_emer_gen_bus_x = panel_rect.x + panel_rect.width * 526/1000;
+            elec_aux_y = panel_rect.y + mfd_size * 634/1000;
+            elec_bus_box_h = mfd_size * 54/1000;
+            // IDG temperature
+            elec_idg_y = panel_rect.y + mfd_size * 933/1000;
+
+            // hydrolic 1 : Green circuit on Airbus ; A circuit on Boeing
+            // hydrolic 2 : Yellow circuit on Airbus ; B circuit on Boeing
+            // hydrolic 3 : Blue circuit on Airbus ; Standby circuit on Boeing
+            hyd_1_x = panel_rect.x + panel_rect.width * 108/1000;
+            hyd_2_x = panel_rect.x + panel_rect.width * 818/1000;
+            hyd_3_x = panel_rect.x + panel_rect.width * 463/1000;
+            hyd_pump_w = panel_rect.width * 86/1000;
+            hyd_pump_h = mfd_size * 77/1000;
+            hyd_1_2_pump_y = panel_rect.y + mfd_size * 544/1000;
+            hyd_3_pump_y = panel_rect.y + mfd_size * 596/1000;
+            
         }
 
     }
