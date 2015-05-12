@@ -280,7 +280,10 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_AIRCRAFT_CONTROLS_ACL_AIL_UP = 335;
     public static final int SIM_AIRCRAFT_CONTROLS_ACL_AIL_DN = 336;
     public static final int SIM_AIRCRAFT_CONTROLS_ACL_RUDDER_LR = 337;
-
+    public static final int SIM_AIRCRAFT_ELECTRICAL_NUM_BATTERIES = 338;
+    public static final int SIM_AIRCRAFT_ELECTRICAL_NUM_BUSES = 339;
+    public static final int SIM_AIRCRAFT_ELECTRICAL_NUM_GENERATORS = 340;
+    public static final int SIM_AIRCRAFT_ELECTRICAL_NUM_INVERTERS = 341;
 
     // Controls & annunciators
     public static final int SIM_COCKPIT2_ANNUNCIATORS_MASTER_CAUTION = 350;

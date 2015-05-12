@@ -25,6 +25,8 @@ package net.sourceforge.xhsi.model;
 import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 
 public interface Avionics {
+	
+	public enum InstrumentSide { PILOT, COPILOT, INSTRUCTOR };
 
     public static final int STYLE_BOEING = 0;
     public static final int STYLE_AIRBUS = 1;
@@ -125,27 +127,33 @@ public interface Avionics {
      * @return int - selected range of map display in switch setting
      */
     public int map_range_index();
+    public int map_range_index(InstrumentSide side);
 
+    
     /**
      * @return int - selected range of map display in NM
      */
     public int map_range();
+    public int map_range(InstrumentSide side);
 
     /**
      * @return boolean - map is close-up
      */
     public boolean map_zoomin();
+    public boolean map_zoomin(InstrumentSide side);
 
     /**
      * @return int - map mode CENTERED or EXPANDED
      */
     public int map_mode();
+    public int map_mode(InstrumentSide side);
 
     /**
      * @return int - map submode APP, VOR, MAP, NAV or PLN
      */
     public int map_submode();
-
+    public int map_submode(InstrumentSide side);
+    
     /**
      * @return int - HSI source selector - either HSI_SOURCE_NAV1, HSI_SOURCE_NAV2 or HSI_SOURCE_GPS
      */
@@ -155,36 +163,49 @@ public interface Avionics {
      * @return int - EFIS Radio1 setting - either EFIS_RADIO_ADF, EFIS_RADIO_NAV or EFIS_RADIO_OFF
      */
     public int efis_radio1();
+    public int efis_radio1(InstrumentSide side);
 
     /**
      * @return int - EFIS Radio2 setting - either EFIS_RADIO_ADF, EFIS_RADIO_NAV or EFIS_RADIO_OFF
      */
     public int efis_radio2();
+    public int efis_radio2(InstrumentSide side);
+
+    /**
+     * @return boolean - true if EFIS displays constraints, false otherwise
+     */
+    public boolean efis_shows_cstr();
+    public boolean efis_shows_cstr(InstrumentSide side);
 
     /**
      * @return boolean - true if EFIS displays waypoints, false otherwise
      */
     public boolean efis_shows_wpt();
+    public boolean efis_shows_wpt(InstrumentSide side);
 
     /**
      * @return boolean - true if EFIS displays VORs, false otherwise
      */
     public boolean efis_shows_vor();
+    public boolean efis_shows_vor(InstrumentSide side);
 
     /**
      * @return boolean - true if EFIS displays NDBs, false otherwise
      */
     public boolean efis_shows_ndb();
+    public boolean efis_shows_ndb(InstrumentSide side);
 
     /**
      * @return boolean - true if EFIS displays airports, false otherwise
      */
     public boolean efis_shows_arpt();
+    public boolean efis_shows_arpt(InstrumentSide side);
 
     /**
      * @return boolean - true if EFIS displays TCAS information, false otherwise
      */
     public boolean efis_shows_tfc();
+    public boolean efis_shows_tfc(InstrumentSide side);
 
     /**
      * @return boolean - true if EFIS displays FMS altitude information, false otherwise
@@ -569,6 +590,7 @@ public interface Avionics {
      * @return boolean - true if baro is in HPa, false if baro is in Hg
      */
     public boolean pfd_show_baro_hpa();
+    public boolean pfd_show_baro_hpa(InstrumentSide side);
     	   
     
     /**
@@ -642,6 +664,7 @@ public interface Avionics {
     
     // ILS Sig and Deviation Capt. and FO
     public boolean qpac_ils_on();
+    public boolean qpac_ils_on(InstrumentSide side);
     public float qpac_loc_val();
     public boolean qpac_loc_on();
     public float qpac_gs_val();
@@ -670,7 +693,9 @@ public interface Avionics {
     
     // Baro
     public boolean qpac_baro_std();
+    public boolean qpac_baro_std(InstrumentSide side);
     public boolean qpac_baro_unit();
+    public boolean qpac_baro_unit(InstrumentSide side);
     public boolean qpac_baro_hide();
       
     // V Speeds
@@ -687,6 +712,11 @@ public interface Avionics {
     
     // Failures
     public float qpac_failures();
+    // Flight controls computers
+    /**
+     * @return boolean - True is FFC #pos is active ; False if failed
+     */    
+    public boolean qpac_fcc(int pos);
     
     // JARDesign A320 Neo
     public boolean is_jar_a320neo();
