@@ -165,6 +165,16 @@ extern XPLMDataRef qpac_bleed_ram_air;
 // APU
 extern XPLMDataRef qpac_apu_egt;
 extern XPLMDataRef qpac_apu_egt_limit;
+// ELEC
+extern XPLMDataRef qpac_elec_ext_pow_box;
+extern XPLMDataRef qpac_elec_ac_cross_connect;
+extern XPLMDataRef qpac_elec_connect_left;
+extern XPLMDataRef qpac_elec_connect_center;
+extern XPLMDataRef qpac_elec_connect_right;
+extern XPLMDataRef qpac_elec_battery_supply;
+extern XPLMDataRef qpac_elec_connectors;
+extern XPLMDataRef qpac_elec_ohp_array;
+extern XPLMDataRef qpac_elec_apu_box;
 // ECAM SD page selection
 extern XPLMDataRef qpac_sd_page;
 extern XPLMDataRef qpac_clear_illuminated;

@@ -19,6 +19,7 @@
 #include "globals.h"
 #include "ids.h"
 #include "structs.h"
+#include "math.h"
 #include "datarefs.h"
 #include "datarefs_ufmc.h"
 #include "datarefs_x737.h"
@@ -453,6 +454,7 @@ int createAvionicsPacket(void) {
     int std_gauges_failures_pilot;
     int std_gauges_failures_copilot;
     int apu_status;
+    int elec_status;
 
     strncpy(sim_packet.packet_id, "AVIO", 4);
 
@@ -465,6 +467,26 @@ int createAvionicsPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_ELECTRICAL_COCKPIT_LIGHTS_ON);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(cockpit_lights_on));
     i++;
+
+    // electric status
+    elec_status = XPLMGetDatai(elec_gpu_on) |
+    		XPLMGetDatai(ram_air_turbin) << 2;
+    		// 1 bits per engine generator on
+    /*
+     elec_battery_on [0/8];
+     elec_battery_amps [0/8];
+     elec_voltage_actual_volts [0/8];
+     elec_voltage_indicated_volts [0/8];
+     elec_generator_on [0/8];
+     elec_generator_amps [0/8];
+     elec_gpu_on;
+     elec_gpu_amps;
+     elec_inverter_on [0/2]
+     elec_bus_load_amps [0/6]
+     elec_bus_volts [0/6];
+     ram_air_turbin;
+     */
+
 
     // Standard gauges failures
     // Each value is on 3 bits (enum failure integer 0 to 6)
@@ -888,8 +910,12 @@ int createAvionicsPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(APU_GEN_AMP);
     sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(apu_gen_amp));
     i++;
-    apu_status = XPLMGetDatai(apu_running) << 4 | XPLMGetDatai(apu_gen_on) << 2 | XPLMGetDatai(apu_starter);
-    sim_packet.sim_data_points[i].id = custom_htoni(APU_STATUS);
+    apu_status = XPLMGetDatai(elec_gpu_on) << 6 |
+    		XPLMGetDatai(ram_air_turbin) << 5 |
+    		XPLMGetDatai(apu_running) << 4 |
+    		XPLMGetDatai(apu_gen_on) << 2 |
+    		XPLMGetDatai(apu_starter); // Starter on 2 bits
+    sim_packet.sim_data_points[i].id = custom_htoni(AUX_GEN_STATUS);
     sim_packet.sim_data_points[i].value = custom_htonf((float) apu_status);
     i++;
 
@@ -1445,23 +1471,31 @@ int createCustomAvionicsPacket(void) {
 
         // ECAM
         // Spoilers qpac_spoilers, transmitted in a 2 bits field set
+        // TODO : check qpac_spoilers_array type (int or float)
         if (qpac_spoilers_array != NULL) {
         	XPLMGetDatavi(qpac_spoilers_array, qpac_spoilers_tab, 0, 10);
-        	qpac_spoilers = qpac_spoilers_tab[0] |
-        			qpac_spoilers_tab[1] << 2 |
-        			qpac_spoilers_tab[2] << 4 |
-        			qpac_spoilers_tab[3] << 6 |
-        			qpac_spoilers_tab[4] << 8 ;
+        	qpac_spoilers = (qpac_spoilers_tab[0] & 0x03) |
+        					(qpac_spoilers_tab[2] & 0x03) << 2 |
+        					(qpac_spoilers_tab[4] & 0x03) << 4 |
+        					(qpac_spoilers_tab[6] & 0x03) << 6 |
+        					(qpac_spoilers_tab[8] & 0x03) << 8 ;
          	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_SPOILERS_LEFT);
         	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_spoilers );
         	i++;
-        	qpac_spoilers = qpac_spoilers_tab[5] |
-        			qpac_spoilers_tab[6] << 2 |
-        			qpac_spoilers_tab[7] << 4 |
-        			qpac_spoilers_tab[8] << 6 |
-        			qpac_spoilers_tab[9] << 8 ;
+        	qpac_spoilers = qpac_spoilers_tab[1] |
+        					qpac_spoilers_tab[3] << 2 |
+        					qpac_spoilers_tab[5] << 4 |
+        					qpac_spoilers_tab[7] << 6 |
+        					qpac_spoilers_tab[9] << 8 ;
         	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_SPOILERS_RIGHT);
         	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_spoilers );
+        	i++;
+        } else {
+         	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_SPOILERS_LEFT);
+        	sim_packet.sim_data_points[i].value = custom_htonf( 3.0f );
+        	i++;
+        	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_SPOILERS_RIGHT);
+        	sim_packet.sim_data_points[i].value = custom_htonf( 7.0f );
         	i++;
         }
 
@@ -2112,6 +2146,20 @@ int createStaticPacket(void) {
 	sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_CONTROLS_ACL_RUDDER_LR);
 	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(acf_controls_rudder_lr));
 	i++;
+
+	// ELEC Aircraft constants
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_ELECTRICAL_NUM_BATTERIES);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(acf_batteries));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_ELECTRICAL_NUM_BUSES);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(acf_buses));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_ELECTRICAL_NUM_GENERATORS);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(acf_generators));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_ELECTRICAL_NUM_INVERTERS);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(acf_inverters));
+    i++;
 
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_STYLE);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(xhsi_instrument_style));

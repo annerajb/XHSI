@@ -1831,8 +1831,8 @@ void findDataRefs(void) {
     elec_generator_on = XPLMFindDataRef("sim/cockpit2/electrical/generator_on");
     elec_generator_amps = XPLMFindDataRef("sim/cockpit2/electrical/generator_amps");
     // GPU
-    elec_gpu_on = XPLMFindDataRef("sim/cockpit2/electrical/generator_on");
-    elec_gpu_amps = XPLMFindDataRef("sim/cockpit2/electrical/generator_on");
+    elec_gpu_on = XPLMFindDataRef("sim/cockpit/electrical/gpu_on");
+    elec_gpu_amps = XPLMFindDataRef("sim/cockpit/electrical/gpu_amps");
     // Inverters
     elec_inverter_on = XPLMFindDataRef("sim/cockpit2/electrical/inverter_on");
     // Buses
