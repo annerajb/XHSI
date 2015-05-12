@@ -182,9 +182,22 @@ XPLMDataRef qpac_bleed_ram_air;
 // APU
 XPLMDataRef qpac_apu_egt;
 XPLMDataRef qpac_apu_egt_limit;
+// ELEC
+XPLMDataRef qpac_elec_ext_pow_box;
+XPLMDataRef qpac_elec_ac_cross_connect;
+XPLMDataRef qpac_elec_connect_left;
+XPLMDataRef qpac_elec_connect_center;
+XPLMDataRef qpac_elec_connect_right;
+XPLMDataRef qpac_elec_battery_supply;
+XPLMDataRef qpac_elec_connectors;
+XPLMDataRef qpac_elec_ohp_array;
+XPLMDataRef qpac_elec_apu_box;
+
+
 // ECAM SD page selection
 XPLMDataRef qpac_sd_page;
 XPLMDataRef qpac_clear_illuminated;
+
 
 int qpac_ready = 0;
 int qpac_version = 0;
