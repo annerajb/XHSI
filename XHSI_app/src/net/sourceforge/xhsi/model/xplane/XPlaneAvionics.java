@@ -1181,7 +1181,7 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     public boolean nav2_gs_active() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_NAV2_CDI) != 0.0f; }
 
-    public boolean gps_gs_active() { return false; }
+    public boolean gps_gs_active() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_GPS_VDEF_DOT) != 0.0f; }
 
     // PFD Display options
     public boolean pfd_show_metric_alt () {

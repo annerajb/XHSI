@@ -138,6 +138,7 @@ public class ILS extends PFDSubcomponent {
             }
         }
 
+        
         int source = this.avionics.hsi_source();
 
         if (source == Avionics.HSI_SOURCE_NAV1) {
@@ -171,13 +172,15 @@ public class ILS extends PFDSubcomponent {
                 nav_type = nav1_type;
             }
         } else /* if (source == Avionics.HSI_SOURCE_GPS) */ {
-            if ( nav1_receive ) {
-                mismatch = true;
-                nav_type = nav1_type;
-            } else if ( nav2_receive ) {
-                mismatch = true;
-                nav_type = nav2_type;
-            }
+                mismatch = false;
+                nav_type = "FMC";
+                cdi_value = this.avionics.gps_hdef_dot();
+                nav_receive = cdi_value != 0.0f;
+                crs = Math.round( this.avionics.gps_course() );
+                obs = crs;
+                gs_active = this.avionics.gps_gs_active();
+                gs_value = this.avionics.gps_vdef_dot();
+                dme = -1.0f;
         }
 
 
@@ -233,11 +236,13 @@ public class ILS extends PFDSubcomponent {
                 g2.setColor(pfd_gc.markings_color);
             }
             // DME
-            ref_y += ref_h_m;
-            if ( ( dme == 0.0f ) || ( dme >= 99.0f ) ) {
-                g2.drawString("DME ---", ref_x, ref_y);
-            } else {
-                g2.drawString("DME " + dme_formatter.format( dme ), ref_x, ref_y);
+            if ( source != Avionics.HSI_SOURCE_GPS ) {
+                ref_y += ref_h_m;
+                if ( ( dme == 0.0f ) || ( dme >= 99.0f ) ) {
+                    g2.drawString("DME ---", ref_x, ref_y);
+                } else {
+                    g2.drawString("DME " + dme_formatter.format( dme ), ref_x, ref_y);
+                }
             }
             // Type
             ref_y += ref_h_l;

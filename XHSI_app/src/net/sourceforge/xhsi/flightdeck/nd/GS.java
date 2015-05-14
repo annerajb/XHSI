@@ -199,8 +199,8 @@ public class GS extends NDSubcomponent {
         //NavigationRadio navradio;
 
         if (source == Avionics.HSI_SOURCE_GPS) {
-            // this never worked: gs_active = this.avionics.gps_gs_active();
-            gs_active = this.avionics.ap_vnav_on();
+            gs_active = this.avionics.gps_gs_active();
+            // what was I thinking? gs_active = this.avionics.ap_vnav_on();
             gs_value = this.avionics.gps_vdef_dot();
         } else if (source == Avionics.HSI_SOURCE_NAV1) {
             gs_active = this.avionics.nav1_gs_active();
