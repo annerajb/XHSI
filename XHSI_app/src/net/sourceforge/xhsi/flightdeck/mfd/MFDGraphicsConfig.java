@@ -331,6 +331,74 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int hyd_1_2_pump_y;
     public int hyd_3_pump_y;
     
+    // SYSTEM / CRUISE
+    // Vertical separation line
+    public int crz_line_x;
+    public int crz_line_top_y;
+    public int crz_line_bottom_y;
+    // Engines vibration 
+    public int crz_vib_n1_legend_y;
+    public int crz_vib_n1_t_y;
+    public int crz_vib_n1_value_y;
+    public int crz_vib_n2_legend_y;
+    public int crz_vib_n2_t_y;
+    public int crz_vib_n2_value_y;
+    public int crz_vib_center_x;
+    public int crz_vib_t_dx;
+    public int crz_vib_t_dy;
+    public int crz_vib_x[] = new int[8];
+    // Engine Fuel and Oil
+    public int crz_eng_center_x;
+    public int crz_eng_line_dx1;
+    public int crz_eng_line_dx2;
+    public int crz_fuel_legend_y;
+    public int crz_fuel_value_y;
+    public int crz_fuel_units_y;
+    public int crz_fuel_top_y;
+    public int crz_fuel_bottom_y;
+    public int crz_oil_legend_y;
+    public int crz_oil_value_y;
+    public int crz_oil_units_y;
+    public int crz_oil_top_y;
+    public int crz_oil_bottom_y;
+    public int crz_eng_x[] = new int[8];
+    // AIR
+    // Cabin Pressure
+    public int crz_air_legend_y;
+    public int crz_delta_p_y;
+    public int crz_ldg_mode_y;
+    public int crz_vs_legend_y;
+    public int crz_vs_value_y;
+    public int crz_alt_legend_y;
+    public int crz_alt_value_y;
+    public int crz_ldg_legend_x;
+    public int crz_ldg_mode_x;
+    public int crz_pres_legend_x;
+    public int crz_pres_value_x;
+    public int crz_pres_units_x;
+    public int crz_delta_p_legend_x;
+    public int crz_delta_p_value_x;
+    public int crz_delta_p_units_x;
+    // Cabin Temperature
+    public int crz_cab_aft_x;
+    public int crz_cab_aft_dx;
+    public int crz_cab_zone2_x; 
+    public int crz_cab_cockpit_x;
+    public int crz_cab_noose_x;
+    public int crz_cab_zone1_x;
+    public int crz_cab_front_x;
+    public int crz_cab_noose_front_x;
+    public int crz_cab_gauge1_x;
+    public int crz_cab_gauge2_x;		
+    public int crz_cab_gauge3_x;
+    public int crz_cab_top_y;
+    public int crz_cab_zone2_y;
+    public int crz_cab_cockpit_y;
+    public int crz_cab_middle_y;
+    // public int crz_cab_noose_y;
+    public int crz_cab_bottom_y;
+    public int crz_cab_temp_legend_y;
+    public int crz_cab_temp_y;
     
     public MFDGraphicsConfig(Component root_component, int du) {
         super(root_component);
@@ -719,6 +787,108 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             hyd_pump_h = mfd_size * 77/1000;
             hyd_1_2_pump_y = panel_rect.y + mfd_size * 544/1000;
             hyd_3_pump_y = panel_rect.y + mfd_size * 596/1000;
+         
+            // SYSTEM / CRUISE
+            // Vertical separation line
+            crz_line_x = panel_rect.x + panel_rect.width * 638/1000;
+            crz_line_top_y = panel_rect.y + mfd_size * 57/1000;
+            crz_line_bottom_y = panel_rect.y + mfd_size * 342/1000;
+            // Engines 
+            crz_vib_n1_legend_y = panel_rect.y + mfd_size * 100/1000;
+            crz_vib_n1_t_y = panel_rect.y + mfd_size * 112/1000;
+            crz_vib_n1_value_y = panel_rect.y + mfd_size * 162/1000;
+            
+            crz_vib_n2_legend_y = panel_rect.y + mfd_size * 277/1000;
+            crz_vib_n2_t_y = panel_rect.y + mfd_size * 288/1000;
+            crz_vib_n2_value_y = panel_rect.y + mfd_size * 346/1000;
+
+            crz_vib_center_x = panel_rect.x + panel_rect.width * 876/1000;
+            crz_vib_t_dx = panel_rect.width * 21/1000;
+            crz_vib_t_dy = mfd_size * 35/1000;
+            if ( num_eng < 3 ) {
+            	crz_vib_x[0] = panel_rect.x + panel_rect.width * 805/1000;
+            	crz_vib_x[1] = panel_rect.x + panel_rect.width * 930/1000;
+            } else {
+            	// TODO : layout for 3 to 8 engines 
+            	crz_vib_x[0] = panel_rect.x + panel_rect.width * 700/1000;
+            	crz_vib_x[1] = panel_rect.x + panel_rect.width * 805/1000;
+            	crz_vib_x[2] = panel_rect.x + panel_rect.width * 930/1000;
+            	crz_vib_x[3] = panel_rect.x + panel_rect.width * 990/1000;
+            	crz_vib_x[4] = panel_rect.x + panel_rect.width * 805/1000;
+            	crz_vib_x[5] = panel_rect.x + panel_rect.width * 930/1000;
+            	crz_vib_x[6] = panel_rect.x + panel_rect.width * 700/1000;
+            	crz_vib_x[7] = panel_rect.x + panel_rect.width * 990/1000;            	
+            }
+            
+            crz_eng_center_x = panel_rect.x + panel_rect.width * 305/1000;
+            crz_eng_line_dx1 = panel_rect.width * 58/1000;
+            crz_eng_line_dx2 = panel_rect.width * 124/1000;
+            // Fuel
+            crz_fuel_legend_y = panel_rect.y + mfd_size * 154/1000;
+            crz_fuel_value_y = panel_rect.y + mfd_size * 192/1000;
+            crz_fuel_units_y = panel_rect.y + mfd_size * 200/1000;
+            crz_fuel_top_y = panel_rect.y + mfd_size * 169/1000;
+            crz_fuel_bottom_y = panel_rect.y + mfd_size * 188/1000;
+            // Oil
+            crz_oil_legend_y = panel_rect.y + mfd_size * 296/1000;
+            crz_oil_value_y = panel_rect.y + mfd_size * 338/1000;
+            crz_oil_units_y = panel_rect.y + mfd_size * 350/1000;
+            crz_oil_top_y = panel_rect.y + mfd_size * 312/1000;
+            crz_oil_bottom_y = panel_rect.y + mfd_size * 334/1000;            
+            if ( num_eng < 3 ) {
+            	crz_eng_x[0] = panel_rect.x + panel_rect.width * 168/1000;
+            	crz_eng_x[1] = panel_rect.x + panel_rect.width * 530/1000;
+            	crz_eng_x[2] = panel_rect.x + panel_rect.width * 700/1000;
+            	crz_eng_x[3] = panel_rect.x + panel_rect.width * 990/1000;
+            } else {
+            	// TODO : layout for 3 to 8 engines
+            	crz_eng_x[0] = panel_rect.x + panel_rect.width * 700/1000;
+            	crz_eng_x[1] = panel_rect.x + panel_rect.width * 805/1000;
+            	crz_eng_x[2] = panel_rect.x + panel_rect.width * 930/1000;
+            	crz_eng_x[3] = panel_rect.x + panel_rect.width * 990/1000;
+            	crz_eng_x[4] = panel_rect.x + panel_rect.width * 805/1000;
+            	crz_eng_x[5] = panel_rect.x + panel_rect.width * 930/1000;
+            	crz_eng_x[6] = panel_rect.x + panel_rect.width * 700/1000;
+            	crz_eng_x[7] = panel_rect.x + panel_rect.width * 990/1000;            	
+            }
+            
+            // Cabine Pressure
+            crz_air_legend_y = panel_rect.y + mfd_size * 562/1000;
+            crz_delta_p_y = panel_rect.y + mfd_size * 662/1000;
+            crz_ldg_mode_y = panel_rect.y + mfd_size * 592/1000;
+            crz_vs_legend_y =  panel_rect.y + mfd_size * 673/1000;
+            crz_vs_value_y =  panel_rect.y + mfd_size * 730/1000;
+            crz_alt_legend_y =  panel_rect.y + mfd_size * 815/1000;
+            crz_alt_value_y =  panel_rect.y + mfd_size * 869/1000;
+            crz_ldg_legend_x = panel_rect.x + panel_rect.width * 366/1000;
+            crz_ldg_mode_x = panel_rect.x + panel_rect.width * 581/1000;
+            crz_pres_legend_x = panel_rect.x + panel_rect.width * 678/1000;
+            crz_pres_value_x = panel_rect.x + panel_rect.width * 852/1000;
+            crz_pres_units_x = panel_rect.x + panel_rect.width * 883/1000;
+            crz_delta_p_legend_x = panel_rect.x + panel_rect.width * 181/1000;
+            crz_delta_p_value_x = panel_rect.x + panel_rect.width * 352/1000;
+            crz_delta_p_units_x = panel_rect.x + panel_rect.width * 403/1000;
+            
+            // Cabin temp
+            crz_cab_aft_x = panel_rect.x + panel_rect.width * 493/1000;
+            crz_cab_aft_dx = panel_rect.width * 69/1000;
+            crz_cab_zone2_x = panel_rect.x + panel_rect.width * 352/1000; 
+            crz_cab_cockpit_x = panel_rect.x + panel_rect.width * 92/1000;
+            crz_cab_noose_x = panel_rect.x + panel_rect.width * 27/1000;
+            crz_cab_noose_front_x = panel_rect.x + panel_rect.width * 57/1000;
+            crz_cab_zone1_x = panel_rect.x + panel_rect.width * 181/1000;
+            crz_cab_front_x = panel_rect.x + panel_rect.width * 134/1000;
+            crz_cab_gauge1_x = panel_rect.x + panel_rect.width * 148/1000;
+            crz_cab_gauge2_x = panel_rect.x + panel_rect.width * 295/1000;		
+            crz_cab_gauge3_x = panel_rect.x + panel_rect.width * 470/1000;
+            crz_cab_top_y = panel_rect.y + mfd_size * 754/1000;
+            crz_cab_zone2_y = panel_rect.y + mfd_size * 838/1000;
+            crz_cab_cockpit_y = panel_rect.y + mfd_size * 808/1000;
+            crz_cab_middle_y = panel_rect.y + mfd_size * 808/1000;
+//            crz_cab_noose_y = panel_rect.y + mfd_size * 838/1000;
+            crz_cab_bottom_y = panel_rect.y + mfd_size * 877/1000;
+            crz_cab_temp_legend_y = panel_rect.y + mfd_size * 808/1000;
+            crz_cab_temp_y = panel_rect.y + mfd_size * 854/1000;
             
         }
 
