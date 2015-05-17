@@ -330,6 +330,23 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int hyd_pump_h;
     public int hyd_1_2_pump_y;
     public int hyd_3_pump_y;
+    public int hyd_psi_legend_y;
+    public int hyd_psi_value_y;
+    public int hyd_psi_unit_x1;
+    public int hyd_psi_unit_x2;
+    public int hyd_arrow_top_y;
+    public int hyd_arrow_base_y;
+    public int hyd_arrow_bottom_y;
+    public int hyd_arrow_dx;
+    public int hyd_line_top_y;
+    public int hyd_ptu_top_y;
+    public int hyd_ptu_line_y;
+    public int hyd_ptu_bottom_y;
+    public int hyd_valve_y;
+    public int hyd_valve_r;
+    public int hyd_qty_top_y;
+    public int hyd_qty_bottom_y;
+    public int hyd_qty_dx;
     
     // SYSTEM / CRUISE
     // Vertical separation line
@@ -399,6 +416,17 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int crz_cab_bottom_y;
     public int crz_cab_temp_legend_y;
     public int crz_cab_temp_y;
+    
+    // Systems Status 
+    // Vertical separation line
+    public int sys_line_x;
+    public int sys_line_top_y;
+    public int sys_line_bottom_y;
+    // INOP Column
+    public int sys_inop_top_y;
+    public int sys_inop_legend_y;
+    public int sys_inop_x;
+    
     
     public MFDGraphicsConfig(Component root_component, int du) {
         super(root_component);
@@ -787,6 +815,24 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             hyd_pump_h = mfd_size * 77/1000;
             hyd_1_2_pump_y = panel_rect.y + mfd_size * 544/1000;
             hyd_3_pump_y = panel_rect.y + mfd_size * 596/1000;
+            hyd_psi_legend_y = panel_rect.y + mfd_size * 106/1000;
+            hyd_psi_value_y = panel_rect.y + mfd_size * 239/1000;
+            hyd_psi_unit_x1 = panel_rect.x + panel_rect.width * 284/1000;
+            hyd_psi_unit_x2 = panel_rect.x + panel_rect.width * 636/1000;
+            hyd_arrow_top_y = panel_rect.y + mfd_size * 118/1000;
+            hyd_arrow_base_y = panel_rect.y + mfd_size * 151/1000;
+            hyd_arrow_bottom_y = panel_rect.y + mfd_size * 176/1000;
+            hyd_arrow_dx = panel_rect.width * 37/2000;
+            hyd_line_top_y = panel_rect.y + mfd_size * 257/1000;
+            hyd_ptu_top_y = panel_rect.y + mfd_size * 331/1000;
+            hyd_ptu_line_y = panel_rect.y + mfd_size * 353/1000;
+            hyd_ptu_bottom_y = panel_rect.y + mfd_size * 375/1000;
+            hyd_qty_top_y = panel_rect.y + mfd_size * 772/1000;
+            hyd_qty_bottom_y = panel_rect.y + mfd_size * 974/1000;
+            hyd_valve_y = panel_rect.y + mfd_size * 684/1000;
+            hyd_valve_r = mfd_size * 35/1000;
+            hyd_qty_dx= panel_rect.width * 19/1000;
+
          
             // SYSTEM / CRUISE
             // Vertical separation line
@@ -889,6 +935,17 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             crz_cab_bottom_y = panel_rect.y + mfd_size * 877/1000;
             crz_cab_temp_legend_y = panel_rect.y + mfd_size * 808/1000;
             crz_cab_temp_y = panel_rect.y + mfd_size * 854/1000;
+
+            // Systems Status 
+            // Vertical separation line
+            sys_line_x = panel_rect.x + panel_rect.width * 650/1000;
+            sys_line_top_y = panel_rect.y + mfd_size * 100/1000;
+            sys_line_bottom_y = panel_rect.y + mfd_size * 900/1000;
+            // INOP Column
+            sys_inop_top_y = panel_rect.y + mfd_size * 150/1000;;
+            sys_inop_legend_y = panel_rect.y + mfd_size * 100/1000;;
+            sys_inop_x = panel_rect.x + panel_rect.width * 680/1000;;
+
             
         }
 

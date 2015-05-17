@@ -78,6 +78,7 @@ public interface Avionics {
     public static final int MFD_MODE_FUEL = 12;
     public static final int MFD_MODE_CAB_PRESS = 13;
     public static final int MFD_MODE_HYDR = 14;
+    public static final int MFD_MODE_STATUS = 15;
     
 
     public static final int RADIO_NAV1 = 1;

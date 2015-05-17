@@ -165,6 +165,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_MFD_FUEL        = "Fuel";
     public static final String ACTION_MFD_CAB_PRESS   = "Cabin pressure";
     public static final String ACTION_MFD_HYDR        = "Hydrolics";
+    public static final String ACTION_MFD_STATUS      = "Status";
        
     public static final String ACTION_CLOCK_UTC = "UTC";
     public static final String ACTION_CLOCK_LT = "Local Time";
@@ -295,6 +296,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JRadioButtonMenuItem radio_button_mfd_fuel;
     private JRadioButtonMenuItem radio_button_mfd_cab_press;
     private JRadioButtonMenuItem radio_button_mfd_hydr;
+    private JRadioButtonMenuItem radio_button_mfd_status;
     
     private JRadioButtonMenuItem radio_button_clock_utc;
     private JRadioButtonMenuItem radio_button_clock_lt;
@@ -1055,9 +1057,6 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // keep a reference
         this.radio_button_mfd_rtu = radio_button_menu_item;
 
-        /*
-         * TODO : Systems
-         */
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_SYSTEM);
         radio_button_menu_item.setToolTipText("Systems - Cruise");
         radio_button_menu_item.addActionListener(this);
@@ -1094,11 +1093,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         xhsi_mfd_menu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_mfd_fuel = radio_button_menu_item;
-        
-        /*
-         * TODO : Electrics
-         */
-                
+                   
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_ELEC);
         radio_button_menu_item.setToolTipText("Electrics");
         radio_button_menu_item.addActionListener(this);
@@ -1107,8 +1102,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         xhsi_mfd_menu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_mfd_elec = radio_button_menu_item;
-        
-        
+               
         /*
          * TODO : Wheels
          */        
@@ -1120,8 +1114,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // xhsi_mfd_menu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_mfd_wheels = radio_button_menu_item;
-        
-        
+               
         /*
          * TODO : Doors and oxygen
          */
@@ -1134,8 +1127,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // xhsi_mfd_menu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_mfd_door_oxy = radio_button_menu_item;
-        
-        
+               
         /*
          * TODO : Bleed air
          */
@@ -1148,11 +1140,6 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // xhsi_mfd_menu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_mfd_bleed = radio_button_menu_item;
-        
-        
-        /*
-         * TODO : Air conditionning
-         */
         
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_COND);
         radio_button_menu_item.setToolTipText("Air conditionning");
@@ -1179,18 +1166,31 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         
         
         /*
-         * TODO : Hydrolics
+         * TODO : Hydraulics
          */
         
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_HYDR);
         radio_button_menu_item.setToolTipText("Hydrolics");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
+        mfd_group.add(radio_button_menu_item);
+        xhsi_mfd_menu.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_mfd_hydr = radio_button_menu_item;
+
+        /*
+         * TODO : Status
+         */
+        
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_STATUS);
+        radio_button_menu_item.setToolTipText("Status");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
         // mfd_group.add(radio_button_menu_item);
         // xhsi_mfd_menu.add(radio_button_menu_item);
         // keep a reference
-        this.radio_button_mfd_hydr = radio_button_menu_item;
-        
+        this.radio_button_mfd_status = radio_button_menu_item;
+
        
         
         // add the "MFD" menu to the menubar
@@ -1612,8 +1612,11 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_mfd_fuel.setSelected( new_mfd_mode == Avionics.MFD_MODE_FUEL );
         this.radio_button_mfd_cab_press.setSelected( new_mfd_mode == Avionics.MFD_MODE_CAB_PRESS );
         this.radio_button_mfd_hydr.setSelected( new_mfd_mode == Avionics.MFD_MODE_HYDR );
+        this.radio_button_mfd_status.setSelected( new_mfd_mode == Avionics.MFD_MODE_STATUS );
         
-        switchable = prefs.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_SWITCHABLE) || prefs.get_preference(XHSIPreferences.PREF_INSTRUMENT_POSITION).equals(XHSIPreferences.INSTRUCTOR);
+        switchable = prefs.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_SWITCHABLE)
+        		|| prefs.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_LINKED)
+        		|| prefs.get_preference(XHSIPreferences.PREF_INSTRUMENT_POSITION).equals(XHSIPreferences.INSTRUCTOR);
         this.radio_button_mfd_arpt.setEnabled( switchable );
         this.radio_button_mfd_fpln.setEnabled( switchable );
         this.radio_button_mfd_eicas.setEnabled( switchable );
@@ -1629,6 +1632,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_mfd_fuel.setEnabled( switchable );
         this.radio_button_mfd_cab_press.setEnabled( switchable );
         this.radio_button_mfd_hydr.setEnabled( switchable );
+        this.radio_button_mfd_status.setEnabled( switchable );
 
         boolean new_clock_mode = avionics.clock_shows_utc();
         this.radio_button_clock_utc.setSelected(new_clock_mode);

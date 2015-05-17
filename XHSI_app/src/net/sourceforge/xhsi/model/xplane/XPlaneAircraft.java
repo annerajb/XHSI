@@ -786,6 +786,9 @@ public class XPlaneAircraft implements Aircraft {
     public float get_hyd_press(int circuit) {
         float h_p;
         // TODO: QPAC hyd pressure
+        // A320-A340-A380 standard pressure is 3000 psi (3 circuits : Blue, Green, Yellow)
+        // A350 two high pressure circuits at 5000 psi
+        // B737 two main circuits : A and B, and one Standby
         if ( this.avionics.is_qpac() ) {
         	switch (circuit) {
         		case 0 : h_p = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_HYD_G_PRESS);

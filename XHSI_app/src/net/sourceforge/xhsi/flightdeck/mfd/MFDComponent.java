@@ -94,13 +94,14 @@ public class MFDComponent extends Component implements Observer, PreferencesObse
         subcomponents.add(new APU(model_factory, mfd_gc, this));
         subcomponents.add(new FlightControls(model_factory, mfd_gc, this));
         subcomponents.add(new Electrics(model_factory, mfd_gc, this));
-        subcomponents.add(new Hydrolics(model_factory, mfd_gc, this));
+        subcomponents.add(new Hydraulics(model_factory, mfd_gc, this));
         subcomponents.add(new Fuel(model_factory, mfd_gc, this));
         subcomponents.add(new BleedAir(model_factory, mfd_gc, this));
         subcomponents.add(new CabinPressure(model_factory, mfd_gc, this));
         subcomponents.add(new AirConditionning(model_factory, mfd_gc, this));
         subcomponents.add(new DoorsOxygen(model_factory, mfd_gc, this));
         subcomponents.add(new Wheels(model_factory, mfd_gc, this));
+        subcomponents.add(new SystemsStatus(model_factory, mfd_gc, this));
         subcomponents.add(new RadioTuningUnit(model_factory, mfd_gc, this));
         subcomponents.add(new MFDFail(model_factory, mfd_gc, this));
         subcomponents.add(new MFDInstrumentFrame(model_factory, mfd_gc));
