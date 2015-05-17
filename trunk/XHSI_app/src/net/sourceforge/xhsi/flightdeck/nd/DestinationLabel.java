@@ -114,7 +114,10 @@ public class DestinationLabel extends NDSubcomponent {
                     dest_navobj = radio.get_radio_nav_object();
                     dest_ete = radio.get_ete();
                     dest_dist = radio.get_distance();
-                    if (dest_navobj != null) dest_name = ((RadioNavigationObject)dest_navobj).ilt;
+                    if (dest_navobj != null) {
+                        this.destination_active = true;
+                        dest_name = ((RadioNavigationObject)dest_navobj).ilt;
+                    }
                 }
             } else if ( source == Avionics.HSI_SOURCE_NAV2 ) {
                 NavigationRadio radio = this.avionics.get_nav_radio(2);
@@ -122,20 +125,30 @@ public class DestinationLabel extends NDSubcomponent {
                     dest_navobj = radio.get_radio_nav_object();
                     dest_ete = radio.get_ete();
                     dest_dist = radio.get_distance();
-                    if (dest_navobj != null) dest_name = ((RadioNavigationObject)dest_navobj).ilt;
+                    if (dest_navobj != null) {
+                        this.destination_active = true;
+                        dest_name = ((RadioNavigationObject)dest_navobj).ilt;
+                    }
                 }
             } else if ( source == Avionics.HSI_SOURCE_GPS ) {
+//                // This is only valid for the legacy FMS
+//                NavigationRadio radio = this.avionics.get_gps_radio();
+//                FMS the_fms = FMS.get_instance();
+//                if ( the_fms.is_active() ) {
+//                    dest_navobj = (NavigationObject)the_fms.get_active_waypoint();
+//                    dest_ete = radio.get_ete();
+//                    dest_dist = radio.get_distance();
+//                    if (dest_navobj != null) dest_name = dest_navobj.name;
+//                }
+                // This should work with the GNS 430/530 *and* the legacy FMS
                 NavigationRadio radio = this.avionics.get_gps_radio();
-                FMS the_fms = FMS.get_instance();
-                if ( the_fms.is_active() ) {
-                    dest_navobj = (NavigationObject)the_fms.get_active_waypoint();
-                    dest_ete = radio.get_ete();
-                    dest_dist = radio.get_distance();
-                    if (dest_navobj != null) dest_name = dest_navobj.name;
-                }
+                dest_ete = radio.get_ete();
+                dest_dist = radio.get_distance();
+                dest_name = this.avionics.gps_nav_id();
+                this.destination_active = ( ! dest_name.equals("") );
             }
 
-            this.destination_active = (dest_navobj != null);
+//            this.destination_active = (dest_navobj != null);
 
             if ( this.destination_active ) {
 

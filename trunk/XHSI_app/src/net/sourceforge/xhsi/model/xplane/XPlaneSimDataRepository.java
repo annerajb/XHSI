@@ -145,6 +145,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     // for the 8.33KHz spacing, see 194-197 below
     public static final int SIM_COCKPIT_RADIOS_STDBY_FLIP = 148; // to send commands to the plugin
 
+    public static final int SIM_COCKPIT_RADIOS_GPS_HAS_GLIDESLOPE = 149;
 
     // AP
     public static final int SIM_COCKPIT_AUTOPILOT_AUTOPILOT_STATE = 150;
@@ -196,6 +197,10 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT2_RADIOS_ACTUATORS_COM1_STANDBY_FREQUENCY_HZ_833 = 195;
     public static final int SIM_COCKPIT2_RADIOS_ACTUATORS_COM2_FREQUENCY_HZ_833 = 196;
     public static final int SIM_COCKPIT2_RADIOS_ACTUATORS_COM2_STANDBY_FREQUENCY_HZ_833 = 197;
+    
+    // GPS next waypoint ID
+    public static final int SIM_COCKPIT2_RADIOS_INDICATORS_GPS_NAV_ID_0_3 = 10198; // the 4 first characters
+    public static final int SIM_COCKPIT2_RADIOS_INDICATORS_GPS_NAV_ID_4_7 = 10199; // the next 4 characters
    
     
     // EFIS

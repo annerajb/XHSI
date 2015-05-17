@@ -179,6 +179,8 @@ XPLMDataRef nav1_dme_time_secs;
 XPLMDataRef nav2_dme_time_secs;
 XPLMDataRef gps_dme_time_secs;
 
+XPLMDataRef gps_has_glideslope;
+
 // XPLMDataRef nav1_dme_nm;
 // XPLMDataRef nav2_dme_nm;
 // XPLMDataRef gps_dme_nm;
@@ -198,7 +200,7 @@ XPLMDataRef nav1_id;
 XPLMDataRef nav2_id;
 XPLMDataRef adf1_id;
 XPLMDataRef adf2_id;
-//XPLMDataRef gps_id;
+XPLMDataRef gps_id;
 
 XPLMDataRef com1_freq_hz;
 XPLMDataRef com1_stdby_freq_hz;
@@ -1607,11 +1609,13 @@ void findDataRefs(void) {
     nav2_dme_time_secs = XPLMFindDataRef("sim/cockpit/radios/nav2_dme_time_secs");
     gps_dme_time_secs = XPLMFindDataRef("sim/cockpit/radios/gps_dme_time_secs");
 
+    gps_has_glideslope = XPLMFindDataRef("sim/cockpit/radios/gps_has_glideslope");
+    
 //	nav1_dme_nm = XPLMFindDataRef("sim/cockpit2/radios/indicators/nav1_dme_distance_nm");
 //	nav2_dme_nm = XPLMFindDataRef("sim/cockpit2/radios/indicators/nav2_dme_distance_nm");
 //	gps_dme_nm = XPLMFindDataRef("sim/cockpit2/radios/indicators/gps_dme_distance_nm");
     hsi_dme_nm_pilot = XPLMFindDataRef("sim/cockpit2/radios/indicators/hsi_dme_distance_nm_pilot");
-    hsi_dme_nm_copilot = XPLMFindDataRef("sim/cockpit2/radios/indicatorshsi_dme_distance_nm_copilot/");
+    hsi_dme_nm_copilot = XPLMFindDataRef("sim/cockpit2/radios/indicators/hsi_dme_distance_nm_copilot");
 
     outer_marker = XPLMFindDataRef("sim/cockpit2/radios/indicators/outer_marker_lit");
     middle_marker = XPLMFindDataRef("sim/cockpit2/radios/indicators/middle_marker_lit");
@@ -1626,7 +1630,7 @@ void findDataRefs(void) {
     nav2_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/nav2_nav_id");
     adf1_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/adf1_nav_id");
     adf2_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/adf2_nav_id");
-    //gps_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/gps_nav_id");
+    gps_id = XPLMFindDataRef("sim/cockpit2/radios/indicators/gps_nav_id");
 
     com1_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com1_freq_hz");              // int (x100 MHz)
     com1_stdby_freq_hz = XPLMFindDataRef("sim/cockpit/radios/com1_stdby_freq_hz");  // int (x100 MHz)

@@ -449,7 +449,7 @@ int createAvionicsPacket(void) {
 
     int i = 0;
     int packet_size;
-    char nav_id_bytes[4];
+    char nav_id_bytes[8];
     //float gear_ratio[10];
     int std_gauges_failures_pilot;
     int std_gauges_failures_copilot;
@@ -610,6 +610,9 @@ int createAvionicsPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_RADIOS_GPS_DME_TIME_SECS);
     sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(gps_dme_time_secs));
     i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_RADIOS_GPS_HAS_GLIDESLOPE);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(gps_has_glideslope));
+    i++;
 
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_RADIOS_INDICATORS_OUTER_MARKER_LIT );
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(outer_marker));
@@ -649,6 +652,14 @@ int createAvionicsPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_RADIOS_INDICATORS_ADF2_NAV_ID);
     XPLMGetDatab(adf2_id, nav_id_bytes, 0, 4);
     strncpy( (char *)&sim_packet.sim_data_points[i].value, nav_id_bytes, 4 );
+    i++;
+
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_RADIOS_INDICATORS_GPS_NAV_ID_0_3);
+    XPLMGetDatab(gps_id, nav_id_bytes, 0, 8);
+    strncpy( (char *)&sim_packet.sim_data_points[i].value, nav_id_bytes, 4 );
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_RADIOS_INDICATORS_GPS_NAV_ID_4_7);
+    strncpy( (char *)&sim_packet.sim_data_points[i].value, nav_id_bytes + 4, 4 );
     i++;
 
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_RADIOS_COM1_FREQ_HZ);
@@ -2235,7 +2246,7 @@ int createFmsPackets(void) {
         cur_entry = 0;
         //XPLMDebugString("XHSI: FMC: cur_entry=");
 
-        while ( total_waypoints > 1
+        while ( total_waypoints > 0
                 && cur_waypoint < total_waypoints
                 && cur_entry < MAX_FMS_ENTRIES_POSSIBLE ) {
 
