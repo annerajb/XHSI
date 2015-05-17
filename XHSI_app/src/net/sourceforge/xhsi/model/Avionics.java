@@ -332,6 +332,11 @@ public interface Avionics {
      */
     public boolean gps_gs_active();
 
+    /**
+     * @return String - GPS active waypoint ID
+     */
+    public String gps_nav_id();
+
 
     /**
      * @return boolean - COM1 is tuned to a 8.33kHz spaced channel

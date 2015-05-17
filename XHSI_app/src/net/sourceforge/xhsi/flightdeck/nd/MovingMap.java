@@ -1752,18 +1752,25 @@ public class MovingMap extends NDSubcomponent {
 //        DecimalFormat eta_hours_formatter = new DecimalFormat("00");
 //        DecimalFormat eta_minutes_formatter = new DecimalFormat("00");
 
+        boolean override_active = false;
+        
         map_projection.setPoint(entry.lat, entry.lon);
         int x = map_projection.getX();
         int y = map_projection.getY();
 
         if ( ( entry.index == 0 ) && ( entry.active ) ) {
-            // draw a line to the entry with index zero, if it is our active waypoint
-            // this didn't happen with the legacy default FMS, but happens with the GNS 430/530
+            // draw a line to the entry with index zero, if it the active waypoint in the legacy FMS
+            // this can happen with the GNS 430/530
             AffineTransform original_at = g2.getTransform();
             Stroke original_stroke = g2.getStroke();
 
             g2.setStroke(new BasicStroke(1.5f));
-            g2.setColor(nd_gc.fmc_active_color);
+            if ( ! entry.name.equals(this.avionics.gps_nav_id()) ) {
+                // it seems to be active, but the GPS datarefs is targetting another waypoint
+                g2.setColor(nd_gc.fmc_other_color);
+            } else {
+                g2.setColor(nd_gc.fmc_active_color);
+            }
             g2.rotate( Math.toRadians( this.avionics.gps_course() - this.aircraft.magnetic_variation() ), x, y );
             // draw the line from the point that the aircraft is supposed to be if it were right on track
             g2.drawLine(x,y, x, y + (int)(this.avionics.get_gps_radio().get_distance() * this.pixels_per_nm) );
@@ -1772,9 +1779,15 @@ public class MovingMap extends NDSubcomponent {
             g2.setTransform(original_at);
         }
         
+        // if the FMS entry seems active, make sure that the GPS datarefs target the same waypoint
+        // this can happen with the GNS 430/530
+        if ( entry.active && ! entry.name.equals(this.avionics.gps_nav_id()) ) override_active = true;
+        
+        
         if ( (next_entry != null) && ( ! next_entry.name.equals("NTFND") ) ) {
             // draw a line to the next waypoint
-            if ( inactive ) {
+            if ( inactive || ! next_entry.name.equals(this.avionics.gps_nav_id()) ) {
+                // the next FMS waypoint is not active, or it seems to be active, but the GPS datarefs is targetting another waypoint
                 g2.setColor(nd_gc.fmc_other_color);
             } else {
                 g2.setColor(nd_gc.fmc_active_color);
@@ -1808,12 +1821,13 @@ public class MovingMap extends NDSubcomponent {
 
             if ( entry.type == 2048 ) {
                 if ( entry.name.equals("Lat/Lon") || entry.name.equals("L/L") ) {
-                    if (entry.active) {
+                    if (entry.active && ! override_active) {
                         // a small magenta circle for unnamed active waypoints
                         g2.setColor(nd_gc.fmc_active_color);
                         g2.drawOval(x-c4, y-c4, 2*c4, 2*c4);
                     } else if (entry.displayed)  {
                         g2.setColor(nd_gc.fmc_active_color);
+                        g2.drawOval(x-c4, y-c4, 2*c4, 2*c4);
                     } else {
                         g2.setColor(Color.RED);
                         // don't print ETA and altitude restrictions for non-active, non-displayed unnamed waypoints
@@ -1823,7 +1837,7 @@ public class MovingMap extends NDSubcomponent {
                     label_y -= 1;
                 } else {
                     // T/C, T/D, B/D, S/C, ACCEL or DECEL
-                    if (entry.active) {
+                    if (entry.active && ! override_active) {
                         g2.setColor(nd_gc.fmc_ll_active_color);
                     } else if (entry.displayed) {
                         g2.setColor(nd_gc.fmc_ll_disp_color);
@@ -1837,7 +1851,7 @@ public class MovingMap extends NDSubcomponent {
                 }
             } else {
                 // ARPT, VOR, NDB or FIX waypoints
-                if (entry.active) {
+                if (entry.active && ! override_active) {
                     g2.setColor(nd_gc.fmc_active_color);
                 } else if (entry.displayed) {
                     g2.setColor(nd_gc.fmc_disp_color);

@@ -104,6 +104,8 @@ extern XPLMDataRef nav1_dme_time_secs;
 extern XPLMDataRef nav2_dme_time_secs;
 extern XPLMDataRef gps_dme_time_secs;
 
+extern XPLMDataRef gps_has_glideslope;
+
 // extern XPLMDataRef nav1_dme_nm;
 // extern XPLMDataRef nav2_dme_nm;
 // extern XPLMDataRef gps_dme_nm;
@@ -123,7 +125,7 @@ extern XPLMDataRef nav1_id;
 extern XPLMDataRef nav2_id;
 extern XPLMDataRef adf1_id;
 extern XPLMDataRef adf2_id;
-//extern XPLMDataRef gps_id;
+extern XPLMDataRef gps_id;
 
 extern XPLMDataRef com1_freq_hz;
 extern XPLMDataRef com1_stdby_freq_hz;
