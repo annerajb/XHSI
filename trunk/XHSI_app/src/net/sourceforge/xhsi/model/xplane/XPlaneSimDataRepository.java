@@ -550,6 +550,13 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_HYD_B_QTY=1069;
     public static final int QPAC_HYD_G_QTY=1070;
     public static final int QPAC_HYD_Y_QTY=1071;
+    // Cabin Pressure
+    public static final int QPAC_CABIN_DELTA_P=1072;
+    public static final int QPAC_CABIN_ALT=1073;
+    public static final int QPAC_CABIN_VS=1074;
+    public static final int QPAC_AIR_VALVES=1075;
+    // ECAM System Display page
+    public static final int QPAC_SD_PAGE=1076;
     // IDs reserved for QPAC up to 1199
 
     // JarDesign Airbus A320neo

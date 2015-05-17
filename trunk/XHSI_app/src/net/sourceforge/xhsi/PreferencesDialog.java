@@ -159,7 +159,26 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private String fuel_units[] = { XHSIPreferences.FUEL_UNITS_SWITCHABLE, XHSIPreferences.FUEL_UNITS_KG, XHSIPreferences.FUEL_UNITS_LBS, XHSIPreferences.FUEL_UNITS_USG, XHSIPreferences.FUEL_UNITS_LTR };
 
     private JComboBox mfd_mode_combobox;
-    private String mfd_modes[] = { XHSIPreferences.MFD_MODE_SWITCHABLE, XHSIPreferences.MFD_MODE_ARPT_CHART , XHSIPreferences.MFD_MODE_FPLN, XHSIPreferences.MFD_MODE_LOWER_EICAS, XHSIPreferences.MFD_MODE_RTU };
+    private String mfd_modes[] = { 
+    		XHSIPreferences.MFD_MODE_SWITCHABLE,
+    		XHSIPreferences.MFD_MODE_LINKED,    		
+    		XHSIPreferences.MFD_MODE_ARPT_CHART,
+    		XHSIPreferences.MFD_MODE_FPLN,
+    		XHSIPreferences.MFD_MODE_LOWER_EICAS,
+    		XHSIPreferences.MFD_MODE_RTU,
+    		XHSIPreferences.MFD_MODE_SYS,
+    		XHSIPreferences.MFD_MODE_FCTL,
+    		XHSIPreferences.MFD_MODE_APU,
+    		XHSIPreferences.MFD_MODE_ELEC,
+    		XHSIPreferences.MFD_MODE_WHEELS,
+    		XHSIPreferences.MFD_MODE_DOOR_OXY,
+    		XHSIPreferences.MFD_MODE_BLEED,
+    		XHSIPreferences.MFD_MODE_COND,
+    		XHSIPreferences.MFD_MODE_FUEL,
+    		XHSIPreferences.MFD_MODE_CAB_PRESS,
+    		XHSIPreferences.MFD_MODE_HYDR,
+    		XHSIPreferences.MFD_MODE_STATUS };
+    
     private JComboBox arpt_chart_color_combobox;
     private String arpt_chart_colors[] = { XHSIPreferences.ARPT_DIAGRAM_COLOR_AUTO, XHSIPreferences.ARPT_DIAGRAM_COLOR_DAY, XHSIPreferences.ARPT_DIAGRAM_COLOR_NIGHT };
 
@@ -1621,14 +1640,25 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.anchor = GridBagConstraints.WEST;
         this.mfd_mode_combobox = new JComboBox();
         this.mfd_mode_combobox.addItem("Switchable");
+        this.mfd_mode_combobox.addItem("Linked");
         //this.mfd_mode_combobox.addItem("Taxi Chart");
         this.mfd_mode_combobox.addItem("Airport Chart");
         this.mfd_mode_combobox.addItem("Flight Plan");
         this.mfd_mode_combobox.addItem("Lower EICAS");
         this.mfd_mode_combobox.addItem("RTU Display");
-        this.mfd_mode_combobox.addItem("APU");
+        this.mfd_mode_combobox.addItem("Systems / Cruise");
         this.mfd_mode_combobox.addItem("Flight Controls");
-        // TODO: more MFD pages
+        this.mfd_mode_combobox.addItem("APU");
+        this.mfd_mode_combobox.addItem("Electrics");
+        this.mfd_mode_combobox.addItem("Wheels");
+        this.mfd_mode_combobox.addItem("Doors / Oxygen");
+        this.mfd_mode_combobox.addItem("Bleed air");
+        this.mfd_mode_combobox.addItem("Air Conditionning");
+        this.mfd_mode_combobox.addItem("Fuel");
+        this.mfd_mode_combobox.addItem("Pressurisation");
+        this.mfd_mode_combobox.addItem("Hydrolics");
+        this.mfd_mode_combobox.addItem("Status");
+       
         this.mfd_mode_combobox.addActionListener(this);
         mfd_options_panel.add(this.mfd_mode_combobox, cons);
         dialog_line++;

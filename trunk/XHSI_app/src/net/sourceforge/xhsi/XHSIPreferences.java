@@ -161,13 +161,23 @@ public class XHSIPreferences {
 
     // for PREF_MFD_MODE
     public static final String MFD_MODE_SWITCHABLE = "switchable";
+    public static final String MFD_MODE_LINKED = "linked";
     public static final String MFD_MODE_ARPT_CHART = "artp_chart";
     public static final String MFD_MODE_FPLN = "fpln";
     public static final String MFD_MODE_LOWER_EICAS = "lower_eicas";
     public static final String MFD_MODE_RTU = "rtu";
-    public static final String MFD_MODE_APU = "apu";
+    public static final String MFD_MODE_SYS = "sys";
     public static final String MFD_MODE_FCTL = "fctl";
-    //TODO: more MFD pages
+    public static final String MFD_MODE_APU = "apu";
+    public static final String MFD_MODE_ELEC = "elec";
+    public static final String MFD_MODE_WHEELS = "wheels";
+    public static final String MFD_MODE_DOOR_OXY = "door_oxy";
+    public static final String MFD_MODE_BLEED = "bleed";
+    public static final String MFD_MODE_COND = "cond";
+    public static final String MFD_MODE_FUEL = "fuel";
+    public static final String MFD_MODE_CAB_PRESS = "cab_press";
+    public static final String MFD_MODE_HYDR = "hydr";
+    public static final String MFD_MODE_STATUS = "status";
     
     // for PREF_ARPT_CHART_COLOR
     public static final String ARPT_DIAGRAM_COLOR_AUTO = "auto";

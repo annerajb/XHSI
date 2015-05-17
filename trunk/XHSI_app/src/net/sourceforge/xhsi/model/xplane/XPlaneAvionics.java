@@ -746,6 +746,25 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     }
 
+    public int qpac_get_mfd_mode() {
+    	int sd_page = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_SD_PAGE);
+    	switch (sd_page) {
+    		case 0 : return Avionics.MFD_MODE_EICAS; 
+    		case 1 : return Avionics.MFD_MODE_BLEED; 
+    		case 2 : return Avionics.MFD_MODE_CAB_PRESS; 
+    		case 3 : return Avionics.MFD_MODE_ELEC; 
+    		case 4 : return Avionics.MFD_MODE_HYDR; 
+    		case 5 : return Avionics.MFD_MODE_FUEL; 
+    		case 6 : return Avionics.MFD_MODE_APU; 
+    		case 7 : return Avionics.MFD_MODE_COND; 
+    		case 8 : return Avionics.MFD_MODE_DOOR_OXY; 
+    		case 9 : return Avionics.MFD_MODE_WHEELS; 
+    		case 10: return Avionics.MFD_MODE_FCTL; 
+    		case 11: return Avionics.MFD_MODE_SYS; 
+    		case 12: return Avionics.MFD_MODE_STATUS;     	
+    	}
+    	return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_MFD_MODE);
+    }
 
     public int get_mfd_mode() {
 
@@ -756,13 +775,50 @@ public class XPlaneAvionics implements Avionics, Observer {
                 return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_MFD_MODE);
 //            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_TAXI_CHART)) {
 //                return 0;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_LINKED)) {
+            	if (is_qpac()) {
+            		return qpac_get_mfd_mode();
+            	} else {
+            		// like mode_switchable
+            		return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_MFD_MODE);
+            	}
             } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_ARPT_CHART)) {
                 return Avionics.MFD_MODE_ARPT;
             } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_FPLN)) {
                 return Avionics.MFD_MODE_FPLN;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_LOWER_EICAS)) {
+                return Avionics.MFD_MODE_EICAS;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_RTU)) {
+                return Avionics.MFD_MODE_RTU;               
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_SYS)) {
+                return Avionics.MFD_MODE_SYS;               
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_FCTL)) {
+                return Avionics.MFD_MODE_FCTL;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_APU)) {
+                return Avionics.MFD_MODE_APU;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_ELEC)) {
+                return Avionics.MFD_MODE_ELEC;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_WHEELS)) {
+                return Avionics.MFD_MODE_WHEELS;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_DOOR_OXY)) {
+                return Avionics.MFD_MODE_DOOR_OXY;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_BLEED)) {
+                return Avionics.MFD_MODE_BLEED;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_COND)) {
+                return Avionics.MFD_MODE_COND;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_FUEL)) {
+                return Avionics.MFD_MODE_FUEL;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_CAB_PRESS)) {
+                return Avionics.MFD_MODE_CAB_PRESS;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_HYDR)) {
+                return Avionics.MFD_MODE_HYDR;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_STATUS)) {
+                return Avionics.MFD_MODE_STATUS;
             } else {
                 return Avionics.MFD_MODE_EICAS;
             }
+            // TODO : add pages
+
         }
 
     }
@@ -1955,6 +2011,34 @@ public class XPlaneAvionics implements Avionics, Observer {
 
         if ( ! xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_MFD_MODE, (float) new_mode );
+            if (this.is_qpac()) {
+            	int sd_page = -1;
+            	// Don't switch QPAC ECAM SD page is custom XHSI MFD page is displayed : Flight Plan , or Airport Chart
+            	// TODO : introduce a preference setting to disable MFD menu link to ECAM SD page
+            	switch (new_mode) {
+            		 
+            		case Avionics.MFD_MODE_ARPT:
+            		case Avionics.MFD_MODE_RTU:
+            		case Avionics.MFD_MODE_FPLN: sd_page = -1; break;
+            		case Avionics.MFD_MODE_ENGINE: sd_page = 0; break; 
+            		case Avionics.MFD_MODE_SYS: sd_page = 11; break; 
+            		case Avionics.MFD_MODE_FCTL: sd_page = 10; break;
+            		case Avionics.MFD_MODE_APU: sd_page = 6; break;
+            		case Avionics.MFD_MODE_ELEC: sd_page = 3; break;
+            		case Avionics.MFD_MODE_WHEELS: sd_page = 9; break;
+            		case Avionics.MFD_MODE_DOOR_OXY: sd_page = 8; break;
+            		case Avionics.MFD_MODE_BLEED: sd_page = 1; break;
+            		case Avionics.MFD_MODE_COND: sd_page = 7; break;
+            		case Avionics.MFD_MODE_FUEL: sd_page = 5; break;
+            		case Avionics.MFD_MODE_CAB_PRESS: sd_page = 2; break;
+            		case Avionics.MFD_MODE_HYDR: sd_page = 4; break;
+            		// case Avionics.MFD_MODE_STATUS: sd_page = 12; break;
+
+            	}
+            	if (sd_page != -1) {
+            		udp_sender.sendDataPoint( XPlaneSimDataRepository.QPAC_SD_PAGE, (float) sd_page );
+            	}
+            }
         }
 
     }
