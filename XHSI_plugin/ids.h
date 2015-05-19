@@ -520,6 +520,7 @@
 #define QPAC_HYD_B_QTY 1069
 #define QPAC_HYD_G_QTY 1070
 #define QPAC_HYD_Y_QTY 1071
+#define QPAC_HYD_PUMPS 1077
 // Cabin Pressure
 #define QPAC_CABIN_DELTA_P 1072
 #define QPAC_CABIN_ALT 1073
@@ -527,7 +528,7 @@
 #define QPAC_AIR_VALVES 1075
 // ECAM System Display page
 #define QPAC_SD_PAGE 1076
-
+// next is 1078
 
 // IDs reserved for QPAC up to 1199
 
