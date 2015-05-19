@@ -819,6 +819,44 @@ public class XPlaneAircraft implements Aircraft {
         else
             return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_2);
     }
+    
+    public HydPumpStatus get_hyd_pump(int circuit) {
+    	if (this.avionics.is_qpac()) {
+    		int qpac_hyd_pumps = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_HYD_PUMPS);
+    		int pump_status = (qpac_hyd_pumps >> (6+circuit*2)) & 0x03;
+    		if (circuit==3) {
+    			// Yellow ELEC pump
+    			pump_status = (qpac_hyd_pumps >> 2) & 0x03;    			
+    		} else if (circuit==4) {
+    			// RAT pump
+    			pump_status = qpac_hyd_pumps & 0x03;    	    			
+    		}
+    		switch (pump_status) {
+				case 0 : return HydPumpStatus.OFF;
+				case 1 : return HydPumpStatus.ON;
+				case 2 : return HydPumpStatus.FAILED;
+				default : return HydPumpStatus.OFF; 
+    		}
+    	} else {
+    		return HydPumpStatus.ON;
+    	}
+    }
+    
+    public HydPTUStatus get_hyd_ptu() {
+    	if (this.avionics.is_qpac()) {
+    		int qpac_hyd_pumps = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_HYD_PUMPS);
+    		int ptu_status = (qpac_hyd_pumps >> 4) & 0x03; 
+    		switch (ptu_status) {
+    			case 0 : return HydPTUStatus.OFF;
+    			case 1 : return HydPTUStatus.STANDBY;
+    			case 2 : return HydPTUStatus.LEFT;
+    			case 3 : return HydPTUStatus.RIGHT;
+    		}
+    		return HydPTUStatus.OFF;
+    	} else {
+    		return HydPTUStatus.STANDBY;
+    	}
+    }
 
     public float get_TRQ_LbFt(int engine) {
         // NM = LbFt * 1.35581794884f

@@ -330,6 +330,10 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int hyd_pump_h;
     public int hyd_1_2_pump_y;
     public int hyd_3_pump_y;
+    public int hyd_1_pump_legend_x;
+    public int hyd_2_pump_legend_x;
+    public int hyd_3_pump_legend_x;
+    public int hyd_rat_pump_y;
     public int hyd_psi_legend_y;
     public int hyd_psi_value_y;
     public int hyd_psi_unit_x1;
@@ -815,6 +819,10 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             hyd_pump_h = mfd_size * 77/1000;
             hyd_1_2_pump_y = panel_rect.y + mfd_size * 544/1000;
             hyd_3_pump_y = panel_rect.y + mfd_size * 596/1000;
+            hyd_1_pump_legend_x = panel_rect.x + panel_rect.width * 204/1000 - digit_width_xl/2;
+            hyd_2_pump_legend_x = panel_rect.x + panel_rect.width * 728/1000 - digit_width_xl/2;
+            hyd_3_pump_legend_x = hyd_3_x + hyd_pump_w/2 + digit_width_xl/8;
+            hyd_rat_pump_y = panel_rect.y + mfd_size * 478/1000;
             hyd_psi_legend_y = panel_rect.y + mfd_size * 106/1000;
             hyd_psi_value_y = panel_rect.y + mfd_size * 239/1000;
             hyd_psi_unit_x1 = panel_rect.x + panel_rect.width * 284/1000;
