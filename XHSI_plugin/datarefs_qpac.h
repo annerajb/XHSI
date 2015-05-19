@@ -197,6 +197,7 @@ extern int qpac_ready;
 extern int qpac_version;
 
 // global functions
-float	checkQpacCallback(float, float, int, void *);
+float checkQpacCallback(float, float, int, void *);
+void writeQpacDataRef(int, float);
 
 #endif /* DATAREFS_QPAC_H_ */
