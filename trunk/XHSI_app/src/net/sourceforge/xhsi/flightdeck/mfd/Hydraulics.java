@@ -27,6 +27,7 @@ import java.awt.Component;
 import java.awt.Graphics2D;
 import java.util.logging.Logger;
 
+import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.Aircraft.ValveStatus;
@@ -48,32 +49,45 @@ public class Hydraulics extends MFDSubcomponent {
 			drawPageID(g2, "HYD");
 			
 			// GREEN circuit
-			drawHydrolicGauge(g2, "GREEN", 5000*this.aircraft.get_hyd_press(0), mfd_gc.hyd_1_x );
-			drawHydrolicPump(g2, true, mfd_gc.hyd_1_x, mfd_gc.hyd_1_2_pump_y);
+			drawHydraulicGauge(g2, "GREEN", 5000*this.aircraft.get_hyd_press(0), mfd_gc.hyd_1_x );
+			drawHydraulicPump(g2, aircraft.get_hyd_pump(0), mfd_gc.hyd_1_x, mfd_gc.hyd_1_2_pump_y);
 			drawValveVert(g2, ValveStatus.VALVE_OPEN, mfd_gc.hyd_1_x, mfd_gc.hyd_valve_y);
-			drawHydrolicQty(g2, this.aircraft.get_hyd_quant(0), mfd_gc.hyd_1_x);
+			drawHydraulicQty(g2, this.aircraft.get_hyd_quant(0), mfd_gc.hyd_1_x);
 			g2.setColor(mfd_gc.ecam_normal_color);
 			g2.drawLine(mfd_gc.hyd_1_x, mfd_gc.hyd_1_2_pump_y + mfd_gc.hyd_pump_h, mfd_gc.hyd_1_x, mfd_gc.hyd_valve_y-mfd_gc.hyd_valve_r );
 			g2.drawLine(mfd_gc.hyd_1_x, mfd_gc.hyd_valve_y+mfd_gc.hyd_valve_r, mfd_gc.hyd_1_x, mfd_gc.hyd_qty_top_y );
 					
 			// YELLOW circuit
-			drawHydrolicGauge(g2, "YELLOW", 5000*this.aircraft.get_hyd_press(1), mfd_gc.hyd_2_x );
-			drawHydrolicPump(g2, true, mfd_gc.hyd_2_x, mfd_gc.hyd_1_2_pump_y);
+			drawHydraulicGauge(g2, "YELLOW", 5000*this.aircraft.get_hyd_press(1), mfd_gc.hyd_2_x );
+			drawHydraulicPump(g2, aircraft.get_hyd_pump(1), mfd_gc.hyd_2_x, mfd_gc.hyd_1_2_pump_y);
 			drawValveVert(g2, ValveStatus.VALVE_OPEN, mfd_gc.hyd_2_x, mfd_gc.hyd_valve_y);
-			drawHydrolicQty(g2, this.aircraft.get_hyd_quant(1), mfd_gc.hyd_2_x);
+			drawHydraulicQty(g2, this.aircraft.get_hyd_quant(1), mfd_gc.hyd_2_x);
 			g2.setColor(mfd_gc.ecam_normal_color);
 			g2.drawLine(mfd_gc.hyd_2_x, mfd_gc.hyd_1_2_pump_y + mfd_gc.hyd_pump_h, mfd_gc.hyd_2_x, mfd_gc.hyd_valve_y-mfd_gc.hyd_valve_r );
 			g2.drawLine(mfd_gc.hyd_2_x, mfd_gc.hyd_valve_y+mfd_gc.hyd_valve_r, mfd_gc.hyd_2_x, mfd_gc.hyd_qty_top_y );
 			
 			// BLUE circuit
-			drawHydrolicGauge(g2, "BLUE", 5000*this.aircraft.get_hyd_press(2), mfd_gc.hyd_3_x );
-			drawHydrolicPump(g2, true, mfd_gc.hyd_3_x, mfd_gc.hyd_3_pump_y);
-			drawHydrolicQty(g2, this.aircraft.get_hyd_quant(2), mfd_gc.hyd_3_x);
+			drawHydraulicGauge(g2, "BLUE", 5000*this.aircraft.get_hyd_press(2), mfd_gc.hyd_3_x );
+			drawHydraulicPump(g2, aircraft.get_hyd_pump(2), mfd_gc.hyd_3_x, mfd_gc.hyd_3_pump_y);
+			drawHydraulicQty(g2, this.aircraft.get_hyd_quant(2), mfd_gc.hyd_3_x);
 			g2.setColor(mfd_gc.ecam_normal_color);
-			g2.drawLine(mfd_gc.hyd_3_x, mfd_gc.hyd_1_2_pump_y + mfd_gc.hyd_pump_h, mfd_gc.hyd_3_x, mfd_gc.hyd_qty_top_y );
+			g2.drawLine(mfd_gc.hyd_3_x, mfd_gc.hyd_3_pump_y + mfd_gc.hyd_pump_h, mfd_gc.hyd_3_x, mfd_gc.hyd_qty_top_y );
 			
+			// Pumps legends
+			g2.setColor(mfd_gc.ecam_markings_color);
+			g2.setFont(mfd_gc.font_xl);
+			g2.drawString("1", mfd_gc.hyd_1_pump_legend_x, mfd_gc.hyd_3_pump_y + mfd_gc.hyd_pump_h/2);
+			g2.drawString("2", mfd_gc.hyd_2_pump_legend_x, mfd_gc.hyd_3_pump_y + mfd_gc.hyd_pump_h/2);
+			g2.drawString("ELEC", mfd_gc.hyd_3_pump_legend_x, mfd_gc.hyd_1_2_pump_y + mfd_gc.hyd_pump_h/3);
+						
 			// Power Transfer Unit
-			drawPTU(g2, true);
+			drawPTU(g2, this.aircraft.get_hyd_ptu());
+			
+			// Yellow ELEC Pump
+			drawElecPump(g2, aircraft.get_hyd_pump(3), mfd_gc.hyd_2_x, mfd_gc.hyd_rat_pump_y);
+			
+			// RAT
+			drawRATPump(g2, aircraft.get_hyd_pump(4), mfd_gc.hyd_3_x, mfd_gc.hyd_rat_pump_y);
 			
 			// Units
 			drawUnits(g2, "PSI", mfd_gc.hyd_psi_unit_x1);
@@ -100,7 +114,7 @@ public class Hydraulics extends MFDSubcomponent {
 	}
 
 	
-	private void drawHydrolicGauge(Graphics2D g2, String gauge_str, float pressure, int x) {
+	private void drawHydraulicGauge(Graphics2D g2, String gauge_str, float pressure, int x) {
 		String pressure_str = "" + Math.round(pressure);
 		Color legendColor = pressure > 2000.0f ? mfd_gc.ecam_markings_color : mfd_gc.ecam_caution_color;
 		Color pressureColor = pressure > 2000.0f ? mfd_gc.ecam_normal_color : mfd_gc.ecam_caution_color;
@@ -118,7 +132,7 @@ public class Hydraulics extends MFDSubcomponent {
 		
 	}
 
-	private void drawHydrolicQty(Graphics2D g2, float qty, int x) {
+	private void drawHydraulicQty(Graphics2D g2, float qty, int x) {
 		String qty_str = "" + Math.round(qty*100);
 		int qty_y = mfd_gc.hyd_qty_bottom_y - Math.round((mfd_gc.hyd_qty_bottom_y - mfd_gc.hyd_qty_top_y) * qty);
 		int green_h = Math.round((mfd_gc.hyd_qty_bottom_y - mfd_gc.hyd_qty_top_y) * 0.20f);
@@ -147,17 +161,77 @@ public class Hydraulics extends MFDSubcomponent {
 				
 	}
 	
-	private void drawHydrolicPump(Graphics2D g2, boolean pump_status, int x, int y) {
+	private void drawHydraulicPump(Graphics2D g2, Aircraft.HydPumpStatus pump_status, int x, int y) {
+		// TODO : this line should be managed by drawHydraulicGauge
 		g2.drawLine(x,mfd_gc.hyd_line_top_y,x,y);
-		if (pump_status) {
+		if (pump_status == Aircraft.HydPumpStatus.ON ) {
 			g2.setColor(mfd_gc.ecam_normal_color);
 			g2.drawLine(x, y, x, y+mfd_gc.hyd_pump_h);
-		} else {
+		} else if (pump_status == Aircraft.HydPumpStatus.OFF ) {
 			g2.setColor(mfd_gc.ecam_caution_color);
-			g2.drawRect(x-mfd_gc.hyd_pump_w/2, y+mfd_gc.hyd_pump_h/2, x+mfd_gc.hyd_pump_w/2, y+mfd_gc.hyd_pump_h/2);	
+			g2.drawLine(x-mfd_gc.hyd_pump_w/2, y+mfd_gc.hyd_pump_h/2, x+mfd_gc.hyd_pump_w/2, y+mfd_gc.hyd_pump_h/2);	
 
+		} else {
+			String lo_str = "LO";
+			g2.setColor(mfd_gc.ecam_caution_color);
+			g2.setFont(mfd_gc.font_xxl);
+			g2.drawString(lo_str, x-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, lo_str)/2, y+mfd_gc.hyd_pump_h/2+mfd_gc.line_height_xxl/2);
 		}
 		g2.drawRect(x-mfd_gc.hyd_pump_w/2, y, mfd_gc.hyd_pump_w, mfd_gc.hyd_pump_h);	
+	}
+
+	private void drawElecPump(Graphics2D g2, Aircraft.HydPumpStatus pump_status, int x, int y) {
+		String elec_str = "ELEC";
+		int arrow_dx = mfd_gc.hyd_valve_r*5/4;
+		int str_x = x+arrow_dx*2 + mfd_gc.digit_width_xl/4;
+		
+		int tri_x[] = { x+arrow_dx , x+arrow_dx*2, x+arrow_dx*2	};
+		int tri_y[] = {	y, y-arrow_dx/2, y+arrow_dx/2 };
+		g2.setFont(mfd_gc.font_xl);
+		
+		if (pump_status == Aircraft.HydPumpStatus.ON ) {
+			g2.setColor(mfd_gc.ecam_normal_color);
+			g2.drawPolygon(tri_x, tri_y, 3);
+			g2.drawLine(x, y, x+arrow_dx, y);
+			g2.setColor(mfd_gc.ecam_markings_color);
+			g2.drawString(elec_str, str_x, y);
+		} else if (pump_status == Aircraft.HydPumpStatus.OFF ) {
+			g2.setColor(mfd_gc.ecam_markings_color);			
+			g2.drawPolygon(tri_x, tri_y, 3);
+			g2.drawString(elec_str, str_x, y);
+
+		} else {
+			g2.setColor(mfd_gc.ecam_caution_color);
+			g2.drawPolygon(tri_x, tri_y, 3);
+			g2.drawString(elec_str, str_x, y);
+		}
+	}
+
+	private void drawRATPump(Graphics2D g2, Aircraft.HydPumpStatus pump_status, int x, int y) {
+		String rat_str = "RAT";
+		int arrow_dx = mfd_gc.hyd_valve_r*5/4;
+		int str_x = x - arrow_dx*2 - mfd_gc.digit_width_xl/4 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, rat_str);
+		
+		int tri_x[] = { x-arrow_dx , x-arrow_dx*2, x-arrow_dx*2	};
+		int tri_y[] = {	y, y-arrow_dx/2, y+arrow_dx/2 };
+		g2.setFont(mfd_gc.font_xl);
+		
+		if (pump_status == Aircraft.HydPumpStatus.ON ) {
+			g2.setColor(mfd_gc.ecam_normal_color);
+			g2.drawPolygon(tri_x, tri_y, 3);
+			g2.drawLine(x, y, x-arrow_dx, y);
+			g2.setColor(mfd_gc.ecam_markings_color);
+			g2.drawString(rat_str, str_x, y);
+		} else if (pump_status == Aircraft.HydPumpStatus.OFF ) {
+			g2.setColor(mfd_gc.ecam_markings_color);			
+			g2.drawPolygon(tri_x, tri_y, 3);
+			g2.drawString(rat_str, str_x, y);
+
+		} else {
+			g2.setColor(mfd_gc.ecam_caution_color);
+			g2.drawPolygon(tri_x, tri_y, 3);
+			g2.drawString(rat_str, str_x, y);
+		}
 	}
 	
     private void drawValveVert(Graphics2D g2, ValveStatus valve_sts, int x, int y) {
@@ -177,26 +251,43 @@ public class Hydraulics extends MFDSubcomponent {
     	}
     }   
 	
-	private void drawPTU(Graphics2D g2, boolean operationnal) {
+	private void drawPTU(Graphics2D g2, Aircraft.HydPTUStatus status) {
 		String ptu_str = "PTU";
 		int left_arrow_x = mfd_gc.hyd_3_x - mfd_gc.hyd_valve_r*6;
 		int middle_arrow_x = mfd_gc.hyd_psi_unit_x2 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, ptu_str)*3/4;
 		int right_arrow_x = mfd_gc.hyd_psi_unit_x2 + mfd_gc.get_text_width(g2, mfd_gc.font_xl, ptu_str)*3/4;
 		int arrow_dx = mfd_gc.hyd_valve_r*5/4;
+		int left_arrow_tri_x[];
+		int middle_arrow_tri_x[];
+		int right_arrow_tri_x[];
 		g2.setColor(mfd_gc.ecam_markings_color);
 		g2.setFont(mfd_gc.font_xl);
 		g2.drawString(ptu_str, mfd_gc.hyd_psi_unit_x2-mfd_gc.get_text_width(g2, mfd_gc.font_xl, ptu_str)/2, mfd_gc.hyd_ptu_bottom_y);
-		if (operationnal) {
-			g2.setColor(mfd_gc.ecam_normal_color);
-		} else {
+		if (status == Aircraft.HydPTUStatus.OFF) {
 			g2.setColor(mfd_gc.ecam_caution_color);
+		} else {
+			g2.setColor(mfd_gc.ecam_normal_color);
 		}
 		g2.drawArc(mfd_gc.hyd_3_x - mfd_gc.hyd_valve_r, mfd_gc.hyd_ptu_line_y - mfd_gc.hyd_valve_r, mfd_gc.hyd_valve_r*2, mfd_gc.hyd_valve_r*2, 0, -180);
 		g2.drawLine(mfd_gc.hyd_3_x + mfd_gc.hyd_valve_r, mfd_gc.hyd_ptu_line_y , middle_arrow_x - arrow_dx, mfd_gc.hyd_ptu_line_y);
 		g2.drawLine(mfd_gc.hyd_3_x - mfd_gc.hyd_valve_r, mfd_gc.hyd_ptu_line_y , left_arrow_x, mfd_gc.hyd_ptu_line_y);
-		int left_arrow_tri_x[] = { left_arrow_x, left_arrow_x, left_arrow_x - arrow_dx };
-		int middle_arrow_tri_x[] = { middle_arrow_x, middle_arrow_x, middle_arrow_x - arrow_dx };
-		int right_arrow_tri_x[] = { right_arrow_x, right_arrow_x, right_arrow_x + arrow_dx };
+		if (status == Aircraft.HydPTUStatus.RIGHT || status == Aircraft.HydPTUStatus.LEFT) {
+			g2.drawLine(mfd_gc.hyd_1_x, mfd_gc.hyd_ptu_line_y, left_arrow_x - arrow_dx, mfd_gc.hyd_ptu_line_y);
+			g2.drawLine(right_arrow_x + arrow_dx, mfd_gc.hyd_ptu_line_y, mfd_gc.hyd_2_x, mfd_gc.hyd_ptu_line_y);
+		}
+		if (status == Aircraft.HydPTUStatus.RIGHT) {
+			left_arrow_tri_x = new int [] { left_arrow_x - arrow_dx, left_arrow_x - arrow_dx, left_arrow_x };
+			middle_arrow_tri_x = new int [] { middle_arrow_x - arrow_dx, middle_arrow_x - arrow_dx, middle_arrow_x  };
+			right_arrow_tri_x = new int [] { right_arrow_x, right_arrow_x, right_arrow_x + arrow_dx };			
+		} else if (status == Aircraft.HydPTUStatus.LEFT) {
+			left_arrow_tri_x = new int [] { left_arrow_x, left_arrow_x, left_arrow_x - arrow_dx };
+			middle_arrow_tri_x = new int [] { middle_arrow_x, middle_arrow_x, middle_arrow_x - arrow_dx };
+			right_arrow_tri_x = new int [] { right_arrow_x + arrow_dx, right_arrow_x + arrow_dx, right_arrow_x  };			
+		} else {
+			left_arrow_tri_x = new int [] { left_arrow_x, left_arrow_x, left_arrow_x - arrow_dx };
+			middle_arrow_tri_x = new int [] { middle_arrow_x, middle_arrow_x, middle_arrow_x - arrow_dx };
+			right_arrow_tri_x = new int [] { right_arrow_x, right_arrow_x, right_arrow_x + arrow_dx };
+		}
 		int arrow_tri_y[] = {  mfd_gc.hyd_ptu_bottom_y , mfd_gc.hyd_ptu_top_y, mfd_gc.hyd_ptu_line_y };
 		g2.drawPolygon(left_arrow_tri_x, arrow_tri_y, 3 );
 		g2.drawPolygon(middle_arrow_tri_x, arrow_tri_y, 3 );

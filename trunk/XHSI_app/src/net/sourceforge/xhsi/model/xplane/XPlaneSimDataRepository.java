@@ -550,6 +550,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_HYD_B_QTY=1069;
     public static final int QPAC_HYD_G_QTY=1070;
     public static final int QPAC_HYD_Y_QTY=1071;
+    public static final int QPAC_HYD_PUMPS=1077;
     // Cabin Pressure
     public static final int QPAC_CABIN_DELTA_P=1072;
     public static final int QPAC_CABIN_ALT=1073;

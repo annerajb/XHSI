@@ -28,6 +28,8 @@ public interface Aircraft {
 	
     public enum ValveStatus { VALVE_OPEN, VALVE_CLOSED, VALVE_OPEN_FAILED, VALVE_CLOSED_FAILED };
     public enum SpoilerStatus { RETRACTED, EXTENDED, FAILED, JAMMED };
+    public enum HydPumpStatus { OFF, ON, FAILED }; 
+    public enum HydPTUStatus { OFF, STANDBY, LEFT, RIGHT };
 
     /**
      * @return String - aircraft_registration
@@ -794,7 +796,17 @@ public interface Aircraft {
      */
     public float get_hyd_quant(int circuit);
 
+    /**
+     * @return HydPumpStatus - Hydraulics main pumps (OFF, ON, FAILED);
+     */
+    public HydPumpStatus get_hyd_pump(int circuit);
 
+    /**
+     * @return HydPTUStatus - Hydraulics PTU (OFF, STANDBY, LEFT, RIGHT);
+     */
+    public HydPTUStatus get_hyd_ptu();
+
+    
     /**
      * @return float - Maximum _available_ engine TRQ
      */
