@@ -91,7 +91,11 @@ void decodeIncomingPacket(void) {
     for (i=0; i<nb; i++) {
         id = custom_ntohi(efis_packet.data_points[i].id);
         float_value = custom_ntohf(efis_packet.data_points[i].value);
-        writeDataRef(id, float_value);
+        if ((id > QPAC_STATUS) && (id < JAR_A320NEO_STATUS)) {
+            writeQpacDataRef(id, float_value);
+        } else {
+        	writeDataRef(id, float_value);
+        }
     }
 
 }
@@ -1592,6 +1596,10 @@ int createCustomAvionicsPacket(void) {
         qpac_apu_egt = XPLMFindDataRef("AirbusFBW/");
         qpac_apu_egt_limit = XPLMFindDataRef("AirbusFBW/");
     	*/
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_SD_PAGE);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_sd_page));
+        i++;
+
     }
 
 

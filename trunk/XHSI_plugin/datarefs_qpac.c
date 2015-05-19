@@ -20,7 +20,7 @@
 //#include "XPLMMenus.h"
 //#include "XPWidgets.h"
 //#include "XPStandardWidgets.h"
-
+#include "ids.h"
 
 
 // DataRefs for the QPAC AirbusFBW
@@ -197,7 +197,19 @@ XPLMDataRef qpac_elec_apu_box;
 // ECAM SD page selection
 XPLMDataRef qpac_sd_page;
 XPLMDataRef qpac_clear_illuminated;
-
+XPLMDataRef qpac_sd_eng;
+XPLMDataRef qpac_sd_bleed;
+XPLMDataRef qpac_sd_press;
+XPLMDataRef qpac_sd_elec;
+XPLMDataRef qpac_sd_hyd;
+XPLMDataRef qpac_sd_fuel;
+XPLMDataRef qpac_sd_apu;
+XPLMDataRef qpac_sd_cond;
+XPLMDataRef qpac_sd_door;
+XPLMDataRef qpac_sd_wheel;
+XPLMDataRef qpac_sd_fctl;
+XPLMDataRef qpac_sd_status;
+XPLMDataRef qpac_sd_to_config;
 
 int qpac_ready = 0;
 int qpac_version = 0;
@@ -386,9 +398,19 @@ void findQpacDataRefs(void) {
             // ECAM SD page selection
             qpac_sd_page = XPLMFindDataRef("AirbusFBW/SDPage");
             qpac_clear_illuminated = XPLMFindDataRef("AirbusFBW/CLRillum");
-
-
-
+            qpac_sd_eng = XPLMFindDataRef("AirbusFBW/SDENG");
+            qpac_sd_bleed = XPLMFindDataRef("AirbusFBW/SDBLEED");
+            qpac_sd_press = XPLMFindDataRef("AirbusFBW/SDPRESS");
+            qpac_sd_elec = XPLMFindDataRef("AirbusFBW/SDELEC");
+            qpac_sd_hyd = XPLMFindDataRef("AirbusFBW/SDHYD");
+            qpac_sd_fuel = XPLMFindDataRef("AirbusFBW/SDFUEL");
+            qpac_sd_apu = XPLMFindDataRef("AirbusFBW/SDAPU");
+            qpac_sd_cond = XPLMFindDataRef("AirbusFBW/SDCOND");
+            qpac_sd_door = XPLMFindDataRef("AirbusFBW/SDDOOR");
+            qpac_sd_wheel = XPLMFindDataRef("AirbusFBW/SDWHEEL");
+            qpac_sd_fctl = XPLMFindDataRef("AirbusFBW/SDFCTL");
+            qpac_sd_status = XPLMFindDataRef("AirbusFBW/SDSTATUS");
+            qpac_sd_to_config = XPLMFindDataRef("AirbusFBW/TOConfigPress");
 
         }
     }
@@ -405,3 +427,48 @@ float checkQpacCallback(
     // come back in 5sec
     return 5.0;
 }
+
+void cmdQpacSDPage(int page) {
+	switch (page) {
+		case 0  : XPLMSetDatai(qpac_sd_eng,1); break;
+		case 1  : XPLMSetDatai(qpac_sd_bleed,1); break;
+		case 2  : XPLMSetDatai(qpac_sd_press,1); break;
+		case 3  : XPLMSetDatai(qpac_sd_elec,1); break;
+		case 4  : XPLMSetDatai(qpac_sd_hyd,1); break;
+		case 5  : XPLMSetDatai(qpac_sd_fuel,1); break;
+		case 6  : XPLMSetDatai(qpac_sd_apu,1); break;
+		case 7  : XPLMSetDatai(qpac_sd_cond,1); break;
+		case 8  : XPLMSetDatai(qpac_sd_door,1); break;
+		case 9  : XPLMSetDatai(qpac_sd_wheel,1); break;
+		case 10  : XPLMSetDatai(qpac_sd_fctl,1); break;
+		case 11  :
+			XPLMSetDatai(qpac_sd_eng,0);
+			XPLMSetDatai(qpac_sd_bleed,0);
+			XPLMSetDatai(qpac_sd_press,0);
+			XPLMSetDatai(qpac_sd_elec,0);
+			XPLMSetDatai(qpac_sd_hyd,0);
+			XPLMSetDatai(qpac_sd_fuel,0);
+			XPLMSetDatai(qpac_sd_apu,0);
+			XPLMSetDatai(qpac_sd_cond,0);
+			XPLMSetDatai(qpac_sd_door,0);
+			XPLMSetDatai(qpac_sd_wheel,0);
+			XPLMSetDatai(qpac_sd_fctl,0);
+			XPLMSetDatai(qpac_sd_status,0);
+			break;
+		case 12 : XPLMSetDatai(qpac_sd_status,1); break;
+	}
+}
+
+void writeQpacDataRef(int id, float value) {
+
+    char info_string[80];
+    sprintf(info_string, "XHSI: received AirbusFBW setting: ID=%d  VALUE=%f\n", id, value);
+    XPLMDebugString(info_string);
+
+    switch (id) {
+		case QPAC_SD_PAGE :
+			cmdQpacSDPage((int) value);
+			break;
+    }
+}
+
