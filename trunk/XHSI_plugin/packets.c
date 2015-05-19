@@ -992,6 +992,9 @@ int createCustomAvionicsPacket(void) {
     int qpac_fcc;
     float qpac_hyd_press_tab[3];
     float qpac_hyd_qty_tab[3];
+    int qpac_hyd_pumps = 0;
+    int qpac_hyd_pump_tab[3];
+
     int auto_brake_level;
     int pa_a320_failures;
 
@@ -1516,14 +1519,22 @@ int createCustomAvionicsPacket(void) {
 
 
     	// ELAC and SEC control computers
-    	XPLMGetDatavi(qpac_fcc_avail_array, qpac_fcc_tab, 0, 5);
-    	qpac_fcc = 0;
-        for (j=0; j<5; j++) {
-        	qpac_fcc |= (qpac_fcc_tab[j] & 0x01) << j;
+        if (qpac_fcc_avail_array != NULL) {
+        	XPLMGetDatavi(qpac_fcc_avail_array, qpac_fcc_tab, 0, 5);
+        	qpac_fcc = 0;
+        	for (j=0; j<5; j++) {
+        		qpac_fcc |= (qpac_fcc_tab[j] & 0x01) << j;
+        	}
+        	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FCC);
+        	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fcc );
+        	i++;
+        } else {
+        	// dataref not available on QPAC v1, turn all computers on
+        	qpac_fcc = 0xFF;
+        	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FCC);
+        	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fcc );
+        	i++;
         }
-    	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FCC);
-    	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fcc );
-    	i++;
 
     	// Rudder limit
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ALPHA_MAX);
@@ -1552,6 +1563,34 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_HYD_B_QTY);
         sim_packet.sim_data_points[i].value = custom_htonf(qpac_hyd_qty_tab[2]);
         i++;
+
+
+        // Hydraulic pumps
+        // Each pump status is on 2 bits
+        if (qpac_hyd_pump_array != NULL) {
+        	XPLMGetDatavi(qpac_hyd_pump_array, qpac_hyd_pump_tab, 0, 3);
+        	qpac_hyd_pumps = 0;
+        	for (j=0; j<3; j++) {
+        		qpac_hyd_pumps |= (qpac_hyd_pump_tab[j] & 0x03) << (j*2);
+        	}
+        	// Shift 6 bits left for rat, ptu and elec pumps
+        	qpac_hyd_pumps <<= 6;
+        	qpac_hyd_pumps |=
+        			(XPLMGetDatai(qpac_hyd_rat_mode) & 0x03 ) |
+        			(XPLMGetDatai(qpac_hyd_y_elec_mode) & 0x03) << 2 |
+        			(XPLMGetDatai(qpac_hyd_ptu_mode) & 0x03) << 4 ;
+
+        	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_HYD_PUMPS);
+        	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_hyd_pumps );
+        	i++;
+        } else {
+        	// dataref not available on QPAC v1, turn all pumps on
+        	// TODO : find out the right value !
+        	qpac_hyd_pumps = 0xFF;
+        	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_HYD_PUMPS);
+        	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fcc );
+        	i++;
+        }
 
         /*
         // Hydrolics
