@@ -368,6 +368,11 @@ public interface Avionics {
      */
     public boolean contact_atc();
 
+    /**
+     * @return boolean - Receiving from PilotEdge
+     */
+    public boolean pilotedge_rx();
+    
     
     /**
      * @return int - Selected radio on the RTU

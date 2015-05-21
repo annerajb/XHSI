@@ -55,8 +55,8 @@ float checkPilotEdgeCallback(
 
     findPilotEdgeDataRefs();
 
-    // come back in 5sec
-    return 5.0;
+    // come back in 11sec
+    return 11.0;
 
 }
 

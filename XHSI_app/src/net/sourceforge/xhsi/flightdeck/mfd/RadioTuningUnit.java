@@ -300,6 +300,9 @@ public class RadioTuningUnit extends MFDSubcomponent {
         if ( this.avionics.contact_atc() ) {
             g2.clearRect(activity_x, y_1-5, char2_w, 10);
             g2.drawString(" TX ", activity_x, y_1_t);
+        } else if ( this.avionics.pilotedge_rx() ) {
+            g2.clearRect(activity_x, y_1-5, char2_w, 10);
+            g2.drawString(" RX ", activity_x, y_1_t);
         }
 
         // ID light
