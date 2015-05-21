@@ -183,8 +183,9 @@ public class XPlaneSimDataRepository implements SimDataRepository {
 
 
     // RTU
-    public static final int XHSI_RTU_CONTACT_ATC = 185;
+    public static final int XHSI_RTU_CONTACT_ATC = 185; // also works for PilotEdge
     public static final int XHSI_RTU_SELECTED_RADIO = 186; // 0:none, 1:COM1, 2:NAV1, 3:ADF1, 4:XPDR_CODE, 5:XPDR_MODE, 6:ADF2, 7:NAV2, 8:COM2
+    public static final int XHSI_RTU_PILOTEDGE_RX = 187; // works only for PilotEdge
     
     
     // Clock mode
