@@ -175,6 +175,11 @@ extern XPLMDataRef qpac_elec_battery_supply;
 extern XPLMDataRef qpac_elec_connectors;
 extern XPLMDataRef qpac_elec_ohp_array;
 extern XPLMDataRef qpac_elec_apu_box;
+// FUEL
+extern XPLMDataRef qpac_fuel_pump_array;
+extern XPLMDataRef qpac_fuel_xfv_array ;
+extern XPLMDataRef qpac_fuel_eng_lp_valve_array;
+extern XPLMDataRef qpac_fuel_tv_array;
 // ECAM SD page selection
 extern XPLMDataRef qpac_sd_page;
 extern XPLMDataRef qpac_clear_illuminated;
