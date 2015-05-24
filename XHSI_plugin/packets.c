@@ -325,6 +325,9 @@ int createADCPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_ANNUNCIATORS_FUEL_QUANTITY);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(low_fuel));
     i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_FUEL_PUMPS);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(fuel_pumps)); // TODO : check bitfield
+    i++;
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_ANNUNCIATORS_GPWS);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(gpws));
     i++;
@@ -997,6 +1000,12 @@ int createCustomAvionicsPacket(void) {
     float qpac_hyd_qty_tab[3];
     int qpac_hyd_pumps = 0;
     int qpac_hyd_pump_tab[3];
+    int qpac_fuel_pumps = 0;
+    int qpac_fuel_pump_tab[6];
+    int qpac_fuel_valves = 0;
+    int qpac_fuel_valves_tab[6];
+    int qpac_air_valves;
+    int qpac_bleed_valves;
 
     int auto_brake_level;
     int pa_a320_failures;
@@ -1595,40 +1604,56 @@ int createCustomAvionicsPacket(void) {
         	i++;
         }
 
-        /*
-        // Hydrolics
-        qpac_hyd_pressure_array = XPLMFindDataRef("AirbusFBW/HydSysPressArray");
-        qpac_hyd_pump_array = XPLMFindDataRef("AirbusFBW/HydPumpArray");
-        qpac_hyd_sys_qty_array = XPLMFindDataRef("AirbusFBW/HydSysQtyArray");
-        qpac_hyd_rat_mode = XPLMFindDataRef("AirbusFBW/HydRATMode");
-        qpac_hyd_y_elec_mode = XPLMFindDataRef("AirbusFBW/HydYElecMode");
-        qpac_hyd_ptu_mode = XPLMFindDataRef("AirbusFBW/HydPTUMode");
-
-        // fire valve : sim/cockpit2/engine/fire_estinguisher_on[0,1] boolean
         // Cabin Pressure
-        qpac_cabin_delta_p = XPLMFindDataRef("AirbusFBW/CabinDeltaP");
-        qpac_cabin_alt = XPLMFindDataRef("AirbusFBW/CabinAlt");
-        qpac_cabin_vs = XPLMFindDataRef("AirbusFBW/CabinVS");
-        qpac_outflow_valve = XPLMFindDataRef("AirbusFBW/OutflowValve");
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_CABIN_DELTA_P);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cabin_delta_p));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_CABIN_ALT);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cabin_alt));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_CABIN_VS);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cabin_vs));
+        i++;
+
+        qpac_air_valves =
+        		(XPLMGetDatai(qpac_outflow_valve) & 0x01)  |
+        		(XPLMGetDatai(qpac_cond_hot_air_valve) & 0x01) << 1 ;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_AIR_VALVES);
+        sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_air_valves );
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_COND_COCKPIT_TRIM);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cond_cockpit_trim));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_COND_ZONE1_TRIM);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cond_zone1_trim));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_COND_ZONE2_TRIM);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cond_zone2_trim));
+        i++;
+
+
+        qpac_bleed_valves =
+        		(XPLMGetDatai(qpac_bleed_x) & 0x03)  |
+        		(XPLMGetDatai(qpac_bleed_apu) & 0x03) << 2 |
+        		(XPLMGetDatai(qpac_bleed_eng1) & 0x03) << 4 |
+        		(XPLMGetDatai(qpac_bleed_eng2) & 0x03) << 6 |
+        		(XPLMGetDatai(qpac_bleed_eng1_hp) & 0x03) << 8 |
+        		(XPLMGetDatai(qpac_bleed_eng2_hp) & 0x03) << 10 |
+				(XPLMGetDatai(qpac_bleed_pack1_fcu) & 0x03) << 12 |
+				(XPLMGetDatai(qpac_bleed_pack2_fcu) & 0x03) << 14;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BLEED_VALVES);
+        sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_bleed_valves );
+        i++;
+        /*
+         *
         // ENG lower ECAM
         qpac_ewd_start_mode = XPLMFindDataRef("AirbusFBW/EWDStartMode");
         qpac_start_valve_array = XPLMFindDataRef("AirbusFBW/StartValveArray");
         qpac_nacelle_temp_array = XPLMFindDataRef("AirbusFBW/NacelleTempArray");
         // COND
         qpac_cond_hot_air_valve = XPLMFindDataRef("AirbusFBW/HotAirValve");
-        qpac_cond_cockpit_trim = XPLMFindDataRef("AirbusFBW/CockpitTrim");
-        qpac_cond_zone1_trim = XPLMFindDataRef("AirbusFBW/Zone1Trim");
-        qpac_cond_zone2_trim = XPLMFindDataRef("AirbusFBW/Zone2Trim");
         // Bleed
         qpac_bleed_intercon = XPLMFindDataRef("AirbusFBW/BleedIntercon");
-        qpac_bleed_x = XPLMFindDataRef("AirbusFBW/XBleedInd");
-        qpac_bleed_apu = XPLMFindDataRef("AirbusFBW/APUBleedInd");
-        qpac_bleed_eng1 = XPLMFindDataRef("AirbusFBW/ENG1BleedInd");
-        qpac_bleed_eng2 = XPLMFindDataRef("AirbusFBW/ENG2BleedInd");
-        qpac_bleed_eng1_hp = XPLMFindDataRef("AirbusFBW/ENG1HPBleedInd");
-        qpac_bleed_eng2_hp = XPLMFindDataRef("AirbusFBW/ENG2HPBleedInd");
-        qpac_bleed_pack1_fcu = XPLMFindDataRef("AirbusFBW/Pack1FCUInd");
-        qpac_bleed_pack2_fcu = XPLMFindDataRef("AirbusFBW/Pack2FCUInd");
         qpac_bleed_pack1_flow = XPLMFindDataRef("AirbusFBW/Pack1Flow");
         qpac_bleed_pack2_flow = XPLMFindDataRef("AirbusFBW/Pack2Flow");
         qpac_bleed_pack1_temp = XPLMFindDataRef("AirbusFBW/Pack1Temp");
@@ -1638,6 +1663,49 @@ int createCustomAvionicsPacket(void) {
         qpac_apu_egt = XPLMFindDataRef("AirbusFBW/");
         qpac_apu_egt_limit = XPLMFindDataRef("AirbusFBW/");
     	*/
+
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_APU_EGT);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_apu_egt));
+        i++;
+
+        // FUEL
+        // Fuel pumps
+        // Each pump status is on 2 bits
+        if (qpac_fuel_pump_array != NULL) {
+        	XPLMGetDatavi(qpac_fuel_pump_array, qpac_fuel_pump_tab, 0, 6);
+        	qpac_fuel_pumps = 0;
+        	for (j=0; j<6; j++) {
+        		qpac_fuel_pumps |= (qpac_fuel_pump_tab[j] & 0x03) << (j*2);
+        	}
+        	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FUEL_PUMPS);
+        	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fuel_pumps );
+        	i++;
+        }
+        // Fuel valves
+        // Each valve status is on 2 bits
+        if (qpac_fuel_xfv_array != NULL) {
+        	qpac_fuel_valves = 0;
+        	XPLMGetDatavi(qpac_fuel_eng_lp_valve_array, qpac_fuel_valves_tab, 0, 2);
+        	for (j=0; j<2; j++) {
+        		qpac_fuel_valves |= (qpac_fuel_valves_tab[j] & 0x03) << (j*2);
+        	}
+        	// X-Fer valve is on 3 bits
+        	XPLMGetDatavi(qpac_fuel_xfv_array, qpac_fuel_valves_tab, 0, 1);
+        	qpac_fuel_valves |= (qpac_fuel_valves_tab[0] & 0x07) << 8;
+
+        	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FUEL_VALVES);
+        	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fuel_valves );
+        	i++;
+        }
+        /*
+        QPAC_FUEL_PUMPS
+		QPAC_FUEL_VALVES
+        qpac_fuel_pump_array;
+        qpac_fuel_xfv_array ;
+        qpac_fuel_eng_lp_valve_array;
+        qpac_fuel_tv_array;
+        */
+
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_SD_PAGE);
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_sd_page));
         i++;
@@ -1835,6 +1903,9 @@ int createEnginesPacket(void) {
     int revs[8];
     int chips[8];
     int fires[8];
+    int extinguisher;
+    int extinguishers[8];
+
 
     strncpy(sim_packet.packet_id, "ENGI", 4);
 
@@ -2041,6 +2112,16 @@ int createEnginesPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf( engifloat[e] );
         i++;
     }
+
+    // Fire Extinguishers : bit field, one bit per engine
+    extinguisher = 0;
+    XPLMGetDatavi(engine_fire_extinguisher, extinguishers, 0, engines);
+    for (e=0; e<engines; e++) {
+        extinguisher |= ((extinguishers[e] & 0x01) << e);
+    }
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_ENGINE_FIRE_EXTINGUISHER);
+    sim_packet.sim_data_points[i].value = custom_htonf( extinguisher );
+    i++;
 
 
     sim_packet.sim_data_points[i].id = custom_htoni(UFMC_STATUS);
