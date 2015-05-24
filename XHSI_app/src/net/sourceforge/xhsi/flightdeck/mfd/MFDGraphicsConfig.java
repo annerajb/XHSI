@@ -61,6 +61,7 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int num_eng = 0; 
     
     public int mfd_size;
+    public int mfd_middle_x;
 
     public int dial_n2_y;
     public int dial_ng_y;
@@ -102,11 +103,38 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int fuel_primary_y[] = new int[5];
     public int fuel_total_x;
     public int fuel_total_y;
+    public int fuel_total_h;
+    public int fuel_total_w;
     public int fuel_flow_y;
     public Font fuel_eng_font;
     public int fuel_eng_font_w;
     public int fuel_eng_font_h;
-    
+    public int fuel_eng_x[] = new int[8];           	           	
+    public int fuel_eng_isol_valve_y;
+    public int fuel_apu_isol_valve_x;
+    public int fuel_apu_isol_valve_y;
+    public int fuel_apu_legend_y;
+    public int fuel_eng_fused_legend_y;
+    public int fuel_eng_fused_value_y;
+    public int fuel_x_feed_line_y;
+    public int fuel_pump_x[] = new int[6];
+    public int fuel_pump_y[] = new int[6];
+    public int fuel_pump_join_line_dy;
+    public int fuel_pump_join_line_dx;
+    public int fuel_ail_legend_y;
+    public int fuel_temp_y;
+    public int fuel_fob_top;
+    public int fuel_fob_bottom;
+    public int fuel_fob_w;
+    public int fuel_tank_legend_y;
+    public int fuel_tank_top;
+    public int fuel_tank_edge_top;
+    public int fuel_tank_bottom;
+    public int fuel_tank_edge_bottom;
+    public int fuel_tank_sep_x1;
+    public int fuel_tank_sep_x2;
+    public int fuel_tank_edge_x;
+
     // ECAM Lower : Flight controls
     public int controls_x;
     public int controls_w;
@@ -476,6 +504,7 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             this.reconfigured = true;
 
             mfd_size = Math.min(panel_rect.width, panel_rect.height);
+            mfd_middle_x = panel_rect.x + panel_rect.width / 2;
             
             if (airbus_style) { mfd_size = Math.min(panel_rect.width, panel_rect.height- line_height_l*4); }
             
@@ -498,19 +527,79 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             
             // FUEL
             fuel_r = mfd_size*40/100*20/100;
-            fuel_primary_x[0] = panel_rect.x + panel_rect.width/2;
-            fuel_primary_x[1] = panel_rect.x + panel_rect.width/2 - fuel_r*6/4;
-            fuel_primary_x[2] = panel_rect.x + panel_rect.width/2 + fuel_r*6/4;
-            fuel_primary_x[3] = panel_rect.x + panel_rect.width/2 - fuel_r*17/4;
-            fuel_primary_x[4] = panel_rect.x + panel_rect.width/2 + fuel_r*17/4;
-            fuel_primary_y[0] = panel_rect.y + mfd_size/2 - fuel_r*3;
-            fuel_primary_y[1] = panel_rect.y + mfd_size/2 - fuel_r;
-            fuel_primary_y[2] = fuel_primary_y[1];
-            fuel_primary_y[3] = fuel_primary_y[1];
-            fuel_primary_y[4] = fuel_primary_y[1];
-            fuel_total_x = panel_rect.x + panel_rect.width*1/20;
-            fuel_total_y = panel_rect.y + mfd_size*90/100;
-            fuel_flow_y = panel_rect.y + mfd_size*70/100;
+            fuel_eng_isol_valve_y = panel_rect.y + mfd_size * 246/1000;
+            fuel_apu_isol_valve_x = mfd_middle_x - panel_rect.width * 178/1000;
+            fuel_apu_isol_valve_y = panel_rect.y + mfd_size * 361/1000;
+            fuel_apu_legend_y = panel_rect.y + mfd_size * 287/1000;
+            fuel_eng_fused_legend_y = panel_rect.y + mfd_size * 102/1000;
+            fuel_eng_fused_value_y = panel_rect.y + mfd_size * 164/1000;
+            fuel_x_feed_line_y =  panel_rect.y + mfd_size * 430/1000;
+            fuel_pump_join_line_dy = mfd_size * 30/1000;
+            fuel_pump_join_line_dx = panel_rect.width * 28/1000;
+            fuel_pump_x[0] = mfd_middle_x -  panel_rect.width * 297/1000;
+            fuel_pump_x[1] = mfd_middle_x -  panel_rect.width * 189/1000;
+            fuel_pump_x[2] = mfd_middle_x -  panel_rect.width * 54/1000;
+            fuel_pump_x[3] = mfd_middle_x +  panel_rect.width * 54/1000;
+            fuel_pump_x[4] = mfd_middle_x +  panel_rect.width * 189/1000;;
+            fuel_pump_x[5] = mfd_middle_x +  panel_rect.width * 297/1000;
+            fuel_pump_y[0] = panel_rect.y + mfd_size * 631/1000;
+            fuel_pump_y[1] = panel_rect.y + mfd_size * 631/1000;
+            fuel_pump_y[2] = panel_rect.y + mfd_size * 664/1000;
+            fuel_pump_y[3] = panel_rect.y + mfd_size * 664/1000;
+            fuel_pump_y[4] = panel_rect.y + mfd_size * 631/1000;
+            fuel_pump_y[5] = panel_rect.y + mfd_size * 631/1000;
+            fuel_ail_legend_y = panel_rect.y + mfd_size * 582/1000;
+            fuel_temp_y = panel_rect.y + mfd_size * 911/1000;
+            fuel_fob_top = panel_rect.y + mfd_size * 172/1000;
+            fuel_fob_bottom = panel_rect.y + mfd_size * 258/1000;
+            fuel_fob_w = mfd_size * 200/1000;
+            fuel_tank_legend_y = panel_rect.y + mfd_size * 582/1000;
+            fuel_tank_top = panel_rect.y + mfd_size * 766/1000;
+            fuel_tank_edge_top = panel_rect.y + mfd_size * 746/1000;
+            fuel_tank_bottom = panel_rect.y + mfd_size * 852/1000;
+            fuel_tank_edge_bottom = panel_rect.y + mfd_size * 832/1000;
+            fuel_tank_sep_x1 = panel_rect.width * 133/1000;
+            fuel_tank_sep_x2 = panel_rect.width * 325/1000;
+            fuel_tank_edge_x = panel_rect.width * 479/1000;
+            if (boeing_style) {
+            	// Tank #0 = center tank
+            	// Tank #1 = left inner tank
+            	// Tank #2 = right inner tank
+            	// Tank #3 = left outer tank
+            	// Tank #4 = right outer tank
+            	fuel_primary_x[0] = panel_rect.x + panel_rect.width/2;
+            	fuel_primary_x[1] = panel_rect.x + panel_rect.width/2 - fuel_r*6/4;
+            	fuel_primary_x[2] = panel_rect.x + panel_rect.width/2 + fuel_r*6/4;
+            	fuel_primary_x[3] = panel_rect.x + panel_rect.width/2 - fuel_r*17/4;
+            	fuel_primary_x[4] = panel_rect.x + panel_rect.width/2 + fuel_r*17/4;
+            	fuel_primary_y[0] = panel_rect.y + mfd_size/2 - fuel_r*3;
+            	fuel_primary_y[1] = panel_rect.y + mfd_size/2 - fuel_r;
+            	fuel_primary_y[2] = fuel_primary_y[1];
+            	fuel_primary_y[3] = fuel_primary_y[1];
+            	fuel_primary_y[4] = fuel_primary_y[1];
+            	fuel_total_x = panel_rect.x + panel_rect.width*1/20;
+            	fuel_total_y = panel_rect.y + mfd_size*90/100;
+                fuel_total_w = panel_rect.width*200/1000;
+                fuel_total_h = mfd_size*86/1000;
+            	fuel_flow_y = panel_rect.y + mfd_size*70/100;
+            } else {
+            	// Airbus style v1
+            	fuel_primary_x[0] = mfd_middle_x;
+            	fuel_primary_x[1] = mfd_middle_x - fuel_tank_sep_x1 - (fuel_tank_sep_x2 - fuel_tank_sep_x1)/2;
+            	fuel_primary_x[2] = mfd_middle_x + fuel_tank_sep_x1 + (fuel_tank_sep_x2 - fuel_tank_sep_x1)/2;
+            	fuel_primary_x[3] = mfd_middle_x - fuel_tank_sep_x2 - (fuel_tank_edge_x - fuel_tank_sep_x2)/2;
+            	fuel_primary_x[4] = mfd_middle_x + fuel_tank_sep_x2 + (fuel_tank_edge_x - fuel_tank_sep_x2)/2;
+            	fuel_primary_y[0] = fuel_tank_top + (fuel_tank_bottom - fuel_tank_top)/2 + line_height_xxl/2;
+            	fuel_primary_y[1] = fuel_tank_top + (fuel_tank_bottom - fuel_tank_top)/2 + line_height_xxl/2;
+            	fuel_primary_y[2] = fuel_tank_top + (fuel_tank_bottom - fuel_tank_top)/2 + line_height_xxl/2;
+            	fuel_primary_y[3] = fuel_tank_edge_top + (fuel_tank_edge_bottom - fuel_tank_edge_top)/2 + line_height_xxl/2;
+            	fuel_primary_y[4] = fuel_tank_edge_top + (fuel_tank_edge_bottom - fuel_tank_edge_top)/2 + line_height_xxl/2;
+            	fuel_total_x = panel_rect.x + panel_rect.width*388/1000;
+            	fuel_total_y = panel_rect.y + mfd_size*172/1000;
+                fuel_total_w = panel_rect.width*200/1000;
+                fuel_total_h = mfd_size*86/1000;
+            	fuel_flow_y = panel_rect.y + mfd_size*70/100;
+            }
             if (nb_engines <5) {
             	fuel_eng_font = font_l;
                 fuel_eng_font_w = digit_width_l;
@@ -520,8 +609,29 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
                 fuel_eng_font_w = digit_width_s;
                 fuel_eng_font_h = line_height_s;
             }
-            
-            
+            if (nb_engines < 3) {
+            	fuel_eng_x[0] = mfd_middle_x -  panel_rect.width * 297/1000;
+            	fuel_eng_x[1] = mfd_middle_x +  panel_rect.width * 297/1000;
+            	fuel_apu_isol_valve_x = mfd_middle_x - panel_rect.width * 178/1000;
+            } else if (nb_engines <5) {
+            	fuel_eng_x[0] = mfd_middle_x -  panel_rect.width * 410/1000;
+            	fuel_eng_x[1] = mfd_middle_x -  panel_rect.width * 230/1000;
+            	fuel_eng_x[2] = mfd_middle_x +  panel_rect.width * 230/1000;
+            	fuel_eng_x[3] = mfd_middle_x +  panel_rect.width * 410/1000;
+            	fuel_apu_isol_valve_x = mfd_middle_x - panel_rect.width * 120/1000;
+            } else {
+            	fuel_eng_x[0] = mfd_middle_x -  panel_rect.width * 420/1000;
+            	fuel_eng_x[1] = mfd_middle_x -  panel_rect.width * 300/1000;
+            	fuel_eng_x[2] = mfd_middle_x -  panel_rect.width * 200/1000;
+            	fuel_eng_x[3] = mfd_middle_x -  panel_rect.width * 100/1000;           	
+            	fuel_eng_x[4] = mfd_middle_x +  panel_rect.width * 100/1000;
+            	fuel_eng_x[5] = mfd_middle_x +  panel_rect.width * 200/1000;
+            	fuel_eng_x[6] = mfd_middle_x +  panel_rect.width * 300/1000;
+            	fuel_eng_x[7] = mfd_middle_x +  panel_rect.width * 420/1000;
+            	fuel_apu_isol_valve_x = mfd_middle_x - panel_rect.width * 100/1000;
+            }
+
+          
             // Lower EICAS dials
             
             int cols = Math.max(nb_engines, 2);

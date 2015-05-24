@@ -333,6 +333,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_FLIGHTMODEL_WEIGHT_M_FUEL_TOTAL = 406;
     public static final int SIM_AIRCRAFT_WEIGHT_ACF_M_FUEL_TOT = 407;
     public static final int SIM_FLIGHTMODEL_WEIGHT_M_TOTAL = 408; // Gross Weight
+    public static final int SIM_COCKPIT2_ENGINE_FIRE_EXTINGUISHER = 409; // Bit field
     public static final int SIM_COCKPIT2_FUEL_QUANTITY_ = 410; // 410..418 : array
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_N1_ = 420; // array
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_EGT_ = 430; // array
@@ -349,6 +350,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO2 = 532;
     public static final int SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_1 = 533;
     public static final int SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_2 = 534;
+    public static final int SIM_COCKPIT_FUEL_PUMPS = 535;
     // 535, 536, 537 : free
     public static final int XHSI_EICAS_OVERRIDE_TRQ_MAX = 538;
     public static final int SIM_AIRCRAFT_CONTROLS_ACF_TRQ_MAX_ENG = 539;
@@ -559,6 +561,16 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_AIR_VALVES=1075;
     // ECAM System Display page
     public static final int QPAC_SD_PAGE=1076;
+    public static final int QPAC_COND_COCKPIT_TRIM=1078;
+    public static final int QPAC_COND_ZONE1_TRIM=1079;
+    public static final int QPAC_COND_ZONE2_TRIM=1080;
+    // BLEED AIR
+    public static final int QPAC_BLEED_VALVES=1081;
+    // APU
+    public static final int QPAC_APU_EGT=1082;
+    // FUEL
+    public static final int QPAC_FUEL_PUMPS=1083;
+    public static final int QPAC_FUEL_VALVES=1084;
     // IDs reserved for QPAC up to 1199
 
     // JarDesign Airbus A320neo
