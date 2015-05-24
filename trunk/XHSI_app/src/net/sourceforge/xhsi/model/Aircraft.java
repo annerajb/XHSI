@@ -26,11 +26,25 @@ import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 
 public interface Aircraft {
 	
-    public enum ValveStatus { VALVE_OPEN, VALVE_CLOSED, VALVE_OPEN_FAILED, VALVE_CLOSED_FAILED };
+    public enum ValveStatus { VALVE_OPEN, VALVE_CLOSED, VALVE_OPEN_FAILED, VALVE_CLOSED_FAILED, JAMMED };
     public enum SpoilerStatus { RETRACTED, EXTENDED, FAILED, JAMMED };
-    public enum HydPumpStatus { OFF, ON, FAILED }; 
+    public enum HydPumpStatus { OFF, ON, FAILED };
+    public enum PumpStatus { OFF, ON, LOW_PRESSURE, FAILED }; 
     public enum HydPTUStatus { OFF, STANDBY, LEFT, RIGHT };
-
+    
+    // Bleed valve circuits
+    public final static int BLEED_VALVE_CROSS = 0;
+    public final static int BLEED_VALVE_APU = 1;
+    public final static int BLEED_VALVE_ENG1 = 2;
+    public final static int BLEED_VALVE_ENG2 = 3;
+    public final static int BLEED_VALVE_ENG1_HP = 4;
+    public final static int BLEED_VALVE_ENG2_HP = 5;
+    public final static int BLEED_VALVE_PACK1 = 6;
+    public final static int BLEED_VALVE_PACK2 = 7;
+    // Air valve circuits
+    public final static int AIR_VALVE_RAM_AIR = 0;
+    public final static int AIR_VALVE_HOT_AIR = 1;
+    
     /**
      * @return String - aircraft_registration
      */
@@ -703,6 +717,17 @@ public interface Aircraft {
 
     public float get_tank_capacity(int tank);
 
+    /**
+     * @return PumpStatus - Tank pump on, off, low pressure or failed
+     */
+    public PumpStatus get_tank_pump(int tank);
+
+    /**
+     * @return ValveStatus - Fuel XFer Valve
+     */
+    public ValveStatus get_tank_xfer_valve();
+
+
     public float fuel_multiplier();
     
 //    public void set_fuel_capacity(float capacity);
@@ -885,7 +910,12 @@ public interface Aircraft {
      * @return float - Engine Throttle ratio
      */
     public float get_throttle(int engine);
-    
+
+    /**
+     * @return boolean - Fire extinguisher on
+     */
+    public boolean fire_extinguisher(int engine);
+
     /**
      * @return float - Minimum runway length
      */
@@ -989,7 +1019,12 @@ public interface Aircraft {
      * @return boolean - Aircraft has Bleed Air Circuits (ENG & APU)
      */
     public boolean has_bleed_air();
-  
+
+    /**
+     * @return ValveStatus - Aircraft has Bleed Air Circuits (ENG & APU)
+     */
+    public ValveStatus bleed_valve(int circuit);
+    
     /**
      * @return Float - Cabin altitude in feet
      */

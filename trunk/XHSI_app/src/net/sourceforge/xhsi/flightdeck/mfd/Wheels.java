@@ -22,12 +22,14 @@
 
 package net.sourceforge.xhsi.flightdeck.mfd;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
+import net.sourceforge.xhsi.model.Aircraft.SpoilerStatus;
 
 public class Wheels extends MFDSubcomponent {
 
@@ -44,6 +46,7 @@ public class Wheels extends MFDSubcomponent {
 		if ( mfd_gc.powered && avionics.get_mfd_mode() == Avionics.MFD_MODE_WHEELS) {
 			// Page ID
 			drawPageID(g2, "WHEELS");
+			draw_airbus_speedbrake(g2);
 		}
 	}
 
@@ -57,4 +60,50 @@ public class Wheels extends MFDSubcomponent {
 		g2.drawLine(page_id_x, page_id_y + mfd_gc.line_height_xl/8, page_id_x + mfd_gc.get_text_width(g2, mfd_gc.font_xl, page_str), page_id_y + mfd_gc.line_height_m/8);
 	}
 
+	   
+    private void draw_airbus_speedbrake(Graphics2D g2) {    	
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_spoiler_ctr, mfd_gc.fctl_y_spoiler_top, 1, this.aircraft.get_spoiler_status_left(0));
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_spoiler_ctr - mfd_gc.fctl_dx_spoiler_step, mfd_gc.fctl_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*1 , 2, this.aircraft.get_spoiler_status_left(1));
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_spoiler_ctr - mfd_gc.fctl_dx_spoiler_step*2 , mfd_gc.fctl_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*2, 3, this.aircraft.get_spoiler_status_left(2));
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_spoiler_ctr - mfd_gc.fctl_dx_spoiler_step*3, mfd_gc.fctl_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*3, 4, this.aircraft.get_spoiler_status_left(3));
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_spoiler_bdr, mfd_gc.fctl_y_spoiler_bottom, 5, this.aircraft.get_spoiler_status_left(4));
+    	
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_spoiler_ctr, mfd_gc.fctl_y_spoiler_top, 1, this.aircraft.get_spoiler_status_right(0));
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_spoiler_ctr + mfd_gc.fctl_dx_spoiler_step , mfd_gc.fctl_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*1, 2, this.aircraft.get_spoiler_status_right(1));
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_spoiler_ctr + mfd_gc.fctl_dx_spoiler_step*2 , mfd_gc.fctl_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*2, 3, this.aircraft.get_spoiler_status_right(2));
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_spoiler_ctr + mfd_gc.fctl_dx_spoiler_step*3 , mfd_gc.fctl_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*3, 4, this.aircraft.get_spoiler_status_right(3));
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_spoiler_bdr, mfd_gc.fctl_y_spoiler_bottom, 5, this.aircraft.get_spoiler_status_right(4));
+    }
+    
+    private void draw_speed_brake_arrow(Graphics2D g2, int x, int y, int num, SpoilerStatus status) {
+    	switch (status) {
+    	case RETRACTED :
+    		g2.setColor(mfd_gc.ecam_normal_color);
+    		g2.drawLine(x-mfd_gc.fctl_dx_spoiler,y,x+mfd_gc.fctl_dx_spoiler,y);
+    		break;
+    	case EXTENDED :	
+    		g2.setColor(mfd_gc.ecam_normal_color);
+    		g2.drawLine(x-mfd_gc.fctl_dx_spoiler,y,x+mfd_gc.fctl_dx_spoiler,y);
+    		g2.drawLine(x,y,x,y-mfd_gc.fctl_dy_spoiler);
+    		g2.drawLine(x-mfd_gc.fctl_dx_spoiler_arrow,y-mfd_gc.fctl_dy_spoiler+mfd_gc.fctl_dy_spoiler_arrow,x,y-mfd_gc.fctl_dy_spoiler);
+    		g2.drawLine(x+mfd_gc.fctl_dx_spoiler_arrow,y-mfd_gc.fctl_dy_spoiler+mfd_gc.fctl_dy_spoiler_arrow,x,y-mfd_gc.fctl_dy_spoiler);
+    		break;
+    	case FAILED :
+    		g2.setColor(mfd_gc.ecam_caution_color);
+    		g2.drawLine(x-mfd_gc.fctl_dx_spoiler,y,x+mfd_gc.fctl_dx_spoiler,y);
+    		g2.setFont(mfd_gc.font_m);
+    		g2.drawString(""+num,x-mfd_gc.digit_width_m/2,y-2);
+    		break;
+    	case JAMMED :
+    		g2.setColor(mfd_gc.ecam_caution_color);
+    		g2.drawLine(x-mfd_gc.fctl_dx_spoiler,y,x+mfd_gc.fctl_dx_spoiler,y);
+    		g2.setFont(mfd_gc.font_m);
+    		g2.drawString(""+num,x-mfd_gc.digit_width_m/2,y-2);
+    		g2.drawLine(x-mfd_gc.fctl_dx_spoiler_arrow,y-mfd_gc.fctl_dy_spoiler+mfd_gc.fctl_dy_spoiler_arrow,x,y-mfd_gc.fctl_dy_spoiler);
+    		g2.drawLine(x+mfd_gc.fctl_dx_spoiler_arrow,y-mfd_gc.fctl_dy_spoiler+mfd_gc.fctl_dy_spoiler_arrow,x,y-mfd_gc.fctl_dy_spoiler);
+    		break;		
+    	}
+    }
+ 
+	
 }

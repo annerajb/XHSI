@@ -51,7 +51,7 @@ public class Hydraulics extends MFDSubcomponent {
 			// GREEN circuit
 			drawHydraulicGauge(g2, "GREEN", 5000*this.aircraft.get_hyd_press(0), mfd_gc.hyd_1_x );
 			drawHydraulicPump(g2, aircraft.get_hyd_pump(0), mfd_gc.hyd_1_x, mfd_gc.hyd_1_2_pump_y);
-			drawValveVert(g2, ValveStatus.VALVE_OPEN, mfd_gc.hyd_1_x, mfd_gc.hyd_valve_y);
+			drawValveVert(g2, this.aircraft.fire_extinguisher(0) ? ValveStatus.VALVE_CLOSED : ValveStatus.VALVE_OPEN, mfd_gc.hyd_1_x, mfd_gc.hyd_valve_y);
 			drawHydraulicQty(g2, this.aircraft.get_hyd_quant(0), mfd_gc.hyd_1_x);
 			g2.setColor(mfd_gc.ecam_normal_color);
 			g2.drawLine(mfd_gc.hyd_1_x, mfd_gc.hyd_1_2_pump_y + mfd_gc.hyd_pump_h, mfd_gc.hyd_1_x, mfd_gc.hyd_valve_y-mfd_gc.hyd_valve_r );
@@ -60,7 +60,7 @@ public class Hydraulics extends MFDSubcomponent {
 			// YELLOW circuit
 			drawHydraulicGauge(g2, "YELLOW", 5000*this.aircraft.get_hyd_press(1), mfd_gc.hyd_2_x );
 			drawHydraulicPump(g2, aircraft.get_hyd_pump(1), mfd_gc.hyd_2_x, mfd_gc.hyd_1_2_pump_y);
-			drawValveVert(g2, ValveStatus.VALVE_OPEN, mfd_gc.hyd_2_x, mfd_gc.hyd_valve_y);
+			drawValveVert(g2, this.aircraft.fire_extinguisher(1) ? ValveStatus.VALVE_CLOSED : ValveStatus.VALVE_OPEN, mfd_gc.hyd_2_x, mfd_gc.hyd_valve_y);
 			drawHydraulicQty(g2, this.aircraft.get_hyd_quant(1), mfd_gc.hyd_2_x);
 			g2.setColor(mfd_gc.ecam_normal_color);
 			g2.drawLine(mfd_gc.hyd_2_x, mfd_gc.hyd_1_2_pump_y + mfd_gc.hyd_pump_h, mfd_gc.hyd_2_x, mfd_gc.hyd_valve_y-mfd_gc.hyd_valve_r );

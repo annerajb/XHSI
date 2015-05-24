@@ -653,6 +653,35 @@ public class XPlaneAircraft implements Aircraft {
 //    public void set_fuel_capacity(float capacity) {
 //        this.fuel_capacity = capacity;
 //    }
+
+    public PumpStatus get_tank_pump(int tank) {
+    	if (avionics.is_qpac()) {
+    		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FUEL_PUMPS) >> (tank*2)) & 0x03 ;
+    		switch (pump_status) {
+    			case 0: return PumpStatus.OFF;
+    			case 1: return PumpStatus.ON;
+    			case 3: return PumpStatus.LOW_PRESSURE;
+    			default :return PumpStatus.FAILED;
+    		}    		
+    	} else {
+    		return ( ( (int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_FUEL_PUMPS) & (1<<tank) ) != 0 ? PumpStatus.ON : PumpStatus.OFF );
+    	}
+    }
+
+    public ValveStatus get_tank_xfer_valve() {
+    	if (avionics.is_qpac()) {
+    		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FUEL_VALVES) >> 8) & 0x07 ;
+    		switch (pump_status) {
+    			case 1: return ValveStatus.VALVE_CLOSED;
+    			case 2: return ValveStatus.VALVE_OPEN;
+    			case 3: return ValveStatus.VALVE_CLOSED_FAILED;
+    			case 4: return ValveStatus.VALVE_OPEN_FAILED;
+    			default :return ValveStatus.JAMMED;
+    		}    		
+    	} else {
+    		return ValveStatus.VALVE_CLOSED;
+    	}
+    }
     
     public float gross_weight() {
     	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_WEIGHT_M_TOTAL);
@@ -932,6 +961,9 @@ public class XPlaneAircraft implements Aircraft {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_ENGINE_ACTUATORS_THROTTLE_RATIO_ + engine);
     }
 
+    public boolean fire_extinguisher(int engine) {
+    	return ( ( (int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_ENGINE_FIRE_EXTINGUISHER) & (1<<engine) ) != 0 );
+    }
     
     public float get_min_rwy_length() {
         float dataref_rwy_len = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_RWY_LENGTH_MIN);
@@ -1087,6 +1119,21 @@ public class XPlaneAircraft implements Aircraft {
     
     public int bleed_air_mode() {
     	return 0;
+    }
+    
+    public ValveStatus bleed_valve(int circuit) {
+    	if (this.avionics.is_qpac()) {
+    		int qpac_bleed = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_BLEED_VALVES);
+    		int valve = (qpac_bleed >> (circuit * 2)) & 0x03;
+    		switch (valve) {
+    		case 0 : return ValveStatus.VALVE_CLOSED;
+    		case 1 : return ValveStatus.VALVE_OPEN;
+    		case 2 : return ValveStatus.VALVE_CLOSED_FAILED;
+    		default : return ValveStatus.VALVE_OPEN_FAILED;
+    		}
+    	} else {
+    		return ValveStatus.VALVE_OPEN;
+    	}
     }
 
     // Cabin pressurization
