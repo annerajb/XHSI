@@ -223,14 +223,14 @@ public class Fuel extends MFDSubcomponent {
 	   g2.setStroke(new BasicStroke(0.5f * mfd_gc.grow_scaling_factor, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
 
 	   // FOB BOX
+	   g2.setColor(mfd_gc.ecam_markings_color);
 	   int d_w = (int) mfd_gc.grow_scaling_factor*2;
 	   int box_x = mfd_gc.mfd_middle_x - mfd_gc.fuel_total_w/2;
 	   g2.drawRect(box_x, mfd_gc.fuel_total_y, mfd_gc.fuel_total_w, mfd_gc.fuel_total_h);
 	   g2.drawRect(box_x + d_w, mfd_gc.fuel_total_y + d_w, mfd_gc.fuel_total_w - d_w*2, mfd_gc.fuel_total_h - d_w*2);
 
 	   // FOB Legend
-	   String fob_str = "FOB";
-	   g2.setColor(mfd_gc.ecam_markings_color);
+	   String fob_str = "FOB";	   
 	   g2.setFont(mfd_gc.font_l);
 	   g2.drawString(fob_str, mfd_gc.mfd_middle_x - mfd_gc.get_text_width(g2, mfd_gc.font_l, fob_str) /2 , mfd_gc.fuel_eng_fused_value_y);
 
@@ -489,6 +489,8 @@ public class Fuel extends MFDSubcomponent {
         // convert FF from kg/s to kg/h, lbs/h, usg/h or ltr/h
         float unit_multiplier = this.aircraft.fuel_multiplier() * 60;
         float ff_value;
+        
+        g2.setColor(mfd_gc.ecam_markings_color);
         
         // Center tank
         int tank_h = mfd_gc.fuel_tank_bottom - mfd_gc.fuel_tank_top;
