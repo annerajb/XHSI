@@ -449,6 +449,51 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int crz_cab_temp_legend_y;
     public int crz_cab_temp_y;
     
+    // Bleed Air
+    public int bleed_id_x;
+    public int bleed_id_y;
+    public int bleed_circuit1_x;
+    public int bleed_circuit2_x;
+    public int bleed_mix_box_top;
+    public int bleed_mix_box_dx;
+    public int bleed_mix_gauge_y;
+    public int bleed_out_line_y;
+    public int bleed_out_tri_y;
+    public int bleed_out_tri_x1;
+    public int bleed_out_tri_x2;
+    public int bleed_out_tri_x3;
+    public int bleed_out_tri_dx;
+    public int bleed_out_tri_dy;
+    public int bleed_ram_air_valve_x;
+    public int bleed_ram_air_valve_y;
+    public int bleed_ram_air_legend_y1;
+    public int bleed_ram_air_legend_y2;
+    public int bleed_gnd_legend_y;
+    public int bleed_gnd_y;
+    public int bleed_gnd_x;
+    public int bleed_mix_temp_y;
+    public int bleed_flow_temp_y;
+    public int bleed_pack_valve_y;
+    public int bleed_cross_valve_y;
+    public int bleed_cross_valve_x;
+    public int bleed_eng_flow_temp_y;
+    public int bleed_eng_flow_press_y;
+    public int bleed_eng_box_top_y;
+    public int bleed_eng_box_inner_dx;
+    public int bleed_eng_box_outer_dx;
+    public int bleed_eng_valve_y;
+    public int bleed_hp_valve_y;
+    public int bleed_hp_valve_x1;
+    public int bleed_hp_valve_x2;
+    public int bleed_hp_x1;
+    public int bleed_hp_x2;
+    public int bleed_circuit_bottom_y;
+    public int bleed_circuit_eng_top_y;
+    public int bleed_ip_hp_legend_y;
+    public int bleed_apu_legend_y;
+    public int bleed_apu_valve_y;
+    public int bleed_apu_valve_x;
+
     // Systems Status 
     // Vertical separation line
     public int sys_line_x;
@@ -1054,6 +1099,59 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             crz_cab_temp_legend_y = panel_rect.y + mfd_size * 808/1000;
             crz_cab_temp_y = panel_rect.y + mfd_size * 854/1000;
 
+            // Bleed Air
+            bleed_id_x = panel_rect.x + panel_rect.width * 46/1000;
+            bleed_id_y = panel_rect.y + mfd_size * 73/1000;
+            hyd_valve_r = mfd_size * 35/1000;
+            bleed_mix_box_top = panel_rect.y + mfd_size * 163/1000;
+            bleed_mix_box_dx = panel_rect.width * 85/1000;
+            bleed_mix_gauge_y = panel_rect.y + mfd_size * 310/1000;
+            bleed_circuit1_x = panel_rect.x + panel_rect.width * 174/1000;
+            bleed_circuit2_x = panel_rect.x + panel_rect.width * 787/1000;
+
+            bleed_out_line_y = panel_rect.y + mfd_size * 122/1000;
+            bleed_out_tri_y = panel_rect.y + mfd_size * 112/1000;
+            bleed_out_tri_dy = mfd_size * 35/1000;
+            bleed_out_tri_x1 = panel_rect.x + panel_rect.width * 289/1000;
+            bleed_out_tri_x2 = panel_rect.x + panel_rect.width * 482/1000;
+            bleed_out_tri_x3 = panel_rect.x + panel_rect.width * 668/1000;
+            bleed_out_tri_dx = panel_rect.width * 37/2000;
+            
+            bleed_ram_air_valve_y = panel_rect.y + mfd_size * 219/1000;
+            bleed_ram_air_valve_x = panel_rect.x + panel_rect.width * 482/1000;
+            bleed_ram_air_legend_y1 = panel_rect.y + mfd_size * 343/1000;
+            bleed_ram_air_legend_y2 = panel_rect.y + mfd_size * 386/1000;
+            
+            bleed_gnd_legend_y = panel_rect.y + mfd_size * 629/1000;
+            bleed_gnd_y = panel_rect.y + mfd_size * 596/1000;
+            bleed_gnd_x = panel_rect.x + panel_rect.width * 399/1000;
+
+            bleed_mix_temp_y = panel_rect.y + mfd_size * 219/1000;
+            // bleed_flow_temp_y = panel_rect.y + mfd_size * 280/1000;
+            bleed_flow_temp_y = panel_rect.y + mfd_size * 367/1000;
+            bleed_pack_valve_y = panel_rect.y + mfd_size * 457/1000;
+            bleed_cross_valve_y = panel_rect.y + mfd_size * 539/1000;
+            bleed_cross_valve_x = panel_rect.x + panel_rect.width * 580/1000;
+            bleed_eng_flow_temp_y = panel_rect.y + mfd_size * 718/1000;
+            bleed_eng_flow_press_y = panel_rect.y + mfd_size * 661/1000;
+            bleed_eng_box_top_y = panel_rect.y + mfd_size * 612/1000;
+            bleed_eng_box_inner_dx = panel_rect.width* 113/1000;
+            bleed_eng_box_outer_dx = panel_rect.width* 50/1000;
+            bleed_eng_valve_y = panel_rect.y + mfd_size * 824/1000;            
+            bleed_hp_valve_y = panel_rect.y + mfd_size * 900/1000;
+            bleed_hp_valve_x1 = panel_rect.x + panel_rect.width * 268/1000;
+            bleed_hp_x1 = panel_rect.x + panel_rect.width * 353/1000;
+            bleed_hp_valve_x2 = panel_rect.x + panel_rect.width * 707/1000;
+            bleed_hp_x2 = panel_rect.x + panel_rect.width * 629/1000;
+            bleed_circuit_bottom_y = panel_rect.y + mfd_size * 939/1000;
+            bleed_circuit_eng_top_y = panel_rect.y + mfd_size * 735/1000;
+            bleed_ip_hp_legend_y = panel_rect.y + mfd_size * 955/1000;
+            
+            bleed_apu_legend_y = panel_rect.y + mfd_size * 792/1000;
+            bleed_apu_valve_y = panel_rect.y + mfd_size * 665/1000;
+            bleed_apu_valve_x = panel_rect.x + panel_rect.width * 493/1000;
+
+            
             // Systems Status 
             // Vertical separation line
             sys_line_x = panel_rect.x + panel_rect.width * 650/1000;

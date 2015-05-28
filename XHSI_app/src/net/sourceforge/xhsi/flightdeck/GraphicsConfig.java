@@ -252,6 +252,7 @@ public class GraphicsConfig implements ComponentListener {
     public Color ecam_markings_color;
     public Color ecam_action_color;
     public Color ecam_special_color;
+    public Color ecam_box_bg_color;
     
     // PFD colors - used to managed PFD lightening
     public Color pfd_armed_color;
@@ -608,7 +609,8 @@ public class GraphicsConfig implements ComponentListener {
         	ecam_normal_color = Color.green;
         	ecam_markings_color = Color.white;
         	ecam_action_color = Color.cyan;
-        	ecam_special_color = Color.magenta;        	
+        	ecam_special_color = Color.magenta;    
+        	ecam_box_bg_color = new Color(0x0f1c60);
             
             // PFD colors - used to managed PFD lightening
             if ( this.settings.style == Avionics.STYLE_AIRBUS ) {
@@ -714,6 +716,7 @@ public class GraphicsConfig implements ComponentListener {
         	ecam_markings_color = Color.white;
         	ecam_action_color = Color.cyan;
         	ecam_special_color = Color.magenta;
+        	ecam_box_bg_color = new Color(0x0f1c60);
         	
             // PFD Colors - used to managed PFD lightening
             if ( this.settings.style == Avionics.STYLE_AIRBUS ) {

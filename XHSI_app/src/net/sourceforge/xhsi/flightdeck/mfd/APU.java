@@ -34,6 +34,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.model.Aircraft.ValveStatus;
+import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 
@@ -113,12 +114,13 @@ public class APU extends MFDSubcomponent {
 
         			// Bleed Valve Bloc
         			int apu_bleed_valve_x = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*700/1000 + mfd_gc.digit_width_l * 4;
-        			int apu_bleed_valve_y = mfd_gc.panel_rect.y + mfd_gc.mfd_size*190/1000;
+        			int apu_bleed_valve_y = apu_bleed_y - mfd_gc.cond_valve_r*2;
 
         			ValveStatus apu_bleed_status = avail ? ValveStatus.VALVE_OPEN : ValveStatus.VALVE_CLOSED ;
+        			if (avionics.is_qpac()) { apu_bleed_status = aircraft.bleed_valve(Aircraft.BLEED_VALVE_APU); }
         			drawValve(g2, apu_bleed_status, apu_bleed_valve_x, apu_bleed_valve_y);
         			g2.setColor(mfd_gc.ecam_normal_color);
-        			g2.drawLine(apu_bleed_valve_x,apu_bleed_valve_y + mfd_gc.digit_width_l, apu_bleed_valve_x,apu_bleed_y);
+        			g2.drawLine(apu_bleed_valve_x,apu_bleed_valve_y + mfd_gc.cond_valve_r, apu_bleed_valve_x,apu_bleed_y);
 
         		}
 
@@ -277,7 +279,7 @@ public class APU extends MFDSubcomponent {
     }
  
     private void drawValve(Graphics2D g2, ValveStatus valve_sts, int x, int y) {
-    	int r = mfd_gc.digit_width_l;
+    	int r = mfd_gc.cond_valve_r;
     	
     	if (valve_sts == ValveStatus.VALVE_CLOSED || valve_sts == ValveStatus.VALVE_OPEN) {
             g2.setColor(mfd_gc.ecam_normal_color); 
