@@ -54,6 +54,7 @@ import net.sourceforge.xhsi.flightdeck.eicas.EICASComponent;
 import net.sourceforge.xhsi.flightdeck.mfd.MFDComponent;
 import net.sourceforge.xhsi.flightdeck.annunciators.AnnunComponent;
 import net.sourceforge.xhsi.flightdeck.clock.ClockComponent;
+import net.sourceforge.xhsi.flightdeck.cdu.CDUComponent;
 
 
 public class PreferencesDialog extends JDialog implements ActionListener {
@@ -77,7 +78,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox panel_locked_checkbox;
     private JButton get_button;
 
-    private static final int MAX_WINS = 7; // Empty, PFD, ND, EICAS, MFD, Annunciators and Clock
+    private static final int MAX_WINS = 8; // Empty, PFD, ND, EICAS, MFD, Annunciators, Clock and CDU
     private JCheckBox panel_active_checkbox[] = new JCheckBox[MAX_WINS];
     private JTextField panel_pos_x_textfield[] = new JTextField[MAX_WINS];
     private JTextField panel_pos_y_textfield[] = new JTextField[MAX_WINS];
@@ -182,6 +183,10 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JComboBox arpt_chart_color_combobox;
     private String arpt_chart_colors[] = { XHSIPreferences.ARPT_DIAGRAM_COLOR_AUTO, XHSIPreferences.ARPT_DIAGRAM_COLOR_DAY, XHSIPreferences.ARPT_DIAGRAM_COLOR_NIGHT };
 
+    private JCheckBox cdu_display_only;
+    private JComboBox cdu_source_combobox;
+    private String cdu_sources[] = { XHSIPreferences.CDU_SOURCE_SWITCHABLE, XHSIPreferences.CDU_SOURCE_LEGACY, XHSIPreferences.CDU_SOURCE_XFMC, XHSIPreferences.CDU_SOURCE_UFMC };
+    
 
     private ArrayList<XHSIInstrument> flightdeck;
 
@@ -433,6 +438,18 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         }
 
         this.arpt_chart_nav_dest.setSelected(preferences.get_preference(XHSIPreferences.PREF_ARPT_CHART_NAV_DEST).equalsIgnoreCase("true"));
+        
+        
+        // CDU Options (2)
+        
+        this.cdu_display_only.setSelected(preferences.get_preference(XHSIPreferences.PREF_CDU_DISPLAY_ONLY).equalsIgnoreCase("true"));
+
+        String cdu_source = preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE);
+        for (int i=0; i<cdu_sources.length; i++) {
+            if ( cdu_source.equals( cdu_sources[i] ) ) {
+                this.cdu_source_combobox.setSelectedIndex(i);
+            }
+        }
 
 
     }
@@ -449,6 +466,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         tabs_panel.add( "ND", create_nd_options_tab() );
         tabs_panel.add( "EICAS", create_eicas_options_tab() );
         tabs_panel.add( "MFD", create_mfd_options_tab() );
+        tabs_panel.add( "CDU", create_cdu_options_tab() );
 
         return tabs_panel;
 
@@ -1700,6 +1718,56 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     }
 
 
+    private JPanel create_cdu_options_tab() {
+
+        GridBagLayout layout = new GridBagLayout();
+        GridBagConstraints cons = new GridBagConstraints();
+        JPanel cdu_options_panel = new JPanel(layout);
+
+        cons.ipadx = 10;
+        cons.ipady = 0;
+        cons.insets = new Insets(2, 5, 0, 0);
+
+        int dialog_line = 0;
+
+        // CDU layout
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        cdu_options_panel.add(new JLabel("CDU display only, without keyboard", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.cdu_display_only = new JCheckBox();
+        cdu_options_panel.add(this.cdu_display_only, cons);
+        dialog_line++;
+
+        // CDU source
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        cdu_options_panel.add(new JLabel("CDU source", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.cdu_source_combobox = new JComboBox();
+        this.cdu_source_combobox.addItem("Automatic");
+        this.cdu_source_combobox.addItem("Legacy X-Plane");
+        this.cdu_source_combobox.addItem("X-FMC");
+        this.cdu_source_combobox.addItem("UFMC");
+        this.cdu_source_combobox.addActionListener(this);
+        cdu_options_panel.add(this.cdu_source_combobox, cons);
+        dialog_line++;
+
+        return cdu_options_panel;
+
+    }
+
+
     private JPanel create_dialog_buttons_panel() {
 
         FlowLayout layout = new FlowLayout();
@@ -1814,6 +1882,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
                         break;
                     case XHSIInstrument.CLOCK_ID :
                         ((ClockComponent)du.components).forceReconfig();
+                        break;
+                    case XHSIInstrument.CDU_ID :
+                        ((CDUComponent)du.components).forceReconfig();
                         break;
                 }
             }
@@ -2035,6 +2106,14 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             if ( this.arpt_chart_nav_dest.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_ARPT_CHART_NAV_DEST).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_ARPT_CHART_NAV_DEST, this.arpt_chart_nav_dest.isSelected()?"true":"false");
 
+            
+            // CDU options
+
+            if ( this.cdu_display_only.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_CDU_DISPLAY_ONLY).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_CDU_DISPLAY_ONLY, this.cdu_display_only.isSelected()?"true":"false");
+
+            if ( ! cdu_sources[this.cdu_source_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE)) )
+                this.preferences.set_preference(XHSIPreferences.PREF_CDU_SOURCE, cdu_sources[this.cdu_source_combobox.getSelectedIndex()]);
 
         }
 

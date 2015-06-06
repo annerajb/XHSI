@@ -35,6 +35,7 @@ public class XHSIInstrument {
         ND (ND_ID, "ND", 320, 320),
         EICAS (EICAS_ID, "EICAS", 320, 320),
         MFD (MFD_ID, "MFD", 320, 320),
+        CDU (CDU_ID, "CDU", 240, 320),
         Annunciators (ANNUN_ID, "Annunciators", 160, 160),
         Clock (CLOCK_ID, "Clock", 160, 160);
 
@@ -90,8 +91,9 @@ public class XHSIInstrument {
     public static final int ND_ID = 2;
     public static final int EICAS_ID = 3;
     public static final int MFD_ID = 4;
-    public static final int ANNUN_ID = 5;
-    public static final int CLOCK_ID = 6;
+    public static final int CDU_ID = 5;
+    public static final int ANNUN_ID = 6;
+    public static final int CLOCK_ID = 7;
 
 
     public XHSIInstrument(DU du) {

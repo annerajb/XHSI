@@ -69,6 +69,7 @@ import net.sourceforge.xhsi.flightdeck.UIHeartbeat;
 
 import net.sourceforge.xhsi.conwin.ConWinComponent;
 import net.sourceforge.xhsi.flightdeck.annunciators.AnnunComponent;
+import net.sourceforge.xhsi.flightdeck.cdu.CDUComponent;
 import net.sourceforge.xhsi.flightdeck.clock.ClockComponent;
 import net.sourceforge.xhsi.flightdeck.mfd.MFDComponent;
 import net.sourceforge.xhsi.flightdeck.eicas.EICASComponent;
@@ -82,7 +83,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 8 Alpha 26";
+    private static final String RELEASE = "2.0 Beta 8 Alpha 28";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -402,6 +403,18 @@ public class XHSI implements ActionListener {
                     this.preferences.add_subsciption(clock_ui, XHSIPreferences.PREF_USE_POWER);
                     this.preferences.add_subsciption(clock_ui, XHSIPreferences.PREF_INSTRUMENT_STYLE);
                     break;
+                case XHSIInstrument.CDU_ID :
+                    // Clock
+                    CDUComponent cdu_ui = (CDUComponent)instruments.get(i).components;
+                    this.preferences.add_subsciption(cdu_ui, XHSIPreferences.PREF_BORDER_STYLE);
+                    this.preferences.add_subsciption(cdu_ui, XHSIPreferences.PREF_BORDER_COLOR);
+                    this.preferences.add_subsciption(cdu_ui, XHSIPreferences.PREF_BOLD_FONTS);
+                    this.preferences.add_subsciption(cdu_ui, XHSIPreferences.PREF_USE_MORE_COLOR);
+                    this.preferences.add_subsciption(cdu_ui, XHSIPreferences.PREF_ANTI_ALIAS);
+                    this.preferences.add_subsciption(cdu_ui, XHSIPreferences.PREF_DU_PREPEND);
+                    this.preferences.add_subsciption(cdu_ui, XHSIPreferences.PREF_USE_POWER);
+                    this.preferences.add_subsciption(cdu_ui, XHSIPreferences.PREF_INSTRUMENT_STYLE);
+                    break;
             }
         }
 
@@ -597,6 +610,11 @@ public class XHSI implements ActionListener {
                     model_instance.get_repository_instance().add_observer( (ClockComponent)instrument_window.components );
                     min_size = true;
                     break;
+                case XHSIInstrument.CDU_ID :
+                    instrument_window.components = new CDUComponent(model_instance, du_num);
+                    model_instance.get_repository_instance().add_observer( (CDUComponent)instrument_window.components );
+                    min_size = true;
+                    break;
             }
 
             if ( instrument_window.components != null ) {
@@ -669,6 +687,12 @@ public class XHSI implements ActionListener {
                     break;
                 case XHSIInstrument.ANNUN_ID :
                     ((AnnunComponent)window.components).forceReconfig();
+                    break;
+                case XHSIInstrument.CLOCK_ID :
+                    ((ClockComponent)window.components).forceReconfig();
+                    break;
+                case XHSIInstrument.CDU_ID :
+                    ((CDUComponent)window.components).forceReconfig();
                     break;
             }
     //        window.frame.setVisible(display);
