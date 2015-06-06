@@ -119,6 +119,10 @@ public class XHSIPreferences {
     public static final String PREF_MFD_MODE = "mfd.mode";
     public static final String PREF_ARPT_CHART_COLOR = "arpt.chart.color";
     public static final String PREF_ARPT_CHART_NAV_DEST = "arpt.chart.nav.dest";
+    
+    // CDU options
+    public static final String PREF_CDU_DISPLAY_ONLY = "cdu.display.only";
+    public static final String PREF_CDU_SOURCE = "cdu.source";
 
 
     // constants
@@ -185,6 +189,14 @@ public class XHSIPreferences {
     public static final String ARPT_DIAGRAM_COLOR_NIGHT = "night";
 
 
+    // for PREF_CDU_SOURCE
+    public static final String CDU_SOURCE_SWITCHABLE = "switchable";
+    public static final String CDU_SOURCE_LEGACY = "legacy";
+    public static final String CDU_SOURCE_XFMC = "xfmc";
+    public static final String CDU_SOURCE_UFMC = "ufmc";
+    
+    
+    
     public static enum Orientation {
         UP ("Up"),
         LEFT ("Left"),
@@ -807,7 +819,19 @@ public class XHSIPreferences {
         return get_preference(PREF_ARPT_CHART_NAV_DEST).equalsIgnoreCase("true");
     }
 
+    
+    
+    // CDU
+    
+    /**
+     * @return            - CDU display only (without keyboard)
+     *
+     */
+    public boolean cdu_display_only() {
+        return get_preference(PREF_CDU_DISPLAY_ONLY).equalsIgnoreCase("true");
+    }
 
+    
     /**
      * Adds the given observer to the list of observers observing changes in the
      * preference addressed by key.
@@ -1236,6 +1260,19 @@ public class XHSIPreferences {
         }
 
 
+        // CDU
+        
+        if ( ! this.preferences.containsKey(PREF_CDU_DISPLAY_ONLY) ) {
+            this.preferences.setProperty(PREF_CDU_DISPLAY_ONLY, "false");
+            this.unsaved_changes = true;
+        }
+
+        if ( ! this.preferences.containsKey(PREF_CDU_SOURCE) ) {
+            this.preferences.setProperty(PREF_CDU_SOURCE, CDU_SOURCE_SWITCHABLE);
+            this.unsaved_changes = true;
+        }
+
+        
         if (this.unsaved_changes) {
             store_preferences();
         }
