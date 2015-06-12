@@ -58,7 +58,7 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
 
 
     public Rectangle clock_square;
-    public GradientPaint clock_gradient;
+    public GradientPaint panel_gradient;
 
 
     public CDUGraphicsConfig(Component root_component, int du) {
@@ -83,12 +83,11 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
             ) {
             // one of the settings has been changed
 
-            // remember the avionics power settings
-            // actually, for the annunciators, we use battery power, not avionics power
+            // for the CDU, we use battery power, not avionics power
             this.powered = power;
             super.update_config(g2);
 
-            // some subcomponents need to be reminded to redraw imediately
+            // some subcomponents need to be reminded to redraw immediately
             this.reconfigured = true;
 
             int square_size;
@@ -100,7 +99,7 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
                     2*square_size
                 );
 
-            clock_gradient = new GradientPaint(
+            panel_gradient = new GradientPaint(
                     0, 0, frontpanel_color.brighter().brighter(),
                     clock_square.width, clock_square.height , frontpanel_color.darker().darker(),
                     false);

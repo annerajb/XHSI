@@ -71,11 +71,11 @@ public class CDUFrame extends CDUSubcomponent {
 
         Stroke original_stroke = g2.getStroke();
 
-        g2.setColor(clock_gc.frontpanel_color);
-        g2.fillRoundRect(clock_gc.clock_square.x, clock_gc.clock_square.y, clock_gc.clock_square.width, clock_gc.clock_square.height, clock_gc.clock_square.width/8, clock_gc.clock_square.height/8);
-        g2.setStroke(new BasicStroke(8.0f * clock_gc.scaling_factor));
-        g2.setPaint(clock_gc.clock_gradient);
-        g2.drawRoundRect(clock_gc.clock_square.x, clock_gc.clock_square.y, clock_gc.clock_square.width, clock_gc.clock_square.height, clock_gc.clock_square.width/8, clock_gc.clock_square.height/8);
+        g2.setColor(cdu_gc.frontpanel_color);
+        g2.fillRoundRect(cdu_gc.clock_square.x, cdu_gc.clock_square.y, cdu_gc.clock_square.width, cdu_gc.clock_square.height, cdu_gc.clock_square.width/8, cdu_gc.clock_square.height/8);
+        g2.setStroke(new BasicStroke(8.0f * cdu_gc.scaling_factor));
+        g2.setPaint(cdu_gc.panel_gradient);
+        g2.drawRoundRect(cdu_gc.clock_square.x, cdu_gc.clock_square.y, cdu_gc.clock_square.width, cdu_gc.clock_square.height, cdu_gc.clock_square.width/8, cdu_gc.clock_square.height/8);
 
         g2.setStroke(original_stroke);
 

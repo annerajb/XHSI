@@ -125,6 +125,7 @@ PLUGIN_API int XPluginStart(
     registerGeneralDataRefs();
     registerEICASDataRefs();
     registerMFDDataRefs();
+    registerCDUDataRefs();
 
     // register custom X-Plane commands
     registerCommands();
@@ -216,6 +217,10 @@ PLUGIN_API int XPluginEnable(void) {
             initMFDCallback,
             -1.0f,
             NULL);
+    XPLMRegisterFlightLoopCallback(
+            initCDUCallback,
+            -1.0f,
+            NULL);
 
     // UFMC
     XPLMRegisterFlightLoopCallback(
@@ -304,6 +309,7 @@ PLUGIN_API void XPluginDisable(void) {
     XPLMUnregisterFlightLoopCallback(initCopilotCallback, NULL);
     XPLMUnregisterFlightLoopCallback(initEICASCallback, NULL);
     XPLMUnregisterFlightLoopCallback(initMFDCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(initCDUCallback, NULL);
 
     XPLMUnregisterFlightLoopCallback(checkUFMCCallback, NULL);
     XPLMUnregisterFlightLoopCallback(checkX737Callback, NULL);
@@ -338,6 +344,7 @@ PLUGIN_API void	XPluginStop(void) {
     unregisterGeneralDataRefs();
     unregisterEICASDataRefs();
     unregisterMFDDataRefs();
+    unregisterCDUDataRefs();
 
     destroyUI();
 

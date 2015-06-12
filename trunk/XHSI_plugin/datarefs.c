@@ -46,6 +46,9 @@ XPLMDataRef override_trq_max;
 // custom datarefs - MFD
 XPLMDataRef mfd_mode;
 
+// custom datarefs - CDU
+XPLMDataRef cdu_source;
+
 // custom datarefs - pilot
 XPLMDataRef efis_pilot_shows_stas;
 XPLMDataRef efis_pilot_shows_data;
@@ -553,6 +556,18 @@ int     getMFDMode(void* inRefcon)
 void	setMFDMode(void* inRefcon, int inValue)
 {
       mfd_display_mode = inValue;
+}
+
+
+// xhsi/cdu/source
+int cdu_source_value;
+int     getCDUSource(void* inRefcon)
+{
+     return cdu_source_value;
+}
+void	setCDUSource(void* inRefcon, int inValue)
+{
+      cdu_source_value = inValue;
 }
 
 
@@ -1136,6 +1151,22 @@ void registerMFDDataRefs(void) {
 }
 
 
+void registerCDUDataRefs(void) {
+
+    XPLMDebugString("XHSI: registering custom CDU DataRefs\n");
+
+    // xhsi/cdu/source
+    cdu_source = XPLMRegisterDataAccessor("xhsi/cdu/source",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                                   // Writable
+                                        getCDUSource, setCDUSource,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    XPLMDebugString("XHSI: custom CDU DataRefs registered\n");
+
+}
+
+
 
 float notifyDataRefEditorCallback(
 									float	inElapsedSinceLastCall,
@@ -1151,6 +1182,7 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rwy_length_min");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rwy_units");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/mode");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu/source");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/engine_type");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_scale");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/fuel_units");
@@ -1374,6 +1406,26 @@ float initMFDCallback(
 }
 
 
+float initCDUCallback(
+									float	inElapsedSinceLastCall,
+									float	inElapsedTimeSinceLastFlightLoop,
+									int		inCounter,
+									void *	inRefcon) {
+
+    XPLMDebugString("XHSI: initializing custom CDU DataRefs\n");
+
+    // set a default for the CDU source
+
+    // mode 0 = X-Plane legacy FMS / 1 = X-FMC / 2 = UFMC/X737FMC
+    XPLMSetDatai(cdu_source, 0);
+
+	XPLMDebugString("XHSI: custom CDU DataRefs initialized\n");
+
+    return 0.0f;
+
+}
+
+
 void unregisterPilotDataRefs(void) {
 
     // xhsi/nd_pilot/sta
@@ -1485,6 +1537,13 @@ void unregisterMFDDataRefs(void) {
 
     // xhsi/mfd/mode
     XPLMUnregisterDataAccessor(mfd_mode);
+
+}
+
+void unregisterCDUDataRefs(void) {
+
+    // xhsi/cdu/source
+    XPLMUnregisterDataAccessor(cdu_source);
 
 }
 
@@ -2067,6 +2126,13 @@ void writeDataRef(int id, float value) {
 
         case XHSI_MFD_MODE :
             XPLMSetDatai(mfd_mode , (int)value);
+            break;
+
+
+        // CDU
+
+        case XHSI_CDU_SOURCE :
+            XPLMSetDatai(cdu_source , (int)value);
             break;
 
 

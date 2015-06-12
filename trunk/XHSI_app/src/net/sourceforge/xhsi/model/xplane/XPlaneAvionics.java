@@ -777,8 +777,6 @@ public class XPlaneAvionics implements Avionics, Observer {
         } else {
             if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_SWITCHABLE)) {
                 return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_MFD_MODE);
-//            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_TAXI_CHART)) {
-//                return 0;
             } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_LINKED)) {
             	if (is_qpac()) {
             		return qpac_get_mfd_mode();
@@ -822,6 +820,29 @@ public class XPlaneAvionics implements Avionics, Observer {
                 return Avionics.MFD_MODE_EICAS;
             }
             // TODO : add pages
+
+        }
+
+    }
+
+
+    public int get_cdu_source() {
+
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
+            return xhsi_settings.cdu_source;
+        } else {
+            if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_SWITCHABLE)) {
+                return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_CDU_SOURCE);
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_LEGACY)) {
+                return Avionics.CDU_SOURCE_LEGACY;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_XFMC)) {
+                return Avionics.CDU_SOURCE_XFMC;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_UFMC)) {
+                return Avionics.CDU_SOURCE_UFMC;
+            } else {
+                // Error, fallback
+                return Avionics.CDU_SOURCE_LEGACY;
+            }
 
         }
 
@@ -2048,6 +2069,13 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
 
 
+    public void set_cdu_source(int new_source) {
+
+        udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_CDU_SOURCE, (float) new_source );
+
+    }
+    
+    
     public void set_trq_scale(int new_scale) {
 
         udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EICAS_TRQ_SCALE, (float) new_scale );

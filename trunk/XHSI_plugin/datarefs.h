@@ -368,6 +368,10 @@ extern XPLMDataRef override_trq_max;
 extern XPLMDataRef mfd_mode;
 
 
+// custom datarefs - CDU
+extern XPLMDataRef cdu_source;
+
+
 // custom datarefs - pilot
 extern XPLMDataRef efis_pilot_shows_stas;
 extern XPLMDataRef efis_pilot_shows_data;
@@ -416,6 +420,7 @@ void    registerCopilotDataRefs(void);
 void    registerGeneralDataRefs(void);
 void    registerEICASDataRefs(void);
 void    registerMFDDataRefs(void);
+void    registerCDUDataRefs(void);
 
 float   notifyDataRefEditorCallback(float, float, int, void *);
 
@@ -424,11 +429,13 @@ float   initPilotCallback(float, float, int, void *);
 float   initCopilotCallback(float, float, int, void *);
 float   initEICASCallback(float, float, int, void *);
 float   initMFDCallback(float, float, int, void *);
+float   initCDUCallback(float, float, int, void *);
 
 void    unregisterPilotDataRefs(void);
 void    unregisterCopilotDataRefs(void);
 void	unregisterGeneralDataRefs(void);
 void    unregisterEICASDataRefs(void);
 void    unregisterMFDDataRefs(void);
+void    unregisterCDUDataRefs(void);
 
 void    writeDataRef(int, float);
