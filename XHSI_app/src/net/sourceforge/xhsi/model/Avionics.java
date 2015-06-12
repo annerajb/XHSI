@@ -80,6 +80,9 @@ public interface Avionics {
     public static final int MFD_MODE_HYDR = 14;
     public static final int MFD_MODE_STATUS = 15;
     
+    public static final int CDU_SOURCE_LEGACY = 0;
+    public static final int CDU_SOURCE_XFMC = 1;
+    public static final int CDU_SOURCE_UFMC = 2;
 
     public static final int RADIO_NAV1 = 1;
     public static final int RADIO_NAV2 = 2;
@@ -385,6 +388,11 @@ public interface Avionics {
      */
     public int get_mfd_mode();
 
+    
+    /**
+     * @return int - CDU source (0=X-Plane_legacy_FMS, 1=X-FMC, 2=UFMCS/X737FMC,)
+     */
+    public int get_cdu_source();
     
     /**
      * @return int - 0=LbFt, 1=Nm, 2=percent
@@ -838,6 +846,8 @@ public interface Avionics {
     public void set_show_data(boolean new_data);
     
     public void set_mfd_mode(int new_mode);
+
+    public void set_cdu_source(int new_source);
 
     // Failures
     public enum FailedElement { PFD_ATTITUDE, PFD_ALTITUDE, PFD_AIR_SPEED, PFD_HEADING, PFD_TURN, PFD_VSI };

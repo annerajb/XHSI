@@ -45,7 +45,7 @@ import net.sourceforge.xhsi.flightdeck.Subcomponent;
 
 public abstract class CDUSubcomponent extends Subcomponent {
 
-    CDUGraphicsConfig clock_gc;
+    CDUGraphicsConfig cdu_gc;
 //    ModelFactory model_factory;
 //    Aircraft aircraft;
 //    Avionics avionics;
@@ -59,7 +59,7 @@ public abstract class CDUSubcomponent extends Subcomponent {
     public CDUSubcomponent(ModelFactory model_factory, CDUGraphicsConfig annun_gc) {
         super(model_factory, annun_gc);
 
-        this.clock_gc = annun_gc;
+        this.cdu_gc = annun_gc;
 
         this.model_factory = model_factory;
         this.aircraft = this.model_factory.get_aircraft_instance();

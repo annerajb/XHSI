@@ -846,6 +846,12 @@ int createAvionicsPacket(void) {
     i++;
 
 
+// CDU
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_CDU_SOURCE);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(cdu_source));
+    i++;
+
+
 // AP
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_AUTOPILOT_AUTOPILOT_STATE);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(autopilot_state));

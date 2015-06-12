@@ -166,7 +166,11 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_MFD_CAB_PRESS   = "Cabin pressure";
     public static final String ACTION_MFD_HYDR        = "Hydrolics";
     public static final String ACTION_MFD_STATUS      = "Status";
-       
+    
+    public static final String ACTION_CDU_LEGACY      = "X-Plane legacy FMS";
+    public static final String ACTION_CDU_XFMC        = "X-FMC";
+    public static final String ACTION_CDU_UFMC        = "UFMC/X737FMC";
+
     public static final String ACTION_CLOCK_UTC = "UTC";
     public static final String ACTION_CLOCK_LT = "Local Time";
     public static final String ACTION_CHR_START_STOP_RESET = "CHR Start/Stop/Reset";
@@ -223,6 +227,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 //    public FUEL_UNITS fuel_units = FUEL_UNITS.KG;
     
     public int mfd_mode = 0;
+
+    public int cdu_source = 0;
 
     public int clock_mode = 0;
 
@@ -297,6 +303,10 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JRadioButtonMenuItem radio_button_mfd_cab_press;
     private JRadioButtonMenuItem radio_button_mfd_hydr;
     private JRadioButtonMenuItem radio_button_mfd_status;
+    
+    private JRadioButtonMenuItem radio_button_cdu_legacy;
+    private JRadioButtonMenuItem radio_button_cdu_xfmc;
+    private JRadioButtonMenuItem radio_button_cdu_ufmc;
     
     private JRadioButtonMenuItem radio_button_clock_utc;
     private JRadioButtonMenuItem radio_button_clock_lt;
@@ -1012,7 +1022,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         menu_item.addActionListener(this);
         xhsi_eicas_menu.add(menu_item);
 
-        // add the "Fuel" menu to the menubar
+        // add the "EICAS" menu to the menubar
         menu_bar.add(xhsi_eicas_menu);
 
 
@@ -1195,6 +1205,42 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         
         // add the "MFD" menu to the menubar
         menu_bar.add(xhsi_mfd_menu);
+
+
+        // define the "CDU" menu
+        JMenu xhsi_cdu_menu = new JMenu("CDU");
+
+        ButtonGroup cdu_group = new ButtonGroup();
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_CDU_LEGACY);
+        radio_button_menu_item.setToolTipText("X-Plane legacy FMS");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(true);
+        cdu_group.add(radio_button_menu_item);
+        xhsi_cdu_menu.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_cdu_legacy = radio_button_menu_item;
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_CDU_XFMC);
+        radio_button_menu_item.setToolTipText("X-FMC");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
+        cdu_group.add(radio_button_menu_item);
+        xhsi_cdu_menu.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_cdu_xfmc = radio_button_menu_item;
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_CDU_UFMC);
+        radio_button_menu_item.setToolTipText("UFMC/X737FMC");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
+        cdu_group.add(radio_button_menu_item);
+        xhsi_cdu_menu.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_cdu_ufmc = radio_button_menu_item;
+
+        // add the "CDU" menu to the menubar
+        menu_bar.add(xhsi_cdu_menu);
 
 
         // define the "Clock" menu
@@ -1488,6 +1534,16 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             mfd_mode = Avionics.MFD_MODE_HYDR;
             this.avionics.set_mfd_mode(mfd_mode);
 
+        } else if (command.equals(XHSISettings.ACTION_CDU_LEGACY)) {
+            cdu_source = Avionics.CDU_SOURCE_LEGACY;
+            this.avionics.set_cdu_source(cdu_source);
+        } else if (command.equals(XHSISettings.ACTION_CDU_XFMC)) {
+            cdu_source = Avionics.CDU_SOURCE_XFMC;
+            this.avionics.set_cdu_source(cdu_source);
+        } else if (command.equals(XHSISettings.ACTION_CDU_UFMC)) {
+            cdu_source = Avionics.CDU_SOURCE_UFMC;
+            this.avionics.set_cdu_source(cdu_source);
+
         } else if (command.equals(XHSISettings.ACTION_CLOCK_UTC)) {
             clock_mode = Avionics.CLOCK_MODE_UTC;
             this.avionics.set_clock_mode(clock_mode);
@@ -1633,6 +1689,15 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_mfd_cab_press.setEnabled( switchable );
         this.radio_button_mfd_hydr.setEnabled( switchable );
         this.radio_button_mfd_status.setEnabled( switchable );
+
+        switchable = prefs.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_SWITCHABLE);
+        this.radio_button_cdu_legacy.setEnabled( switchable );
+        this.radio_button_cdu_xfmc.setEnabled( switchable );
+        this.radio_button_cdu_ufmc.setEnabled( switchable );
+        int new_cdu_source = avionics.get_cdu_source();
+        this.radio_button_cdu_legacy.setSelected( new_cdu_source == Avionics.CDU_SOURCE_LEGACY );
+        this.radio_button_cdu_xfmc.setSelected( new_cdu_source == Avionics.CDU_SOURCE_XFMC );
+        this.radio_button_cdu_ufmc.setSelected( new_cdu_source == Avionics.CDU_SOURCE_UFMC );
 
         boolean new_clock_mode = avionics.clock_shows_utc();
         this.radio_button_clock_utc.setSelected(new_clock_mode);

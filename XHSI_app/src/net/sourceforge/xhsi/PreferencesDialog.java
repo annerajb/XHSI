@@ -1756,9 +1756,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.anchor = GridBagConstraints.WEST;
         this.cdu_source_combobox = new JComboBox();
         this.cdu_source_combobox.addItem("Automatic");
-        this.cdu_source_combobox.addItem("Legacy X-Plane");
+        this.cdu_source_combobox.addItem("X-Plane legacy FMS");
         this.cdu_source_combobox.addItem("X-FMC");
-        this.cdu_source_combobox.addItem("UFMC");
+        this.cdu_source_combobox.addItem("UFMC/X737FMC");
         this.cdu_source_combobox.addActionListener(this);
         cdu_options_panel.add(this.cdu_source_combobox, cons);
         dialog_line++;

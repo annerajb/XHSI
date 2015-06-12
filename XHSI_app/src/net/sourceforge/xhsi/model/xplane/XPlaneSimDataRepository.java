@@ -193,6 +193,10 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_CHR_CONTROL = 191; // to send commands to the plugin 1=Start/Stop/Reset, 2=Start/Stop, 3=Reset
 
     
+    // CDU source
+    public static final int XHSI_CDU_SOURCE = 192;
+    
+    
     // COM1 & 2 using 8.33kHz spacing
     public static final int SIM_COCKPIT2_RADIOS_ACTUATORS_COM1_FREQUENCY_HZ_833 = 194;
     public static final int SIM_COCKPIT2_RADIOS_ACTUATORS_COM1_STANDBY_FREQUENCY_HZ_833 = 195;
