@@ -1,9 +1,9 @@
 /**
-* CDUFrame.java
+* CDUDemo.java
 * 
 * ...
 * 
-* Copyright (C) 2010  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2015  Marc Rogiers (marrog.123@gmail.com)
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -35,9 +35,11 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 //import java.awt.image.BufferedImage;
 
+import java.text.DecimalFormat;
+
 import java.util.logging.Logger;
 
-import net.sourceforge.xhsi.XHSIPreferences;
+//import net.sourceforge.xhsi.XHSISettings;
 
 //import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
@@ -48,44 +50,44 @@ import net.sourceforge.xhsi.model.ModelFactory;
 
 
 
-public class CDUFrame extends CDUSubcomponent {
+public class CDUDemo extends CDUSubcomponent {
 
     private static final long serialVersionUID = 1L;
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
+    
+    private int clock_x;
+    private int clock_y;
+    private int clock_r;
 
 
-    public CDUFrame(ModelFactory model_factory, CDUGraphicsConfig hsi_gc, Component parent_component) {
+    public CDUDemo(ModelFactory model_factory, CDUGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
     }
 
 
     public void paint(Graphics2D g2) {
-        if ( XHSIPreferences.get_instance().get_relief_border() ) {
-            drawRaisedPanel(g2);
-            drawSunkenDisplay(g2);
-        }
-    }
 
-
-    private void drawRaisedPanel(Graphics2D g2) {
-
-        Stroke original_stroke = g2.getStroke();
-
-        g2.setColor(cdu_gc.frontpanel_color);
-        g2.fillRoundRect(cdu_gc.raised_panel.x, cdu_gc.raised_panel.y, cdu_gc.raised_panel.width, cdu_gc.raised_panel.height, cdu_gc.raised_panel.width/16, cdu_gc.raised_panel.height/16);
-        g2.setStroke(new BasicStroke(8.0f * cdu_gc.scaling_factor));
-        g2.setPaint(cdu_gc.panel_gradient);
-        g2.drawRoundRect(cdu_gc.raised_panel.x, cdu_gc.raised_panel.y, cdu_gc.raised_panel.width, cdu_gc.raised_panel.height, cdu_gc.raised_panel.width/16, cdu_gc.raised_panel.height/16);
-
-        g2.setStroke(original_stroke);
-
-    }
-
-    private void drawSunkenDisplay(Graphics2D g2) {
-
-        // draw the black display
+        clock_x = cdu_gc.raised_panel.x + cdu_gc.raised_panel.width/2;
+        clock_y = cdu_gc.raised_panel.y + cdu_gc.raised_panel.height/2;
+        clock_r = Math.min(cdu_gc.raised_panel.width/2*7/8, cdu_gc.raised_panel.height/2*7/8);
         
+        drawDial(g2); // just for demo...
+        if ( this.aircraft.battery() ) {
+            // 
+        }
+        
+    }
+
+
+    private void drawDial(Graphics2D g2) {
+
+        g2.setColor(cdu_gc.knobs_color);
+        g2.fillOval(clock_x-clock_r, clock_y-clock_r, 2*clock_r, 2*clock_r);
+
+        g2.setColor(cdu_gc.background_color);
+        g2.fillOval(clock_x-clock_r*280/300, clock_y-clock_r*280/300, 2*clock_r*280/300, 2*clock_r*280/300);
+
     }
 
 
