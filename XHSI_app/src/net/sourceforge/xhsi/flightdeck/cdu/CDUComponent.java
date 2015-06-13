@@ -86,7 +86,7 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
 
         addComponentListener(clock_gc);
         subcomponents.add(new CDUFrame(model_factory, clock_gc, this));
-        subcomponents.add(new CDUDial(model_factory, clock_gc, this));
+        subcomponents.add(new CDUDemo(model_factory, clock_gc, this));
 
         this.repaint();
 
@@ -121,7 +121,7 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
         }
 
         // send Graphics object to annun_gc to recompute positions, if necessary because the panel has been resized or a mode setting has been changed
-        clock_gc.update_config( g2, this.aircraft.battery() );
+        clock_gc.update_config( g2, this.aircraft.battery(), this.avionics.get_cdu_source() );
 
         // rotate the display
         XHSIPreferences.Orientation orientation = XHSIPreferences.get_instance().get_panel_orientation( this.clock_gc.display_unit );

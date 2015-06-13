@@ -57,7 +57,7 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
 
-    public Rectangle clock_square;
+    public Rectangle raised_panel;
     public GradientPaint panel_gradient;
 
 
@@ -75,33 +75,67 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
 //    }
 
 
-    public void update_config(Graphics2D g2, boolean power) {
+    public void update_config(Graphics2D g2, boolean power, int source) {
 
         if (this.resized
                 || this.reconfig
                 || (this.powered != power)
+                || (this.cdu_source != source)
             ) {
             // one of the settings has been changed
 
             // for the CDU, we use battery power, not avionics power
             this.powered = power;
+            
+            // the FMC for this CDU
+            this.cdu_source = source;
+            
             super.update_config(g2);
 
             // some subcomponents need to be reminded to redraw immediately
             this.reconfigured = true;
 
-            int square_size;
-            square_size = Math.min(panel_rect.width, panel_rect.height)/2;
-            clock_square = new Rectangle(
-                    panel_rect.x + panel_rect.width/2 - square_size,
-                    panel_rect.y + panel_rect.height/2 - square_size,
-                    2*square_size,
-                    2*square_size
-                );
+            float cdu_panel_aspect;
+            switch (source) {
+                case Avionics.CDU_SOURCE_LEGACY :
+                    cdu_panel_aspect = 1.0f;
+                    break;
+                case Avionics.CDU_SOURCE_XFMC :
+                    cdu_panel_aspect = 3.0f / 4.0f;
+                    break;
+                case Avionics.CDU_SOURCE_UFMC :
+                    cdu_panel_aspect = 4.0f / 3.0f;
+                    break;
+                default :
+                    cdu_panel_aspect = 1.0f;
+                    break;
+            }
+
+            if ( ( (float)panel_rect.width / (float)panel_rect.height ) > cdu_panel_aspect ) {
+                // window is wider than necessary, my_height is OK
+                int my_height = panel_rect.height;
+                int my_width = (int)(my_height * cdu_panel_aspect);
+                raised_panel = new Rectangle(
+                        panel_rect.x + panel_rect.width/2 - my_width/2,
+                        panel_rect.y,
+                        my_width,
+                        my_height
+                    );
+            } else {
+                // window is higher than necessary, my_width is OK
+                int my_width = panel_rect.width;
+                int my_height = (int)(my_width / cdu_panel_aspect);
+                raised_panel = new Rectangle(
+                        panel_rect.x,
+                        panel_rect.y + panel_rect.height/2 - my_height/2,
+                        my_width,
+                        my_height
+                    );
+            }
 
             panel_gradient = new GradientPaint(
                     0, 0, frontpanel_color.brighter().brighter(),
-                    clock_square.width, clock_square.height , frontpanel_color.darker().darker(),
+                    raised_panel.width, raised_panel.height , frontpanel_color.darker().darker(),
                     false);
 
         }

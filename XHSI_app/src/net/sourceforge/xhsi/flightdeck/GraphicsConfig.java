@@ -378,6 +378,7 @@ public class GraphicsConfig implements ComponentListener {
     public int display_unit;
 
     public boolean powered;
+    public int cdu_source;
     public int style;
 
 
