@@ -35,9 +35,11 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.event.MouseInputListener;
 
 import net.sourceforge.xhsi.PreferencesObserver;
 import net.sourceforge.xhsi.XHSIPreferences;
@@ -52,7 +54,7 @@ import net.sourceforge.xhsi.model.Observer;
 //import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
 
 
-public class CDUComponent extends Component implements Observer, PreferencesObserver {
+public class CDUComponent extends Component implements Observer, PreferencesObserver, MouseInputListener {
 
     private static final long serialVersionUID = 1L;
     public static boolean COLLECT_PROFILING_INFORMATION = false;
@@ -66,7 +68,7 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
     long total_paint_times = 0;
     long nb_of_paints = 0;
     Graphics2D g2;
-    CDUGraphicsConfig clock_gc;
+    CDUGraphicsConfig cdu_gc;
     ModelFactory model_factory;
     boolean update_since_last_heartbeat = false;
     //StatusMessage status_message_comp;
@@ -77,16 +79,19 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
 
     public CDUComponent(ModelFactory model_factory, int du) {
 
-        this.clock_gc = new CDUGraphicsConfig(this, du);
+        this.cdu_gc = new CDUGraphicsConfig(this, du);
         this.model_factory = model_factory;
         this.aircraft = this.model_factory.get_aircraft_instance();
         this.avionics = this.aircraft.get_avionics();
 
-        clock_gc.reconfig = true;
+        cdu_gc.reconfig = true;
 
-        addComponentListener(clock_gc);
-        subcomponents.add(new CDUFrame(model_factory, clock_gc, this));
-        subcomponents.add(new CDUDemo(model_factory, clock_gc, this));
+        addMouseListener(this);
+        
+        addComponentListener(cdu_gc);
+        subcomponents.add(new CDUFrame(model_factory, cdu_gc, this));
+        subcomponents.add(new CDUDemo(model_factory, cdu_gc, this));
+        subcomponents.add(new CDUXfmc(model_factory, cdu_gc, this));
 
         this.repaint();
 
@@ -108,29 +113,29 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
     public void drawAll(Graphics g) {
 
         g2 = (Graphics2D)g;
-        g2.setRenderingHints(clock_gc.rendering_hints);
+        g2.setRenderingHints(cdu_gc.rendering_hints);
         g2.setStroke(new BasicStroke(2.0f));
 
         if ( XHSIPreferences.get_instance().get_border_style().equalsIgnoreCase(XHSIPreferences.BORDER_LIGHT) ||
                 XHSIPreferences.get_instance().get_relief_border() ) {
-            g2.setBackground(clock_gc.backpanel_color);
+            g2.setBackground(cdu_gc.backpanel_color);
         } else if ( XHSIPreferences.get_instance().get_border_style().equalsIgnoreCase(XHSIPreferences.BORDER_DARK) ) {
-            g2.setBackground(clock_gc.frontpanel_color);
+            g2.setBackground(cdu_gc.frontpanel_color);
         } else {
             g2.setBackground(Color.BLACK);
         }
 
         // send Graphics object to annun_gc to recompute positions, if necessary because the panel has been resized or a mode setting has been changed
-        clock_gc.update_config( g2, this.aircraft.battery(), this.avionics.get_cdu_source() );
+        cdu_gc.update_config( g2, this.aircraft.battery(), this.avionics.get_cdu_source() );
 
         // rotate the display
-        XHSIPreferences.Orientation orientation = XHSIPreferences.get_instance().get_panel_orientation( this.clock_gc.display_unit );
+        XHSIPreferences.Orientation orientation = XHSIPreferences.get_instance().get_panel_orientation( this.cdu_gc.display_unit );
         if ( orientation == XHSIPreferences.Orientation.LEFT ) {
-            g2.rotate(-Math.PI/2.0, clock_gc.frame_size.width/2, clock_gc.frame_size.width/2);
+            g2.rotate(-Math.PI/2.0, cdu_gc.frame_size.width/2, cdu_gc.frame_size.width/2);
         } else if ( orientation == XHSIPreferences.Orientation.RIGHT ) {
-            g2.rotate(Math.PI/2.0, clock_gc.frame_size.height/2, clock_gc.frame_size.height/2);
+            g2.rotate(Math.PI/2.0, cdu_gc.frame_size.height/2, cdu_gc.frame_size.height/2);
         } else if ( orientation == XHSIPreferences.Orientation.DOWN ) {
-            g2.rotate(Math.PI, clock_gc.frame_size.width/2, clock_gc.frame_size.height/2);
+            g2.rotate(Math.PI, cdu_gc.frame_size.width/2, cdu_gc.frame_size.height/2);
         }
 
 // adjustable brightness is too slow
@@ -138,7 +143,7 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
 //        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, alpha);
 //        g2.setComposite(ac);
 
-        g2.clearRect(0, 0, clock_gc.frame_size.width, clock_gc.frame_size.height);
+        g2.clearRect(0, 0, cdu_gc.frame_size.width, cdu_gc.frame_size.height);
 
         long time = 0;
         long paint_time = 0;
@@ -158,7 +163,7 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
             }
         }
 
-        clock_gc.reconfigured = false;
+        cdu_gc.reconfigured = false;
 
         this.nb_of_paints += 1;
 
@@ -208,7 +213,7 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
         logger.finest("Preference changed");
         // if (key.equals(XHSIPreferences.PREF_USE_MORE_COLOR)) {
         // Don't bother checking the preference key that was changed, just reconfig...
-        this.clock_gc.reconfig = true;
+        this.cdu_gc.reconfig = true;
         repaint();
 
     }
@@ -217,8 +222,32 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
     public void forceReconfig() {
 
         componentResized();
-        this.clock_gc.reconfig = true;
+        this.cdu_gc.reconfig = true;
         repaint();
         
     }
+    
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	public void mousePressed(MouseEvent e) {
+        for (int i=0;i<this.subcomponents.size();i++) {
+            ((CDUSubcomponent)this.subcomponents.get(i)).mousePressed(e);
+        }
+	}
+
+	public void mouseReleased(MouseEvent e) {
+	}
+
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	public void mouseExited(MouseEvent e) {
+	}
+
+	public void mouseDragged(MouseEvent e) {
+	}
+
+	public void mouseMoved(MouseEvent e) {
+	}    
 }

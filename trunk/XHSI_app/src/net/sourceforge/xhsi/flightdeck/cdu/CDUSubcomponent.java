@@ -1,10 +1,12 @@
 /**
-* AnnunSubcomponent.java
+* CDUSubcomponent.java
 * 
 * Superclass for all elements of the HSI which are subcomponents of
-* HSIComponent.
+* CDUComponent.
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
+* Copyright (C) 2015  Nicolas Carel
+* Copyright (C) 2015  Marc Rogiers
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -29,6 +31,7 @@ import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Transparency;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 import net.sourceforge.xhsi.XHSIPreferences;
@@ -81,6 +84,10 @@ public abstract class CDUSubcomponent extends Subcomponent {
 
 
     public abstract void paint(Graphics2D g2);
+
+    public void mousePressed(MouseEvent e) {
+    }
+
 
 
 //    public String toString() {
