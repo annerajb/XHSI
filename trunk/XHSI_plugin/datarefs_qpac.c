@@ -398,6 +398,16 @@ void findQpacDataRefs(void) {
             // APU
             qpac_apu_egt = XPLMFindDataRef("AirbusFBW/APUEGT");
             qpac_apu_egt_limit = XPLMFindDataRef("AirbusFBW/APUEGTLimit");
+            // ELEC
+            qpac_elec_ext_pow_box = XPLMFindDataRef("AirbusFBW/SDExtPowBox");
+            qpac_elec_ac_cross_connect = XPLMFindDataRef("AirbusFBW/SDACCrossConnect");
+            qpac_elec_connect_left = XPLMFindDataRef("AirbusFBW/SDELConnectLeft");
+            qpac_elec_connect_center = XPLMFindDataRef("AirbusFBW/SDELConnectCenter");
+            qpac_elec_connect_right = XPLMFindDataRef("AirbusFBW/SDELConnectRight");
+            qpac_elec_battery_supply = XPLMFindDataRef("AirbusFBW/SDELBatterySupply");
+            qpac_elec_connectors = XPLMFindDataRef("AirbusFBW/ElecConnectors"); // array [0,1]
+            qpac_elec_ohp_array = XPLMFindDataRef("AirbusFBW/ElecOHPArray"); // array [0,1]
+            qpac_elec_apu_box  = XPLMFindDataRef("AirbusFBW/SDAPUBox");
 
             // FUEL
             qpac_fuel_pump_array = XPLMFindDataRef("AirbusFBW/FuelPumpOHPArray");
@@ -407,8 +417,6 @@ void findQpacDataRefs(void) {
             qpac_fuel_eng_lp_valve_array = XPLMFindDataRef("AirbusFBW/ENGFuelLPValveArray");
             // ENG LP Valve 0 = jammed "/"  ; 1 = amber closed ; 2 = amber open ; 3 = green open
             qpac_fuel_tv_array = XPLMFindDataRef("AirbusFBW/FuelTVSDArray");
-
-
 
             // ECAM SD page selection
             qpac_sd_page = XPLMFindDataRef("AirbusFBW/SDPage");
