@@ -1127,8 +1127,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
                
         /*
          * TODO : Doors and oxygen
-         */
-        
+         */       
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_DOOR_OXY);
         radio_button_menu_item.setToolTipText("Doors and oxygen");
         radio_button_menu_item.addActionListener(this);
@@ -1137,17 +1136,13 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // xhsi_mfd_menu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_mfd_door_oxy = radio_button_menu_item;
-               
-        /*
-         * TODO : Bleed air
-         */
-        
+                      
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_BLEED);
         radio_button_menu_item.setToolTipText("Bleed air");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
-        // mfd_group.add(radio_button_menu_item);
-        // xhsi_mfd_menu.add(radio_button_menu_item);
+        mfd_group.add(radio_button_menu_item);
+        xhsi_mfd_menu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_mfd_bleed = radio_button_menu_item;
         

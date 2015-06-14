@@ -31,6 +31,7 @@ public interface Aircraft {
     public enum HydPumpStatus { OFF, ON, FAILED };
     public enum PumpStatus { OFF, ON, LOW_PRESSURE, FAILED }; 
     public enum HydPTUStatus { OFF, STANDBY, LEFT, RIGHT };
+    public enum ElecBus { NONE, BUS_1, BUS_2, BOTH };
     
     // Bleed valve circuits
     public final static int BLEED_VALVE_CROSS = 0;
@@ -43,7 +44,7 @@ public interface Aircraft {
     public final static int BLEED_VALVE_PACK2 = 7;
     // Air valve circuits
     public final static int AIR_VALVE_RAM_AIR = 0;
-    public final static int AIR_VALVE_HOT_AIR = 1;
+    public final static int AIR_VALVE_HOT_AIR = 1;    
     
     /**
      * @return String - aircraft_registration
@@ -1014,6 +1015,32 @@ public interface Aircraft {
      * @return int - Number of inverters 
      */  
     public int num_inverters();    
+    
+    /**
+     * @return boolean - AC bus tie 
+     */  
+    public boolean ac_bus_tie();  
+    
+    /**
+     * @return ElecBus - APU AC bus connection 
+     */  
+    public ElecBus apu_on_bus();
+    
+    /**
+     * @return ElecBus - GPU AC bus connection
+     */  
+    public ElecBus gpu_on_bus();
+    
+    /**
+     * @return ElecBus - AC Essential bus connection (AC1 or AC2) 
+     */  
+    public ElecBus ac_ess_on_bus();
+        
+    /**
+     * @return boolean - Engine Generator on bus (nb gen. may differ from number of engines) 
+     */  
+    public boolean eng_gen_on_bus(int eng);  
+        
     
     /**
      * @return boolean - Aircraft has Bleed Air Circuits (ENG & APU)
