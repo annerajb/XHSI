@@ -31,6 +31,7 @@ import net.sourceforge.xhsi.model.CoordinateSystem;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.NavigationObject;
 import net.sourceforge.xhsi.model.SimDataRepository;
+import net.sourceforge.xhsi.model.Aircraft.ElecBus;
 
 
 public class XPlaneAircraft implements Aircraft {
@@ -1111,7 +1112,85 @@ public class XPlaneAircraft implements Aircraft {
     public int num_inverters() {
     	return (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_ELECTRICAL_NUM_INVERTERS);
     }
+    
+    public boolean ac_bus_tie() {
+    	if (this.avionics.is_qpac()) {
+        	// Complex aircrafts, Bus Tie depends on GPU, APU and ENG GEN, may be automatic or manual
+    		int qpac_ac_cross = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ELEC_AC_CROSS);
+    		switch (qpac_ac_cross) {
+    			case 3 :
+    			case 6 :
+    			case 7 : return true;
+    			default : return false;
+    		}
+    	} else {
+        	// Common aircraft, no bus tie
+        	return false;
+    	}    		
+    }
+    
+    public ElecBus apu_on_bus() {
+    	if (this.avionics.is_qpac()) {
+        	// Complex aircrafts, APU may be connected to bus 1, bus 2 or both buses
+    		int qpac_ac_cross = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ELEC_AC_CROSS);
+    		switch (qpac_ac_cross) {
+    			case 1 : return ElecBus.BUS_1;
+    			case 2 : return ElecBus.BUS_2;
+    			case 3 : return ElecBus.BOTH;
+    			default : return ElecBus.NONE;
+    		}
+    	} else {
+        	// Common aircraft, APU GEN ON = APU on BUS 1
+        	return apu_gen_on() ? ElecBus.BUS_1 : ElecBus.NONE;
+    	}    		
+    }
+    
+    public ElecBus gpu_on_bus() {
+    	if (this.avionics.is_qpac()) {
+        	// Complex aircrafts, GPU may be connected to bus 1, bus 2 or both buses
+    		int qpac_ac_cross = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ELEC_AC_CROSS);
+    		switch (qpac_ac_cross) {
+    			case 4 : return ElecBus.BUS_1;
+    			case 5 : return ElecBus.BUS_2;
+    			case 6 : return ElecBus.BOTH;
+    			default : return ElecBus.NONE;
+    		}
+    	} else {
+        	// Common aircraft, APU GEN ON = APU on BUS 1
+        	return gpu_gen_on() ? ElecBus.BUS_1 : ElecBus.NONE;
+    	}    		
+    }
 
+    public ElecBus ac_ess_on_bus() {
+    	int qpac_elec_connectors;
+    	if (this.avionics.is_qpac()) {
+    		qpac_elec_connectors = ((int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ELEC_CX_CENTER)) & 0x03;
+    		switch (qpac_elec_connectors) {
+    		case 0 : return ElecBus.NONE;
+    		case 1 : return ElecBus.BUS_1;
+    		case 2 : return ElecBus.BUS_2;
+    		default: return ElecBus.BOTH;
+    		}    		
+    	} else {
+    		// on AC 1 by default
+    		return ElecBus.BUS_1;
+    	}
+    }
+    
+    public boolean eng_gen_on_bus(int eng) {
+    	int qpac_elec_connectors;
+    	if (this.avionics.is_qpac()) {
+    		if (eng==0) {  
+    			qpac_elec_connectors = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ELEC_CX_LEFT);
+    		} else { 
+    			qpac_elec_connectors = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ELEC_CX_RIGHT);
+    		}
+    		return ((qpac_elec_connectors & 0x01) != 0);
+    	} else {
+    		return true;
+    	}
+    }
+    
     // Bleed Air
     public boolean has_bleed_air() {
     	return true;

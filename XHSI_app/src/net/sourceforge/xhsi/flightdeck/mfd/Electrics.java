@@ -26,6 +26,7 @@ import java.awt.Component;
 import java.awt.Graphics2D;
 import java.util.logging.Logger;
 
+import net.sourceforge.xhsi.model.Aircraft.ElecBus;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 
@@ -57,7 +58,9 @@ public class Electrics extends MFDSubcomponent  {
 			drawBusBox(g2, "AC ESS", 0, false, mfd_gc.elec_ac_ess_box_x, mfd_gc.elec_ac_ess_box_y, mfd_gc.elec_ac_ess_box_w, mfd_gc.elec_bus_box_h);
 			
 			drawElecGen(g2, "GEN 1", true, 0, 115, 400, mfd_gc.elec_gen1_x, mfd_gc.elec_gen_y );
-			drawElecGen(g2, "GEN 2", true, 0, 115, 400, mfd_gc.elec_gen2_x, mfd_gc.elec_gen_y );
+			if (aircraft.num_generators()>1) {
+				drawElecGen(g2, "GEN 2", true, 0, 115, 400, mfd_gc.elec_gen2_x, mfd_gc.elec_gen_y );
+			}
 			
 			drawElecBatTr(g2, "BAT 1", true, 28, 0, mfd_gc.elec_bat1_x, mfd_gc.elec_bat_y );
 			drawElecBatTr(g2, "BAT 2", true, 28, 0, mfd_gc.elec_bat2_x, mfd_gc.elec_bat_y );
@@ -70,8 +73,7 @@ public class Electrics extends MFDSubcomponent  {
         		// Elec Bloc
         		// Use the X-Plane noise generator to put some noise on freq
         		boolean v_avail = (aircraft.apu_n1()>89.0f);
-        		boolean start=aircraft.apu_starter()>0;
-        		boolean apu_on_bus = aircraft.apu_gen_on(); 
+        		boolean start=aircraft.apu_starter()>0;        		 
         		int load = Math.round(aircraft.apu_gen_amp());
         		int volt = v_avail ? Math.round(aircraft.apu_n1()/100*115) : 0;
         		int freq = v_avail ? Math.round(aircraft.apu_n1()/100*400) : 0;
@@ -82,17 +84,31 @@ public class Electrics extends MFDSubcomponent  {
 			drawElecAux(g2,"EXT PWR", true, (int)aircraft.gpu_gen_amps(), 115, 400, mfd_gc.elec_extpwr_x, mfd_gc.elec_ext_apu_y);
 			
 			if (aircraft.apu_gen_on()) {
-				drawElecAuxOnBus (g2, mfd_gc.elec_apugen_x + mfd_gc.elec_ext_apu_w/2, mfd_gc.elec_aux_y, mfd_gc.elec_ext_apu_y);
+				drawElecAuxOnBus (g2, mfd_gc.elec_apugen_x + mfd_gc.elec_ext_apu_w/2, mfd_gc.elec_aux_y, mfd_gc.elec_ext_apu_y, aircraft.apu_on_bus());
 			} else if (aircraft.gpu_gen_on()) {
-				drawElecAuxOnBus (g2, mfd_gc.elec_extpwr_x + mfd_gc.elec_ext_apu_w/2, mfd_gc.elec_aux_y, mfd_gc.elec_ext_apu_y);
+				drawElecAuxOnBus (g2, mfd_gc.elec_extpwr_x + mfd_gc.elec_ext_apu_w/2, mfd_gc.elec_aux_y, mfd_gc.elec_ext_apu_y, aircraft.gpu_on_bus());
 			} 
 			
 			drawDCbusLines(g2);
 			drawACbusLines(g2);
-
+			drawIDGTemperatures(g2);
+			
 		}
 	}
 
+	private void drawIDGTemperatures(Graphics2D g2) {
+		// IDG Temperatures
+		g2.setColor(mfd_gc.ecam_markings_color);
+		g2.setFont(mfd_gc.font_xl);
+		g2.drawString("IDG 1", mfd_gc.elec_gen1_x + mfd_gc.elec_gen_w/2 - mfd_gc.digit_width_xl*2, mfd_gc.elec_idg_y);
+		g2.drawString("IDG 2", mfd_gc.elec_gen2_x + mfd_gc.elec_gen_w/2 - mfd_gc.digit_width_xl*2, mfd_gc.elec_idg_y);
+		String unit_str ="°C";
+		g2.setColor(mfd_gc.ecam_action_color);
+		g2.setFont(mfd_gc.font_m);
+		g2.drawString(unit_str, mfd_gc.elec_gen1_x + mfd_gc.elec_gen_w, mfd_gc.elec_idg_y);
+		g2.drawString(unit_str, mfd_gc.elec_gen2_x - mfd_gc.digit_width_m*2, mfd_gc.elec_idg_y);
+	}
+	
 	private void drawDCbusLines(Graphics2D g2) {
 		g2.setColor(mfd_gc.ecam_normal_color);
 		// TR to DC bus
@@ -115,10 +131,24 @@ public class Electrics extends MFDSubcomponent  {
 		g2.drawLine(mfd_gc.elec_ac1_x, mfd_gc.elec_tr_y+ mfd_gc.elec_tr_h, mfd_gc.elec_ac1_x, mfd_gc.elec_ac_box_y );
 		g2.drawLine(mfd_gc.elec_ac2_x, mfd_gc.elec_tr_y+ mfd_gc.elec_tr_h, mfd_gc.elec_ac2_x, mfd_gc.elec_ac_box_y );
 		// GEN to AC bus
-		g2.drawLine(mfd_gc.elec_ac1_x, mfd_gc.elec_ac_box_y + mfd_gc.elec_bus_box_h, mfd_gc.elec_ac1_x, mfd_gc.elec_gen_y);
-		g2.drawLine(mfd_gc.elec_ac2_x, mfd_gc.elec_ac_box_y + mfd_gc.elec_bus_box_h, mfd_gc.elec_ac2_x, mfd_gc.elec_gen_y);
+		if (aircraft.eng_gen_on_bus(0)) {
+			g2.drawLine(mfd_gc.elec_ac1_x, mfd_gc.elec_ac_box_y + mfd_gc.elec_bus_box_h, mfd_gc.elec_ac1_x, mfd_gc.elec_gen_y);
+		}
+		if (aircraft.eng_gen_on_bus(1) && (aircraft.num_generators()>1)) {
+			g2.drawLine(mfd_gc.elec_ac2_x, mfd_gc.elec_ac_box_y + mfd_gc.elec_bus_box_h, mfd_gc.elec_ac2_x, mfd_gc.elec_gen_y);
+		}
 		// AC1 to AC ESS
-		g2.drawLine(mfd_gc.elec_ac1_box_x + mfd_gc.elec_ac_box_w, mfd_gc.elec_ac_ess_y, mfd_gc.elec_ac_ess_box_x, mfd_gc.elec_ac_ess_y);
+		if (aircraft.ac_ess_on_bus() == ElecBus.BUS_1 ) {
+			g2.drawLine(mfd_gc.elec_ac1_box_x + mfd_gc.elec_ac_box_w, mfd_gc.elec_ac_ess_y, mfd_gc.elec_ac_ess_box_x, mfd_gc.elec_ac_ess_y);
+		} else if (aircraft.ac_ess_on_bus() == ElecBus.BUS_2 ) {
+			g2.drawLine(mfd_gc.elec_ac2_box_x, mfd_gc.elec_ac_ess_y, mfd_gc.elec_ac_ess_box_x + mfd_gc.elec_ac_ess_box_w , mfd_gc.elec_ac_ess_y);
+		}
+		// Bus Tie
+		if (aircraft.ac_bus_tie()) {
+			g2.drawLine(mfd_gc.elec_ac1_x, mfd_gc.elec_aux_y, mfd_gc.elec_ac2_x, mfd_gc.elec_aux_y);
+			g2.drawLine(mfd_gc.elec_ac1_x, mfd_gc.elec_ac_box_y + mfd_gc.elec_bus_box_h, mfd_gc.elec_ac1_x, mfd_gc.elec_aux_y);
+			g2.drawLine(mfd_gc.elec_ac2_x, mfd_gc.elec_ac_box_y + mfd_gc.elec_bus_box_h, mfd_gc.elec_ac2_x, mfd_gc.elec_aux_y);
+		}
 	}
 
 	
@@ -138,7 +168,7 @@ public class Electrics extends MFDSubcomponent  {
 		int str_x;
 		// TODO : center text on box vertically
 		int str_y = y + mfd_gc.line_height_xl;
-        g2.setColor(mfd_gc.pfd_instrument_background_color.darker());
+        g2.setColor(mfd_gc.ecam_box_bg_color);
         g2.setFont(mfd_gc.font_xl);
 		g2.fillRect(x, y, w, h);
 		if (failed) {
@@ -204,14 +234,24 @@ public class Electrics extends MFDSubcomponent  {
         }
     }
 	
-    private void drawElecAuxOnBus(Graphics2D g2, int x, int top, int bottom) {
+    private void drawElecAuxOnBus(Graphics2D g2, int x, int top, int bottom, ElecBus bus) {
     	int h = mfd_gc.mfd_size * 26/1000;
     	int w = mfd_gc.mfd_size * 14/1000;
     	int tri_x[] = { x - w ,x, x + w };
     	int tri_y[] = { bottom-3, bottom-h, bottom-3 };
     	g2.setColor(mfd_gc.ecam_normal_color);
-    	g2.drawPolygon(tri_x, tri_y, 3);
-    	g2.drawLine(x, top, x, bottom-h);
+    	
+		if (bus  == ElecBus.BUS_1) {
+			g2.drawLine(mfd_gc.elec_ac1_x, mfd_gc.elec_aux_y, x, mfd_gc.elec_aux_y);
+			g2.drawLine(mfd_gc.elec_ac1_x, mfd_gc.elec_ac_box_y + mfd_gc.elec_bus_box_h, mfd_gc.elec_ac1_x, mfd_gc.elec_aux_y);
+		} else if (bus == ElecBus.BUS_2) {
+			g2.drawLine(mfd_gc.elec_ac2_x, mfd_gc.elec_aux_y, x, mfd_gc.elec_aux_y);
+			g2.drawLine(mfd_gc.elec_ac2_x, mfd_gc.elec_ac_box_y + mfd_gc.elec_bus_box_h, mfd_gc.elec_ac2_x, mfd_gc.elec_aux_y);
+		}
+    	if (bus != ElecBus.NONE) {
+    		g2.drawPolygon(tri_x, tri_y, 3);
+    		g2.drawLine(x, top, x, bottom-h);
+    	}
     }
     
     private void drawElecAux(Graphics2D g2, String bloc_str, boolean display_values, int load, int volt, int freq, int x, int y) {
