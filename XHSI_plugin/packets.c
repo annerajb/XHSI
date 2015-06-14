@@ -1712,6 +1712,20 @@ int createCustomAvionicsPacket(void) {
         qpac_fuel_tv_array;
         */
 
+        // ELEC
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ELEC_AC_CROSS);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_elec_ac_cross_connect));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ELEC_CX_LEFT);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_elec_connect_left));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ELEC_CX_CENTER);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_elec_connect_center));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ELEC_CX_RIGHT);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_elec_connect_right));
+        i++;
+
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_SD_PAGE);
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_sd_page));
         i++;

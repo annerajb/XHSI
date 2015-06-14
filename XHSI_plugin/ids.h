@@ -544,6 +544,13 @@
 // FUEL
 #define QPAC_FUEL_PUMPS 1083
 #define QPAC_FUEL_VALVES 1084
+// ELEC
+#define QPAC_ELEC_AC_CROSS 1085
+#define QPAC_ELEC_CX_LEFT 1086
+#define QPAC_ELEC_CX_CENTER 1087
+#define QPAC_ELEC_CX_RIGHT 1088
+
+
 // next is 1085
 
 // IDs reserved for QPAC up to 1199
