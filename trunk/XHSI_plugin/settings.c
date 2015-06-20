@@ -52,7 +52,7 @@ void defaultSettings() {
 		dest_port[i] = DEFAULT_DEST_PORT + i;
 	}
 	recv_port = DEFAULT_RECV_PORT;
-	recv_rate = 10;
+	recv_rate = 20;
 	recv_delay = 1.0f / (float)recv_rate;
 
 	adc_data_rate = 15;
@@ -108,8 +108,8 @@ void readConfig() {
 			if (strcmp(param, "adc_data_rate")==0) {
 				adc_data_rate = d_value;
 				adc_data_delay = 1.0f / (float)adc_data_rate;
-                avionics_data_delay = adc_data_delay * 3.0f;
-                engines_data_delay = adc_data_delay * 5.0f;
+                                avionics_data_delay = adc_data_delay * 5.0f;
+                                engines_data_delay = adc_data_delay * 3.0f;
 			}
 
 			if (strcmp(param, "fms_data_rate")==0) {
