@@ -83,7 +83,7 @@ float sendXfmcCallback(
 	int packet_size;
 
 
-	xfmc_delay = adc_data_delay * 3.0f;
+	xfmc_delay = adc_data_delay * 2.0f;
 
 	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open && (xfmcPluginId != XPLM_NO_PLUGIN_ID))  {
 

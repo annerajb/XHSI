@@ -61,9 +61,11 @@ public class CDUFrame extends CDUSubcomponent {
 
 
     public void paint(Graphics2D g2) {
-        if ( XHSIPreferences.get_instance().get_relief_border() ) {
-            drawRaisedPanel(g2);
+        if ( this.preferences.cdu_display_only() ) {
             drawSunkenDisplay(g2);
+        } else {
+            // Nothing as long as only the X-FMC CDU is implemented
+            //drawRaisedPanel(g2);
         }
     }
 
@@ -84,7 +86,26 @@ public class CDUFrame extends CDUSubcomponent {
 
     private void drawSunkenDisplay(Graphics2D g2) {
 
-        // draw the black display
+        if ( XHSIPreferences.get_instance().get_relief_border() ) {
+            // a rounded frame looks soo much nicer...
+            g2.setPaint(cdu_gc.border_gradient);
+            g2.fill(cdu_gc.instrument_frame);
+            g2.setColor(cdu_gc.backpanel_color);
+            g2.fill(cdu_gc.instrument_outer_frame);
+        } else {
+            // the cheapest way is to paint the borders as rectangles
+            if ( XHSIPreferences.get_instance().get_border_style().equalsIgnoreCase(XHSIPreferences.BORDER_DARK) ) {
+                g2.setColor(cdu_gc.frontpanel_color);
+            } else if ( XHSIPreferences.get_instance().get_border_style().equalsIgnoreCase(XHSIPreferences.BORDER_LIGHT) ) {
+                g2.setColor(cdu_gc.backpanel_color);
+            } else {
+                g2.setColor(Color.BLACK);
+            }
+            g2.fillRect(0, 0, cdu_gc.border_left, cdu_gc.frame_size.height);
+            g2.fillRect(cdu_gc.frame_size.width - cdu_gc.border_right, 0, cdu_gc.border_right, cdu_gc.frame_size.height);
+            g2.fillRect(0, 0, cdu_gc.frame_size.width, cdu_gc.border_top);
+            g2.fillRect(0, cdu_gc.frame_size.height - cdu_gc.border_bottom, cdu_gc.frame_size.width, cdu_gc.border_bottom);
+        }
         
     }
 
