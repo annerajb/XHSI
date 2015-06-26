@@ -89,8 +89,8 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
         addMouseListener(this);
         
         addComponentListener(cdu_gc);
-//        subcomponents.add(new CDUFrame(model_factory, cdu_gc, this));
 //        subcomponents.add(new CDUDemo(model_factory, cdu_gc, this));
+        subcomponents.add(new CDUFrame(model_factory, cdu_gc, this));
         subcomponents.add(new CDUXfmc(model_factory, cdu_gc, this));
 
         this.repaint();
@@ -116,13 +116,17 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
         g2.setRenderingHints(cdu_gc.rendering_hints);
         g2.setStroke(new BasicStroke(2.0f));
 
-        if ( XHSIPreferences.get_instance().get_border_style().equalsIgnoreCase(XHSIPreferences.BORDER_LIGHT) ||
-                XHSIPreferences.get_instance().get_relief_border() ) {
-            g2.setBackground(cdu_gc.backpanel_color);
-        } else if ( XHSIPreferences.get_instance().get_border_style().equalsIgnoreCase(XHSIPreferences.BORDER_DARK) ) {
-            g2.setBackground(cdu_gc.frontpanel_color);
+        if ( XHSIPreferences.get_instance().cdu_display_only() ) {
+            g2.setBackground(cdu_gc.background_color);
         } else {
-            g2.setBackground(Color.BLACK);
+            if ( XHSIPreferences.get_instance().get_border_style().equalsIgnoreCase(XHSIPreferences.BORDER_LIGHT) ||
+                    XHSIPreferences.get_instance().get_relief_border() ) {
+                g2.setBackground(cdu_gc.backpanel_color);
+            } else if ( XHSIPreferences.get_instance().get_border_style().equalsIgnoreCase(XHSIPreferences.BORDER_DARK) ) {
+                g2.setBackground(cdu_gc.frontpanel_color);
+            } else {
+                g2.setBackground(Color.BLACK);
+            }
         }
 
         // send Graphics object to annun_gc to recompute positions, if necessary because the panel has been resized or a mode setting has been changed

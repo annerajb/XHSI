@@ -68,6 +68,8 @@ public class CDUXfmc extends CDUSubcomponent {
     double scalex = 1;
     double scaley = 1;
     double border;
+    double border_x;
+    double border_y;
     List<ClickRegion> regions;
     boolean drawregions = false;
     Font font;
@@ -77,8 +79,9 @@ public class CDUXfmc extends CDUSubcomponent {
     double row_coef = 19.8;
     int upper_y = 2;
     double scratch_y_coef = 13.0;
-    double char_width_coef = 1.5;
+    double char_width_coef = 1.5; // was: 1.5
 
+   
 //	int xfmc_keypath_code = 750;
 
     XfmcData xfmcData = null;
@@ -91,11 +94,11 @@ public class CDUXfmc extends CDUSubcomponent {
         
         try {
         	image = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_800x480.png"));
-			ap_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_ap_litv_m.png"));
-			athr_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_athr_litv_m.png"));
-			exec_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_exec_litv_m.png"));
-			lnav_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_lnav_litv_m.png"));
-			vnav_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_vnav_litv_m.png"));
+		ap_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_ap_litv_m.png"));
+		athr_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_athr_litv_m.png"));
+		exec_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_exec_litv_m.png"));
+		lnav_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_lnav_litv_m.png"));
+		vnav_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_vnav_litv_m.png"));
         	
         } catch (IOException ioe){}
         
@@ -147,11 +150,41 @@ public class CDUXfmc extends CDUSubcomponent {
     
     
     public void paint(Graphics2D g2) {
-        drawPanel(g2);
+        if ( this.preferences.cdu_display_only() ) {
+            drawDisplayOnly(g2);
+        } else {
+            drawFullPanel(g2);
+        }
     }
 
     
-    private void drawPanel(Graphics2D g2) {
+    private void drawDisplayOnly(Graphics2D g2) {
+        
+        if ( this.aircraft.battery() ) {
+            
+            scalex = (double)cdu_gc.panel_rect.width /363.0; //was: 343.0
+            scaley = (double)cdu_gc.panel_rect.height/289.0;
+            border_x = (double)cdu_gc.border_left;
+            border_y = (double)cdu_gc.border_top;
+
+            AffineTransform orig = g2.getTransform();
+            g2.translate(border_x, border_y);
+            g2.scale(scalex, scaley);
+            g2.translate(font.getSize()/2, font.getSize());
+            
+            g2.setFont(font);
+            double dy = row_coef;
+
+            drawDisplayLines(g2, dy);
+
+            g2.setTransform(orig);
+
+        }
+        
+    }
+    
+    
+    private void drawFullPanel(Graphics2D g2) {
 
         scalex = (double)cdu_gc.panel_rect.width /image.getWidth();
         scaley = (double)cdu_gc.panel_rect.height/image.getHeight();
@@ -168,72 +201,79 @@ public class CDUXfmc extends CDUSubcomponent {
         g2.drawImage(image, null, 0, 0);
 
 
-        int stat = 0;
-        try{
-            stat = Integer.parseInt(xfmcData.getLine(14));
-        } catch (Exception e) {}
+        if ( this.aircraft.battery() ) {
+
+            int stat = 0;
+            try{
+                stat = Integer.parseInt(xfmcData.getLine(14));
+            } catch (Exception e) {}
 
 
-        if((stat & 1) == 1) {
-            g2.drawImage(ap_img,null,250, 354);
-        }
-        if((stat & 2) == 2) {
-            g2.drawImage(lnav_img,null,25, 541);
-        }
-        if(!((stat & 4) == 4)) {
-            g2.drawImage(vnav_img,null,25, 612);
-        }
-        if((stat & 8) == 8) {
-            g2.drawImage(athr_img,null,435, 541);
-        }
-        if((stat & 32) == 32) {
-            g2.drawImage(exec_img,null, 383, 397);
-        }
-
-//        g2.setTransform(orig);
-
-        //g2.setColor(Color.GREEN);
-        g2.translate(displayunit_topleft_x, displayunit_topleft_y);
-//        g2.scale(scalex, scaley);
-        g2.setFont(font);
-        double dy = row_coef;
-
-        for(int i=0; i < 14; i++){
-            int x=i, xx = 0, yy = 0;
-            if(i==0) {
-                xx = 0;
-                yy = upper_y;
-            } else if ((i > 0) && (i < 13)){
-                x = (((i+1) / 2) * 2) - ((i % 2) == 1 ? 0 : 1);
-                yy = new Double(dy*(i)).intValue();
-            } else if(i == 13) { 
-                xx = 0;
-                yy = new Double(dy*scratch_y_coef).intValue();
+            if((stat & 1) == 1) {
+                g2.drawImage(ap_img,null,250, 354);
+            }
+            if((stat & 2) == 2) {
+                g2.drawImage(lnav_img,null,25, 541);
+            }
+            if(!((stat & 4) == 4)) {
+                g2.drawImage(vnav_img,null,25, 612);
+            }
+            if((stat & 8) == 8) {
+                g2.drawImage(athr_img,null,435, 541);
+            }
+            if((stat & 32) == 32) {
+                g2.drawImage(exec_img,null, 383, 397);
             }
 
-            List l = xfmcData.decodeLine(xfmcData.getLine(x));
-            for(Object o : l){
-                    Object[] pts = (Object[]) o;
-                    xx = new Double((Integer)pts[1]*char_width_coef).intValue();
+            g2.translate(displayunit_topleft_x, displayunit_topleft_y);
+            g2.setFont(font);
+            double dy = row_coef;
 
-                    g2.setColor(((Integer)pts[0]).intValue() == 0 ? cdu_gc.markings_color : cdu_gc.color_boeingcyan); // was: new Color(176,176,252)
-                    g2.drawString((String)pts[2], xx, yy);
+            drawDisplayLines(g2, dy);
+
+            g2.setTransform(orig);
+
+            // for debugging
+            if ( drawregions ) {
+                g2.setColor(cdu_gc.dim_markings_color);
+                double[] sc = new double[]{1.0, 1.0};
+                for(ClickRegion r2 : regions){
+                        r2.draw(g2, scalex, scaley, border, border);
+                }
             }
+
         }
-
-        g2.setTransform(orig);
-
-        // for debugging
-        if ( drawregions ) {
-            g2.setColor(cdu_gc.dim_markings_color);
-            double[] sc = new double[]{1.0, 1.0};
-            for(ClickRegion r2 : regions){
-                    r2.draw(g2, scalex, scaley, border, border);
-            }
-        }
-
+        
     }
 
+    
+    private void drawDisplayLines(Graphics2D g2, double dy) {
+    
+            for(int i=0; i < 14; i++){
+                int x=i, xx = 0, yy = 0;
+                if(i==0) {
+                    xx = 0;
+                    yy = upper_y;
+                } else if ((i > 0) && (i < 13)){
+                    x = (((i+1) / 2) * 2) - ((i % 2) == 1 ? 0 : 1);
+                    yy = new Double(dy*(i)).intValue();
+                } else if(i == 13) { 
+                    xx = 0;
+                    yy = new Double(dy*scratch_y_coef).intValue();
+                }
+
+                List l = xfmcData.decodeLine(xfmcData.getLine(x));
+                for(Object o : l){
+                        Object[] pts = (Object[]) o;
+                        xx = new Double((Integer)pts[1]*char_width_coef).intValue();
+
+                        g2.setColor(((Integer)pts[0]).intValue() == 0 ? cdu_gc.markings_color : cdu_gc.color_boeingcyan);
+                        g2.drawString((String)pts[2], xx, yy);
+                }
+            }
+
+    }
+    
     
     public void mousePressed(MouseEvent e) {
     	for(ClickRegion r : regions){
