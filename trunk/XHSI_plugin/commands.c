@@ -1842,7 +1842,7 @@ XPLMCommandCallback_f clock_handler(XPLMCommandRef inCommand, XPLMCommandPhase i
 
 
 // contact_atc
-XPLMCommandCallback_f contact_atc_handler (XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+XPLMCommandCallback_f contact_atc_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
 {
 
     switch (inPhase) {
@@ -1862,20 +1862,25 @@ XPLMCommandCallback_f contact_atc_handler (XPLMCommandRef inCommand, XPLMCommand
 
 
 // Transponder
-XPLMCommandCallback_f xpdr_handler (XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+XPLMCommandCallback_f xpdr_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
 {
     if (inPhase == xplm_CommandBegin)
     {
         int mode = XPLMGetDatai(transponder_mode);
         int code = XPLMGetDatai(transponder_code);
-        int code_units = code % 10;
+        int code_units;
+        int code_tens;
+        int code_hundreds;
+        int code_thousands;
+        int i;
+        code_units = code % 10;
         code /= 10;
-        int code_tens = code % 10;
+        code_tens = code % 10;
         code /= 10;
-        int code_hundreds = code % 10;
+        code_hundreds = code % 10;
         code /= 10;
-        int code_thousands = code % 10;
-        int i = (int)((intptr_t)inRefcon);
+        code_thousands = code % 10;
+        i = (int)((intptr_t)inRefcon);
         switch ( i )
         {
             case XPDR_MODE_UP :
@@ -1939,7 +1944,7 @@ XPLMCommandCallback_f xpdr_handler (XPLMCommandRef inCommand, XPLMCommandPhase i
 
 
 // ADF tuning
-XPLMCommandCallback_f adf_handler (XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+XPLMCommandCallback_f adf_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
 {
     if (inPhase == xplm_CommandBegin)
     {
@@ -1947,6 +1952,11 @@ XPLMCommandCallback_f adf_handler (XPLMCommandRef inCommand, XPLMCommandPhase in
         int i = (int)((intptr_t)inRefcon);
         int action = i % 1000;
         int radio = i - action;
+        int freq;
+        int freq_units;
+        int freq_tens;
+        int freq_hundreds;
+        int freq_thousands;
         switch ( radio )
         {
             case ADF1 :
@@ -1962,14 +1972,14 @@ XPLMCommandCallback_f adf_handler (XPLMCommandRef inCommand, XPLMCommandPhase in
                 radioref = adf2_stdby_freq_hz;
                 break;
         }
-        int freq = XPLMGetDatai(radioref);
-        int freq_units = freq % 10;
+        freq = XPLMGetDatai(radioref);
+        freq_units = freq % 10;
         freq /= 10;
-        int freq_tens = freq % 10;
+        freq_tens = freq % 10;
         freq /= 10;
-        int freq_hundreds = freq % 10;
+        freq_hundreds = freq % 10;
         freq /= 10;
-        int freq_thousands = freq % 10;
+        freq_thousands = freq % 10;
         switch ( action )
         {
             case ADF_HUNDREDS_UP :
@@ -2026,7 +2036,7 @@ XPLMCommandCallback_f adf_handler (XPLMCommandRef inCommand, XPLMCommandPhase in
 
 
 // RTU
-XPLMCommandCallback_f rtu_handler (XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+XPLMCommandCallback_f rtu_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
 {
     if (inPhase == xplm_CommandBegin)
     {
