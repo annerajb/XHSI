@@ -84,7 +84,7 @@ public interface Aircraft {
     /**
      * @return float - turn speed in degrees per second
      */
-    public float turn_speed();
+    public float turn_rate();
 
     /**
      * @return float - ground speed in knots

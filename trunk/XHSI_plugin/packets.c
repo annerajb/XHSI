@@ -172,6 +172,9 @@ int createADCPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_FORCES_G_LOAD );
     sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(g_load));
     i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_MISC_TURNRATE_NOROLL );
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(turnrate_noroll));
+    i++;
 
 //	sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_POSITION_VH_IND_FPM);
 //	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(vh_ind_fpm));

@@ -110,6 +110,7 @@ XPLMDataRef baro_pilot;
 XPLMDataRef baro_copilot;
 XPLMDataRef airspeed_acceleration;
 XPLMDataRef g_load;
+XPLMDataRef turnrate_noroll;
 
 //Instruments failures pilot
 XPLMDataRef sim_op_fail_rel_ss_ahz;
@@ -1560,7 +1561,8 @@ void findDataRefs(void) {
     // Aircraft position
     groundspeed = XPLMFindDataRef("sim/flightmodel/position/groundspeed");
     true_airspeed = XPLMFindDataRef("sim/flightmodel/position/true_airspeed");
-    magpsi = XPLMFindDataRef("sim/flightmodel/position/magpsi");
+    // magpsi = XPLMFindDataRef("sim/flightmodel/position/magpsi"); // DO NOT USE THIS
+    magpsi = XPLMFindDataRef("sim/flightmodel/position/mag_psi"); // The real magnetic heading of the aircraft - the old magpsi dataref was FUBAR
     hpath = XPLMFindDataRef("sim/flightmodel/position/hpath");
     latitude = XPLMFindDataRef("sim/flightmodel/position/latitude");	// double
     longitude = XPLMFindDataRef("sim/flightmodel/position/longitude");	// double
@@ -1592,6 +1594,7 @@ void findDataRefs(void) {
     baro_copilot = XPLMFindDataRef("sim/cockpit2/gauges/actuators/barometer_setting_in_hg_copilot");
     airspeed_acceleration = XPLMFindDataRef("sim/cockpit2/gauges/indicators/airspeed_acceleration_kts_sec_pilot");
     g_load =  XPLMFindDataRef("sim/flightmodel/forces/g_nrml");
+    turnrate_noroll = XPLMFindDataRef("sim/flightmodel/misc/turnrate_noroll");
 
     //Instruments failures pilot
     sim_op_fail_rel_ss_ahz = XPLMFindDataRef("sim/operation/failures/rel_ss_ahz");

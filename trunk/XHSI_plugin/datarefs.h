@@ -32,6 +32,7 @@ extern XPLMDataRef baro_pilot;
 extern XPLMDataRef baro_copilot;
 extern XPLMDataRef airspeed_acceleration;
 extern XPLMDataRef g_load;
+extern XPLMDataRef turnrate_noroll;
 
 //Instruments failures pilot
 extern XPLMDataRef sim_op_fail_rel_ss_ahz;

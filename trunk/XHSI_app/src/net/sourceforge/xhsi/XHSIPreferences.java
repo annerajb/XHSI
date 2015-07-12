@@ -107,6 +107,7 @@ public class XHSIPreferences {
     public static final String PREF_PFD_DRAW_RADIOS = "pfd.draw.radios";
     public static final String PREF_PFD_ADI_CENTERED = "pfd.adi.centered";
     public static final String PREF_PFD_DRAW_TWINSPEEDS = "pfd.draw.twinspeeds";
+    public static final String PREF_PFD_DRAW_TURNRATE = "pfd.draw.turnrate";
 
     // EICAS options
     public static final String PREF_EICAS_LAYOUT = "eicas.layout";
@@ -770,11 +771,19 @@ public class XHSIPreferences {
     }
 
     /**
-     * @return            - Draw Radios
+     * @return            - Draw Vmca and Vyse
      *
      */
     public boolean get_pfd_draw_twinspeeds() {
         return get_preference(PREF_PFD_DRAW_TWINSPEEDS).equalsIgnoreCase("true");
+    }
+    
+    /**
+     * @return            - Draw turn rate indicator
+     *
+     */
+    public boolean get_draw_pfd_turnrate() {
+        return get_preference(PREF_PFD_DRAW_TURNRATE).equalsIgnoreCase("true");
     }
     
     
@@ -1211,6 +1220,11 @@ public class XHSIPreferences {
 
         if ( ! this.preferences.containsKey(PREF_PFD_DRAW_TWINSPEEDS) ) {
             this.preferences.setProperty(PREF_PFD_DRAW_TWINSPEEDS, "false");
+            this.unsaved_changes = true;
+        }
+
+        if ( ! this.preferences.containsKey(PREF_PFD_DRAW_TURNRATE) ) {
+            this.preferences.setProperty(PREF_PFD_DRAW_TURNRATE, "false");
             this.unsaved_changes = true;
         }
 

@@ -54,6 +54,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_FLIGHTMODEL_FAILURES_ONGROUND_ANY = 15; // It was misplaced and is not really a failure, you can use that to indicate when the wheels are on the ground
     public static final int XHSI_FLIGHTMODEL_POSITION_NEAREST_ARPT = 10016;
     public static final int SIM_FLIGHTMODEL_FORCES_G_LOAD = 17;
+    public static final int SIM_FLIGHTMODEL_MISC_TURNRATE_NOROLL = 18;
 
 
 
