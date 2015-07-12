@@ -105,7 +105,7 @@ float sendXfmcCallback(
         }
 
 	} else {
-		return xfmc_delay;
+		return 10.0f;
 	}
 
 }

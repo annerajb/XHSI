@@ -93,7 +93,7 @@ public class FMA extends PFDSubcomponent {
         if ( ap_mode > 0 ) {
             String ss_str = ap_mode == 1 ? "FD" : "CMD";
             int ss_x = pfd_gc.adi_cx - pfd_gc.get_text_width(g2, pfd_gc.font_xxl, ss_str) / 2;
-            int ss_y = pfd_gc.adi_cy - pfd_gc.adi_size_up - pfd_gc.line_height_xxl/2;
+            int ss_y = pfd_gc.adi_cy - pfd_gc.adi_size_up - pfd_gc.line_height_xxl;
             g2.setColor(pfd_gc.color_lime);
             g2.setFont(pfd_gc.font_xxl);
             g2.drawString(ss_str, ss_x, ss_y);

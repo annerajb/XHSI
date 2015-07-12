@@ -64,6 +64,10 @@ public class ADI extends PFDSubcomponent {
         if ( pfd_gc.boeing_style && pfd_gc.powered ) {
             drawADI(g2);
             drawMarker(g2);
+            if ( this.preferences.get_draw_pfd_turnrate() ) {
+                drawTurnRate(g2);
+                if ( ! this.aircraft.on_ground() ) drawBankForStdRate(g2);
+            }
         }
     }
 
@@ -506,7 +510,7 @@ public class ADI extends PFDSubcomponent {
             int m_y;
             if ( this.preferences.get_draw_fullwidth_horizon() ) {
                 m_x = pfd_gc.adi_cx - pfd_gc.adi_size_left;
-                m_y = m_y = pfd_gc.adi_cy - pfd_gc.adi_size_up;
+                m_y = pfd_gc.adi_cy - pfd_gc.adi_size_up;
             } else {
                 m_x = pfd_gc.adi_cx + pfd_gc.adi_size_right - pfd_gc.adi_size_right*1/16 - 2*m_r;
                 m_y = pfd_gc.adi_cy - pfd_gc.adi_size_up + pfd_gc.adi_size_right*1/16;
@@ -537,6 +541,64 @@ public class ADI extends PFDSubcomponent {
 
         }
         
+    }
+    
+    
+    private void drawTurnRate(Graphics2D g2) {
+        
+        int turnrate_x = pfd_gc.adi_cx;
+        int turnrate_w = pfd_gc.adi_size_left*6/7;
+        int turnrate_y = pfd_gc.adi_cy - pfd_gc.adi_size_up - pfd_gc.adi_size_up/11;
+        int turnrate_h = pfd_gc.adi_size_up/12;
+
+        float turnrate = this.aircraft.turn_rate() / 30.0f; // ratio of standard rate = 1.0f
+        turnrate = Math.min(turnrate, 2.2f); // full scale right
+        turnrate = Math.max(turnrate, -2.2f); // full scale left
+        int turnrate_d = Math.round(1000.0f * turnrate) * turnrate_w/2/2 / 1000;
+        g2.setColor(pfd_gc.markings_color);
+        if ( turnrate_d > 0 ) {
+            g2.fillRect(turnrate_x, turnrate_y - turnrate_h/2*3/4, turnrate_d, turnrate_h*6/8);
+        } else {
+            g2.fillRect(turnrate_x + turnrate_d, turnrate_y - turnrate_h/2*3/4, - turnrate_d, turnrate_h*6/8);
+        }
+
+        g2.setColor(pfd_gc.dim_markings_color);
+        g2.drawRect(turnrate_x - turnrate_w/2, turnrate_y - turnrate_h/2, turnrate_w, turnrate_h);
+        // vertical line at the center
+        g2.drawLine(turnrate_x, turnrate_y - turnrate_h/2, turnrate_x, turnrate_y + turnrate_h/2);
+        g2.setColor(pfd_gc.normal_color);
+        // vertical line for standard rate left at 1/3 full scale
+        g2.drawLine(turnrate_x - turnrate_w/2/2, turnrate_y - turnrate_h/2 + 1, turnrate_x - turnrate_w/2/2, turnrate_y + turnrate_h/2);
+        // vertical line for standard rate right at 1/3 full scale
+        g2.drawLine(turnrate_x + turnrate_w/2/2, turnrate_y - turnrate_h/2 + 1, turnrate_x + turnrate_w/2/2, turnrate_y + turnrate_h/2);
+
+    }
+    
+    
+    private void drawBankForStdRate(Graphics2D g2) {
+    
+        AffineTransform original_at = g2.getTransform();
+
+        double targetbank = Math.atan( this.aircraft.true_air_speed() / 364.0 );
+        
+        if ( targetbank > 0.7854 ) {
+            // > 45deg
+            g2.setColor(pfd_gc.warning_color);
+        } else if ( targetbank > 0.4363 ) {
+            // > 25deg
+            g2.setColor(pfd_gc.caution_color);
+        } else {
+            g2.setColor(pfd_gc.normal_color);
+        }
+
+        g2.rotate(targetbank, pfd_gc.adi_cx, pfd_gc.adi_cy);
+        g2.drawOval(pfd_gc.adi_cx - pfd_gc.adi_size_left/50, pfd_gc.adi_cy - pfd_gc.adi_size_up + pfd_gc.adi_size_up/16 - pfd_gc.adi_size_up/25, pfd_gc.adi_size_left/25, pfd_gc.adi_size_up/25);
+        g2.setTransform(original_at);
+
+        g2.rotate(-targetbank, pfd_gc.adi_cx, pfd_gc.adi_cy);
+        g2.drawOval(pfd_gc.adi_cx - pfd_gc.adi_size_left/50, pfd_gc.adi_cy - pfd_gc.adi_size_up + pfd_gc.adi_size_up/16 - pfd_gc.adi_size_up/25, pfd_gc.adi_size_left/25, pfd_gc.adi_size_up/25);
+        g2.setTransform(original_at);
+
     }
 
 

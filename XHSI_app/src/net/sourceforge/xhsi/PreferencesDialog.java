@@ -148,6 +148,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox draw_radios_checkbox;
     private JCheckBox adi_centered_checkbox;
     private JCheckBox draw_twinspeeds_checkbox;
+    private JCheckBox draw_turnrate_checkbox;
   
     private JComboBox eicas_layout_combobox;
     private final String[] eicas_layouts = { XHSIPreferences.EICAS_LAYOUT_PRIMARY, XHSIPreferences.EICAS_LAYOUT_PRIMARY_AND_CONTROLS, XHSIPreferences.EICAS_LAYOUT_FULL };
@@ -386,6 +387,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.adi_centered_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_ADI_CENTERED).equalsIgnoreCase("true"));
 
         this.draw_twinspeeds_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_TWINSPEEDS).equalsIgnoreCase("true"));
+
+        this.draw_turnrate_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_TURNRATE).equalsIgnoreCase("true"));
 
 
         // EICAS Options (5)
@@ -1275,6 +1278,20 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         pfd_options_panel.add(this.draw_twinspeeds_checkbox, cons);
         dialog_line++;
 
+        // Draw turn rate indicator
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        pfd_options_panel.add(new JLabel("Draw turn rate indicator", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.draw_turnrate_checkbox = new JCheckBox();
+        pfd_options_panel.add(this.draw_turnrate_checkbox, cons);
+        dialog_line++;
+
         
 //        // A reminder
 //        cons.gridx = 2;
@@ -2075,6 +2092,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
             if ( this.draw_twinspeeds_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_TWINSPEEDS).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_PFD_DRAW_TWINSPEEDS, this.draw_twinspeeds_checkbox.isSelected()?"true":"false");
+
+            if ( this.draw_turnrate_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_TURNRATE).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_PFD_DRAW_TURNRATE, this.draw_turnrate_checkbox.isSelected()?"true":"false");
 
 
             // EICAS options

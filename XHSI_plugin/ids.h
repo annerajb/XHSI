@@ -20,6 +20,7 @@
 #define SIM_FLIGHTMODEL_FAILURES_ONGROUND_ANY 15 // It was misplaced and is not really a failure, you can use that to indicate when the wheels are on the ground
 #define XHSI_FLIGHTMODEL_POSITION_NEAREST_ARPT 10016 // Special case : 4 char
 #define SIM_FLIGHTMODEL_FORCES_G_LOAD 17
+#define SIM_FLIGHTMODEL_MISC_TURNRATE_NOROLL 18 // I don't know in which units this is, but a standard rate turn seems to be 30.0f
 
 
 // Instruments

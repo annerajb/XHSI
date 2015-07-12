@@ -226,7 +226,7 @@ public class XPlaneAircraft implements Aircraft {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_GAUGES_INDICATORS_AIRSPEED_ACCELERATION);
     }
 
-    public float turn_speed() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_R); } // degrees per second
+    public float turn_rate() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_MISC_TURNRATE_NOROLL); } // degrees per second
 
     public float distance_to(NavigationObject nav_object) {
         return CoordinateSystem.distance(lat(), lon(), nav_object.lat, nav_object.lon);
