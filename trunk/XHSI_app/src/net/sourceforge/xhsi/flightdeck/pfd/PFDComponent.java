@@ -103,6 +103,7 @@ public class PFDComponent extends Component implements Observer, PreferencesObse
         subcomponents.add(new SpeedTape(model_factory, pfd_gc, this));
         subcomponents.add(new AltiTape(model_factory, pfd_gc, this));
         subcomponents.add(new MINS(model_factory, pfd_gc, this));       
+        subcomponents.add(new GMeter(model_factory, pfd_gc, this));       
         subcomponents.add(new VSI(model_factory, pfd_gc, this));
         subcomponents.add(new FMA(model_factory, pfd_gc, this));
         subcomponents.add(new HSI(model_factory, pfd_gc, this));

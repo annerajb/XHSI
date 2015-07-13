@@ -149,7 +149,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox adi_centered_checkbox;
     private JCheckBox draw_twinspeeds_checkbox;
     private JCheckBox draw_turnrate_checkbox;
-  
+    private JCheckBox draw_gmeter_checkbox;
+
     private JComboBox eicas_layout_combobox;
     private final String[] eicas_layouts = { XHSIPreferences.EICAS_LAYOUT_PRIMARY, XHSIPreferences.EICAS_LAYOUT_PRIMARY_AND_CONTROLS, XHSIPreferences.EICAS_LAYOUT_FULL };
     private JComboBox engine_count_combobox;
@@ -389,6 +390,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.draw_twinspeeds_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_TWINSPEEDS).equalsIgnoreCase("true"));
 
         this.draw_turnrate_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_TURNRATE).equalsIgnoreCase("true"));
+
+        this.draw_gmeter_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_GMETER).equalsIgnoreCase("true"));
 
 
         // EICAS Options (5)
@@ -1292,7 +1295,21 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         pfd_options_panel.add(this.draw_turnrate_checkbox, cons);
         dialog_line++;
 
-        
+        // Draw G-meter
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        pfd_options_panel.add(new JLabel("Draw G-meter", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.draw_gmeter_checkbox = new JCheckBox();
+        pfd_options_panel.add(this.draw_gmeter_checkbox, cons);
+        dialog_line++;
+
+
 //        // A reminder
 //        cons.gridx = 2;
 //        cons.gridwidth = 1;
@@ -2095,6 +2112,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
             if ( this.draw_turnrate_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_TURNRATE).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_PFD_DRAW_TURNRATE, this.draw_turnrate_checkbox.isSelected()?"true":"false");
+
+            if ( this.draw_gmeter_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_GMETER).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_PFD_DRAW_GMETER, this.draw_gmeter_checkbox.isSelected()?"true":"false");
 
 
             // EICAS options

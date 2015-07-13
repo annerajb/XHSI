@@ -108,6 +108,7 @@ public class XHSIPreferences {
     public static final String PREF_PFD_ADI_CENTERED = "pfd.adi.centered";
     public static final String PREF_PFD_DRAW_TWINSPEEDS = "pfd.draw.twinspeeds";
     public static final String PREF_PFD_DRAW_TURNRATE = "pfd.draw.turnrate";
+    public static final String PREF_PFD_DRAW_GMETER = "pfd.draw.gmeter";
 
     // EICAS options
     public static final String PREF_EICAS_LAYOUT = "eicas.layout";
@@ -786,6 +787,14 @@ public class XHSIPreferences {
         return get_preference(PREF_PFD_DRAW_TURNRATE).equalsIgnoreCase("true");
     }
     
+    /**
+     * @return            - Draw G-meter
+     *
+     */
+    public boolean get_pfd_draw_gmeter() {
+        return get_preference(PREF_PFD_DRAW_GMETER).equalsIgnoreCase("true");
+    }
+
     
     // EICAS
 
@@ -1225,6 +1234,11 @@ public class XHSIPreferences {
 
         if ( ! this.preferences.containsKey(PREF_PFD_DRAW_TURNRATE) ) {
             this.preferences.setProperty(PREF_PFD_DRAW_TURNRATE, "false");
+            this.unsaved_changes = true;
+        }
+
+        if ( ! this.preferences.containsKey(PREF_PFD_DRAW_GMETER) ) {
+            this.preferences.setProperty(PREF_PFD_DRAW_GMETER, "false");
             this.unsaved_changes = true;
         }
 
