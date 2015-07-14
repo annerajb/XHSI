@@ -125,7 +125,7 @@ extern XPLMDataRef qpac_spoilers_array;
 extern XPLMDataRef qpac_fcc_avail_array;
 // Rudder limits
 extern XPLMDataRef qpac_rudder_limit_pos;
-// Hydrolics
+// Hydraulics
 extern XPLMDataRef qpac_hyd_pressure_array;
 extern XPLMDataRef qpac_hyd_pump_array;
 extern XPLMDataRef qpac_hyd_rat_mode;

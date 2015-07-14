@@ -142,7 +142,7 @@ XPLMDataRef qpac_spoilers_array;
 XPLMDataRef qpac_fcc_avail_array;
 // Rudder limits
 XPLMDataRef qpac_rudder_limit_pos;
-// Hydrolics
+// Hydraulics
 XPLMDataRef qpac_hyd_pressure_array;
 XPLMDataRef qpac_hyd_pump_array;
 XPLMDataRef qpac_hyd_rat_mode;
@@ -358,7 +358,7 @@ void findQpacDataRefs(void) {
             qpac_fcc_avail_array = XPLMFindDataRef("AirbusFBW/FCCAvailArray");
             // Rudder limits
             qpac_rudder_limit_pos = XPLMFindDataRef("AirbusFBW/RTLPosition");
-            // Hydrolics
+            // Hydraulics
             qpac_hyd_pressure_array = XPLMFindDataRef("AirbusFBW/HydSysPressArray");
             qpac_hyd_pump_array = XPLMFindDataRef("AirbusFBW/HydPumpArray");
             qpac_hyd_rat_mode = XPLMFindDataRef("AirbusFBW/HydRATMode");

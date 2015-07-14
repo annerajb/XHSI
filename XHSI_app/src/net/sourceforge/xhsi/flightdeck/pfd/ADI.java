@@ -554,8 +554,12 @@ public class ADI extends PFDSubcomponent {
         float turnrate = this.aircraft.turn_rate() / 30.0f; // ratio of standard rate = 1.0f
         turnrate = Math.min(turnrate, 2.0f); // full scale right
         turnrate = Math.max(turnrate, -2.0f); // full scale left
+        if ( Math.abs(turnrate) == 2.0f ) {
+            g2.setColor(pfd_gc.caution_color);
+        } else {
+            g2.setColor(pfd_gc.markings_color);
+        }
         int turnrate_d = Math.round(1000.0f * turnrate) * turnrate_w/2/2 / 1000;
-        g2.setColor(pfd_gc.markings_color);
         if ( turnrate_d > 0 ) {
             g2.fillRect(turnrate_x, turnrate_y - turnrate_h/2*3/4, turnrate_d, turnrate_h*6/8);
         } else {

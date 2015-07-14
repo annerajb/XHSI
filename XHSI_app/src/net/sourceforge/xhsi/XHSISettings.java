@@ -164,7 +164,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_MFD_COND        = "Air conditionning";
     public static final String ACTION_MFD_FUEL        = "Fuel";
     public static final String ACTION_MFD_CAB_PRESS   = "Cabin pressure";
-    public static final String ACTION_MFD_HYDR        = "Hydrolics";
+    public static final String ACTION_MFD_HYDR        = "Hydraulics";
     public static final String ACTION_MFD_STATUS      = "Status";
     
     public static final String ACTION_CDU_LEGACY      = "X-Plane legacy FMS";
@@ -1175,7 +1175,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
          */
         
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_HYDR);
-        radio_button_menu_item.setToolTipText("Hydrolics");
+        radio_button_menu_item.setToolTipText("Hydraulics");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
         mfd_group.add(radio_button_menu_item);

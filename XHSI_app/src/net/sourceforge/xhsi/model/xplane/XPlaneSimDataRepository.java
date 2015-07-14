@@ -551,7 +551,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_FCC=1064;
     // Rudder limit
     public static final int QPAC_RUDDER_LIMIT=1065;
-    // Hydrolic
+    // Hydraulic
     public static final int QPAC_HYD_B_PRESS=1066;
     public static final int QPAC_HYD_G_PRESS=1067;
     public static final int QPAC_HYD_Y_PRESS=1068;

@@ -520,7 +520,7 @@
 #define QPAC_FCC 1064
 // Rudder limit
 #define QPAC_RUDDER_LIMIT 1065
-// Hydrolic
+// Hydraulic
 #define QPAC_HYD_B_PRESS 1066
 #define QPAC_HYD_G_PRESS 1067
 #define QPAC_HYD_Y_PRESS 1068

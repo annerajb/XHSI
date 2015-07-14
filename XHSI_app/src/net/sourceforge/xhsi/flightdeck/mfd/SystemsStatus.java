@@ -107,7 +107,7 @@ public class SystemsStatus extends MFDSubcomponent {
 			"BCL 1", 
 			"BCL 2",
 			"EMER GEN",
-			// Hydrolic systems
+			// Hydraulic systems
 			"BLUE HYD",
 			"GREEN HYD",
 			"YELLOW HYD",
@@ -361,7 +361,7 @@ public class SystemsStatus extends MFDSubcomponent {
 	private static final int INOP_BCL_1 = 59;
 	private static final int INOP_BCL_2 = 60;
 	private static final int INOP_EMER_GEN = 61;
-	// Hydrolic systems
+	// Hydraulic systems
 	private static final int INOP_BLUE_HYD = 62;
 	private static final int INOP_GREEN_HYD = 63;
 	private static final int INOP_YELLOW_HYD = 64;
