@@ -350,7 +350,7 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     // IDG temperature
     public int elec_idg_y;
     
-    // Hydrolic
+    // Hydraulic
     public int hyd_1_x;
     public int hyd_2_x;
     public int hyd_3_x;
@@ -791,7 +791,7 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             fctl_dx_rud_b = panel_rect.width * 120/1000; // rudder
             fctl_dx_rud_c = panel_rect.width * 173/1000; // rudder
             fctl_dx_pitch_box = panel_rect.width * 120/1000; // rudder
-            fctl_dx_box_width = panel_rect.width * 67/1000; // hydrolic box width
+            fctl_dx_box_width = panel_rect.width * 67/1000; // hydraulic box width
             fctl_dx_tri = mfd_size * 30/1000;
             fctl_y_wing_box = panel_rect.y + mfd_size * 25/1000;
             fctl_y_wing_top = panel_rect.y + mfd_size * 67/1000;
@@ -964,9 +964,9 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             // IDG temperature
             elec_idg_y = panel_rect.y + mfd_size * 933/1000;
 
-            // hydrolic 1 : Green circuit on Airbus ; A circuit on Boeing
-            // hydrolic 2 : Yellow circuit on Airbus ; B circuit on Boeing
-            // hydrolic 3 : Blue circuit on Airbus ; Standby circuit on Boeing
+            // hydraulic 1 : Green circuit on Airbus ; A circuit on Boeing
+            // hydraulic 2 : Yellow circuit on Airbus ; B circuit on Boeing
+            // hydraulic 3 : Blue circuit on Airbus ; Standby circuit on Boeing
             hyd_1_x = panel_rect.x + panel_rect.width * 108/1000;
             hyd_2_x = panel_rect.x + panel_rect.width * 818/1000;
             hyd_3_x = panel_rect.x + panel_rect.width * 463/1000;

@@ -83,7 +83,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 8 Alpha 34";
+    private static final String RELEASE = "2.0 Beta 8 Alpha 35";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -782,12 +782,13 @@ public class XHSI implements ActionListener {
                     "XHSI " + XHSI.RELEASE + "\n" +
                     "\n" +
                     "XHSI - eXternal High-fidelity Simulator Instruments for X-Plane\n" +
-                    "  PFD - Primary Flight Display\n" +
-                    "  ND - Navigation Display\n" +
-                    "  EICAS - Engine Instruments\n" +
-                    "  MFD - Airport Chart / Flight Plan / Lower EICAS / etc...\n" +
-                    "  Clock / Chrongraph\n" +
-                    "  Annunciators - Gear, Flaps, etc...\n" +
+                    "    PFD - Primary Flight Display\n" +
+                    "    ND - Navigation Display\n" +
+                    "    EICAS - Engine Instruments\n" +
+                    "    MFD - Airport Chart / Flight Plan / Lower EICAS / etc...\n" +
+                    "    CDU - Remote Control Display Unit for third-party FMC\n" +
+                    "    Clock / Chronograph\n" +
+                    "    Annunciators - Gear, Flaps, etc...\n" +
                     "\n" +
                     "http://xhsi.sourceforge.net\n" +
                     "\n" +

@@ -1708,7 +1708,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.mfd_mode_combobox.addItem("Air Conditionning");
         this.mfd_mode_combobox.addItem("Fuel");
         this.mfd_mode_combobox.addItem("Pressurisation");
-        this.mfd_mode_combobox.addItem("Hydrolics");
+        this.mfd_mode_combobox.addItem("Hydraulics");
         this.mfd_mode_combobox.addItem("Status");
        
         this.mfd_mode_combobox.addActionListener(this);

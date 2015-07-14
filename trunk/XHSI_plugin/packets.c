@@ -1562,7 +1562,7 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_rudder_limit_pos));
         i++;
 
-        // Hydrolics
+        // Hydraulics
         XPLMGetDatavf(qpac_hyd_pressure_array, qpac_hyd_press_tab, 0, 3);
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_HYD_G_PRESS);
         sim_packet.sim_data_points[i].value = custom_htonf(qpac_hyd_press_tab[0]);

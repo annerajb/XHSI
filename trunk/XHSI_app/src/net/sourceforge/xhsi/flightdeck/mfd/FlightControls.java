@@ -171,7 +171,7 @@ public class FlightControls extends MFDSubcomponent {
     	String spd_brk_str="SPD BRK";
     	g2.drawString(spd_brk_str, mfd_gc.fctl_mid_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, spd_brk_str)/2 , mfd_gc.fctl_y_ail_top);
 
-    	// Hydrolic box "GBY"
+    	// Hydraulic box "GBY"
     	// Text in green is circuit ok, amber when low pressure (<2000 psi)
     	g2.setColor(mfd_gc.color_airbusgray.darker());
     	g2.fillRect(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_box , mfd_gc.fctl_y_wing_box, mfd_gc.fctl_dx_wing_box*2, mfd_gc.fctl_box_height);
@@ -288,8 +288,8 @@ public class FlightControls extends MFDSubcomponent {
     	ail_str="AIL";
     	g2.drawString(ail_str, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail_txt - mfd_gc.get_text_width(g2, mfd_gc.font_xl, ail_str)/2 , mfd_gc.fctl_y_ail_top + mfd_gc.line_height_l * 11/4);
     	
-    	// 4 hydrolic box
-    	// Hydrolic box "GBY"
+    	// 4 hydraulic box
+    	// Hydraulic box "GBY"
     	// Text in green is circuit ok, amber when low pressure (<2000 psi)
     	// LEFT 1
     	g2.setColor(mfd_gc.color_airbusgray.darker());
@@ -499,8 +499,8 @@ public class FlightControls extends MFDSubcomponent {
     	ail_str="ELEV";
     	g2.drawString(ail_str, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_elev_txt - mfd_gc.get_text_width(g2, mfd_gc.font_xl, ail_str)/2 , mfd_gc.fctl_y_elev_top + mfd_gc.line_height_l * 11/4);
     	
-    	// 2 hydrolic box
-    	// Hydrolic box "BG"
+    	// 2 hydraulic box
+    	// Hydraulic box "BG"
     	// Text in green is circuit ok, amber when low pressure (<2000 psi)
     	// LEFT
     	g2.setColor(mfd_gc.color_airbusgray.darker());
@@ -637,7 +637,7 @@ public class FlightControls extends MFDSubcomponent {
     	String rudder_str = "RUD";
     	g2.drawString(rudder_str, mfd_gc.fctl_mid_x - mfd_gc.get_text_width(g2, mfd_gc.font_xl, rudder_str)/2, mfd_gc.fctl_y_rud_box_top - mfd_gc.line_height_l);
 
-    	// Hydrolic box "GBY"
+    	// Hydraulic box "GBY"
     	// Text in green is circuit ok, amber when low pressure (<2000 psi)
     	g2.setColor(mfd_gc.color_airbusgray.darker());
     	g2.fillRect(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_box , mfd_gc.fctl_y_rud_box_top, mfd_gc.fctl_dx_wing_box*2, mfd_gc.fctl_box_height);
@@ -713,7 +713,7 @@ public class FlightControls extends MFDSubcomponent {
     	String pitch_str = "PITCH TRIM  ";
     	g2.drawString(pitch_str, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_pitch_box - mfd_gc.get_text_width(g2, mfd_gc.font_xl, pitch_str), mfd_gc.fctl_y_pitch_box_top + mfd_gc.line_height_l);
     	
-    	// hydrolic box
+    	// hydraulic box
        	g2.setColor(mfd_gc.color_airbusgray.darker());
     	g2.fillRect(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_pitch_box, mfd_gc.fctl_y_pitch_box_top,
     			    mfd_gc.fctl_dx_box_width, mfd_gc.fctl_box_height);
