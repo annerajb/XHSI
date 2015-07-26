@@ -39,6 +39,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.logging.Logger;
 
+import net.sourceforge.xhsi.XHSIPreferences.DrawJokeInputMode;
 import net.sourceforge.xhsi.XHSIStatus;
 import net.sourceforge.xhsi.model.ModelFactory;
 
@@ -493,62 +494,68 @@ public class ADI_A320 extends PFDSubcomponent {
 		g2.drawRect(cx - wing_t, cy - wing_t, wing_t * 2, wing_t * 2);
 		
 	
+		DrawJokeInputMode display_joke_pref = preferences.get_pfd_draw_joke_input();
 		// Stick orders : on ground / bellow 30 ft AGL
-		if  ((! airborne) || (ra < 30))  {
+		boolean display_stick_always = (display_joke_pref == DrawJokeInputMode.ALWAYS) || (display_joke_pref == DrawJokeInputMode.ALWAYS_RUDDER);
+		boolean display_stick_orders = ((! airborne) || (ra < 30)) && engine_started && (display_joke_pref != DrawJokeInputMode.NONE);
+		// public enum DrawJokeInputMode { NONE, AUTO, AUTO_RUDDER, ALWAYS, ALWAYS_RUDDER };
+		boolean display_rudder = (display_joke_pref == DrawJokeInputMode.AUTO_RUDDER ) || (display_joke_pref == DrawJokeInputMode.ALWAYS_RUDDER );
+		if  (display_stick_orders || display_stick_always)  {
 
-			if (engine_started) {
-				g2.setColor(pfd_gc.pfd_markings_color);
-				int st_width = left / 8;
-				int st_left = cx - left*14/20;
-				int st_right = cx + right*14/20;
-				int st_up = cy - up/2;
-				int st_down = cy + down/2;
-				int st_x = cx + Math.round(this.aircraft.yoke_roll() * left*14/20);
-				int st_y = cy - Math.round(this.aircraft.yoke_pitch() * up/2);
-				int st_d = left/60;
-				int st_w = left/10;
-				int rd_x = cx + Math.round(this.aircraft.rudder_hdg() * left*14/20);
-				int rd_y = cy + up/2 - st_d/2;
-				int brk_l_y = Math.round(this.aircraft.brk_pedal_left() * up/2);
-				int brk_r_y = Math.round(this.aircraft.brk_pedal_right() * up/2);
+			g2.setColor(pfd_gc.pfd_markings_color);
+			int st_width = left / 8;
+			int st_left = cx - left*14/20;
+			int st_right = cx + right*14/20;
+			int st_up = cy - up/2;
+			int st_down = cy + down/2;
+			int st_x = cx + Math.round(this.aircraft.yoke_roll() * left*14/20);
+			int st_y = cy - Math.round(this.aircraft.yoke_pitch() * up/2);
+			int st_d = left/60;
+			int st_w = left/10;
+			int rd_x = cx + Math.round(this.aircraft.rudder_hdg() * left*14/20);
+			int rd_y = cy + up/2 - st_d/2;
+			int brk_l_y = Math.round(this.aircraft.brk_pedal_left() * up/2);
+			int brk_r_y = Math.round(this.aircraft.brk_pedal_right() * up/2);
 
-				// Stick box
-				// top left
-				g2.drawLine(st_left, st_up, st_left + st_width, st_up);
-				g2.drawLine(st_left, st_up, st_left, st_up + st_width);
-				// top right
-				g2.drawLine(st_right, st_up, st_right - st_width, st_up);
-				g2.drawLine(st_right, st_up, st_right, st_up + st_width);
-				// bottom left
-				g2.drawLine(st_left, st_down, st_left + st_width, st_down);
-				g2.drawLine(st_left, st_down, st_left, st_down - st_width);
-				// bottom right
-				g2.drawLine(st_right, st_down, st_right - st_width, st_down);
-				g2.drawLine(st_right, st_down, st_right, st_down - st_width);
+			// Stick box
+			// top left
+			g2.drawLine(st_left, st_up, st_left + st_width, st_up);
+			g2.drawLine(st_left, st_up, st_left, st_up + st_width);
+			// top right
+			g2.drawLine(st_right, st_up, st_right - st_width, st_up);
+			g2.drawLine(st_right, st_up, st_right, st_up + st_width);
+			// bottom left
+			g2.drawLine(st_left, st_down, st_left + st_width, st_down);
+			g2.drawLine(st_left, st_down, st_left, st_down - st_width);
+			// bottom right
+			g2.drawLine(st_right, st_down, st_right - st_width, st_down);
+			g2.drawLine(st_right, st_down, st_right, st_down - st_width);
 
-				// Stick marker
-				// top left
-				g2.drawLine(st_x - st_d - st_w , st_y - st_d, st_x - st_d, st_y - st_d);
-				g2.drawLine(st_x - st_d, st_y - st_d, st_x - st_d, st_y - st_d - st_w);
-				// top right
-				g2.drawLine(st_x + st_d + st_w , st_y - st_d, st_x + st_d, st_y - st_d);
-				g2.drawLine(st_x + st_d, st_y - st_d, st_x + st_d, st_y - st_d - st_w);
-				// bottom left
-				g2.drawLine(st_x - st_d - st_w , st_y + st_d, st_x - st_d, st_y + st_d);
-				g2.drawLine(st_x - st_d, st_y + st_d, st_x - st_d, st_y + st_d + st_w);
-				// bottom right
-				g2.drawLine(st_x + st_d + st_w , st_y + st_d, st_x + st_d, st_y + st_d);
-				g2.drawLine(st_x + st_d, st_y + st_d, st_x + st_d, st_y + st_d + st_w);
-				
+			// Stick marker
+			// top left
+			g2.drawLine(st_x - st_d - st_w , st_y - st_d, st_x - st_d, st_y - st_d);
+			g2.drawLine(st_x - st_d, st_y - st_d, st_x - st_d, st_y - st_d - st_w);
+			// top right
+			g2.drawLine(st_x + st_d + st_w , st_y - st_d, st_x + st_d, st_y - st_d);
+			g2.drawLine(st_x + st_d, st_y - st_d, st_x + st_d, st_y - st_d - st_w);
+			// bottom left
+			g2.drawLine(st_x - st_d - st_w , st_y + st_d, st_x - st_d, st_y + st_d);
+			g2.drawLine(st_x - st_d, st_y + st_d, st_x - st_d, st_y + st_d + st_w);
+			// bottom right
+			g2.drawLine(st_x + st_d + st_w , st_y + st_d, st_x + st_d, st_y + st_d);
+			g2.drawLine(st_x + st_d, st_y + st_d, st_x + st_d, st_y + st_d + st_w);
+			
+			if (display_rudder) {
 				// Rudder marker
 				g2.drawRect(rd_x-st_d*2, rd_y, st_d*4, st_d*2);
 				g2.drawLine(cx, st_down, cx, st_down+st_d);
-				
+
 				// Brake pedals
 				g2.fillRect(st_left-st_d*2, cy + up/2 - brk_l_y, st_d*2, brk_l_y);
 				g2.fillRect(st_right      , cy + up/2 - brk_r_y, st_d*2, brk_r_y);
-			
 			}
+			
+			
 		}
 
 		// Controls flight director flashing (FCOM 1.31.40 p18)
