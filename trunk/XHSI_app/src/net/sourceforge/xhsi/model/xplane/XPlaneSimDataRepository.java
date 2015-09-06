@@ -581,6 +581,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_ELEC_CX_LEFT=1086;
     public static final int QPAC_ELEC_CX_CENTER=1087;
     public static final int QPAC_ELEC_CX_RIGHT=1088;
+    // Key press to commands
+    public static final int QPAC_KEY_PRESS=1089;
     // IDs reserved for QPAC up to 1199
 
     // JarDesign Airbus A320neo

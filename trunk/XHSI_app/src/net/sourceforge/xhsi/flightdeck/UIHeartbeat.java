@@ -65,6 +65,8 @@ public class UIHeartbeat extends StoppableThread {
 				this.nd.heartbeat();
 				this.eicas.heartbeat();
 				this.mfd.heartbeat();
+				// TODO : check CDU heartbeat
+				// this.cdu.heartbeat();
 			} catch (Exception e) {
 				this.keep_running = false;
 				logger.warning("Caught exception in Watchdog! Stopping. (" + e.toString());

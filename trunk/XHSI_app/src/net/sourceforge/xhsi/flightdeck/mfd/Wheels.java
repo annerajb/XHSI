@@ -22,11 +22,15 @@
 
 package net.sourceforge.xhsi.flightdeck.mfd;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.util.logging.Logger;
 
+import net.sourceforge.xhsi.flightdeck.annunciators.GearStatus.COL;
+import net.sourceforge.xhsi.flightdeck.annunciators.GearStatus.WHEEL;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.Aircraft.SpoilerStatus;
@@ -47,6 +51,15 @@ public class Wheels extends MFDSubcomponent {
 			// Page ID
 			drawPageID(g2, "WHEELS");
 			draw_airbus_speedbrake(g2);
+	        if ( this.aircraft.has_retractable_gear() ) {
+	            if ( this.aircraft.num_gears() == 3 ) {
+	                drawTricycle(g2);
+	            } else if ( this.aircraft.num_gears() > 0 ) {
+	                // simple annunciators with an icon
+	                drawAllGears(g2);
+	            }
+	        }
+	        drawAutoBrakeStatus(g2);
 		}
 	}
 
@@ -62,17 +75,21 @@ public class Wheels extends MFDSubcomponent {
 
 	   
     private void draw_airbus_speedbrake(Graphics2D g2) {    	
-    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_spoiler_ctr, mfd_gc.fctl_y_spoiler_top, 1, this.aircraft.get_spoiler_status_left(0));
-    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_spoiler_ctr - mfd_gc.fctl_dx_spoiler_step, mfd_gc.fctl_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*1 , 2, this.aircraft.get_spoiler_status_left(1));
-    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_spoiler_ctr - mfd_gc.fctl_dx_spoiler_step*2 , mfd_gc.fctl_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*2, 3, this.aircraft.get_spoiler_status_left(2));
-    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_spoiler_ctr - mfd_gc.fctl_dx_spoiler_step*3, mfd_gc.fctl_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*3, 4, this.aircraft.get_spoiler_status_left(3));
-    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_spoiler_bdr, mfd_gc.fctl_y_spoiler_bottom, 5, this.aircraft.get_spoiler_status_left(4));
+    	String speed_brk_str = "SPEED BRAKES";
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_spoiler_ctr, mfd_gc.wheel_y_spoiler_top, 1, this.aircraft.get_spoiler_status_left(0));
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_spoiler_ctr - mfd_gc.fctl_dx_spoiler_step, mfd_gc.wheel_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*1 , 2, this.aircraft.get_spoiler_status_left(1));
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_spoiler_ctr - mfd_gc.fctl_dx_spoiler_step*2 , mfd_gc.wheel_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*2, 3, this.aircraft.get_spoiler_status_left(2));
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_spoiler_ctr - mfd_gc.fctl_dx_spoiler_step*3, mfd_gc.wheel_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*3, 4, this.aircraft.get_spoiler_status_left(3));
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_spoiler_bdr, mfd_gc.wheel_y_spoiler_bottom, 5, this.aircraft.get_spoiler_status_left(4));
     	
-    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_spoiler_ctr, mfd_gc.fctl_y_spoiler_top, 1, this.aircraft.get_spoiler_status_right(0));
-    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_spoiler_ctr + mfd_gc.fctl_dx_spoiler_step , mfd_gc.fctl_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*1, 2, this.aircraft.get_spoiler_status_right(1));
-    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_spoiler_ctr + mfd_gc.fctl_dx_spoiler_step*2 , mfd_gc.fctl_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*2, 3, this.aircraft.get_spoiler_status_right(2));
-    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_spoiler_ctr + mfd_gc.fctl_dx_spoiler_step*3 , mfd_gc.fctl_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*3, 4, this.aircraft.get_spoiler_status_right(3));
-    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_spoiler_bdr, mfd_gc.fctl_y_spoiler_bottom, 5, this.aircraft.get_spoiler_status_right(4));
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_spoiler_ctr, mfd_gc.wheel_y_spoiler_top, 1, this.aircraft.get_spoiler_status_right(0));
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_spoiler_ctr + mfd_gc.fctl_dx_spoiler_step , mfd_gc.wheel_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*1, 2, this.aircraft.get_spoiler_status_right(1));
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_spoiler_ctr + mfd_gc.fctl_dx_spoiler_step*2 , mfd_gc.wheel_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*2, 3, this.aircraft.get_spoiler_status_right(2));
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_spoiler_ctr + mfd_gc.fctl_dx_spoiler_step*3 , mfd_gc.wheel_y_spoiler_top + mfd_gc.fctl_dy_spoiler_step*3, 4, this.aircraft.get_spoiler_status_right(3));
+    	draw_speed_brake_arrow(g2, mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_spoiler_bdr, mfd_gc.wheel_y_spoiler_bottom, 5, this.aircraft.get_spoiler_status_right(4));
+        g2.setColor(mfd_gc.markings_color);
+        g2.setFont(mfd_gc.font_l);
+        g2.drawString(speed_brk_str, mfd_gc.mfd_middle_x - mfd_gc.get_text_width(g2, mfd_gc.font_l, speed_brk_str)/2, mfd_gc.wheel_y_spoiler_bottom + mfd_gc.line_height_l*2);
     }
     
     private void draw_speed_brake_arrow(Graphics2D g2, int x, int y, int num, SpoilerStatus status) {
@@ -104,6 +121,167 @@ public class Wheels extends MFDSubcomponent {
     		break;		
     	}
     }
- 
+
+    private void drawAllGears(Graphics2D g2) {
+
+        int gears = this.aircraft.num_gears();
+
+        int firstleft;
+
+        if ( gears % 2 == 1 ) {
+            // odd number of gears; draw the first one at the top in the center
+            drawAnyWheel(g2, 0, COL.Center, this.aircraft.get_gear(0));
+            firstleft = 1;
+        } else {
+            firstleft = 0;
+        }
+        int row = 1;
+        if ( gears > 1 ) {
+            for ( int i=firstleft; i<gears; i+=2) {
+                drawAnyWheel(g2, row, COL.Left, this.aircraft.get_gear(i));
+                drawAnyWheel(g2, row, COL.Right, this.aircraft.get_gear(i+1));
+                row++;
+            }
+        }
+
+    }
+
+
+    private void drawAnyWheel(Graphics2D g2, int row, COL col, float lowered) {
+
+            int w_w = mfd_gc.wheel_tri_dy;
+            int w_h = mfd_gc.line_height_l * 2;
+            int w_x;
+            int w_y;
+
+            if ( col == COL.Center ) {
+                w_x = mfd_gc.mfd_middle_x;
+            } else if ( col == COL.Left ) {
+                w_x = mfd_gc.mfd_middle_x - mfd_gc.wheel_main_tri_dx;
+            } else {
+                w_x = mfd_gc.mfd_middle_x + mfd_gc.wheel_main_tri_dx; 
+            }
+            w_y = mfd_gc.wheel_main_tri_y + (3-row)*(w_h+w_w/12);
+
+            int tri_x [] = { w_x, w_x + mfd_gc.wheel_tri_dx, w_x - mfd_gc.wheel_tri_dx };
+            int tri_y [] = { w_y + mfd_gc.wheel_tri_dy, w_y, w_y };
+            g2.setColor(mfd_gc.instrument_background_color);
+            g2.drawPolygon(tri_x, tri_y, 3);
+            
+            if ( ( ! mfd_gc.powered ) || (lowered == 0.0f) ) {
+                g2.setColor(mfd_gc.instrument_background_color.brighter());
+            } else if ( lowered == 1.0f ) {
+                g2.setColor(mfd_gc.ecam_normal_color);
+            } else {
+                g2.setColor(mfd_gc.ecam_warning_color);
+            }
+            
+            g2.fillPolygon(tri_x, tri_y, 3);
+
+    }
+
+
+    private void drawTricycle(Graphics2D g2) {
+
+        g2.setStroke(new BasicStroke(3.0f * mfd_gc.grow_scaling_factor));
+
+        drawTrikeWheel(g2, WHEEL.Nose, this.aircraft.get_gear(0));
+        drawTrikeWheel(g2, WHEEL.Left, this.aircraft.get_gear(1));
+        drawTrikeWheel(g2, WHEEL.Right, this.aircraft.get_gear(2));
+
+    }
+
+
+    private void drawTrikeWheel(Graphics2D g2, WHEEL gearpos, float lowered) {
+
+            int w_w = mfd_gc.wheel_tri_dy;
+            int w_h = mfd_gc.line_height_l * 3;
+            int w_x = 999;
+            int w_y = 999;
+            String w1_str = "ERROR";
+            int w1_y = 999;
+            String w2_str = "GEAR";
+            int w2_y = 999;
+
+            switch (gearpos) {
+                case Nose:
+                    w_x = mfd_gc.mfd_middle_x;
+                    w_y = mfd_gc.wheel_nose_tri_y;
+                    w1_str = "NOSE";
+                    break;
+                case Left:
+                    w_x = mfd_gc.mfd_middle_x - mfd_gc.wheel_main_tri_dx;
+                    w_y = mfd_gc.wheel_main_tri_y;
+                    w1_str = "LEFT";
+                    break;
+                case Right:
+                    w_x = mfd_gc.mfd_middle_x + mfd_gc.wheel_main_tri_dx;
+                    w_y = mfd_gc.wheel_main_tri_y;
+                    w1_str = "RIGHT";
+                    break;
+            }
+
+            int tri_x [] = { w_x, w_x + mfd_gc.wheel_tri_dx, w_x - mfd_gc.wheel_tri_dx };
+            int tri_y [] = { w_y + mfd_gc.wheel_tri_dy, w_y, w_y };
+            g2.setColor(mfd_gc.instrument_background_color);
+            g2.drawPolygon(tri_x, tri_y, 3);
+
+            if ( ( ! mfd_gc.powered ) || (lowered == 0.0f) ) {
+                g2.setColor(mfd_gc.instrument_background_color.brighter());
+            } else if ( lowered == 1.0f ) {
+                g2.setColor(mfd_gc.ecam_normal_color);
+            } else {
+                g2.setColor(mfd_gc.ecam_warning_color);
+            }
+            
+            g2.fillPolygon(tri_x, tri_y, 3);
+            g2.setFont(mfd_gc.font_l);
+            w1_y = w_y + mfd_gc.wheel_tri_dy + mfd_gc.line_height_l*28/20;
+            w2_y = w_y + mfd_gc.wheel_tri_dy + mfd_gc.line_height_l*48/20;
+            g2.setColor(mfd_gc.markings_color);
+            g2.drawString(w1_str, w_x  - mfd_gc.get_text_width(g2, mfd_gc.font_l, w1_str)/2, w1_y);
+            g2.drawString(w2_str, w_x  - mfd_gc.get_text_width(g2, mfd_gc.font_l, w2_str)/2, w2_y);
+
+    }
+    
+    private void drawAutoBrakeStatus(Graphics2D g2) {
+        // AUTO BRK
+        int autobrake = this.aircraft.auto_brake();
+        String str_brake = ""+autobrake;
+        String str_auto = "AUTO BRK";
+        boolean auto_brake_on = false;
+        switch (autobrake) {           
+            case -1 :
+            	str_brake = "RTO";
+            	auto_brake_on = true;
+                break;
+            case 1 :
+            	str_brake = "LOW";
+            	auto_brake_on = true;
+                break;
+            case 2 :
+            	str_brake = "MED";
+            	auto_brake_on = true;
+                break;
+            case 3 :
+            	str_brake = "MED";
+            	auto_brake_on = true;
+                break;
+            case 4 :
+            	str_brake = "MAX";
+            	auto_brake_on = true;
+                break;
+            default :
+                break;
+
+        }
+        if (auto_brake_on) {
+        	g2.setFont(mfd_gc.font_l);
+        	g2.setColor(mfd_gc.ecam_normal_color);
+            g2.drawString(str_auto, mfd_gc.mfd_middle_x - mfd_gc.get_text_width(g2, mfd_gc.font_l, str_auto)/2, mfd_gc.wheel_autobrk_legend_y);
+            g2.drawString(str_brake, mfd_gc.mfd_middle_x - mfd_gc.get_text_width(g2, mfd_gc.font_l, str_brake)/2, mfd_gc.wheel_autobrk_value_y);
+        }
+
+    }
 	
 }

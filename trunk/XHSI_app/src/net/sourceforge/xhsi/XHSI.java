@@ -83,7 +83,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 8 Alpha 36";
+    private static final String RELEASE = "2.0 Beta 8 Alpha 38";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -404,7 +404,7 @@ public class XHSI implements ActionListener {
                     this.preferences.add_subsciption(clock_ui, XHSIPreferences.PREF_INSTRUMENT_STYLE);
                     break;
                 case XHSIInstrument.CDU_ID :
-                    // Clock
+                    // CDU
                     CDUComponent cdu_ui = (CDUComponent)instruments.get(i).components;
                     this.preferences.add_subsciption(cdu_ui, XHSIPreferences.PREF_BORDER_STYLE);
                     this.preferences.add_subsciption(cdu_ui, XHSIPreferences.PREF_BORDER_COLOR);
@@ -414,6 +414,7 @@ public class XHSI implements ActionListener {
                     this.preferences.add_subsciption(cdu_ui, XHSIPreferences.PREF_DU_PREPEND);
                     this.preferences.add_subsciption(cdu_ui, XHSIPreferences.PREF_USE_POWER);
                     this.preferences.add_subsciption(cdu_ui, XHSIPreferences.PREF_INSTRUMENT_STYLE);
+                    this.preferences.add_subsciption(cdu_ui, XHSIPreferences.PREF_CDU_SOURCE);
                     break;
             }
         }
@@ -462,7 +463,9 @@ public class XHSI implements ActionListener {
 
 
     private boolean isMac() {
-        return (System.getProperty("mrj.version") != null);
+        // return (System.getProperty("mrj.version") != null);
+        String OS = System.getProperty("os.name").toLowerCase();
+        return (OS.indexOf("mac") >= 0);
     }
 
 
@@ -473,6 +476,14 @@ public class XHSI implements ActionListener {
         // Sorry, Java is about being platform-independent; I disable the creation of Mac look and feel
         // at least until it can be added again without having to maintain any extra code
 
+        // Experimental : remove Mac Menu Bar for full screen mode
+        if (isMac()) {
+            logger.config("Mac detected. Disable Menu Bar.");
+
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "XHSI_PLUGIN");       	
+        }
+        
 //        if (isMac()) {
 //            logger.config("Mac detected. Create Menubar with Mac look and feel");
 //
@@ -560,6 +571,20 @@ public class XHSI implements ActionListener {
 
             instrument_window.frame = new JFrame( instrument_window.get_description() );
             instrument_window.frame.setUndecorated( this.preferences.get_hide_window_frames() );
+            
+            // TODO : Full Screen Mode
+            /* Full Screen Code
+                GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+
+                if (gd.isFullScreenSupported()) {
+                    setUndecorated(true);
+                    gd.setFullScreenWindow(this);
+                } else {
+                    System.err.println("Full screen not supported");
+                    setSize(100, 100); // just something to let you see the window
+                    setVisible(true);
+                }
+            */
 
             // Exit on Close, otherwise the instrument_window will close, but java will still be running
 //            instrument_window.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

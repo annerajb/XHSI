@@ -92,7 +92,7 @@ public class ECAM_Flaps extends EICASSubcomponent {
         	
         
         // Flaps
-        if ( flaps > 0.0f ) {
+        if ( flaps > 0.05f ) {
 
         	// flaps text
         	g2.setColor(eicas_gc.ecam_markings_color);
@@ -169,7 +169,7 @@ public class ECAM_Flaps extends EICASSubcomponent {
            
         
         // Slats 
-        if ( slats > 0.0f ) {
+        if ( slats > 0.05f ) {
         	g2.setColor(eicas_gc.ecam_markings_color);
         	// slats arc
        	
@@ -277,7 +277,7 @@ public class ECAM_Flaps extends EICASSubcomponent {
         	
         
         // Flaps
-        if ( flaps > 0.0f ) {
+        if ( flaps > 0.05f ) {
 
         	// flaps text
         	g2.setColor(eicas_gc.ecam_markings_color);
@@ -348,7 +348,7 @@ public class ECAM_Flaps extends EICASSubcomponent {
            
         
         // Slats 
-        if ( slats > 0.0f ) {
+        if ( slats > 0.05f ) {
         	g2.setColor(eicas_gc.ecam_markings_color);
         	// slats arc
        	
