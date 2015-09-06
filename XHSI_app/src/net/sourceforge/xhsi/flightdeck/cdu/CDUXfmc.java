@@ -47,6 +47,7 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
+import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.XfmcData;
 import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
@@ -150,11 +151,13 @@ public class CDUXfmc extends CDUSubcomponent {
     
     
     public void paint(Graphics2D g2) {
-        if ( this.preferences.cdu_display_only() ) {
-            drawDisplayOnly(g2);
-        } else {
-            drawFullPanel(g2);
-        }
+    	if (cdu_gc.cdu_source == Avionics.CDU_SOURCE_XFMC) {
+    		if ( this.preferences.cdu_display_only() ) {
+    			drawDisplayOnly(g2);
+    		} else {
+    			drawFullPanel(g2);
+    		}
+    	}
     }
 
     

@@ -416,6 +416,32 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
             
             xfmc.setLine(14, Integer.toString(status));
             
+        } else if (packet_type.equals("QPAC")) {
+        	int buff_max = 80;
+            logger.finest("Receiving XFMC packet");
+        	
+            DataInputStream data_stream = new DataInputStream(new ByteArrayInputStream(sim_data));
+            data_stream.skipBytes(4);    // skip the bytes containing the packet type id
+
+            int nb_of_lines = data_stream.readInt();
+            int status = data_stream.readInt();
+            byte[] buff = new byte[buff_max];
+            
+            if (nb_of_lines > 0 ) {
+                for (int i = 0; i < nb_of_lines; i++) {
+
+                	int line_no = data_stream.readInt();
+                	int line_length = data_stream.readInt();
+                	data_stream.read(buff, 0, buff_max);
+                	boolean sm = convertCodedStrings(buff);
+                	String s = new String(buff, 0, line_length, charset);
+                	
+                	xfmc.setLine(line_no, s);
+                }
+            }
+            
+            xfmc.setLine(14, Integer.toString(status));
+       	
         }
 
         // no, only for sim data packets

@@ -1114,14 +1114,14 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_mfd_elec = radio_button_menu_item;
                
         /*
-         * TODO : Wheels
+         * Wheels
          */        
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_WHEELS);
         radio_button_menu_item.setToolTipText("Wheels");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
-        // mfd_group.add(radio_button_menu_item);
-        // xhsi_mfd_menu.add(radio_button_menu_item);
+        mfd_group.add(radio_button_menu_item);
+        xhsi_mfd_menu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_mfd_wheels = radio_button_menu_item;
                

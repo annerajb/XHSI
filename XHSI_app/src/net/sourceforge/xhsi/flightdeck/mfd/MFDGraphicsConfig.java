@@ -493,6 +493,28 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int bleed_apu_legend_y;
     public int bleed_apu_valve_y;
     public int bleed_apu_valve_x;
+    
+    // Wheels
+    public int wheel_tri_dx;
+    public int wheel_tri_dy;
+    public int wheel_nose_tri_y;
+    public int wheel_nose_door_y;
+    public int wheel_nose_psi_legend_y;
+    public int wheel_nose_psi_value_y;
+    public int wheel_main_tri_y;
+    public int wheel_main_tri_dx;
+    public int wheel_main_door_y;
+    public int wheel_main_temp_legend_y;
+    public int wheel_main_temp_value_y;
+    public int wheel_main_psi_legend_y;
+    public int wheel_main_psi_value_y;
+    public int wheel_main_rel_legend_y;
+    public int wheel_main_rel_value_y;
+    public int wheel_autobrk_legend_y;
+    public int wheel_autobrk_value_y;
+    public int wheel_y_spoiler_top;
+    public int wheel_y_spoiler_bottom;    
+    
 
     // Systems Status 
     // Vertical separation line
@@ -1151,6 +1173,29 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             bleed_apu_valve_y = panel_rect.y + mfd_size * 665/1000;
             bleed_apu_valve_x = panel_rect.x + panel_rect.width * 493/1000;
 
+            // Wheels
+            wheel_tri_dx = panel_rect.width * 60/1000;
+            wheel_tri_dy = mfd_size * 60/1000;
+            wheel_nose_tri_y = panel_rect.y + mfd_size * 150/1000;
+            wheel_nose_door_y = panel_rect.y + mfd_size * 100/1000;
+            wheel_nose_psi_legend_y = panel_rect.y + mfd_size * 220/1000;
+            wheel_nose_psi_value_y = panel_rect.y + mfd_size * 210/1000;
+
+            wheel_main_tri_y = panel_rect.y + mfd_size * 220/1000;
+            wheel_main_tri_dx = panel_rect.width * 300/1000;
+            wheel_main_door_y = panel_rect.y + mfd_size * 200/1000;
+            wheel_main_temp_legend_y = panel_rect.y + mfd_size * 500/1000;
+            wheel_main_temp_value_y = panel_rect.y + mfd_size * 510/1000;
+            wheel_main_psi_legend_y = panel_rect.y + mfd_size * 610/1000;
+            wheel_main_psi_value_y = panel_rect.y + mfd_size * 620/1000;
+            wheel_main_rel_legend_y = panel_rect.y + mfd_size * 580/1000;
+            wheel_main_rel_value_y = panel_rect.y + mfd_size * 585/1000;
+
+            wheel_autobrk_legend_y = panel_rect.y + mfd_size * 700/1000;
+            wheel_autobrk_value_y = panel_rect.y + mfd_size * 730/1000;
+            wheel_y_spoiler_top = panel_rect.y + mfd_size * 800/1000;            
+            wheel_y_spoiler_bottom = panel_rect.y + mfd_size * 850/1000;
+            
             
             // Systems Status 
             // Vertical separation line

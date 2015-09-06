@@ -92,6 +92,7 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
 //        subcomponents.add(new CDUDemo(model_factory, cdu_gc, this));
         subcomponents.add(new CDUFrame(model_factory, cdu_gc, this));
         subcomponents.add(new CDUXfmc(model_factory, cdu_gc, this));
+        subcomponents.add(new CDUQpac(model_factory, cdu_gc, this));
 
         this.repaint();
 
