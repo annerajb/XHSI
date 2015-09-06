@@ -61,6 +61,9 @@ extern XPLMCommandRef chr_start_stop_reset;
 extern XPLMCommandRef chr_start_stop;
 extern XPLMCommandRef chr_reset;
 
+extern XPLMCommandRef sim_annunciator_clear_master_warning;
+extern XPLMCommandRef sim_annunciator_clear_master_caution;
+extern XPLMCommandRef sim_annunciator_clear_master_accept;
 
 void registerCommands(void);
 void unregisterCommands(void);
