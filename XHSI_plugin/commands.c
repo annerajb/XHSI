@@ -501,6 +501,10 @@ XPLMCommandRef x737_app_toggle;
 XPLMCommandRef x737_althld_toggle;
 XPLMCommandRef x737_vs_toggle;
 
+// Master Warnings, Caution, Accept
+XPLMCommandRef sim_annunciator_clear_master_warning;
+XPLMCommandRef sim_annunciator_clear_master_caution;
+XPLMCommandRef sim_annunciator_clear_master_accept;
 
 char debug_string[80];
 
@@ -3031,6 +3035,29 @@ void registerCommands(void) {
     sim_flight_controls_landing_gear_toggle = XPLMFindCommand("sim/flight_controls/landing_gear_toggle");
     sim_flight_controls_speed_brakes_down_one = XPLMFindCommand("sim/flight_controls/speed_brakes_down_one");
     sim_flight_controls_speed_brakes_up_one = XPLMFindCommand("sim/flight_controls/speed_brakes_up_one");
+
+    // master caution, warning, accept commands
+    sim_annunciator_clear_master_warning = XPLMFindCommand("sim/annunciator/clear_master_warning");
+    sim_annunciator_clear_master_caution = XPLMFindCommand("sim/annunciator/clear_master_caution");
+    sim_annunciator_clear_master_accept  = XPLMFindCommand("sim/annunciator/clear_master_accept");
+
+    //qpac fcu toggles and push/pull commands
+    XPLMCommandRef qpac_to_config_press;
+    XPLMCommandRef qpac_push_alt;
+    XPLMCommandRef qpac_pull_alt;
+    XPLMCommandRef qpac_push_vs;
+    XPLMCommandRef qpac_pull_vs;
+    XPLMCommandRef qpac_push_hdg;
+    XPLMCommandRef qpac_pull_hdg;
+    XPLMCommandRef qpac_push_spd;
+    XPLMCommandRef qpac_pull_spd;
+    XPLMCommandRef qpac_athr_toggle;
+    XPLMCommandRef qpac_appr_toggle;
+    XPLMCommandRef qpac_loc_toggle;
+    XPLMCommandRef qpac_exped_toggle;
+    XPLMCommandRef qpac_abrk_low_toggle;
+    XPLMCommandRef qpac_abrk_med_toggle;
+    XPLMCommandRef qpac_abrk_max_toggle;
 
 
     XPLMDebugString("XHSI: custom commands created and custom command handlers registered\n");

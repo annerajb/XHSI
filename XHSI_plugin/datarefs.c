@@ -2322,6 +2322,17 @@ void writeDataRef(int id, float value) {
                 case 35 :
                     XPLMSetDatai(pitot_heat_on, ! XPLMGetDatai(pitot_heat_on));
                     break;
+                // master caution, warning, accept
+                case 36 :
+                	XPLMCommandOnce(sim_annunciator_clear_master_warning);
+                	break;
+                case 37 :
+                	XPLMCommandOnce(sim_annunciator_clear_master_caution);
+                	break;
+                case 38 :
+                	XPLMCommandOnce(sim_annunciator_clear_master_accept);
+                	break;
+
             }
             break;
 

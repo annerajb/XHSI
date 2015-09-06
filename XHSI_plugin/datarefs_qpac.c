@@ -214,6 +214,25 @@ XPLMDataRef qpac_sd_fctl;
 XPLMDataRef qpac_sd_status;
 XPLMDataRef qpac_sd_to_config;
 
+//qpac fcu toggles and push/pull commands
+XPLMCommandRef qpac_to_config_press;
+XPLMCommandRef qpac_push_alt;
+XPLMCommandRef qpac_pull_alt;
+XPLMCommandRef qpac_push_vs;
+XPLMCommandRef qpac_pull_vs;
+XPLMCommandRef qpac_push_hdg;
+XPLMCommandRef qpac_pull_hdg;
+XPLMCommandRef qpac_push_spd;
+XPLMCommandRef qpac_pull_spd;
+XPLMCommandRef qpac_athr_toggle;
+XPLMCommandRef qpac_appr_toggle;
+XPLMCommandRef qpac_loc_toggle;
+XPLMCommandRef qpac_exped_toggle;
+XPLMCommandRef qpac_abrk_low_toggle;
+XPLMCommandRef qpac_abrk_med_toggle;
+XPLMCommandRef qpac_abrk_max_toggle;
+
+
 int qpac_ready = 0;
 int qpac_version = 0;
 
@@ -343,7 +362,8 @@ void findQpacDataRefs(void) {
             qpac_co_efis_nd_range = XPLMFindDataRef("AirbusFBW/NDrangeFO");
             if (qpac_capt_efis_nd_range != NULL) qpac_version = 202;
             // Brakes
-            qpac_autobrake_low = XPLMFindDataRef("AirbusFBW/AutoBrkLow");
+            // TODO : check dataref qpac_autobrake_low = XPLMFindDataRef("AirbusFBW/AutoBrkLow");
+            qpac_autobrake_low = XPLMFindDataRef("AirbusFBW/AutoBrkLo");
             qpac_autobrake_med = XPLMFindDataRef("AirbusFBW/AutoBrkMed");
             qpac_autobrake_max = XPLMFindDataRef("AirbusFBW/AutoBrkMax");
             // Flaps and slats
@@ -435,6 +455,24 @@ void findQpacDataRefs(void) {
             qpac_sd_status = XPLMFindDataRef("AirbusFBW/SDSTATUS");
             qpac_sd_to_config = XPLMFindDataRef("AirbusFBW/TOConfigPress");
 
+            //qpac fcu toggles and push/pull commands
+            qpac_to_config_press = XPLMFindCommand("AirbusFBW/TOConfigPress");
+            qpac_push_alt = XPLMFindCommand("AirbusFBW/PushAltitude");
+            qpac_pull_alt = XPLMFindCommand("AirbusFBW/PullAltitude");
+            qpac_push_vs = XPLMFindCommand("AirbusFBW/PushVSSel");
+            qpac_pull_vs = XPLMFindCommand("AirbusFBW/PullVSSel");
+            qpac_push_hdg = XPLMFindCommand("AirbusFBW/PushHDGSel");
+            qpac_pull_hdg = XPLMFindCommand("AirbusFBW/PullHDGSel");
+            qpac_push_spd = XPLMFindCommand("AirbusFBW/PushSPDSel");
+            qpac_pull_spd = XPLMFindCommand("AirbusFBW/PullSPDSel");
+            qpac_athr_toggle = XPLMFindCommand("AirbusFBW/ATHRbutton");
+            qpac_appr_toggle = XPLMFindCommand("AirbusFBW/APPRbutton");
+            qpac_loc_toggle = XPLMFindCommand("AirbusFBW/LOCbutton");
+            qpac_exped_toggle = XPLMFindCommand("AirbusFBW/EXPEDbutton");
+            qpac_abrk_low_toggle = XPLMFindCommand("AirbusFBW/AbrkLo");
+            qpac_abrk_med_toggle = XPLMFindCommand("AirbusFBW/AbrkMed");
+            qpac_abrk_max_toggle = XPLMFindCommand("AirbusFBW/AbrkMax");
+
         }
     }
 }
@@ -491,6 +529,93 @@ void writeQpacDataRef(int id, float value) {
     switch (id) {
 		case QPAC_SD_PAGE :
 			cmdQpacSDPage((int) value);
+			break;
+		case QPAC_KEY_PRESS :
+			switch ((int)value) {
+
+				case QPAC_KEY_TO_CONFIG :
+					if(qpac_ready){
+						XPLMCommandOnce(qpac_to_config_press);
+					}
+					break;
+				case QPAC_KEY_PUSH_ALT :
+					if(qpac_ready){
+						XPLMCommandOnce(qpac_push_alt);
+					}
+					break;
+				case QPAC_KEY_PULL_ALT :
+					if(qpac_ready){
+						XPLMCommandOnce(qpac_pull_alt);
+					}
+					break;
+				case QPAC_KEY_PUSH_VS :
+					if(qpac_ready){
+						XPLMCommandOnce(qpac_push_vs);
+					}
+					break;
+				case QPAC_KEY_PULL_VS :
+					if(qpac_ready){
+						XPLMCommandOnce(qpac_pull_vs);
+					}
+					break;
+				case QPAC_KEY_PUSH_HDG :
+					if(qpac_ready){
+						XPLMCommandOnce(qpac_push_hdg);
+					}
+					break;
+				case QPAC_KEY_PULL_HDG :
+					if(qpac_ready){
+						XPLMCommandOnce(qpac_pull_hdg);
+					}
+					break;
+				case QPAC_KEY_PUSH_SPD :
+					if(qpac_ready){
+						XPLMCommandOnce(qpac_push_spd);
+					}
+					break;
+				case QPAC_KEY_PULL_SPD :
+					if(qpac_ready){
+						XPLMCommandOnce(qpac_pull_spd);
+					}
+					break;
+				case QPAC_KEY_ATHR :
+					if(qpac_ready){
+						XPLMCommandOnce(qpac_athr_toggle);
+					}
+					break;
+				case QPAC_KEY_APPR :
+					if(qpac_ready){
+						XPLMCommandOnce(qpac_appr_toggle);
+					}
+					break;
+				case QPAC_KEY_EXPED :
+					if(qpac_ready){
+						XPLMCommandOnce(qpac_loc_toggle);
+					}
+					break;
+				case QPAC_KEY_LOC :
+					if(qpac_ready){
+						XPLMCommandOnce(qpac_exped_toggle);
+					}
+					break;
+				case QPAC_KEY_ABRK_LOW :
+					if(qpac_ready){
+						XPLMCommandOnce(qpac_abrk_low_toggle);
+					}
+					break;
+				case QPAC_KEY_ABRK_MED :
+					if(qpac_ready){
+						XPLMCommandOnce(qpac_abrk_med_toggle);
+					}
+					break;
+				case QPAC_KEY_ABRK_MAX :
+					if(qpac_ready){
+						XPLMCommandOnce(qpac_abrk_max_toggle);
+					}
+					break;
+
+			}
+
 			break;
     }
 }

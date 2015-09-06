@@ -184,7 +184,23 @@ extern XPLMDataRef qpac_fuel_tv_array;
 extern XPLMDataRef qpac_sd_page;
 extern XPLMDataRef qpac_clear_illuminated;
 
-
+//qpac fcu toggles and push/pull commands
+extern XPLMCommandRef qpac_to_config_press;
+extern XPLMCommandRef qpac_push_alt;
+extern XPLMCommandRef qpac_pull_alt;
+extern XPLMCommandRef qpac_push_vs;
+extern XPLMCommandRef qpac_pull_vs;
+extern XPLMCommandRef qpac_push_hdg;
+extern XPLMCommandRef qpac_pull_hdg;
+extern XPLMCommandRef qpac_push_spd;
+extern XPLMCommandRef qpac_pull_spd;
+extern XPLMCommandRef qpac_athr_toggle;
+extern XPLMCommandRef qpac_appr_toggle;
+extern XPLMCommandRef qpac_loc_toggle;
+extern XPLMCommandRef qpac_exped_toggle;
+extern XPLMCommandRef qpac_abrk_low_toggle;
+extern XPLMCommandRef qpac_abrk_med_toggle;
+extern XPLMCommandRef qpac_abrk_max_toggle;
 
 
 extern int qpac_ready;

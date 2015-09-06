@@ -550,9 +550,28 @@
 #define QPAC_ELEC_CX_LEFT 1086
 #define QPAC_ELEC_CX_CENTER 1087
 #define QPAC_ELEC_CX_RIGHT 1088
+// Keypress
+#define QPAC_KEY_PRESS 1089
 
+// Key codes (values passed with QPAC_KEY_PRESS ID)
+#define QPAC_KEY_TO_CONFIG 15001
+#define QPAC_KEY_PUSH_ALT  15002
+#define QPAC_KEY_PULL_ALT  15003
+#define QPAC_KEY_PUSH_VS   15004
+#define QPAC_KEY_PULL_VS   15005
+#define QPAC_KEY_PUSH_HDG  15006
+#define QPAC_KEY_PULL_HDG  15007
+#define QPAC_KEY_PUSH_SPD  15008
+#define QPAC_KEY_PULL_SPD  15009
+#define QPAC_KEY_ATHR      15010
+#define QPAC_KEY_APPR      15011
+#define QPAC_KEY_EXPED     15012
+#define QPAC_KEY_LOC       15013
+#define QPAC_KEY_ABRK_LOW  15014
+#define QPAC_KEY_ABRK_MED  15015
+#define QPAC_KEY_ABRK_MAX  15016
 
-// next is 1085
+// next is 1090
 
 // IDs reserved for QPAC up to 1199
 
