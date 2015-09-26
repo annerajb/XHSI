@@ -150,8 +150,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox draw_twinspeeds_checkbox;
     private JCheckBox draw_turnrate_checkbox;
     private JCheckBox draw_gmeter_checkbox;
-    private JComboBox draw_joke_input_combobox;
-    private String draw_joke_input[] = { XHSIPreferences.JOKE_INPUT_NONE, XHSIPreferences.JOKE_INPUT_AUTO, XHSIPreferences.JOKE_INPUT_RUDDER, XHSIPreferences.JOKE_INPUT_ALWAYS, XHSIPreferences.JOKE_INPUT_ALWAYS_RUDDER };
+    private JComboBox draw_yoke_input_combobox;
+    private String draw_yoke_input[] = { XHSIPreferences.JOKE_INPUT_NONE, XHSIPreferences.JOKE_INPUT_AUTO, XHSIPreferences.JOKE_INPUT_RUDDER, XHSIPreferences.JOKE_INPUT_ALWAYS, XHSIPreferences.JOKE_INPUT_ALWAYS_RUDDER };
 
     
     private JComboBox eicas_layout_combobox;
@@ -1312,24 +1312,24 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         pfd_options_panel.add(this.draw_gmeter_checkbox, cons);
         dialog_line++;
 
-        // Draw joke and rudder input
+        // Draw yoke and rudder input
         cons.gridx = 0;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
-        pfd_options_panel.add(new JLabel("Draw joke input", JLabel.TRAILING), cons);
+        pfd_options_panel.add(new JLabel("Draw yoke input", JLabel.TRAILING), cons);
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
-        this.draw_joke_input_combobox = new JComboBox();
-        this.draw_joke_input_combobox.addItem("None");
-        this.draw_joke_input_combobox.addItem("Auto - Joke only");
-        this.draw_joke_input_combobox.addItem("Auto - Joke, rudder, brakes");
-        this.draw_joke_input_combobox.addItem("Always - Joke only");
-        this.draw_joke_input_combobox.addItem("Always - Joke, rudder, brakes");
-        this.draw_joke_input_combobox.addActionListener(this);
-        pfd_options_panel.add(this.draw_joke_input_combobox, cons);
+        this.draw_yoke_input_combobox = new JComboBox();
+        this.draw_yoke_input_combobox.addItem("None");
+        this.draw_yoke_input_combobox.addItem("Auto - Yoke only");
+        this.draw_yoke_input_combobox.addItem("Auto - Yoke, rudder, brakes");
+        this.draw_yoke_input_combobox.addItem("Always - Yoke only");
+        this.draw_yoke_input_combobox.addItem("Always - Yoke, rudder, brakes");
+        this.draw_yoke_input_combobox.addActionListener(this);
+        pfd_options_panel.add(this.draw_yoke_input_combobox, cons);
         dialog_line++;
         
         
@@ -2139,8 +2139,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             if ( this.draw_gmeter_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_GMETER).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_PFD_DRAW_GMETER, this.draw_gmeter_checkbox.isSelected()?"true":"false");
 
-            if ( ! draw_joke_input[this.draw_joke_input_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_JOKE_INPUT)) )
-                this.preferences.set_preference(XHSIPreferences.PREF_PFD_DRAW_JOKE_INPUT, draw_joke_input[this.draw_joke_input_combobox.getSelectedIndex()]);
+            if ( ! draw_yoke_input[this.draw_yoke_input_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_JOKE_INPUT)) )
+                this.preferences.set_preference(XHSIPreferences.PREF_PFD_DRAW_JOKE_INPUT, draw_yoke_input[this.draw_yoke_input_combobox.getSelectedIndex()]);
 
             // EICAS options
 

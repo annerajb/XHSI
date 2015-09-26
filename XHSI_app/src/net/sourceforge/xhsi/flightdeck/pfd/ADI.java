@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 
 //import net.sourceforge.xhsi.XHSISettings;
 
-import net.sourceforge.xhsi.XHSIPreferences.DrawJokeInputMode;
+import net.sourceforge.xhsi.XHSIPreferences.DrawYokeInputMode;
 //import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 //import net.sourceforge.xhsi.model.NavigationRadio;
@@ -465,13 +465,13 @@ public class ADI extends PFDSubcomponent {
 //        g2.setColor(pfd_gc.instrument_background_color);
 //        g2.fillRect(pfd_gc.border_left + ( pfd_gc.frame_size.width - pfd_gc.border_left - pfd_gc.border_right ) / 32, pfd_gc.border_top + ( pfd_gc.frame_size.height - pfd_gc.border_top - pfd_gc.border_bottom ) / 8, ( pfd_gc.frame_size.width - pfd_gc.border_left - pfd_gc.border_right ) / 8, ( pfd_gc.frame_size.height - pfd_gc.border_top - pfd_gc.border_bottom ) / 8 * 6);
         
-		DrawJokeInputMode display_joke_pref = preferences.get_pfd_draw_joke_input();
+		DrawYokeInputMode display_yoke_pref = preferences.get_pfd_draw_yoke_input();
 		// Stick orders : on ground / bellow 30 ft AGL
 		int ra = Math.round(this.aircraft.agl_m() * 3.28084f); // Radio altitude
-		boolean display_stick_always = (display_joke_pref == DrawJokeInputMode.ALWAYS) || (display_joke_pref == DrawJokeInputMode.ALWAYS_RUDDER);
-		boolean display_stick_orders = ((this.aircraft.on_ground()) || (ra < 30)) && (display_joke_pref != DrawJokeInputMode.NONE);
-		// public enum DrawJokeInputMode { NONE, AUTO, AUTO_RUDDER, ALWAYS, ALWAYS_RUDDER };
-		boolean display_rudder = (display_joke_pref == DrawJokeInputMode.AUTO_RUDDER ) || (display_joke_pref == DrawJokeInputMode.ALWAYS_RUDDER );
+		boolean display_stick_always = (display_yoke_pref == DrawYokeInputMode.ALWAYS) || (display_yoke_pref == DrawYokeInputMode.ALWAYS_RUDDER);
+		boolean display_stick_orders = ((this.aircraft.on_ground()) || (ra < 30)) && (display_yoke_pref != DrawYokeInputMode.NONE);
+		// public enum DrawYokeInputMode { NONE, AUTO, AUTO_RUDDER, ALWAYS, ALWAYS_RUDDER };
+		boolean display_rudder = (display_yoke_pref == DrawYokeInputMode.AUTO_RUDDER ) || (display_yoke_pref == DrawYokeInputMode.ALWAYS_RUDDER );
 		if  (display_stick_orders || display_stick_always)  {
 
 			g2.setColor(pfd_gc.dim_markings_color);

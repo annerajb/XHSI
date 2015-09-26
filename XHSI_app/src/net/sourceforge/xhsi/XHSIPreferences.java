@@ -109,7 +109,7 @@ public class XHSIPreferences {
     public static final String PREF_PFD_DRAW_TWINSPEEDS = "pfd.draw.twinspeeds";
     public static final String PREF_PFD_DRAW_TURNRATE = "pfd.draw.turnrate";
     public static final String PREF_PFD_DRAW_GMETER = "pfd.draw.gmeter";
-    public static final String PREF_PFD_DRAW_JOKE_INPUT = "pfd.draw.joke_input";
+    public static final String PREF_PFD_DRAW_JOKE_INPUT = "pfd.draw.yoke_input";
 
     // EICAS options
     public static final String PREF_EICAS_LAYOUT = "eicas.layout";
@@ -150,7 +150,7 @@ public class XHSIPreferences {
     public static final String JOKE_INPUT_RUDDER = "rudder";
     public static final String JOKE_INPUT_ALWAYS = "always";
     public static final String JOKE_INPUT_ALWAYS_RUDDER = "always+rudder";
-    public enum DrawJokeInputMode { NONE, AUTO, AUTO_RUDDER, ALWAYS, ALWAYS_RUDDER };
+    public enum DrawYokeInputMode { NONE, AUTO, AUTO_RUDDER, ALWAYS, ALWAYS_RUDDER };
     
     // for PREF_HSI_SOURCE
     public static final String USER = "user";
@@ -805,15 +805,15 @@ public class XHSIPreferences {
     }
 
     /**
-     * @return            - Draw Joke input
+     * @return            - Draw Yoke input
      *
      */
-    public DrawJokeInputMode get_pfd_draw_joke_input() {
-        if ( get_preference(PREF_PFD_DRAW_JOKE_INPUT).equalsIgnoreCase(JOKE_INPUT_NONE) ) { return DrawJokeInputMode.NONE; } 
-        else if ( get_preference(PREF_PFD_DRAW_JOKE_INPUT).equalsIgnoreCase(JOKE_INPUT_AUTO) ) { return DrawJokeInputMode.AUTO; } 
-        else if ( get_preference(PREF_PFD_DRAW_JOKE_INPUT).equalsIgnoreCase(JOKE_INPUT_RUDDER) ) { return DrawJokeInputMode.AUTO_RUDDER; }
-        else if ( get_preference(PREF_PFD_DRAW_JOKE_INPUT).equalsIgnoreCase(JOKE_INPUT_ALWAYS) ) { return DrawJokeInputMode.ALWAYS; }
-        else return DrawJokeInputMode.ALWAYS_RUDDER;
+    public DrawYokeInputMode get_pfd_draw_yoke_input() {
+        if ( get_preference(PREF_PFD_DRAW_JOKE_INPUT).equalsIgnoreCase(JOKE_INPUT_NONE) ) { return DrawYokeInputMode.NONE; } 
+        else if ( get_preference(PREF_PFD_DRAW_JOKE_INPUT).equalsIgnoreCase(JOKE_INPUT_AUTO) ) { return DrawYokeInputMode.AUTO; } 
+        else if ( get_preference(PREF_PFD_DRAW_JOKE_INPUT).equalsIgnoreCase(JOKE_INPUT_RUDDER) ) { return DrawYokeInputMode.AUTO_RUDDER; }
+        else if ( get_preference(PREF_PFD_DRAW_JOKE_INPUT).equalsIgnoreCase(JOKE_INPUT_ALWAYS) ) { return DrawYokeInputMode.ALWAYS; }
+        else return DrawYokeInputMode.ALWAYS_RUDDER;
     }
 
     

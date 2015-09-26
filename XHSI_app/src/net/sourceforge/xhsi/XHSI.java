@@ -83,7 +83,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 8 Alpha 38";
+    private static final String RELEASE = "2.0 Beta 8 Alpha 39";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -571,6 +571,7 @@ public class XHSI implements ActionListener {
 
             instrument_window.frame = new JFrame( instrument_window.get_description() );
             instrument_window.frame.setUndecorated( this.preferences.get_hide_window_frames() );
+// requires Java 1.7   instrument_window.frame.setType(javax.swing.JFrame.Type.UTILITY);
             
             // TODO : Full Screen Mode
             /* Full Screen Code
