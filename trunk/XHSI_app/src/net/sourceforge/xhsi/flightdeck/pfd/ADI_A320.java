@@ -39,7 +39,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.logging.Logger;
 
-import net.sourceforge.xhsi.XHSIPreferences.DrawJokeInputMode;
+import net.sourceforge.xhsi.XHSIPreferences.DrawYokeInputMode;
 import net.sourceforge.xhsi.XHSIStatus;
 import net.sourceforge.xhsi.model.ModelFactory;
 
@@ -494,12 +494,12 @@ public class ADI_A320 extends PFDSubcomponent {
 		g2.drawRect(cx - wing_t, cy - wing_t, wing_t * 2, wing_t * 2);
 		
 	
-		DrawJokeInputMode display_joke_pref = preferences.get_pfd_draw_joke_input();
+		DrawYokeInputMode display_yoke_pref = preferences.get_pfd_draw_yoke_input();
 		// Stick orders : on ground / bellow 30 ft AGL
-		boolean display_stick_always = (display_joke_pref == DrawJokeInputMode.ALWAYS) || (display_joke_pref == DrawJokeInputMode.ALWAYS_RUDDER);
-		boolean display_stick_orders = ((! airborne) || (ra < 30)) && engine_started && (display_joke_pref != DrawJokeInputMode.NONE);
-		// public enum DrawJokeInputMode { NONE, AUTO, AUTO_RUDDER, ALWAYS, ALWAYS_RUDDER };
-		boolean display_rudder = (display_joke_pref == DrawJokeInputMode.AUTO_RUDDER ) || (display_joke_pref == DrawJokeInputMode.ALWAYS_RUDDER );
+		boolean display_stick_always = (display_yoke_pref == DrawYokeInputMode.ALWAYS) || (display_yoke_pref == DrawYokeInputMode.ALWAYS_RUDDER);
+		boolean display_stick_orders = ((! airborne) || (ra < 30)) && engine_started && (display_yoke_pref != DrawYokeInputMode.NONE);
+		// public enum DrawYokeInputMode { NONE, AUTO, AUTO_RUDDER, ALWAYS, ALWAYS_RUDDER };
+		boolean display_rudder = (display_yoke_pref == DrawYokeInputMode.AUTO_RUDDER ) || (display_yoke_pref == DrawYokeInputMode.ALWAYS_RUDDER );
 		if  (display_stick_orders || display_stick_always)  {
 
 			g2.setColor(pfd_gc.pfd_markings_color);
