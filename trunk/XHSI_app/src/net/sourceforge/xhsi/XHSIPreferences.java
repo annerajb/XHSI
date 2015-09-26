@@ -109,7 +109,7 @@ public class XHSIPreferences {
     public static final String PREF_PFD_DRAW_TWINSPEEDS = "pfd.draw.twinspeeds";
     public static final String PREF_PFD_DRAW_TURNRATE = "pfd.draw.turnrate";
     public static final String PREF_PFD_DRAW_GMETER = "pfd.draw.gmeter";
-    public static final String PREF_PFD_DRAW_JOKE_INPUT = "pfd.draw.yoke_input";
+    public static final String PREF_PFD_DRAW_YOKE_INPUT = "pfd.draw.yoke_input";
 
     // EICAS options
     public static final String PREF_EICAS_LAYOUT = "eicas.layout";
@@ -144,12 +144,12 @@ public class XHSIPreferences {
     public static final String INSTRUMENT_STYLE_BOEING = "boeing";   
     public static final String INSTRUMENT_STYLE_AIRBUS = "airbus";   
     
-    // for PREF_PFD_DRAW_JOKE_INPUT
-    public static final String JOKE_INPUT_NONE = "none"; 
-    public static final String JOKE_INPUT_AUTO = "auto";
-    public static final String JOKE_INPUT_RUDDER = "rudder";
-    public static final String JOKE_INPUT_ALWAYS = "always";
-    public static final String JOKE_INPUT_ALWAYS_RUDDER = "always+rudder";
+    // for PREF_PFD_DRAW_YOKE_INPUT
+    public static final String YOKE_INPUT_NONE = "none"; 
+    public static final String YOKE_INPUT_AUTO = "auto";
+    public static final String YOKE_INPUT_RUDDER = "rudder";
+    public static final String YOKE_INPUT_ALWAYS = "always";
+    public static final String YOKE_INPUT_ALWAYS_RUDDER = "always+rudder";
     public enum DrawYokeInputMode { NONE, AUTO, AUTO_RUDDER, ALWAYS, ALWAYS_RUDDER };
     
     // for PREF_HSI_SOURCE
@@ -809,10 +809,10 @@ public class XHSIPreferences {
      *
      */
     public DrawYokeInputMode get_pfd_draw_yoke_input() {
-        if ( get_preference(PREF_PFD_DRAW_JOKE_INPUT).equalsIgnoreCase(JOKE_INPUT_NONE) ) { return DrawYokeInputMode.NONE; } 
-        else if ( get_preference(PREF_PFD_DRAW_JOKE_INPUT).equalsIgnoreCase(JOKE_INPUT_AUTO) ) { return DrawYokeInputMode.AUTO; } 
-        else if ( get_preference(PREF_PFD_DRAW_JOKE_INPUT).equalsIgnoreCase(JOKE_INPUT_RUDDER) ) { return DrawYokeInputMode.AUTO_RUDDER; }
-        else if ( get_preference(PREF_PFD_DRAW_JOKE_INPUT).equalsIgnoreCase(JOKE_INPUT_ALWAYS) ) { return DrawYokeInputMode.ALWAYS; }
+        if ( get_preference(PREF_PFD_DRAW_YOKE_INPUT).equalsIgnoreCase(YOKE_INPUT_NONE) ) { return DrawYokeInputMode.NONE; } 
+        else if ( get_preference(PREF_PFD_DRAW_YOKE_INPUT).equalsIgnoreCase(YOKE_INPUT_AUTO) ) { return DrawYokeInputMode.AUTO; } 
+        else if ( get_preference(PREF_PFD_DRAW_YOKE_INPUT).equalsIgnoreCase(YOKE_INPUT_RUDDER) ) { return DrawYokeInputMode.AUTO_RUDDER; }
+        else if ( get_preference(PREF_PFD_DRAW_YOKE_INPUT).equalsIgnoreCase(YOKE_INPUT_ALWAYS) ) { return DrawYokeInputMode.ALWAYS; }
         else return DrawYokeInputMode.ALWAYS_RUDDER;
     }
 
@@ -1263,8 +1263,8 @@ public class XHSIPreferences {
             this.unsaved_changes = true;
         }
 
-        if ( ! this.preferences.containsKey(PREF_PFD_DRAW_JOKE_INPUT) ) {
-            this.preferences.setProperty(PREF_PFD_DRAW_JOKE_INPUT, JOKE_INPUT_AUTO);
+        if ( ! this.preferences.containsKey(PREF_PFD_DRAW_YOKE_INPUT) ) {
+            this.preferences.setProperty(PREF_PFD_DRAW_YOKE_INPUT, YOKE_INPUT_AUTO);
             this.unsaved_changes = true;
         }
         
