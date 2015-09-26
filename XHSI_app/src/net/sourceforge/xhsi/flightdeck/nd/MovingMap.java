@@ -1148,7 +1148,7 @@ public class MovingMap extends NDSubcomponent {
                         
                         map_projection.setPoint(this.tcas.lat[i], this.tcas.lon[i]);
                         int tfc_x = map_projection.getX();
-                        int tfc_y = map_projection.getX();
+                        int tfc_y = map_projection.getY();
                         AffineTransform pre_tcas_at = g2.getTransform();
                         g2.rotate(Math.toRadians(this.map_up), tfc_x, tfc_y);
                         int diamond_x[] = { tfc_x, tfc_x+tfc_size, tfc_x, tfc_x-tfc_size };
