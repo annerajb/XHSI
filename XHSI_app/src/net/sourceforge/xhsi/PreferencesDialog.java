@@ -151,7 +151,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox draw_turnrate_checkbox;
     private JCheckBox draw_gmeter_checkbox;
     private JComboBox draw_yoke_input_combobox;
-    private String draw_yoke_input[] = { XHSIPreferences.JOKE_INPUT_NONE, XHSIPreferences.JOKE_INPUT_AUTO, XHSIPreferences.JOKE_INPUT_RUDDER, XHSIPreferences.JOKE_INPUT_ALWAYS, XHSIPreferences.JOKE_INPUT_ALWAYS_RUDDER };
+    private String draw_yoke_input[] = { XHSIPreferences.YOKE_INPUT_NONE, XHSIPreferences.YOKE_INPUT_AUTO, XHSIPreferences.YOKE_INPUT_RUDDER, XHSIPreferences.YOKE_INPUT_ALWAYS, XHSIPreferences.YOKE_INPUT_ALWAYS_RUDDER };
 
     
     private JComboBox eicas_layout_combobox;
@@ -2139,8 +2139,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             if ( this.draw_gmeter_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_GMETER).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_PFD_DRAW_GMETER, this.draw_gmeter_checkbox.isSelected()?"true":"false");
 
-            if ( ! draw_yoke_input[this.draw_yoke_input_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_JOKE_INPUT)) )
-                this.preferences.set_preference(XHSIPreferences.PREF_PFD_DRAW_JOKE_INPUT, draw_yoke_input[this.draw_yoke_input_combobox.getSelectedIndex()]);
+            if ( ! draw_yoke_input[this.draw_yoke_input_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_YOKE_INPUT)) )
+                this.preferences.set_preference(XHSIPreferences.PREF_PFD_DRAW_YOKE_INPUT, draw_yoke_input[this.draw_yoke_input_combobox.getSelectedIndex()]);
 
             // EICAS options
 
