@@ -993,7 +993,7 @@ public class XPlaneAircraft implements Aircraft {
     
     
     public String get_nearest_arpt() {
-        if ( this.nearest_arpt.isEmpty() ) {
+        if ( this.nearest_arpt.isEmpty() || this.on_ground() ) {
             return sim_data.get_sim_string(XPlaneSimDataRepository.XHSI_FLIGHTMODEL_POSITION_NEAREST_ARPT);
         } else {
             return this.nearest_arpt;

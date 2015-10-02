@@ -440,6 +440,9 @@ public class NavigationObjectRepository {
         double nrst_dist = 99999.0d;
         ArrayList<NavigationObject> navobj_list;
         
+        double dist;
+        double cos_lat = Math.cos(my_lat);
+        
         for (int grid_lat=0; grid_lat<181; grid_lat++) {
             for (int grid_lon=0; grid_lon<361; grid_lon++) {
 
@@ -448,7 +451,8 @@ public class NavigationObjectRepository {
                 while ( index < navobj_list.size() ) {
                     Airport arpt = (Airport)navobj_list.get(index);
                     if ( arpt.longest >= min_rwy ) {
-                        double dist = Math.hypot( (my_lat - arpt.lat) * Math.cos(my_lat), (my_lon - arpt.lon));
+//                        double dist = Math.hypot( (my_lat - arpt.lat) * Math.cos(my_lat), (my_lon - arpt.lon));
+                        dist = Math.hypot( (my_lat - arpt.lat) * cos_lat, (my_lon - arpt.lon));
                         if ( dist < nrst_dist ) {
                             nrst_dist = dist;
                             nrst_arpt = arpt.icao_code;
