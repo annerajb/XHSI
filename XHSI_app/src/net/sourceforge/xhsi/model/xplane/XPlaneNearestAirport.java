@@ -53,8 +53,11 @@ public class XPlaneNearestAirport extends StoppableThread {
 
         while (this.keep_running) {
             
-            this.aircraft.set_nearest_arpt( nor.find_nrst_arpt(
-                    this.aircraft.lat(), this.aircraft.lon(), this.aircraft.get_min_rwy_length(), true ));
+            if ( (this.aircraft.lat() != 0.0f) || (this.aircraft.lon() != 0.0f) ) {
+                this.aircraft.set_nearest_arpt(
+                    nor.find_nrst_arpt(this.aircraft.lat(), this.aircraft.lon(), this.aircraft.get_min_rwy_length(), true)
+                );
+            }
 
             try { Thread.sleep(100l); } catch(Exception e) {}
             
