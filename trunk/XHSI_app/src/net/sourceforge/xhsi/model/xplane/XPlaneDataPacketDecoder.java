@@ -10,6 +10,7 @@
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * Copyright (C) 2009-2010  Marc Rogiers (marrog.123@gmail.com)
 * Copyright (C) 2009-2014 qwerty (XFMC section)
+* Copyright (C) 2015 Nicolas Carel (QPAC section)
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -37,6 +38,8 @@ import net.sourceforge.xhsi.model.CoordinateSystem;
 import net.sourceforge.xhsi.model.FMS;
 import net.sourceforge.xhsi.model.FMSEntry;
 import net.sourceforge.xhsi.model.ModelFactory;
+import net.sourceforge.xhsi.model.QpacEwdData;
+import net.sourceforge.xhsi.model.QpacMcduData;
 import net.sourceforge.xhsi.model.SimDataRepository;
 import net.sourceforge.xhsi.model.TCAS;
 import net.sourceforge.xhsi.model.XfmcData;
@@ -63,7 +66,10 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
     SimDataRepository xplane_data_repository = null;
     FMS fms = FMS.get_instance();
     TCAS tcas = TCAS.get_instance();
-    XfmcData xfmc = XfmcData.getInstance(); 
+    XfmcData xfmc = XfmcData.getInstance();
+    QpacEwdData qpac_ewd = QpacEwdData.getInstance();
+    QpacMcduData qpac_mcdu = QpacMcduData.getInstance();
+    
 
     public boolean beyond_active;
     public float last_lat;
@@ -416,15 +422,39 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
             
             xfmc.setLine(14, Integer.toString(status));
             
-        } else if (packet_type.equals("QPAC")) {
+        } else if (packet_type.equals("QPAE")) {
         	int buff_max = 80;
-            logger.finest("Receiving XFMC packet");
+            logger.finest("Receiving QPAC E/WD packet");
         	
             DataInputStream data_stream = new DataInputStream(new ByteArrayInputStream(sim_data));
             data_stream.skipBytes(4);    // skip the bytes containing the packet type id
 
             int nb_of_lines = data_stream.readInt();
-            int status = data_stream.readInt();
+            byte[] buff = new byte[buff_max];
+            logger.finest("QPAC E/WD packet lines "+ nb_of_lines);
+            
+            if (nb_of_lines > 0 ) {
+                for (int i = 0; i < nb_of_lines; i++) {
+
+                	int line_no = data_stream.readInt();
+                	int line_length = data_stream.readInt();
+                	data_stream.read(buff, 0, buff_max);
+                	boolean sm = convertCodedStrings(buff);
+                	String s = new String(buff, 0, line_length, charset);
+                	logger.finest("QPAC E/WD packet line " + i + " = " + s);
+                	
+                	qpac_ewd.setLine(line_no, s);
+                }
+            }
+       	
+        } else if (packet_type.equals("QPAM")) {
+        	int buff_max = 80;
+            logger.finest("Receiving QPAC MCDU packet");
+        	
+            DataInputStream data_stream = new DataInputStream(new ByteArrayInputStream(sim_data));
+            data_stream.skipBytes(4);    // skip the bytes containing the packet type id
+
+            int nb_of_lines = data_stream.readInt();
             byte[] buff = new byte[buff_max];
             
             if (nb_of_lines > 0 ) {
@@ -436,12 +466,10 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
                 	boolean sm = convertCodedStrings(buff);
                 	String s = new String(buff, 0, line_length, charset);
                 	
-                	xfmc.setLine(line_no, s);
+                	qpac_mcdu.setLine(line_no, s);
                 }
             }
             
-            xfmc.setLine(14, Integer.toString(status));
-       	
         }
 
         // no, only for sim data packets

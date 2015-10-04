@@ -97,6 +97,57 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int ec_col3_val;
     public int ec_col3_unit;
     
+    // ECAM Engine
+    public int eng_dial_center_x;
+    public int eng_fused_value_dx;
+    public int eng_fused_title_y;
+    public int eng_fused_legend_y;
+    public int eng_fused_line_top;
+    public int eng_fused_line_bottom;
+    public int eng_fused_line_edge_dx;
+    public int eng_fused_line_inner_dx;
+
+    public int eng_oilq_title_y;
+    public int eng_oilq_legend_y;
+    public int eng_oilq_value_y;
+    public int eng_oilq_max_y;
+    public int eng_oilq_min_y;    
+    public int eng_oilq_dial_y;
+    
+    public int eng_oilp_title_y;
+    public int eng_oilp_legend_y;
+    public int eng_oilp_value_y;
+    public int eng_oilp_max_y;
+    public int eng_oilp_min_y;    
+    public int eng_oilp_dial_y;
+    
+    public int eng_oilt_legend_y;
+    public int eng_oilt_value_y;
+    public int eng_oilt_line_top;
+    public int eng_oilt_line_bottom;
+
+    public int eng_ing_title_y;
+    public int eng_ing_legend_y;
+    public int eng_ing_value_y;
+    public int eng_ing_valve_y;
+    public int eng_ing_bottom;
+    
+    public int eng_vib_n1_title_y;
+    public int eng_vib_n1_value_y;
+    public int eng_vib_n1_top;   
+    public int eng_vib_n2_title_y;
+    public int eng_vib_n2_value_y;
+    public int eng_vib_n2_top;
+    public int eng_vib_t_dy;
+    public int eng_vib_t_dx;
+    public int eng_vib_x;
+    
+    public int eng_line_x;
+    public int eng_line_top;
+    public int eng_line_bottom;
+
+    
+    
     // ECAM Lower : Fuel
     public int fuel_r;
     public int fuel_primary_x[] = new int[5];
@@ -510,10 +561,17 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int wheel_main_psi_value_y;
     public int wheel_main_rel_legend_y;
     public int wheel_main_rel_value_y;
+    public int wheel_main_rel_center;
+    public int wheel_main_rel_arc_r;
+    public int wheel_main_rel_dx;
     public int wheel_autobrk_legend_y;
     public int wheel_autobrk_value_y;
     public int wheel_y_spoiler_top;
     public int wheel_y_spoiler_bottom;    
+    public int wheel_door_edge_dx;
+    public int wheel_door_axis_r;
+    public int wheel_door_nose_l;
+    public int wheel_door_main_l;
     
 
     // Systems Status 
@@ -703,10 +761,17 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             
             int cols = Math.max(nb_engines, 2);
             if ( cols == 2 ) {
-                dial_x[0] = panel_rect.x + panel_rect.width*30/100;
-                tape_x[0] = dial_x[0] + dial_r[2]/2;
-                dial_x[1] = panel_rect.x + panel_rect.width*70/100;
-                tape_x[1] = dial_x[1] - dial_r[2]/2;
+            	if (boeing_style) {
+            		dial_x[0] = panel_rect.x + panel_rect.width*30/100;
+            		tape_x[0] = dial_x[0] + dial_r[2]/2;
+            		dial_x[1] = panel_rect.x + panel_rect.width*70/100;
+            		tape_x[1] = dial_x[1] - dial_r[2]/2;
+            	} else {
+            		dial_x[0] = panel_rect.x + panel_rect.width*159/1000;
+            		tape_x[0] = dial_x[0] + dial_r[2]/2;
+            		dial_x[1] = panel_rect.x + panel_rect.width*473/1000;
+            		tape_x[1] = dial_x[1] - dial_r[2]/2;           		
+            	}
             } else {
                 for (int i=0; i<cols; i++) {
                     dial_x[i] = panel_rect.x + panel_rect.width*50/100/cols + i*panel_rect.width*9/10/cols;
@@ -793,6 +858,56 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             gear_y = controls_y + controls_h*1/16;
             autbrk_x = gear_x;
             autbrk_y = controls_y + controls_h*6/16;
+            
+            // ECAM Engine
+            eng_dial_center_x = panel_rect.x + panel_rect.width * 318/1000;
+            
+            eng_fused_value_dx = panel_rect.width * 622/1000;
+            eng_fused_title_y = panel_rect.y + mfd_size * 889/1000;
+            eng_fused_legend_y = panel_rect.y + mfd_size * 889/1000;
+            eng_fused_line_top = panel_rect.y + mfd_size * 889/1000;
+            eng_fused_line_bottom = panel_rect.y + mfd_size * 889/1000;
+            eng_fused_line_edge_dx = panel_rect.width * 622/1000;
+            eng_fused_line_inner_dx = panel_rect.width * 622/1000;
+
+            eng_oilq_title_y = panel_rect.y + mfd_size * 298/1000;
+            eng_oilq_legend_y = panel_rect.y + mfd_size * 385/1000;
+            eng_oilq_value_y = panel_rect.y + mfd_size * 429/1000;
+            eng_oilq_max_y = panel_rect.y + mfd_size * 341/1000;
+            eng_oilq_min_y = panel_rect.y + mfd_size * 429/1000;    
+            eng_oilq_dial_y = panel_rect.y + mfd_size * 381/1000;
+            
+            eng_oilp_title_y = panel_rect.y + mfd_size * 889/1000;
+            eng_oilp_legend_y = panel_rect.y + mfd_size * 567/1000;
+            eng_oilp_value_y = panel_rect.y + mfd_size * 627/1000;
+            eng_oilp_max_y = panel_rect.y + mfd_size * 544/1000;
+            eng_oilp_min_y = panel_rect.y + mfd_size * 630/1000;    
+            eng_oilp_dial_y = panel_rect.y + mfd_size * 583/1000;
+            
+            eng_oilt_legend_y = panel_rect.y + mfd_size * 720/1000;
+            eng_oilt_value_y = panel_rect.y + mfd_size * 726/1000;
+            eng_oilt_line_top = panel_rect.y + mfd_size * 700/1000;
+            eng_oilt_line_bottom = panel_rect.y + mfd_size * 720/1000;
+
+            eng_ing_title_y = panel_rect.y + mfd_size * 889/1000;
+            eng_ing_legend_y = panel_rect.y + mfd_size * 889/1000;
+            eng_ing_value_y = panel_rect.y + mfd_size * 889/1000;
+            eng_ing_valve_y = panel_rect.y + mfd_size * 889/1000;
+            eng_ing_bottom = panel_rect.y + mfd_size * 889/1000;
+            
+            eng_vib_n1_title_y = panel_rect.y + mfd_size * 149/1000;
+            eng_vib_n1_value_y = panel_rect.y + mfd_size * 222/1000;
+            eng_vib_n1_top = panel_rect.y + mfd_size * 163/1000;   
+            eng_vib_n2_title_y = panel_rect.y + mfd_size * 328/1000;
+            eng_vib_n2_value_y = panel_rect.y + mfd_size * 397/1000;
+            eng_vib_n2_top = panel_rect.y + mfd_size * 345/1000;
+            eng_vib_t_dy = mfd_size * 35/1000;
+            eng_vib_t_dx = panel_rect.width * 14/1000;
+            eng_vib_x = panel_rect.x + panel_rect.width * 834/1000;
+            
+            eng_line_x = panel_rect.x + panel_rect.width * 622/1000;
+            eng_line_top = panel_rect.y + mfd_size * 142/1000;
+            eng_line_bottom = panel_rect.y + mfd_size * 889/1000;
             
             // Airbus Flight Controls
             fctl_mid_x = panel_rect.x + panel_rect.width / 2;  // middle axis
@@ -1175,7 +1290,7 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
 
             // Wheels
             wheel_tri_dx = panel_rect.width * 60/1000;
-            wheel_tri_dy = mfd_size * 60/1000;
+            wheel_tri_dy = mfd_size * 75/1000;
             wheel_nose_tri_y = panel_rect.y + mfd_size * 150/1000;
             wheel_nose_door_y = panel_rect.y + mfd_size * 100/1000;
             wheel_nose_psi_legend_y = panel_rect.y + mfd_size * 220/1000;
@@ -1186,15 +1301,23 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             wheel_main_door_y = panel_rect.y + mfd_size * 200/1000;
             wheel_main_temp_legend_y = panel_rect.y + mfd_size * 500/1000;
             wheel_main_temp_value_y = panel_rect.y + mfd_size * 510/1000;
-            wheel_main_psi_legend_y = panel_rect.y + mfd_size * 610/1000;
-            wheel_main_psi_value_y = panel_rect.y + mfd_size * 620/1000;
-            wheel_main_rel_legend_y = panel_rect.y + mfd_size * 580/1000;
-            wheel_main_rel_value_y = panel_rect.y + mfd_size * 585/1000;
+            wheel_main_psi_legend_y = panel_rect.y + mfd_size * 620/1000;
+            wheel_main_psi_value_y = panel_rect.y + mfd_size * 630/1000;
+            wheel_main_rel_legend_y = panel_rect.y + mfd_size * 565/1000;
+            wheel_main_rel_value_y = panel_rect.y + mfd_size * 570/1000;
+            wheel_main_rel_center = panel_rect.y + mfd_size * 550/1000;
+            wheel_main_rel_arc_r = panel_rect.y + mfd_size * 85/1000;
+            wheel_main_rel_dx =  panel_rect.width * 90/1000;
 
             wheel_autobrk_legend_y = panel_rect.y + mfd_size * 700/1000;
             wheel_autobrk_value_y = panel_rect.y + mfd_size * 730/1000;
-            wheel_y_spoiler_top = panel_rect.y + mfd_size * 800/1000;            
-            wheel_y_spoiler_bottom = panel_rect.y + mfd_size * 850/1000;
+            wheel_y_spoiler_top = panel_rect.y + mfd_size * 850/1000;            
+            wheel_y_spoiler_bottom = panel_rect.y + mfd_size * 900/1000;
+            
+            wheel_door_edge_dx = panel_rect.width * 50/1000;
+            wheel_door_axis_r = panel_rect.width * 5/1000;
+            wheel_door_nose_l = panel_rect.width * 60/1000;
+            wheel_door_main_l = panel_rect.width * 100/1000;
             
             
             // Systems Status 

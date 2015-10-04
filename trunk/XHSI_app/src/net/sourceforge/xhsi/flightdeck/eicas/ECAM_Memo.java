@@ -101,22 +101,19 @@ public class ECAM_Memo extends EICASSubcomponent {
 
         if ( eicas_gc.powered && eicas_gc.airbus_style 
         	 && this.preferences.get_eicas_primary_only() && (!this.preferences.get_eicas_draw_controls() || eicas_gc.ecam_version ==1)) {        	
-        	DrawXHSIEcamMemo(g2);
-        	/*
+        	
         	if (this.avionics.is_qpac()) {
         		DrawQpacEcamMemo(g2);
-        	} else if (this.avionics.is_jar_a320neo()) {
-        		DrawJarA320neoEcamMemo(g2);
+        	// } else if (this.avionics.is_jar_a320neo()) {
+        	//	DrawJarA320neoEcamMemo(g2);
         	} else {
         		DrawXHSIEcamMemo(g2);
         	}
-        	*/
-        		
         }
     }
     
     private void DrawQpacEcamMemo(Graphics2D g2) {
-    	
+    	// Do nothing, messages are decoded with ECAM_Messages.
     }
  
     private void DrawJarA320neoEcamMemo(Graphics2D g2) {

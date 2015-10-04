@@ -54,6 +54,12 @@ public class Wheels extends MFDSubcomponent {
 	        if ( this.aircraft.has_retractable_gear() ) {
 	            if ( this.aircraft.num_gears() == 3 ) {
 	                drawTricycle(g2);
+	                drawRelLegends(g2, mfd_gc.mfd_middle_x - mfd_gc.wheel_main_tri_dx );
+	                drawRelLegends(g2, mfd_gc.mfd_middle_x + mfd_gc.wheel_main_tri_dx );
+	                drawRelValues(g2, 0.0f, 0.0f, 1, mfd_gc.mfd_middle_x - mfd_gc.wheel_main_tri_dx - mfd_gc.wheel_main_rel_dx);
+	                drawRelValues(g2, 0.0f, 0.0f, 2, mfd_gc.mfd_middle_x - mfd_gc.wheel_main_tri_dx + mfd_gc.wheel_main_rel_dx);
+	                drawRelValues(g2, 0.0f, 0.0f, 3, mfd_gc.mfd_middle_x + mfd_gc.wheel_main_tri_dx - mfd_gc.wheel_main_rel_dx);
+	                drawRelValues(g2, 0.0f, 0.0f, 4, mfd_gc.mfd_middle_x + mfd_gc.wheel_main_tri_dx + mfd_gc.wheel_main_rel_dx);
 	            } else if ( this.aircraft.num_gears() > 0 ) {
 	                // simple annunciators with an icon
 	                drawAllGears(g2);
@@ -191,7 +197,37 @@ public class Wheels extends MFDSubcomponent {
 
     }
 
+    private void drawRelValues(Graphics2D g2, float psi, float temp, int num, int x) {
+    	String str_psi = "XX";
+    	String str_temp = "XX";
+    	String str_rel = ""+num;
+    	g2.setColor(mfd_gc.ecam_markings_color);
+    	g2.drawArc(x - mfd_gc.wheel_main_rel_arc_r, mfd_gc.wheel_main_rel_center-mfd_gc.wheel_main_rel_arc_r , 
+    				mfd_gc.wheel_main_rel_arc_r*2, mfd_gc.wheel_main_rel_arc_r*2, 65, 50);
+    	g2.drawArc(x - mfd_gc.wheel_main_rel_arc_r, mfd_gc.wheel_main_rel_center-mfd_gc.wheel_main_rel_arc_r , 
+				mfd_gc.wheel_main_rel_arc_r*2, mfd_gc.wheel_main_rel_arc_r*2, -65, -50);
 
+    	g2.setColor(mfd_gc.ecam_caution_color);
+    	g2.setFont(mfd_gc.font_xl);
+    	g2.drawString(str_temp, x, mfd_gc.wheel_main_temp_value_y);
+    	g2.setFont(mfd_gc.font_l);
+    	g2.drawString(str_psi, x, mfd_gc.wheel_main_psi_value_y);
+    	g2.setColor(mfd_gc.ecam_markings_color);
+    	g2.drawString(str_rel, x, mfd_gc.wheel_main_rel_value_y);
+    }
+
+    private void drawRelLegends(Graphics2D g2, int x) {
+    	String str_psi = "PSI";
+    	String str_temp = "°C";
+    	String str_rel = "-REL-";
+    	g2.setFont(mfd_gc.font_s);
+    	g2.setColor(mfd_gc.ecam_action_color);
+    	g2.drawString(str_psi, x - mfd_gc.get_text_width(g2, mfd_gc.font_s, str_psi)/2, mfd_gc.wheel_main_psi_value_y);
+    	g2.drawString(str_temp, x - mfd_gc.get_text_width(g2, mfd_gc.font_s, str_temp)/2, mfd_gc.wheel_main_temp_value_y);
+    	g2.setColor(mfd_gc.ecam_markings_color);
+    	g2.drawString(str_rel, x - mfd_gc.get_text_width(g2, mfd_gc.font_s, str_rel)/2, mfd_gc.wheel_main_rel_value_y);
+    }
+    
     private void drawTrikeWheel(Graphics2D g2, WHEEL gearpos, float lowered) {
 
             int w_w = mfd_gc.wheel_tri_dy;

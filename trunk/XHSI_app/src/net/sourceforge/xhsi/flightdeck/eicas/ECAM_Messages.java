@@ -4,8 +4,12 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.text.DecimalFormat;
+import java.util.List;
 
+import net.sourceforge.xhsi.model.CduLine;
 import net.sourceforge.xhsi.model.ModelFactory;
+import net.sourceforge.xhsi.model.QpacEwdData;
+import net.sourceforge.xhsi.model.QpacMcduData;
 
 public class ECAM_Messages extends EICASSubcomponent {
 	
@@ -108,9 +112,59 @@ public class ECAM_Messages extends EICASSubcomponent {
         }
     }
     
+    private void decodeColor(Graphics2D g2, char color_code) {
+    	switch (color_code) {
+    	case 'r' : g2.setColor(eicas_gc.ecam_warning_color); break;
+    	case 'b' : g2.setColor(eicas_gc.ecam_action_color); break;
+    	case 'w' : g2.setColor(eicas_gc.ecam_markings_color); break;
+    	case 'y' : g2.setColor(Color.YELLOW); break;
+    	case 'm' : g2.setColor(Color.MAGENTA); break;
+    	case 'a' : g2.setColor(eicas_gc.ecam_caution_color); break;
+    	case 'g' : g2.setColor(eicas_gc.ecam_normal_color); break;
+        default : g2.setColor(Color.GRAY); break;
+    	}
+    }
+    
+    private void decodeFont(Graphics2D g2, char font_code) {
+    	switch (font_code) {
+    	case 'l' : g2.setFont(eicas_gc.font_l); break;
+    	case 's' : g2.setFont(eicas_gc.font_s); break;
+        default : g2.setFont(eicas_gc.font_m); break;
+    	}
+    }
+
+    private String insertSpaces(String str) {
+    	String result="";
+    	int pos;
+    	for (pos=0; pos<str.length(); pos++) {
+    		if (str.charAt(pos) == '.' ) { 
+    			result += ' ';
+    		}
+    		result += str.charAt(pos);
+    	}
+    	return result;
+    	
+    }
     
     private void DrawQpacEcamMessages(Graphics2D g2) {
-    	
+    	g2.setFont(eicas_gc.font_l);
+    	g2.setColor(eicas_gc.ecam_normal_color);
+        for(int i=0; i < 7; i++) {        
+        	int y = eicas_gc.memo_y + eicas_gc.line_height_xl*i*11/10;
+        	int x;
+            String ewd_str = QpacEwdData.getLine(i);
+            List<CduLine> l = QpacEwdData.decodeLine(ewd_str);
+            for(CduLine o : l){
+            		if (o.pos>23) {
+            			// It is an ECAM Memo
+            			x = eicas_gc.memo_x + (int) Math.round( (o.pos-25) * eicas_gc.digit_width_l);
+            		} else {
+            			x = eicas_gc.message_x + (int) Math.round( o.pos * eicas_gc.digit_width_l);
+            		}
+                    decodeColor(g2, o.color );
+                    g2.drawString(insertSpaces(o.text), x, y);
+            }
+        } 
     }
  
     private void DrawJarA320neoEcamMessages(Graphics2D g2) {

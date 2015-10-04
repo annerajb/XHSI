@@ -56,6 +56,11 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
+    public int cdu_size;
+    public int cdu_middle_x;
+    public int cdu_first_line;
+    public int cdu_dy_line;
+    public int cdu_scratch_line; 
 
     public Rectangle raised_panel;
     public GradientPaint panel_gradient;
@@ -94,6 +99,12 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
 
             // some subcomponents need to be reminded to redraw immediately
             this.reconfigured = true;
+            
+            cdu_size = Math.min(panel_rect.width, panel_rect.height);
+            cdu_middle_x = panel_rect.x + panel_rect.width / 2;
+            cdu_first_line = panel_rect.y + line_height_fixed_xxxl; 
+            cdu_dy_line = cdu_size / 14 ;
+            cdu_scratch_line = panel_rect.y + cdu_size - line_height_fixed_zl/10; 
 
             float cdu_panel_aspect;
             switch (source) {

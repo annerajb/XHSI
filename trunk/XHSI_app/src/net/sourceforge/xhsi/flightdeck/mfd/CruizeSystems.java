@@ -86,20 +86,6 @@ public class CruizeSystems extends MFDSubcomponent {
 		g2.drawLine(mfd_gc.crz_line_x, mfd_gc.crz_line_top_y, mfd_gc.crz_line_x, mfd_gc.crz_line_bottom_y);
 	}
 	
-	/*
-	 mfd_gc.crz_eng_center_x;
-     mfd_gc.crz_fuel_legend_y;
-     mfd_gc.crz_fuel_value_y;
-     mfd_gc.crz_fuel_units_y;
-     mfd_gc.crz_fuel_top_y;
-     mfd_gc.crz_fuel_bottom_y;
-     mfd_gc.crz_oil_legend_y;
-     mfd_gc.crz_oil_value_y;
-     mfd_gc.crz_oil_units_y;
-     mfd_gc.crz_oil_top_y;
-     mfd_gc.crz_oil_bottom_y;
-	 */
-	
 	private void drawFuelUsed(Graphics2D g2) {
 		String str_fuel_legend = "F. USED";
 		String str_fuel_units = "KG";
