@@ -30,6 +30,7 @@
 
 package net.sourceforge.xhsi.flightdeck.cdu;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -38,7 +39,10 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.model.Avionics;
+import net.sourceforge.xhsi.model.CduLine;
 import net.sourceforge.xhsi.model.ModelFactory;
+import net.sourceforge.xhsi.model.QpacMcduData;
+
 
 public class CDUQpac extends CDUSubcomponent {
 
@@ -53,7 +57,6 @@ public class CDUQpac extends CDUSubcomponent {
     double border_y;
    
     boolean drawregions = false;
-    Font font;
     int displayunit_topleft_x = 76;
     int displayunit_topleft_y = 49;
     double row_coef = 19.8;
@@ -70,7 +73,8 @@ public class CDUQpac extends CDUSubcomponent {
     		if ( this.preferences.cdu_display_only() ) {
     			drawDisplayOnly(g2);
     		} else {
-    			drawFullPanel(g2);
+    			// drawFullPanel(g2);
+    			drawDisplayOnly(g2);
     		}
     	}
     }
@@ -79,23 +83,36 @@ public class CDUQpac extends CDUSubcomponent {
     private void drawDisplayOnly(Graphics2D g2) {
         
         if ( this.aircraft.battery() ) {
+        	String str_title = QpacMcduData.getLine(0);
             
+        	if (str_title.isEmpty()) {
+        		str_title = "QPAC MCDU";
+            	g2.setColor(Color.MAGENTA);
+            	g2.setFont(cdu_gc.font_xl);
+        		g2.drawString(str_title, cdu_gc.cdu_middle_x - cdu_gc.get_text_width(g2, cdu_gc.font_xl, str_title), cdu_gc.cdu_first_line);
+        	} 
+
+
+        	
             scalex = (double)cdu_gc.panel_rect.width /363.0; //was: 343.0
             scaley = (double)cdu_gc.panel_rect.height/289.0;
             border_x = (double)cdu_gc.border_left;
             border_y = (double)cdu_gc.border_top;
 
+            /*
             AffineTransform orig = g2.getTransform();
             g2.translate(border_x, border_y);
             g2.scale(scalex, scaley);
-            g2.translate(font.getSize()/2, font.getSize());
+            g2.translate(large_font.getSize()/2, large_font.getSize());
             
-            g2.setFont(font);
+            g2.setFont(large_font);
             double dy = row_coef;
+            */
 
-            drawDisplayLines(g2, dy);
-
-            g2.setTransform(orig);
+            // drawDisplayLines(g2,dy );
+        	drawDisplayLines(g2);
+        	
+            // g2.setTransform(orig);            
 
         }
         
@@ -105,31 +122,82 @@ public class CDUQpac extends CDUSubcomponent {
     	
     }
     
-    private void drawDisplayLines(Graphics2D g2, double dy) {
-        
-        for(int i=0; i < 14; i++){
-            int x=i, xx = 0, yy = 0;
+    private void decodeColor(Graphics2D g2, char color_code) {
+    	switch (color_code) {
+    	case 'r' : g2.setColor(cdu_gc.ecam_warning_color); break;
+    	case 'b' : g2.setColor(cdu_gc.ecam_action_color); break;
+    	case 'w' : g2.setColor(cdu_gc.ecam_markings_color); break;
+    	case 'y' : g2.setColor(Color.YELLOW); break;
+    	case 'm' : g2.setColor(Color.MAGENTA); break;
+    	case 'a' : g2.setColor(cdu_gc.ecam_caution_color); break;
+    	case 'g' : g2.setColor(cdu_gc.ecam_normal_color); break;
+        default : g2.setColor(Color.GRAY); break;
+    	}
+    }
+    
+    private void decodeFont(Graphics2D g2, char font_code) {
+    	switch (font_code) {
+    	case 'l' : g2.setFont(cdu_gc.font_fixed_zl); break;
+    	case 's' : g2.setFont(cdu_gc.font_fixed_xxxl); break;
+        default : g2.setFont(cdu_gc.font_fixed_zl); break;
+    	}
+    }
+    
+    private String translateCduLine(String str){
+    	String result = "";
+    	char c;
+    	for (int i=0; i<str.length(); i++) {
+    		switch ( str.charAt(i) ) {
+    		case '`' : c = '°'; break;
+    		case '|' : c = 'Δ'; break;
+    		case 1 : c='?'; break;
+    		case 2 : c='?'; break;
+    		case 3 : c='?'; break;
+    		case 4 : c='?'; break;
+    		case 5 : c='?'; break;
+    		case 6 : c='?'; break;
+    		case 7 : c='?'; break;
+    		case 8 : c='?'; break;
+    		case 9 : c='?'; break;
+    		case 10 : c='?'; break;
+    		default : c = str.charAt(i);
+    		}
+    		result += c;
+    	}
+    	return result;
+    }
+    
+    private void drawDisplayLines(Graphics2D g2) {
+    	
+        for(int i=0; i < 14; i++) {        
+
+            int x = 0, yy = 0;
             if(i==0) {
-                xx = 0;
-                yy = upper_y;
+                yy = cdu_gc.cdu_first_line;
             } else if ((i > 0) && (i < 13)){
-                x = (((i+1) / 2) * 2) - ((i % 2) == 1 ? 0 : 1);
-                yy = new Double(dy*(i)).intValue();
+                yy = cdu_gc.cdu_first_line + cdu_gc.cdu_dy_line*i;
             } else if(i == 13) { 
-                xx = 0;
-                yy = new Double(dy*scratch_y_coef).intValue();
+                yy = cdu_gc.cdu_scratch_line;
             }
+            /* Debug */
             /*
-            List l = xfmcData.decodeLine(xfmcData.getLine(x));
-            for(Object o : l){
-                    Object[] pts = (Object[]) o;
-                    xx = new Double((Integer)pts[1]*char_width_coef).intValue();
-
-                    g2.setColor(((Integer)pts[0]).intValue() == 0 ? cdu_gc.markings_color : cdu_gc.color_boeingcyan);
-                    g2.drawString((String)pts[2], xx, yy);
-            }
+            g2.setColor(Color.GRAY);
+            g2.setFont(cdu_gc.font_s);
+            g2.drawString(QpacMcduData.getLine(i), cdu_gc.cdu_middle_x, yy);
             */
+            
+            
+            List<CduLine> l = QpacMcduData.decodeLine(QpacMcduData.getLine(i));
+            for(CduLine o : l){                    
+                    x = (int) Math.round( o.pos * cdu_gc.digit_width_fixed_zl);
+                    decodeColor(g2, o.color );
+                    decodeFont(g2, o.font );
+                    g2.drawString(translateCduLine(o.text), x, yy);
+            }
+            
+            
         }
+        
 
-}
+    }
 }

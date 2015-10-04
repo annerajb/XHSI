@@ -351,6 +351,39 @@ public class GraphicsConfig implements ComponentListener {
     public int max_char_advance_normal;
     public int digit_width_normal;
 
+    // Fixed font 
+    String font_fixed_name = "Andale Mono";   
+    
+    public Font font_fixed_zl;
+    public int line_height_fixed_zl;
+    public int max_char_advance_fixed_zl;
+    public int digit_width_fixed_zl;
+
+    public Font font_fixed_xxxl;
+    public int line_height_fixed_xxxl;
+    public int max_char_advance_fixed_xxxl;
+    public int digit_width_fixed_xxxl;
+    
+    public Font font_fixed_xxl;
+    public int line_height_fixed_xxl;
+    public int max_char_advance_fixed_xxl;
+    public int digit_width_fixed_xxl;
+
+    public Font font_fixed_xl;
+    public int line_height_fixed_xl;
+    public int max_char_advance_fixed_xl;
+    public int digit_width_fixed_xl;
+
+    public Font font_fixed_l;
+    public int line_height_fixed_l;
+    public int max_char_advance_fixed_l;
+    public int digit_width_fixed_l;
+
+    public Font font_fixed_m;
+    public int line_height_fixed_m;
+    public int max_char_advance_fixed_m;
+    public int digit_width_fixed_m;
+    
     public Dimension component_size;
     public Dimension frame_size;
     public Point component_topleft;
@@ -538,6 +571,44 @@ public class GraphicsConfig implements ComponentListener {
             this.max_char_advance_normal = fm.stringWidth("WW") - fm.stringWidth("W");
             this.digit_width_normal =  fm.stringWidth("88") - fm.stringWidth("8");
 
+            // Fixed fonts
+            this.font_fixed_zl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(45.0f * scale));
+            this.font_fixed_xxxl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(32.0f * scale));
+            this.font_fixed_xxl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(24.0f * scale));
+            this.font_fixed_xl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(21.0f * scale));
+            this.font_fixed_l = new Font( this.font_fixed_name, Font.PLAIN, Math.round(18.0f * scale));
+            this.font_fixed_m = new Font( this.font_fixed_name, Font.PLAIN, Math.round(16.0f * scale));
+            
+            // Get metrics for fixed fonts
+            fm = g2.getFontMetrics(this.font_fixed_zl);
+            this.line_height_fixed_zl = fm.getAscent();
+            this.max_char_advance_fixed_zl = fm.stringWidth("WW") - fm.stringWidth("W");
+            this.digit_width_fixed_zl =  fm.stringWidth("88") - fm.stringWidth("8");
+            
+            fm = g2.getFontMetrics(this.font_fixed_xxxl);
+            this.line_height_fixed_xxxl = fm.getAscent();
+            this.max_char_advance_fixed_xxxl = fm.stringWidth("WW") - fm.stringWidth("W");
+            this.digit_width_fixed_xxxl =  fm.stringWidth("88") - fm.stringWidth("8");
+            
+            fm = g2.getFontMetrics(this.font_fixed_xxl);
+            this.line_height_fixed_xxl = fm.getAscent();
+            this.max_char_advance_fixed_xxl = fm.stringWidth("WW") - fm.stringWidth("W");
+            this.digit_width_fixed_xxl =  fm.stringWidth("88") - fm.stringWidth("8");
+
+            fm = g2.getFontMetrics(this.font_fixed_xl);
+            this.line_height_fixed_xl = fm.getAscent();
+            this.max_char_advance_fixed_xl = fm.stringWidth("WW") - fm.stringWidth("W");
+            this.digit_width_fixed_xl =  fm.stringWidth("88") - fm.stringWidth("8");
+
+            fm = g2.getFontMetrics(this.font_fixed_l);
+            this.line_height_fixed_l = fm.getAscent();
+            this.max_char_advance_fixed_l = fm.stringWidth("WW") - fm.stringWidth("W");
+            this.digit_width_fixed_l =  fm.stringWidth("88") - fm.stringWidth("8");
+            
+            fm = g2.getFontMetrics(this.font_fixed_m);
+            this.line_height_fixed_m = fm.getAscent();
+            this.max_char_advance_fixed_m = fm.stringWidth("WW") - fm.stringWidth("W");
+            this.digit_width_fixed_m =  fm.stringWidth("88") - fm.stringWidth("8");
     }
 
 
