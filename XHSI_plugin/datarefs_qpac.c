@@ -21,6 +21,7 @@
 //#include "XPWidgets.h"
 //#include "XPStandardWidgets.h"
 #include "ids.h"
+#include "qpac_msg.h"
 
 
 // DataRefs for the QPAC AirbusFBW
@@ -472,6 +473,7 @@ void findQpacDataRefs(void) {
             qpac_abrk_low_toggle = XPLMFindCommand("AirbusFBW/AbrkLo");
             qpac_abrk_med_toggle = XPLMFindCommand("AirbusFBW/AbrkMed");
             qpac_abrk_max_toggle = XPLMFindCommand("AirbusFBW/AbrkMax");
+            findQpacMsgDataRefs();
 
         }
     }
