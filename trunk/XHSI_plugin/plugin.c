@@ -86,6 +86,7 @@
 #include "receiver.h"
 #include "commands.h"
 #include "xfmc.h"
+#include "qpac_msg.h"
 
 
 
@@ -268,6 +269,13 @@ PLUGIN_API int XPluginEnable(void) {
             -1.0f,
             NULL);
 
+    // QPAC Messages E/WD and MCDU
+    XPLMRegisterFlightLoopCallback(
+            sendQpacMsgCallback,
+            -1.0f,
+            NULL);
+
+
     // Notify DataRefEditor of our custom DataRefs
     XPLMRegisterFlightLoopCallback(
             notifyDataRefEditorCallback,
@@ -320,6 +328,7 @@ PLUGIN_API void XPluginDisable(void) {
     XPLMUnregisterFlightLoopCallback(checkJarA320NeoCallback, NULL);
 
     XPLMUnregisterFlightLoopCallback(sendXfmcCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(sendQpacMsgCallback, NULL);
 
     XPLMDebugString("XHSI: flightloop callbacks unregistered\n");
 
