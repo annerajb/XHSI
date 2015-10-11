@@ -104,7 +104,8 @@ public class ECAM_Messages extends EICASSubcomponent {
         	if (this.avionics.is_qpac()) {
         		DrawQpacEcamMessages(g2);
         	} else if (this.avionics.is_jar_a320neo()) {
-        		DrawJarA320neoEcamMessages(g2);
+        		// DrawJarA320neoEcamMessages(g2);
+        		DrawQpacEcamMessages(g2);
         	} else {
         		DrawXHSIEcamMessages(g2);
         	}

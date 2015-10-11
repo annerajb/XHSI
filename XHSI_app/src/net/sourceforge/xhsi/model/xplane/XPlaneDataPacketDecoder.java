@@ -398,7 +398,7 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
         } else if (packet_type.equals("XFMC")) {
         	
         	int buff_max = 80;
-            logger.finest("Receiving XFMC packet");
+            logger.fine("Receiving XFMC packet");
         	
             DataInputStream data_stream = new DataInputStream(new ByteArrayInputStream(sim_data));
             data_stream.skipBytes(4);    // skip the bytes containing the packet type id
@@ -441,7 +441,7 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
                 	data_stream.read(buff, 0, buff_max);
                 	boolean sm = convertCodedStrings(buff);
                 	String s = new String(buff, 0, line_length, charset);
-                	logger.finest("QPAC E/WD packet line " + i + " = " + s);
+                	logger.fine("QPAC E/WD packet line " + i + " = " + s);
                 	
                 	qpac_ewd.setLine(line_no, s);
                 }
@@ -463,8 +463,9 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
                 	int line_no = data_stream.readInt();
                 	int line_length = data_stream.readInt();
                 	data_stream.read(buff, 0, buff_max);
-                	boolean sm = convertCodedStrings(buff);
+                	// boolean sm = convertCodedStrings(buff);
                 	String s = new String(buff, 0, line_length, charset);
+                	logger.fine("QPAC MCDU packet line " + i + " = " + s);
                 	
                 	qpac_mcdu.setLine(line_no, s);
                 }

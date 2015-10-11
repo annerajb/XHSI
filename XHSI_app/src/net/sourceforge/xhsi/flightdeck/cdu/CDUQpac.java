@@ -69,7 +69,8 @@ public class CDUQpac extends CDUSubcomponent {
     }
 
     public void paint(Graphics2D g2) {
-    	if ((cdu_gc.cdu_source == Avionics.CDU_SOURCE_LEGACY) && this.avionics.is_qpac()) {
+    	if ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_LEGACY) && (this.avionics.is_qpac() || this.avionics.is_jar_a320neo() )
+    			) {
     		if ( this.preferences.cdu_display_only() ) {
     			drawDisplayOnly(g2);
     		} else {
@@ -82,7 +83,7 @@ public class CDUQpac extends CDUSubcomponent {
     
     private void drawDisplayOnly(Graphics2D g2) {
         
-        if ( this.aircraft.battery() ) {
+        if ( this.aircraft.battery() || this.avionics.is_jar_a320neo() ) {
         	String str_title = QpacMcduData.getLine(0);
             
         	if (str_title.isEmpty()) {
@@ -114,6 +115,11 @@ public class CDUQpac extends CDUSubcomponent {
         	
             // g2.setTransform(orig);            
 
+        } else {
+        	String str_title = "POWER OFF";
+           	g2.setColor(cdu_gc.ecam_caution_color);
+           	g2.setFont(cdu_gc.font_xl);
+       		g2.drawString(str_title, cdu_gc.cdu_middle_x - cdu_gc.get_text_width(g2, cdu_gc.font_xl, str_title), cdu_gc.cdu_first_line);
         }
         
     }
@@ -150,6 +156,8 @@ public class CDUQpac extends CDUSubcomponent {
     		switch ( str.charAt(i) ) {
     		case '`' : c = '°'; break;
     		case '|' : c = 'Δ'; break;
+    		case '*' : c = '⎕'; break;
+    		case '0' : c = 'O'; break;
     		case 1 : c='?'; break;
     		case 2 : c='?'; break;
     		case 3 : c='?'; break;
@@ -160,6 +168,27 @@ public class CDUQpac extends CDUSubcomponent {
     		case 8 : c='?'; break;
     		case 9 : c='?'; break;
     		case 10 : c='?'; break;
+    		case 11 : c='?'; break;
+    		case 12 : c='?'; break;
+    		case 13 : c='?'; break;
+    		case 14 : c='?'; break;
+    		case 15 : c='?'; break;
+    		case 16 : c='?'; break;
+    		case 17 : c='?'; break;
+    		case 18 : c='?'; break;
+    		case 19 : c='?'; break;
+    		case 20 : c='?'; break;
+    		case 21 : c='?'; break;
+    		case 22 : c='?'; break;
+    		case 23 : c='?'; break;
+    		case 24 : c='?'; break;
+    		case 25 : c='?'; break;
+    		case 26 : c='?'; break;
+    		case 27 : c='?'; break;
+    		case 28 : c='?'; break;
+    		case 29 : c='?'; break;
+    		case 30 : c='?'; break;
+    		case 31 : c='?'; break;
     		default : c = str.charAt(i);
     		}
     		result += c;

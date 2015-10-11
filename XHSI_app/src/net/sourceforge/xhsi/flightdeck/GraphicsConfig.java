@@ -572,7 +572,7 @@ public class GraphicsConfig implements ComponentListener {
             this.digit_width_normal =  fm.stringWidth("88") - fm.stringWidth("8");
 
             // Fixed fonts
-            this.font_fixed_zl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(45.0f * scale));
+            this.font_fixed_zl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(42.0f * scale));
             this.font_fixed_xxxl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(32.0f * scale));
             this.font_fixed_xxl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(24.0f * scale));
             this.font_fixed_xl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(21.0f * scale));
