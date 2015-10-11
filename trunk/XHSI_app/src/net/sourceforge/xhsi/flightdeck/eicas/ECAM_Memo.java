@@ -104,8 +104,8 @@ public class ECAM_Memo extends EICASSubcomponent {
         	
         	if (this.avionics.is_qpac()) {
         		DrawQpacEcamMemo(g2);
-        	// } else if (this.avionics.is_jar_a320neo()) {
-        	//	DrawJarA320neoEcamMemo(g2);
+        	} else if (this.avionics.is_jar_a320neo()) {
+        		DrawJarA320neoEcamMemo(g2);
         	} else {
         		DrawXHSIEcamMemo(g2);
         	}
@@ -117,7 +117,7 @@ public class ECAM_Memo extends EICASSubcomponent {
     }
  
     private void DrawJarA320neoEcamMemo(Graphics2D g2) {
-    	
+    	// Do nothing, messages are decoded with ECAM_Messages.    	
     }
     
     private void DrawXHSIEcamMemo(Graphics2D g2) {
