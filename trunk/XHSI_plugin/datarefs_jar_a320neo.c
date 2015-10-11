@@ -20,6 +20,7 @@
 //#include "XPLMMenus.h"
 //#include "XPWidgets.h"
 //#include "XPStandardWidgets.h"
+#include "jar_a320neo_msg.h"
 
 // DataRefs for JAR Design Airbus A320 Neo
 
@@ -196,6 +197,7 @@ void findJarA320NeoDataRefs(void) {
             jar_a320_neo_v1 = XPLMFindDataRef("sim/custom/xap/pfd/v1_knots");
             jar_a320_neo_vr = XPLMFindDataRef("sim/custom/xap/pfd/vr_knots");
             jar_a320_neo_vgrdot = XPLMFindDataRef("sim/custom/xap/pfd/vgrdot_knots");
+            findJar_a320MsgDataRefs();
 
         }
     }

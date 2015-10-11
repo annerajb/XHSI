@@ -553,7 +553,7 @@ int createQpacMcduPacket(void) {
     		 if (blue_buffer[j] < ' ') blue_buffer[j] = '?';
     		 encoded_string[p] = blue_buffer[j];
     		 p++;
-    	 } else if ((j < amber_len) && (amber_buffer[j] != ' ')) {
+    	 } else if ((j < amber_len) && (!(amber_buffer[j] == ' '))) {
     		 if (color != 'A') {
     			 color = 'A';
     			 space=0;
@@ -589,7 +589,7 @@ int createQpacMcduPacket(void) {
     		 }
     		 if (white_buffer[j] < ' ') white_buffer[j] = '?';
     		 encoded_string[p++]= white_buffer[j];
-    	 } else if ((j < magenta_len) && (magenta_buffer[j] != 32)) {
+    	 } else if ((j < magenta_len) && (magenta_buffer[j] != ' ')) {
     		 if (color != 'M') {
     			 color = 'M';
 				 space=0;
@@ -601,7 +601,7 @@ int createQpacMcduPacket(void) {
     		 }
     		 if (magenta_buffer[j] < ' ') magenta_buffer[j] = '?';
     		 encoded_string[p++]= magenta_buffer[j];
-    	 } else if ((j < s_blue_len) && (s_blue_buffer[j] != 32)) {
+    	 } else if ((j < s_blue_len) && (s_blue_buffer[j] != ' ')) {
     		 if (color != 'b') {
     			 color = 'b';
 				 space=0;
@@ -613,7 +613,7 @@ int createQpacMcduPacket(void) {
     		 }
     		 if (s_blue_buffer[j] < ' ') s_blue_buffer[j] = '?';
     		 encoded_string[p++]= s_blue_buffer[j];
-    	 } else if ((j < s_white_len) && (s_white_buffer[j] != 32)) {
+    	 } else if ((j < s_white_len) && (s_white_buffer[j] != ' ')) {
     		 if (color != 'w') {
     			 color = 'w';
 				 space=0;
@@ -625,7 +625,7 @@ int createQpacMcduPacket(void) {
     		 }
     		 if (s_white_buffer[j] < ' ') s_white_buffer[j] = '?';
     		 encoded_string[p++]= s_white_buffer[j];
-    	 } else if ((j < s_green_len) && (s_green_buffer[j] != 32)) {
+    	 } else if ((j < s_green_len) && (s_green_buffer[j] != ' ')) {
     		 if (color != 'g') {
     			 color = 'g';
 				 space=0;
@@ -637,7 +637,7 @@ int createQpacMcduPacket(void) {
     		 }
     		 if (s_green_buffer[j] < ' ') s_green_buffer[j] = '?';
     		 encoded_string[p++]= s_green_buffer[j];
-    	 } else if ((j < s_amber_len) && (s_amber_buffer[j] != 32)) {
+    	 } else if ((j < s_amber_len) && (s_amber_buffer[j] != ' ')) {
     		 if (color != 'a') {
     			 color = 'a';
 				 space=0;
@@ -649,7 +649,7 @@ int createQpacMcduPacket(void) {
     		 }
     		 if (s_amber_buffer[j] < ' ') s_amber_buffer[j] = '?';
     		 encoded_string[p++]= (s_amber_buffer[j] < 32) ? s_amber_buffer[j] + 32 : s_amber_buffer[j];
-    	 } else if ((j < s_yellow_len) && (s_yellow_buffer[j] != 32)) {
+    	 } else if ((j < s_yellow_len) && (s_yellow_buffer[j] != ' ')) {
     		 if (color != 'y') {
     			 color = 'y';
 				 space=0;
@@ -661,7 +661,7 @@ int createQpacMcduPacket(void) {
     		 }
     		 if (s_yellow_buffer[j] < ' ') s_yellow_buffer[j] = '?';
     		 encoded_string[p++]= s_yellow_buffer[j];
-    	 } else if ((j < s_magenta_len) && (s_magenta_buffer[j] != 32)) {
+    	 } else if ((j < s_magenta_len) && (s_magenta_buffer[j] != ' ')) {
     		 if (color != 'm') {
     			 color = 'm';
 				 space=0;
@@ -723,9 +723,14 @@ int createQpacMcduPacket(void) {
 	   encoded_string[p++] = '0';
 	   strcpy(&encoded_string[p], yellow_buffer);
    }
-   strcpy(qpacMcduMsgPacket.lines[l].linestr, encoded_string);
-   qpacMcduMsgPacket.lines[l].len = custom_htoni((int)strlen(qpacMcduMsgPacket.lines[l].linestr));
+   // strcpy(qpacMcduMsgPacket.lines[l].linestr, encoded_string);
+   // qpacMcduMsgPacket.lines[l].len = custom_htoni((int)strlen(qpacMcduMsgPacket.lines[l].linestr));
 
+
+   datalen = XPLMGetDatab(qpac_mcdu1_small_amber[0],blue_buffer,0,sizeof(blue_buffer));
+   blue_len = (datalen > 0) ? strlen(blue_buffer) : 0;
+   strcpy(qpacMcduMsgPacket.lines[l].linestr, blue_buffer);
+   qpacMcduMsgPacket.lines[l].len = custom_htoni(blue_len);
 
    return 4 + 4 + QPAC_MCDU_LINES * 88;
 
