@@ -51,6 +51,16 @@ void defaultSettings() {
 		strcpy(dest_ip[i], DEFAULT_DEST_IP);
 		dest_port[i] = DEFAULT_DEST_PORT + i;
 	}
+    
+        strcpy(dest_ip[1], DEFAULT_MULTICAST_IP);
+        dest_port[1] = DEFAULT_DEST_PORT;
+        
+        strcpy(dest_ip[2], "192.168.0.1");
+        dest_port[2] = DEFAULT_DEST_PORT;
+        
+        strcpy(dest_ip[3], "192.168.0.1");
+        dest_port[3] = DEFAULT_DEST_PORT+1;
+        
 	recv_port = DEFAULT_RECV_PORT;
 	recv_rate = 20;
 	recv_delay = 1.0f / (float)recv_rate;
