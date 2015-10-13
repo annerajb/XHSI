@@ -441,6 +441,7 @@ public class NavigationObjectRepository {
         ArrayList<NavigationObject> navobj_list;
         
         double dist;
+        double delta_lon;
         double cos_lat = Math.cos(Math.toRadians(my_lat));
 
         for (int grid_lat=0; grid_lat<181; grid_lat++) {
@@ -451,7 +452,9 @@ public class NavigationObjectRepository {
                 while ( index < navobj_list.size() ) {
                     Airport arpt = (Airport)navobj_list.get(index);
                     if ( arpt.longest >= min_rwy ) {
-                        dist = Math.hypot( (my_lat - arpt.lat), (my_lon - arpt.lon) * cos_lat );
+                        delta_lon = Math.abs(my_lon - arpt.lon);
+                        if ( delta_lon > 270.0 ) delta_lon = 360.0 - delta_lon; // close to the Internationale Date Line, with one point on either side
+                        dist = Math.hypot( (my_lat - arpt.lat), delta_lon * cos_lat );
                         if ( dist < nrst_dist ) {
                             nrst_dist = dist;
                             nrst_arpt = arpt.icao_code;
