@@ -35,6 +35,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.logging.Logger;
@@ -54,7 +56,7 @@ import net.sourceforge.xhsi.model.Observer;
 //import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
 
 
-public class CDUComponent extends Component implements Observer, PreferencesObserver, MouseInputListener {
+public class CDUComponent extends Component implements Observer, PreferencesObserver, MouseInputListener, KeyListener {
 
     private static final long serialVersionUID = 1L;
     public static boolean COLLECT_PROFILING_INFORMATION = false;
@@ -87,14 +89,16 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
         cdu_gc.reconfig = true;
 
         addMouseListener(this);
+        addKeyListener(this);
         
         addComponentListener(cdu_gc);
-//        subcomponents.add(new CDUDemo(model_factory, cdu_gc, this));
         subcomponents.add(new CDUFrame(model_factory, cdu_gc, this));
         subcomponents.add(new CDUXfmc(model_factory, cdu_gc, this));
         subcomponents.add(new CDUQpac(model_factory, cdu_gc, this));
 
         this.repaint();
+        this.setFocusable(true);
+        this.requestFocus();
 
     }
 
@@ -255,4 +259,17 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
 
 	public void mouseMoved(MouseEvent e) {
 	}    
+	
+	public void keyPressed(KeyEvent k) {
+        for (int i=0;i<this.subcomponents.size();i++) {
+            ((CDUSubcomponent)this.subcomponents.get(i)).keyPressed(k);
+        }
+	}
+
+	public void keyTyped(KeyEvent k) {
+	}
+
+	public void keyReleased(KeyEvent k) {
+	}
+	
 }

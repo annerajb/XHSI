@@ -31,6 +31,7 @@ import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Transparency;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
@@ -87,7 +88,9 @@ public abstract class CDUSubcomponent extends Subcomponent {
 
     public void mousePressed(MouseEvent e) {
     }
-
+    
+    public void keyPressed(KeyEvent k) {
+    }
 
 
 //    public String toString() {
