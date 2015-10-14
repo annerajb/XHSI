@@ -37,6 +37,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -146,6 +147,8 @@ public class CDUXfmc extends CDUSubcomponent {
         udp_sender = XPlaneUDPSender.get_instance();
 
         xfmcData.setLine(0, "1/1,38,Remote CDU for X-FMC");	
+        
+        
         
     }
     
@@ -285,7 +288,53 @@ public class CDUXfmc extends CDUSubcomponent {
                 udp_sender.sendDataPoint( XPlaneSimDataRepository.XFMC_KEYPATH, (float) w );
             }
         }
+    	
     }
 
+  
+    public void keyPressed(KeyEvent k) {
+    	char key = k.getKeyChar();
+    	float w = -1.0f;
+    	// Test KeyChar
+    	if (key >= 'a' && key <= 'z') {
+    		w = 27.0f + (key - 'a'); 
+    	} else if (key >= 'A' && key <= 'Z') {
+    		w = 27.0f + (key - 'A');
+    	} else if (key >= '1' && key <= '9') { 
+    		w = 57.0f + (key - '1'); 
+    	} else switch (key) {
+    			case '.' : w = 66.0f; break;
+    			case '/' : w = 55.0f; break;
+    			case '0' : w = 67.0f; break;
+    			case '+' : w = 68.0f; break;
+    			case 127 : w = 56.0f; break; // DEL -> CLEAR
+    			case 8   : w = 54.0f; break; // BackSpace
+    			case 13  : w = 22.0f; break; // EXEC
+    			case 27  : w = 23.0f; break; // MENU
+    	}
+    	// Test KeyCodes
+    	if (w == -1.0f) switch (k.getKeyCode()) {
+    		case KeyEvent.VK_F1 : w = 0.0f; break;// LSK 1
+    		case KeyEvent.VK_F2 : w = 1.0f; break;// LSK 2
+    		case KeyEvent.VK_F3 : w = 2.0f; break;// LSK 3
+    		case KeyEvent.VK_F4 : w = 3.0f; break;// LSK 4
+    		case KeyEvent.VK_F5 : w = 4.0f; break;// LSK 5
+    		case KeyEvent.VK_F6 : w = 5.0f; break;// LSK 6
+    		case KeyEvent.VK_F7 : w = 6.0f; break;// RSK 1
+    		case KeyEvent.VK_F8 : w = 7.0f; break;// RSK 2
+    		case KeyEvent.VK_F9 : w = 8.0f; break;// RSK 3
+    		case KeyEvent.VK_F10 : w = 9.0f; break;// RSK 4
+    		case KeyEvent.VK_F11 : w = 10.0f; break;// RSK 5
+    		case KeyEvent.VK_F12 : w = 11.0f; break;// RSK 6
+    		case KeyEvent.VK_PAGE_UP : w = 26.0f; break;
+    		case KeyEvent.VK_PAGE_DOWN : w = 25.0f; break;
+    		case KeyEvent.VK_HOME : w = 12.0f; break;// INIT
+    		case KeyEvent.VK_END : w = 13.0f; break; // RTE
+    	}
+    
+    	if (w > -0.5f) udp_sender.sendDataPoint( XPlaneSimDataRepository.XFMC_KEYPATH, (float) w );
+    	// logger.info("MCDU Key pressed : " + k.getKeyChar() + " " + w);
+    }    
+    
 	
 }
