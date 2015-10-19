@@ -584,7 +584,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     // Key press to commands
     public static final int QPAC_KEY_PRESS=1089;
     // IDs reserved for QPAC up to 1199
-
+    
     // JarDesign Airbus A320neo
     public static final int JAR_A320NEO_STATUS=1200;
     
@@ -637,6 +637,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int JAR_A320NEO_FAILURES=1255;
     // BRAKES
     public static final int JAR_A320NEO_AUTO_BRAKE_LEVEL=1256;
+    // MCDU Clics
+    public static final int JAR_A320NEO_MCDU_CLICK=1257;
 
     
     // Plugin Version

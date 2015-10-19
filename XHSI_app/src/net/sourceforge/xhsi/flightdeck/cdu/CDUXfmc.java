@@ -282,38 +282,41 @@ public class CDUXfmc extends CDUSubcomponent {
     
     
     public void mousePressed(MouseEvent e) {
-    	for(ClickRegion r : regions){
-            int w = r.check(e.getPoint(), scalex, scaley, border, border);
-            if(w > -1) {
-                udp_sender.sendDataPoint( XPlaneSimDataRepository.XFMC_KEYPATH, (float) w );
-            }
-        }
+    	if (cdu_gc.cdu_source == Avionics.CDU_SOURCE_XFMC) {
+    		for(ClickRegion r : regions){
+    			int w = r.check(e.getPoint(), scalex, scaley, border, border);
+    			if(w > -1) {
+    				udp_sender.sendDataPoint( XPlaneSimDataRepository.XFMC_KEYPATH, (float) w );
+    			}
+    		}
+    	}
     	
     }
 
   
     public void keyPressed(KeyEvent k) {
-    	char key = k.getKeyChar();
-    	float w = -1.0f;
-    	// Test KeyChar
-    	if (key >= 'a' && key <= 'z') {
-    		w = 27.0f + (key - 'a'); 
-    	} else if (key >= 'A' && key <= 'Z') {
-    		w = 27.0f + (key - 'A');
-    	} else if (key >= '1' && key <= '9') { 
-    		w = 57.0f + (key - '1'); 
-    	} else switch (key) {
-    			case '.' : w = 66.0f; break;
-    			case '/' : w = 55.0f; break;
-    			case '0' : w = 67.0f; break;
-    			case '+' : w = 68.0f; break;
-    			case 127 : w = 56.0f; break; // DEL -> CLEAR
-    			case 8   : w = 54.0f; break; // BackSpace
-    			case 13  : w = 22.0f; break; // EXEC
-    			case 27  : w = 23.0f; break; // MENU
-    	}
-    	// Test KeyCodes
-    	if (w == -1.0f) switch (k.getKeyCode()) {
+    	if (cdu_gc.cdu_source == Avionics.CDU_SOURCE_XFMC) {
+    		char key = k.getKeyChar();
+    		float w = -1.0f;
+    		// Test KeyChar
+    		if (key >= 'a' && key <= 'z') {
+    			w = 27.0f + (key - 'a'); 
+    		} else if (key >= 'A' && key <= 'Z') {
+    			w = 27.0f + (key - 'A');
+    		} else if (key >= '1' && key <= '9') { 
+    			w = 57.0f + (key - '1'); 
+    		} else switch (key) {
+    		case '.' : w = 66.0f; break;
+    		case '/' : w = 55.0f; break;
+    		case '0' : w = 67.0f; break;
+    		case '+' : w = 68.0f; break;
+    		case 127 : w = 56.0f; break; // DEL -> CLEAR
+    		case 8   : w = 54.0f; break; // BackSpace
+    		case 13  : w = 22.0f; break; // EXEC
+    		case 27  : w = 23.0f; break; // MENU
+    		}
+    		// Test KeyCodes
+    		if (w == -1.0f) switch (k.getKeyCode()) {
     		case KeyEvent.VK_F1 : w = 0.0f; break;// LSK 1
     		case KeyEvent.VK_F2 : w = 1.0f; break;// LSK 2
     		case KeyEvent.VK_F3 : w = 2.0f; break;// LSK 3
@@ -330,11 +333,12 @@ public class CDUXfmc extends CDUSubcomponent {
     		case KeyEvent.VK_PAGE_DOWN : w = 25.0f; break;
     		case KeyEvent.VK_HOME : w = 12.0f; break;// INIT
     		case KeyEvent.VK_END : w = 13.0f; break; // RTE
-    	}
-    
-    	if (w > -0.5f) udp_sender.sendDataPoint( XPlaneSimDataRepository.XFMC_KEYPATH, (float) w );
-    	// logger.info("MCDU Key pressed : " + k.getKeyChar() + " " + w);
-    }    
+    		}
+
+    		if (w > -0.5f) udp_sender.sendDataPoint( XPlaneSimDataRepository.XFMC_KEYPATH, (float) w );
+    		// logger.info("MCDU Key pressed : " + k.getKeyChar() + " " + w);
+    	}    
+    }
     
 	
 }
