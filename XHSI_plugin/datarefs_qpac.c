@@ -21,6 +21,7 @@
 //#include "XPWidgets.h"
 //#include "XPStandardWidgets.h"
 #include "ids.h"
+#include "datarefs_qpac.h"
 #include "qpac_msg.h"
 
 
@@ -215,92 +216,8 @@ XPLMDataRef qpac_sd_fctl;
 XPLMDataRef qpac_sd_status;
 XPLMDataRef qpac_sd_to_config;
 
-//qpac fcu toggles and push/pull commands
-XPLMCommandRef qpac_to_config_press;
-XPLMCommandRef qpac_push_alt;
-XPLMCommandRef qpac_pull_alt;
-XPLMCommandRef qpac_push_vs;
-XPLMCommandRef qpac_pull_vs;
-XPLMCommandRef qpac_push_hdg;
-XPLMCommandRef qpac_pull_hdg;
-XPLMCommandRef qpac_push_spd;
-XPLMCommandRef qpac_pull_spd;
-XPLMCommandRef qpac_athr_toggle;
-XPLMCommandRef qpac_appr_toggle;
-XPLMCommandRef qpac_loc_toggle;
-XPLMCommandRef qpac_exped_toggle;
-XPLMCommandRef qpac_abrk_low_toggle;
-XPLMCommandRef qpac_abrk_med_toggle;
-XPLMCommandRef qpac_abrk_max_toggle;
-
-// MCDU1 Keys
-XPLMCommandRef qpac_mdcu1_init;
-XPLMCommandRef qpac_mdcu1_data;
-XPLMCommandRef qpac_mdcu1_menu;
-XPLMCommandRef qpac_mdcu1_perf;
-XPLMCommandRef qpac_mdcu1_prog;
-XPLMCommandRef qpac_mdcu1_fpln;
-XPLMCommandRef qpac_mdcu1_dirto;
-XPLMCommandRef qpac_mdcu1_radnav;
-XPLMCommandRef qpac_mdcu1_airport;
-XPLMCommandRef qpac_mdcu1_slew_up;
-XPLMCommandRef qpac_mdcu1_slew_down;
-XPLMCommandRef qpac_mdcu1_slew_left;
-XPLMCommandRef qpac_mdcu1_slew_right;
-XPLMCommandRef qpac_mdcu1_lsk_1l;
-XPLMCommandRef qpac_mdcu1_lsk_2l;
-XPLMCommandRef qpac_mdcu1_lsk_3l;
-XPLMCommandRef qpac_mdcu1_lsk_4l;
-XPLMCommandRef qpac_mdcu1_lsk_5l;
-XPLMCommandRef qpac_mdcu1_lsk_6l;
-XPLMCommandRef qpac_mdcu1_lsk_1r;
-XPLMCommandRef qpac_mdcu1_lsk_2r;
-XPLMCommandRef qpac_mdcu1_lsk_3r;
-XPLMCommandRef qpac_mdcu1_lsk_4r;
-XPLMCommandRef qpac_mdcu1_lsk_5r;
-XPLMCommandRef qpac_mdcu1_lsk_6r;
-XPLMCommandRef qpac_mdcu1_key_slash;
-XPLMCommandRef qpac_mdcu1_key_space;
-XPLMCommandRef qpac_mdcu1_key_overfly;
-XPLMCommandRef qpac_mdcu1_key_clear;
-XPLMCommandRef qpac_mdcu1_key_pm;
-XPLMCommandRef qpac_mdcu1_key_decimal;
-XPLMCommandRef qpac_mdcu1_key_0;
-XPLMCommandRef qpac_mdcu1_key_1;
-XPLMCommandRef qpac_mdcu1_key_2;
-XPLMCommandRef qpac_mdcu1_key_3;
-XPLMCommandRef qpac_mdcu1_key_4;
-XPLMCommandRef qpac_mdcu1_key_5;
-XPLMCommandRef qpac_mdcu1_key_6;
-XPLMCommandRef qpac_mdcu1_key_7;
-XPLMCommandRef qpac_mdcu1_key_8;
-XPLMCommandRef qpac_mdcu1_key_9;
-XPLMCommandRef qpac_mdcu1_key_a;
-XPLMCommandRef qpac_mdcu1_key_b;
-XPLMCommandRef qpac_mdcu1_key_c;
-XPLMCommandRef qpac_mdcu1_key_d;
-XPLMCommandRef qpac_mdcu1_key_e;
-XPLMCommandRef qpac_mdcu1_key_f;
-XPLMCommandRef qpac_mdcu1_key_g;
-XPLMCommandRef qpac_mdcu1_key_h;
-XPLMCommandRef qpac_mdcu1_key_i;
-XPLMCommandRef qpac_mdcu1_key_j;
-XPLMCommandRef qpac_mdcu1_key_k;
-XPLMCommandRef qpac_mdcu1_key_l;
-XPLMCommandRef qpac_mdcu1_key_m;
-XPLMCommandRef qpac_mdcu1_key_n;
-XPLMCommandRef qpac_mdcu1_key_o;
-XPLMCommandRef qpac_mdcu1_key_p;
-XPLMCommandRef qpac_mdcu1_key_q;
-XPLMCommandRef qpac_mdcu1_key_r;
-XPLMCommandRef qpac_mdcu1_key_s;
-XPLMCommandRef qpac_mdcu1_key_t;
-XPLMCommandRef qpac_mdcu1_key_u;
-XPLMCommandRef qpac_mdcu1_key_v;
-XPLMCommandRef qpac_mdcu1_key_w;
-XPLMCommandRef qpac_mdcu1_key_x;
-XPLMCommandRef qpac_mdcu1_key_y;
-XPLMCommandRef qpac_mdcu1_key_z;
+//qpac FCU toggles, push/pull commands, RMP, MCDU
+XPLMCommandRef qpac_command[QPAC_KEY_MAX];
 
 int qpac_ready = 0;
 int qpac_version = 0;
@@ -525,92 +442,189 @@ void findQpacDataRefs(void) {
             qpac_sd_to_config = XPLMFindDataRef("AirbusFBW/TOConfigPress");
 
             //qpac fcu toggles and push/pull commands
-            qpac_to_config_press = XPLMFindCommand("AirbusFBW/TOConfigPress");
-            qpac_push_alt = XPLMFindCommand("AirbusFBW/PushAltitude");
-            qpac_pull_alt = XPLMFindCommand("AirbusFBW/PullAltitude");
-            qpac_push_vs = XPLMFindCommand("AirbusFBW/PushVSSel");
-            qpac_pull_vs = XPLMFindCommand("AirbusFBW/PullVSSel");
-            qpac_push_hdg = XPLMFindCommand("AirbusFBW/PushHDGSel");
-            qpac_pull_hdg = XPLMFindCommand("AirbusFBW/PullHDGSel");
-            qpac_push_spd = XPLMFindCommand("AirbusFBW/PushSPDSel");
-            qpac_pull_spd = XPLMFindCommand("AirbusFBW/PullSPDSel");
-            qpac_athr_toggle = XPLMFindCommand("AirbusFBW/ATHRbutton");
-            qpac_appr_toggle = XPLMFindCommand("AirbusFBW/APPRbutton");
-            qpac_loc_toggle = XPLMFindCommand("AirbusFBW/LOCbutton");
-            qpac_exped_toggle = XPLMFindCommand("AirbusFBW/EXPEDbutton");
-            qpac_abrk_low_toggle = XPLMFindCommand("AirbusFBW/AbrkLo");
-            qpac_abrk_med_toggle = XPLMFindCommand("AirbusFBW/AbrkMed");
-            qpac_abrk_max_toggle = XPLMFindCommand("AirbusFBW/AbrkMax");
-
+            qpac_command[QPAC_KEY_TO_CONFIG] = XPLMFindCommand("AirbusFBW/TOConfigPress");
+            qpac_command[QPAC_KEY_TO_CONFIG] = XPLMFindCommand("AirbusFBW/TOConfigPress");
+            qpac_command[QPAC_KEY_PUSH_ALT] = XPLMFindCommand("AirbusFBW/PushAltitude");
+            qpac_command[QPAC_KEY_PULL_ALT] = XPLMFindCommand("AirbusFBW/PullAltitude");
+            qpac_command[QPAC_KEY_PUSH_VS] = XPLMFindCommand("AirbusFBW/PushVSSel");
+            qpac_command[QPAC_KEY_PULL_VS] = XPLMFindCommand("AirbusFBW/PullVSSel");
+            qpac_command[QPAC_KEY_PUSH_HDG] = XPLMFindCommand("AirbusFBW/PushHDGSel");
+            qpac_command[QPAC_KEY_PULL_HDG] = XPLMFindCommand("AirbusFBW/PullHDGSel");
+            qpac_command[QPAC_KEY_PUSH_SPD] = XPLMFindCommand("AirbusFBW/PushSPDSel");
+            qpac_command[QPAC_KEY_PULL_SPD] = XPLMFindCommand("AirbusFBW/PullSPDSel");
+            qpac_command[QPAC_KEY_ATHR] = XPLMFindCommand("AirbusFBW/ATHRbutton");
+            qpac_command[QPAC_KEY_APPR] = XPLMFindCommand("AirbusFBW/APPRbutton");
+            qpac_command[QPAC_KEY_EXPED] = XPLMFindCommand("AirbusFBW/LOCbutton");
+            qpac_command[QPAC_KEY_LOC] = XPLMFindCommand("AirbusFBW/EXPEDbutton");
+            qpac_command[QPAC_KEY_ABRK_LOW] = XPLMFindCommand("AirbusFBW/AbrkLo");
+            qpac_command[QPAC_KEY_ABRK_MED] = XPLMFindCommand("AirbusFBW/AbrkMed");
+            qpac_command[QPAC_KEY_ABRK_MAX] = XPLMFindCommand("AirbusFBW/AbrkMax");
+            // QPAC RMP1
+            qpac_command[QPAC_KEY_RMP1_VHF1] = XPLMFindCommand("AirbusFBW/VHF1Capt");
+            qpac_command[QPAC_KEY_RMP1_VHF2] = XPLMFindCommand("AirbusFBW/VHF2Capt");
+            qpac_command[QPAC_KEY_RMP1_FREQ_DOWN_LRG] = XPLMFindCommand("AirbusFBW/RMP1FreqDownLrg");
+            qpac_command[QPAC_KEY_RMP1_FREQ_DOWN_SML] = XPLMFindCommand("AirbusFBW/RMP1FreqDownSml");
+            qpac_command[QPAC_KEY_RMP1_FREQ_UP_LRG] = XPLMFindCommand("AirbusFBW/RMP1FreqUpLrg");
+            qpac_command[QPAC_KEY_RMP1_FREQ_UP_SML] = XPLMFindCommand("AirbusFBW/RMP1FreqUpSml");
+            qpac_command[QPAC_KEY_RMP1_SWAP] = XPLMFindCommand("AirbusFBW/RMPSwapCapt");
+            // QPAC RMP2
+            qpac_command[QPAC_KEY_RMP2_VHF1] = XPLMFindCommand("AirbusFBW/VHF1Co");
+            qpac_command[QPAC_KEY_RMP2_VHF2] = XPLMFindCommand("AirbusFBW/VHF2Co");
+            qpac_command[QPAC_KEY_RMP2_FREQ_DOWN_LRG] = XPLMFindCommand("AirbusFBW/RMP2FreqDownLrg");
+            qpac_command[QPAC_KEY_RMP2_FREQ_DOWN_SML] = XPLMFindCommand("AirbusFBW/RMP2FreqDownSml");
+            qpac_command[QPAC_KEY_RMP2_FREQ_UP_LRG] = XPLMFindCommand("AirbusFBW/RMP2FreqUpLrg");
+            qpac_command[QPAC_KEY_RMP2_FREQ_UP_SML] = XPLMFindCommand("AirbusFBW/RMP2FreqUpSml");
+            qpac_command[QPAC_KEY_RMP2_SWAP] = XPLMFindCommand("AirbusFBW/RMPSwapCo");
+            // QPAC RMP3
+            qpac_command[QPAC_KEY_RMP3_VHF1] = XPLMFindCommand("AirbusFBW/VHF1RMP3");
+            qpac_command[QPAC_KEY_RMP3_VHF2] = XPLMFindCommand("AirbusFBW/VHF2RMP3");
+            qpac_command[QPAC_KEY_RMP3_FREQ_DOWN_LRG] = XPLMFindCommand("AirbusFBW/RMP3FreqDownLrg");
+            qpac_command[QPAC_KEY_RMP3_FREQ_DOWN_SML] = XPLMFindCommand("AirbusFBW/RMP3FreqDownSml");
+            qpac_command[QPAC_KEY_RMP3_FREQ_UP_LRG] = XPLMFindCommand("AirbusFBW/RMP3FreqUpLrg");
+            qpac_command[QPAC_KEY_RMP3_FREQ_UP_SML] = XPLMFindCommand("AirbusFBW/RMP3FreqUpSml");
+            qpac_command[QPAC_KEY_RMP3_SWAP] = XPLMFindCommand("AirbusFBW/RMP3Swap");
+            // CAB PRESSURE
+            qpac_command[QPAC_KEY_CAB_VS_UP] = XPLMFindCommand("AirbusFBW/CabVSUp");
+            qpac_command[QPAC_KEY_CAB_VS_DOWN] = XPLMFindCommand("AirbusFBW/CabVSDown");
+            // CHRONO
+            qpac_command[QPAC_KEY_CHRONO_CAPT] = XPLMFindCommand("AirbusFBW/CaptChronoButton");
+            qpac_command[QPAC_KEY_CHRONO_FO] = XPLMFindCommand("AirbusFBW/CoChronoButton");
             // MCDU1 Keys
-            qpac_mdcu1_init = XPLMFindCommand("AirbusFBW/MCDU1Init");
-            qpac_mdcu1_data = XPLMFindCommand("AirbusFBW/MCDU1Data");
-            qpac_mdcu1_menu = XPLMFindCommand("AirbusFBW/MCDU1Menu");
-            qpac_mdcu1_perf = XPLMFindCommand("AirbusFBW/MCDU1Perf");
-            qpac_mdcu1_prog = XPLMFindCommand("AirbusFBW/MCDU1Prog");
-            qpac_mdcu1_fpln = XPLMFindCommand("AirbusFBW/MCDU1Fpln");
-            qpac_mdcu1_dirto = XPLMFindCommand("AirbusFBW/MCDU1DirTo");
-            qpac_mdcu1_radnav = XPLMFindCommand("AirbusFBW/MCDU1RadNav");
-            qpac_mdcu1_airport = XPLMFindCommand("AirbusFBW/MCDU1Airport");
-            qpac_mdcu1_slew_up = XPLMFindCommand("AirbusFBW/MCDU1SlewUp");
-            qpac_mdcu1_slew_down = XPLMFindCommand("AirbusFBW/MCDU1SlewDown");
-            qpac_mdcu1_slew_left = XPLMFindCommand("AirbusFBW/MCDU1SlewLeft");
-            qpac_mdcu1_slew_right = XPLMFindCommand("AirbusFBW/MCDU1SlewRight");
-            qpac_mdcu1_lsk_1l = XPLMFindCommand("AirbusFBW/MCDU1LSK1L");
-            qpac_mdcu1_lsk_2l = XPLMFindCommand("AirbusFBW/MCDU1LSK2L");
-            qpac_mdcu1_lsk_3l = XPLMFindCommand("AirbusFBW/MCDU1LSK3L");
-            qpac_mdcu1_lsk_4l = XPLMFindCommand("AirbusFBW/MCDU1LSK4L");
-            qpac_mdcu1_lsk_5l = XPLMFindCommand("AirbusFBW/MCDU1LSK5L");
-            qpac_mdcu1_lsk_6l = XPLMFindCommand("AirbusFBW/MCDU1LSK6L");
-            qpac_mdcu1_lsk_1r = XPLMFindCommand("AirbusFBW/MCDU1LSK1R");
-            qpac_mdcu1_lsk_2r = XPLMFindCommand("AirbusFBW/MCDU1LSK2R");
-            qpac_mdcu1_lsk_3r = XPLMFindCommand("AirbusFBW/MCDU1LSK3R");
-            qpac_mdcu1_lsk_4r = XPLMFindCommand("AirbusFBW/MCDU1LSK4R");
-            qpac_mdcu1_lsk_5r = XPLMFindCommand("AirbusFBW/MCDU1LSK5R");
-            qpac_mdcu1_lsk_6r = XPLMFindCommand("AirbusFBW/MCDU1LSK6R");
-            qpac_mdcu1_key_slash = XPLMFindCommand("AirbusFBW/MCDU1KeySlash");
-            qpac_mdcu1_key_space = XPLMFindCommand("AirbusFBW/MCDU1KeySpace");
-            qpac_mdcu1_key_overfly = XPLMFindCommand("AirbusFBW/MCDU1KeyOverfly");
-            qpac_mdcu1_key_clear = XPLMFindCommand("AirbusFBW/MCDU1KeyClear");
-            qpac_mdcu1_key_pm = XPLMFindCommand("AirbusFBW/MCDU1KeyPM");
-            qpac_mdcu1_key_decimal = XPLMFindCommand("AirbusFBW/MCDU1KeyDecimal");
-            qpac_mdcu1_key_0 = XPLMFindCommand("AirbusFBW/MCDU1Key0");
-            qpac_mdcu1_key_1 = XPLMFindCommand("AirbusFBW/MCDU1Key1");
-            qpac_mdcu1_key_2 = XPLMFindCommand("AirbusFBW/MCDU1Key2");
-            qpac_mdcu1_key_3 = XPLMFindCommand("AirbusFBW/MCDU1Key3");
-            qpac_mdcu1_key_4 = XPLMFindCommand("AirbusFBW/MCDU1Key4");
-            qpac_mdcu1_key_5 = XPLMFindCommand("AirbusFBW/MCDU1Key5");
-            qpac_mdcu1_key_6 = XPLMFindCommand("AirbusFBW/MCDU1Key6");
-            qpac_mdcu1_key_7 = XPLMFindCommand("AirbusFBW/MCDU1Key7");
-            qpac_mdcu1_key_8 = XPLMFindCommand("AirbusFBW/MCDU1Key8");
-            qpac_mdcu1_key_9 = XPLMFindCommand("AirbusFBW/MCDU1Key9");
-            qpac_mdcu1_key_a = XPLMFindCommand("AirbusFBW/MCDU1KeyA");
-            qpac_mdcu1_key_b = XPLMFindCommand("AirbusFBW/MCDU1KeyB");
-            qpac_mdcu1_key_c = XPLMFindCommand("AirbusFBW/MCDU1KeyC");
-            qpac_mdcu1_key_d = XPLMFindCommand("AirbusFBW/MCDU1KeyD");
-            qpac_mdcu1_key_e = XPLMFindCommand("AirbusFBW/MCDU1KeyE");
-            qpac_mdcu1_key_f = XPLMFindCommand("AirbusFBW/MCDU1KeyF");
-            qpac_mdcu1_key_g = XPLMFindCommand("AirbusFBW/MCDU1KeyG");
-            qpac_mdcu1_key_h = XPLMFindCommand("AirbusFBW/MCDU1KeyH");
-            qpac_mdcu1_key_i = XPLMFindCommand("AirbusFBW/MCDU1KeyI");
-            qpac_mdcu1_key_j = XPLMFindCommand("AirbusFBW/MCDU1KeyJ");
-            qpac_mdcu1_key_k = XPLMFindCommand("AirbusFBW/MCDU1KeyK");
-            qpac_mdcu1_key_l = XPLMFindCommand("AirbusFBW/MCDU1KeyL");
-            qpac_mdcu1_key_m = XPLMFindCommand("AirbusFBW/MCDU1KeyM");
-            qpac_mdcu1_key_n = XPLMFindCommand("AirbusFBW/MCDU1KeyN");
-            qpac_mdcu1_key_o = XPLMFindCommand("AirbusFBW/MCDU1KeyO");
-            qpac_mdcu1_key_p = XPLMFindCommand("AirbusFBW/MCDU1KeyP");
-            qpac_mdcu1_key_q = XPLMFindCommand("AirbusFBW/MCDU1KeyQ");
-            qpac_mdcu1_key_r = XPLMFindCommand("AirbusFBW/MCDU1KeyR");
-            qpac_mdcu1_key_s = XPLMFindCommand("AirbusFBW/MCDU1KeyS");
-            qpac_mdcu1_key_t = XPLMFindCommand("AirbusFBW/MCDU1KeyT");
-            qpac_mdcu1_key_u = XPLMFindCommand("AirbusFBW/MCDU1KeyU");
-            qpac_mdcu1_key_v = XPLMFindCommand("AirbusFBW/MCDU1KeyV");
-            qpac_mdcu1_key_w = XPLMFindCommand("AirbusFBW/MCDU1KeyW");
-            qpac_mdcu1_key_x = XPLMFindCommand("AirbusFBW/MCDU1KeyX");
-            qpac_mdcu1_key_y = XPLMFindCommand("AirbusFBW/MCDU1KeyY");
-            qpac_mdcu1_key_z = XPLMFindCommand("AirbusFBW/MCDU1KeyZ");
-
+            qpac_command[QPAC_KEY_MDCU1_INIT] = XPLMFindCommand("AirbusFBW/MCDU1Init");
+            qpac_command[QPAC_KEY_MDCU1_DATA] = XPLMFindCommand("AirbusFBW/MCDU1Data");
+            qpac_command[QPAC_KEY_MDCU1_MENU] = XPLMFindCommand("AirbusFBW/MCDU1Menu");
+            qpac_command[QPAC_KEY_MDCU1_PERF] = XPLMFindCommand("AirbusFBW/MCDU1Perf");
+            qpac_command[QPAC_KEY_MDCU1_PROG] = XPLMFindCommand("AirbusFBW/MCDU1Prog");
+            qpac_command[QPAC_KEY_MDCU1_FPLN] = XPLMFindCommand("AirbusFBW/MCDU1Fpln");
+            qpac_command[QPAC_KEY_MDCU1_DIR_TO] = XPLMFindCommand("AirbusFBW/MCDU1DirTo");
+            qpac_command[QPAC_KEY_MDCU1_RAD_NAV] = XPLMFindCommand("AirbusFBW/MCDU1RadNav");
+            qpac_command[QPAC_KEY_MDCU1_AIRPORT] = XPLMFindCommand("AirbusFBW/MCDU1Airport");
+            qpac_command[QPAC_KEY_MDCU1_SLEW_UP] = XPLMFindCommand("AirbusFBW/MCDU1SlewUp");
+            qpac_command[QPAC_KEY_MDCU1_SLEW_DOWN] = XPLMFindCommand("AirbusFBW/MCDU1SlewDown");
+            qpac_command[QPAC_KEY_MDCU1_SLEW_LEFT] = XPLMFindCommand("AirbusFBW/MCDU1SlewLeft");
+            qpac_command[QPAC_KEY_MDCU1_SLEW_RIGHT] = XPLMFindCommand("AirbusFBW/MCDU1SlewRight");
+            qpac_command[QPAC_KEY_MDCU1_LSK1L] = XPLMFindCommand("AirbusFBW/MCDU1LSK1L");
+            qpac_command[QPAC_KEY_MDCU1_LSK2L] = XPLMFindCommand("AirbusFBW/MCDU1LSK2L");
+            qpac_command[QPAC_KEY_MDCU1_LSK3L] = XPLMFindCommand("AirbusFBW/MCDU1LSK3L");
+            qpac_command[QPAC_KEY_MDCU1_LSK4L] = XPLMFindCommand("AirbusFBW/MCDU1LSK4L");
+            qpac_command[QPAC_KEY_MDCU1_LSK5L] = XPLMFindCommand("AirbusFBW/MCDU1LSK5L");
+            qpac_command[QPAC_KEY_MDCU1_LSK6L] = XPLMFindCommand("AirbusFBW/MCDU1LSK6L");
+            qpac_command[QPAC_KEY_MDCU1_LSK1R] = XPLMFindCommand("AirbusFBW/MCDU1LSK1R");
+            qpac_command[QPAC_KEY_MDCU1_LSK2R] = XPLMFindCommand("AirbusFBW/MCDU1LSK2R");
+            qpac_command[QPAC_KEY_MDCU1_LSK3R] = XPLMFindCommand("AirbusFBW/MCDU1LSK3R");
+            qpac_command[QPAC_KEY_MDCU1_LSK4R] = XPLMFindCommand("AirbusFBW/MCDU1LSK4R");
+            qpac_command[QPAC_KEY_MDCU1_LSK5R] = XPLMFindCommand("AirbusFBW/MCDU1LSK5R");
+            qpac_command[QPAC_KEY_MDCU1_LSK6R] = XPLMFindCommand("AirbusFBW/MCDU1LSK6R");
+            qpac_command[QPAC_KEY_MDCU1_SLASH] = XPLMFindCommand("AirbusFBW/MCDU1KeySlash");
+            qpac_command[QPAC_KEY_MDCU1_SPACE] = XPLMFindCommand("AirbusFBW/MCDU1KeySpace");
+            qpac_command[QPAC_KEY_MDCU1_OVERFL] = XPLMFindCommand("AirbusFBW/MCDU1KeyOverfly");
+            qpac_command[QPAC_KEY_MDCU1_DEL] = XPLMFindCommand("AirbusFBW/MCDU1KeyClear");
+            qpac_command[QPAC_KEY_MDCU1_PLUS_M] = XPLMFindCommand("AirbusFBW/MCDU1KeyPM");
+            qpac_command[QPAC_KEY_MDCU1_DOT] = XPLMFindCommand("AirbusFBW/MCDU1KeyDecimal");
+            qpac_command[QPAC_KEY_MDCU1_0] = XPLMFindCommand("AirbusFBW/MCDU1Key0");
+            qpac_command[QPAC_KEY_MDCU1_1] = XPLMFindCommand("AirbusFBW/MCDU1Key1");
+            qpac_command[QPAC_KEY_MDCU1_2] = XPLMFindCommand("AirbusFBW/MCDU1Key2");
+            qpac_command[QPAC_KEY_MDCU1_3] = XPLMFindCommand("AirbusFBW/MCDU1Key3");
+            qpac_command[QPAC_KEY_MDCU1_4] = XPLMFindCommand("AirbusFBW/MCDU1Key4");
+            qpac_command[QPAC_KEY_MDCU1_5] = XPLMFindCommand("AirbusFBW/MCDU1Key5");
+            qpac_command[QPAC_KEY_MDCU1_6] = XPLMFindCommand("AirbusFBW/MCDU1Key6");
+            qpac_command[QPAC_KEY_MDCU1_7] = XPLMFindCommand("AirbusFBW/MCDU1Key7");
+            qpac_command[QPAC_KEY_MDCU1_8] = XPLMFindCommand("AirbusFBW/MCDU1Key8");
+            qpac_command[QPAC_KEY_MDCU1_9] = XPLMFindCommand("AirbusFBW/MCDU1Key9");
+            qpac_command[QPAC_KEY_MDCU1_A] = XPLMFindCommand("AirbusFBW/MCDU1KeyA");
+            qpac_command[QPAC_KEY_MDCU1_B] = XPLMFindCommand("AirbusFBW/MCDU1KeyB");
+            qpac_command[QPAC_KEY_MDCU1_C] = XPLMFindCommand("AirbusFBW/MCDU1KeyC");
+            qpac_command[QPAC_KEY_MDCU1_D] = XPLMFindCommand("AirbusFBW/MCDU1KeyD");
+            qpac_command[QPAC_KEY_MDCU1_E] = XPLMFindCommand("AirbusFBW/MCDU1KeyE");
+            qpac_command[QPAC_KEY_MDCU1_F] = XPLMFindCommand("AirbusFBW/MCDU1KeyF");
+            qpac_command[QPAC_KEY_MDCU1_G] = XPLMFindCommand("AirbusFBW/MCDU1KeyG");
+            qpac_command[QPAC_KEY_MDCU1_H] = XPLMFindCommand("AirbusFBW/MCDU1KeyH");
+            qpac_command[QPAC_KEY_MDCU1_I] = XPLMFindCommand("AirbusFBW/MCDU1KeyI");
+            qpac_command[QPAC_KEY_MDCU1_J] = XPLMFindCommand("AirbusFBW/MCDU1KeyJ");
+            qpac_command[QPAC_KEY_MDCU1_K] = XPLMFindCommand("AirbusFBW/MCDU1KeyK");
+            qpac_command[QPAC_KEY_MDCU1_L] = XPLMFindCommand("AirbusFBW/MCDU1KeyL");
+            qpac_command[QPAC_KEY_MDCU1_M] = XPLMFindCommand("AirbusFBW/MCDU1KeyM");
+            qpac_command[QPAC_KEY_MDCU1_N] = XPLMFindCommand("AirbusFBW/MCDU1KeyN");
+            qpac_command[QPAC_KEY_MDCU1_O] = XPLMFindCommand("AirbusFBW/MCDU1KeyO");
+            qpac_command[QPAC_KEY_MDCU1_P] = XPLMFindCommand("AirbusFBW/MCDU1KeyP");
+            qpac_command[QPAC_KEY_MDCU1_Q] = XPLMFindCommand("AirbusFBW/MCDU1KeyQ");
+            qpac_command[QPAC_KEY_MDCU1_R] = XPLMFindCommand("AirbusFBW/MCDU1KeyR");
+            qpac_command[QPAC_KEY_MDCU1_S] = XPLMFindCommand("AirbusFBW/MCDU1KeyS");
+            qpac_command[QPAC_KEY_MDCU1_T] = XPLMFindCommand("AirbusFBW/MCDU1KeyT");
+            qpac_command[QPAC_KEY_MDCU1_U] = XPLMFindCommand("AirbusFBW/MCDU1KeyU");
+            qpac_command[QPAC_KEY_MDCU1_V] = XPLMFindCommand("AirbusFBW/MCDU1KeyV");
+            qpac_command[QPAC_KEY_MDCU1_W] = XPLMFindCommand("AirbusFBW/MCDU1KeyW");
+            qpac_command[QPAC_KEY_MDCU1_X] = XPLMFindCommand("AirbusFBW/MCDU1KeyX");
+            qpac_command[QPAC_KEY_MDCU1_Y] = XPLMFindCommand("AirbusFBW/MCDU1KeyY");
+            qpac_command[QPAC_KEY_MDCU1_Z] = XPLMFindCommand("AirbusFBW/MCDU1KeyZ");
+            // MCDU2 Keys
+            qpac_command[QPAC_KEY_MDCU2_INIT] = XPLMFindCommand("AirbusFBW/MCDU2Init");
+            qpac_command[QPAC_KEY_MDCU2_DATA] = XPLMFindCommand("AirbusFBW/MCDU2Data");
+            qpac_command[QPAC_KEY_MDCU2_MENU] = XPLMFindCommand("AirbusFBW/MCDU2Menu");
+            qpac_command[QPAC_KEY_MDCU2_PERF] = XPLMFindCommand("AirbusFBW/MCDU2Perf");
+            qpac_command[QPAC_KEY_MDCU2_PROG] = XPLMFindCommand("AirbusFBW/MCDU2Prog");
+            qpac_command[QPAC_KEY_MDCU2_FPLN] = XPLMFindCommand("AirbusFBW/MCDU2Fpln");
+            qpac_command[QPAC_KEY_MDCU2_DIR_TO] = XPLMFindCommand("AirbusFBW/MCDU2DirTo");
+            qpac_command[QPAC_KEY_MDCU2_RAD_NAV] = XPLMFindCommand("AirbusFBW/MCDU2RadNav");
+            qpac_command[QPAC_KEY_MDCU2_AIRPORT] = XPLMFindCommand("AirbusFBW/MCDU2Airport");
+            qpac_command[QPAC_KEY_MDCU2_SLEW_UP] = XPLMFindCommand("AirbusFBW/MCDU2SlewUp");
+            qpac_command[QPAC_KEY_MDCU2_SLEW_DOWN] = XPLMFindCommand("AirbusFBW/MCDU2SlewDown");
+            qpac_command[QPAC_KEY_MDCU2_SLEW_LEFT] = XPLMFindCommand("AirbusFBW/MCDU2SlewLeft");
+            qpac_command[QPAC_KEY_MDCU2_SLEW_RIGHT] = XPLMFindCommand("AirbusFBW/MCDU2SlewRight");
+            qpac_command[QPAC_KEY_MDCU2_LSK1L] = XPLMFindCommand("AirbusFBW/MCDU2LSK1L");
+            qpac_command[QPAC_KEY_MDCU2_LSK2L] = XPLMFindCommand("AirbusFBW/MCDU2LSK2L");
+            qpac_command[QPAC_KEY_MDCU2_LSK3L] = XPLMFindCommand("AirbusFBW/MCDU2LSK3L");
+            qpac_command[QPAC_KEY_MDCU2_LSK4L] = XPLMFindCommand("AirbusFBW/MCDU2LSK4L");
+            qpac_command[QPAC_KEY_MDCU2_LSK5L] = XPLMFindCommand("AirbusFBW/MCDU2LSK5L");
+            qpac_command[QPAC_KEY_MDCU2_LSK6L] = XPLMFindCommand("AirbusFBW/MCDU2LSK6L");
+            qpac_command[QPAC_KEY_MDCU2_LSK1R] = XPLMFindCommand("AirbusFBW/MCDU2LSK1R");
+            qpac_command[QPAC_KEY_MDCU2_LSK2R] = XPLMFindCommand("AirbusFBW/MCDU2LSK2R");
+            qpac_command[QPAC_KEY_MDCU2_LSK3R] = XPLMFindCommand("AirbusFBW/MCDU2LSK3R");
+            qpac_command[QPAC_KEY_MDCU2_LSK4R] = XPLMFindCommand("AirbusFBW/MCDU2LSK4R");
+            qpac_command[QPAC_KEY_MDCU2_LSK5R] = XPLMFindCommand("AirbusFBW/MCDU2LSK5R");
+            qpac_command[QPAC_KEY_MDCU2_LSK6R] = XPLMFindCommand("AirbusFBW/MCDU2LSK6R");
+            qpac_command[QPAC_KEY_MDCU2_SLASH] = XPLMFindCommand("AirbusFBW/MCDU2KeySlash");
+            qpac_command[QPAC_KEY_MDCU2_SPACE] = XPLMFindCommand("AirbusFBW/MCDU2KeySpace");
+            qpac_command[QPAC_KEY_MDCU2_OVERFL] = XPLMFindCommand("AirbusFBW/MCDU2KeyOverfly");
+            qpac_command[QPAC_KEY_MDCU2_DEL] = XPLMFindCommand("AirbusFBW/MCDU2KeyClear");
+            qpac_command[QPAC_KEY_MDCU2_PLUS_M] = XPLMFindCommand("AirbusFBW/MCDU2KeyPM");
+            qpac_command[QPAC_KEY_MDCU2_DOT] = XPLMFindCommand("AirbusFBW/MCDU2KeyDecimal");
+            qpac_command[QPAC_KEY_MDCU2_0] = XPLMFindCommand("AirbusFBW/MCDU2Key0");
+            qpac_command[QPAC_KEY_MDCU2_1] = XPLMFindCommand("AirbusFBW/MCDU2Key1");
+            qpac_command[QPAC_KEY_MDCU2_2] = XPLMFindCommand("AirbusFBW/MCDU2Key2");
+            qpac_command[QPAC_KEY_MDCU2_3] = XPLMFindCommand("AirbusFBW/MCDU2Key3");
+            qpac_command[QPAC_KEY_MDCU2_4] = XPLMFindCommand("AirbusFBW/MCDU2Key4");
+            qpac_command[QPAC_KEY_MDCU2_5] = XPLMFindCommand("AirbusFBW/MCDU2Key5");
+            qpac_command[QPAC_KEY_MDCU2_6] = XPLMFindCommand("AirbusFBW/MCDU2Key6");
+            qpac_command[QPAC_KEY_MDCU2_7] = XPLMFindCommand("AirbusFBW/MCDU2Key7");
+            qpac_command[QPAC_KEY_MDCU2_8] = XPLMFindCommand("AirbusFBW/MCDU2Key8");
+            qpac_command[QPAC_KEY_MDCU2_9] = XPLMFindCommand("AirbusFBW/MCDU2Key9");
+            qpac_command[QPAC_KEY_MDCU2_A] = XPLMFindCommand("AirbusFBW/MCDU2KeyA");
+            qpac_command[QPAC_KEY_MDCU2_B] = XPLMFindCommand("AirbusFBW/MCDU2KeyB");
+            qpac_command[QPAC_KEY_MDCU2_C] = XPLMFindCommand("AirbusFBW/MCDU2KeyC");
+            qpac_command[QPAC_KEY_MDCU2_D] = XPLMFindCommand("AirbusFBW/MCDU2KeyD");
+            qpac_command[QPAC_KEY_MDCU2_E] = XPLMFindCommand("AirbusFBW/MCDU2KeyE");
+            qpac_command[QPAC_KEY_MDCU2_F] = XPLMFindCommand("AirbusFBW/MCDU2KeyF");
+            qpac_command[QPAC_KEY_MDCU2_G] = XPLMFindCommand("AirbusFBW/MCDU2KeyG");
+            qpac_command[QPAC_KEY_MDCU2_H] = XPLMFindCommand("AirbusFBW/MCDU2KeyH");
+            qpac_command[QPAC_KEY_MDCU2_I] = XPLMFindCommand("AirbusFBW/MCDU2KeyI");
+            qpac_command[QPAC_KEY_MDCU2_J] = XPLMFindCommand("AirbusFBW/MCDU2KeyJ");
+            qpac_command[QPAC_KEY_MDCU2_K] = XPLMFindCommand("AirbusFBW/MCDU2KeyK");
+            qpac_command[QPAC_KEY_MDCU2_L] = XPLMFindCommand("AirbusFBW/MCDU2KeyL");
+            qpac_command[QPAC_KEY_MDCU2_M] = XPLMFindCommand("AirbusFBW/MCDU2KeyM");
+            qpac_command[QPAC_KEY_MDCU2_N] = XPLMFindCommand("AirbusFBW/MCDU2KeyN");
+            qpac_command[QPAC_KEY_MDCU2_O] = XPLMFindCommand("AirbusFBW/MCDU2KeyO");
+            qpac_command[QPAC_KEY_MDCU2_P] = XPLMFindCommand("AirbusFBW/MCDU2KeyP");
+            qpac_command[QPAC_KEY_MDCU2_Q] = XPLMFindCommand("AirbusFBW/MCDU2KeyQ");
+            qpac_command[QPAC_KEY_MDCU2_R] = XPLMFindCommand("AirbusFBW/MCDU2KeyR");
+            qpac_command[QPAC_KEY_MDCU2_S] = XPLMFindCommand("AirbusFBW/MCDU2KeyS");
+            qpac_command[QPAC_KEY_MDCU2_T] = XPLMFindCommand("AirbusFBW/MCDU2KeyT");
+            qpac_command[QPAC_KEY_MDCU2_U] = XPLMFindCommand("AirbusFBW/MCDU2KeyU");
+            qpac_command[QPAC_KEY_MDCU2_V] = XPLMFindCommand("AirbusFBW/MCDU2KeyV");
+            qpac_command[QPAC_KEY_MDCU2_W] = XPLMFindCommand("AirbusFBW/MCDU2KeyW");
+            qpac_command[QPAC_KEY_MDCU2_X] = XPLMFindCommand("AirbusFBW/MCDU2KeyX");
+            qpac_command[QPAC_KEY_MDCU2_Y] = XPLMFindCommand("AirbusFBW/MCDU2KeyY");
+            qpac_command[QPAC_KEY_MDCU2_Z] = XPLMFindCommand("AirbusFBW/MCDU2KeyZ");
 
             findQpacMsgDataRefs();
 
@@ -662,168 +676,17 @@ void cmdQpacSDPage(int page) {
 }
 
 void writeQpacDataRef(int id, float value) {
-
     char info_string[80];
     sprintf(info_string, "XHSI: received AirbusFBW setting: ID=%d  VALUE=%f\n", id, value);
     XPLMDebugString(info_string);
-
     switch (id) {
 		case QPAC_SD_PAGE :
 			cmdQpacSDPage((int) value);
 			break;
 		case QPAC_KEY_PRESS :
-			switch ((int)value) {
-
-				case QPAC_KEY_TO_CONFIG :
-					if(qpac_ready){
-						XPLMCommandOnce(qpac_to_config_press);
-					}
-					break;
-				case QPAC_KEY_PUSH_ALT :
-					if(qpac_ready){
-						XPLMCommandOnce(qpac_push_alt);
-					}
-					break;
-				case QPAC_KEY_PULL_ALT :
-					if(qpac_ready){
-						XPLMCommandOnce(qpac_pull_alt);
-					}
-					break;
-				case QPAC_KEY_PUSH_VS :
-					if(qpac_ready){
-						XPLMCommandOnce(qpac_push_vs);
-					}
-					break;
-				case QPAC_KEY_PULL_VS :
-					if(qpac_ready){
-						XPLMCommandOnce(qpac_pull_vs);
-					}
-					break;
-				case QPAC_KEY_PUSH_HDG :
-					if(qpac_ready){
-						XPLMCommandOnce(qpac_push_hdg);
-					}
-					break;
-				case QPAC_KEY_PULL_HDG :
-					if(qpac_ready){
-						XPLMCommandOnce(qpac_pull_hdg);
-					}
-					break;
-				case QPAC_KEY_PUSH_SPD :
-					if(qpac_ready){
-						XPLMCommandOnce(qpac_push_spd);
-					}
-					break;
-				case QPAC_KEY_PULL_SPD :
-					if(qpac_ready){
-						XPLMCommandOnce(qpac_pull_spd);
-					}
-					break;
-				case QPAC_KEY_ATHR :
-					if(qpac_ready){
-						XPLMCommandOnce(qpac_athr_toggle);
-					}
-					break;
-				case QPAC_KEY_APPR :
-					if(qpac_ready){
-						XPLMCommandOnce(qpac_appr_toggle);
-					}
-					break;
-				case QPAC_KEY_EXPED :
-					if(qpac_ready){
-						XPLMCommandOnce(qpac_loc_toggle);
-					}
-					break;
-				case QPAC_KEY_LOC :
-					if(qpac_ready){
-						XPLMCommandOnce(qpac_exped_toggle);
-					}
-					break;
-				case QPAC_KEY_ABRK_LOW :
-					if(qpac_ready){
-						XPLMCommandOnce(qpac_abrk_low_toggle);
-					}
-					break;
-				case QPAC_KEY_ABRK_MED :
-					if(qpac_ready){
-						XPLMCommandOnce(qpac_abrk_med_toggle);
-					}
-					break;
-				case QPAC_KEY_ABRK_MAX :
-					if(qpac_ready){
-						XPLMCommandOnce(qpac_abrk_max_toggle);
-					}
-					break;
-				case QPAC_KEY_MDCU1_INIT : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_init); } break;
-				case QPAC_KEY_MDCU1_DATA : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_data); } break;
-				case QPAC_KEY_MDCU1_MENU : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_menu); } break;
-				case QPAC_KEY_MDCU1_PERF : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_perf); } break;
-				case QPAC_KEY_MDCU1_PROG : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_prog); } break;
-				case QPAC_KEY_MDCU1_FPLN : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_fpln); } break;
-				case QPAC_KEY_MDCU1_DIR_TO : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_dirto); } break;
-				case QPAC_KEY_MDCU1_RAD_NAV : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_radnav); } break;
-				case QPAC_KEY_MDCU1_AIRPORT : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_airport); } break;
-				case QPAC_KEY_MDCU1_SLEW_UP : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_slew_up); } break;
-				case QPAC_KEY_MDCU1_SLEW_DOWN : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_slew_down); } break;
-				case QPAC_KEY_MDCU1_SLEW_LEFT : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_slew_left); } break;
-				case QPAC_KEY_MDCU1_SLEW_RIGHT : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_slew_right); } break;
-				case QPAC_KEY_MDCU1_LSK1L : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_lsk_1l); } break;
-				case QPAC_KEY_MDCU1_LSK2L : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_lsk_2l); } break;
-				case QPAC_KEY_MDCU1_LSK3L : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_lsk_3l); } break;
-				case QPAC_KEY_MDCU1_LSK4L : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_lsk_4l); } break;
-				case QPAC_KEY_MDCU1_LSK5L : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_lsk_5l); } break;
-				case QPAC_KEY_MDCU1_LSK6L : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_lsk_6l); } break;
-				case QPAC_KEY_MDCU1_LSK1R : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_lsk_1r); } break;
-				case QPAC_KEY_MDCU1_LSK2R : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_lsk_2r); } break;
-				case QPAC_KEY_MDCU1_LSK3R : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_lsk_3r); } break;
-				case QPAC_KEY_MDCU1_LSK4R : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_lsk_4r); } break;
-				case QPAC_KEY_MDCU1_LSK5R : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_lsk_5r); } break;
-				case QPAC_KEY_MDCU1_LSK6R : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_lsk_6r); } break;
-				case QPAC_KEY_MDCU1_DEL    : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_clear); } break;
-				case QPAC_KEY_MDCU1_SPACE  : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_space); } break;
-				case QPAC_KEY_MDCU1_OVERFL : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_overfly); } break;
-				case QPAC_KEY_MDCU1_PLUS_M : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_pm); } break;
-				case QPAC_KEY_MDCU1_DOT    : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_decimal); } break;
-				case QPAC_KEY_MDCU1_SLASH  : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_slash); } break;
-				case QPAC_KEY_MDCU1_0 : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_0); } break;
-				case QPAC_KEY_MDCU1_1 : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_1); } break;
-				case QPAC_KEY_MDCU1_2 : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_2); } break;
-				case QPAC_KEY_MDCU1_3 : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_3); } break;
-				case QPAC_KEY_MDCU1_4 : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_4); } break;
-				case QPAC_KEY_MDCU1_5 : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_5); } break;
-				case QPAC_KEY_MDCU1_6 : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_6); } break;
-				case QPAC_KEY_MDCU1_7 : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_7); } break;
-				case QPAC_KEY_MDCU1_8 : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_8); } break;
-				case QPAC_KEY_MDCU1_9 : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_9); } break;
-				case QPAC_KEY_MDCU1_A : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_a); } break;
-				case QPAC_KEY_MDCU1_B : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_b); } break;
-				case QPAC_KEY_MDCU1_C : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_c); } break;
-				case QPAC_KEY_MDCU1_D : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_d); } break;
-				case QPAC_KEY_MDCU1_E : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_e); } break;
-				case QPAC_KEY_MDCU1_F : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_f); } break;
-				case QPAC_KEY_MDCU1_G : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_g); } break;
-				case QPAC_KEY_MDCU1_H : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_h); } break;
-				case QPAC_KEY_MDCU1_I : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_i); } break;
-				case QPAC_KEY_MDCU1_J : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_j); } break;
-				case QPAC_KEY_MDCU1_K : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_k); } break;
-				case QPAC_KEY_MDCU1_L : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_l); } break;
-				case QPAC_KEY_MDCU1_M : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_m); } break;
-				case QPAC_KEY_MDCU1_N : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_n); } break;
-				case QPAC_KEY_MDCU1_O : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_o); } break;
-				case QPAC_KEY_MDCU1_P : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_p); } break;
-				case QPAC_KEY_MDCU1_Q : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_q); } break;
-				case QPAC_KEY_MDCU1_R : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_r); } break;
-				case QPAC_KEY_MDCU1_S : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_s); } break;
-				case QPAC_KEY_MDCU1_T : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_t); } break;
-				case QPAC_KEY_MDCU1_U : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_u); } break;
-				case QPAC_KEY_MDCU1_V : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_v); } break;
-				case QPAC_KEY_MDCU1_W : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_w); } break;
-				case QPAC_KEY_MDCU1_X : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_x); } break;
-				case QPAC_KEY_MDCU1_Y : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_y); } break;
-				case QPAC_KEY_MDCU1_Z : if (qpac_ready) { XPLMCommandOnce(qpac_mdcu1_key_z); } break;
-
+			if (value>=0 && value <= QPAC_KEY_MAX && qpac_ready) {
+						XPLMCommandOnce(qpac_command[(int)value]);
 			}
-
 			break;
     }
 }

@@ -120,10 +120,14 @@ extern XPLMDataRef jar_a320_neo_vgrdot;
 // EFIS
 extern XPLMDataRef jar_a320_neo_nd_mode;
 
+// MCDU
+#define JAR_A320_MAX_MCDU_KEYS 70
+extern XPLMDataRef jar_a320_mcdu_click[JAR_A320_MAX_MCDU_KEYS];
+
 extern int jar_a320_neo_ready;
 
 // global functions
-float	checkJarA320NeoCallback(float, float, int, void *);
-
+float checkJarA320NeoCallback(float, float, int, void *);
+void writeJarA320neoDataRef(int, float);
 
 #endif /* DATAREFS_JAR_A320NEO_H_ */

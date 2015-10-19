@@ -95,6 +95,8 @@ void decodeIncomingPacket(void) {
         float_value = custom_ntohf(efis_packet.data_points[i].value);
         if ((id > QPAC_STATUS) && (id < JAR_A320NEO_STATUS)) {
             writeQpacDataRef(id, float_value);
+        } else 	if ((id >= JAR_A320NEO_STATUS) && (id <= JAR_A320NEO_MCDU_CLICK)) {
+        	writeJarA320neoDataRef(id, float_value);
         } else {
         	writeDataRef(id, float_value);
         }

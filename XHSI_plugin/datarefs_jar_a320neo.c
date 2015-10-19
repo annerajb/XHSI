@@ -21,6 +21,8 @@
 //#include "XPWidgets.h"
 //#include "XPStandardWidgets.h"
 #include "jar_a320neo_msg.h"
+#include "datarefs_jar_a320neo.h"
+#include "ids.h"
 
 // DataRefs for JAR Design Airbus A320 Neo
 
@@ -101,6 +103,9 @@ XPLMDataRef jar_a320_neo_vgrdot;
 
 // EFIS
 XPLMDataRef jar_a320_neo_nd_mode;
+
+// MCDU
+XPLMDataRef jar_a320_mcdu_click[JAR_A320_MAX_MCDU_KEYS];
 
 int jar_a320_neo_ready = 0;
 
@@ -197,6 +202,80 @@ void findJarA320NeoDataRefs(void) {
             jar_a320_neo_v1 = XPLMFindDataRef("sim/custom/xap/pfd/v1_knots");
             jar_a320_neo_vr = XPLMFindDataRef("sim/custom/xap/pfd/vr_knots");
             jar_a320_neo_vgrdot = XPLMFindDataRef("sim/custom/xap/pfd/vgrdot_knots");
+
+            // MCDU click
+
+            jar_a320_mcdu_click[0] = XPLMFindDataRef("sim/custom/xap/mcdu/click_mcdumenu");
+            jar_a320_mcdu_click[1] = XPLMFindDataRef("sim/custom/xap/mcdu/click_data");
+            jar_a320_mcdu_click[2] = XPLMFindDataRef("sim/custom/xap/mcdu/click_blank");
+            jar_a320_mcdu_click[3] = XPLMFindDataRef("sim/custom/xap/mcdu/click_fpln");
+            jar_a320_mcdu_click[4] = XPLMFindDataRef("sim/custom/xap/mcdu/click_airp");
+            jar_a320_mcdu_click[5] = XPLMFindDataRef("sim/custom/xap/mcdu/click_fuel");
+            jar_a320_mcdu_click[6] = XPLMFindDataRef("sim/custom/xap/mcdu/click_left");
+            jar_a320_mcdu_click[7] = XPLMFindDataRef("sim/custom/xap/mcdu/click_down");
+            jar_a320_mcdu_click[8] = XPLMFindDataRef("sim/custom/xap/mcdu/click_right");
+            jar_a320_mcdu_click[9] = XPLMFindDataRef("sim/custom/xap/mcdu/click_up");
+            jar_a320_mcdu_click[10] = XPLMFindDataRef("sim/custom/xap/mcdu/click_int");
+            jar_a320_mcdu_click[11] = XPLMFindDataRef("sim/custom/xap/mcdu/click_prog");
+            jar_a320_mcdu_click[12] = XPLMFindDataRef("sim/custom/xap/mcdu/click_dir");
+            jar_a320_mcdu_click[13] = XPLMFindDataRef("sim/custom/xap/mcdu/click_radnav");
+            jar_a320_mcdu_click[14] = XPLMFindDataRef("sim/custom/xap/mcdu/click_perf");
+            jar_a320_mcdu_click[15] = XPLMFindDataRef("sim/custom/xap/mcdu/click_dot");
+            jar_a320_mcdu_click[16] = XPLMFindDataRef("sim/custom/xap/mcdu/click_slash");
+            jar_a320_mcdu_click[17] = XPLMFindDataRef("sim/custom/xap/mcdu/click_plusmin");
+            jar_a320_mcdu_click[18] = XPLMFindDataRef("sim/custom/xap/mcdu/click_sp");
+            jar_a320_mcdu_click[19] = XPLMFindDataRef("sim/custom/xap/mcdu/click_ovfy");
+            jar_a320_mcdu_click[20] = XPLMFindDataRef("sim/custom/xap/mcdu/click_clr");
+            jar_a320_mcdu_click[21] = XPLMFindDataRef("sim/custom/xap/mcdu/click_l1");
+            jar_a320_mcdu_click[22] = XPLMFindDataRef("sim/custom/xap/mcdu/click_l2");
+            jar_a320_mcdu_click[23] = XPLMFindDataRef("sim/custom/xap/mcdu/click_l3");
+            jar_a320_mcdu_click[24] = XPLMFindDataRef("sim/custom/xap/mcdu/click_l4");
+            jar_a320_mcdu_click[25] = XPLMFindDataRef("sim/custom/xap/mcdu/click_l5");
+            jar_a320_mcdu_click[26] = XPLMFindDataRef("sim/custom/xap/mcdu/click_l6");
+            jar_a320_mcdu_click[27] = XPLMFindDataRef("sim/custom/xap/mcdu/click_r1");
+            jar_a320_mcdu_click[28] = XPLMFindDataRef("sim/custom/xap/mcdu/click_r2");
+            jar_a320_mcdu_click[29] = XPLMFindDataRef("sim/custom/xap/mcdu/click_r3");
+            jar_a320_mcdu_click[30] = XPLMFindDataRef("sim/custom/xap/mcdu/click_r4");
+            jar_a320_mcdu_click[31] = XPLMFindDataRef("sim/custom/xap/mcdu/click_r5");
+            jar_a320_mcdu_click[32] = XPLMFindDataRef("sim/custom/xap/mcdu/click_r6");
+
+            jar_a320_mcdu_click[33] = XPLMFindDataRef("sim/custom/xap/mcdu/click_0");
+            jar_a320_mcdu_click[34] = XPLMFindDataRef("sim/custom/xap/mcdu/click_1");
+            jar_a320_mcdu_click[35] = XPLMFindDataRef("sim/custom/xap/mcdu/click_2");
+            jar_a320_mcdu_click[36] = XPLMFindDataRef("sim/custom/xap/mcdu/click_3");
+            jar_a320_mcdu_click[37] = XPLMFindDataRef("sim/custom/xap/mcdu/click_4");
+            jar_a320_mcdu_click[38] = XPLMFindDataRef("sim/custom/xap/mcdu/click_5");
+            jar_a320_mcdu_click[39] = XPLMFindDataRef("sim/custom/xap/mcdu/click_6");
+            jar_a320_mcdu_click[40] = XPLMFindDataRef("sim/custom/xap/mcdu/click_7");
+            jar_a320_mcdu_click[41] = XPLMFindDataRef("sim/custom/xap/mcdu/click_8");
+            jar_a320_mcdu_click[42] = XPLMFindDataRef("sim/custom/xap/mcdu/click_9");
+            jar_a320_mcdu_click[43] = XPLMFindDataRef("sim/custom/xap/mcdu/click_a");
+            jar_a320_mcdu_click[44] = XPLMFindDataRef("sim/custom/xap/mcdu/click_b");
+            jar_a320_mcdu_click[45] = XPLMFindDataRef("sim/custom/xap/mcdu/click_c");
+            jar_a320_mcdu_click[46] = XPLMFindDataRef("sim/custom/xap/mcdu/click_d");
+            jar_a320_mcdu_click[47] = XPLMFindDataRef("sim/custom/xap/mcdu/click_e");
+            jar_a320_mcdu_click[48] = XPLMFindDataRef("sim/custom/xap/mcdu/click_f");
+            jar_a320_mcdu_click[49] = XPLMFindDataRef("sim/custom/xap/mcdu/click_g");
+            jar_a320_mcdu_click[50] = XPLMFindDataRef("sim/custom/xap/mcdu/click_h");
+            jar_a320_mcdu_click[51] = XPLMFindDataRef("sim/custom/xap/mcdu/click_i");
+            jar_a320_mcdu_click[52] = XPLMFindDataRef("sim/custom/xap/mcdu/click_j");
+            jar_a320_mcdu_click[53] = XPLMFindDataRef("sim/custom/xap/mcdu/click_k");
+            jar_a320_mcdu_click[54] = XPLMFindDataRef("sim/custom/xap/mcdu/click_l");
+            jar_a320_mcdu_click[55] = XPLMFindDataRef("sim/custom/xap/mcdu/click_m");
+            jar_a320_mcdu_click[56] = XPLMFindDataRef("sim/custom/xap/mcdu/click_n");
+            jar_a320_mcdu_click[57] = XPLMFindDataRef("sim/custom/xap/mcdu/click_o");
+            jar_a320_mcdu_click[58] = XPLMFindDataRef("sim/custom/xap/mcdu/click_p");
+            jar_a320_mcdu_click[59] = XPLMFindDataRef("sim/custom/xap/mcdu/click_q");
+            jar_a320_mcdu_click[60] = XPLMFindDataRef("sim/custom/xap/mcdu/click_r");
+            jar_a320_mcdu_click[61] = XPLMFindDataRef("sim/custom/xap/mcdu/click_s");
+            jar_a320_mcdu_click[62] = XPLMFindDataRef("sim/custom/xap/mcdu/click_t");
+            jar_a320_mcdu_click[63] = XPLMFindDataRef("sim/custom/xap/mcdu/click_u");
+            jar_a320_mcdu_click[64] = XPLMFindDataRef("sim/custom/xap/mcdu/click_v");
+            jar_a320_mcdu_click[65] = XPLMFindDataRef("sim/custom/xap/mcdu/click_w");
+            jar_a320_mcdu_click[66] = XPLMFindDataRef("sim/custom/xap/mcdu/click_x");
+            jar_a320_mcdu_click[67] = XPLMFindDataRef("sim/custom/xap/mcdu/click_y");
+            jar_a320_mcdu_click[68] = XPLMFindDataRef("sim/custom/xap/mcdu/click_z");
+
             findJar_a320MsgDataRefs();
 
         }
@@ -214,3 +293,18 @@ float checkJarA320NeoCallback(
     // come back in 5sec
     return 5.0;
 }
+
+
+void writeJarA320neoDataRef(int id, float value) {
+
+    char info_string[80];
+    sprintf(info_string, "XHSI: received JarDesign A320 data: ID=%d  VALUE=%f\n", id, value);
+    XPLMDebugString(info_string);
+
+    switch (id) {
+		case JAR_A320NEO_MCDU_CLICK :
+			if ((value >= 0) && (value <= 68)) XPLMSetDatai(jar_a320_mcdu_click[(int)value], 1);
+			break;
+    }
+}
+
