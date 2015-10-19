@@ -9,7 +9,6 @@
 #define JAR_A320NEO_MSG_H_
 
 
-
 // ECAM Memo & Messages
 #define JAR_A320_EWD_LINES 7
 #define JAR_A320_SD_LINES 18

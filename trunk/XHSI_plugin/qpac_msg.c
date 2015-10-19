@@ -723,14 +723,15 @@ int createQpacMcduPacket(void) {
 	   encoded_string[p++] = '0';
 	   strcpy(&encoded_string[p], yellow_buffer);
    }
-   // strcpy(qpacMcduMsgPacket.lines[l].linestr, encoded_string);
-   // qpacMcduMsgPacket.lines[l].len = custom_htoni((int)strlen(qpacMcduMsgPacket.lines[l].linestr));
+   strcpy(qpacMcduMsgPacket.lines[l].linestr, encoded_string);
+   qpacMcduMsgPacket.lines[l].len = custom_htoni((int)strlen(qpacMcduMsgPacket.lines[l].linestr));
 
-
+   /*
    datalen = XPLMGetDatab(qpac_mcdu1_small_amber[0],blue_buffer,0,sizeof(blue_buffer));
    blue_len = (datalen > 0) ? strlen(blue_buffer) : 0;
    strcpy(qpacMcduMsgPacket.lines[l].linestr, blue_buffer);
    qpacMcduMsgPacket.lines[l].len = custom_htoni(blue_len);
+   */
 
    return 4 + 4 + QPAC_MCDU_LINES * 88;
 
