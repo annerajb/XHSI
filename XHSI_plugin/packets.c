@@ -1343,7 +1343,7 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_thr_rating_type));
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_THR_RATING_N1);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_thr_rating_n1));
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_thr_rating_n1));
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_THROTTLE_INPUT);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_throttle_input));
