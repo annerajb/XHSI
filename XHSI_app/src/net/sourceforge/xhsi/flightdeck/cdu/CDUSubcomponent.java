@@ -86,7 +86,7 @@ public abstract class CDUSubcomponent extends Subcomponent {
 
     public abstract void paint(Graphics2D g2);
 
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(Graphics2D g2, MouseEvent e) {
     }
     
     public void keyPressed(KeyEvent k) {

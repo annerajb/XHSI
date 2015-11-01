@@ -40,6 +40,8 @@ import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -104,11 +106,8 @@ public class CDUXfmc extends CDUSubcomponent {
         	
         } catch (IOException ioe){}
         
-        
-//        font = new Font("Lucida Console",1, 18);
         // Andale Mono is one of the Core Webfonts, Lucida Console is not! https://en.wikipedia.org/wiki/Core_fonts_for_the_Web
-        font = new Font("Andale Mono",1, 18);
-        
+        font = new Font("Andale Mono",1, 18);        
 
         regions = new ArrayList<ClickRegion>();
 
@@ -146,10 +145,7 @@ public class CDUXfmc extends CDUSubcomponent {
         xfmcData = XfmcData.getInstance();
         udp_sender = XPlaneUDPSender.get_instance();
 
-        xfmcData.setLine(0, "1/1,38,Remote CDU for X-FMC");	
-        
-        
-        
+        xfmcData.setLine(0, "1/1,38,Remote CDU for X-FMC");	      
     }
     
     
@@ -242,7 +238,6 @@ public class CDUXfmc extends CDUSubcomponent {
             // for debugging
             if ( drawregions ) {
                 g2.setColor(cdu_gc.dim_markings_color);
-                double[] sc = new double[]{1.0, 1.0};
                 for(ClickRegion r2 : regions){
                         r2.draw(g2, scalex, scaley, border, border);
                 }
@@ -280,11 +275,17 @@ public class CDUXfmc extends CDUSubcomponent {
 
     }
     
-    
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(Graphics2D g2, MouseEvent e) {
     	if (cdu_gc.cdu_source == Avionics.CDU_SOURCE_XFMC) {
+    		Point true_click = e.getPoint();
+    		AffineTransform current_transform = g2.getTransform();
+    		try {
+    			current_transform.invert();
+    			current_transform.transform(e.getPoint(), true_click);
+    		} catch (NoninvertibleTransformException e1) {
+    		}
     		for(ClickRegion r : regions){
-    			int w = r.check(e.getPoint(), scalex, scaley, border, border);
+    			int w = r.check(true_click, scalex, scaley, border, border);
     			if(w > -1) {
     				udp_sender.sendDataPoint( XPlaneSimDataRepository.XFMC_KEYPATH, (float) w );
     			}
