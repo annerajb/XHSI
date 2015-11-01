@@ -1,14 +1,17 @@
 package net.sourceforge.xhsi.flightdeck.eicas;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 
 import net.sourceforge.xhsi.model.ModelFactory;
 
 public class ECAM_Flaps extends EICASSubcomponent {
 
+    private Stroke original_stroke;
 
 	public ECAM_Flaps(ModelFactory model_factory, EICASGraphicsConfig hsi_gc, Component parent_component) {
 		super(model_factory, hsi_gc, parent_component);
@@ -90,6 +93,7 @@ public class ECAM_Flaps extends EICASSubcomponent {
         g2.fillPolygon(wing_section_x, wing_section_y, 4);
         // g2.drawPolygon(wing_section_x, wing_section_y, 4);
         	
+        scalePen(g2,1.2f);
         
         // Flaps
         if ( flaps > 0.05f ) {
@@ -206,7 +210,7 @@ public class ECAM_Flaps extends EICASSubcomponent {
         g2.drawLine(eicas_gc.ecam_flaps_box_x + eicas_gc.ecam_flaps_box_w*33/100, eicas_gc.ecam_flaps_box_y + eicas_gc.ecam_flaps_box_h*38/100 - 1 ,
     			eicas_gc.ecam_slats_center_x - s_tx, eicas_gc.ecam_slats_center_y+s_dy);
 
-        
+        resetPen(g2);
     }
     
     
@@ -438,5 +442,18 @@ public class ECAM_Flaps extends EICASSubcomponent {
         }
 
     }
+    
+    private void scalePen(Graphics2D g2, float factor) {
 
+        original_stroke = g2.getStroke();
+        g2.setStroke(new BasicStroke(factor * eicas_gc.grow_scaling_factor, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
+
+    }
+
+
+    private void resetPen(Graphics2D g2) {
+
+        g2.setStroke(original_stroke);
+
+    }
 }

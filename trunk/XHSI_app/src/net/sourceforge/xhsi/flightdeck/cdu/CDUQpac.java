@@ -32,15 +32,20 @@ package net.sourceforge.xhsi.flightdeck.cdu;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
 
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.CduLine;
@@ -55,6 +60,8 @@ public class CDUQpac extends CDUSubcomponent {
     private static final long serialVersionUID = 1L;
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
+    
+    private BufferedImage image = null;
 
     double scalex = 1;
     double scaley = 1;
@@ -62,12 +69,17 @@ public class CDUQpac extends CDUSubcomponent {
     double border_x;
     double border_y;
     
-    List<ClickRegion> regions;
+    List<ClickRegion> qpac_regions;
+    List<ClickRegion> jar_a320_regions;
+
     boolean drawregions = false;
     XPlaneUDPSender udp_sender = null; 
     
-    int displayunit_topleft_x = 76;
-    int displayunit_topleft_y = 49;
+    int displayunit_topleft_x = 81;
+    int displayunit_topleft_y = 56;
+    int displayunit_width = 338;
+    int displayunit_heigth = 400;
+
     double row_coef = 19.8;
     int upper_y = 2;
     double scratch_y_coef = 13.0;
@@ -136,6 +148,7 @@ public class CDUQpac extends CDUSubcomponent {
     public static final int JAR_A320_MCDU_CLICK_DIR_TO     = 12;
     public static final int JAR_A320_MCDU_CLICK_RAD_NAV    = 13;
     public static final int JAR_A320_MCDU_CLICK_AIRPORT    = 2;
+    public static final int JAR_A320_MCDU_CLICK_FUEL       = 5;   
     public static final int JAR_A320_MCDU_CLICK_SLEW_UP    = 9;
     public static final int JAR_A320_MCDU_CLICK_SLEW_DOWN  = 7;
     public static final int JAR_A320_MCDU_CLICK_SLEW_LEFT  = 6;
@@ -174,39 +187,127 @@ public class CDUQpac extends CDUSubcomponent {
     
     public CDUQpac(ModelFactory model_factory, CDUGraphicsConfig cdu_gc, Component parent_component) {
         super(model_factory, cdu_gc, parent_component);
+        
+        try {
+        	image = ImageIO.read(this.getClass().getResourceAsStream("img/mcdu_a320_800x480.png"));      	
+        } catch (IOException ioe){}
+        
         udp_sender = XPlaneUDPSender.get_instance();
 
-        regions = new ArrayList<ClickRegion>();
+        qpac_regions = new ArrayList<ClickRegion>();
+        jar_a320_regions = new ArrayList<ClickRegion>();
 
+        // QPAC MCDU Keyboard mapping
         // LSK
-        regions.add(new ClickRegion(new Point(6, 62), new Point(48+26, 300), 1, 6, 
-                        new int[][] {{0}, {1}, {2}, {3}, {4}, {5}} ));
+        qpac_regions.add(new ClickRegion(new Point(6, 95), new Point(48+26, 365), 1, 6, 
+                        new int[][] {
+        	{QPAC_KEY_MDCU1_LSK1L}, 
+        	{QPAC_KEY_MDCU1_LSK2L},
+        	{QPAC_KEY_MDCU1_LSK3L},
+        	{QPAC_KEY_MDCU1_LSK4L},
+        	{QPAC_KEY_MDCU1_LSK5L},
+        	{QPAC_KEY_MDCU1_LSK6L}} ));
 
         // RSK
-        regions.add(new ClickRegion(new Point(432-26, 62), new Point(474, 300), 1, 6, 
-                        new int[][] {{6}, {7}, {8}, {9}, {10}, {11}} ));
+        qpac_regions.add(new ClickRegion(new Point(432-26, 95), new Point(474, 365), 1, 6, 
+                        new int[][] {
+        	{QPAC_KEY_MDCU1_LSK1R},
+        	{QPAC_KEY_MDCU1_LSK2R},
+        	{QPAC_KEY_MDCU1_LSK3R},
+        	{QPAC_KEY_MDCU1_LSK4R},
+        	{QPAC_KEY_MDCU1_LSK5R},
+        	{QPAC_KEY_MDCU1_LSK6R}} ));
 
         // A..Z, SP, DEL, /, CLR
-        regions.add(new ClickRegion(new Point(192, 452), new Point(432, 774), 5, 6,
+        qpac_regions.add(new ClickRegion(new Point(192, 490), new Point(440, 785), 5, 6,
                         new int[][] {
-                                {27, 28, 29, 30, 31},
-                                {32, 33, 34, 35, 36},
-                                {37, 38, 39, 40, 41},
-                                {42, 43, 44, 45, 46},
-                                {47, 48, 49, 50, 51},
-                                {52, -1, 54, 55, 56}} ));
+            {84, 85, 86, 87, 88},
+            {89, 90, 91, 92, 93},
+            {94, 95, 96, 97, 98},
+            {99, 100, 101, 102, 103},
+            {104, 105, 106, 107, 108},
+            {109, QPAC_KEY_MDCU1_SLASH, QPAC_KEY_MDCU1_SPACE, QPAC_KEY_MDCU1_OVERFL, QPAC_KEY_MDCU1_DEL}} ));
 
         // 1..9, ., 0, +/-
-        regions.add(new ClickRegion(new Point(52, 562), new Point(186, 768), 3, 4, 
-                        new int[][] {{57, 58, 59}, {60, 61, 62}, {63, 64, 65}, {66, 67, 68}} ));
+        qpac_regions.add(new ClickRegion(new Point(43, 608), new Point(186, 785), 3, 4, 
+                        new int[][] {
+        	{75, 76, 77},
+        	{78, 79, 80},
+        	{81, 82, 83}, 
+        	{QPAC_KEY_MDCU1_DOT, QPAC_KEY_MDCU1_0, QPAC_KEY_MDCU1_PLUS_M}} ));
 
-        // INIT REF, RTE, DEP ARR, AP, VNAV, BRT, FIX, LEGS, HOLD, PERF, PROG, EXEC
-        regions.add(new ClickRegion(new Point(52, 348), new Point(436, 452), 6, 2, 
-                        new int[][] {{12, 13, 14, 15, 16, -1}, {17, 18, 19, 20, 21, 22}} ));
+        
+        // DIR, PROG, PERF, INIT, DATA, blank
+        // F-PLN, RAD-NAV, FUEL-PRED, SEC-FPLN, ATC-COMM, MCDU MENU
+        qpac_regions.add(new ClickRegion(new Point(46, 400), new Point(402, 485), 6, 2, 
+                        new int[][] {
+        	{QPAC_KEY_MDCU1_DIR_TO, QPAC_KEY_MDCU1_PROG, QPAC_KEY_MDCU1_PERF, QPAC_KEY_MDCU1_INIT, QPAC_KEY_MDCU1_DATA, -1},
+        	{QPAC_KEY_MDCU1_FPLN, QPAC_KEY_MDCU1_RAD_NAV, -1, -1, -1, QPAC_KEY_MDCU1_MENU}} ));
 
-        // MENU, NAV RAD, PREV PAGE, NEXT PAGE
-        regions.add(new ClickRegion(new Point(52, 454), new Point(180, 554), 2, 2, 
-                        new int[][] {{23, 24}, {25, 26}} ));
+        // AIRPORT, blank
+        // LEFT, UP
+        // RIGHT, DOWN
+        qpac_regions.add(new ClickRegion(new Point(46, 486), new Point(170, 607), 2, 3, 
+                        new int[][] {
+        		{QPAC_KEY_MDCU1_AIRPORT, -1}, 
+        		{QPAC_KEY_MDCU1_SLEW_LEFT, QPAC_KEY_MDCU1_SLEW_UP},
+        		{QPAC_KEY_MDCU1_SLEW_RIGHT, QPAC_KEY_MDCU1_SLEW_DOWN}} ));
+
+        // JAR Design A320neo MCDU Keyboard mapping
+        // LSK
+        jar_a320_regions.add(new ClickRegion(new Point(6, 95), new Point(48+26, 365), 1, 6, 
+                        new int[][] {
+        	{JAR_A320_MCDU_CLICK_LSK1L}, 
+        	{JAR_A320_MCDU_CLICK_LSK2L},
+        	{JAR_A320_MCDU_CLICK_LSK3L},
+        	{JAR_A320_MCDU_CLICK_LSK4L},
+        	{JAR_A320_MCDU_CLICK_LSK5L},
+        	{JAR_A320_MCDU_CLICK_LSK6L}} ));
+
+        // RSK
+        jar_a320_regions.add(new ClickRegion(new Point(432-26, 95), new Point(474, 365), 1, 6, 
+                        new int[][] {
+        	{JAR_A320_MCDU_CLICK_LSK1R},
+        	{JAR_A320_MCDU_CLICK_LSK2R},
+        	{JAR_A320_MCDU_CLICK_LSK3R},
+        	{JAR_A320_MCDU_CLICK_LSK4R},
+        	{JAR_A320_MCDU_CLICK_LSK5R},
+        	{JAR_A320_MCDU_CLICK_LSK6R}} ));
+
+        // A..Z, SP, DEL, /, CLR
+        jar_a320_regions.add(new ClickRegion(new Point(192, 490), new Point(440, 785), 5, 6,
+                        new int[][] {
+            {43, 44, 45, 46, 47},
+            {48, 49, 50, 51, 52},
+            {53, 54, 55, 56, 57},
+            {58, 59, 60, 61, 62},
+            {63, 64, 65, 66, 67},
+            {68, JAR_A320_MCDU_CLICK_SLASH, JAR_A320_MCDU_CLICK_SPACE, JAR_A320_MCDU_CLICK_OVERFL, JAR_A320_MCDU_CLICK_DEL}} ));
+
+        // 1..9, ., 0, +/-
+        jar_a320_regions.add(new ClickRegion(new Point(43, 608), new Point(186, 785), 3, 4, 
+                        new int[][] {
+        	{34, 35, 36},
+        	{37, 38, 39},
+        	{40, 41, 42}, 
+        	{JAR_A320_MCDU_CLICK_DOT, JAR_A320_MCDU_CLICK_0, JAR_A320_MCDU_CLICK_PLUS_M}} ));
+
+        
+        // DIR, PROG, PERF, INIT, DATA, blank
+        // F-PLN, RAD-NAV, FUEL-PRED, SEC-FPLN, ATC-COMM, MCDU MENU
+        jar_a320_regions.add(new ClickRegion(new Point(46, 400), new Point(402, 485), 6, 2, 
+                        new int[][] {
+        	{JAR_A320_MCDU_CLICK_DIR_TO, JAR_A320_MCDU_CLICK_PROG, JAR_A320_MCDU_CLICK_PERF, JAR_A320_MCDU_CLICK_INIT, JAR_A320_MCDU_CLICK_DATA, -1},
+        	{JAR_A320_MCDU_CLICK_FPLN, JAR_A320_MCDU_CLICK_RAD_NAV, JAR_A320_MCDU_CLICK_FUEL, -1, -1, JAR_A320_MCDU_CLICK_MENU}} ));
+
+        // AIRPORT, blank
+        // LEFT, UP
+        // RIGHT, DOWN
+        jar_a320_regions.add(new ClickRegion(new Point(46, 486), new Point(170, 607), 2, 3, 
+                        new int[][] {
+        		{JAR_A320_MCDU_CLICK_AIRPORT, -1}, 
+        		{JAR_A320_MCDU_CLICK_SLEW_LEFT, JAR_A320_MCDU_CLICK_SLEW_UP},
+        		{JAR_A320_MCDU_CLICK_SLEW_RIGHT, JAR_A320_MCDU_CLICK_SLEW_DOWN}} ));
 
     }
 
@@ -216,8 +317,7 @@ public class CDUQpac extends CDUSubcomponent {
     		if ( this.preferences.cdu_display_only() ) {
     			drawDisplayOnly(g2);
     		} else {
-    			// drawFullPanel(g2);
-    			drawDisplayOnly(g2);
+    			drawFullPanel(g2);
     		}
     	}
     }
@@ -234,28 +334,13 @@ public class CDUQpac extends CDUSubcomponent {
             	g2.setFont(cdu_gc.font_xl);
         		g2.drawString(str_title, cdu_gc.cdu_middle_x - cdu_gc.get_text_width(g2, cdu_gc.font_xl, str_title), cdu_gc.cdu_first_line);
         	} 
-
-
         	
             scalex = (double)cdu_gc.panel_rect.width /363.0; //was: 343.0
             scaley = (double)cdu_gc.panel_rect.height/289.0;
             border_x = (double)cdu_gc.border_left;
             border_y = (double)cdu_gc.border_top;
 
-            /*
-            AffineTransform orig = g2.getTransform();
-            g2.translate(border_x, border_y);
-            g2.scale(scalex, scaley);
-            g2.translate(large_font.getSize()/2, large_font.getSize());
-            
-            g2.setFont(large_font);
-            double dy = row_coef;
-            */
-
-            // drawDisplayLines(g2,dy );
-        	drawDisplayLines(g2);
-        	
-            // g2.setTransform(orig);            
+            drawDisplayLines(g2);
 
         } else {
         	String str_title = "POWER OFF";
@@ -267,7 +352,31 @@ public class CDUQpac extends CDUSubcomponent {
     }
     
     private void drawFullPanel(Graphics2D g2) {
-    	
+        scalex = (double)cdu_gc.panel_rect.width /image.getWidth();
+        scaley = (double)cdu_gc.panel_rect.height/image.getHeight();
+        border = (double)cdu_gc.border;
+
+        AffineTransform orig = g2.getTransform();
+        g2.translate(border, border);
+        g2.scale(scalex, scaley);
+
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_QUALITY);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2.drawImage(image, null, 0, 0);
+        g2.setTransform(orig);
+        // g2.scale((double) cdu_gc.panel_rect.width/displayunit_width, (double)cdu_gc.panel_rect.height/displayunit_heigth);
+        // g2.translate(displayunit_topleft_x, displayunit_topleft_y);
+    	drawDisplayLines(g2);
+        g2.setTransform(orig);
+        // for debugging
+        if ( drawregions ) {
+            g2.setColor(cdu_gc.dim_markings_color);
+            for(ClickRegion r2 : qpac_regions){
+                    r2.draw(g2, scalex, scaley, border, border);
+            }
+        }
     }
     
     private void decodeColor(Graphics2D g2, char color_code) {
@@ -285,9 +394,9 @@ public class CDUQpac extends CDUSubcomponent {
     
     private void decodeFont(Graphics2D g2, char font_code) {
     	switch (font_code) {
-    	case 'l' : g2.setFont(cdu_gc.font_fixed_zl); break;
-    	case 's' : g2.setFont(cdu_gc.font_fixed_xxxl); break;
-        default : g2.setFont(cdu_gc.font_fixed_zl); break;
+    	case 'l' : g2.setFont(cdu_gc.cdu_normal_font); break;
+    	case 's' : g2.setFont(cdu_gc.cdu_small_font); break;
+        default : g2.setFont(cdu_gc.cdu_normal_font); break;
     	}
     }
     
@@ -331,7 +440,7 @@ public class CDUQpac extends CDUSubcomponent {
     		case 29 : c='?'; break;
     		case 30 : c='?'; break;
     		case 31 : c='?'; break;
-    		default : c = str.charAt(i);
+    		default : if (str.charAt(i) > 126) { c='!'; }  else { c = str.charAt(i); }
     		}
     		result += c;
     	}
@@ -360,29 +469,42 @@ public class CDUQpac extends CDUSubcomponent {
             
             List<CduLine> l = QpacMcduData.decodeLine(QpacMcduData.getLine(i));
             for(CduLine o : l){                    
-                    x = (int) Math.round( o.pos * cdu_gc.digit_width_fixed_zl);
+                    x = (int) Math.round( cdu_gc.cdu_screen_topleft_x + o.pos * cdu_gc.cdu_digit_width);
                     decodeColor(g2, o.color );
                     decodeFont(g2, o.font );
                     g2.drawString(translateCduLine(o.text), x, yy);
-            }
-            
-            
+            }    
         }
-        
-
     }
+
     
-    
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(Graphics2D g2, MouseEvent e) {
+		Point true_click = e.getPoint();
+		AffineTransform current_transform = g2.getTransform();
+		try {
+			current_transform.invert();
+			current_transform.transform(e.getPoint(), true_click);
+		} catch (NoninvertibleTransformException e1) {
+			e1.printStackTrace();
+		}
+		
+		logger.info("MCDU Click x="+ true_click.x + " y="+true_click.y+ "   /  mouse x="+e.getPoint().x+ "  y="+e.getPoint().y);
     	if ((cdu_gc.cdu_source == Avionics.CDU_SOURCE_LEGACY) &&  this.avionics.is_qpac() ) {
-    		for(ClickRegion r : regions){
-    			int w = r.check(e.getPoint(), scalex, scaley, border, border);
+    		for(ClickRegion r : qpac_regions){
+    			int w = r.check(true_click, scalex, scaley, border, border);
     			if(w > -1) {
     				udp_sender.sendDataPoint( XPlaneSimDataRepository.QPAC_KEY_PRESS, (float) w );
     			}
     		}
     	}
-    	
+    	if ((cdu_gc.cdu_source == Avionics.CDU_SOURCE_LEGACY) &&  this.avionics.is_jar_a320neo() ) {
+    		for(ClickRegion r : jar_a320_regions){
+    			int w = r.check(true_click, scalex, scaley, border, border);
+    			if(w > -1) {
+    				udp_sender.sendDataPoint( XPlaneSimDataRepository.JAR_A320NEO_MCDU_CLICK, (float) w );
+    			}
+    		}
+    	}
     }
 
   
@@ -397,44 +519,47 @@ public class CDUQpac extends CDUSubcomponent {
     			w = QPAC_KEY_MDCU1_A + (key - 'A');
     		} else if (key >= '0' && key <= '9') { 
     			w = QPAC_KEY_MDCU1_0+ (key - '0'); 
-    		} else switch (key) {
-    		case '.' : w = QPAC_KEY_MDCU1_DOT; break;
-    		case '/' : w = QPAC_KEY_MDCU1_SLASH; break;    		
-    		case '+' : w = QPAC_KEY_MDCU1_PLUS_M; break;
-    		case '*' : w = QPAC_KEY_MDCU1_OVERFL; break;
-    		case 127 : w = QPAC_KEY_MDCU1_DEL; break; // DEL -> CLEAR
-    		case 8   : w = QPAC_KEY_MDCU1_DEL; break; // BackSpace
-    		case ' ' : w = QPAC_KEY_MDCU1_SPACE; break; // EXEC
-    		case 27  : w = QPAC_KEY_MDCU1_MENU; break; // MENU
+    		} else 
+    			switch (key) {
+    			case '.' : w = QPAC_KEY_MDCU1_DOT; break;
+    			case '/' : w = QPAC_KEY_MDCU1_SLASH; break;    		
+    			case '+' : w = QPAC_KEY_MDCU1_PLUS_M; break;
+    			case '*' : w = QPAC_KEY_MDCU1_OVERFL; break;
+    			case 127 : w = QPAC_KEY_MDCU1_DEL; break; // DEL -> CLEAR
+    			case 8   : w = QPAC_KEY_MDCU1_DEL; break; // BackSpace
+    			case ' ' : w = QPAC_KEY_MDCU1_SPACE; break; 
+    			case 27  : w = QPAC_KEY_MDCU1_MENU; break; // ESCAPE -> MENU MENU
     		}
     		// Test KeyCodes
-    		if (w == -1.0f) switch (k.getKeyCode()) {
-    		case KeyEvent.VK_F1 : w = QPAC_KEY_MDCU1_LSK1L; break;// LSK 1
-    		case KeyEvent.VK_F2 : w = QPAC_KEY_MDCU1_LSK2L; break;// LSK 2
-    		case KeyEvent.VK_F3 : w = QPAC_KEY_MDCU1_LSK3L; break;// LSK 3
-    		case KeyEvent.VK_F4 : w = QPAC_KEY_MDCU1_LSK4L; break;// LSK 4
-    		case KeyEvent.VK_F5 : w = QPAC_KEY_MDCU1_LSK5L; break;// LSK 5
-    		case KeyEvent.VK_F6 : w = QPAC_KEY_MDCU1_LSK6L; break;// LSK 6
-    		case KeyEvent.VK_F7 : w = QPAC_KEY_MDCU1_LSK1R; break;// RSK 1
-    		case KeyEvent.VK_F8 : w = QPAC_KEY_MDCU1_LSK2R; break;// RSK 2
-    		case KeyEvent.VK_F9 : w = QPAC_KEY_MDCU1_LSK3R; break;// RSK 3
-    		case KeyEvent.VK_F10 : w = QPAC_KEY_MDCU1_LSK4R; break;// RSK 4
-    		case KeyEvent.VK_F11 : w = QPAC_KEY_MDCU1_LSK5R; break;// RSK 5
-    		case KeyEvent.VK_F12 : w = QPAC_KEY_MDCU1_LSK6R; break;// RSK 6
-    		case KeyEvent.VK_UP : w = QPAC_KEY_MDCU1_SLEW_UP; break;
-    		case KeyEvent.VK_DOWN : w = QPAC_KEY_MDCU1_SLEW_DOWN; break;
-    		case KeyEvent.VK_LEFT : w = QPAC_KEY_MDCU1_SLEW_LEFT; break;
-    		case KeyEvent.VK_RIGHT : w = QPAC_KEY_MDCU1_SLEW_RIGHT; break; 
-    		
-    		case KeyEvent.VK_PAGE_UP : w = QPAC_KEY_MDCU1_PERF; break;
-    		case KeyEvent.VK_PAGE_DOWN : w = QPAC_KEY_MDCU1_PROG; break;
-    		case KeyEvent.VK_HOME : w = QPAC_KEY_MDCU1_INIT; break;
-    		case KeyEvent.VK_END : w = QPAC_KEY_MDCU1_FPLN; break; 
-    		case KeyEvent.VK_INSERT : w = QPAC_KEY_MDCU1_DIR_TO; break;
+    		if (w == -1.0f) 
+    			switch (k.getKeyCode()) {
+    			case KeyEvent.VK_F1 : w = QPAC_KEY_MDCU1_LSK1L; break;
+    			case KeyEvent.VK_F2 : w = QPAC_KEY_MDCU1_LSK2L; break;
+    			case KeyEvent.VK_F3 : w = QPAC_KEY_MDCU1_LSK3L; break;
+    			case KeyEvent.VK_F4 : w = QPAC_KEY_MDCU1_LSK4L; break;
+    			case KeyEvent.VK_F5 : w = QPAC_KEY_MDCU1_LSK5L; break;
+    			case KeyEvent.VK_F6 : w = QPAC_KEY_MDCU1_LSK6L; break;
+    			case KeyEvent.VK_F7 : w = QPAC_KEY_MDCU1_LSK1R; break;
+    			case KeyEvent.VK_F8 : w = QPAC_KEY_MDCU1_LSK2R; break;
+    			case KeyEvent.VK_F9 : w = QPAC_KEY_MDCU1_LSK3R; break;
+    			case KeyEvent.VK_F10 : w = QPAC_KEY_MDCU1_LSK4R; break;
+    			case KeyEvent.VK_F11 : w = QPAC_KEY_MDCU1_LSK5R; break;
+    			case KeyEvent.VK_F12 : w = QPAC_KEY_MDCU1_LSK6R; break;
+    			case KeyEvent.VK_UP : w = QPAC_KEY_MDCU1_SLEW_UP; break;
+    			case KeyEvent.VK_DOWN : w = QPAC_KEY_MDCU1_SLEW_DOWN; break;
+    			case KeyEvent.VK_LEFT : w = QPAC_KEY_MDCU1_SLEW_LEFT; break;
+    			case KeyEvent.VK_RIGHT : w = QPAC_KEY_MDCU1_SLEW_RIGHT; break; 
+
+    			case KeyEvent.VK_PAGE_UP : w = QPAC_KEY_MDCU1_PERF; break;
+    			case KeyEvent.VK_PAGE_DOWN : w = QPAC_KEY_MDCU1_PROG; break;
+    			case KeyEvent.VK_HOME : w = QPAC_KEY_MDCU1_INIT; break;
+    			case KeyEvent.VK_END : w = QPAC_KEY_MDCU1_FPLN; break; 
+    			case KeyEvent.VK_INSERT : w = QPAC_KEY_MDCU1_DIR_TO; break;
+    			case KeyEvent.VK_SCROLL_LOCK : w = QPAC_KEY_MDCU1_DATA; break;
+    			case KeyEvent.VK_PAUSE : w = QPAC_KEY_MDCU1_RAD_NAV; break;
     		}
 
     		if (w > -0.5f) udp_sender.sendDataPoint( XPlaneSimDataRepository.QPAC_KEY_PRESS, (float) w );
-    		// logger.info("MCDU Key pressed : " + k.getKeyChar() + " " + w);
     	}    
     
 	if ((cdu_gc.cdu_source == Avionics.CDU_SOURCE_LEGACY) &&  this.avionics.is_jar_a320neo() ) {
@@ -447,44 +572,47 @@ public class CDUQpac extends CDUSubcomponent {
 			w = JAR_A320_MCDU_CLICK_A + (key - 'A');
 		} else if (key >= '0' && key <= '9') { 
 			w = JAR_A320_MCDU_CLICK_0+ (key - '0'); 
-		} else switch (key) {
-		case '.' : w = JAR_A320_MCDU_CLICK_DOT; break;
-		case '/' : w = JAR_A320_MCDU_CLICK_SLASH; break;    		
-		case '+' : w = JAR_A320_MCDU_CLICK_PLUS_M; break;
-		case '*' : w = JAR_A320_MCDU_CLICK_OVERFL; break;
-		case 127 : w = JAR_A320_MCDU_CLICK_DEL; break; // DEL -> CLEAR
-		case 8   : w = JAR_A320_MCDU_CLICK_DEL; break; // BackSpace
-		case ' ' : w = JAR_A320_MCDU_CLICK_SPACE; break; // EXEC
-		case 27  : w = JAR_A320_MCDU_CLICK_MENU; break; // MENU
+		} else 
+			switch (key) {
+			case '.' : w = JAR_A320_MCDU_CLICK_DOT; break;
+			case '/' : w = JAR_A320_MCDU_CLICK_SLASH; break;    		
+			case '+' : w = JAR_A320_MCDU_CLICK_PLUS_M; break;
+			case '*' : w = JAR_A320_MCDU_CLICK_OVERFL; break;
+			case 127 : w = JAR_A320_MCDU_CLICK_DEL; break; // DEL -> CLEAR
+			case 8   : w = JAR_A320_MCDU_CLICK_DEL; break; // BackSpace
+			case ' ' : w = JAR_A320_MCDU_CLICK_SPACE; break; 
+			case 27  : w = JAR_A320_MCDU_CLICK_MENU; break; // ESCAPE -> MCDU_MENU
 		}
 		// Test KeyCodes
-		if (w == -1.0f) switch (k.getKeyCode()) {
-		case KeyEvent.VK_F1 : w = JAR_A320_MCDU_CLICK_LSK1L; break;// LSK 1
-		case KeyEvent.VK_F2 : w = JAR_A320_MCDU_CLICK_LSK2L; break;// LSK 2
-		case KeyEvent.VK_F3 : w = JAR_A320_MCDU_CLICK_LSK3L; break;// LSK 3
-		case KeyEvent.VK_F4 : w = JAR_A320_MCDU_CLICK_LSK4L; break;// LSK 4
-		case KeyEvent.VK_F5 : w = JAR_A320_MCDU_CLICK_LSK5L; break;// LSK 5
-		case KeyEvent.VK_F6 : w = JAR_A320_MCDU_CLICK_LSK6L; break;// LSK 6
-		case KeyEvent.VK_F7 : w = JAR_A320_MCDU_CLICK_LSK1R; break;// RSK 1
-		case KeyEvent.VK_F8 : w = JAR_A320_MCDU_CLICK_LSK2R; break;// RSK 2
-		case KeyEvent.VK_F9 : w = JAR_A320_MCDU_CLICK_LSK3R; break;// RSK 3
-		case KeyEvent.VK_F10 : w = JAR_A320_MCDU_CLICK_LSK4R; break;// RSK 4
-		case KeyEvent.VK_F11 : w = JAR_A320_MCDU_CLICK_LSK5R; break;// RSK 5
-		case KeyEvent.VK_F12 : w = JAR_A320_MCDU_CLICK_LSK6R; break;// RSK 6
-		case KeyEvent.VK_UP : w = JAR_A320_MCDU_CLICK_SLEW_UP; break;
-		case KeyEvent.VK_DOWN : w = JAR_A320_MCDU_CLICK_SLEW_DOWN; break;
-		case KeyEvent.VK_LEFT : w = JAR_A320_MCDU_CLICK_SLEW_LEFT; break;
-		case KeyEvent.VK_RIGHT : w = JAR_A320_MCDU_CLICK_SLEW_RIGHT; break; 
-		
-		case KeyEvent.VK_PAGE_UP : w = JAR_A320_MCDU_CLICK_PERF; break;
-		case KeyEvent.VK_PAGE_DOWN : w = JAR_A320_MCDU_CLICK_PROG; break;
-		case KeyEvent.VK_HOME : w = JAR_A320_MCDU_CLICK_INIT; break;
-		case KeyEvent.VK_END : w = JAR_A320_MCDU_CLICK_FPLN; break; 
-		case KeyEvent.VK_INSERT : w = JAR_A320_MCDU_CLICK_DIR_TO; break;
+		if (w == -1.0f) 
+			switch (k.getKeyCode()) {
+			case KeyEvent.VK_F1 : w = JAR_A320_MCDU_CLICK_LSK1L; break;
+			case KeyEvent.VK_F2 : w = JAR_A320_MCDU_CLICK_LSK2L; break;
+			case KeyEvent.VK_F3 : w = JAR_A320_MCDU_CLICK_LSK3L; break;
+			case KeyEvent.VK_F4 : w = JAR_A320_MCDU_CLICK_LSK4L; break;
+			case KeyEvent.VK_F5 : w = JAR_A320_MCDU_CLICK_LSK5L; break;
+			case KeyEvent.VK_F6 : w = JAR_A320_MCDU_CLICK_LSK6L; break;
+			case KeyEvent.VK_F7 : w = JAR_A320_MCDU_CLICK_LSK1R; break;
+			case KeyEvent.VK_F8 : w = JAR_A320_MCDU_CLICK_LSK2R; break;
+			case KeyEvent.VK_F9 : w = JAR_A320_MCDU_CLICK_LSK3R; break;
+			case KeyEvent.VK_F10 : w = JAR_A320_MCDU_CLICK_LSK4R; break;
+			case KeyEvent.VK_F11 : w = JAR_A320_MCDU_CLICK_LSK5R; break;
+			case KeyEvent.VK_F12 : w = JAR_A320_MCDU_CLICK_LSK6R; break;
+			case KeyEvent.VK_UP : w = JAR_A320_MCDU_CLICK_SLEW_UP; break;
+			case KeyEvent.VK_DOWN : w = JAR_A320_MCDU_CLICK_SLEW_DOWN; break;
+			case KeyEvent.VK_LEFT : w = JAR_A320_MCDU_CLICK_SLEW_LEFT; break;
+			case KeyEvent.VK_RIGHT : w = JAR_A320_MCDU_CLICK_SLEW_RIGHT; break; 
+
+			case KeyEvent.VK_PAGE_UP : w = JAR_A320_MCDU_CLICK_PERF; break;
+			case KeyEvent.VK_PAGE_DOWN : w = JAR_A320_MCDU_CLICK_PROG; break;
+			case KeyEvent.VK_HOME : w = JAR_A320_MCDU_CLICK_INIT; break;
+			case KeyEvent.VK_END : w = JAR_A320_MCDU_CLICK_FPLN; break; 
+			case KeyEvent.VK_INSERT : w = JAR_A320_MCDU_CLICK_DIR_TO; break;
+			case KeyEvent.VK_SCROLL_LOCK : w = JAR_A320_MCDU_CLICK_DATA; break;
+			case KeyEvent.VK_PAUSE : w = JAR_A320_MCDU_CLICK_RAD_NAV; break;
 		}
 
 		if (w > -0.5f) udp_sender.sendDataPoint( XPlaneSimDataRepository.JAR_A320NEO_MCDU_CLICK, (float) w );
-		// logger.info("MCDU Key pressed : " + k.getKeyChar() + " " + w);
 	}    
 }
     

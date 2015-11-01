@@ -24,7 +24,9 @@ package net.sourceforge.xhsi.flightdeck.eicas;
 //import java.awt.BasicStroke;
 //import java.awt.Color;
 //import java.awt.Color;
+import java.awt.BasicStroke;
 import java.awt.Component;
+import java.awt.Stroke;
 //import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 //import java.awt.Shape;
@@ -51,6 +53,7 @@ public class SubPanelLines extends EICASSubcomponent {
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
+    private Stroke original_stroke;
 
     public SubPanelLines(ModelFactory model_factory, EICASGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
@@ -70,6 +73,7 @@ public class SubPanelLines extends EICASSubcomponent {
         }
         if ( eicas_gc.powered && eicas_gc.airbus_style ) {
         	g2.setColor(eicas_gc.ecam_markings_color);
+        	scalePen(g2,4.0f);
         	
         	// Horiz left segment
         	g2.drawLine ( eicas_gc.panel_rect.x + eicas_gc.ecam_messages_w*8/100,
@@ -98,12 +102,26 @@ public class SubPanelLines extends EICASSubcomponent {
         				eicas_gc.panel_rect.x + eicas_gc.ecam_messages_w,
         				eicas_gc.panel_rect.y + eicas_gc.prim_dials_height *93/100 );            		
         	} 
+        	resetPen(g2);
 
         }
 
 
 
     }
+    
+    private void scalePen(Graphics2D g2, float factor) {
 
+        original_stroke = g2.getStroke();
+        g2.setStroke(new BasicStroke(factor * eicas_gc.grow_scaling_factor, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
+
+    }
+
+
+    private void resetPen(Graphics2D g2) {
+
+        g2.setStroke(original_stroke);
+
+    }
 
 }

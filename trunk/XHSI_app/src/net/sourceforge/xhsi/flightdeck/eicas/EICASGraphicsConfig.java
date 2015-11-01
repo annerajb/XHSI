@@ -82,6 +82,9 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
     public Font dial_font[] = new Font[9];
     public int dial_font_w[] = new int[9];
     public int dial_font_h[] = new int[9];
+    public Font dial_font_s[] = new Font[9];
+    public int dial_font_s_w[] = new int[9];
+    public int dial_font_s_h[] = new int[9];
     public int alerts_w;
     public int alerts_x0;
     public int alert_y[] = new int[3];
@@ -148,6 +151,7 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
     public int eng_label_x;
     public int ref_n1_x;
     public int ref_n1_y;
+    public int ref_temp_x;
     
 
     public EICASGraphicsConfig(Component root_component, int du) {
@@ -257,7 +261,32 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                 dial_font[8] = font_xxs;
                 dial_font_w[8] = digit_width_xxs;
                 dial_font_h[8] = line_height_xxs;
-
+                // Small fonts for decimals
+                dial_font_s[0] = null;
+                dial_font_s[1] = font_l;
+                dial_font_s_w[1] = digit_width_l;
+                dial_font_s_h[1] = line_height_l;
+                dial_font_s[2] = font_l;
+                dial_font_s_w[2] = digit_width_l;
+                dial_font_s_h[2] = line_height_l;
+                dial_font_s[3] = font_xs;
+                dial_font_s_w[3] = digit_width_xs;
+                dial_font_s_h[3] = line_height_xs;
+                dial_font_s[4] = font_xs;
+                dial_font_s_w[4] = digit_width_xs;
+                dial_font_s_h[4] = line_height_xs;
+                dial_font_s[5] = font_xxs;
+                dial_font_s_w[5] = digit_width_xxs;
+                dial_font_s_h[5] = line_height_xxs;
+                dial_font_s[6] = font_xxs;
+                dial_font_s_w[6] = digit_width_xxs;
+                dial_font_s_h[6] = line_height_xxs;
+                dial_font_s[7] = font_xxs;
+                dial_font_s_w[7] = digit_width_xxs;
+                dial_font_s_h[7] = line_height_xxs;
+                dial_font_s[8] = font_xxs;
+                dial_font_s_w[8] = digit_width_xxs;
+                dial_font_s_h[8] = line_height_xxs;
             } else {
             	// Airbus style
 
@@ -329,24 +358,50 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                 dial_font[2] = font_xl;
                 dial_font_w[2] = digit_width_xl;
                 dial_font_h[2] = line_height_xl;
-                dial_font[3] = font_m;
-                dial_font_w[3] = digit_width_m;
-                dial_font_h[3] = line_height_m;
-                dial_font[4] = font_s;
-                dial_font_w[4] = digit_width_s;
-                dial_font_h[4] = line_height_s;
-                dial_font[5] = font_s;
-                dial_font_w[5] = digit_width_s;
-                dial_font_h[5] = line_height_s;
-                dial_font[6] = font_xs;
-                dial_font_w[6] = digit_width_xs;
-                dial_font_h[6] = line_height_xs;
+                dial_font[3] = font_xl;
+                dial_font_w[3] = digit_width_xl;
+                dial_font_h[3] = line_height_xl;
+                dial_font[4] = font_xl;
+                dial_font_w[4] = digit_width_xl;
+                dial_font_h[4] = line_height_xl;
+                dial_font[5] = font_m;
+                dial_font_w[5] = digit_width_m;
+                dial_font_h[5] = line_height_m;
+                dial_font[6] = font_m;
+                dial_font_w[6] = digit_width_m;
+                dial_font_h[6] = line_height_m;
                 dial_font[7] = font_xs;
                 dial_font_w[7] = digit_width_xs;
                 dial_font_h[7] = line_height_xs;
-                dial_font[8] = font_xxs;
-                dial_font_w[8] = digit_width_xxs;
-                dial_font_h[8] = line_height_xxs;
+                dial_font[8] = font_xs;
+                dial_font_w[8] = digit_width_xs;
+                dial_font_h[8] = line_height_xs;
+                // Small fonts for decimals
+                dial_font_s[0] = null;
+                dial_font_s[1] = font_m;
+                dial_font_s_w[1] = digit_width_m;
+                dial_font_s_h[1] = line_height_m;
+                dial_font_s[2] = font_m;
+                dial_font_s_w[2] = digit_width_m;
+                dial_font_s_h[2] = line_height_m;
+                dial_font_s[3] = font_m;
+                dial_font_s_w[3] = digit_width_m;
+                dial_font_s_h[3] = line_height_m;
+                dial_font_s[4] = font_m;
+                dial_font_s_w[4] = digit_width_m;
+                dial_font_s_h[4] = line_height_m;
+                dial_font_s[5] = font_xs;
+                dial_font_s_w[5] = digit_width_xs;
+                dial_font_s_h[5] = line_height_xs;
+                dial_font_s[6] = font_xs;
+                dial_font_s_w[6] = digit_width_xs;
+                dial_font_s_h[6] = line_height_xs;
+                dial_font_s[7] = font_xxs;
+                dial_font_s_w[7] = digit_width_xxs;
+                dial_font_s_h[7] = line_height_xxs;
+                dial_font_s[8] = font_xxs;
+                dial_font_s_w[8] = digit_width_xxs;
+                dial_font_s_h[8] = line_height_xxs;
             }
             message_x = panel_rect.x + panel_rect.width*40/1000;
             memo_x = panel_rect.x + panel_rect.width*630/1000;
@@ -401,6 +456,7 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                 ecam_flaps_box_h = panel_rect.height * 200/1000;
                 // Ref N1 values set but not used
                 ref_n1_x = panel_rect.x + panel_rect.width * 500/1000;
+                ref_temp_x = panel_rect.x + panel_rect.width * 600/1000;
                 ref_n1_y = panel_rect.y + panel_rect.height * 10/1000 + line_height_m;
             } else {
             	// Airbus style
@@ -464,6 +520,7 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                     // Ref N1 values on the right panel
                     ref_n1_x = panel_rect.x + panel_rect.width * 610/1000;
                     ref_n1_y = panel_rect.y + prim_dials_height * 350/1000 + line_height_l;
+                    ref_temp_x = ref_n1_x + digit_width_xl*13;
                 		              	
                 } else {
                 	// Airbus software version 2

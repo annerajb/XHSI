@@ -72,6 +72,7 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
     Graphics2D g2;
     CDUGraphicsConfig cdu_gc;
     ModelFactory model_factory;
+    XHSIPreferences preferences;
     boolean update_since_last_heartbeat = false;
     //StatusMessage status_message_comp;
 
@@ -85,6 +86,7 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
         this.model_factory = model_factory;
         this.aircraft = this.model_factory.get_aircraft_instance();
         this.avionics = this.aircraft.get_avionics();
+        this.preferences = XHSIPreferences.get_instance();
 
         cdu_gc.reconfig = true;
 
@@ -135,7 +137,7 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
         }
 
         // send Graphics object to annun_gc to recompute positions, if necessary because the panel has been resized or a mode setting has been changed
-        cdu_gc.update_config( g2, this.aircraft.battery(), this.avionics.get_cdu_source() );
+        cdu_gc.update_config( g2, this.aircraft.battery(), this.avionics.get_cdu_source(), this.preferences.cdu_display_only() );
 
         // rotate the display
         XHSIPreferences.Orientation orientation = XHSIPreferences.get_instance().get_panel_orientation( this.cdu_gc.display_unit );
@@ -241,7 +243,7 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
 
 	public void mousePressed(MouseEvent e) {
         for (int i=0;i<this.subcomponents.size();i++) {
-            ((CDUSubcomponent)this.subcomponents.get(i)).mousePressed(e);
+            ((CDUSubcomponent)this.subcomponents.get(i)).mousePressed(g2, e);
         }
 	}
 

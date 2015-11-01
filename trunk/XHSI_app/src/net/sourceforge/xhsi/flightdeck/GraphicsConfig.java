@@ -574,9 +574,9 @@ public class GraphicsConfig implements ComponentListener {
             // Fixed fonts
             this.font_fixed_zl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(42.0f * scale));
             this.font_fixed_xxxl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(32.0f * scale));
-            this.font_fixed_xxl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(24.0f * scale));
-            this.font_fixed_xl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(21.0f * scale));
-            this.font_fixed_l = new Font( this.font_fixed_name, Font.PLAIN, Math.round(18.0f * scale));
+            this.font_fixed_xxl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(28.0f * scale));
+            this.font_fixed_xl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(24.0f * scale));
+            this.font_fixed_l = new Font( this.font_fixed_name, Font.PLAIN, Math.round(20.0f * scale));
             this.font_fixed_m = new Font( this.font_fixed_name, Font.PLAIN, Math.round(16.0f * scale));
             
             // Get metrics for fixed fonts

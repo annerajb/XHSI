@@ -1,11 +1,12 @@
 /**
- * AnnunGraphicsConfig.java
+ * CDUGraphicsConfig.java
  *
  * Calculates and provides access to screen positions and sizes based on the
  * size of HSIComponent.
  *
  * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
- * Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
+ * Copyright (C) 2015  Marc Rogiers (marrog.123@gmail.com)
+ * Copyright (C) 2015  Nicoals Carel
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -61,10 +62,21 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int cdu_first_line;
     public int cdu_dy_line;
     public int cdu_scratch_line; 
+    
+    int cdu_screen_topleft_x = 81;
+    int cdu_screen_topleft_y = 56;
+    int cdu_screen_width = 338;
+    int cdu_screen_height = 400;
+    
+    Font cdu_small_font;
+    Font cdu_normal_font;
 
+    int cdu_digit_width;
+    
     public Rectangle raised_panel;
     public GradientPaint panel_gradient;
 
+    boolean display_only;
 
     public CDUGraphicsConfig(Component root_component, int du) {
         super(root_component);
@@ -72,20 +84,13 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
         init();
     }
 
-
-//    public void init() {
-//
-//        super.init();
-//
-//    }
-
-
-    public void update_config(Graphics2D g2, boolean power, int source) {
+    public void update_config(Graphics2D g2, boolean power, int source, boolean cdu_display_only) {
 
         if (this.resized
                 || this.reconfig
                 || (this.powered != power)
                 || (this.cdu_source != source)
+                || (this.display_only != cdu_display_only)
             ) {
             // one of the settings has been changed
 
@@ -95,17 +100,44 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
             // the FMC for this CDU
             this.cdu_source = source;
             
+            // Full CDU (false) - text lines only (true)
+            this.display_only = cdu_display_only;
+            
             super.update_config(g2);
 
             // some subcomponents need to be reminded to redraw immediately
             this.reconfigured = true;
             
-            cdu_size = Math.min(panel_rect.width, panel_rect.height);
-            cdu_middle_x = panel_rect.x + panel_rect.width / 2;
-            cdu_first_line = panel_rect.y + line_height_fixed_xxxl; 
-            cdu_dy_line = cdu_size / 14 ;
-            cdu_scratch_line = panel_rect.y + cdu_size - line_height_fixed_zl/10; 
-
+      
+            if (display_only) {
+            	cdu_screen_topleft_x = panel_rect.x;
+            	cdu_screen_topleft_y = panel_rect.y;
+            	cdu_screen_width = panel_rect.width;
+            	cdu_screen_height = panel_rect.height;
+            	cdu_normal_font = font_fixed_zl;
+            	cdu_small_font = font_fixed_xxxl;
+            	cdu_digit_width = digit_width_fixed_zl;
+                cdu_size = Math.min(cdu_screen_width, cdu_screen_height);
+                cdu_middle_x = cdu_screen_topleft_x + cdu_screen_width / 2;
+                cdu_dy_line = cdu_size / 14 ;
+            	cdu_first_line = cdu_screen_topleft_y + line_height_fixed_zl;
+            	cdu_scratch_line = cdu_screen_topleft_y + cdu_size - line_height_fixed_zl/10;
+            } else {
+            	cdu_screen_topleft_x = panel_rect.x+panel_rect.width*81/480;
+            	cdu_screen_topleft_y = panel_rect.y+panel_rect.height*65/800;
+            	cdu_screen_width = panel_rect.width*338/480;
+            	cdu_screen_height = panel_rect.height*315/800;
+            	cdu_normal_font = font_fixed_xxl;
+            	cdu_small_font = font_fixed_xl;
+            	cdu_digit_width = digit_width_fixed_xxl;
+                cdu_size = Math.min(cdu_screen_width, cdu_screen_height);
+                cdu_middle_x = cdu_screen_topleft_x + cdu_screen_width / 2;
+                cdu_dy_line = cdu_screen_height / 14 ;
+            	cdu_first_line = cdu_screen_topleft_y + line_height_fixed_xxl;
+            	cdu_scratch_line = cdu_screen_topleft_y + cdu_screen_height - line_height_fixed_xxl/10;
+            }
+            
+                 
             float cdu_panel_aspect;
             switch (source) {
                 case Avionics.CDU_SOURCE_LEGACY :
@@ -152,17 +184,6 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
         }
 
     }
-
-
-//    public int get_text_width(Graphics graphics, Font font, String text) {
-//        return graphics.getFontMetrics(font).stringWidth(text);
-//    }
-
-
-//    public int get_text_height(Graphics graphics, Font font) {
-//        return graphics.getFontMetrics(font).getHeight();
-//    }
-
 
     public void componentResized(ComponentEvent event) {
         this.component_size = event.getComponent().getSize();
