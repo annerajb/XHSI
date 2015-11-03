@@ -97,6 +97,8 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
         subcomponents.add(new CDUFrame(model_factory, cdu_gc, this));
         subcomponents.add(new CDUXfmc(model_factory, cdu_gc, this));
         subcomponents.add(new CDUQpac(model_factory, cdu_gc, this));
+        subcomponents.add(new CDUJarDesign(model_factory, cdu_gc, this));
+        subcomponents.add(new CDUDefault(model_factory, cdu_gc, this));
 
         this.repaint();
         this.setFocusable(true);
@@ -202,18 +204,9 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
         this.update_since_last_heartbeat = true;
     }
 
-
-//    public void heartbeat() {
-//        if (this.update_since_last_heartbeat == false) {
-//            XHSIStatus.status = XHSIStatus.STATUS_NO_RECEPTION;
-//            repaint();
-//        } else {
-//            XHSIStatus.status = XHSIStatus.STATUS_RECEIVING;
-//            this.update_since_last_heartbeat = false;
-//            repaint();
-//        }
-//    }
-
+    public void heartbeat() {
+        repaint();
+    }
 
     public void componentResized() {
     }

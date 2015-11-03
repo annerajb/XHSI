@@ -25,6 +25,7 @@ package net.sourceforge.xhsi.flightdeck;
 import net.sourceforge.xhsi.conwin.ConWinComponent;
 import net.sourceforge.xhsi.flightdeck.pfd.PFDComponent;
 import net.sourceforge.xhsi.flightdeck.nd.NDComponent;
+import net.sourceforge.xhsi.flightdeck.cdu.CDUComponent;
 import net.sourceforge.xhsi.flightdeck.eicas.EICASComponent;
 import net.sourceforge.xhsi.flightdeck.mfd.MFDComponent;
 import java.util.logging.Logger;
@@ -39,6 +40,7 @@ public class UIHeartbeat extends StoppableThread {
 	private NDComponent nd;
 	private EICASComponent eicas;
 	private MFDComponent mfd;
+	private CDUComponent cdu;
 	
 	private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 	
@@ -46,13 +48,14 @@ public class UIHeartbeat extends StoppableThread {
 	 * 
 	 * @param watch_interval	time in ms between invocations of this watchdog
 	 */
-	public UIHeartbeat(ConWinComponent conwin, PFDComponent pfd, NDComponent nd, EICASComponent eicas, MFDComponent mfd, int watch_interval) {
+	public UIHeartbeat(ConWinComponent conwin, PFDComponent pfd, NDComponent nd, EICASComponent eicas, MFDComponent mfd, CDUComponent cdu, int watch_interval) {
 		this.watch_interval = watch_interval;
 		this.conwin = conwin;
                 this.pfd = pfd;
                 this.nd = nd;
                 this.eicas = eicas;
                 this.mfd = mfd;
+                this.cdu = cdu;
 		this.keep_running = true;
 	}
 	
@@ -65,8 +68,7 @@ public class UIHeartbeat extends StoppableThread {
 				this.nd.heartbeat();
 				this.eicas.heartbeat();
 				this.mfd.heartbeat();
-				// TODO : check CDU heartbeat
-				// this.cdu.heartbeat();
+				this.cdu.heartbeat();
 			} catch (Exception e) {
 				this.keep_running = false;
 				logger.warning("Caught exception in Watchdog! Stopping. (" + e.toString());

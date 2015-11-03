@@ -167,7 +167,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_MFD_HYDR        = "Hydraulics";
     public static final String ACTION_MFD_STATUS      = "Status";
     
-    public static final String ACTION_CDU_LEGACY      = "X-Plane legacy FMS";
+    public static final String ACTION_CDU_LEGACY      = "Aircraft legacy FMS";
     public static final String ACTION_CDU_XFMC        = "X-FMC";
     public static final String ACTION_CDU_UFMC        = "UFMC/X737FMC";
 
@@ -1208,7 +1208,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         ButtonGroup cdu_group = new ButtonGroup();
 
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_CDU_LEGACY);
-        radio_button_menu_item.setToolTipText("X-Plane legacy FMS");
+        radio_button_menu_item.setToolTipText("Aircraft legacy FMS");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(true);
         cdu_group.add(radio_button_menu_item);
@@ -1229,8 +1229,9 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         radio_button_menu_item.setToolTipText("UFMC/X737FMC");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
-        cdu_group.add(radio_button_menu_item);
-        xhsi_cdu_menu.add(radio_button_menu_item);
+        // TODO : for beta 9 version
+        // cdu_group.add(radio_button_menu_item);
+        // xhsi_cdu_menu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_cdu_ufmc = radio_button_menu_item;
 

@@ -83,7 +83,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    private static final String RELEASE = "2.0 Beta 8 Alpha 44";
+    public static final String RELEASE = "2.0 Beta 8 Alpha 45";
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -316,6 +316,7 @@ public class XHSI implements ActionListener {
         NDComponent nd_ui = null;
         EICASComponent eicas_ui = null;
         MFDComponent mfd_ui = null;
+        CDUComponent cdu_ui = null;
 
         // some preferences require a reconfiguration
         for (int i=0; i<instruments.size(); i++) {
@@ -405,7 +406,7 @@ public class XHSI implements ActionListener {
                     break;
                 case XHSIInstrument.CDU_ID :
                     // CDU
-                    CDUComponent cdu_ui = (CDUComponent)instruments.get(i).components;
+                    cdu_ui = (CDUComponent)instruments.get(i).components;
                     this.preferences.add_subsciption(cdu_ui, XHSIPreferences.PREF_BORDER_STYLE);
                     this.preferences.add_subsciption(cdu_ui, XHSIPreferences.PREF_BORDER_COLOR);
                     this.preferences.add_subsciption(cdu_ui, XHSIPreferences.PREF_BOLD_FONTS);
@@ -436,7 +437,7 @@ public class XHSI implements ActionListener {
 //taxi.get_chart("YMML");
         
         // add components update watchdog
-        UIHeartbeat ui_heartbeat = new UIHeartbeat(this.xhsi_ui, pfd_ui, nd_ui, eicas_ui, mfd_ui, 1000);
+        UIHeartbeat ui_heartbeat = new UIHeartbeat(this.xhsi_ui, pfd_ui, nd_ui, eicas_ui, mfd_ui, cdu_ui, 1000);
         ui_heartbeat.start();
         this.running_threads.add(ui_heartbeat);
 

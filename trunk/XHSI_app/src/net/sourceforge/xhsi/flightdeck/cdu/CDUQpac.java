@@ -70,7 +70,6 @@ public class CDUQpac extends CDUSubcomponent {
     double border_y;
     
     List<ClickRegion> qpac_regions;
-    List<ClickRegion> jar_a320_regions;
 
     boolean drawregions = false;
     XPlaneUDPSender udp_sender = null; 
@@ -138,53 +137,6 @@ public class CDUQpac extends CDUSubcomponent {
     public static final int QPAC_KEY_MDCU1_A          = 84;
 
     
-    // JarDesign A320neo MCDU KEYS
-    public static final int JAR_A320_MCDU_CLICK_INIT       = 10;
-    public static final int JAR_A320_MCDU_CLICK_DATA       = 1;
-    public static final int JAR_A320_MCDU_CLICK_MENU       = 0;
-    public static final int JAR_A320_MCDU_CLICK_PERF       = 14;
-    public static final int JAR_A320_MCDU_CLICK_PROG       = 11;
-    public static final int JAR_A320_MCDU_CLICK_FPLN       = 3;
-    public static final int JAR_A320_MCDU_CLICK_DIR_TO     = 12;
-    public static final int JAR_A320_MCDU_CLICK_RAD_NAV    = 13;
-    public static final int JAR_A320_MCDU_CLICK_AIRPORT    = 2;
-    public static final int JAR_A320_MCDU_CLICK_FUEL       = 5;   
-    public static final int JAR_A320_MCDU_CLICK_SLEW_UP    = 9;
-    public static final int JAR_A320_MCDU_CLICK_SLEW_DOWN  = 7;
-    public static final int JAR_A320_MCDU_CLICK_SLEW_LEFT  = 6;
-    public static final int JAR_A320_MCDU_CLICK_SLEW_RIGHT = 8;
-    public static final int JAR_A320_MCDU_CLICK_LSK1L      = 21;
-    public static final int JAR_A320_MCDU_CLICK_LSK2L      = 22;
-    public static final int JAR_A320_MCDU_CLICK_LSK3L      = 23;
-    public static final int JAR_A320_MCDU_CLICK_LSK4L      = 24;
-    public static final int JAR_A320_MCDU_CLICK_LSK5L      = 25;
-    public static final int JAR_A320_MCDU_CLICK_LSK6L      = 26;
-    public static final int JAR_A320_MCDU_CLICK_LSK1R      = 27;
-    public static final int JAR_A320_MCDU_CLICK_LSK2R      = 28;
-    public static final int JAR_A320_MCDU_CLICK_LSK3R      = 29;
-    public static final int JAR_A320_MCDU_CLICK_LSK4R      = 30;
-    public static final int JAR_A320_MCDU_CLICK_LSK5R      = 31;
-    public static final int JAR_A320_MCDU_CLICK_LSK6R      = 32;
-    public static final int JAR_A320_MCDU_CLICK_DEL        = 20;
-    public static final int JAR_A320_MCDU_CLICK_SPACE      = 18;
-    public static final int JAR_A320_MCDU_CLICK_OVERFL     = 19;
-    public static final int JAR_A320_MCDU_CLICK_PLUS_M     = 17;
-    public static final int JAR_A320_MCDU_CLICK_DOT        = 15;
-    public static final int JAR_A320_MCDU_CLICK_SLASH      = 16;
-    public static final int JAR_A320_MCDU_CLICK_0          = 33;
-    public static final int JAR_A320_MCDU_CLICK_1          = 34;
-    public static final int JAR_A320_MCDU_CLICK_2          = 35;
-    public static final int JAR_A320_MCDU_CLICK_3          = 36;
-    public static final int JAR_A320_MCDU_CLICK_4          = 37;
-    public static final int JAR_A320_MCDU_CLICK_5          = 38;
-    public static final int JAR_A320_MCDU_CLICK_6          = 39;
-    public static final int JAR_A320_MCDU_CLICK_7          = 40;
-    public static final int JAR_A320_MCDU_CLICK_8          = 41;
-    public static final int JAR_A320_MCDU_CLICK_9          = 42;
-    public static final int JAR_A320_MCDU_CLICK_A          = 43;
-
-    
-    
     public CDUQpac(ModelFactory model_factory, CDUGraphicsConfig cdu_gc, Component parent_component) {
         super(model_factory, cdu_gc, parent_component);
         
@@ -194,8 +146,7 @@ public class CDUQpac extends CDUSubcomponent {
         
         udp_sender = XPlaneUDPSender.get_instance();
 
-        qpac_regions = new ArrayList<ClickRegion>();
-        jar_a320_regions = new ArrayList<ClickRegion>();
+        qpac_regions = new ArrayList<ClickRegion>();        
 
         // QPAC MCDU Keyboard mapping
         // LSK
@@ -252,67 +203,10 @@ public class CDUQpac extends CDUSubcomponent {
         		{QPAC_KEY_MDCU1_AIRPORT, -1}, 
         		{QPAC_KEY_MDCU1_SLEW_LEFT, QPAC_KEY_MDCU1_SLEW_UP},
         		{QPAC_KEY_MDCU1_SLEW_RIGHT, QPAC_KEY_MDCU1_SLEW_DOWN}} ));
-
-        // JAR Design A320neo MCDU Keyboard mapping
-        // LSK
-        jar_a320_regions.add(new ClickRegion(new Point(6, 95), new Point(48+26, 365), 1, 6, 
-                        new int[][] {
-        	{JAR_A320_MCDU_CLICK_LSK1L}, 
-        	{JAR_A320_MCDU_CLICK_LSK2L},
-        	{JAR_A320_MCDU_CLICK_LSK3L},
-        	{JAR_A320_MCDU_CLICK_LSK4L},
-        	{JAR_A320_MCDU_CLICK_LSK5L},
-        	{JAR_A320_MCDU_CLICK_LSK6L}} ));
-
-        // RSK
-        jar_a320_regions.add(new ClickRegion(new Point(432-26, 95), new Point(474, 365), 1, 6, 
-                        new int[][] {
-        	{JAR_A320_MCDU_CLICK_LSK1R},
-        	{JAR_A320_MCDU_CLICK_LSK2R},
-        	{JAR_A320_MCDU_CLICK_LSK3R},
-        	{JAR_A320_MCDU_CLICK_LSK4R},
-        	{JAR_A320_MCDU_CLICK_LSK5R},
-        	{JAR_A320_MCDU_CLICK_LSK6R}} ));
-
-        // A..Z, SP, DEL, /, CLR
-        jar_a320_regions.add(new ClickRegion(new Point(192, 490), new Point(440, 785), 5, 6,
-                        new int[][] {
-            {43, 44, 45, 46, 47},
-            {48, 49, 50, 51, 52},
-            {53, 54, 55, 56, 57},
-            {58, 59, 60, 61, 62},
-            {63, 64, 65, 66, 67},
-            {68, JAR_A320_MCDU_CLICK_SLASH, JAR_A320_MCDU_CLICK_SPACE, JAR_A320_MCDU_CLICK_OVERFL, JAR_A320_MCDU_CLICK_DEL}} ));
-
-        // 1..9, ., 0, +/-
-        jar_a320_regions.add(new ClickRegion(new Point(43, 608), new Point(186, 785), 3, 4, 
-                        new int[][] {
-        	{34, 35, 36},
-        	{37, 38, 39},
-        	{40, 41, 42}, 
-        	{JAR_A320_MCDU_CLICK_DOT, JAR_A320_MCDU_CLICK_0, JAR_A320_MCDU_CLICK_PLUS_M}} ));
-
-        
-        // DIR, PROG, PERF, INIT, DATA, blank
-        // F-PLN, RAD-NAV, FUEL-PRED, SEC-FPLN, ATC-COMM, MCDU MENU
-        jar_a320_regions.add(new ClickRegion(new Point(46, 400), new Point(402, 485), 6, 2, 
-                        new int[][] {
-        	{JAR_A320_MCDU_CLICK_DIR_TO, JAR_A320_MCDU_CLICK_PROG, JAR_A320_MCDU_CLICK_PERF, JAR_A320_MCDU_CLICK_INIT, JAR_A320_MCDU_CLICK_DATA, -1},
-        	{JAR_A320_MCDU_CLICK_FPLN, JAR_A320_MCDU_CLICK_RAD_NAV, JAR_A320_MCDU_CLICK_FUEL, -1, -1, JAR_A320_MCDU_CLICK_MENU}} ));
-
-        // AIRPORT, blank
-        // LEFT, UP
-        // RIGHT, DOWN
-        jar_a320_regions.add(new ClickRegion(new Point(46, 486), new Point(170, 607), 2, 3, 
-                        new int[][] {
-        		{JAR_A320_MCDU_CLICK_AIRPORT, -1}, 
-        		{JAR_A320_MCDU_CLICK_SLEW_LEFT, JAR_A320_MCDU_CLICK_SLEW_UP},
-        		{JAR_A320_MCDU_CLICK_SLEW_RIGHT, JAR_A320_MCDU_CLICK_SLEW_DOWN}} ));
-
     }
 
     public void paint(Graphics2D g2) {
-    	if ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_LEGACY) && (this.avionics.is_qpac() || this.avionics.is_jar_a320neo() )
+    	if ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_LEGACY) && (this.avionics.is_qpac()  )
     			) {
     		if ( this.preferences.cdu_display_only() ) {
     			drawDisplayOnly(g2);
@@ -325,7 +219,7 @@ public class CDUQpac extends CDUSubcomponent {
     
     private void drawDisplayOnly(Graphics2D g2) {
         
-        if ( this.aircraft.battery() || this.avionics.is_jar_a320neo() ) {
+        if ( this.aircraft.battery() ) {
         	String str_title = QpacMcduData.getLine(0);
             
         	if (str_title.isEmpty()) {
@@ -366,8 +260,6 @@ public class CDUQpac extends CDUSubcomponent {
 
         g2.drawImage(image, null, 0, 0);
         g2.setTransform(orig);
-        // g2.scale((double) cdu_gc.panel_rect.width/displayunit_width, (double)cdu_gc.panel_rect.height/displayunit_heigth);
-        // g2.translate(displayunit_topleft_x, displayunit_topleft_y);
     	drawDisplayLines(g2);
         g2.setTransform(orig);
         // for debugging
@@ -406,8 +298,7 @@ public class CDUQpac extends CDUSubcomponent {
     	for (int i=0; i<str.length(); i++) {
     		switch ( str.charAt(i) ) {
     		case '`' : c = '°'; break;
-    		case '|' : c = 'Δ'; break;
-    		case '*' : c = '⎕'; break;
+    		case '|' : c = 'Δ'; break;    		
     		case '0' : c = 'O'; break;
     		case 1 : c='?'; break;
     		case 2 : c='?'; break;
@@ -464,8 +355,7 @@ public class CDUQpac extends CDUSubcomponent {
             g2.setColor(Color.GRAY);
             g2.setFont(cdu_gc.font_s);
             g2.drawString(QpacMcduData.getLine(i), cdu_gc.cdu_middle_x, yy);
-            */
-            
+            */            
             
             List<CduLine> l = QpacMcduData.decodeLine(QpacMcduData.getLine(i));
             for(CduLine o : l){                    
@@ -488,20 +378,12 @@ public class CDUQpac extends CDUSubcomponent {
 			e1.printStackTrace();
 		}
 		
-		logger.info("MCDU Click x="+ true_click.x + " y="+true_click.y+ "   /  mouse x="+e.getPoint().x+ "  y="+e.getPoint().y);
+		// logger.info("MCDU Click x="+ true_click.x + " y="+true_click.y+ "   /  mouse x="+e.getPoint().x+ "  y="+e.getPoint().y);
     	if ((cdu_gc.cdu_source == Avionics.CDU_SOURCE_LEGACY) &&  this.avionics.is_qpac() ) {
     		for(ClickRegion r : qpac_regions){
     			int w = r.check(true_click, scalex, scaley, border, border);
     			if(w > -1) {
     				udp_sender.sendDataPoint( XPlaneSimDataRepository.QPAC_KEY_PRESS, (float) w );
-    			}
-    		}
-    	}
-    	if ((cdu_gc.cdu_source == Avionics.CDU_SOURCE_LEGACY) &&  this.avionics.is_jar_a320neo() ) {
-    		for(ClickRegion r : jar_a320_regions){
-    			int w = r.check(true_click, scalex, scaley, border, border);
-    			if(w > -1) {
-    				udp_sender.sendDataPoint( XPlaneSimDataRepository.JAR_A320NEO_MCDU_CLICK, (float) w );
     			}
     		}
     	}
@@ -561,61 +443,7 @@ public class CDUQpac extends CDUSubcomponent {
 
     		if (w > -0.5f) udp_sender.sendDataPoint( XPlaneSimDataRepository.QPAC_KEY_PRESS, (float) w );
     	}    
-    
-	if ((cdu_gc.cdu_source == Avionics.CDU_SOURCE_LEGACY) &&  this.avionics.is_jar_a320neo() ) {
-		char key = k.getKeyChar();
-		int w = -1;
-		// Test KeyChar
-		if (key >= 'a' && key <= 'z') {
-			w = JAR_A320_MCDU_CLICK_A + (key - 'a'); 
-		} else if (key >= 'A' && key <= 'Z') {
-			w = JAR_A320_MCDU_CLICK_A + (key - 'A');
-		} else if (key >= '0' && key <= '9') { 
-			w = JAR_A320_MCDU_CLICK_0+ (key - '0'); 
-		} else 
-			switch (key) {
-			case '.' : w = JAR_A320_MCDU_CLICK_DOT; break;
-			case '/' : w = JAR_A320_MCDU_CLICK_SLASH; break;    		
-			case '+' : w = JAR_A320_MCDU_CLICK_PLUS_M; break;
-			case '*' : w = JAR_A320_MCDU_CLICK_OVERFL; break;
-			case 127 : w = JAR_A320_MCDU_CLICK_DEL; break; // DEL -> CLEAR
-			case 8   : w = JAR_A320_MCDU_CLICK_DEL; break; // BackSpace
-			case ' ' : w = JAR_A320_MCDU_CLICK_SPACE; break; 
-			case 27  : w = JAR_A320_MCDU_CLICK_MENU; break; // ESCAPE -> MCDU_MENU
-		}
-		// Test KeyCodes
-		if (w == -1.0f) 
-			switch (k.getKeyCode()) {
-			case KeyEvent.VK_F1 : w = JAR_A320_MCDU_CLICK_LSK1L; break;
-			case KeyEvent.VK_F2 : w = JAR_A320_MCDU_CLICK_LSK2L; break;
-			case KeyEvent.VK_F3 : w = JAR_A320_MCDU_CLICK_LSK3L; break;
-			case KeyEvent.VK_F4 : w = JAR_A320_MCDU_CLICK_LSK4L; break;
-			case KeyEvent.VK_F5 : w = JAR_A320_MCDU_CLICK_LSK5L; break;
-			case KeyEvent.VK_F6 : w = JAR_A320_MCDU_CLICK_LSK6L; break;
-			case KeyEvent.VK_F7 : w = JAR_A320_MCDU_CLICK_LSK1R; break;
-			case KeyEvent.VK_F8 : w = JAR_A320_MCDU_CLICK_LSK2R; break;
-			case KeyEvent.VK_F9 : w = JAR_A320_MCDU_CLICK_LSK3R; break;
-			case KeyEvent.VK_F10 : w = JAR_A320_MCDU_CLICK_LSK4R; break;
-			case KeyEvent.VK_F11 : w = JAR_A320_MCDU_CLICK_LSK5R; break;
-			case KeyEvent.VK_F12 : w = JAR_A320_MCDU_CLICK_LSK6R; break;
-			case KeyEvent.VK_UP : w = JAR_A320_MCDU_CLICK_SLEW_UP; break;
-			case KeyEvent.VK_DOWN : w = JAR_A320_MCDU_CLICK_SLEW_DOWN; break;
-			case KeyEvent.VK_LEFT : w = JAR_A320_MCDU_CLICK_SLEW_LEFT; break;
-			case KeyEvent.VK_RIGHT : w = JAR_A320_MCDU_CLICK_SLEW_RIGHT; break; 
-
-			case KeyEvent.VK_PAGE_UP : w = JAR_A320_MCDU_CLICK_PERF; break;
-			case KeyEvent.VK_PAGE_DOWN : w = JAR_A320_MCDU_CLICK_PROG; break;
-			case KeyEvent.VK_HOME : w = JAR_A320_MCDU_CLICK_INIT; break;
-			case KeyEvent.VK_END : w = JAR_A320_MCDU_CLICK_FPLN; break; 
-			case KeyEvent.VK_INSERT : w = JAR_A320_MCDU_CLICK_DIR_TO; break;
-			case KeyEvent.VK_SCROLL_LOCK : w = JAR_A320_MCDU_CLICK_DATA; break;
-			case KeyEvent.VK_PAUSE : w = JAR_A320_MCDU_CLICK_RAD_NAV; break;
-		}
-
-		if (w > -0.5f) udp_sender.sendDataPoint( XPlaneSimDataRepository.JAR_A320NEO_MCDU_CLICK, (float) w );
-	}    
-}
-    
-	
+       
+    }    
 
 }
