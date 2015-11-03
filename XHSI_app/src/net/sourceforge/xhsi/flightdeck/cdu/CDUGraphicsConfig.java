@@ -37,6 +37,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.font.TextAttribute;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
@@ -115,7 +116,11 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
             	cdu_screen_width = panel_rect.width;
             	cdu_screen_height = panel_rect.height;
             	cdu_normal_font = font_fixed_zl;
-            	cdu_small_font = font_fixed_xxxl;
+            	// Align font text spacing with normal font
+            	Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>();
+            	attributes.put(TextAttribute.TRACKING, 0.145);
+            	cdu_small_font= font_fixed_xxxl.deriveFont(attributes);
+            	// cdu_small_font = font_fixed_xxxl;
             	cdu_digit_width = digit_width_fixed_zl;
                 cdu_size = Math.min(cdu_screen_width, cdu_screen_height);
                 cdu_middle_x = cdu_screen_topleft_x + cdu_screen_width / 2;
@@ -128,7 +133,11 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
             	cdu_screen_width = panel_rect.width*338/480;
             	cdu_screen_height = panel_rect.height*315/800;
             	cdu_normal_font = font_fixed_xxl;
-            	cdu_small_font = font_fixed_xl;
+            	// Align font text spacing with normal font
+            	Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>();
+            	attributes.put(TextAttribute.TRACKING, 0.145);
+            	cdu_small_font= font_fixed_xl.deriveFont(attributes);
+            	// cdu_small_font = font_fixed_xl;
             	cdu_digit_width = digit_width_fixed_xxl;
                 cdu_size = Math.min(cdu_screen_width, cdu_screen_height);
                 cdu_middle_x = cdu_screen_topleft_x + cdu_screen_width / 2;
