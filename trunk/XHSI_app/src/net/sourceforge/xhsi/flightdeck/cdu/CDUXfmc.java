@@ -162,7 +162,7 @@ public class CDUXfmc extends CDUSubcomponent {
     
     private void drawDisplayOnly(Graphics2D g2) {
         
-        if ( this.aircraft.battery() ) {
+        if ( cdu_gc.powered ) {
             
             scalex = (double)cdu_gc.panel_rect.width /363.0; //was: 343.0
             scaley = (double)cdu_gc.panel_rect.height/289.0;
@@ -203,7 +203,7 @@ public class CDUXfmc extends CDUSubcomponent {
         g2.drawImage(image, null, 0, 0);
 
 
-        if ( this.aircraft.battery() ) {
+        if ( cdu_gc.powered ) {
 
             int stat = 0;
             try{

@@ -139,7 +139,7 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
         }
 
         // send Graphics object to annun_gc to recompute positions, if necessary because the panel has been resized or a mode setting has been changed
-        cdu_gc.update_config( g2, this.aircraft.battery(), this.avionics.get_cdu_source(), this.preferences.cdu_display_only() );
+        cdu_gc.update_config( g2, this.avionics.power(), this.avionics.get_cdu_source(), this.preferences.cdu_display_only() );
 
         // rotate the display
         XHSIPreferences.Orientation orientation = XHSIPreferences.get_instance().get_panel_orientation( this.cdu_gc.display_unit );
