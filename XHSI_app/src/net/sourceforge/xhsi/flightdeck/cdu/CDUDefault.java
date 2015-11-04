@@ -136,7 +136,7 @@ public class CDUDefault extends CDUSubcomponent {
 
     
     private void drawDisplayOnly(Graphics2D g2) {       
-        if ( this.aircraft.battery() ) {
+        if ( cdu_gc.powered ) {
             scalex = (double)cdu_gc.panel_rect.width /363.0; //was: 343.0
             scaley = (double)cdu_gc.panel_rect.height/289.0;
             border_x = (double)cdu_gc.border_left;
@@ -160,7 +160,9 @@ public class CDUDefault extends CDUSubcomponent {
 
         g2.drawImage(image, null, 0, 0);
         g2.setTransform(orig);
-    	drawDisplayLines(g2);
+        if ( cdu_gc.powered ) {
+        	drawDisplayLines(g2);
+        }
         g2.setTransform(orig);
     }
     

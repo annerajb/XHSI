@@ -212,7 +212,7 @@ public class CDUJarDesign extends CDUSubcomponent {
     
     private void drawDisplayOnly(Graphics2D g2) {
         
-        if ( this.aircraft.battery() || this.avionics.is_jar_a320neo() ) {
+        if ( cdu_gc.powered ) {
         	String str_title = QpacMcduData.getLine(0);
             
         	if (str_title.isEmpty()) {
@@ -253,7 +253,9 @@ public class CDUJarDesign extends CDUSubcomponent {
 
         g2.drawImage(image, null, 0, 0);
         g2.setTransform(orig);
-    	drawDisplayLines(g2);
+        if ( cdu_gc.powered ) {
+        	drawDisplayLines(g2);
+        }
         g2.setTransform(orig);
         // for debugging
         if ( drawregions ) {
