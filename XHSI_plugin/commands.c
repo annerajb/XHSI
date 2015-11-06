@@ -394,7 +394,7 @@ XPLMCommandRef com2_standy_flip;
 XPLMCommandRef adf1_standy_flip;
 XPLMCommandRef adf2_standy_flip;
 XPLMCommandRef sim_transponder_transponder_ident;
-XPLMCommandRef contact_atc_cmd;
+//XPLMCommandRef contact_atc_cmd;
 XPLMCommandRef stby_com1_coarse_down;
 XPLMCommandRef stby_com1_coarse_up;
 XPLMCommandRef stby_com1_fine_down_833;
@@ -1845,24 +1845,24 @@ XPLMCommandCallback_f clock_handler(XPLMCommandRef inCommand, XPLMCommandPhase i
 }
 
 
-// contact_atc
-XPLMCommandCallback_f contact_atc_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
-{
-
-    switch (inPhase) {
-        case xplm_CommandBegin:
-        case xplm_CommandContinue:
-            XPLMSetDatai(xhsi_rtu_contact_atc, 1);
-            break;
-        case xplm_CommandEnd:
-            XPLMSetDatai(xhsi_rtu_contact_atc, 0);
-            break;
-        default:
-            break;
-    }
-    // return 1 , so that other plugins like PilotEdge or X-Plane itself can handle this command
-    return (XPLMCommandCallback_f)1;
-}
+//// contact_atc
+//XPLMCommandCallback_f contact_atc_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
+//{
+//
+//    switch (inPhase) {
+//        case xplm_CommandBegin:
+//        case xplm_CommandContinue:
+//            XPLMSetDatai(xhsi_rtu_contact_atc, 1);
+//            break;
+//        case xplm_CommandEnd:
+//            XPLMSetDatai(xhsi_rtu_contact_atc, 0);
+//            break;
+//        default:
+//            break;
+//    }
+//    // return 1 , so that other plugins like PilotEdge or X-Plane itself can handle this command
+//    return (XPLMCommandCallback_f)1;
+//}
 
 
 // Transponder
@@ -2893,9 +2893,9 @@ void registerCommands(void) {
     stby_nav2_fine_up = XPLMFindCommand("sim/radios/stby_nav2_fine_up");
     
     
-    // special case: intercept a standard X-Plane command
-    contact_atc_cmd = XPLMCreateCommand("sim/operation/contact_atc", "Contact ATC");
-    XPLMRegisterCommandHandler(contact_atc_cmd, (XPLMCommandCallback_f)contact_atc_handler, 1, (void *)0);
+//    // special case: intercept a standard X-Plane command
+//    contact_atc_cmd = XPLMCreateCommand("sim/operation/contact_atc", "Contact ATC");
+//    XPLMRegisterCommandHandler(contact_atc_cmd, (XPLMCommandCallback_f)contact_atc_handler, 1, (void *)0);
 
 
     // RTU select
@@ -3386,8 +3386,8 @@ void unregisterCommands(void) {
     XPLMUnregisterCommandHandler(chr_start_stop, (XPLMCommandCallback_f)clock_handler, 1, (void *)1);
     XPLMUnregisterCommandHandler(chr_reset, (XPLMCommandCallback_f)clock_handler, 1, (void *)2);
 
-    // cancel the interception of a standard X-Plane command
-    XPLMUnregisterCommandHandler(contact_atc_cmd, (XPLMCommandCallback_f)contact_atc_handler, 1, (void *)0);
+//    // cancel the interception of a standard X-Plane command
+//    XPLMUnregisterCommandHandler(contact_atc_cmd, (XPLMCommandCallback_f)contact_atc_handler, 1, (void *)0);
 
     // RTU select
     XPLMUnregisterCommandHandler(rtu_select_none, (XPLMCommandCallback_f)rtu_handler, 1, (void *)RTU_SELECT_NONE);
