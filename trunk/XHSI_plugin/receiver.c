@@ -83,7 +83,7 @@ float receiveCallback(
                 return recv_delay;
             } else {
 
-                XPLMDebugString("XHSI: packet received\n");
+//                XPLMDebugString("XHSI: packet received\n");
                 decodeIncomingPacket();
                 return recv_delay;
 

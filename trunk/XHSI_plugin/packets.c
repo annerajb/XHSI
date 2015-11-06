@@ -703,7 +703,8 @@ int createAvionicsPacket(void) {
     i++;
 
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_RTU_CONTACT_ATC);
-    sim_packet.sim_data_points[i].value =  custom_htonf((float)( XPLMGetDatai(xhsi_rtu_contact_atc) || ( pilotedge_ready && XPLMGetDatai(pilotedge_tx_status) )));
+//    sim_packet.sim_data_points[i].value =  custom_htonf((float)( XPLMGetDatai(xhsi_rtu_contact_atc) || ( pilotedge_ready && XPLMGetDatai(pilotedge_tx_status) )));
+    sim_packet.sim_data_points[i].value =  custom_htonf((float)( ( pilotedge_ready && XPLMGetDatai(pilotedge_tx_status) )));
     i++;
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_RTU_SELECTED_RADIO);
     sim_packet.sim_data_points[i].value =  custom_htonf((float) XPLMGetDatai(xhsi_rtu_selected_radio));

@@ -34,7 +34,7 @@
 XPLMDataRef xhsi_instrument_style;
 XPLMDataRef xhsi_rwy_length_min;
 XPLMDataRef xhsi_rwy_units;
-XPLMDataRef xhsi_rtu_contact_atc;
+//XPLMDataRef xhsi_rtu_contact_atc;
 XPLMDataRef xhsi_rtu_selected_radio;
 
 // custom datarefs - EICAS
@@ -830,16 +830,16 @@ void	setCopilotMapRange100(void* inRefcon, int inValue)
       copilot_map_zoomin = inValue;
 }
 
-// xhsi/rtu/contact_atc
-int contact_atc;
-int     getContactATC(void* inRefcon)
-{
-     return contact_atc;
-}
-void	setContactATC(void* inRefcon, int inValue)
-{
-      contact_atc = inValue;
-}
+//// xhsi/rtu/contact_atc
+//int contact_atc;
+//int     getContactATC(void* inRefcon)
+//{
+//     return contact_atc;
+//}
+//void	setContactATC(void* inRefcon, int inValue)
+//{
+//      contact_atc = inValue;
+//}
 
 // xhsi/rtu/selected_radio
 int selected_radio;
@@ -1079,12 +1079,12 @@ void registerGeneralDataRefs(void) {
                                         getRwyUnits, setRwyUnits,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
-    // xhsi/rtu/contact_atc
-    xhsi_rtu_contact_atc = XPLMRegisterDataAccessor("xhsi/rtu/contact_atc",
-                                        xplmType_Int,                                  // The types we support
-                                        1,                                                   // Writable
-                                        getContactATC, setContactATC,      // Integer accessors
-                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+//    // xhsi/rtu/contact_atc
+//    xhsi_rtu_contact_atc = XPLMRegisterDataAccessor("xhsi/rtu/contact_atc",
+//                                        xplmType_Int,                                  // The types we support
+//                                        1,                                                   // Writable
+//                                        getContactATC, setContactATC,      // Integer accessors
+//                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
     // xhsi/rtu/selected_radio
     xhsi_rtu_selected_radio = XPLMRegisterDataAccessor("xhsi/rtu/selected_radio",
@@ -1211,7 +1211,7 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/map_zoomin");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/da_bug");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/mins_mode");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rtu/contact_atc");
+//        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rtu/contact_atc");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rtu/selected_radio");
     }
 
@@ -1240,8 +1240,8 @@ float initGeneralCallback(
     // Runway length units 0:Meters 1:Feet (has no effect when min_rwy_lentgh==0)
     XPLMSetDatai(xhsi_rwy_units, 0);
 
-    // This dataref is normally set by a XPLMCommand intercept (see commands.c))
-    XPLMSetDatai(xhsi_rtu_contact_atc, 0);
+//    // This dataref is normally set by a XPLMCommand intercept (see commands.c))
+//    XPLMSetDatai(xhsi_rtu_contact_atc, 0);
 
     // No radio selected in the RTU
     XPLMSetDatai(xhsi_rtu_selected_radio, 0);
@@ -1516,8 +1516,8 @@ void unregisterGeneralDataRefs(void) {
     // xhsi/rwy_units
     XPLMUnregisterDataAccessor(xhsi_rwy_units);
 
-    // xhsi/rtu/contact_atc
-    XPLMUnregisterDataAccessor(xhsi_rtu_contact_atc);
+//    // xhsi/rtu/contact_atc
+//    XPLMUnregisterDataAccessor(xhsi_rtu_contact_atc);
 
     // xhsi/rtu/selected_radio
     XPLMUnregisterDataAccessor(xhsi_rtu_selected_radio);
@@ -1942,9 +1942,9 @@ void findDataRefs(void) {
 
 void writeDataRef(int id, float value) {
 
-    char info_string[80];
-    sprintf(info_string, "XHSI: received setting : ID=%d  VALUE=%f\n", id, value);
-    XPLMDebugString(info_string);
+//    char info_string[80];
+//    sprintf(info_string, "XHSI: received setting : ID=%d  VALUE=%f\n", id, value);
+//    XPLMDebugString(info_string);
 
     switch (id) {
 
