@@ -304,8 +304,8 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                     }
                     eng_label=0;
                     eng_label_x=(prim_dial_x[eng_label] + prim_dial_x[eng_label+1]) / 2;
-                	dial_main1_y = panel_rect.y + eicas_size*17/100;
-                	dial_main2_y = panel_rect.y + eicas_size*33/100;
+                	dial_main1_y = panel_rect.y + eicas_size*15/100;
+                	dial_main2_y = panel_rect.y + eicas_size*31/100;
                 	dial_main3_y = panel_rect.y + eicas_size*48/100;
                 	dial_main4_y = panel_rect.y + eicas_size*58/100;
                 	dial_main5_y = panel_rect.y + eicas_size*65/100;
@@ -334,18 +334,18 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                     }
                     eng_label=(cols/2)-1;
                     eng_label_x=(prim_dial_x[eng_label] + prim_dial_x[eng_label+1]) / 2;
-                	dial_main1_y = panel_rect.y + eicas_size*170/1000;
-                	dial_main2_y = panel_rect.y + eicas_size*355/1000;
-                	dial_main3_y = panel_rect.y + eicas_size*450/1000;
-                	dial_main4_y = panel_rect.y + eicas_size*520/1000;
+                	dial_main1_y = panel_rect.y + eicas_size*145/1000;
+                	dial_main2_y = panel_rect.y + eicas_size*315/1000;
+                	dial_main3_y = panel_rect.y + eicas_size*470/1000;
+                	dial_main4_y = panel_rect.y + eicas_size*550/1000;
                 	dial_main5_y = panel_rect.y + eicas_size*650/1000;
                     dial_r[0] = 0; // no radius for 0 engines
                     dial_r[1] = dials_width*90/1000; // dial radius when there is 1 engine
                     dial_r[2] = dials_width*90/1000; // dial radius when there are 2 engines
-                    dial_r[3] = dials_width*85/1000; // etc...
-                    dial_r[4] = dials_width*85/1000;
-                    dial_r[5] = dials_width*70/1000;
-                    dial_r[6] = dials_width*70/1000;
+                    dial_r[3] = dials_width*70/1000; // etc...
+                    dial_r[4] = dials_width*70/1000;
+                    dial_r[5] = dials_width*60/1000;
+                    dial_r[6] = dials_width*60/1000;
                     dial_r[7] = dials_width*50/1000;
                     dial_r[8] = dials_width*50/1000;
             	}

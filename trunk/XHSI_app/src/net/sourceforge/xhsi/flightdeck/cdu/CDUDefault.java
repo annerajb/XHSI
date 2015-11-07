@@ -54,6 +54,7 @@ import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.CduLine;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.QpacMcduData;
+import net.sourceforge.xhsi.model.SimDataRepository;
 import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 import net.sourceforge.xhsi.model.xplane.XPlaneUDPSender;
 
@@ -64,8 +65,8 @@ public class CDUDefault extends CDUSubcomponent {
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
     
-    Aircraft aircraft;
-    Avionics avionics;
+    private Aircraft aircraft;
+    private Avionics avionics;
     
     private BufferedImage image = null;
 
@@ -89,11 +90,11 @@ public class CDUDefault extends CDUSubcomponent {
     String CduLine[] = { 
     		"lg10XHSI",    		
     		"sw00Software version",	"lb00"+XHSI.RELEASE,
+    		"", "",
     		"sw00Engines", "", 
     		"sw00A/C Registration", "",
     		"sw00Gears", "",
     		"sw00Fuel tanks", "",
-    		"", "",
     		"", "",
     		""};
 
@@ -106,23 +107,27 @@ public class CDUDefault extends CDUSubcomponent {
         } catch (IOException ioe){}
         
         this.aircraft = this.model_factory.get_aircraft_instance();
-        this.avionics = this.aircraft.get_avionics();
+        this.avionics = this.aircraft.get_avionics();        
     }
 
     public void paint(Graphics2D g2) {
     	if ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_LEGACY) && (!this.avionics.is_qpac() && (!this.avionics.is_jar_a320neo()) )
     			) {
-    		CduLine[4] = "lb00" + this.aircraft.num_engines();
-    		CduLine[6] = "lb00" + this.aircraft.aircraft_registration();
+    		CduLine[6] = "lb00" + this.aircraft.num_engines();
+    		CduLine[8] = "lb00" + this.aircraft.aircraft_registration();
     		if (this.aircraft.has_retractable_gear()) { 
-    			CduLine[8] = "lb00" + this.aircraft.num_gears() + " RETRACTABLE";	
+    			CduLine[10] = "lb00" + this.aircraft.num_gears() + " RETRACTABLE";	
     		} else {
-    			CduLine[8] = "lb00" + this.aircraft.num_gears() + " FIXED";	    			
+    			CduLine[10] = "lb00" + this.aircraft.num_gears() + " FIXED";	    			
     		}
-    		CduLine[10] = "lb00" + this.aircraft.num_tanks();
-    		if ( XHSIStatus.receiving ) {
-    			CduLine[13] = "";
-    		} else {
+    		CduLine[12] = "lb00" + this.aircraft.num_tanks();
+    		
+    		//  Compare plugin to application version. Display in amber if discrepancy.
+    		CduLine[13] = "";
+    		if (! XHSI.RELEASE.equals(this.aircraft.plugin_version())) {
+    			CduLine[13] = "la00Plugin " + decode_plugin_version( this.aircraft.plugin_version());
+    		} 
+    		if ( ! XHSIStatus.receiving ) {
     			CduLine[13] = "la00INDEPENDENT MODE";	
     		}
 
@@ -232,5 +237,23 @@ public class CDUDefault extends CDUSubcomponent {
   
     public void keyPressed(KeyEvent k) {          
     }    
+    
+    private String decode_plugin_version(int plugin_version) {
+        if (plugin_version == 0.0f) {
+            return "1.0 Beta ?";
+        } else {
+            String pv = "" + plugin_version; // example: 1.0 Beta 8 is "10008"
+            String pv_displayed = pv.substring(0, 1) + "." + pv.substring(1, 2); // "major.minor" (example: "1.0")
+            if (pv.substring(2, 3).equals("0") == false)
+                pv_displayed += "." + pv.substring(2, 3); // "major.minor.bugfix" if bugfix!=0
+            if (pv.substring(3, 5).equals("00") == false)
+                if (pv.substring(3, 4).equals("9"))
+                    pv_displayed += " RC" + Integer.valueOf(pv.substring(4, 5)); // "major.minor[.bugfix] RCx" if xy>=90
+                else
+                    pv_displayed += " Beta " + Integer.valueOf(pv.substring(3, 5)); // "major.minor[.bugfix] Beta xx" if xx!=00
+            return pv_displayed;
+        }
 
+    }
+    
 }
