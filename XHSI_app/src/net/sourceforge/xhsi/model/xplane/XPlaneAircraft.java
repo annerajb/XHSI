@@ -66,6 +66,8 @@ public class XPlaneAircraft implements Aircraft {
         return this.environment;
     }
 
+    public int plugin_version() { return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.PLUGIN_VERSION_ID)); }
+    
     public String aircraft_registration() {
         return sim_data.get_sim_string(XPlaneSimDataRepository.SIM_AIRCRAFT_VIEW_ACF_TAILNUM_0_3) + sim_data.get_sim_string(XPlaneSimDataRepository.SIM_AIRCRAFT_VIEW_ACF_TAILNUM_4_7);
     }

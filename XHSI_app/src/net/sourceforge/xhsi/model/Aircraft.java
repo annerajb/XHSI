@@ -47,6 +47,11 @@ public interface Aircraft {
     public final static int AIR_VALVE_HOT_AIR = 1;    
     
     /**
+     * @return int - xhsi plugin version
+     */
+    public int plugin_version();
+    
+    /**
      * @return String - aircraft_registration
      */
     public String aircraft_registration();
