@@ -206,7 +206,7 @@ public class CDUQpac extends CDUSubcomponent {
     }
 
     public void paint(Graphics2D g2) {
-    	if ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_LEGACY) && (this.avionics.is_qpac()  )
+    	if ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY) && (this.avionics.is_qpac()  )
     			) {
     		if ( this.preferences.cdu_display_only() ) {
     			drawDisplayOnly(g2);
@@ -381,7 +381,7 @@ public class CDUQpac extends CDUSubcomponent {
 		}
 		
 		// logger.info("MCDU Click x="+ true_click.x + " y="+true_click.y+ "   /  mouse x="+e.getPoint().x+ "  y="+e.getPoint().y);
-    	if ((cdu_gc.cdu_source == Avionics.CDU_SOURCE_LEGACY) &&  this.avionics.is_qpac() ) {
+    	if ((cdu_gc.cdu_source == Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY) &&  this.avionics.is_qpac() ) {
     		for(ClickRegion r : qpac_regions){
     			int w = r.check(true_click, scalex, scaley, border, border);
     			if(w > -1) {
@@ -393,7 +393,7 @@ public class CDUQpac extends CDUSubcomponent {
 
   
     public void keyPressed(KeyEvent k) {
-    	if ((cdu_gc.cdu_source == Avionics.CDU_SOURCE_LEGACY) &&  this.avionics.is_qpac() ) {
+    	if ((cdu_gc.cdu_source == Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY) &&  this.avionics.is_qpac() ) {
     		char key = k.getKeyChar();
     		int w = -1;
     		// Test KeyChar

@@ -190,7 +190,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
     private JCheckBox cdu_display_only;
     private JComboBox cdu_source_combobox;
-    private String cdu_sources[] = { XHSIPreferences.CDU_SOURCE_SWITCHABLE, XHSIPreferences.CDU_SOURCE_LEGACY, XHSIPreferences.CDU_SOURCE_XFMC, XHSIPreferences.CDU_SOURCE_UFMC };
+    private String cdu_sources[] = { XHSIPreferences.CDU_SOURCE_SWITCHABLE, XHSIPreferences.CDU_SOURCE_AIRCRAFT_OR_DUMMY, XHSIPreferences.CDU_SOURCE_XFMC, XHSIPreferences.CDU_SOURCE_UFMC };
     
 
     private ArrayList<XHSIInstrument> flightdeck;
@@ -1813,10 +1813,10 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.anchor = GridBagConstraints.WEST;
         this.cdu_source_combobox = new JComboBox();
         this.cdu_source_combobox.addItem("Switchable");
-        this.cdu_source_combobox.addItem("Aircraft's custom FMC");
+        this.cdu_source_combobox.addItem("Aircraft's custom FMC (or a dummy)");
         this.cdu_source_combobox.addItem("X-FMC");        
         // TODO : for beta 9
-        // this.cdu_source_combobox.addItem("UFMC/X737FMC");
+        // this.cdu_source_combobox.addItem("UFMC or X737FMC");
         this.cdu_source_combobox.addActionListener(this);
         cdu_options_panel.add(this.cdu_source_combobox, cons);
         dialog_line++;

@@ -202,7 +202,7 @@ public class XHSIPreferences {
 
     // for PREF_CDU_SOURCE
     public static final String CDU_SOURCE_SWITCHABLE = "switchable";
-    public static final String CDU_SOURCE_LEGACY = "legacy";
+    public static final String CDU_SOURCE_AIRCRAFT_OR_DUMMY = "aircraft";
     public static final String CDU_SOURCE_XFMC = "xfmc";
     public static final String CDU_SOURCE_UFMC = "ufmc";
     

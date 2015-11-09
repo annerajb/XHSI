@@ -833,15 +833,15 @@ public class XPlaneAvionics implements Avionics, Observer {
         } else {
             if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_SWITCHABLE)) {
                 return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_CDU_SOURCE);
-            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_LEGACY)) {
-                return Avionics.CDU_SOURCE_LEGACY;
+            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_AIRCRAFT_OR_DUMMY)) {
+                return Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY;
             } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_XFMC)) {
                 return Avionics.CDU_SOURCE_XFMC;
             } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_UFMC)) {
                 return Avionics.CDU_SOURCE_UFMC;
             } else {
                 // Error, fallback
-                return Avionics.CDU_SOURCE_LEGACY;
+                return Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY;
             }
 
         }

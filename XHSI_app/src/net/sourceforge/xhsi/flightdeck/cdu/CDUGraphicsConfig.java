@@ -149,7 +149,7 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
                  
             float cdu_panel_aspect;
             switch (source) {
-                case Avionics.CDU_SOURCE_LEGACY :
+                case Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY :
                     cdu_panel_aspect = 1.0f;
                     break;
                 case Avionics.CDU_SOURCE_XFMC :

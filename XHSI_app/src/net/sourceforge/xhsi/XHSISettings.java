@@ -167,7 +167,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_MFD_HYDR        = "Hydraulics";
     public static final String ACTION_MFD_STATUS      = "Status";
     
-    public static final String ACTION_CDU_LEGACY      = "Aircraft's custom FMC";
+    public static final String ACTION_CDU_AIRCRAFT_OR_DUMMY      = "Aircraft's custom FMC (or a dummy)";
     public static final String ACTION_CDU_XFMC        = "X-FMC";
     public static final String ACTION_CDU_UFMC        = "UFMC/X737FMC";
 
@@ -304,7 +304,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JRadioButtonMenuItem radio_button_mfd_hydr;
     private JRadioButtonMenuItem radio_button_mfd_status;
     
-    private JRadioButtonMenuItem radio_button_cdu_legacy;
+    private JRadioButtonMenuItem radio_button_cdu_aircraft;
     private JRadioButtonMenuItem radio_button_cdu_xfmc;
     private JRadioButtonMenuItem radio_button_cdu_ufmc;
     
@@ -1207,14 +1207,14 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
         ButtonGroup cdu_group = new ButtonGroup();
 
-        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_CDU_LEGACY);
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_CDU_AIRCRAFT_OR_DUMMY);
         radio_button_menu_item.setToolTipText("Aircraft's custom FMC, if available");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(true);
         cdu_group.add(radio_button_menu_item);
         xhsi_cdu_menu.add(radio_button_menu_item);
         // keep a reference
-        this.radio_button_cdu_legacy = radio_button_menu_item;
+        this.radio_button_cdu_aircraft = radio_button_menu_item;
 
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_CDU_XFMC);
         radio_button_menu_item.setToolTipText("X-FMC");
@@ -1226,7 +1226,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_cdu_xfmc = radio_button_menu_item;
 
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_CDU_UFMC);
-        radio_button_menu_item.setToolTipText("UFMC/X737FMC");
+        radio_button_menu_item.setToolTipText("UFMC or X737FMC");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
         // TODO : for beta 9 version
@@ -1530,8 +1530,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             mfd_mode = Avionics.MFD_MODE_HYDR;
             this.avionics.set_mfd_mode(mfd_mode);
 
-        } else if (command.equals(XHSISettings.ACTION_CDU_LEGACY)) {
-            cdu_source = Avionics.CDU_SOURCE_LEGACY;
+        } else if (command.equals(XHSISettings.ACTION_CDU_AIRCRAFT_OR_DUMMY)) {
+            cdu_source = Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY;
             this.avionics.set_cdu_source(cdu_source);
         } else if (command.equals(XHSISettings.ACTION_CDU_XFMC)) {
             cdu_source = Avionics.CDU_SOURCE_XFMC;
@@ -1687,11 +1687,11 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_mfd_status.setEnabled( switchable );
 
         switchable = prefs.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_SWITCHABLE);
-        this.radio_button_cdu_legacy.setEnabled( switchable );
+        this.radio_button_cdu_aircraft.setEnabled( switchable );
         this.radio_button_cdu_xfmc.setEnabled( switchable );
         this.radio_button_cdu_ufmc.setEnabled( switchable );
         int new_cdu_source = avionics.get_cdu_source();
-        this.radio_button_cdu_legacy.setSelected( new_cdu_source == Avionics.CDU_SOURCE_LEGACY );
+        this.radio_button_cdu_aircraft.setSelected( new_cdu_source == Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY );
         this.radio_button_cdu_xfmc.setSelected( new_cdu_source == Avionics.CDU_SOURCE_XFMC );
         this.radio_button_cdu_ufmc.setSelected( new_cdu_source == Avionics.CDU_SOURCE_UFMC );
 
