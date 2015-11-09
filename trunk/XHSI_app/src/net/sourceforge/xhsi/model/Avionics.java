@@ -80,7 +80,7 @@ public interface Avionics {
     public static final int MFD_MODE_HYDR = 14;
     public static final int MFD_MODE_STATUS = 15;
     
-    public static final int CDU_SOURCE_LEGACY = 0;
+    public static final int CDU_SOURCE_AIRCRAFT_OR_DUMMY = 0;
     public static final int CDU_SOURCE_XFMC = 1;
     public static final int CDU_SOURCE_UFMC = 2;
 
@@ -390,7 +390,7 @@ public interface Avionics {
 
     
     /**
-     * @return int - CDU source (0=X-Plane_legacy_FMS, 1=X-FMC, 2=UFMCS/X737FMC,)
+     * @return int - CDU source (0=aircraft's custom FMC or dummy, 1=X-FMC, 2=UFMCS/X737FMC,)
      */
     public int get_cdu_source();
     

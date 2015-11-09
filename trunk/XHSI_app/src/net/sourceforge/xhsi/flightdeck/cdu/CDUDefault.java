@@ -111,7 +111,7 @@ public class CDUDefault extends CDUSubcomponent {
     }
 
     public void paint(Graphics2D g2) {
-    	if ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_LEGACY) && (!this.avionics.is_qpac() && (!this.avionics.is_jar_a320neo()) )
+    	if ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY) && (!this.avionics.is_qpac() && (!this.avionics.is_jar_a320neo()) )
     			) {
     		CduLine[6] = "lb00" + this.aircraft.num_engines();
     		CduLine[8] = "lb00" + this.aircraft.aircraft_registration();
