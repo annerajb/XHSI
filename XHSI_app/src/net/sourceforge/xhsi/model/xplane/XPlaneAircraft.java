@@ -772,6 +772,10 @@ public class XPlaneAircraft implements Aircraft {
     public float get_EGT_value(int engine) {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_ENGINE_ENGN_EGT_C_ + engine);
     }
+    
+    public float get_EGT_max() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_ENGINE_MAX_EGT);
+    }
 
     public float get_N2(int engine) {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_ENGINE_ENGN_N2_ + engine);

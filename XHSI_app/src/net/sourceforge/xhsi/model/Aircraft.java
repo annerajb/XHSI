@@ -772,7 +772,11 @@ public interface Aircraft {
      */
     public float get_EGT_value(int engine);
 
-
+    /**
+     * @return float - Engine Max EGT value
+     */
+    public float get_EGT_max();
+    
     /**
      * @return float - Engine N2 %
      */
