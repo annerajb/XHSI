@@ -356,7 +356,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_1 = 533;
     public static final int SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_2 = 534;
     public static final int SIM_COCKPIT_FUEL_PUMPS = 535;
-    // 535, 536, 537 : free
+    public static final int SIM_AIRCRAFT_ENGINE_MAX_EGT = 536;
+    // 537 : free
     public static final int XHSI_EICAS_OVERRIDE_TRQ_MAX = 538;
     public static final int SIM_AIRCRAFT_CONTROLS_ACF_TRQ_MAX_ENG = 539;
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_TRQ_ = 540;

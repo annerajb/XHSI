@@ -71,6 +71,7 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
     public int dial_main3_y;
     public int dial_main4_y;
     public int dial_main5_y;
+    public int dial_main6_y;
     //public int dial_ng_y;
     public int dial_oil_p_y;
     public int dial_oil_t_y;
@@ -85,6 +86,7 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
     public Font dial_font_s[] = new Font[9];
     public int dial_font_s_w[] = new int[9];
     public int dial_font_s_h[] = new int[9];
+    public int dial_box_h[] = new int[9];
     public int alerts_w;
     public int alerts_x0;
     public int alert_y[] = new int[3];
@@ -224,6 +226,7 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
             	dial_main3_y = panel_rect.y + eicas_size*55/100;
             	dial_main4_y = panel_rect.y + eicas_size*73/100;
             	dial_main5_y = panel_rect.y + eicas_size*89/100;
+            	dial_main6_y = panel_rect.y + eicas_size*95/100;
                 dial_r[0] = 0; // no radius for 0 engines
                 dial_r[1] = Math.min(eicas_size*9/100, panel_rect.width*9/100); // dial radius when there is 1 engine
                 dial_r[2] = Math.min(eicas_size*9/100, panel_rect.width*9/100); // dial radius when there are 2 engines
@@ -305,10 +308,11 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                     eng_label=0;
                     eng_label_x=(prim_dial_x[eng_label] + prim_dial_x[eng_label+1]) / 2;
                 	dial_main1_y = panel_rect.y + eicas_size*15/100;
-                	dial_main2_y = panel_rect.y + eicas_size*31/100;
-                	dial_main3_y = panel_rect.y + eicas_size*48/100;
-                	dial_main4_y = panel_rect.y + eicas_size*58/100;
-                	dial_main5_y = panel_rect.y + eicas_size*65/100;
+                	dial_main2_y = panel_rect.y + eicas_size*32/100;
+                	dial_main3_y = panel_rect.y + eicas_size*50/100;
+                	dial_main4_y = panel_rect.y + eicas_size*61/100;
+                	dial_main5_y = panel_rect.y + eicas_size*75/100;
+                	dial_main6_y = panel_rect.y + eicas_size*85/100;
                     dial_r[0] = 0; // no radius for 0 engines
                     dial_r[1] = Math.min(eicas_size*9/100, dials_width*250/1000); // dial radius when there is 1 engine
                     dial_r[2] = Math.min(eicas_size*9/100, dials_width*250/1000); // dial radius when there are 2 engines
@@ -338,7 +342,9 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                 	dial_main2_y = panel_rect.y + eicas_size*315/1000;
                 	dial_main3_y = panel_rect.y + eicas_size*470/1000;
                 	dial_main4_y = panel_rect.y + eicas_size*550/1000;
-                	dial_main5_y = panel_rect.y + eicas_size*650/1000;
+                	// EPR Dial mode with more than 2 engine 
+                	dial_main5_y = panel_rect.y + eicas_size*270/1000;
+                	dial_main6_y = panel_rect.y + eicas_size*370/1000;
                     dial_r[0] = 0; // no radius for 0 engines
                     dial_r[1] = dials_width*90/1000; // dial radius when there is 1 engine
                     dial_r[2] = dials_width*90/1000; // dial radius when there are 2 engines
@@ -415,6 +421,10 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
             dial_vib_y = panel_rect.y + eicas_size*65/100;
             dial_hyd_p_y = panel_rect.y + panel_rect.height - eicas_size*16/100;
             dial_hyd_q_y = panel_rect.y + panel_rect.height - eicas_size*6/100;
+            
+            for (int i=1; i<9; i++) {
+            	dial_box_h[i] = dial_font_h[i]*120/100;
+            }
 
 
             // TAT and Thrust Mode
@@ -548,7 +558,7 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                     ecam_flaps_box_y = panel_rect.y + prim_dials_height * 835/1000;
                     ecam_flaps_box_w = panel_rect.width * 470/1000;
                     ecam_flaps_box_h = prim_dials_height * 157/1000;
-                    ecam_bullet_r = ecam_flaps_box_w*3/100;
+                    ecam_bullet_r = ecam_flaps_box_w*2/100;
                     // 
                     ecam_flaps_center_x = ecam_flaps_box_x + ecam_flaps_box_w*(395+61)/1000;
                     ecam_flaps_center_y = ecam_flaps_box_y + ecam_flaps_box_h*355/1000;

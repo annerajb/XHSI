@@ -281,6 +281,7 @@ public class ECAM_Flaps extends EICASSubcomponent {
         	
         
         // Flaps
+        scalePen(g2,1.2f);
         if ( flaps > 0.05f ) {
 
         	// flaps text
@@ -381,7 +382,7 @@ public class ECAM_Flaps extends EICASSubcomponent {
         g2.setTransform(original_at);
         g2.drawLine(eicas_gc.ecam_flaps_box_x + eicas_gc.ecam_flaps_box_w*325/1000, eicas_gc.ecam_flaps_box_y + eicas_gc.ecam_flaps_box_h*310/1000 - 1 ,
         		eicas_gc.ecam_flaps_box_x + eicas_gc.ecam_flaps_box_w*322/1000 + tx, eicas_gc.ecam_flaps_box_y + eicas_gc.ecam_flaps_box_h*310/1000 + ty);
-
+        resetPen(g2);
     }
     
     
