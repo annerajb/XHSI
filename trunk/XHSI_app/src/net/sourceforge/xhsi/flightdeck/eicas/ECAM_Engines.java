@@ -374,23 +374,28 @@ public class ECAM_Engines extends EICASSubcomponent {
         scalePen(g2, 2.2f);
 
         float n1_value = this.aircraft.get_N1(pos);
+        float n2_value = this.aircraft.get_N2(pos);       
+        float epr_value = this.aircraft.get_EPR(pos);
         float throttle_value = this.aircraft.get_throttle(pos)*100.0f;
         float n1_dial = Math.min(n1_value, 110.0f) / 100.0f;
+        float epr_dial = Math.min(epr_value-1.0f, 0.65f) / 0.6f;
         float throttle_dial = Math.min(throttle_value, 110.0f) / 100.0f;
-        float epr_value = this.aircraft.get_EPR(pos);
-
-        float n2_value = this.aircraft.get_N2(pos);       
         boolean engine_on = (n1_value > 1.0f) || (n2_value > 1.0f);        
         
-        int n1_y = eicas_gc.dial_main1_y;
-        int n1_r = eicas_gc.dial_r[num];
-        int n1_box_y = n1_y - n1_r/8;
+        int epr_y = eicas_gc.dial_main1_y;
+        int epr_r = eicas_gc.dial_r[num];
+        int epr_box_y = epr_y - epr_r/8;
         
-        int deg_start = 225;
-        int deg_caution = 15;
-        int deg_warning = 15;
+        int deg_arc_start = 215;
+        int deg_start = 210;
+        int deg_caution = 10;
+        int deg_warning = 10;
+        int deg_arc_range = deg_arc_start - deg_caution;
         int deg_norm_range = deg_start-deg_caution;
         int deg_warn_range = deg_caution-deg_warning;
+        int deg_dial_range = deg_start - deg_caution - 10;
+        int deg_throttle_start = deg_start;
+        int deg_throttle_range = deg_throttle_start - deg_caution - 10;
 
         if ( ( n1_dial <= 1.0f ) || this.inhibit ) {
             // inhibit caution or warning below 1000ft
@@ -406,10 +411,10 @@ public class ECAM_Engines extends EICASSubcomponent {
         
         g2.setColor(eicas_gc.ecam_markings_color);
         if (engine_on) {
-        	g2.rotate(Math.toRadians(360-deg_start), eicas_gc.prim_dial_x[pos], n1_y);
+        	g2.rotate(Math.toRadians(360-deg_start), eicas_gc.prim_dial_x[pos], epr_y);
         	for (int i=0; i<=6; i++) {
-        		g2.drawLine(eicas_gc.prim_dial_x[pos]+n1_r*14/16, n1_y, eicas_gc.prim_dial_x[pos]+n1_r-1, n1_y);
-        		g2.rotate(Math.toRadians(deg_norm_range/6), eicas_gc.prim_dial_x[pos], n1_y);
+        		g2.drawLine(eicas_gc.prim_dial_x[pos]+epr_r*18/20, epr_y, eicas_gc.prim_dial_x[pos]+epr_r-1, epr_y);
+        		g2.rotate(Math.toRadians(deg_dial_range/6), eicas_gc.prim_dial_x[pos], epr_y);
         	}
         	g2.setTransform(original_at);
         }
@@ -422,24 +427,24 @@ public class ECAM_Engines extends EICASSubcomponent {
             int n1_digit_y;
             int n1_digit_angle = 360-deg_start;
             for (int i=0; i<=6; i+=2) {
-                n1_digit_x = eicas_gc.prim_dial_x[pos] + (int)(Math.cos(Math.toRadians(n1_digit_angle))*n1_r*10/16);
-                n1_digit_y = n1_y + (int)(Math.sin(Math.toRadians(n1_digit_angle))*n1_r*10/16);
+                n1_digit_x = eicas_gc.prim_dial_x[pos] + (int)(Math.cos(Math.toRadians(n1_digit_angle))*epr_r*10/16);
+                n1_digit_y = epr_y + (int)(Math.sin(Math.toRadians(n1_digit_angle))*epr_r*10/16);
                 mark_str = (i==0) ? "1" : "1."+Integer.toString(i);
                 g2.drawString(mark_str, n1_digit_x - eicas_gc.get_text_width(g2, eicas_gc.font_s, mark_str)/2, n1_digit_y+eicas_gc.line_height_s*3/8);                
-                n1_digit_angle += deg_norm_range*2/6;
+                n1_digit_angle += deg_dial_range*2/6;
             }
         }
 
         // Gauge Arc
         g2.setColor(engine_on ? eicas_gc.ecam_markings_color : eicas_gc.ecam_caution_color);  
-        g2.drawArc(eicas_gc.prim_dial_x[pos]-n1_r, n1_y-n1_r, 2*n1_r, 2*n1_r, deg_start, -deg_norm_range);
+        g2.drawArc(eicas_gc.prim_dial_x[pos]-epr_r, epr_y-epr_r, 2*epr_r, 2*epr_r, deg_arc_start, -deg_arc_range);
         if (engine_on) {
         	g2.setColor(eicas_gc.ecam_warning_color);
         	original_stroke = g2.getStroke();
         	g2.setStroke(new CompositeStroke( new BasicStroke( 3.0f * eicas_gc.grow_scaling_factor ), new BasicStroke( 2.0f * eicas_gc.grow_scaling_factor ) ));
         	// EPR radius red arc 
-        	int n1_r_red = n1_r * 98/100; 
-        	g2.drawArc(eicas_gc.prim_dial_x[pos]-n1_r_red, n1_y-n1_r_red, 2*n1_r_red, 2*n1_r_red, deg_caution-2, -deg_warn_range);
+        	int epr_r_red = epr_r * 98/100; 
+        	g2.drawArc(eicas_gc.prim_dial_x[pos]-epr_r_red, epr_y-epr_r_red, 2*epr_r_red, 2*epr_r_red, deg_caution-2, -deg_warn_range);
         	g2.setStroke(original_stroke);
         }
         resetPen(g2);
@@ -447,18 +452,18 @@ public class ECAM_Engines extends EICASSubcomponent {
         // needle
         if (engine_on) {
         	scalePen(g2,3.0f);
-        	g2.rotate(Math.toRadians(Math.round(n1_dial*deg_norm_range)-deg_start), eicas_gc.prim_dial_x[pos], n1_y);
+        	g2.rotate(Math.toRadians(Math.round(epr_dial*deg_dial_range)-deg_start), eicas_gc.prim_dial_x[pos], epr_y);
         	g2.setColor(eicas_gc.ecam_normal_color);
-        	g2.drawLine(eicas_gc.prim_dial_x[pos], n1_y, eicas_gc.prim_dial_x[pos]+n1_r*11/10, n1_y);
+        	g2.drawLine(eicas_gc.prim_dial_x[pos], epr_y, eicas_gc.prim_dial_x[pos]+epr_r*11/10, epr_y);
         	g2.setTransform(original_at);
         	resetPen(g2);
         }
 
         // Throttle
         if (engine_on) {
-        	g2.rotate(Math.toRadians(Math.round(throttle_dial*deg_norm_range)-deg_start), eicas_gc.prim_dial_x[pos], n1_y);
+        	g2.rotate(Math.toRadians(Math.round(throttle_dial*deg_throttle_range)-deg_start), eicas_gc.prim_dial_x[pos], epr_y);
         	g2.setColor(eicas_gc.ecam_action_color);
-        	g2.drawOval(eicas_gc.prim_dial_x[pos]+n1_r*11/10, n1_y, n1_r/8, n1_r/8);
+        	g2.drawOval(eicas_gc.prim_dial_x[pos]+epr_r*11/10, epr_y, epr_r/8, epr_r/8);
         	g2.setTransform(original_at);
         }
         
@@ -466,7 +471,7 @@ public class ECAM_Engines extends EICASSubcomponent {
     	// Don't draw the box when more than 4 engines
         if ( num < 5 && engine_on) {
             g2.setColor(eicas_gc.ecam_markings_color);
-            drawDoubleRect(g2, eicas_gc.prim_dial_x[pos] - eicas_gc.dial_font_w[num], n1_box_y + eicas_gc.dial_font_h[num]*45/100,
+            drawDoubleRect(g2, eicas_gc.prim_dial_x[pos] - eicas_gc.dial_font_w[num], epr_box_y + eicas_gc.dial_font_h[num]*45/100,
             		    eicas_gc.dial_font_w[num]*45/10, eicas_gc.dial_box_h[num]);
         }
         if ( ( n1_dial <= 1.0f ) || this.inhibit ) {
@@ -480,12 +485,12 @@ public class ECAM_Engines extends EICASSubcomponent {
 
         if (engine_on) {
         	drawStringSmallThreeDecimals(g2, eicas_gc.prim_dial_x[pos]- eicas_gc.dial_font_w[num] + eicas_gc.dial_font_w[num]*44/10,
-        			n1_box_y+eicas_gc.dial_font_h[num]*140/100, eicas_gc.dial_font[num], eicas_gc.dial_font_s[num], epr_value);
+        			epr_box_y+eicas_gc.dial_font_h[num]*140/100, eicas_gc.dial_font[num], eicas_gc.dial_font_s[num], epr_value);
         } else {
         	g2.setColor(eicas_gc.ecam_caution_color);
         	g2.setFont(eicas_gc.dial_font[num]);
             g2.drawString("XX", eicas_gc.prim_dial_x[pos]- eicas_gc.dial_font_w[num] + eicas_gc.dial_font_w[num]*14/10,
-            		n1_box_y+eicas_gc.dial_font_h[num]*140/100);	
+            		epr_box_y+eicas_gc.dial_font_h[num]*140/100);	
         }
 
         // Reverser
@@ -496,8 +501,8 @@ public class ECAM_Engines extends EICASSubcomponent {
             } else {
                 g2.setColor(eicas_gc.ecam_caution_color);
             }
-            g2.drawRect(eicas_gc.prim_dial_x[pos]-eicas_gc.dial_font_w[num]*18/10, n1_y-eicas_gc.dial_font_h[num]*12/10, eicas_gc.dial_font_w[num]*36/10, eicas_gc.dial_font_h[num]*120/100);
-            g2.drawString("REV", eicas_gc.prim_dial_x[pos]-eicas_gc.dial_font_w[num]*16/10, n1_y-eicas_gc.dial_font_h[num]*15/100-2);
+            g2.drawRect(eicas_gc.prim_dial_x[pos]-eicas_gc.dial_font_w[num]*18/10, epr_y-eicas_gc.dial_font_h[num]*12/10, eicas_gc.dial_font_w[num]*36/10, eicas_gc.dial_font_h[num]*120/100);
+            g2.drawString("REV", eicas_gc.prim_dial_x[pos]-eicas_gc.dial_font_w[num]*16/10, epr_y-eicas_gc.dial_font_h[num]*15/100-2);
         }
 
         // target N1 bug not for reverse
@@ -510,8 +515,8 @@ public class ECAM_Engines extends EICASSubcomponent {
             	}
             	float ref_n1_dial = Math.min(ref_n1, 110.0f) / 100.0f;
                 g2.setColor(eicas_gc.ecam_caution_color);
-                g2.rotate(Math.toRadians(Math.round(ref_n1_dial*deg_norm_range)-deg_start), eicas_gc.prim_dial_x[pos], n1_y);
-                g2.drawLine(eicas_gc.prim_dial_x[pos]+n1_r-n1_r/10, n1_y, eicas_gc.prim_dial_x[pos]+n1_r+n1_r/10, n1_y);
+                g2.rotate(Math.toRadians(Math.round(ref_n1_dial*deg_dial_range)-deg_start), eicas_gc.prim_dial_x[pos], epr_y);
+                g2.drawLine(eicas_gc.prim_dial_x[pos]+epr_r-epr_r/10, epr_y, eicas_gc.prim_dial_x[pos]+epr_r+epr_r/10, epr_y);
                 g2.setTransform(original_at);
             }
         }
@@ -524,62 +529,79 @@ public class ECAM_Engines extends EICASSubcomponent {
         AffineTransform original_at = g2.getTransform();
         scalePen(g2, 2.2f);
 
-        float n1_value = this.aircraft.get_N1(pos);
-        float throttle_value = this.aircraft.get_throttle(pos)*100.0f;
-        float n1_dial = Math.min(n1_value-20.0f, 110.0f) / 100.0f;
+        float n1_value = this.aircraft.get_N1(pos);    
+        float throttle_dial = this.aircraft.get_throttle(pos);
+        float n1_dial = Math.min(n1_value-20.0f, 90.0f) / 80.0f;
         n1_dial = Math.max(0.0f, n1_dial);
-        float throttle_dial = Math.min(throttle_value, 110.0f) / 100.0f;
         float n2_value = this.aircraft.get_N2(pos);       
         boolean engine_on = (n1_value > 1.0f) || (n2_value > 1.0f);
+        boolean draw_box = (line != 3);
         
         int n1_y = line==1 ? eicas_gc.dial_main1_y : (line==2 ? eicas_gc.dial_main2_y : eicas_gc.dial_main3_y);
         int n1_r = eicas_gc.dial_r[num];
         int n1_box_y = n1_y - n1_r/8;
         
-        // TODO : Needle start at 20% N1
-        int deg_start = 225;
-        int deg_caution = 30;
-        int deg_warning = 0;
-        int deg_norm_range = deg_start-deg_caution;
-        int deg_warn_range = deg_caution-deg_warning;
+        int deg_arc_start = 215;
+        int deg_start = 210;
+        int deg_caution = 10;
+        int deg_warning = -10;
+        if (line==3) {
+        	deg_caution = 35;
+        	deg_warning = 20;
+        }
+        int deg_arc_range = deg_arc_start - deg_caution;
+        int deg_norm_range = deg_start - deg_caution;
+        int deg_dial_range = deg_start - deg_caution - 10;
+        int deg_warn_range = deg_caution - deg_warning;
         int deg_throttle_start = deg_start;
-        int deg_throttle_range = deg_throttle_start - deg_caution;
+        int deg_throttle_range = deg_throttle_start - deg_caution - 10;
 
-        // scale markings every 10%
+        // scale markings every 1/8, starting from N1=20%
         if (engine_on) {
         	g2.setColor(eicas_gc.ecam_markings_color);
         	g2.rotate(Math.toRadians(360-deg_start), eicas_gc.prim_dial_x[pos], n1_y);
-        	for (int i=0; i<=10; i++) {
-        		if (i==0 || i>4) g2.drawLine(eicas_gc.prim_dial_x[pos]+n1_r*14/16, n1_y, eicas_gc.prim_dial_x[pos]+n1_r-1, n1_y);
-        		g2.rotate(Math.toRadians(deg_norm_range/10), eicas_gc.prim_dial_x[pos], n1_y);
+        	for (int i=0; i<=8; i++) {
+        		if (i==0 || (i>2 && draw_box) || (i%2==0 && !draw_box)) g2.drawLine(eicas_gc.prim_dial_x[pos]+n1_r*18/20, n1_y, eicas_gc.prim_dial_x[pos]+n1_r-1, n1_y);
+        		g2.rotate(Math.toRadians(deg_dial_range/8), eicas_gc.prim_dial_x[pos], n1_y);
         	}
         	g2.setTransform(original_at);
         }
         
-        // scale numbers 2, 4, 6, 8 and 10
-        // scale number 4 and 10
-        // N1 : scale number 5 and 10
-        if ( num <= 4 && engine_on) {
+        // N1 : scale number 5 and 10, EPR : scale number 4 and 10
+        if ( num <= 4 && engine_on) {       	
             g2.setFont(eicas_gc.font_s);
             int n1_digit_x;
             int n1_digit_y;
-            int n1_digit_angle = 360-deg_start + deg_norm_range/2;
-            // 5
-            n1_digit_x = eicas_gc.prim_dial_x[pos] + (int)(Math.cos(Math.toRadians(n1_digit_angle))*n1_r*11/16);
-            n1_digit_y = n1_y + (int)(Math.sin(Math.toRadians(n1_digit_angle))*n1_r*11/16);
-            g2.drawString("5", n1_digit_x - eicas_gc.digit_width_s/2, n1_digit_y+eicas_gc.line_height_s*3/8);
-            n1_digit_angle += deg_norm_range/2;
-            // 10
-            n1_digit_x = eicas_gc.prim_dial_x[pos] + (int)(Math.cos(Math.toRadians(n1_digit_angle))*n1_r*11/16);
-            n1_digit_y = n1_y + (int)(Math.sin(Math.toRadians(n1_digit_angle))*n1_r*11/16);
-            g2.drawString("10", n1_digit_x - eicas_gc.digit_width_s, n1_digit_y+eicas_gc.line_height_s*3/8);
-            n1_digit_angle += deg_norm_range/2;
-            
+            int n1_digit_angle;
+            if (draw_box) {
+            	// 5
+            	n1_digit_angle = 360-deg_start + deg_dial_range*3/8;
+            	n1_digit_x = eicas_gc.prim_dial_x[pos] + (int)(Math.cos(Math.toRadians(n1_digit_angle))*n1_r*11/16);
+            	n1_digit_y = n1_y + (int)(Math.sin(Math.toRadians(n1_digit_angle))*n1_r*11/16);
+            	g2.drawString("5", n1_digit_x - eicas_gc.digit_width_s/2, n1_digit_y+eicas_gc.line_height_s*3/8);
+            	// 10
+            	n1_digit_angle += deg_dial_range*5/8;
+            	n1_digit_x = eicas_gc.prim_dial_x[pos] + (int)(Math.cos(Math.toRadians(n1_digit_angle))*n1_r*11/16);
+            	n1_digit_y = n1_y + (int)(Math.sin(Math.toRadians(n1_digit_angle))*n1_r*11/16);
+            	g2.drawString("10", n1_digit_x - eicas_gc.digit_width_s, n1_digit_y+eicas_gc.line_height_s*3/8);            
+            } else {
+            	// 4
+            	n1_digit_angle = 360-deg_start + deg_dial_range*2/8;
+            	n1_digit_x = eicas_gc.prim_dial_x[pos] + (int)(Math.cos(Math.toRadians(n1_digit_angle))*n1_r*11/16);
+            	n1_digit_y = n1_y + (int)(Math.sin(Math.toRadians(n1_digit_angle))*n1_r*11/16);
+            	g2.drawString("4", n1_digit_x - eicas_gc.digit_width_s/2, n1_digit_y+eicas_gc.line_height_s*3/8);
+            	// 10
+            	n1_digit_angle += deg_dial_range*6/8;
+            	n1_digit_x = eicas_gc.prim_dial_x[pos] + (int)(Math.cos(Math.toRadians(n1_digit_angle))*n1_r*11/16);
+            	n1_digit_y = n1_y + (int)(Math.sin(Math.toRadians(n1_digit_angle))*n1_r*11/16);
+            	g2.drawString("10", n1_digit_x - eicas_gc.digit_width_s, n1_digit_y+eicas_gc.line_height_s*3/8);            
+
+            }
         }
 
         // Gauge Arc
         g2.setColor(engine_on ? eicas_gc.ecam_markings_color : eicas_gc.ecam_caution_color);  
-        g2.drawArc(eicas_gc.prim_dial_x[pos]-n1_r, n1_y-n1_r, 2*n1_r, 2*n1_r, deg_start, -deg_norm_range);
+        g2.drawArc(eicas_gc.prim_dial_x[pos]-n1_r, n1_y-n1_r, 2*n1_r, 2*n1_r, deg_arc_start, -deg_arc_range);
         if (engine_on) {
         	g2.setColor(eicas_gc.ecam_warning_color);
         	original_stroke = g2.getStroke();
@@ -590,12 +612,11 @@ public class ECAM_Engines extends EICASSubcomponent {
         	g2.setStroke(original_stroke);
         }
         
-
         // Needle
         resetPen(g2);
         scalePen(g2,3.0f);
         if (engine_on) {
-        	g2.rotate(Math.toRadians(Math.round(n1_dial*deg_norm_range)-deg_start), eicas_gc.prim_dial_x[pos], n1_y);
+        	g2.rotate(Math.toRadians(Math.round(n1_dial*deg_dial_range)-deg_start), eicas_gc.prim_dial_x[pos], n1_y);
         	g2.setColor(eicas_gc.ecam_normal_color);
         	g2.drawLine(eicas_gc.prim_dial_x[pos], n1_y, eicas_gc.prim_dial_x[pos]+n1_r*11/10, n1_y);
         	g2.setTransform(original_at);
@@ -606,13 +627,13 @@ public class ECAM_Engines extends EICASSubcomponent {
         if (engine_on && (line == 1)) {
         	g2.rotate(Math.toRadians(Math.round(throttle_dial*deg_throttle_range)-deg_throttle_start), eicas_gc.prim_dial_x[pos], n1_y);
         	g2.setColor(eicas_gc.ecam_action_color);
-        	g2.drawOval(eicas_gc.prim_dial_x[pos]+n1_r*11/10, n1_y, n1_r/8, n1_r/8);
+        	g2.drawOval(eicas_gc.prim_dial_x[pos]+n1_r*11/10, n1_y-n1_r/16, n1_r/8, n1_r/8);
         	g2.setTransform(original_at);
         }
         
         // value box - present for A340 CRT, none for A340 LCD
        	// Don't draw the box when more than 4 engines
-        if (engine_on) {
+        if (engine_on && draw_box) {
         	if ( num < 4 ) {     
         		g2.setColor(eicas_gc.ecam_markings_color);
         		drawDoubleRect(g2, eicas_gc.prim_dial_x[pos] - eicas_gc.dial_font_w[num]*2, n1_box_y + eicas_gc.dial_font_h[num]*45/100,
@@ -678,8 +699,9 @@ public class ECAM_Engines extends EICASSubcomponent {
             		ref_n1 *= 100.0f;
             	}
             	float ref_n1_dial = Math.min(ref_n1, 110.0f) / 100.0f;
+            	ref_n1_dial = Math.max(0.2f, ref_n1_dial);
                 g2.setColor(Color.yellow);
-                g2.rotate(Math.toRadians(Math.round(ref_n1_dial*deg_norm_range)-deg_start), eicas_gc.prim_dial_x[pos], n1_y);
+                g2.rotate(Math.toRadians(Math.round(ref_n1_dial*deg_dial_range)-deg_start), eicas_gc.prim_dial_x[pos], n1_y);
                 g2.drawLine(eicas_gc.prim_dial_x[pos]+n1_r-n1_r/7, n1_y, eicas_gc.prim_dial_x[pos]+n1_r+n1_r*22/100, n1_y);
                 g2.fillRect(eicas_gc.prim_dial_x[pos]+n1_r, n1_y, n1_r/4, n1_r/7);
                 g2.setTransform(original_at);
@@ -739,7 +761,7 @@ public class ECAM_Engines extends EICASSubcomponent {
         g2.setColor(eicas_gc.ecam_markings_color);
         g2.rotate(Math.toRadians(360-deg_start), eicas_gc.prim_dial_x[pos], n1_y);
         for (int i=0; i<8; i++) {
-            g2.drawLine(eicas_gc.prim_dial_x[pos]+n1_r*14/16, n1_y, eicas_gc.prim_dial_x[pos]+n1_r-1, n1_y);
+            g2.drawLine(eicas_gc.prim_dial_x[pos]+n1_r*18/20, n1_y, eicas_gc.prim_dial_x[pos]+n1_r-1, n1_y);
             g2.rotate(Math.toRadians(deg_norm_range/7), eicas_gc.prim_dial_x[pos], n1_y);
         }
         g2.setTransform(original_at);
@@ -884,7 +906,7 @@ public class ECAM_Engines extends EICASSubcomponent {
         g2.setColor(eicas_gc.ecam_markings_color);
         g2.rotate(Math.toRadians(360-deg_start), eicas_gc.prim_dial_x[pos], trq_y);
         for (int i=0; i<11; i++) {
-            g2.drawLine(eicas_gc.prim_dial_x[pos]+trq_r*14/16, trq_y, eicas_gc.prim_dial_x[pos]+trq_r-1, trq_y);
+            g2.drawLine(eicas_gc.prim_dial_x[pos]+trq_r*18/20, trq_y, eicas_gc.prim_dial_x[pos]+trq_r-1, trq_y);
             g2.rotate(Math.toRadians(deg_norm_range/10), eicas_gc.prim_dial_x[pos], trq_y);
         }
         g2.setTransform(original_at);
@@ -999,11 +1021,13 @@ public class ECAM_Engines extends EICASSubcomponent {
         int egt_r = eicas_gc.dial_r[num];
         
         int deg_start = full_arc ? 225 : 180;
-        int deg_caution = full_arc ? 45 : 25;
+        // int deg_caution = full_arc ? 45 : 25;
         int deg_warning = full_arc ? 25 : 0;
+        int deg_full_range = deg_start-deg_warning;
+        int deg_caution = deg_start-Math.round(max_egt_dial*deg_full_range)-10;
         int deg_norm_range = deg_start-deg_caution;
         int deg_warn_range = deg_caution-deg_warning;
-        int deg_full_range = deg_start-deg_warning;
+
 
         if ( ( egt_dial <= 1.0f ) || this.inhibit ) {
             // inhibit caution or warning below 1000ft
@@ -1033,7 +1057,7 @@ public class ECAM_Engines extends EICASSubcomponent {
         	g2.setColor(eicas_gc.ecam_markings_color);
         	g2.rotate(Math.toRadians(360-deg_start), eicas_gc.prim_dial_x[pos], egt_y);
         	for (int i=0; i<2; i++) {
-        		g2.drawLine(eicas_gc.prim_dial_x[pos]+egt_r*14/16, egt_y, eicas_gc.prim_dial_x[pos]+egt_r-1, egt_y);
+        		g2.drawLine(eicas_gc.prim_dial_x[pos]+egt_r*18/20, egt_y, eicas_gc.prim_dial_x[pos]+egt_r-1, egt_y);
         		g2.rotate(Math.toRadians(deg_full_range/2), eicas_gc.prim_dial_x[pos], egt_y);
         	}
         	g2.setTransform(original_at);
@@ -1073,8 +1097,12 @@ public class ECAM_Engines extends EICASSubcomponent {
         // EGT MAX
         if (engine_on) {
         	g2.setColor(Color.yellow);
-        	g2.rotate(Math.toRadians(Math.round(max_egt_dial*deg_norm_range)-deg_start), eicas_gc.prim_dial_x[pos], egt_y);
+        	g2.rotate(Math.toRadians(Math.round(max_egt_dial*deg_full_range)-deg_start), eicas_gc.prim_dial_x[pos], egt_y);
         	g2.fillRect(eicas_gc.prim_dial_x[pos]+egt_r, egt_y, egt_r/4, egt_r/7);
+        	/* Draw Max EGT Value (debug)
+        	g2.setFont(eicas_gc.font_s);
+        	g2.drawString(""+Math.round(egt_max), eicas_gc.prim_dial_x[pos]+egt_r, egt_y);
+        	*/
         	g2.setTransform(original_at);
         }
         
