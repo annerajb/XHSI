@@ -332,6 +332,7 @@ XPLMDataRef m_total;
 XPLMDataRef engine_n1;
 XPLMDataRef engine_egt_percent;
 XPLMDataRef engine_egt_value;
+XPLMDataRef engine_max_egt_value;
 XPLMDataRef engine_fire_extinguisher;
 XPLMDataRef reverser_ratio;
 XPLMDataRef tank_ratio;
@@ -1847,6 +1848,7 @@ void findDataRefs(void) {
     engine_n1 = XPLMFindDataRef("sim/flightmodel/engine/ENGN_N1_");
     engine_egt_percent = XPLMFindDataRef("sim/flightmodel/engine/ENGN_EGT");
     engine_egt_value = XPLMFindDataRef("sim/flightmodel/engine/ENGN_EGT_c");
+    engine_max_egt_value = XPLMFindDataRef("sim/aircraft/engine/acf_max_EGT");
     engine_fire_extinguisher = XPLMFindDataRef("sim/cockpit2/engine/fire_extinguisher_on");
     reverser_ratio = XPLMFindDataRef("sim/flightmodel2/engines/thrust_reverser_deploy_ratio");
     tank_ratio = XPLMFindDataRef("sim/aircraft/overflow/acf_tank_rat");

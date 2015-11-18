@@ -259,6 +259,7 @@ extern XPLMDataRef m_total;
 extern XPLMDataRef engine_n1;
 extern XPLMDataRef engine_egt_percent;
 extern XPLMDataRef engine_egt_value;
+extern XPLMDataRef engine_max_egt_value;
 extern XPLMDataRef engine_fire_extinguisher;
 extern XPLMDataRef reverser_ratio;
 extern XPLMDataRef tank_ratio;
