@@ -1934,7 +1934,6 @@ int createEnginesPacket(void) {
     int extinguisher;
     int extinguishers[8];
 
-
     strncpy(sim_packet.packet_id, "ENGI", 4);
 
     tanks = XPLMGetDatai(num_tanks);
@@ -1994,6 +1993,10 @@ int createEnginesPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf( engifloat[e] );
         i++;
     }
+
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_ENGINE_MAX_EGT);
+    sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(engine_max_egt_value) );
+    i++;
 
     XPLMGetDatavf(reverser_ratio, engifloat, 0, engines);
     for (e=0; e<engines; e++) {
