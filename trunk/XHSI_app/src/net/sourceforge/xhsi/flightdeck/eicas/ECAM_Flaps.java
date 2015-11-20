@@ -110,14 +110,6 @@ public class ECAM_Flaps extends EICASSubcomponent {
         	
         	// flaps bullets
         	g2.setColor(eicas_gc.ecam_markings_color);
-        	/*
-        	g2.drawArc(
-        			flaps_center_x - flaps_w, 
-        			flaps_center_y - flaps_h,
-        			flaps_w*2 + 2,
-        			flaps_h*2 + 2, 0, 80);
-        	*/
-
         	for ( int i=1; i<=detents; i++) {
     			g2.fillOval(
     					eicas_gc.ecam_flaps_bullet[i].x,
@@ -137,8 +129,6 @@ public class ECAM_Flaps extends EICASSubcomponent {
                 g2.rotate(flaps_angle_t, eicas_gc.ecam_flaps_center_x+tx, eicas_gc.ecam_flaps_center_y+ty);
                 g2.translate(tx, ty);
                 g2.drawPolygon(flaps_triangle_x, flaps_triangle_y, 3);
-        		// g2.rotate(Math.toRadians(60*flapshandle), eicas_gc.ecam_flaps_box_x + eicas_gc.ecam_flaps_box_w*46/100, eicas_gc.ecam_flaps_box_y + eicas_gc.ecam_flaps_box_h*28/100);
-        		// g2.drawLine(eicas_gc.ecam_flaps_box_x + eicas_gc.ecam_flaps_box_w*46/100 , eicas_gc.ecam_flaps_box_y + eicas_gc.ecam_flaps_box_h*28/100 - 1, eicas_gc.wing_x + eicas_gc.wing_w + eicas_gc.flaps_l, eicas_gc.wing_y + eicas_gc.wing_h/2);
         		g2.setTransform(original_at);
         	} else {
         		// Draw flap position in green
@@ -157,7 +147,7 @@ public class ECAM_Flaps extends EICASSubcomponent {
         			eicas_gc.ecam_flaps_box_y + eicas_gc.line_height_l*4);
         }
         
-        // Flaps position
+        // Flaps position and line
         g2.setColor(eicas_gc.ecam_normal_color);
         double flaps_angle = Math.toRadians(80*flaps);
         double flaps_angle_t = Math.toRadians(40*flaps);
@@ -168,21 +158,21 @@ public class ECAM_Flaps extends EICASSubcomponent {
         g2.translate(tx, ty);
         g2.drawPolygon(flaps_triangle_x, flaps_triangle_y, 3);
         g2.setTransform(original_at);
+        /*
+        double[] flaps_line = {flaps_triangle_x[0], flaps_triangle_y[0]};
+        AffineTransform.getRotateInstance(flaps_angle_t, eicas_gc.ecam_flaps_center_x+tx, eicas_gc.ecam_flaps_center_y+ty)
+          .transform(flaps_line, 0, flaps_line, 0, 1); 
+        g2.drawLine(eicas_gc.ecam_flaps_box_x + eicas_gc.ecam_flaps_box_w*43/100, eicas_gc.ecam_flaps_box_y + eicas_gc.ecam_flaps_box_h*38/100 - 1 ,
+        		(int) flaps_line[0]+tx, (int) flaps_line[1]+ty);
+        */
+        
         g2.drawLine(eicas_gc.ecam_flaps_box_x + eicas_gc.ecam_flaps_box_w*43/100, eicas_gc.ecam_flaps_box_y + eicas_gc.ecam_flaps_box_h*38/100 - 1 ,
     			eicas_gc.ecam_flaps_center_x - eicas_gc.ecam_flaps_box_w*12/100 + tx, eicas_gc.ecam_flaps_center_y+dy);
-           
         
-        // Slats 
+        
+        // Slats bullets 
         if ( slats > 0.05f ) {
         	g2.setColor(eicas_gc.ecam_markings_color);
-        	// slats arc
-       	
-        	/* g2.drawArc(
-        			slats_center_x - slats_w, 
-        			slats_center_y - slats_h,
-        			slats_w*2 + 2,
-        			slats_h*2 + 2, 90, 90);
-        	*/
         	for ( int i=1; i<=detents; i++) {
     			g2.fillOval(
     					eicas_gc.ecam_slats_bullet[i].x,
@@ -195,21 +185,15 @@ public class ECAM_Flaps extends EICASSubcomponent {
  
         // Slats position
         g2.setColor(eicas_gc.ecam_normal_color);
-        double slats_angle = Math.toRadians(80*slats);
-        double slats_angle_t = Math.toRadians(40*slats);
-		int s_tx = (int) Math.round(slats_w * Math.sin(slats_angle)); 
-	    int s_ty = (int) Math.round(-slats_h * Math.cos(slats_angle));
-//	    int s_dy = (int) Math.round(-slats_h * Math.cos(slats_angle) + flaps_h*25*Math.sin(slats_angle)/100);
-	    int s_dy = (int) Math.round(-slats_h * Math.cos(slats_angle));
-
-        // double s_angle = -Math.toRadians(90*slats-90);
-        // g2.translate(eicas_gc.ecam_slats_center_x + slats_w * Math.cos(s_angle), eicas_gc.ecam_slats_center_y + slats_h * Math.sin(s_angle));
-        g2.rotate(-Math.toRadians(90*slats), eicas_gc.ecam_slats_center_x, eicas_gc.ecam_slats_center_y);
+        double slats_angle = -Math.toRadians(90*slats);
+        g2.rotate(slats_angle, eicas_gc.ecam_slats_center_x, eicas_gc.ecam_slats_center_y);
         g2.drawPolygon(slats_triangle_x, slats_triangle_y, 3);
         g2.setTransform(original_at);
+        double[] slats_line = {slats_triangle_x[0], slats_triangle_y[0]};
+        AffineTransform.getRotateInstance(slats_angle, eicas_gc.ecam_slats_center_x, eicas_gc.ecam_slats_center_y)
+          .transform(slats_line, 0, slats_line, 0, 1); 
         g2.drawLine(eicas_gc.ecam_flaps_box_x + eicas_gc.ecam_flaps_box_w*33/100, eicas_gc.ecam_flaps_box_y + eicas_gc.ecam_flaps_box_h*38/100 - 1 ,
-    			eicas_gc.ecam_slats_center_x - s_tx, eicas_gc.ecam_slats_center_y+s_dy);
-
+        		(int) slats_line[0], (int) slats_line[1]);
         resetPen(g2);
     }
     
@@ -297,13 +281,6 @@ public class ECAM_Flaps extends EICASSubcomponent {
         	
         	// flaps bullets
         	g2.setColor(eicas_gc.ecam_markings_color);
-        	/*
-        	g2.drawArc(
-        			flaps_center_x - flaps_w, 
-        			flaps_center_y - flaps_h,
-        			flaps_w*2 + 2,
-        			flaps_h*2 + 2, 0, 80);
-        	*/
 
         	for ( int i=1; i<=detents; i++) {
     			g2.fillOval(
@@ -355,14 +332,6 @@ public class ECAM_Flaps extends EICASSubcomponent {
         // Slats 
         if ( slats > 0.05f ) {
         	g2.setColor(eicas_gc.ecam_markings_color);
-        	// slats arc
-       	
-        	/* g2.drawArc(
-        			slats_center_x - slats_w, 
-        			slats_center_y - slats_h,
-        			slats_w*2 + 2,
-        			slats_h*2 + 2, 90, 90);
-        	*/
         	for ( int i=1; i<=detents; i++) {
     			g2.fillOval(
     					eicas_gc.ecam_slats_bullet[i].x,
@@ -389,7 +358,6 @@ public class ECAM_Flaps extends EICASSubcomponent {
     
     
     private void draw_speed_brakes(Graphics2D g2) {
-
         
         float speedbrake = this.aircraft.get_speed_brake();
         boolean sbrk_armed = this.aircraft.speed_brake_armed();
