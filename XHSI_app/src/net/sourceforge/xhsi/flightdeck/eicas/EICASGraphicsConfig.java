@@ -153,7 +153,15 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
     public int eng_label_x;
     public int ref_n1_x;
     public int ref_n1_y;
+    public int ref_n1_epr_y;
     public int ref_temp_x;
+    // On Airbus ECAM version 1, EPR engine, Fuel Flow is on the right side 
+    public int ecam_v1_ff_legend_y;
+    public int ecam_v1_ff_legend_x;
+    public int ecam_v1_ff_unit_x;
+    public int ecam_v1_ff_value_y;
+    public int ecam_v1_ff_eng1_x;
+    public int ecam_v1_ff_eng2_x;
     
 
     public EICASGraphicsConfig(Component root_component, int du) {
@@ -191,7 +199,6 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
             // remember the number of flaps / slats detents
             this.detents = detents;
 
-//logger.warning("EICAS update_config");
             // general instrument config
             super.update_config(g2);
 
@@ -219,6 +226,8 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                     prim_dial_x[i] = panel_rect.x + dials_width*50/100/cols + i*dials_width/cols;
                     seco_dial_x[i] = alerts_x0 + i*alerts_w/cols + (alerts_w/cols*15/16)/2;
                 }
+                memo_x = panel_rect.x + panel_rect.width*630/1000;
+                memo_y = panel_rect.y + prim_dials_height + line_height_l * 2;
             	// the dials take +/-60% of the width
             	dials_width = panel_rect.width*575/1000;
             	dial_main1_y = panel_rect.y + eicas_size*17/100;
@@ -301,6 +310,9 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                     prim_dials_height = eicas_size*630/1000;
                     hyd_dials_height = eicas_size*25/100;
                     ecam_messages_w = panel_rect.width*600/1000; 
+                    memo_x = panel_rect.x + panel_rect.width*630/1000;
+                    memo_y = panel_rect.y + prim_dials_height + line_height_l * 2;
+                    
                     for (int i=0; i<cols; i++) {
                         prim_dial_x[i] = panel_rect.x + dials_width*65/1000 + dials_width*50/100/cols + i*dials_width/cols;
                         seco_dial_x[i] = alerts_x0 + i*alerts_w/cols + (alerts_w/cols*15/16)/2;
@@ -328,6 +340,8 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                     prim_dials_height = eicas_size*670/1000;
                     hyd_dials_height = eicas_size*25/100;
                     ecam_messages_w = panel_rect.width*625/1000;
+                    memo_x = panel_rect.x + panel_rect.width*650/1000;
+                    memo_y = panel_rect.y + prim_dials_height + line_height_l * 2;
                     
                     // TODO : let a title spacing in the middle
                     int col_spacing = dials_width*50/1000;
@@ -410,8 +424,7 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                 dial_font_s_h[8] = line_height_xxs;
             }
             message_x = panel_rect.x + panel_rect.width*40/1000;
-            memo_x = panel_rect.x + panel_rect.width*630/1000;
-            memo_y = panel_rect.y + prim_dials_height + line_height_l * 2;
+
             		
             
             //dial_ng_y = panel_rect.y + eicas_size*87/100;
@@ -468,6 +481,7 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                 ref_n1_x = panel_rect.x + panel_rect.width * 500/1000;
                 ref_temp_x = panel_rect.x + panel_rect.width * 600/1000;
                 ref_n1_y = panel_rect.y + panel_rect.height * 10/1000 + line_height_m;
+                ref_n1_epr_y = panel_rect.y + panel_rect.height * 10/1000 + line_height_m;
             } else {
             	// Airbus style
             	// fuel_primary is the text coordinates
@@ -530,6 +544,7 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                     // Ref N1 values on the right panel
                     ref_n1_x = panel_rect.x + panel_rect.width * 610/1000;
                     ref_n1_y = panel_rect.y + prim_dials_height * 350/1000 + line_height_l;
+                    ref_n1_epr_y = panel_rect.y + prim_dials_height * 170/1000 + line_height_l;
                     ref_temp_x = ref_n1_x + digit_width_xl*13;
                 		              	
                 } else {
@@ -578,13 +593,21 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                     // Ref N1 values
                     ref_n1_x = panel_rect.x + panel_rect.width * 500/1000;
                     ref_n1_y = panel_rect.y + panel_rect.height * 10/1000 + line_height_m;
+                    ref_n1_epr_y = panel_rect.y + panel_rect.height * 10/1000 + line_height_m;
                 }
             }
+            
+            // On Airbus ECAM version 1, EPR engine, Fuel Flow is on the right side 
+            ecam_v1_ff_legend_y = panel_rect.y + prim_dials_height * 360/1000;
+            ecam_v1_ff_legend_x = panel_rect.x + panel_rect.width * 760/1000;
+            ecam_v1_ff_unit_x = panel_rect.x + panel_rect.width * 770/1000;
+            ecam_v1_ff_value_y = panel_rect.y + prim_dials_height * 360/1000 + line_height_xl*12/10;
+            ecam_v1_ff_eng1_x = panel_rect.x + panel_rect.width * 760/1000;
+            ecam_v1_ff_eng2_x = panel_rect.x + panel_rect.width * 890/1000;
             
             trim_txt_x = controls_x + controls_w*57/100;
             trim_txt_y = controls_y + controls_h*68/100;
             
-//            lat_trim_x = controls_x + controls_w*6/100;
             lat_trim_x = controls_x + controls_w*2/100;
             lat_trim_w = controls_w/2;
             lat_trim_y = controls_y + controls_h*64/100;
@@ -592,7 +615,6 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
             
             yaw_trim_y = lat_trim_y + lat_trim_h*6/10;
             
-//            pitch_trim_x = controls_x + controls_w*66/100;
             pitch_trim_x = controls_x + controls_w*70/100;
             pitch_trim_w = controls_w/2;
             pitch_trim_y = controls_y + controls_h*64/100;
