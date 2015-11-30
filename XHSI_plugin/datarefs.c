@@ -308,6 +308,10 @@ XPLMDataRef auto_brake_level;
 XPLMDataRef speedbrake_handle;
 XPLMDataRef speedbrake_ratio;
 XPLMDataRef gear_deploy;
+XPLMDataRef gear_door_ang;
+XPLMDataRef gear_door_type;
+XPLMDataRef gear_door_ext_ang;
+XPLMDataRef gear_door_ret_ang;
 XPLMDataRef yoke_pitch_ratio;
 XPLMDataRef yoke_roll_ratio;
 XPLMDataRef yoke_hdg_ratio;
@@ -339,9 +343,14 @@ XPLMDataRef tank_ratio;
 XPLMDataRef engine_n2;
 XPLMDataRef fuel_flow;
 XPLMDataRef oil_p_ratio;
+XPLMDataRef oil_p_psi;
 XPLMDataRef oil_t_ratio;
+XPLMDataRef oil_t_c;
 XPLMDataRef oil_q_ratio;
+XPLMDataRef oil_t_red;
+XPLMDataRef oil_p_red;
 XPLMDataRef throttle_ratio;
+XPLMDataRef engine_epr_red;
 
 // for VIB
 XPLMDataRef vib_running;
@@ -1813,6 +1822,10 @@ void findDataRefs(void) {
     speedbrake_handle = XPLMFindDataRef("sim/cockpit2/controls/speedbrake_ratio");
     speedbrake_ratio = XPLMFindDataRef("sim/flightmodel2/controls/speedbrake_ratio");
     gear_deploy = XPLMFindDataRef("sim/flightmodel2/gear/deploy_ratio");
+    gear_door_ang = XPLMFindDataRef("sim/aircraft/gear/acf_gear_door_ang_now");
+    gear_door_type = XPLMFindDataRef("sim/aircraft/gear/acf_gear_door_typ");
+    gear_door_ext_ang = XPLMFindDataRef("sim/aircraft/gear/acf_gear_door_ext_ang");
+    gear_door_ret_ang = XPLMFindDataRef("sim/aircraft/gear/acf_gear_door_ret_ang");
     yoke_pitch_ratio = XPLMFindDataRef("sim/cockpit2/controls/yoke_pitch_ratio");
     yoke_roll_ratio = XPLMFindDataRef("sim/cockpit2/controls/yoke_roll_ratio");
     yoke_hdg_ratio = XPLMFindDataRef("sim/cockpit2/controls/yoke_heading_ratio");
@@ -1855,8 +1868,14 @@ void findDataRefs(void) {
     engine_n2 = XPLMFindDataRef("sim/flightmodel/engine/ENGN_N2_");
     fuel_flow = XPLMFindDataRef("sim/flightmodel/engine/ENGN_FF_");
     oil_p_ratio = XPLMFindDataRef("sim/flightmodel/engine/ENGN_oil_press");
+    oil_p_psi = XPLMFindDataRef("sim/flightmodel/engine/ENGN_oil_press_psi");
     oil_t_ratio = XPLMFindDataRef("sim/flightmodel/engine/ENGN_oil_temp");
+    oil_t_c = XPLMFindDataRef("sim/flightmodel/engine/ENGN_oil_temp_c");
     oil_q_ratio = XPLMFindDataRef("sim/cockpit2/engine/indicators/oil_quantity_ratio");
+    oil_p_red = XPLMFindDataRef("sim/aircraft/limits/red_hi_oilP");
+    oil_t_red = XPLMFindDataRef("sim/aircraft/limits/red_hi_oilT");
+    engine_epr_red = XPLMFindDataRef("sim/aircraft/limits/red_hi_EPR");
+
     throttle_ratio = XPLMFindDataRef("sim/cockpit2/engine/actuators/throttle_ratio");
     // for VIB
     vib_running = XPLMFindDataRef("sim/flightmodel/engine/ENGN_running");
