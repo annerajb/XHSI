@@ -45,11 +45,15 @@ public class Hydraulics extends MFDSubcomponent {
 	public void paint(Graphics2D g2) {
 
 		if ( mfd_gc.powered && avionics.get_mfd_mode() == Avionics.MFD_MODE_HYDR) {
+			boolean airbus = this.avionics.is_qpac() || this.avionics.is_jar_a320neo();
+			String str_circuit_legend;
+		
 			// Page ID
 			drawPageID(g2, "HYD");
 			
 			// GREEN circuit
-			drawHydraulicGauge(g2, "GREEN", 5000*this.aircraft.get_hyd_press(0), mfd_gc.hyd_1_x );
+			str_circuit_legend = airbus ? "GREEN" : "1";
+			drawHydraulicGauge(g2, str_circuit_legend, 5000*this.aircraft.get_hyd_press(0), mfd_gc.hyd_1_x );
 			drawHydraulicPump(g2, aircraft.get_hyd_pump(0), mfd_gc.hyd_1_x, mfd_gc.hyd_1_2_pump_y);
 			drawValveVert(g2, this.aircraft.fire_extinguisher(0) ? ValveStatus.VALVE_CLOSED : ValveStatus.VALVE_OPEN, mfd_gc.hyd_1_x, mfd_gc.hyd_valve_y);
 			drawHydraulicQty(g2, this.aircraft.get_hyd_quant(0), mfd_gc.hyd_1_x);
@@ -58,7 +62,8 @@ public class Hydraulics extends MFDSubcomponent {
 			g2.drawLine(mfd_gc.hyd_1_x, mfd_gc.hyd_valve_y+mfd_gc.hyd_valve_r, mfd_gc.hyd_1_x, mfd_gc.hyd_qty_top_y );
 					
 			// YELLOW circuit
-			drawHydraulicGauge(g2, "YELLOW", 5000*this.aircraft.get_hyd_press(1), mfd_gc.hyd_2_x );
+			str_circuit_legend = airbus ? "YELLOW" : "2";
+			drawHydraulicGauge(g2, str_circuit_legend, 5000*this.aircraft.get_hyd_press(1), mfd_gc.hyd_2_x );
 			drawHydraulicPump(g2, aircraft.get_hyd_pump(1), mfd_gc.hyd_2_x, mfd_gc.hyd_1_2_pump_y);
 			drawValveVert(g2, this.aircraft.fire_extinguisher(1) ? ValveStatus.VALVE_CLOSED : ValveStatus.VALVE_OPEN, mfd_gc.hyd_2_x, mfd_gc.hyd_valve_y);
 			drawHydraulicQty(g2, this.aircraft.get_hyd_quant(1), mfd_gc.hyd_2_x);
@@ -67,27 +72,29 @@ public class Hydraulics extends MFDSubcomponent {
 			g2.drawLine(mfd_gc.hyd_2_x, mfd_gc.hyd_valve_y+mfd_gc.hyd_valve_r, mfd_gc.hyd_2_x, mfd_gc.hyd_qty_top_y );
 			
 			// BLUE circuit
-			drawHydraulicGauge(g2, "BLUE", 5000*this.aircraft.get_hyd_press(2), mfd_gc.hyd_3_x );
-			drawHydraulicPump(g2, aircraft.get_hyd_pump(2), mfd_gc.hyd_3_x, mfd_gc.hyd_3_pump_y);
-			drawHydraulicQty(g2, this.aircraft.get_hyd_quant(2), mfd_gc.hyd_3_x);
-			g2.setColor(mfd_gc.ecam_normal_color);
-			g2.drawLine(mfd_gc.hyd_3_x, mfd_gc.hyd_3_pump_y + mfd_gc.hyd_pump_h, mfd_gc.hyd_3_x, mfd_gc.hyd_qty_top_y );
+			if (airbus) {
+				drawHydraulicGauge(g2, "BLUE", 5000*this.aircraft.get_hyd_press(2), mfd_gc.hyd_3_x );
+				drawHydraulicPump(g2, aircraft.get_hyd_pump(2), mfd_gc.hyd_3_x, mfd_gc.hyd_3_pump_y);
+				drawHydraulicQty(g2, this.aircraft.get_hyd_quant(2), mfd_gc.hyd_3_x);
+				g2.setColor(mfd_gc.ecam_normal_color);
+				g2.drawLine(mfd_gc.hyd_3_x, mfd_gc.hyd_3_pump_y + mfd_gc.hyd_pump_h, mfd_gc.hyd_3_x, mfd_gc.hyd_qty_top_y );
+			}
 			
 			// Pumps legends
 			g2.setColor(mfd_gc.ecam_markings_color);
 			g2.setFont(mfd_gc.font_xl);
 			g2.drawString("1", mfd_gc.hyd_1_pump_legend_x, mfd_gc.hyd_3_pump_y + mfd_gc.hyd_pump_h/2);
 			g2.drawString("2", mfd_gc.hyd_2_pump_legend_x, mfd_gc.hyd_3_pump_y + mfd_gc.hyd_pump_h/2);
-			g2.drawString("ELEC", mfd_gc.hyd_3_pump_legend_x, mfd_gc.hyd_1_2_pump_y + mfd_gc.hyd_pump_h/3);
+			if (airbus) g2.drawString("ELEC", mfd_gc.hyd_3_pump_legend_x, mfd_gc.hyd_1_2_pump_y + mfd_gc.hyd_pump_h/3);
 						
 			// Power Transfer Unit
 			drawPTU(g2, this.aircraft.get_hyd_ptu());
 			
 			// Yellow ELEC Pump
-			drawElecPump(g2, aircraft.get_hyd_pump(3), mfd_gc.hyd_2_x, mfd_gc.hyd_rat_pump_y);
+			if (airbus) drawElecPump(g2, aircraft.get_hyd_pump(3), mfd_gc.hyd_2_x, mfd_gc.hyd_rat_pump_y);
 			
 			// RAT
-			drawRATPump(g2, aircraft.get_hyd_pump(4), mfd_gc.hyd_3_x, mfd_gc.hyd_rat_pump_y);
+			if (airbus) drawRATPump(g2, aircraft.get_hyd_pump(4), mfd_gc.hyd_3_x, mfd_gc.hyd_rat_pump_y);
 			
 			// Units
 			drawUnits(g2, "PSI", mfd_gc.hyd_psi_unit_x1);

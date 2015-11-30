@@ -295,7 +295,10 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_AIRCRAFT_ELECTRICAL_NUM_BUSES = 339;
     public static final int SIM_AIRCRAFT_ELECTRICAL_NUM_GENERATORS = 340;
     public static final int SIM_AIRCRAFT_ELECTRICAL_NUM_INVERTERS = 341;
-
+    public static final int SIM_AIRCRAFT_ENGINE_RED_OIL_P = 342;
+    public static final int SIM_AIRCRAFT_ENGINE_RED_OIL_T = 343;
+    public static final int SIM_AIRCRAFT_ENGINE_RED_EPR = 344;
+    
     // Controls & annunciators
     public static final int SIM_COCKPIT2_ANNUNCIATORS_MASTER_CAUTION = 350;
     public static final int SIM_COCKPIT2_ANNUNCIATORS_MASTER_WARNING = 351;
@@ -318,6 +321,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT2_CONTROLS_SPEEDBRAKE_RATIO = 368;
     public static final int SIM_FLIGHTMODEL2_CONTROLS_SPEEDBRAKE_RATIO = 369;
     public static final int SIM_FLIGHTMODEL2_GEAR_DEPLOY_RATIO_ = 370; // array of 10 floats
+    public static final int XHSI_AIRCRAFT_GEAR_DOOR_DEPLOY_RATIO_ = 380; // array of 10 floats
     public static final int SIM_COCKPIT2_CONTROLS_YOKE_PITCH_RATIO = 390;
     public static final int SIM_COCKPIT2_CONTROLS_YOKE_ROLL_RATIO = 391;
     public static final int SIM_COCKPIT2_CONTROLS_YOKE_HDG_RATIO = 396;
@@ -327,6 +331,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_FLIGHTMODEL_CONTROLS_SLATRAT = 395;
     public static final int SIM_COCKPIT2_CONTROLS_LEFT_BRK_RATIO = 397;
     public static final int SIM_COCKPIT2_CONTROLS_RIGHT_BRK_RATIO = 398;
+    public static final int XHSI_AIRCRAFT_GEAR_DOOR_COUNT = 399;
     
     // Fuel, engines, etc...
     public static final int SIM_AIRCRAFT_OVERFLOW_ACF_NUM_TANKS = 400;
@@ -350,37 +355,40 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_PRESS_ = 490; // array
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_TEMP_ = 500; // array
     public static final int SIM_COCKPIT2_ENGINE_INDICATORS_OIL_QUANTITY_RATIO_ = 510; // array
-    public static final int XHSI_FLIGHTMODEL_ENGINE_VIB_ = 520; // array
-    public static final int SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO1 = 531;
-    public static final int SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO2 = 532;
-    public static final int SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_1 = 533;
-    public static final int SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_2 = 534;
-    public static final int SIM_COCKPIT_FUEL_PUMPS = 535;
-    public static final int SIM_AIRCRAFT_ENGINE_MAX_EGT = 536;
-    // 537 : free
-    public static final int XHSI_EICAS_OVERRIDE_TRQ_MAX = 538;
-    public static final int SIM_AIRCRAFT_CONTROLS_ACF_TRQ_MAX_ENG = 539;
-    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_TRQ_ = 540;
-    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_ITT_ = 550;
-    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_ITT_C_ = 560;
-    public static final int SIM_AIRCRAFT_CONTROLS_ACF_RSC_REDLINE_PRP = 569;
-    public static final int SIM_COCKPIT2_ENGINE_INDICATORS_PROP_SPEED_RPM_ = 570;
-    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_PROPMODE_ = 580;
-    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_MPR_ = 590;
-    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_EPR_ = 600;
-    public static final int SIM_COCKPIT2_ENGINE_ACTUATORS_THROTTLE_RATIO_ = 610;
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_TEMP_C_ = 520; // array
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_PRESS_PSI_ = 530; // array
+    public static final int XHSI_FLIGHTMODEL_ENGINE_VIB_ = 540; // array
+    public static final int SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO1 = 551;
+    public static final int SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO2 = 552;
+    public static final int SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_1 = 553;
+    public static final int SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_2 = 554;
+    public static final int SIM_COCKPIT_FUEL_PUMPS = 555;
+    public static final int SIM_AIRCRAFT_ENGINE_MAX_EGT = 556;
+    // 557 : free
+    public static final int XHSI_EICAS_OVERRIDE_TRQ_MAX = 558;
+    public static final int SIM_AIRCRAFT_CONTROLS_ACF_TRQ_MAX_ENG = 559;
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_TRQ_ = 560;
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_ITT_ = 570;
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_ITT_C_ = 580;
+    public static final int SIM_AIRCRAFT_CONTROLS_ACF_RSC_REDLINE_PRP = 589;
+    public static final int SIM_COCKPIT2_ENGINE_INDICATORS_PROP_SPEED_RPM_ = 590;
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_PROPMODE_ = 600;
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_MPR_ = 610;
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_EPR_ = 620;
+    public static final int SIM_COCKPIT2_ENGINE_ACTUATORS_THROTTLE_RATIO_ = 630;
+    public static final int XHSI_FUEL_USED_ = 640;
     
     // Control surface positions : rudder, elevators, ailerons, spoilers
-    public static final int SIM_FLIGHTMODEL_CONTROLS_RUDDER = 620;
-    public static final int SIM_FLIGHTMODEL_CONTROLS_LEFT_ELEV = 621;
-    public static final int SIM_FLIGHTMODEL_CONTROLS_RIGHT_ELEV = 622;
-    public static final int SIM_FLIGHTMODEL_CONTROLS_LEFT_AIL = 623;
-    public static final int SIM_FLIGHTMODEL_CONTROLS_RIGHT_AIL = 624;
+    public static final int SIM_FLIGHTMODEL_CONTROLS_RUDDER = 650;
+    public static final int SIM_FLIGHTMODEL_CONTROLS_LEFT_ELEV = 651;
+    public static final int SIM_FLIGHTMODEL_CONTROLS_RIGHT_ELEV = 652;
+    public static final int SIM_FLIGHTMODEL_CONTROLS_LEFT_AIL = 653;
+    public static final int SIM_FLIGHTMODEL_CONTROLS_RIGHT_AIL = 654;
     
     // Cabin Pressure
-    public static final int SIM_COCKPIT2_PRESSURIZATION_CABIN_DELTA_P=625;
-    public static final int SIM_COCKPIT2_PRESSURIZATION_CABIN_ALT=626;
-    public static final int SIM_COCKPIT2_PRESSURIZATION_CABIN_VVI=627;
+    public static final int SIM_COCKPIT2_PRESSURIZATION_CABIN_DELTA_P=655;
+    public static final int SIM_COCKPIT2_PRESSURIZATION_CABIN_ALT=656;
+    public static final int SIM_COCKPIT2_PRESSURIZATION_CABIN_VVI=657;
     
     // UFMC
     public static final int UFMC_STATUS = 700;

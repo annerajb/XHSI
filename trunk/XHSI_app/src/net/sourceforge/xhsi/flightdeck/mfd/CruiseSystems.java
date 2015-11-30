@@ -25,6 +25,7 @@
 package net.sourceforge.xhsi.flightdeck.mfd;
 
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -34,7 +35,7 @@ import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.Aircraft.ValveStatus;
 
-public class CruizeSystems extends MFDSubcomponent {
+public class CruiseSystems extends MFDSubcomponent {
 
 	private static final long serialVersionUID = 1L;
 
@@ -44,7 +45,7 @@ public class CruizeSystems extends MFDSubcomponent {
     private DecimalFormat two_decimals_format;
     private DecimalFormatSymbols format_symbols;
     
-	public CruizeSystems(ModelFactory model_factory, MFDGraphicsConfig hsi_gc, Component parent_component) {
+	public CruiseSystems(ModelFactory model_factory, MFDGraphicsConfig hsi_gc, Component parent_component) {
 		super(model_factory, hsi_gc, parent_component);
         one_decimal_format = new DecimalFormat("##0.0");
         format_symbols = one_decimal_format.getDecimalFormatSymbols();
@@ -61,15 +62,25 @@ public class CruizeSystems extends MFDSubcomponent {
 	public void paint(Graphics2D g2) {
 
 		if ( mfd_gc.powered && avionics.get_mfd_mode() == Avionics.MFD_MODE_SYS) {
-			// Page ID
-			drawPageID(g2, "ENGINE", mfd_gc.panel_rect.x, mfd_gc.panel_rect.y + mfd_gc.line_height_xxl * 11/10);
-			drawPageID(g2, "AIR", mfd_gc.panel_rect.x, mfd_gc.crz_air_legend_y);
+			if (mfd_gc.num_eng<3) {
+				drawPageID(g2, "ENGINE", mfd_gc.panel_rect.x, mfd_gc.panel_rect.y + mfd_gc.line_height_xxl * 11/10);
+				drawPageID(g2, "AIR", mfd_gc.panel_rect.x, mfd_gc.crz_air_legend_y);
+				drawLines(g2);
+				drawEngineVib(g2);
+				drawFuelUsed(g2);
+				drawOilQuantity(g2);
+			} else {
+				drawPageID(g2, "CRUISE", mfd_gc.mfd_middle_x, mfd_gc.panel_rect.y + mfd_gc.line_height_xxl * 11/10);
+				drawPageID(g2, "ENG", mfd_gc.panel_rect.x, mfd_gc.panel_rect.y + mfd_gc.line_height_xxl * 21/10);
+				drawPageID(g2, "AIR", mfd_gc.panel_rect.x, mfd_gc.crz_air_legend_y);
+		
+				drawEngineVib(g2);				
+				drawFuelUsed(g2);
+				drawOilQuantity(g2);
+								
+			}
 			drawCabin(g2);
 			drawCabinPressures(g2);
-			drawLines(g2);
-			drawEngineVib(g2);
-			drawFuelUsed(g2);
-			drawOilQuantity(g2);
 		}
 	}
 
@@ -90,9 +101,10 @@ public class CruizeSystems extends MFDSubcomponent {
 		String str_fuel_legend = "F. USED";
 		String str_fuel_units = "KG";
 		g2.setColor(mfd_gc.ecam_markings_color);
-		g2.drawLine(mfd_gc.crz_eng_center_x - mfd_gc.crz_eng_line_dx1, mfd_gc.crz_fuel_top_y, mfd_gc.crz_eng_center_x - mfd_gc.crz_eng_line_dx2, mfd_gc.crz_fuel_bottom_y);
-		g2.drawLine(mfd_gc.crz_eng_center_x + mfd_gc.crz_eng_line_dx1, mfd_gc.crz_fuel_top_y, mfd_gc.crz_eng_center_x + mfd_gc.crz_eng_line_dx2, mfd_gc.crz_fuel_bottom_y);
-	
+		if (mfd_gc.num_eng<3) {
+			g2.drawLine(mfd_gc.crz_eng_center_x - mfd_gc.crz_eng_line_dx1, mfd_gc.crz_fuel_top_y, mfd_gc.crz_eng_center_x - mfd_gc.crz_eng_line_dx2, mfd_gc.crz_fuel_bottom_y);
+			g2.drawLine(mfd_gc.crz_eng_center_x + mfd_gc.crz_eng_line_dx1, mfd_gc.crz_fuel_top_y, mfd_gc.crz_eng_center_x + mfd_gc.crz_eng_line_dx2, mfd_gc.crz_fuel_bottom_y);
+		}
 		g2.setFont(mfd_gc.font_xl);
 		g2.drawString(str_fuel_legend, mfd_gc.crz_eng_center_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_fuel_legend)/2, mfd_gc.crz_fuel_legend_y);
 		g2.setColor(mfd_gc.ecam_action_color);
@@ -103,11 +115,8 @@ public class CruizeSystems extends MFDSubcomponent {
 		String str_fuel_val="XX";
 		g2.setFont(mfd_gc.font_xxl);
 		g2.setColor(mfd_gc.ecam_caution_color);
-		if (mfd_gc.num_eng > 0 ) {
-			g2.drawString(str_fuel_val, mfd_gc.crz_eng_x[0]-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_fuel_val), mfd_gc.crz_fuel_value_y);
-		}
-		if (mfd_gc.num_eng > 1 ) {
-			g2.drawString(str_fuel_val, mfd_gc.crz_eng_x[1]-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_fuel_val), mfd_gc.crz_fuel_value_y);
+		for (int eng=0; eng<mfd_gc.num_eng; eng++) {					
+			g2.drawString(str_fuel_val, mfd_gc.crz_eng_x[eng]-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_fuel_val), mfd_gc.crz_fuel_value_y);
 		}
 	}
 
@@ -115,8 +124,10 @@ public class CruizeSystems extends MFDSubcomponent {
 		String str_oil_legend = "OIL";
 		String str_oil_units = "QT";
 		g2.setColor(mfd_gc.ecam_markings_color);
-		g2.drawLine(mfd_gc.crz_eng_center_x - mfd_gc.crz_eng_line_dx1, mfd_gc.crz_oil_top_y, mfd_gc.crz_eng_center_x - mfd_gc.crz_eng_line_dx2, mfd_gc.crz_oil_bottom_y);
-		g2.drawLine(mfd_gc.crz_eng_center_x + mfd_gc.crz_eng_line_dx1, mfd_gc.crz_oil_top_y, mfd_gc.crz_eng_center_x + mfd_gc.crz_eng_line_dx2, mfd_gc.crz_oil_bottom_y);
+		if (mfd_gc.num_eng<3) {
+			g2.drawLine(mfd_gc.crz_eng_center_x - mfd_gc.crz_eng_line_dx1, mfd_gc.crz_oil_top_y, mfd_gc.crz_eng_center_x - mfd_gc.crz_eng_line_dx2, mfd_gc.crz_oil_bottom_y);
+			g2.drawLine(mfd_gc.crz_eng_center_x + mfd_gc.crz_eng_line_dx1, mfd_gc.crz_oil_top_y, mfd_gc.crz_eng_center_x + mfd_gc.crz_eng_line_dx2, mfd_gc.crz_oil_bottom_y);
+		}
 		g2.setFont(mfd_gc.font_xl);
 		g2.drawString(str_oil_legend, mfd_gc.crz_eng_center_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_oil_legend)/2, mfd_gc.crz_oil_legend_y);
 		g2.setColor(mfd_gc.ecam_action_color);
@@ -127,13 +138,10 @@ public class CruizeSystems extends MFDSubcomponent {
 		String str_oil_val="XX";
 		g2.setFont(mfd_gc.font_xxl);
 		g2.setColor(mfd_gc.ecam_normal_color);
-		if (mfd_gc.num_eng > 0 ) {
-			str_oil_val = one_decimal_format.format(this.aircraft.get_oil_quant_ratio(0)*100);
-			g2.drawString(str_oil_val, mfd_gc.crz_eng_x[0]-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_oil_val), mfd_gc.crz_oil_value_y);
-		}
-		if (mfd_gc.num_eng > 1 ) {
-			str_oil_val = one_decimal_format.format(this.aircraft.get_oil_quant_ratio(1)*100);
-			g2.drawString(str_oil_val, mfd_gc.crz_eng_x[1]-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_oil_val), mfd_gc.crz_oil_value_y);
+		for (int eng=0; eng<mfd_gc.num_eng; eng++) {			
+			str_oil_val = one_decimal_format.format(this.aircraft.get_oil_quant_ratio(eng)*100);
+			// g2.drawString(str_oil_val, mfd_gc.crz_eng_x[eng]-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_oil_val), mfd_gc.crz_oil_value_y);
+			drawStringSmallOneDecimal(g2, mfd_gc.crz_eng_x[eng]+mfd_gc.digit_width_xxl, mfd_gc.crz_oil_value_y,mfd_gc.font_xxl,mfd_gc.font_xl, this.aircraft.get_oil_quant_ratio(eng)*100);
 		}
 		
 	}
@@ -143,37 +151,34 @@ public class CruizeSystems extends MFDSubcomponent {
 		String vib_n1_legend = "VIB  (N1)";
 		String vib_n2_legend = "VIB  (N2)";
 		String str_vib_val = "";
+		
 		// T
-		g2.setColor(mfd_gc.ecam_markings_color);
-		g2.drawLine(mfd_gc.crz_vib_center_x - mfd_gc.crz_vib_t_dx, mfd_gc.crz_vib_n1_t_y, mfd_gc.crz_vib_center_x + mfd_gc.crz_vib_t_dx, mfd_gc.crz_vib_n1_t_y);
-		g2.drawLine(mfd_gc.crz_vib_center_x - mfd_gc.crz_vib_t_dx, mfd_gc.crz_vib_n2_t_y, mfd_gc.crz_vib_center_x + mfd_gc.crz_vib_t_dx, mfd_gc.crz_vib_n2_t_y);
-		g2.drawLine(mfd_gc.crz_vib_center_x, mfd_gc.crz_vib_n1_t_y, mfd_gc.crz_vib_center_x, mfd_gc.crz_vib_n1_t_y  + mfd_gc.crz_vib_t_dy);
-		g2.drawLine(mfd_gc.crz_vib_center_x, mfd_gc.crz_vib_n2_t_y, mfd_gc.crz_vib_center_x, mfd_gc.crz_vib_n2_t_y  + mfd_gc.crz_vib_t_dy);
+		if (mfd_gc.num_eng<3) {
+			g2.setColor(mfd_gc.ecam_markings_color);
+			g2.drawLine(mfd_gc.crz_vib_center_x - mfd_gc.crz_vib_t_dx, mfd_gc.crz_vib_n1_t_y, mfd_gc.crz_vib_center_x + mfd_gc.crz_vib_t_dx, mfd_gc.crz_vib_n1_t_y);
+			g2.drawLine(mfd_gc.crz_vib_center_x - mfd_gc.crz_vib_t_dx, mfd_gc.crz_vib_n2_t_y, mfd_gc.crz_vib_center_x + mfd_gc.crz_vib_t_dx, mfd_gc.crz_vib_n2_t_y);
+			g2.drawLine(mfd_gc.crz_vib_center_x, mfd_gc.crz_vib_n1_t_y, mfd_gc.crz_vib_center_x, mfd_gc.crz_vib_n1_t_y  + mfd_gc.crz_vib_t_dy);
+			g2.drawLine(mfd_gc.crz_vib_center_x, mfd_gc.crz_vib_n2_t_y, mfd_gc.crz_vib_center_x, mfd_gc.crz_vib_n2_t_y  + mfd_gc.crz_vib_t_dy);
+		}
+		
 		// Legends
 		g2.setFont(mfd_gc.font_xl);
+		if (mfd_gc.num_eng>2) {
+			vib_n1_legend = "VIB  N1";
+			vib_n2_legend = "      N2";
+		}
 		g2.drawString(vib_n1_legend, mfd_gc.crz_vib_center_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, vib_n1_legend)/2, mfd_gc.crz_vib_n1_legend_y);
 		g2.drawString(vib_n2_legend, mfd_gc.crz_vib_center_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, vib_n2_legend)/2, mfd_gc.crz_vib_n2_legend_y);
+
 		// Values
 		g2.setFont(mfd_gc.font_xxl);
 		g2.setColor(mfd_gc.ecam_normal_color);
-		if (mfd_gc.num_eng > 0 ) {
-			str_vib_val = one_decimal_format.format(this.aircraft.get_vib(0)/10);
-			g2.drawString(str_vib_val, mfd_gc.crz_vib_x[0]-mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_vib_val), mfd_gc.crz_vib_n1_value_y);
-			g2.drawString(str_vib_val, mfd_gc.crz_vib_x[0]-mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_vib_val), mfd_gc.crz_vib_n2_value_y);
-		}
-
-		if (mfd_gc.num_eng > 1 ) {
-			str_vib_val = one_decimal_format.format(this.aircraft.get_vib(1)/10);
-			g2.drawString(str_vib_val, mfd_gc.crz_vib_x[1]-mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_vib_val), mfd_gc.crz_vib_n1_value_y);
-			g2.drawString(str_vib_val, mfd_gc.crz_vib_x[1]-mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_vib_val), mfd_gc.crz_vib_n2_value_y);
-		}
-
-		if (mfd_gc.num_eng > 2 ) {
-			String str_vib_warn = "DISP. LIMITED";
-			g2.setColor(mfd_gc.ecam_caution_color);
-			g2.setFont(mfd_gc.font_l);
-			g2.drawString(str_vib_warn, mfd_gc.crz_vib_center_x-mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_vib_warn)/2 ,
-					mfd_gc.crz_vib_n1_legend_y - mfd_gc.line_height_l);
+		str_vib_val="XX";
+		g2.setFont(mfd_gc.font_xxl);
+		for (int eng=0; eng<mfd_gc.num_eng; eng++) {
+			str_vib_val = one_decimal_format.format(this.aircraft.get_vib(eng)/10);
+			drawStringSmallOneDecimal(g2, mfd_gc.crz_vib_x[eng]+mfd_gc.digit_width_xxl, mfd_gc.crz_vib_n1_value_y,mfd_gc.font_xxl,mfd_gc.font_xl, this.aircraft.get_vib(eng)/10 );
+			drawStringSmallOneDecimal(g2, mfd_gc.crz_vib_x[eng]+mfd_gc.digit_width_xxl, mfd_gc.crz_vib_n2_value_y,mfd_gc.font_xxl,mfd_gc.font_xl, this.aircraft.get_vib(eng)/10 );
 		}
 	}
 	
@@ -259,5 +264,18 @@ public class CruizeSystems extends MFDSubcomponent {
        
     }
 
+    private void drawStringSmallOneDecimal(Graphics2D g2, int x, int y, Font normalFont, Font smallFont, float value) {
+    	// Value, decimal part in smaller font
+    	// Justify Right
+    	String valueStr =  one_decimal_format.format(value);
+    	g2.setFont(normalFont);
+    	String intStr = valueStr.substring(0, valueStr.length()-2);
+    	String decStr = valueStr.substring(valueStr.length()-2,valueStr.length());
+    	int len_n1_str1 = mfd_gc.get_text_width(g2, normalFont, intStr);
+    	int len_n1_str2 = mfd_gc.get_text_width(g2, smallFont, decStr);
+    	g2.drawString(intStr, x - len_n1_str2 - len_n1_str1, y);
+    	g2.setFont(smallFont);
+    	g2.drawString(decStr, x - len_n1_str2, y);
+    }
 
 }

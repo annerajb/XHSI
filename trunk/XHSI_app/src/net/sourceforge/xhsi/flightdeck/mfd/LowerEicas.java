@@ -22,6 +22,7 @@
 package net.sourceforge.xhsi.flightdeck.mfd;
 
 import java.awt.BasicStroke;
+import java.awt.Font;
 //import java.awt.Color;
 //import java.awt.Color;
 import java.awt.Component;
@@ -547,7 +548,7 @@ public class LowerEicas extends MFDSubcomponent {
 
 	private void drawAirbusOilQ(Graphics2D g2){
 		String str_fuel_legend = "OIL";
-		String str_fuel_units = "QT";
+		String str_fuel_units = "QT%";
 		g2.setColor(mfd_gc.ecam_markings_color);
 		g2.setFont(mfd_gc.font_xl);
 		g2.drawString(str_fuel_legend, mfd_gc.eng_dial_center_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_fuel_legend)/2, mfd_gc.eng_oilq_title_y);
@@ -556,30 +557,27 @@ public class LowerEicas extends MFDSubcomponent {
 		g2.drawString(str_fuel_units, mfd_gc.eng_dial_center_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_fuel_units)/2, mfd_gc.eng_oilq_legend_y);
 		
 		for (int eng=0; eng<mfd_gc.num_eng; eng++) {
-			int oilq_val = Math.round( this.aircraft.get_oil_quant_ratio(eng) * 25.0f );
+			int oilq_val = Math.round( this.aircraft.get_oil_quant_ratio(eng) * 100.0f );
 	        int dial_x = mfd_gc.dial_x[eng];
 	        int dial_y = mfd_gc.eng_oilq_dial_y;
 	        int dial_r = mfd_gc.dial_r[mfd_gc.num_eng];
-			drawAirbusGauge(g2, dial_x, dial_y, dial_r, oilq_val, 25.0f);
+			drawAirbusGauge(g2, dial_x, dial_y, dial_r, oilq_val, 100.0f);
 		}
 	}
 
 	private void drawAirbusOilP(Graphics2D g2){
-		//String str_fuel_legend = "OIL";
 		String str_fuel_units = "PSI";
-		/// g2.setColor(mfd_gc.ecam_markings_color);
-		// g2.setFont(mfd_gc.font_xl);
-		// g2.drawString(str_fuel_legend, mfd_gc.eng_dial_center_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_fuel_legend)/2, mfd_gc.eng_oilq_title_y);
 		g2.setColor(mfd_gc.ecam_action_color);
 		g2.setFont(mfd_gc.font_l);
 		g2.drawString(str_fuel_units, mfd_gc.eng_dial_center_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_fuel_units)/2, mfd_gc.eng_oilp_legend_y);
+		float max_oil_p = Math.round(10*((this.aircraft.get_oil_press_max()+5)/10));
 		
 		for (int eng=0; eng<mfd_gc.num_eng; eng++) {
-			int oilp_val = Math.round(  this.aircraft.get_oil_press_ratio(eng) * 300.0f );
+			int oilp_val = Math.round(  this.aircraft.get_oil_press_psi(eng));
 	        int dial_x = mfd_gc.dial_x[eng];
 	        int dial_y = mfd_gc.eng_oilp_dial_y;
 	        int dial_r = mfd_gc.dial_r[mfd_gc.num_eng];
-			drawAirbusGauge(g2, dial_x, dial_y, dial_r, oilp_val, 300.0f);
+			drawAirbusGauge(g2, dial_x, dial_y, dial_r, oilp_val, max_oil_p);
 		}
 	}
     
@@ -590,7 +588,7 @@ public class LowerEicas extends MFDSubcomponent {
 
         float egt_dial = value / max;
         int dial_value = Math.round(value);
-        int egt_limit = Math.round(this.aircraft.apu_egt_limit());
+        int max_limit = Math.round(max);
         boolean dial_disabled = false;
         int num = mfd_gc.num_eng;
 
@@ -603,7 +601,7 @@ public class LowerEicas extends MFDSubcomponent {
         int deg_full  = 50;     // Gauge full (100%)
         int deg_full_range = deg_zero-deg_full;   // Deg range from 0 to 100%
         // int deg_warning = stabilized ? 45 : 120;   // Gauge red sector (warning)
-        int deg_warning = deg_zero - egt_limit*deg_full_range/1000;   // Gauge red sector (warning) 
+        int deg_warning = 60;   // Gauge red sector (warning) 
         int deg_end = 25;       // Gauge end
         int deg_norm_range = deg_start-deg_warning;
         int deg_warn_range = deg_warning-deg_end;
@@ -700,46 +698,45 @@ public class LowerEicas extends MFDSubcomponent {
 		String vib_n1_legend = "VIB   (N1)";
 		String vib_n2_legend = "VIB   (N2)";
 		String str_vib_val = "";
-		// T
-		g2.setColor(mfd_gc.ecam_markings_color);
-		g2.drawLine(mfd_gc.eng_vib_x - mfd_gc.eng_vib_t_dx, mfd_gc.eng_vib_n1_top, mfd_gc.eng_vib_x + mfd_gc.eng_vib_t_dx, mfd_gc.eng_vib_n1_top);
-		g2.drawLine(mfd_gc.eng_vib_x - mfd_gc.eng_vib_t_dx, mfd_gc.eng_vib_n2_top, mfd_gc.eng_vib_x + mfd_gc.eng_vib_t_dx, mfd_gc.eng_vib_n2_top);
-		g2.drawLine(mfd_gc.eng_vib_x, mfd_gc.eng_vib_n1_top, mfd_gc.eng_vib_x, mfd_gc.eng_vib_n1_top  + mfd_gc.eng_vib_t_dy);
-		g2.drawLine(mfd_gc.eng_vib_x, mfd_gc.eng_vib_n2_top, mfd_gc.eng_vib_x, mfd_gc.eng_vib_n2_top  + mfd_gc.eng_vib_t_dy);
-		// Legends
-		g2.setFont(mfd_gc.font_xl);
-		g2.drawString(vib_n1_legend, mfd_gc.eng_vib_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, vib_n1_legend)/2, mfd_gc.eng_vib_n1_title_y);
-		g2.drawString(vib_n2_legend, mfd_gc.eng_vib_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, vib_n2_legend)/2, mfd_gc.eng_vib_n2_title_y);
+		if (mfd_gc.num_eng < 3) {
+			// T
+			g2.setColor(mfd_gc.ecam_markings_color);
+			g2.drawLine(mfd_gc.eng_vib_x - mfd_gc.eng_vib_t_dx, mfd_gc.eng_vib_n1_top, mfd_gc.eng_vib_x + mfd_gc.eng_vib_t_dx, mfd_gc.eng_vib_n1_top);
+			g2.drawLine(mfd_gc.eng_vib_x - mfd_gc.eng_vib_t_dx, mfd_gc.eng_vib_n2_top, mfd_gc.eng_vib_x + mfd_gc.eng_vib_t_dx, mfd_gc.eng_vib_n2_top);
+			g2.drawLine(mfd_gc.eng_vib_x, mfd_gc.eng_vib_n1_top, mfd_gc.eng_vib_x, mfd_gc.eng_vib_n1_top  + mfd_gc.eng_vib_t_dy);
+			g2.drawLine(mfd_gc.eng_vib_x, mfd_gc.eng_vib_n2_top, mfd_gc.eng_vib_x, mfd_gc.eng_vib_n2_top  + mfd_gc.eng_vib_t_dy);
+			// Legends
+			g2.setFont(mfd_gc.font_xl);
+			g2.drawString(vib_n1_legend, mfd_gc.eng_vib_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, vib_n1_legend)/2, mfd_gc.eng_vib_n1_title_y);
+			g2.drawString(vib_n2_legend, mfd_gc.eng_vib_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, vib_n2_legend)/2, mfd_gc.eng_vib_n2_title_y);
+		} else {
+			// Legends
+			vib_n1_legend = "VIB N1";
+			vib_n2_legend = "     N2";	
+			g2.setFont(mfd_gc.font_xl);
+			g2.drawString(vib_n1_legend, mfd_gc.crz_eng_center_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, vib_n1_legend)/2, mfd_gc.eng_vib_n1_title_y);
+			g2.drawString(vib_n2_legend, mfd_gc.crz_eng_center_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, vib_n2_legend)/2, mfd_gc.eng_vib_n2_title_y);
+
+		}
+			
+		
 		// Values
-		g2.setFont(mfd_gc.font_xxl);
 		g2.setColor(mfd_gc.ecam_normal_color);
-		if (mfd_gc.num_eng > 0 ) {
-			str_vib_val = one_decimal_format.format(this.aircraft.get_vib(0)/10);
-			g2.drawString(str_vib_val, mfd_gc.crz_vib_x[0]-mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_vib_val), mfd_gc.eng_vib_n1_value_y);
-			g2.drawString(str_vib_val, mfd_gc.crz_vib_x[0]-mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_vib_val), mfd_gc.eng_vib_n2_value_y);
-		}
-
-		if (mfd_gc.num_eng > 1 ) {
-			str_vib_val = one_decimal_format.format(this.aircraft.get_vib(1)/10);
-			g2.drawString(str_vib_val, mfd_gc.crz_vib_x[1]-mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_vib_val), mfd_gc.eng_vib_n1_value_y);
-			g2.drawString(str_vib_val, mfd_gc.crz_vib_x[1]-mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_vib_val), mfd_gc.eng_vib_n2_value_y);
-		}
-
-		if (mfd_gc.num_eng > 2 ) {
-			String str_vib_warn = "DISP. LIMITED";
-			g2.setColor(mfd_gc.ecam_caution_color);
-			g2.setFont(mfd_gc.font_l);
-			g2.drawString(str_vib_warn, mfd_gc.eng_vib_x-mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_vib_warn)/2 ,
-					mfd_gc.eng_vib_n1_title_y - mfd_gc.line_height_l);
+		str_vib_val="XX";
+		for (int eng=0; eng<mfd_gc.num_eng; eng++) {
+			drawStringSmallOneDecimal(g2, mfd_gc.crz_vib_x[eng]+mfd_gc.digit_width_xxl, mfd_gc.eng_vib_n1_value_y,mfd_gc.font_xxl,mfd_gc.font_xl, this.aircraft.get_vib(eng)/10 );
+			drawStringSmallOneDecimal(g2, mfd_gc.crz_vib_x[eng]+mfd_gc.digit_width_xxl, mfd_gc.eng_vib_n2_value_y,mfd_gc.font_xxl,mfd_gc.font_xl, this.aircraft.get_vib(eng)/10 );
 		}
 	}
     
 	private void drawFuelUsed(Graphics2D g2) {
 		String str_fuel_legend = "F. USED";
 		String str_fuel_units = "KG";
-		g2.setColor(mfd_gc.ecam_markings_color);
-		g2.drawLine(mfd_gc.crz_eng_center_x - mfd_gc.crz_eng_line_dx1, mfd_gc.crz_fuel_top_y, mfd_gc.crz_eng_center_x - mfd_gc.crz_eng_line_dx2, mfd_gc.crz_fuel_bottom_y);
-		g2.drawLine(mfd_gc.crz_eng_center_x + mfd_gc.crz_eng_line_dx1, mfd_gc.crz_fuel_top_y, mfd_gc.crz_eng_center_x + mfd_gc.crz_eng_line_dx2, mfd_gc.crz_fuel_bottom_y);
+		if (mfd_gc.num_eng<3) {
+			g2.setColor(mfd_gc.ecam_markings_color);
+			g2.drawLine(mfd_gc.crz_eng_center_x - mfd_gc.crz_eng_line_dx1, mfd_gc.crz_fuel_top_y, mfd_gc.crz_eng_center_x - mfd_gc.crz_eng_line_dx2, mfd_gc.crz_fuel_bottom_y);
+			g2.drawLine(mfd_gc.crz_eng_center_x + mfd_gc.crz_eng_line_dx1, mfd_gc.crz_fuel_top_y, mfd_gc.crz_eng_center_x + mfd_gc.crz_eng_line_dx2, mfd_gc.crz_fuel_bottom_y);
+		}
 	
 		g2.setFont(mfd_gc.font_xl);
 		g2.drawString(str_fuel_legend, mfd_gc.crz_eng_center_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_fuel_legend)/2, mfd_gc.crz_fuel_legend_y);
@@ -750,36 +747,40 @@ public class LowerEicas extends MFDSubcomponent {
 		// Values
 		String str_fuel_val="XX";
 		g2.setFont(mfd_gc.font_xxl);
-		g2.setColor(mfd_gc.ecam_caution_color);
-		if (mfd_gc.num_eng > 0 ) {
-			g2.drawString(str_fuel_val, mfd_gc.crz_eng_x[0]-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_fuel_val), mfd_gc.crz_fuel_value_y);
+		for (int eng=0; eng<mfd_gc.num_eng; eng++) {
+			if (this.aircraft.fuel_used(eng) > 0.1f ) {
+				g2.setColor(mfd_gc.ecam_normal_color);					
+				str_fuel_val=""+Math.round(this.aircraft.fuel_used(eng));
+			} else {
+				str_fuel_val="XX";
+				g2.setColor(mfd_gc.ecam_caution_color);
+			}
+			g2.drawString(str_fuel_val, mfd_gc.crz_eng_x[eng]-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_fuel_val), mfd_gc.crz_fuel_value_y);
 		}
-		if (mfd_gc.num_eng > 1 ) {
-			g2.drawString(str_fuel_val, mfd_gc.crz_eng_x[1]-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_fuel_val), mfd_gc.crz_fuel_value_y);
-		}
+		
 	}
 	
 	private void drawOilTemp(Graphics2D g2) {
 	
 		String str_oil_units = "°C";
-		g2.setColor(mfd_gc.ecam_markings_color);
-		g2.drawLine(mfd_gc.eng_dial_center_x - mfd_gc.crz_eng_line_dx1, mfd_gc.eng_oilt_line_top, mfd_gc.eng_dial_center_x - mfd_gc.crz_eng_line_dx2, mfd_gc.eng_oilt_line_bottom);
-		g2.drawLine(mfd_gc.eng_dial_center_x + mfd_gc.crz_eng_line_dx1, mfd_gc.eng_oilt_line_top, mfd_gc.eng_dial_center_x + mfd_gc.crz_eng_line_dx2, mfd_gc.eng_oilt_line_bottom);
+		if (mfd_gc.num_eng < 3) {
+			g2.setColor(mfd_gc.ecam_markings_color);
+			g2.drawLine(mfd_gc.eng_dial_center_x - mfd_gc.crz_eng_line_dx1, mfd_gc.eng_oilt_line_top, mfd_gc.eng_dial_center_x - mfd_gc.crz_eng_line_dx2, mfd_gc.eng_oilt_line_bottom);
+			g2.drawLine(mfd_gc.eng_dial_center_x + mfd_gc.crz_eng_line_dx1, mfd_gc.eng_oilt_line_top, mfd_gc.eng_dial_center_x + mfd_gc.crz_eng_line_dx2, mfd_gc.eng_oilt_line_bottom);
+		}
 		g2.setColor(mfd_gc.ecam_action_color);
 		g2.setFont(mfd_gc.font_l);
 		g2.drawString(str_oil_units, mfd_gc.eng_dial_center_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_oil_units)/2, mfd_gc.eng_oilt_legend_y);
 		
 		// Values
-		String str_oil_val="XX";
 		g2.setFont(mfd_gc.font_xxl);
-		g2.setColor(mfd_gc.ecam_normal_color);
-		if (mfd_gc.num_eng > 0 ) {
-			str_oil_val = one_decimal_format.format(this.aircraft.get_oil_quant_ratio(0)*100);
-			g2.drawString(str_oil_val, mfd_gc.crz_eng_x[0]-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_oil_val), mfd_gc.eng_oilt_value_y);
-		}
-		if (mfd_gc.num_eng > 1 ) {
-			str_oil_val = one_decimal_format.format(this.aircraft.get_oil_quant_ratio(1)*100);
-			g2.drawString(str_oil_val, mfd_gc.crz_eng_x[1]-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_oil_val), mfd_gc.eng_oilt_value_y);
+		for (int eng=0; eng<mfd_gc.num_eng; eng++) {
+			if (this.aircraft.get_oil_temp_c(eng) > this.aircraft.get_oil_temp_max()) {
+				g2.setColor(mfd_gc.ecam_caution_color);	
+			} else {
+				g2.setColor(mfd_gc.ecam_normal_color);	
+			}
+			drawStringSmallOneDecimal(g2, mfd_gc.crz_eng_x[eng]+mfd_gc.digit_width_xxl, mfd_gc.eng_oilt_value_y, mfd_gc.font_xxl,mfd_gc.font_xl, this.aircraft.get_oil_temp_c(eng) );
 		}
 		
 	}
@@ -802,7 +803,20 @@ public class LowerEicas extends MFDSubcomponent {
     	}
     }    
     
-
+    private void drawStringSmallOneDecimal(Graphics2D g2, int x, int y, Font normalFont, Font smallFont, float value) {
+    	// Value, decimal part in smaller font
+    	// Justify Right
+    	String valueStr =  one_decimal_format.format(value);
+    	g2.setFont(normalFont);
+    	String intStr = valueStr.substring(0, valueStr.length()-2);
+    	String decStr = valueStr.substring(valueStr.length()-2,valueStr.length());
+    	int len_n1_str1 = mfd_gc.get_text_width(g2, normalFont, intStr);
+    	int len_n1_str2 = mfd_gc.get_text_width(g2, smallFont, decStr);
+    	g2.drawString(intStr, x - len_n1_str2 - len_n1_str1, y);
+    	g2.setFont(smallFont);
+    	g2.drawString(decStr, x - len_n1_str2, y);
+    }
+    
     private void scalePen(Graphics2D g2) {
 
         original_stroke = g2.getStroke();

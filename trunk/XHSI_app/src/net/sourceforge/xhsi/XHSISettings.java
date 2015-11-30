@@ -1164,8 +1164,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         radio_button_menu_item.setToolTipText("Cabin pressure");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
-        mfd_group.add(radio_button_menu_item);
-        xhsi_mfd_menu.add(radio_button_menu_item);
+        // mfd_group.add(radio_button_menu_item);
+        // xhsi_mfd_menu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_mfd_cab_press = radio_button_menu_item;
         

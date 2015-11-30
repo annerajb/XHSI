@@ -758,7 +758,7 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
 
           
             // Lower EICAS dials
-            
+            eng_dial_center_x = panel_rect.x + panel_rect.width * 318/1000;
             int cols = Math.max(nb_engines, 2);
             if ( cols == 2 ) {
             	if (boeing_style) {
@@ -773,10 +773,20 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             		tape_x[1] = dial_x[1] - dial_r[2]/2;           		
             	}
             } else {
-                for (int i=0; i<cols; i++) {
-                    dial_x[i] = panel_rect.x + panel_rect.width*50/100/cols + i*panel_rect.width*9/10/cols;
-                    tape_x[i] = dial_x[i] - dial_r[cols]/2;
-                }
+            	if (boeing_style) {
+            		for (int i=0; i<cols; i++) {
+            			dial_x[i] = panel_rect.x + panel_rect.width*50/100/cols + i*panel_rect.width*9/10/cols;
+            			tape_x[i] = dial_x[i] - dial_r[cols]/2;
+            		}
+            	} else {
+            		int col_spacing = panel_rect.width*180/1000;
+            		for (int i=0; i<cols; i++) {
+            			dial_x[i] = panel_rect.x + (panel_rect.width-col_spacing)*50/100/cols + i*(panel_rect.width-col_spacing)/cols;
+            			if (i>=(cols/2)) { dial_x[i] += col_spacing; }                    
+            		}
+            		int eng_dial_col_label=(cols/2)-1;
+            		eng_dial_center_x=(dial_x[eng_dial_col_label] + dial_x[eng_dial_col_label+1]) / 2;
+            	}
             }
 
             dial_n2_y = panel_rect.y + mfd_size*12/100;
@@ -859,9 +869,7 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             autbrk_x = gear_x;
             autbrk_y = controls_y + controls_h*6/16;
             
-            // ECAM Engine
-            eng_dial_center_x = panel_rect.x + panel_rect.width * 318/1000;
-            
+            // ECAM Engine           
             eng_fused_value_dx = panel_rect.width * 622/1000;
             eng_fused_title_y = panel_rect.y + mfd_size * 889/1000;
             eng_fused_legend_y = panel_rect.y + mfd_size * 889/1000;
@@ -904,6 +912,14 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             eng_vib_t_dy = mfd_size * 35/1000;
             eng_vib_t_dx = panel_rect.width * 14/1000;
             eng_vib_x = panel_rect.x + panel_rect.width * 834/1000;
+            
+            if (num_eng>2) {
+            	eng_vib_n1_value_y = panel_rect.y + mfd_size * 800/1000;
+            	eng_vib_n2_value_y = panel_rect.y + mfd_size * 870/1000;
+            	eng_vib_n1_title_y = eng_vib_n1_value_y;
+            	eng_vib_n2_title_y = eng_vib_n2_value_y;
+
+            }
             
             eng_line_x = panel_rect.x + panel_rect.width * 622/1000;
             eng_line_top = panel_rect.y + mfd_size * 142/1000;
@@ -1141,29 +1157,31 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             crz_line_bottom_y = panel_rect.y + mfd_size * 342/1000;
             // Engines 
             crz_vib_n1_legend_y = panel_rect.y + mfd_size * 100/1000;
-            crz_vib_n1_t_y = panel_rect.y + mfd_size * 112/1000;
+            crz_vib_n1_t_y = panel_rect.y + mfd_size * 115/1000;
             crz_vib_n1_value_y = panel_rect.y + mfd_size * 162/1000;
             
             crz_vib_n2_legend_y = panel_rect.y + mfd_size * 277/1000;
-            crz_vib_n2_t_y = panel_rect.y + mfd_size * 288/1000;
+            crz_vib_n2_t_y = panel_rect.y + mfd_size * 293/1000;
             crz_vib_n2_value_y = panel_rect.y + mfd_size * 346/1000;
 
-            crz_vib_center_x = panel_rect.x + panel_rect.width * 876/1000;
+            crz_vib_center_x = panel_rect.x + panel_rect.width * 850/1000;
             crz_vib_t_dx = panel_rect.width * 21/1000;
             crz_vib_t_dy = mfd_size * 35/1000;
             if ( num_eng < 3 ) {
-            	crz_vib_x[0] = panel_rect.x + panel_rect.width * 805/1000;
-            	crz_vib_x[1] = panel_rect.x + panel_rect.width * 930/1000;
-            } else {
-            	// TODO : layout for 3 to 8 engines 
-            	crz_vib_x[0] = panel_rect.x + panel_rect.width * 700/1000;
-            	crz_vib_x[1] = panel_rect.x + panel_rect.width * 805/1000;
-            	crz_vib_x[2] = panel_rect.x + panel_rect.width * 930/1000;
-            	crz_vib_x[3] = panel_rect.x + panel_rect.width * 990/1000;
-            	crz_vib_x[4] = panel_rect.x + panel_rect.width * 805/1000;
-            	crz_vib_x[5] = panel_rect.x + panel_rect.width * 930/1000;
-            	crz_vib_x[6] = panel_rect.x + panel_rect.width * 700/1000;
-            	crz_vib_x[7] = panel_rect.x + panel_rect.width * 990/1000;            	
+            	crz_vib_x[0] = panel_rect.x + panel_rect.width * 790/1000;
+            	crz_vib_x[1] = panel_rect.x + panel_rect.width * 915/1000;
+            } else {            	
+            	crz_vib_n1_value_y = panel_rect.y + mfd_size * 410/1000;
+            	crz_vib_n2_value_y = panel_rect.y + mfd_size * 480/1000;
+            	crz_vib_n1_legend_y = crz_vib_n1_value_y;
+            	crz_vib_n2_legend_y = crz_vib_n2_value_y;                
+                int col_spacing = panel_rect.width*180/1000;
+                for (int i=0; i<cols; i++) {
+                	crz_vib_x[i] = panel_rect.x + (panel_rect.width-col_spacing)*50/100/cols + i*(panel_rect.width-col_spacing)/cols;
+                    if (i>=(cols/2)) { crz_vib_x[i] += col_spacing; }                    
+                }
+                int crz_vib_col_label=(cols/2)-1;
+                crz_vib_center_x=(crz_vib_x[crz_vib_col_label] + crz_vib_x[crz_vib_col_label+1]) / 2;
             }
             
             crz_eng_center_x = panel_rect.x + panel_rect.width * 305/1000;
@@ -1182,20 +1200,15 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             crz_oil_top_y = panel_rect.y + mfd_size * 312/1000;
             crz_oil_bottom_y = panel_rect.y + mfd_size * 334/1000;            
             if ( num_eng < 3 ) {
-            	crz_eng_x[0] = panel_rect.x + panel_rect.width * 168/1000;
+            	crz_eng_x[0] = panel_rect.x + panel_rect.width * 140/1000;
             	crz_eng_x[1] = panel_rect.x + panel_rect.width * 530/1000;
             	crz_eng_x[2] = panel_rect.x + panel_rect.width * 700/1000;
             	crz_eng_x[3] = panel_rect.x + panel_rect.width * 990/1000;
             } else {
-            	// TODO : layout for 3 to 8 engines
-            	crz_eng_x[0] = panel_rect.x + panel_rect.width * 700/1000;
-            	crz_eng_x[1] = panel_rect.x + panel_rect.width * 805/1000;
-            	crz_eng_x[2] = panel_rect.x + panel_rect.width * 930/1000;
-            	crz_eng_x[3] = panel_rect.x + panel_rect.width * 990/1000;
-            	crz_eng_x[4] = panel_rect.x + panel_rect.width * 805/1000;
-            	crz_eng_x[5] = panel_rect.x + panel_rect.width * 930/1000;
-            	crz_eng_x[6] = panel_rect.x + panel_rect.width * 700/1000;
-            	crz_eng_x[7] = panel_rect.x + panel_rect.width * 990/1000;            	
+            	crz_eng_center_x = crz_vib_center_x;
+                for (int i=0; i<cols; i++) {
+                    crz_eng_x[i] = crz_vib_x[i];                    
+                }
             }
             
             // Cabine Pressure

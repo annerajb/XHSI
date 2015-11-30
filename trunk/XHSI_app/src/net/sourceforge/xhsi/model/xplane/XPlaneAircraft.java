@@ -318,6 +318,12 @@ public class XPlaneAircraft implements Aircraft {
         }
     }
 
+    public int num_gear_doors() { return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_AIRCRAFT_GEAR_DOOR_COUNT); }
+    
+    public float get_gear_door(int gear) {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_AIRCRAFT_GEAR_DOOR_DEPLOY_RATIO_ + gear);
+    }
+    
     public boolean gear_is_down() {
         boolean all_down = true;
         int n = num_gears();
@@ -623,6 +629,10 @@ public class XPlaneAircraft implements Aircraft {
     public boolean oil_temp_alert(int eng) {return ( ( (int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_ANNUNCIATORS_OIL_TEMPERATURE) & (1<<eng) ) != 0 );}
     public boolean fuel_press_alert(int eng) {return ( ( (int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_ANNUNCIATORS_FUEL_PRESSURE) & (1<<eng) ) != 0 );}
 
+    public float fuel_used(int eng) {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_FUEL_USED_ + eng);
+    }
+    
     public float get_fuel(int tank) {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_FUEL_QUANTITY_ + tank);
     }
@@ -803,6 +813,14 @@ public class XPlaneAircraft implements Aircraft {
             return o_p;
     }
 
+    public float get_oil_press_psi(int engine) {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_PRESS_PSI_ + engine);
+    }
+    
+    public float get_oil_press_max() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_ENGINE_RED_OIL_P);
+    }
+    
     public float get_oil_temp_ratio(int engine) {
         float o_t = sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_TEMP_ + engine);
         if ( o_t > 1.0f )
@@ -811,6 +829,14 @@ public class XPlaneAircraft implements Aircraft {
             return o_t;
     }
 
+    public float get_oil_temp_max() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_ENGINE_RED_OIL_T);
+    }
+    
+    public float get_oil_temp_c(int engine) {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_TEMP_C_ + engine);
+    }
+    
     public float get_oil_quant_ratio(int engine) {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_ENGINE_INDICATORS_OIL_QUANTITY_RATIO_ + engine);
     }
@@ -963,7 +989,11 @@ public class XPlaneAircraft implements Aircraft {
     public float get_EPR(int engine) {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_ENGINE_ENGN_EPR_ + engine);
     }
-
+    
+    public float get_EPR_max() {
+        return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_ENGINE_RED_EPR);
+    }
+    
     public float get_throttle(int engine) {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_ENGINE_ACTUATORS_THROTTLE_RATIO_ + engine);
     }
