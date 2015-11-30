@@ -233,6 +233,10 @@ extern XPLMDataRef auto_brake_level;
 extern XPLMDataRef speedbrake_handle;
 extern XPLMDataRef speedbrake_ratio;
 extern XPLMDataRef gear_deploy;
+extern XPLMDataRef gear_door_ang;
+extern XPLMDataRef gear_door_type;
+extern XPLMDataRef gear_door_ext_ang;
+extern XPLMDataRef gear_door_ret_ang;
 extern XPLMDataRef yoke_pitch_ratio;
 extern XPLMDataRef yoke_roll_ratio;
 extern XPLMDataRef yoke_hdg_ratio;
@@ -266,9 +270,14 @@ extern XPLMDataRef tank_ratio;
 extern XPLMDataRef engine_n2;
 extern XPLMDataRef fuel_flow;
 extern XPLMDataRef oil_p_ratio;
+extern XPLMDataRef oil_p_psi;
 extern XPLMDataRef oil_t_ratio;
+extern XPLMDataRef oil_t_c;
 extern XPLMDataRef oil_q_ratio;
+extern XPLMDataRef oil_t_red;
+extern XPLMDataRef oil_p_red;
 extern XPLMDataRef throttle_ratio;
+extern XPLMDataRef engine_epr_red;
 
 // for VIB
 extern XPLMDataRef vib_running;

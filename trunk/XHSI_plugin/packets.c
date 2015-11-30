@@ -114,6 +114,13 @@ int createADCPacket(void) {
 	int lights_signs;
 	int gear_type[10];
 	float gear_ratio[10];
+	int gear_doors;
+	int d;
+	int gear_doors_type[20];
+	float gear_doors_ang[20];
+	float gear_doors_ext_ang[20];
+	float gear_doors_ret_ang[20];
+	float door_deploy_ratio;
 
     strncpy(sim_packet.packet_id, "ADCD", 4);
 
@@ -285,6 +292,35 @@ int createADCPacket(void) {
     }
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_AIRCRAFT_GEAR_COUNT);
     sim_packet.sim_data_points[i].value = custom_htonf((float) gears);
+    i++;
+
+    // GEAR DOORS
+    // Count gear doors, only ones that are closed when gears are down, type = 3
+    XPLMGetDatavi(gear_door_type, gear_doors_type, 0, 20);
+    XPLMGetDatavf(gear_door_ext_ang, gear_doors_ext_ang, 0, 20);
+    XPLMGetDatavf(gear_door_ret_ang, gear_doors_ret_ang, 0, 20);
+    XPLMGetDatavf(gear_door_ang, gear_doors_ang, 0, 20);
+    gear_doors = 0;
+    for (d=0; (d<20) && (gear_doors < 10); d++ )
+    {
+    	if ( gear_doors_type[d] == 3 ) {
+
+    		if ( abs(gear_doors_ret_ang[d]-gear_doors_ext_ang[d]) > 0) {
+    			// Check there is not division by 0
+    			door_deploy_ratio = ((gear_doors_ret_ang[d]-gear_doors_ang[d]) / (gear_doors_ret_ang[d]-gear_doors_ext_ang[d]));
+    		} else {
+    			door_deploy_ratio=0;
+    		}
+
+    		// door_deploy_ratio = gear_doors_ang[d];
+    	    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_AIRCRAFT_GEAR_DOOR_DEPLOY_RATIO_+ gear_doors);
+    	    sim_packet.sim_data_points[i].value = custom_htonf(door_deploy_ratio);
+    	    i++;
+    	    gear_doors++;
+    	}
+    }
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_AIRCRAFT_GEAR_DOOR_COUNT);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) gear_doors);
     i++;
 
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_PARKING_BRAKE_RATIO);
@@ -468,7 +504,7 @@ int createAvionicsPacket(void) {
     int std_gauges_failures_pilot;
     int std_gauges_failures_copilot;
     int apu_status;
-    int elec_status;
+    // int elec_status;
 
     strncpy(sim_packet.packet_id, "AVIO", 4);
 
@@ -483,8 +519,10 @@ int createAvionicsPacket(void) {
     i++;
 
     // electric status
+    /*
     elec_status = XPLMGetDatai(elec_gpu_on) |
     		XPLMGetDatai(ram_air_turbin) << 2;
+    */
     		// 1 bits per engine generator on
     /*
      elec_battery_on [0/8];
@@ -2033,9 +2071,23 @@ int createEnginesPacket(void) {
         i++;
     }
 
+    XPLMGetDatavf(oil_p_psi, engifloat, 0, engines);
+    for (e=0; e<engines; e++) {
+        sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_PRESS_PSI_ + e);
+        sim_packet.sim_data_points[i].value = custom_htonf( engifloat[e] );
+        i++;
+    }
+
     XPLMGetDatavf(oil_t_ratio, engifloat, 0, engines);
     for (e=0; e<engines; e++) {
         sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_TEMP_ + e);
+        sim_packet.sim_data_points[i].value = custom_htonf( engifloat[e] );
+        i++;
+    }
+
+    XPLMGetDatavf(oil_t_c, engifloat, 0, engines);
+    for (e=0; e<engines; e++) {
+        sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_TEMP_C_ + e);
         sim_packet.sim_data_points[i].value = custom_htonf( engifloat[e] );
         i++;
     }
@@ -2333,6 +2385,17 @@ int createStaticPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_ELECTRICAL_NUM_INVERTERS);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(acf_inverters));
     i++;
+
+    // ENGINE LIMITS
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_ENGINE_RED_OIL_T);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(oil_t_red));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_ENGINE_RED_OIL_P);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(oil_p_red));
+	i++;
+	sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_ENGINE_RED_EPR);
+	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(engine_epr_red));
+	i++;
 
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_STYLE);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(xhsi_instrument_style));
