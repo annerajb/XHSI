@@ -27,6 +27,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import java.awt.geom.AffineTransform;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.flightdeck.annunciators.GearStatus.COL;
@@ -63,7 +64,7 @@ public class Wheels extends MFDSubcomponent {
 	            } else if ( this.aircraft.num_gears() > 0 ) {
 	                // simple annunciators with an icon
 	                drawAllGears(g2);
-	            }
+	            }	            
 	        }
 	        drawAutoBrakeStatus(g2);
 		}
@@ -79,6 +80,20 @@ public class Wheels extends MFDSubcomponent {
 		g2.drawLine(page_id_x, page_id_y + mfd_gc.line_height_xl/8, page_id_x + mfd_gc.get_text_width(g2, mfd_gc.font_xl, page_str), page_id_y + mfd_gc.line_height_m/8);
 	}
 
+	/* for debug only
+	private void drawGearDoor(Graphics2D g2) {
+		int doors = this.aircraft.num_gear_doors();
+		if (doors > 0) {
+			for (int i=0; i<doors; i++) {
+				g2.setColor(mfd_gc.ecam_markings_color);
+				// if (i>=doors)g2.setColor(mfd_gc.ecam_caution_color); 
+				g2.setFont(mfd_gc.font_xl);
+				String str_door = i + ": " + Math.round(Math.abs(this.aircraft.get_gear_door(i))*100);
+				g2.drawString(str_door, mfd_gc.panel_rect.x , mfd_gc.panel_rect.y + mfd_gc.line_height_xl + mfd_gc.line_height_xl * i);
+			}
+		}
+	}
+	*/
 	   
     private void draw_airbus_speedbrake(Graphics2D g2) {    	
     	String speed_brk_str = "SPEED BRAKES";
@@ -190,11 +205,18 @@ public class Wheels extends MFDSubcomponent {
     private void drawTricycle(Graphics2D g2) {
 
         g2.setStroke(new BasicStroke(3.0f * mfd_gc.grow_scaling_factor));
-
-        drawTrikeWheel(g2, WHEEL.Nose, this.aircraft.get_gear(0));
-        drawTrikeWheel(g2, WHEEL.Left, this.aircraft.get_gear(1));
-        drawTrikeWheel(g2, WHEEL.Right, this.aircraft.get_gear(2));
-
+        float door_nose=0;
+        float door_left=0;
+        float door_right=0;
+        if (this.aircraft.num_gear_doors()>3) {
+        	// Nose may be door 0 and door 1
+        	door_nose = this.aircraft.get_gear_door(0);
+        	door_left = this.aircraft.get_gear_door(2);
+        	door_right = this.aircraft.get_gear_door(3);
+        }
+        drawTrikeWheel(g2, WHEEL.Nose, this.aircraft.get_gear(0), door_nose);
+        drawTrikeWheel(g2, WHEEL.Left, this.aircraft.get_gear(1), door_left);
+        drawTrikeWheel(g2, WHEEL.Right, this.aircraft.get_gear(2), door_right);
     }
 
     private void drawRelValues(Graphics2D g2, float psi, float temp, int num, int x) {
@@ -228,7 +250,7 @@ public class Wheels extends MFDSubcomponent {
     	g2.drawString(str_rel, x - mfd_gc.get_text_width(g2, mfd_gc.font_s, str_rel)/2, mfd_gc.wheel_main_rel_value_y);
     }
     
-    private void drawTrikeWheel(Graphics2D g2, WHEEL gearpos, float lowered) {
+    private void drawTrikeWheel(Graphics2D g2, WHEEL gearpos, float lowered, float door_pos) {
 
             int w_w = mfd_gc.wheel_tri_dy;
             int w_h = mfd_gc.line_height_l * 3;
@@ -238,39 +260,56 @@ public class Wheels extends MFDSubcomponent {
             int w1_y = 999;
             String w2_str = "GEAR";
             int w2_y = 999;
+            int door_y = 999;
+            int door_dx = mfd_gc.wheel_tri_dx*5/4;
+            AffineTransform original_at = g2.getTransform();
 
+            if (door_pos>0.0) g2.setColor(mfd_gc.ecam_caution_color); else g2.setColor(mfd_gc.ecam_normal_color);
+            
             switch (gearpos) {
                 case Nose:
                     w_x = mfd_gc.mfd_middle_x;
                     w_y = mfd_gc.wheel_nose_tri_y;
+                    door_y = w_y - mfd_gc.wheel_tri_dy/2; 
                     w1_str = "NOSE";
+                    g2.rotate(Math.toRadians(door_pos*90), w_x - door_dx, door_y );
+                    g2.drawLine(w_x - door_dx, door_y, w_x- mfd_gc.wheel_tri_dx/4,  door_y );
+                    g2.setTransform(original_at);
+                    g2.rotate(Math.toRadians(door_pos*-90), w_x + door_dx, door_y );
+                    g2.drawLine(w_x + mfd_gc.wheel_tri_dx/4, door_y, w_x+ door_dx,  door_y );
                     break;
                 case Left:
                     w_x = mfd_gc.mfd_middle_x - mfd_gc.wheel_main_tri_dx;
                     w_y = mfd_gc.wheel_main_tri_y;
+                    door_y = w_y - mfd_gc.wheel_tri_dy/2; 
                     w1_str = "LEFT";
+                    g2.rotate(Math.toRadians(door_pos*-90), w_x+ door_dx, door_y );
+                    g2.drawLine(w_x - mfd_gc.wheel_tri_dx*3/4, door_y, w_x+ door_dx,  door_y );
                     break;
                 case Right:
                     w_x = mfd_gc.mfd_middle_x + mfd_gc.wheel_main_tri_dx;
                     w_y = mfd_gc.wheel_main_tri_y;
+                    door_y = w_y - mfd_gc.wheel_tri_dy/2; 
                     w1_str = "RIGHT";
+                    g2.rotate(Math.toRadians(door_pos*90), w_x - door_dx, door_y );
+                    g2.drawLine(w_x - door_dx, door_y, w_x+ mfd_gc.wheel_tri_dx*3/4,  door_y );
                     break;
             }
-
+            g2.setTransform(original_at);
+            
             int tri_x [] = { w_x, w_x + mfd_gc.wheel_tri_dx, w_x - mfd_gc.wheel_tri_dx };
             int tri_y [] = { w_y + mfd_gc.wheel_tri_dy, w_y, w_y };
             g2.setColor(mfd_gc.instrument_background_color);
             g2.drawPolygon(tri_x, tri_y, 3);
 
-            if ( ( ! mfd_gc.powered ) || (lowered == 0.0f) ) {
-                g2.setColor(mfd_gc.instrument_background_color.brighter());
-            } else if ( lowered == 1.0f ) {
+            if ( lowered == 1.0f && mfd_gc.powered ) {
                 g2.setColor(mfd_gc.ecam_normal_color);
-            } else {
+                g2.fillPolygon(tri_x, tri_y, 3);
+            } else if (lowered > 0.01f && mfd_gc.powered) {
                 g2.setColor(mfd_gc.ecam_warning_color);
+                g2.fillPolygon(tri_x, tri_y, 3);
             }
-            
-            g2.fillPolygon(tri_x, tri_y, 3);
+                        
             g2.setFont(mfd_gc.font_l);
             w1_y = w_y + mfd_gc.wheel_tri_dy + mfd_gc.line_height_l*28/20;
             w2_y = w_y + mfd_gc.wheel_tri_dy + mfd_gc.line_height_l*48/20;
@@ -278,6 +317,9 @@ public class Wheels extends MFDSubcomponent {
             g2.drawString(w1_str, w_x  - mfd_gc.get_text_width(g2, mfd_gc.font_l, w1_str)/2, w1_y);
             g2.drawString(w2_str, w_x  - mfd_gc.get_text_width(g2, mfd_gc.font_l, w2_str)/2, w2_y);
 
+            // Wheel door          
+            g2.drawLine(w_x - mfd_gc.wheel_tri_dx*2, door_y, w_x - door_dx,  door_y );
+            g2.drawLine(w_x + door_dx, door_y, w_x+ mfd_gc.wheel_tri_dx*2,  door_y );            
     }
     
     private void drawAutoBrakeStatus(Graphics2D g2) {

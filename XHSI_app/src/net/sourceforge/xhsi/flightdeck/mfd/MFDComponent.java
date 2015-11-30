@@ -90,7 +90,7 @@ public class MFDComponent extends Component implements Observer, PreferencesObse
         subcomponents.add(new FMSRoute(model_factory, mfd_gc, this));
         subcomponents.add(new LowerEicas(model_factory, mfd_gc, this));
         subcomponents.add(new LowerEcamCommon(model_factory, mfd_gc, this));
-        subcomponents.add(new CruizeSystems(model_factory, mfd_gc, this));
+        subcomponents.add(new CruiseSystems(model_factory, mfd_gc, this));
         subcomponents.add(new APU(model_factory, mfd_gc, this));
         subcomponents.add(new FlightControls(model_factory, mfd_gc, this));
         subcomponents.add(new Electrics(model_factory, mfd_gc, this));

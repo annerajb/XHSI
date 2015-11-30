@@ -382,7 +382,16 @@ public interface Aircraft {
      */
     public float get_gear(int gear);
 
-
+    /**
+     * @return int - number of gear doors that are closed when gear is down
+     */
+    public int num_gear_doors();
+    
+    /**
+     * @return float - position of a gear door in % - 0 = closed, 100% = fully opened
+     */
+    public float get_gear_door(int gear);
+    
     /**
      * @return boolean - all gears down and locked?
      */
@@ -705,6 +714,10 @@ public interface Aircraft {
      */
     public boolean fuel_press_alert(int eng);
 
+    /**
+     * @return float - Fuel used (kg) per engine since engine startup
+     */
+    public float fuel_used(int eng);
 
     /**
      * @return float - Fuel quantity (kg) per tank
@@ -807,9 +820,29 @@ public interface Aircraft {
     public float get_oil_press_ratio(int engine);
 
     /**
+     * @return float - Oil Pressure in PSI
+     */
+    public float get_oil_press_psi(int engine);
+
+    /**
+     * @return float - Oil MAX Pressure in PSI
+     */
+    public float get_oil_press_max();
+
+    /**
      * @return float - Oil T ratio
      */
     public float get_oil_temp_ratio(int engine);
+
+    /**
+     * @return float - Oil Temp in C°
+     */
+    public float get_oil_temp_c(int engine);
+
+    /**
+     * @return float - Oil MAX Temp in C°
+     */
+    public float get_oil_temp_max();
 
     /**
      * @return float - Oil Q ratio
@@ -915,6 +948,11 @@ public interface Aircraft {
      * @return float - Engine EPR
      */
     public float get_EPR(int engine);
+
+    /**
+     * @return float - Engine EPR MAX
+     */
+    public float get_EPR_max();
 
     /**
      * @return float - Engine Throttle ratio
