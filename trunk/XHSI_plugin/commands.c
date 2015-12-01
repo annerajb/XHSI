@@ -1975,6 +1975,10 @@ XPLMCommandCallback_f adf_handler(XPLMCommandRef inCommand, XPLMCommandPhase inP
             case ADF2_STBY :
                 radioref = adf2_stdby_freq_hz;
                 break;
+            default :
+                // this should never happen, it's just to make the compiler happy
+                radioref = adf2_stdby_freq_hz;
+                break;
         }
         freq = XPLMGetDatai(radioref);
         freq_units = freq % 10;

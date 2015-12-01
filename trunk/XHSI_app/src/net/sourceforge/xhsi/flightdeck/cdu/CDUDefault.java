@@ -124,8 +124,8 @@ public class CDUDefault extends CDUSubcomponent {
     		
     		//  Compare plugin to application version. Display in amber if discrepancy.
     		CduLine[13] = "";
-    		if (! XHSI.RELEASE.equals(this.aircraft.plugin_version())) {
-    			CduLine[13] = "la00Plugin " + decode_plugin_version( this.aircraft.plugin_version());
+    		if ( XHSI.EXPECTED_PLUGIN != this.aircraft.plugin_version() ) {
+    			CduLine[13] = "la00Plugin " + decode_plugin_version( this.aircraft.plugin_version() );
     		} 
     		if ( ! XHSIStatus.receiving ) {
     			CduLine[13] = "la00INDEPENDENT MODE";	
