@@ -2038,26 +2038,26 @@ public class XPlaneAvionics implements Avionics, Observer {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_MFD_MODE, (float) new_mode );
             if (this.is_qpac()) {
             	int sd_page = -1;
-            	// Don't switch QPAC ECAM SD page is custom XHSI MFD page is displayed : Flight Plan , or Airport Chart
+            	// Don't switch QPAC ECAM SD page if custom XHSI MFD page is displayed : Flight Plan , or Airport Chart
             	// TODO : introduce a preference setting to disable MFD menu link to ECAM SD page
             	switch (new_mode) {
             		 
             		case Avionics.MFD_MODE_ARPT:
-            		case Avionics.MFD_MODE_RTU:
-            		case Avionics.MFD_MODE_FPLN: sd_page = -1; break;
+            		case Avionics.MFD_MODE_FPLN:
+            		case Avionics.MFD_MODE_RTU: sd_page = -1; break;
             		case Avionics.MFD_MODE_ENGINE: sd_page = 0; break; 
-            		case Avionics.MFD_MODE_SYS: sd_page = 11; break; 
-            		case Avionics.MFD_MODE_FCTL: sd_page = 10; break;
-            		case Avionics.MFD_MODE_APU: sd_page = 6; break;
-            		case Avionics.MFD_MODE_ELEC: sd_page = 3; break;
-            		case Avionics.MFD_MODE_WHEELS: sd_page = 9; break;
-            		case Avionics.MFD_MODE_DOOR_OXY: sd_page = 8; break;
             		case Avionics.MFD_MODE_BLEED: sd_page = 1; break;
-            		case Avionics.MFD_MODE_COND: sd_page = 7; break;
-            		case Avionics.MFD_MODE_FUEL: sd_page = 5; break;
             		case Avionics.MFD_MODE_CAB_PRESS: sd_page = 2; break;
+            		case Avionics.MFD_MODE_ELEC: sd_page = 3; break;
             		case Avionics.MFD_MODE_HYDR: sd_page = 4; break;
-            		// case Avionics.MFD_MODE_STATUS: sd_page = 12; break;
+            		case Avionics.MFD_MODE_FUEL: sd_page = 5; break;
+            		case Avionics.MFD_MODE_APU: sd_page = 6; break;
+            		case Avionics.MFD_MODE_COND: sd_page = 7; break;
+            		case Avionics.MFD_MODE_DOOR_OXY: sd_page = 8; break;
+            		case Avionics.MFD_MODE_WHEELS: sd_page = 9; break;
+            		case Avionics.MFD_MODE_FCTL: sd_page = 10; break;
+            		case Avionics.MFD_MODE_SYS: sd_page = 11; break; 
+            		case Avionics.MFD_MODE_STATUS: sd_page = 12; break;
 
             	}
             	if (sd_page != -1) {

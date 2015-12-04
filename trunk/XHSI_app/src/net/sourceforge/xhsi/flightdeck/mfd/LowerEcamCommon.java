@@ -70,7 +70,8 @@ public class LowerEcamCommon extends MFDSubcomponent {
         if ( mfd_gc.powered && 
         	 mfd_gc.airbus_style && 
         	 this.avionics.get_mfd_mode() != Avionics.MFD_MODE_ARPT &&
-        	 this.avionics.get_mfd_mode() != Avionics.MFD_MODE_FPLN  
+        	 this.avionics.get_mfd_mode() != Avionics.MFD_MODE_FPLN &&
+        	 this.avionics.get_mfd_mode() != Avionics.MFD_MODE_RTU
         	) {
             
             // this.inhibit = ( this.aircraft.agl_m() < 1000.0f / 3.28084f );

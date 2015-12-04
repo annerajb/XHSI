@@ -327,8 +327,8 @@ int createQpacMcduPacket(void) {
    int datalen = 0;
    int p;
    char color = 'u';
-   int red_len, blue_len, amber_len, green_len, white_len, yellow_len, magenta_len;
-   int s_red_len, s_blue_len, s_amber_len, s_green_len, s_white_len, s_yellow_len, s_magenta_len;
+   int blue_len, amber_len, green_len, white_len, yellow_len, magenta_len;
+   int s_blue_len, s_amber_len, s_green_len, s_white_len, s_yellow_len, s_magenta_len;
    int space = 0;
    char yellow_buffer[MCDU_BUF_LEN];
    char white_buffer[MCDU_BUF_LEN];

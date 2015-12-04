@@ -364,6 +364,18 @@ extern XPLMDataRef qpac_fuel_tv_array;
 // ECAM SD page selection
 extern XPLMDataRef qpac_sd_page;
 extern XPLMDataRef qpac_clear_illuminated;
+extern XPLMDataRef qpac_sd_eng;
+extern XPLMDataRef qpac_sd_bleed;
+extern XPLMDataRef qpac_sd_press;
+extern XPLMDataRef qpac_sd_elec;
+extern XPLMDataRef qpac_sd_hyd;
+extern XPLMDataRef qpac_sd_fuel;
+extern XPLMDataRef qpac_sd_apu;
+extern XPLMDataRef qpac_sd_cond;
+extern XPLMDataRef qpac_sd_door;
+extern XPLMDataRef qpac_sd_wheel;
+extern XPLMDataRef qpac_sd_fctl;
+extern XPLMDataRef qpac_sd_status;
 
 //qpac FCU toggles, push/pull commands, RMP, MCDU
 extern XPLMCommandRef qpac_command[QPAC_KEY_MAX];

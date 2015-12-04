@@ -320,7 +320,7 @@ int createJar_a320McduPacket(void) {
    int datalen = 0;
    int p;
    char color = 'u';
-   int red_len, blue_len, amber_len, green_len, white_len, yellow_len, magenta_len;
+   int blue_len, amber_len, green_len, white_len, yellow_len, magenta_len;
    int space = 0;
    char yellow_buffer[MCDU_BUF_LEN];
    char white_buffer[MCDU_BUF_LEN];
