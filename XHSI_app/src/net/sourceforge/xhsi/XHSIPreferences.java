@@ -179,8 +179,8 @@ public class XHSIPreferences {
     public static final String MFD_MODE_LINKED = "linked";
     public static final String MFD_MODE_ARPT_CHART = "artp_chart";
     public static final String MFD_MODE_FPLN = "fpln";
-    public static final String MFD_MODE_LOWER_EICAS = "lower_eicas";
     public static final String MFD_MODE_RTU = "rtu";
+    public static final String MFD_MODE_LOWER_EICAS = "lower_eicas";
     public static final String MFD_MODE_SYS = "sys";
     public static final String MFD_MODE_FCTL = "fctl";
     public static final String MFD_MODE_APU = "apu";
