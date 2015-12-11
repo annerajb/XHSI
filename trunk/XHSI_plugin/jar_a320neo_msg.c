@@ -179,25 +179,25 @@ int createJar_a320EwdPacket(void) {
    for(i=0; i<JAR_A320_EWD_LINES; i++){
      jar_a320EwdMsgPacket.lines[i].lineno = custom_htoni(i);
      datalen = XPLMGetDatab(jar_a320_ewd_magenta[i],magenta_buffer,0,sizeof(magenta_buffer));
-     magenta_len = (datalen > 0) ? strlen(magenta_buffer) : 0;
+     magenta_len = (datalen > 0) ? (int)strlen(magenta_buffer) : 0;
 
      datalen = XPLMGetDatab(jar_a320_ewd_blue[i],blue_buffer,0,sizeof(blue_buffer));
-     blue_len = (datalen > 0) ? strlen(blue_buffer) : 0;
+     blue_len = (datalen > 0) ? (int)strlen(blue_buffer) : 0;
 
      datalen = XPLMGetDatab(jar_a320_ewd_amber[i],amber_buffer,0,sizeof(amber_buffer));
-     amber_len = (datalen > 0) ? strlen(amber_buffer) : 0;
+     amber_len = (datalen > 0) ? (int)strlen(amber_buffer) : 0;
 
      datalen = XPLMGetDatab(jar_a320_ewd_green[i],green_buffer,0,sizeof(green_buffer));
-     green_len = (datalen > 0) ? strlen(green_buffer) : 0;
+     green_len = (datalen > 0) ? (int)strlen(green_buffer) : 0;
 
      datalen = XPLMGetDatab(jar_a320_ewd_white[i],white_buffer,0,sizeof(white_buffer));
-     white_len = (datalen > 0) ? strlen(white_buffer) : 0;
+     white_len = (datalen > 0) ? (int)strlen(white_buffer) : 0;
 
      datalen = XPLMGetDatab(jar_a320_ewd_r_blue[i],r_blue_buffer,0,sizeof(r_blue_buffer));
-     r_blue_len = (datalen > 0) ? strlen(r_blue_buffer) : 0;
+     r_blue_len = (datalen > 0) ? (int)strlen(r_blue_buffer) : 0;
 
      datalen = XPLMGetDatab(jar_a320_ewd_r_green[i],r_green_buffer,0,sizeof(r_green_buffer));
-     r_green_len = (datalen > 0) ? strlen(r_green_buffer) : 0;
+     r_green_len = (datalen > 0) ? (int)strlen(r_green_buffer) : 0;
 
      color = 'u';
      encoded_string[0] = 0;
@@ -336,9 +336,9 @@ int createJar_a320McduPacket(void) {
    l=0;
    // Page title
    datalen = XPLMGetDatab(jar_a320_mcdu_title_white,white_buffer,0,sizeof(white_buffer));
-   white_len = (datalen > 0) ? strlen(white_buffer) : 0;
+   white_len = (datalen > 0) ? (int)strlen(white_buffer) : 0;
    datalen = XPLMGetDatab(jar_a320_mcdu_title_green,green_buffer,0,sizeof(green_buffer));
-   green_len = (datalen > 0) ? strlen(green_buffer) : 0;
+   green_len = (datalen > 0) ? (int)strlen(green_buffer) : 0;
 
    encoded_string[0] = 0;
    p=0;
@@ -364,7 +364,7 @@ int createJar_a320McduPacket(void) {
    for(i=0; i<6; i++){
 
      datalen = XPLMGetDatab(jar_a320_mcdu_label[i],white_buffer,0,sizeof(white_buffer));
-     white_len = (datalen > 0) ? strlen(white_buffer) : 0;
+     white_len = (datalen > 0) ? (int)strlen(white_buffer) : 0;
      color = 'u';
      encoded_string[0] = 0;
      space=0;
@@ -397,15 +397,15 @@ int createJar_a320McduPacket(void) {
      l++;
 
      datalen = XPLMGetDatab(jar_a320_mcdu_content_white[i],white_buffer,0,sizeof(white_buffer));
-     white_len = (datalen > 0) ? strlen(white_buffer) : 0;
+     white_len = (datalen > 0) ? (int)strlen(white_buffer) : 0;
      datalen = XPLMGetDatab(jar_a320_mcdu_content_blue[i],blue_buffer,0,sizeof(blue_buffer));
-     blue_len = (datalen > 0) ? strlen(blue_buffer) : 0;
+     blue_len = (datalen > 0) ? (int)strlen(blue_buffer) : 0;
      datalen = XPLMGetDatab(jar_a320_mcdu_content_magenta[i],magenta_buffer,0,sizeof(magenta_buffer));
-     magenta_len = (datalen > 0) ? strlen(magenta_buffer) : 0;
+     magenta_len = (datalen > 0) ? (int)strlen(magenta_buffer) : 0;
      datalen = XPLMGetDatab(jar_a320_mcdu_content_green[i],green_buffer,0,sizeof(green_buffer));
-     green_len = (datalen > 0) ? strlen(green_buffer) : 0;
+     green_len = (datalen > 0) ? (int)strlen(green_buffer) : 0;
      datalen = XPLMGetDatab(jar_a320_mcdu_content_amber[i],amber_buffer,0,sizeof(amber_buffer));
-     amber_len = (datalen > 0) ? strlen(amber_buffer) : 0;
+     amber_len = (datalen > 0) ? (int)strlen(amber_buffer) : 0;
 
      color = 'u';
      encoded_string[0] = 0;
@@ -493,9 +493,9 @@ int createJar_a320McduPacket(void) {
    // Scratch pad line
    jar_a320McduMsgPacket.lines[l].lineno = custom_htoni(l);
    XPLMGetDatab(jar_a320_mcdu_scratch_yellow,yellow_buffer,0,sizeof(yellow_buffer));
-   yellow_len = (datalen > 0) ? strlen(yellow_buffer) : 0;
+   yellow_len = (datalen > 0) ? (int)strlen(yellow_buffer) : 0;
    XPLMGetDatab(jar_a320_mcdu_scratch_white,white_buffer,0,sizeof(white_buffer));
-   white_len = (datalen > 0) ? strlen(white_buffer) : 0;
+   white_len = (datalen > 0) ? (int)strlen(white_buffer) : 0;
    color = 'u';
    encoded_string[0] = 0;
    p=0;
