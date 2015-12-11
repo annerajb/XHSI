@@ -21,7 +21,6 @@
 #include "globals.h"
 #include "ids.h"
 #include "structs.h"
-#include "math.h"
 #include "datarefs.h"
 #include "datarefs_ufmc.h"
 #include "datarefs_x737.h"
@@ -305,7 +304,7 @@ int createADCPacket(void) {
     {
     	if ( gear_doors_type[d] == 3 ) {
 
-    		if ( abs(gear_doors_ret_ang[d]-gear_doors_ext_ang[d]) > 0) {
+    		if ( (gear_doors_ret_ang[d]-gear_doors_ext_ang[d]) != 0) {
     			// Check there is not division by 0
     			door_deploy_ratio = ((gear_doors_ret_ang[d]-gear_doors_ang[d]) / (gear_doors_ret_ang[d]-gear_doors_ext_ang[d]));
     		} else {
@@ -2203,7 +2202,7 @@ int createEnginesPacket(void) {
         extinguisher |= ((extinguishers[e] & 0x01) << e);
     }
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_ENGINE_FIRE_EXTINGUISHER);
-    sim_packet.sim_data_points[i].value = custom_htonf( extinguisher );
+    sim_packet.sim_data_points[i].value = custom_htonf((float) extinguisher );
     i++;
 
 

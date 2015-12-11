@@ -217,19 +217,19 @@ int createQpacEwdPacket(void) {
    for(i=0; i<QPAC_EWD_LINES; i++){
      qpacEwdMsgPacket.lines[i].lineno = custom_htoni(i);
      datalen = XPLMGetDatab(qpac_ewd_red[i],red_buffer,0,sizeof(red_buffer));
-     red_len = (datalen > 0) ? strlen(red_buffer) : 0;
+     red_len = (datalen > 0) ? (int)strlen(red_buffer) : 0;
 
      datalen = XPLMGetDatab(qpac_ewd_blue[i],blue_buffer,0,sizeof(blue_buffer));
-     blue_len = (datalen > 0) ? strlen(blue_buffer) : 0;
+     blue_len = (datalen > 0) ? (int)strlen(blue_buffer) : 0;
 
      datalen = XPLMGetDatab(qpac_ewd_amber[i],amber_buffer,0,sizeof(amber_buffer));
-     amber_len = (datalen > 0) ? strlen(amber_buffer) : 0;
+     amber_len = (datalen > 0) ? (int)strlen(amber_buffer) : 0;
 
      datalen = XPLMGetDatab(qpac_ewd_green[i],green_buffer,0,sizeof(green_buffer));
-     green_len = (datalen > 0) ? strlen(green_buffer) : 0;
+     green_len = (datalen > 0) ? (int)strlen(green_buffer) : 0;
 
      datalen = XPLMGetDatab(qpac_ewd_white[i],white_buffer,0,sizeof(white_buffer));
-     white_len = (datalen > 0) ? strlen(white_buffer) : 0;
+     white_len = (datalen > 0) ? (int)strlen(white_buffer) : 0;
 
      color = 'u';
      encoded_string[0] = 0;
@@ -350,13 +350,13 @@ int createQpacMcduPacket(void) {
    l=0;
    // Page title
    datalen = XPLMGetDatab(qpac_mcdu1_title_yellow,yellow_buffer,0,sizeof(yellow_buffer));
-   yellow_len = (datalen > 0) ? strlen(yellow_buffer) : 0;
+   yellow_len = (datalen > 0) ? (int)strlen(yellow_buffer) : 0;
    datalen = XPLMGetDatab(qpac_mcdu1_title_white,white_buffer,0,sizeof(white_buffer));
-   white_len = (datalen > 0) ? strlen(white_buffer) : 0;
+   white_len = (datalen > 0) ? (int)strlen(white_buffer) : 0;
    datalen = XPLMGetDatab(qpac_mcdu1_title_blue,blue_buffer,0,sizeof(blue_buffer));
-   blue_len = (datalen > 0) ? strlen(blue_buffer) : 0;
+   blue_len = (datalen > 0) ? (int)strlen(blue_buffer) : 0;
    datalen = XPLMGetDatab(qpac_mcdu1_title_green,green_buffer,0,sizeof(green_buffer));
-   green_len = (datalen > 0) ? strlen(green_buffer) : 0;
+   green_len = (datalen > 0) ? (int)strlen(green_buffer) : 0;
 
    encoded_string[0] = 0;
    p=0;
@@ -400,17 +400,17 @@ int createQpacMcduPacket(void) {
 
    for(i=0; i<6; i++){
      datalen = XPLMGetDatab(qpac_mcdu1_label_yellow[i],yellow_buffer,0,sizeof(yellow_buffer));
-     yellow_len = (datalen > 0) ? strlen(yellow_buffer) : 0;
+     yellow_len = (datalen > 0) ? (int)strlen(yellow_buffer) : 0;
      datalen = XPLMGetDatab(qpac_mcdu1_label_white[i],white_buffer,0,sizeof(white_buffer));
-     white_len = (datalen > 0) ? strlen(white_buffer) : 0;
+     white_len = (datalen > 0) ? (int)strlen(white_buffer) : 0;
      datalen = XPLMGetDatab(qpac_mcdu1_label_blue[i],blue_buffer,0,sizeof(blue_buffer));
-     blue_len = (datalen > 0) ? strlen(blue_buffer) : 0;
+     blue_len = (datalen > 0) ? (int)strlen(blue_buffer) : 0;
      datalen = XPLMGetDatab(qpac_mcdu1_label_magenta[i],magenta_buffer,0,sizeof(magenta_buffer));
-     magenta_len = (datalen > 0) ? strlen(magenta_buffer) : 0;
+     magenta_len = (datalen > 0) ? (int)strlen(magenta_buffer) : 0;
      datalen = XPLMGetDatab(qpac_mcdu1_label_green[i],green_buffer,0,sizeof(green_buffer));
-     green_len = (datalen > 0) ? strlen(green_buffer) : 0;
+     green_len = (datalen > 0) ? (int)strlen(green_buffer) : 0;
      datalen = XPLMGetDatab(qpac_mcdu1_label_amber[i],amber_buffer,0,sizeof(amber_buffer));
-     amber_len = (datalen > 0) ? strlen(amber_buffer) : 0;
+     amber_len = (datalen > 0) ? (int)strlen(amber_buffer) : 0;
 
      color = 'u';
      encoded_string[0] = 0;
@@ -498,30 +498,30 @@ int createQpacMcduPacket(void) {
      */
 
      datalen = XPLMGetDatab(qpac_mcdu1_content_yellow[i],yellow_buffer,0,sizeof(yellow_buffer));
-     yellow_len = (datalen > 0) ? strlen(yellow_buffer) : 0;
+     yellow_len = (datalen > 0) ? (int)strlen(yellow_buffer) : 0;
      datalen = XPLMGetDatab(qpac_mcdu1_content_white[i],white_buffer,0,sizeof(white_buffer));
-     white_len = (datalen > 0) ? strlen(white_buffer) : 0;
+     white_len = (datalen > 0) ? (int)strlen(white_buffer) : 0;
      datalen = XPLMGetDatab(qpac_mcdu1_content_blue[i],blue_buffer,0,sizeof(blue_buffer));
-     blue_len = (datalen > 0) ? strlen(blue_buffer) : 0;
+     blue_len = (datalen > 0) ? (int)strlen(blue_buffer) : 0;
      datalen = XPLMGetDatab(qpac_mcdu1_content_magenta[i],magenta_buffer,0,sizeof(magenta_buffer));
-     magenta_len = (datalen > 0) ? strlen(magenta_buffer) : 0;
+     magenta_len = (datalen > 0) ? (int)strlen(magenta_buffer) : 0;
      datalen = XPLMGetDatab(qpac_mcdu1_content_green[i],green_buffer,0,sizeof(green_buffer));
-     green_len = (datalen > 0) ? strlen(green_buffer) : 0;
+     green_len = (datalen > 0) ? (int)strlen(green_buffer) : 0;
      datalen = XPLMGetDatab(qpac_mcdu1_content_amber[i],amber_buffer,0,sizeof(amber_buffer));
-     amber_len = (datalen > 0) ? strlen(amber_buffer) : 0;
+     amber_len = (datalen > 0) ? (int)strlen(amber_buffer) : 0;
 
      datalen = XPLMGetDatab(qpac_mcdu1_small_yellow[i],s_yellow_buffer,0,sizeof(yellow_buffer));
-     s_yellow_len = (datalen > 0) ? strlen(s_yellow_buffer) : 0;
+     s_yellow_len = (datalen > 0) ? (int)strlen(s_yellow_buffer) : 0;
      datalen = XPLMGetDatab(qpac_mcdu1_small_white[i],s_white_buffer,0,sizeof(white_buffer));
-     s_white_len = (datalen > 0) ? strlen(s_white_buffer) : 0;
+     s_white_len = (datalen > 0) ? (int)strlen(s_white_buffer) : 0;
      datalen = XPLMGetDatab(qpac_mcdu1_small_blue[i],s_blue_buffer,0,sizeof(blue_buffer));
-     s_blue_len = (datalen > 0) ? strlen(s_blue_buffer) : 0;
+     s_blue_len = (datalen > 0) ? (int)strlen(s_blue_buffer) : 0;
      datalen = XPLMGetDatab(qpac_mcdu1_small_magenta[i],s_magenta_buffer,0,sizeof(magenta_buffer));
-     s_magenta_len = (datalen > 0) ? strlen(s_magenta_buffer) : 0;
+     s_magenta_len = (datalen > 0) ? (int)strlen(s_magenta_buffer) : 0;
      datalen = XPLMGetDatab(qpac_mcdu1_small_green[i],s_green_buffer,0,sizeof(green_buffer));
-     s_green_len = (datalen > 0) ? strlen(s_green_buffer) : 0;
+     s_green_len = (datalen > 0) ? (int)strlen(s_green_buffer) : 0;
      datalen = XPLMGetDatab(qpac_mcdu1_small_amber[i],s_amber_buffer,0,sizeof(amber_buffer));
-     s_amber_len = (datalen > 0) ? strlen(s_amber_buffer) : 0;
+     s_amber_len = (datalen > 0) ? (int)strlen(s_amber_buffer) : 0;
 
 
      color = 'u';
@@ -704,9 +704,9 @@ int createQpacMcduPacket(void) {
    // Scratch pad line
    qpacMcduMsgPacket.lines[l].lineno = custom_htoni(l);
    XPLMGetDatab(qpac_mcdu1_scratch_yellow,yellow_buffer,0,sizeof(yellow_buffer));
-   yellow_len = (datalen > 0) ? strlen(yellow_buffer) : 0;
+   yellow_len = (datalen > 0) ? (int)strlen(yellow_buffer) : 0;
    XPLMGetDatab(qpac_mcdu1_scratch_white,white_buffer,0,sizeof(white_buffer));
-   white_len = (datalen > 0) ? strlen(white_buffer) : 0;
+   white_len = (datalen > 0) ? (int)strlen(white_buffer) : 0;
    color = 'u';
    encoded_string[0] = 0;
    p=0;
@@ -728,7 +728,7 @@ int createQpacMcduPacket(void) {
 
    /*
    datalen = XPLMGetDatab(qpac_mcdu1_small_amber[0],blue_buffer,0,sizeof(blue_buffer));
-   blue_len = (datalen > 0) ? strlen(blue_buffer) : 0;
+   blue_len = (datalen > 0) ? (int)strlen(blue_buffer) : 0;
    strcpy(qpacMcduMsgPacket.lines[l].linestr, blue_buffer);
    qpacMcduMsgPacket.lines[l].len = custom_htoni(blue_len);
    */
