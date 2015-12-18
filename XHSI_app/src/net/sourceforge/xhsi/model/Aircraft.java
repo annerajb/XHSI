@@ -1118,5 +1118,25 @@ public interface Aircraft {
      * @return Float - Cabin pressure vertical speed (feet / minute)
      */
     public float cabin_vs();
+
+    /**
+     * @return Float - Cabin outflow valve ratio (0.0=closed 1.0=fully opened)
+     */
+    public float cabin_outflow_valve();
+
+    /**
+     * @return Float - Cabin ventilation inlet valve ratio (0.0=closed 1.0=fully opened)
+     */
+    public float cabin_inlet_valve();
+
+    /**
+     * @return Float - Cabin ventilation extract valve ratio (0.0=closed 1.0=fully opened)
+     */
+    public float cabin_extract_valve();
+
+    /**
+     * @return Float - Cabin pressurization safety valve ratio (0.0=closed 1.0=fully opened)
+     */
+    public float cabin_safety_valve();
     
 }

@@ -31,6 +31,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.logging.Logger;
 
+import net.sourceforge.xhsi.XHSIPreferences;
 import net.sourceforge.xhsi.XHSISettings;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
@@ -159,18 +160,27 @@ public class LowerEcamCommon extends MFDSubcomponent {
             g2.drawString (m_str, mfd_gc.ec_col2_ctr + mfd_gc.digit_width_l*2, mfd_gc.ec_line2);
                         
             // GW (right)
-            // line 1 : GW
+            // line 1 : GW (KG or LBS only)
+    		String str_gw_units;
+    		String gw_str = "XX";
+            if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_KG ||
+            		this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_LTR ||
+            		this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_USG ) {
+            	str_gw_units = XHSIPreferences.FUEL_UNITS_KG;
+            	gw_str=""+Math.round(this.aircraft.gross_weight());
+            } else {
+            	str_gw_units = XHSIPreferences.FUEL_UNITS_LBS;
+            	gw_str=""+Math.round(this.aircraft.gross_weight() * this.aircraft.fuel_multiplier());
+            } 
+    	
             g2.setFont(mfd_gc.font_xl);
             g2.setColor(mfd_gc.ecam_markings_color);
             g2.drawString("GW", mfd_gc.ec_col3, mfd_gc.ec_line1);
-            String gw_str = "XX";
-            g2.setColor(mfd_gc.ecam_caution_color);
-            gw_str=""+Math.round(this.aircraft.gross_weight());
             g2.setColor(mfd_gc.ecam_normal_color);
             g2.drawString(gw_str, mfd_gc.ec_col3_val, mfd_gc.ec_line1);
             g2.setFont(mfd_gc.font_m);
-            g2.setColor(mfd_gc.ecam_action_color);
-            g2.drawString("KG", mfd_gc.ec_col3_unit, mfd_gc.ec_line1);
+            g2.setColor(mfd_gc.ecam_action_color);            
+            g2.drawString(str_gw_units, mfd_gc.ec_col3_unit, mfd_gc.ec_line1);
 
             // line 2 : GW CG
         }

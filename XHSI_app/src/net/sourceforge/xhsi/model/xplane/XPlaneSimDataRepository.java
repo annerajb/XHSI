@@ -573,6 +573,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_CABIN_ALT=1073;
     public static final int QPAC_CABIN_VS=1074;
     public static final int QPAC_AIR_VALVES=1075;
+    public static final int QPAC_OUTFLOW_VALVE=1090;
     // ECAM System Display page
     public static final int QPAC_SD_PAGE=1076;
     public static final int QPAC_COND_COCKPIT_TRIM=1078;

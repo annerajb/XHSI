@@ -827,25 +827,38 @@ public class XPlaneAvionics implements Avionics, Observer {
 
 
     public int get_cdu_source() {
-
-        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
-            return xhsi_settings.cdu_source;
-        } else {
-            if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_SWITCHABLE)) {
-                return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_CDU_SOURCE);
-            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_AIRCRAFT_OR_DUMMY)) {
-                return Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY;
-            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_XFMC)) {
-                return Avionics.CDU_SOURCE_XFMC;
-            } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_UFMC)) {
-                return Avionics.CDU_SOURCE_UFMC;
-            } else {
-                // Error, fallback
-                return Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY;
-            }
-
-        }
-
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+    		// PILOT CDU
+    		if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_SWITCHABLE)) {
+    			return ((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_CDU_SOURCE)) & 0x0F;
+    		} else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_AIRCRAFT_OR_DUMMY)) {
+    			return Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY;
+    		} else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_XFMC)) {
+    			return Avionics.CDU_SOURCE_XFMC;
+    		} else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_UFMC)) {
+    			return Avionics.CDU_SOURCE_UFMC;
+    		} else {
+    			// Error, fallback
+    			return Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY;
+    		}
+    	} else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		// COPILOT CDU
+    		if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_SWITCHABLE)) {
+    			return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_CDU_SOURCE)) & 0xF0) >> 4;
+    		} else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_AIRCRAFT_OR_DUMMY)) {
+    			return Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY;
+    		} else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_XFMC)) {
+    			return Avionics.CDU_SOURCE_XFMC;
+    		} else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE).equals(XHSIPreferences.CDU_SOURCE_UFMC)) {
+    			return Avionics.CDU_SOURCE_UFMC;
+    		} else {
+    			// Error, fallback
+    			return Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY;
+    		}
+    	} else {
+    		// INSTRUCTOR CDU
+    		return xhsi_settings.cdu_source;
+    	}    	
     }
 
 
@@ -2070,9 +2083,19 @@ public class XPlaneAvionics implements Avionics, Observer {
 
 
     public void set_cdu_source(int new_source) {
+    	int cdu_source = (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_CDU_SOURCE);
 
-        udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_CDU_SOURCE, (float) new_source );
-
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+    		// PILOT CDU
+    		cdu_source = (cdu_source & 0xF0) | (new_source & 0x0F);
+    	} else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		// COPILOT CDU
+    		cdu_source = (cdu_source & 0x0F) | ((new_source & 0xF0) >> 4);
+    	} else {
+    		// INSTRUCTOR CDU
+    		// ignore
+    	}
+        udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_CDU_SOURCE, (float) cdu_source );
     }
     
     

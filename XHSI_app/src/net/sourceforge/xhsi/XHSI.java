@@ -83,8 +83,8 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    public static final String RELEASE = "2.0 Beta 8";
-    public static final int EXPECTED_PLUGIN = 20008;
+    public static final String RELEASE = "2.0 Beta 9 alpha 1";
+    public static final int EXPECTED_PLUGIN = 20009;
 
 
     public enum Mode { REPLAY, LIVE, RECORD }
@@ -123,6 +123,7 @@ public class XHSI implements ActionListener {
         handler.setFilter(null);
         logger.addHandler(handler);
 
+        // TODO : check if XHSI.log is writable
         handler = new FileHandler("XHSI.log");
         handler.setLevel(Level.ALL);
         handler.setFormatter(new XHSILogFormatter());
@@ -574,7 +575,7 @@ public class XHSI implements ActionListener {
             instrument_window.frame = new JFrame( instrument_window.get_description() );
             instrument_window.frame.setUndecorated( this.preferences.get_hide_window_frames() );
 // requires Java 1.7
-            instrument_window.frame.setType(javax.swing.JFrame.Type.UTILITY);
+            // instrument_window.frame.setType(javax.swing.JFrame.Type.UTILITY);
             
             // TODO : Full Screen Mode
             /* Full Screen Code

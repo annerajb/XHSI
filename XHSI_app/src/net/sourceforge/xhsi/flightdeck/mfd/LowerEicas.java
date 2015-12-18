@@ -40,6 +40,7 @@ import java.text.DecimalFormatSymbols;
 
 import java.util.logging.Logger;
 
+import net.sourceforge.xhsi.XHSIPreferences;
 //import net.sourceforge.xhsi.XHSIPreferences;
 import net.sourceforge.xhsi.XHSISettings;
 
@@ -731,7 +732,13 @@ public class LowerEicas extends MFDSubcomponent {
     
 	private void drawFuelUsed(Graphics2D g2) {
 		String str_fuel_legend = "F. USED";
-		String str_fuel_units = "KG";
+		
+		String str_fuel_units;
+        if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_KG ) str_fuel_units = XHSIPreferences.FUEL_UNITS_KG;
+        else if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_LBS ) str_fuel_units = XHSIPreferences.FUEL_UNITS_LBS;
+        else if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_USG ) str_fuel_units = XHSIPreferences.FUEL_UNITS_USG;
+        else /* if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_LTR ) */ str_fuel_units = XHSIPreferences.FUEL_UNITS_LTR;
+	
 		if (mfd_gc.num_eng<3) {
 			g2.setColor(mfd_gc.ecam_markings_color);
 			g2.drawLine(mfd_gc.crz_eng_center_x - mfd_gc.crz_eng_line_dx1, mfd_gc.crz_fuel_top_y, mfd_gc.crz_eng_center_x - mfd_gc.crz_eng_line_dx2, mfd_gc.crz_fuel_bottom_y);
@@ -750,7 +757,7 @@ public class LowerEicas extends MFDSubcomponent {
 		for (int eng=0; eng<mfd_gc.num_eng; eng++) {
 			if (this.aircraft.fuel_used(eng) > 0.1f ) {
 				g2.setColor(mfd_gc.ecam_normal_color);					
-				str_fuel_val=""+Math.round(this.aircraft.fuel_used(eng));
+				str_fuel_val=""+Math.round(this.aircraft.fuel_used(eng) * this.aircraft.fuel_multiplier());
 			} else {
 				str_fuel_val="XX";
 				g2.setColor(mfd_gc.ecam_caution_color);
