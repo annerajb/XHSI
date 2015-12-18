@@ -503,6 +503,7 @@ int createAvionicsPacket(void) {
     int std_gauges_failures_pilot;
     int std_gauges_failures_copilot;
     int apu_status;
+    int xhsi_cdu_source;
     // int elec_status;
 
     strncpy(sim_packet.packet_id, "AVIO", 4);
@@ -892,10 +893,10 @@ int createAvionicsPacket(void) {
 
 
 // CDU
+    xhsi_cdu_source = (XPLMGetDatai(cdu_pilot_source) & 0x0F) | ((XPLMGetDatai(cdu_copilot_source) & 0x0F) << 4);
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_CDU_SOURCE);
-    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(cdu_source));
+    sim_packet.sim_data_points[i].value = custom_htonf((float) xhsi_cdu_source);
     i++;
-
 
 // AP
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_AUTOPILOT_AUTOPILOT_STATE);
@@ -1667,10 +1668,12 @@ int createCustomAvionicsPacket(void) {
         i++;
 
         qpac_air_valves =
-        		(XPLMGetDatai(qpac_outflow_valve) & 0x01)  |
         		(XPLMGetDatai(qpac_cond_hot_air_valve) & 0x01) << 1 ;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_AIR_VALVES);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_air_valves );
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_OUTFLOW_VALVE);
+        sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(qpac_outflow_valve) );
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_COND_COCKPIT_TRIM);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cond_cockpit_trim));
@@ -2007,6 +2010,13 @@ int createEnginesPacket(void) {
     for (e=0; e<tanks; e++) {
         sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_FUEL_QUANTITY_ + e);
         sim_packet.sim_data_points[i].value = custom_htonf( fuelfloat[e] );
+        i++;
+    }
+
+    XPLMGetDatavf(mfd_fuel_used, engifloat, 0, engines);
+    for (e=0; e<engines; e++) {
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FUEL_USED_ + e);
+        sim_packet.sim_data_points[i].value = custom_htonf( engifloat[e] );
         i++;
     }
 

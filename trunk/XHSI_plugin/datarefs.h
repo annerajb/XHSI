@@ -48,6 +48,9 @@ extern XPLMDataRef sim_op_fail_rel_cop_asi;
 extern XPLMDataRef sim_op_fail_rel_cop_dgy;
 extern XPLMDataRef sim_op_fail_rel_cop_tsi;
 extern XPLMDataRef sim_op_fail_rel_cop_vvi;
+// Gears failures
+extern XPLMDataRef sim_op_fail_rel_gear_ind;
+extern XPLMDataRef sim_op_fail_rel_gear_act;
 
 extern XPLMDataRef avionics_on;
 extern XPLMDataRef battery_on;
@@ -188,6 +191,7 @@ extern XPLMDataRef wind_speed_kt;
 extern XPLMDataRef wind_direction_degt;
 extern XPLMDataRef zulu_time_sec;
 extern XPLMDataRef local_time_sec;
+extern XPLMDataRef sim_paused;
 extern XPLMDataRef oat;
 extern XPLMDataRef tat;
 extern XPLMDataRef isa;
@@ -377,11 +381,11 @@ extern XPLMDataRef override_trq_max;
 
 // custom datarefs - MFD
 extern XPLMDataRef mfd_mode;
-
+extern XPLMDataRef mfd_fuel_used;
 
 // custom datarefs - CDU
-extern XPLMDataRef cdu_source;
-
+extern XPLMDataRef cdu_pilot_source;
+extern XPLMDataRef cdu_copilot_source;
 
 // custom datarefs - pilot
 extern XPLMDataRef efis_pilot_shows_stas;

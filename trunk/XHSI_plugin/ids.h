@@ -543,6 +543,7 @@
 #define QPAC_CABIN_ALT 1073
 #define QPAC_CABIN_VS 1074
 #define QPAC_AIR_VALVES 1075
+#define QPAC_OUTFLOW_VALVE 1090
 // ECAM System Display page
 #define QPAC_SD_PAGE 1076
 // COND
@@ -562,7 +563,7 @@
 #define QPAC_ELEC_CX_RIGHT 1088
 // Keypress
 #define QPAC_KEY_PRESS 1089
-// next is 1090
+// next is 1091
 
 // IDs reserved for QPAC up to 1199
 
