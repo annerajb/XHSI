@@ -1078,15 +1078,12 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // keep a reference
         this.radio_button_mfd_bleed = radio_button_menu_item;
         
-        /*
-         * TODO : Cabin Pressure
-         */
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_CAB_PRESS);
         radio_button_menu_item.setToolTipText("Cabin pressure");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
-        // mfd_group.add(radio_button_menu_item);
-        // xhsi_mfd_menu.add(radio_button_menu_item);
+        mfd_group.add(radio_button_menu_item);
+        xhsi_mfd_menu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_mfd_cab_press = radio_button_menu_item;
         
@@ -1134,22 +1131,16 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         xhsi_mfd_menu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_mfd_cond = radio_button_menu_item;
-        
-        /*
-         * TODO : Doors and oxygen
-         */       
+            
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_DOOR_OXY);
         radio_button_menu_item.setToolTipText("Doors and oxygen");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
-        // mfd_group.add(radio_button_menu_item);
-        // xhsi_mfd_menu.add(radio_button_menu_item);
+        mfd_group.add(radio_button_menu_item);
+        xhsi_mfd_menu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_mfd_door_oxy = radio_button_menu_item;
-                      
-        /*
-         * Wheels
-         */        
+                             
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_WHEELS);
         radio_button_menu_item.setToolTipText("Wheels");
         radio_button_menu_item.addActionListener(this);
@@ -1177,9 +1168,6 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // keep a reference
         this.radio_button_mfd_sys = radio_button_menu_item;
         
-        /*
-         * TODO : Status
-         */
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_MFD_STATUS);
         radio_button_menu_item.setToolTipText("Status");
         radio_button_menu_item.addActionListener(this);
@@ -1188,8 +1176,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         xhsi_mfd_menu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_mfd_status = radio_button_menu_item;
-
-       
+  
         
         // add the "MFD" menu to the menubar
         menu_bar.add(xhsi_mfd_menu);

@@ -47,6 +47,7 @@ import net.sourceforge.xhsi.XHSIInstrument;
 import net.sourceforge.xhsi.XHSIPreferences;
 
 import net.sourceforge.xhsi.model.Avionics;
+import net.sourceforge.xhsi.model.Door;
 
 import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
 
@@ -573,7 +574,86 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int wheel_door_nose_l;
     public int wheel_door_main_l;
     
-
+    // Door/oxy
+    public int door_center_x;
+    public int door_cabin_width_dx;
+    public int door_noose_y;
+    public int door_cabin_top_y;
+    public int door_cabin_bottom_y;
+    public int door_tail_y;
+    public int door_wing_top_y;
+    public int door_wing_bottom_y;
+    public int door_wing_width_dx;
+    public int door_slide_top_y;
+    public int door_slide_wing_y;
+    public int door_slide_aft_y;
+    public int door_slide_legend_dx;
+    public int door_oxy_y;
+    public int door_oxy_legend_x;
+    public int door_oxy_value_x;
+    public int door_oxy_unit_x;    
+    public int door_vs_y;
+    public int door_vs_legend_x;
+    public int door_vs_value_x;
+    public int door_vs_unit_x;
+    public int door_heigth;
+    public int door_main_width;
+    public int door_escape_width;
+    public int door_cargo_width;
+    public int door_avionics_dx;
+    public int door_avionics_dy;
+    public int door_avionics_heigth;
+    public int door_num;
+    public Door doors[] = new Door[20]; 
+    
+    // Pressurisation
+    public int press_id_x;
+    public int press_id_y;
+    public int press_gauges_y;
+    public int press_gauges_legend_y;
+    public int press_delta_p_x;
+    public int press_vs_x;
+    public int press_cab_alt_x;
+    public int press_dial_r;
+    public int press_ldg_legend_x;
+    public int press_ldg_units_x;
+    public int press_ldg_value_x;
+    public int press_ldg_mode_x;
+    public int press_ldg_mode_y;
+    public int press_box_top_y;
+    public int press_box_bottom_y;
+    public int press_box_left_x;
+    public int press_box_right_x;
+    public int press_box_inlet_x;
+    public int press_box_inlet_dx;
+    public int press_box_inlet_y;
+    public int press_box_extract_x;
+    public int press_box_safety_x;
+    public int press_box_safety_top;
+    public int press_box_safety_bottom;
+    public int press_box_outflow_right;
+    public int press_box_outflow_left;
+    public int press_box_outflow_r;
+    public int press_valve_bullet_r;
+    public int press_inlet_legend_y;
+    public int press_inlet_legend_x;
+    public int press_extract_legend_x;
+    public int press_vent_legend_y;
+    public int press_vent_legend_x;
+    public int press_man_legend_x;
+    public int press_man_legend_y;
+    public int press_sys_legend_y;
+    public int press_sys1_legend_x;
+    public int press_sys2_legend_x;
+    public int press_safety_legend_y;
+    public int press_safety_legend_x;
+    public int press_pack_legend_y;
+    public int press_pack_arrow_y;
+    public int press_pack_arrow_dy;
+    public int press_pack_arrow_dx;
+    public int press_pack1_x;
+    public int press_pack2_x;
+    
     // Systems Status 
     // Vertical separation line
     public int sys_line_x;
@@ -1332,6 +1412,106 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             wheel_door_nose_l = panel_rect.width * 60/1000;
             wheel_door_main_l = panel_rect.width * 100/1000;
             
+            // Door/oxy
+            door_center_x = panel_rect.x + panel_rect.width / 2;
+            door_cabin_width_dx = panel_rect.width * 74/1000;
+            door_noose_y = panel_rect.y + mfd_size * 41/1000;
+            door_cabin_top_y = panel_rect.y + mfd_size * 220/1000;
+            door_cabin_bottom_y = panel_rect.y + mfd_size * 904/1000;
+            door_tail_y = panel_rect.y + mfd_size * 984/1000;
+            door_wing_top_y = panel_rect.y + mfd_size * 533/1000;
+            door_wing_bottom_y = panel_rect.y + mfd_size * 585/1000;
+            door_wing_width_dx = panel_rect.width * 141/1000;
+            door_slide_top_y = panel_rect.y + mfd_size * 309/1000;
+            door_slide_wing_y = panel_rect.y + mfd_size * 610/1000;
+            door_slide_aft_y = panel_rect.y + mfd_size * 907/1000;
+            door_slide_legend_dx = panel_rect.width * 14/1000;
+            door_oxy_y = panel_rect.y + mfd_size * 69/1000;
+            door_oxy_legend_x = panel_rect.x + panel_rect.width * 658/1000;
+            door_oxy_value_x = panel_rect.x + panel_rect.width * 852/1000;
+            door_oxy_unit_x= panel_rect.x + panel_rect.width * 863/1000;    
+            door_vs_y = panel_rect.y + mfd_size * 183/1000;
+            door_vs_legend_x = panel_rect.x + panel_rect.width * 658/1000;
+            door_vs_value_x = panel_rect.x + panel_rect.width * 866/1000;
+            door_vs_unit_x = panel_rect.x + panel_rect.width * 887/1000;
+            door_heigth = mfd_size * 37/1000;
+            door_main_width = panel_rect.width * 21/1000;
+            door_escape_width = panel_rect.width * 15/1000;
+            door_cargo_width = panel_rect.width * 34/1000;
+            door_avionics_dx = panel_rect.width * 20/1000;
+            door_avionics_dy = mfd_size * 18/1000;
+            door_avionics_heigth = mfd_size * 28/1000;
+            
+            // A320-200 door layout
+            door_num = 15;            
+            // PAX
+            doors[0] = new Door(door_center_x-door_cabin_width_dx,panel_rect.y + mfd_size * 276/1000,door_main_width,door_heigth,Door.PAX);
+            doors[1] = new Door(door_center_x+door_cabin_width_dx-door_main_width,panel_rect.y + mfd_size * 276/1000,door_main_width,door_heigth,Door.PAX);
+            doors[2] = new Door(door_center_x-door_cabin_width_dx,panel_rect.y + mfd_size * 870/1000,door_main_width,door_heigth,Door.PAX);
+            doors[3] = new Door(door_center_x+door_cabin_width_dx-door_main_width,panel_rect.y + mfd_size * 870/1000,door_main_width,door_heigth,Door.PAX);
+            // EMERGENCY
+            doors[4] = new Door(door_center_x-door_cabin_width_dx,panel_rect.y + mfd_size * 545/1000,door_escape_width,door_heigth,Door.EMERGENCY);
+            doors[5] = new Door(door_center_x+door_cabin_width_dx-door_escape_width,panel_rect.y + mfd_size * 545/1000,door_escape_width,door_heigth,Door.EMERGENCY);
+            doors[6] = new Door(door_center_x-door_cabin_width_dx,panel_rect.y + mfd_size * 602/1000,door_escape_width,door_heigth,Door.EMERGENCY);
+            doors[7] = new Door(door_center_x+door_cabin_width_dx-door_escape_width,panel_rect.y + mfd_size * 602/1000,door_escape_width,door_heigth,Door.EMERGENCY);
+            // CARGO & BULK
+            doors[8] = new Door(door_center_x+door_cabin_width_dx-door_cargo_width,panel_rect.y + mfd_size * 415/1000,door_cargo_width,door_heigth,Door.CARGO);
+            doors[9] = new Door(door_center_x+door_cabin_width_dx-door_cargo_width,panel_rect.y + mfd_size * 695/1000,door_cargo_width,door_heigth,Door.CARGO);
+            doors[10] = new Door(door_center_x+door_cabin_width_dx-door_escape_width*2,panel_rect.y + mfd_size * 776/1000,door_escape_width,door_heigth,Door.CARGO);
+            // MAINTENANCE PANELS
+            doors[11] = new Door(door_center_x-door_main_width/2,panel_rect.y + mfd_size * 114/1000,door_main_width,door_avionics_dy,Door.MAINTENANCE);
+            doors[12] = new Door(door_center_x-door_avionics_dx*2,panel_rect.y + mfd_size * 185/1000,door_escape_width,door_avionics_heigth,Door.MAINTENANCE);
+            doors[13] = new Door(door_center_x+door_avionics_dx ,panel_rect.y + mfd_size * 185/1000,door_escape_width,door_avionics_heigth,Door.MAINTENANCE);
+            doors[14] = new Door(door_center_x,panel_rect.y + mfd_size * 350/1000,door_main_width,door_avionics_dy,Door.MAINTENANCE);
+
+            // Pressurisation
+            press_id_x = panel_rect.x + panel_rect.width * 10/1000;
+            press_id_y = panel_rect.y + mfd_size * 58/1000;
+            press_gauges_y = panel_rect.y + mfd_size * 381/1000;
+            press_gauges_legend_y = panel_rect.y + mfd_size * 208/1000;
+            press_delta_p_x = panel_rect.x + panel_rect.width * 181/1000;
+            press_vs_x = panel_rect.x + panel_rect.width * 483/1000;
+            press_cab_alt_x = panel_rect.x + panel_rect.width * 802/1000;            
+            press_dial_r = panel_rect.width * 80/1000;
+            press_ldg_legend_x = panel_rect.x + panel_rect.width * 400/1000;
+            press_ldg_mode_x = panel_rect.x + panel_rect.width * 600/1000;
+            press_ldg_units_x = panel_rect.x + panel_rect.width * 900/1000;
+            press_ldg_value_x = panel_rect.x + panel_rect.width * 820/1000;
+            press_ldg_mode_y = panel_rect.y + mfd_size * 60/1000;
+            press_box_top_y = panel_rect.y + mfd_size * 538/1000;
+            press_box_bottom_y = panel_rect.y + mfd_size * 802/1000;
+            press_box_left_x = panel_rect.x + panel_rect.width * 112/1000;
+            press_box_right_x = panel_rect.x + panel_rect.width * 880/1000;
+            press_box_inlet_x = panel_rect.x + panel_rect.width * 181/1000;
+            press_box_inlet_dx =  panel_rect.width * 66/1000;
+            press_box_inlet_y = panel_rect.y + mfd_size * 830/1000;
+            press_box_extract_x = panel_rect.x + panel_rect.width * 423/1000;
+            press_box_safety_x = panel_rect.x + panel_rect.width * 897/1000;
+            press_box_safety_top = panel_rect.y + mfd_size * 632/1000;
+            press_box_safety_bottom = panel_rect.y + mfd_size * 708/1000;
+            press_box_outflow_left = panel_rect.x + panel_rect.width * 638/1000;
+            press_box_outflow_right = panel_rect.x + panel_rect.width * 741/1000;
+            press_box_outflow_r = panel_rect.width * 103/1000;
+            press_valve_bullet_r = panel_rect.width * 5/1000;
+            
+            press_inlet_legend_y = panel_rect.y + mfd_size * 792/1000;
+            press_inlet_legend_x = press_box_inlet_x + press_box_inlet_dx / 2;
+            press_extract_legend_x = press_box_extract_x + press_box_inlet_dx / 2;
+            press_vent_legend_y = panel_rect.y + mfd_size * 740/1000;
+            press_vent_legend_x = panel_rect.x + panel_rect.width * 331/1000;
+            press_man_legend_y = panel_rect.y + mfd_size * 585/1000;
+            press_man_legend_x = panel_rect.x + panel_rect.width * 491/1000;
+            press_sys_legend_y = panel_rect.y + mfd_size * 632/1000;
+            press_sys1_legend_x = panel_rect.x + panel_rect.width * 328/1000;
+            press_sys2_legend_x = panel_rect.x + panel_rect.width * 647/1000;
+            press_safety_legend_y = panel_rect.y + mfd_size * 615/1000;
+            press_safety_legend_x = press_box_right_x;
+            press_pack_legend_y = panel_rect.y + mfd_size * 915/1000;
+            press_pack_arrow_y = panel_rect.y + mfd_size * 830/1000;
+            press_pack_arrow_dy = mfd_size * 35/1000;
+            press_pack_arrow_dx = panel_rect.width * 30/1000;
+            press_pack1_x = panel_rect.x + panel_rect.width * 164/1000;
+            press_pack2_x = panel_rect.x + panel_rect.width * 819/1000;
             
             // Systems Status 
             // Vertical separation line

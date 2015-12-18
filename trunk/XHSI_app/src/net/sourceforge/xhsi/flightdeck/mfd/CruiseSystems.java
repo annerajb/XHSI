@@ -31,8 +31,14 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.logging.Logger;
 
+import net.sourceforge.xhsi.XHSIPreferences;
+import net.sourceforge.xhsi.XHSISettings;
+import net.sourceforge.xhsi.model.Airport;
 import net.sourceforge.xhsi.model.Avionics;
+import net.sourceforge.xhsi.model.FMSEntry;
+import net.sourceforge.xhsi.model.Localizer;
 import net.sourceforge.xhsi.model.ModelFactory;
+import net.sourceforge.xhsi.model.NavigationObjectRepository;
 import net.sourceforge.xhsi.model.Aircraft.ValveStatus;
 
 public class CruiseSystems extends MFDSubcomponent {
@@ -99,7 +105,13 @@ public class CruiseSystems extends MFDSubcomponent {
 	
 	private void drawFuelUsed(Graphics2D g2) {
 		String str_fuel_legend = "F. USED";
-		String str_fuel_units = "KG";
+		
+		String str_fuel_units;
+        if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_KG ) str_fuel_units = XHSIPreferences.FUEL_UNITS_KG;
+        else if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_LBS ) str_fuel_units = XHSIPreferences.FUEL_UNITS_LBS;
+        else if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_USG ) str_fuel_units = XHSIPreferences.FUEL_UNITS_USG;
+        else /* if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_LTR ) */ str_fuel_units = XHSIPreferences.FUEL_UNITS_LTR;
+	
 		g2.setColor(mfd_gc.ecam_markings_color);
 		if (mfd_gc.num_eng<3) {
 			g2.drawLine(mfd_gc.crz_eng_center_x - mfd_gc.crz_eng_line_dx1, mfd_gc.crz_fuel_top_y, mfd_gc.crz_eng_center_x - mfd_gc.crz_eng_line_dx2, mfd_gc.crz_fuel_bottom_y);
@@ -114,10 +126,17 @@ public class CruiseSystems extends MFDSubcomponent {
 		// Values
 		String str_fuel_val="XX";
 		g2.setFont(mfd_gc.font_xxl);
-		g2.setColor(mfd_gc.ecam_caution_color);
-		for (int eng=0; eng<mfd_gc.num_eng; eng++) {					
+		for (int eng=0; eng<mfd_gc.num_eng; eng++) {		
+			if (this.aircraft.fuel_used(eng) > 0.1f ) {
+				g2.setColor(mfd_gc.ecam_normal_color);					
+				str_fuel_val=""+Math.round(this.aircraft.fuel_used(eng) * this.aircraft.fuel_multiplier());
+			} else {
+				str_fuel_val="XX";
+				g2.setColor(mfd_gc.ecam_caution_color);
+			}
 			g2.drawString(str_fuel_val, mfd_gc.crz_eng_x[eng]-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_fuel_val), mfd_gc.crz_fuel_value_y);
 		}
+		
 	}
 
 	private void drawOilQuantity(Graphics2D g2) {
@@ -183,6 +202,19 @@ public class CruiseSystems extends MFDSubcomponent {
 	}
 	
 	private void drawCabinPressures(Graphics2D g2) {
+		/*
+		 * A320 FCOM 1.21.20 page 12
+		 * 
+		 * Cabin V/S amber when >= 2000 feet/minute
+		 * Pulse when > 1800 feet/minute, reset at 1600 feet/minute
+		 * 
+		 * V/S is a gauge when in MAN mode
+		 * 
+		 * Cabin Alt in red if >= 9550 feet
+		 * Cabin Alt Pulse if >= 8800 feet (reset at 8600 feet)
+		 * 
+		 * Delta P : amber if dp <= -0.4 psi or if dp >= 8.5 psi
+		 */
 		// Legends
 		String str_ldg_legend = "LDG  ELEV";
 		String str_delta_p_legend = "ΔP";
@@ -195,10 +227,10 @@ public class CruiseSystems extends MFDSubcomponent {
 		// Values
 		String str_alt = "" + Math.round(aircraft.cabin_altitude()/10)*10;
 		String str_delta = one_decimal_format.format(aircraft.cabin_delta_p());
-		String str_vs = "" + Math.round(aircraft.cabin_vs());
+		String str_vs = "" + Math.round(aircraft.cabin_vs()/10)*10;
 		String str_mode = "AUTO";
-		String str_ldg = "XX";
-
+		// String str_ldg = ""+Math.round(get_auto_ldg_elevation());
+		
 	    // Draw legends
 		g2.setColor(mfd_gc.ecam_markings_color);
 		g2.setFont(mfd_gc.font_xl);
@@ -221,9 +253,9 @@ public class CruiseSystems extends MFDSubcomponent {
 		g2.drawString(str_mode, mfd_gc.crz_ldg_mode_x, mfd_gc.crz_ldg_mode_y);
 		g2.drawString(str_delta, mfd_gc.crz_cab_zone2_x - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_delta) , mfd_gc.crz_delta_p_y);
 		g2.drawString(str_vs, mfd_gc.crz_pres_value_x - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_vs), mfd_gc.crz_vs_value_y);
-		g2.drawString(str_alt, mfd_gc.crz_pres_value_x - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_alt) , mfd_gc.crz_alt_value_y);
-		g2.setColor(mfd_gc.ecam_caution_color);
-		g2.drawString(str_ldg, mfd_gc.crz_pres_value_x - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_ldg), mfd_gc.crz_ldg_mode_y);
+		g2.drawString(str_alt, mfd_gc.crz_pres_value_x - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_alt) , mfd_gc.crz_alt_value_y);		
+		// g2.drawString(str_ldg, mfd_gc.crz_pres_value_x - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_ldg), mfd_gc.crz_ldg_mode_y);
+		drawAutoLDGElevation(g2);
 		
 	}
 	
@@ -276,6 +308,69 @@ public class CruiseSystems extends MFDSubcomponent {
     	g2.drawString(intStr, x - len_n1_str2 - len_n1_str1, y);
     	g2.setFont(smallFont);
     	g2.drawString(decStr, x - len_n1_str2, y);
+    }
+    
+    /* 
+     * Functions from Destination Airport Class 
+     */
+    
+    private void drawAutoLDGElevation(Graphics2D g2) {
+		String str_ldg = "XX";
+    	String airport_icao = getDestination();
+    	NavigationObjectRepository nor = NavigationObjectRepository.get_instance();
+    	Airport airport = nor.get_airport(airport_icao.trim());
+    	if ( airport != null ) {   
+    		g2.setColor(mfd_gc.ecam_normal_color);
+    		g2.setFont(mfd_gc.font_xxl);
+    		str_ldg = ""+Math.round(airport.elev);
+    	} else {
+    		g2.setColor(mfd_gc.ecam_caution_color);	
+    	}
+		g2.drawString(str_ldg, mfd_gc.crz_pres_value_x - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_ldg), mfd_gc.crz_ldg_mode_y);
+    }
+    
+    private String get_nav_dest() {
+        String dest_str = "";
+        Localizer dest_loc = null;
+        int hsi_source = this.avionics.hsi_source();
+        int bank = 0;
+        if ( hsi_source == Avionics.HSI_SOURCE_NAV1 ) {
+            bank = 1;
+        } else if ( hsi_source == Avionics.HSI_SOURCE_NAV2 ) {
+            bank = 2;
+        }
+        if ( bank > 0 ) {
+            dest_loc = this.avionics.get_tuned_localizer(bank);
+            if ( dest_loc != null ) dest_str = dest_loc.airport;
+        }
+        return dest_str;
+    }
+
+
+    private String get_fms_dest() {
+        String dest_str = "";
+        if ( this.avionics.hsi_source() == Avionics.HSI_SOURCE_GPS ) {
+            FMSEntry last_wpt = this.avionics.get_fms().get_last_waypoint();
+            if ( ( last_wpt != null ) && ( last_wpt.type == FMSEntry.ARPT ) ) {
+                dest_str = last_wpt.name;                
+            }
+        }
+        return dest_str;
+    }
+
+
+    private String getDestination() {
+        String dest_arpt_str = "";
+        if ( this.aircraft.on_ground() ) {
+            dest_arpt_str = this.aircraft.get_nearest_arpt();           
+        } else if ( ! this.preferences.get_arpt_chart_nav_dest() ) {
+            dest_arpt_str = this.aircraft.get_nearest_arpt();            
+        } else {
+            if ( dest_arpt_str.equals("") ) dest_arpt_str = get_nav_dest();
+            if ( dest_arpt_str.equals("") ) dest_arpt_str = get_fms_dest();
+            if ( dest_arpt_str.equals("") ) dest_arpt_str = this.aircraft.get_nearest_arpt();  
+        }
+        return dest_arpt_str;
     }
 
 }

@@ -1266,6 +1266,23 @@ public class XPlaneAircraft implements Aircraft {
     	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_PRESSURIZATION_CABIN_VVI);
     }
 
+    public float cabin_outflow_valve() {    	
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_OUTFLOW_VALVE);
+    }
 
-    
+    public float cabin_inlet_valve() {
+    	// Ventilation inlet valve - always closed when not simulated 
+    	return 0.0f;
+    }
+
+    public float cabin_extract_valve() {
+    	// Ventilation inlet valve - always closed when not simulated
+    	return 0.0f;
+    }
+
+    public float cabin_safety_valve() {
+    	// Cabin pressure safety valve - normaly closed - open when delta p > 8.5
+    	return 0.0f;
+    }
+
 }
