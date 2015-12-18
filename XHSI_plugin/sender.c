@@ -34,6 +34,7 @@
 #include "structs.h"
 #include "packets.h"
 #include "net.h"
+#include "datarefs.h"
 
 //char pack_msg[200];
 
@@ -180,6 +181,21 @@ float sendEnginesCallback(
 #if IBM
 	char msg[80];
 #endif
+	int engines;
+	int e;
+	float tab_fuel_flow[8];
+	float tab_fuel_used[8];
+    int sim_run = !XPLMGetDatai(sim_paused);
+	// Compute fuel used
+	if (xhsi_plugin_enabled && sim_run) {
+	    engines = XPLMGetDatai(num_engines);
+	    XPLMGetDatavf(fuel_flow, tab_fuel_flow, 0, engines);
+	    XPLMGetDatavf(mfd_fuel_used, tab_fuel_used, 0, engines);
+	    for (e=0; e<engines; e++) {
+	    	tab_fuel_used[e] += tab_fuel_flow[e] * inElapsedSinceLastCall;
+	    }
+	    XPLMSetDatavf(mfd_fuel_used, tab_fuel_used, 0, engines);
+	}
 
 	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open) {
 

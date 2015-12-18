@@ -132,6 +132,9 @@ XPLMDataRef qpac_co_efis_nd_range;
 XPLMDataRef qpac_autobrake_low;
 XPLMDataRef qpac_autobrake_med;
 XPLMDataRef qpac_autobrake_max;
+XPLMDataRef qpac_left_brake_release;
+XPLMDataRef qpac_right_brake_release;
+XPLMDataRef qpac_nw_anti_skid;
 // Flaps and slats
 XPLMDataRef qpac_flaps_request_pos;
 XPLMDataRef qpac_slats_request_pos;
@@ -166,6 +169,10 @@ XPLMDataRef qpac_cond_hot_air_valve;
 XPLMDataRef qpac_cond_cockpit_trim;
 XPLMDataRef qpac_cond_zone1_trim;
 XPLMDataRef qpac_cond_zone2_trim;
+// Doors
+XPLMDataRef qpac_door_pax_array;
+XPLMDataRef qpac_door_cargo_array;
+XPLMDataRef qpac_door_bulk_door;
 // Bleed
 XPLMDataRef qpac_bleed_intercon;
 XPLMDataRef qpac_bleed_x;
@@ -352,6 +359,9 @@ void findQpacDataRefs(void) {
             qpac_autobrake_low = XPLMFindDataRef("AirbusFBW/AutoBrkLo");
             qpac_autobrake_med = XPLMFindDataRef("AirbusFBW/AutoBrkMed");
             qpac_autobrake_max = XPLMFindDataRef("AirbusFBW/AutoBrkMax");
+            qpac_left_brake_release = XPLMFindDataRef("AirbusFBW/LeftBrakeRelease");
+            qpac_right_brake_release = XPLMFindDataRef("AirbusFBW/RightBrakeRelease");
+            qpac_nw_anti_skid = XPLMFindDataRef("AirbusFBW/NWSnAntiSkid");
             // Flaps and slats
             qpac_flaps_request_pos = XPLMFindDataRef("AirbusFBW/FlapsRequestPos");
             qpac_slats_request_pos = XPLMFindDataRef("AirbusFBW/SlatsRequestPos");
@@ -386,6 +396,10 @@ void findQpacDataRefs(void) {
             qpac_cond_cockpit_trim = XPLMFindDataRef("AirbusFBW/CockpitTrim");
             qpac_cond_zone1_trim = XPLMFindDataRef("AirbusFBW/Zone1Trim");
             qpac_cond_zone2_trim = XPLMFindDataRef("AirbusFBW/Zone2Trim");
+            // Doors
+            qpac_door_pax_array = XPLMFindDataRef("AirbusFBW/PaxDoorArray");
+            qpac_door_cargo_array = XPLMFindDataRef("AirbusFBW/CargoDoorArray");
+            qpac_door_bulk_door = XPLMFindDataRef("AirbusFBW/BulkDoor");
             // Bleed
             qpac_bleed_intercon = XPLMFindDataRef("AirbusFBW/BleedIntercon");
             qpac_bleed_x = XPLMFindDataRef("AirbusFBW/XBleedInd");

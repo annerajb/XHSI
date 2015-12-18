@@ -294,6 +294,9 @@ extern XPLMDataRef qpac_co_efis_nd_range;
 extern XPLMDataRef qpac_autobrake_low;
 extern XPLMDataRef qpac_autobrake_med;
 extern XPLMDataRef qpac_autobrake_max;
+extern XPLMDataRef qpac_left_brake_release;
+extern XPLMDataRef qpac_right_brake_release;
+extern XPLMDataRef qpac_nw_anti_skid;
 // Flaps and slats
 extern XPLMDataRef qpac_flaps_request_pos;
 extern XPLMDataRef qpac_slats_request_pos;
@@ -328,6 +331,10 @@ extern XPLMDataRef qpac_cond_hot_air_valve;
 extern XPLMDataRef qpac_cond_cockpit_trim;
 extern XPLMDataRef qpac_cond_zone1_trim;
 extern XPLMDataRef qpac_cond_zone2_trim;
+// Doors
+extern XPLMDataRef qpac_door_pax_array;
+extern XPLMDataRef qpac_door_cargo_array;
+extern XPLMDataRef qpac_door_bulk_door;
 // Bleed
 extern XPLMDataRef qpac_bleed_intercon;
 extern XPLMDataRef qpac_bleed_x;

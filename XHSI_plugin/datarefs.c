@@ -45,9 +45,11 @@ XPLMDataRef override_trq_max;
 
 // custom datarefs - MFD
 XPLMDataRef mfd_mode;
+XPLMDataRef mfd_fuel_used;
 
 // custom datarefs - CDU
-XPLMDataRef cdu_source;
+XPLMDataRef cdu_pilot_source;
+XPLMDataRef cdu_copilot_source;
 
 // custom datarefs - pilot
 XPLMDataRef efis_pilot_shows_stas;
@@ -112,20 +114,23 @@ XPLMDataRef airspeed_acceleration;
 XPLMDataRef g_load;
 XPLMDataRef turnrate_noroll;
 
-//Instruments failures pilot
+// Instruments failures pilot
 XPLMDataRef sim_op_fail_rel_ss_ahz;
 XPLMDataRef sim_op_fail_rel_ss_alt;
 XPLMDataRef sim_op_fail_rel_ss_asi;
 XPLMDataRef sim_op_fail_rel_ss_dgy;
 XPLMDataRef sim_op_fail_rel_ss_tsi;
 XPLMDataRef sim_op_fail_rel_ss_vvi;
-//Instruments failures co-pilot
+// Instruments failures co-pilot
 XPLMDataRef sim_op_fail_rel_cop_ahz;
 XPLMDataRef sim_op_fail_rel_cop_alt;
 XPLMDataRef sim_op_fail_rel_cop_asi;
 XPLMDataRef sim_op_fail_rel_cop_dgy;
 XPLMDataRef sim_op_fail_rel_cop_tsi;
 XPLMDataRef sim_op_fail_rel_cop_vvi;
+// Gears failures
+XPLMDataRef sim_op_fail_rel_gear_ind;
+XPLMDataRef sim_op_fail_rel_gear_act;
 
 XPLMDataRef avionics_on;
 XPLMDataRef battery_on;
@@ -265,6 +270,7 @@ XPLMDataRef wind_speed_kt;
 XPLMDataRef wind_direction_degt;
 XPLMDataRef zulu_time_sec;
 XPLMDataRef local_time_sec;
+XPLMDataRef sim_paused;
 XPLMDataRef oat;
 XPLMDataRef isa;
 XPLMDataRef tat;
@@ -569,18 +575,77 @@ void	setMFDMode(void* inRefcon, int inValue)
       mfd_display_mode = inValue;
 }
 
-
-// xhsi/cdu/source
-int cdu_source_value;
-int     getCDUSource(void* inRefcon)
+// xhsi/mfd/fuel_used
+XPLM_API int                  XPLMGetDatavf(
+                                   XPLMDataRef          inDataRef,
+                                   float *              outValues,    /* Can be NULL */
+                                   int                  inOffset,
+                                   int                  inMax);
+typedef int (* XPLMGetDatavf_f)(
+                                   void *               inRefcon,
+                                   float *              outValues,    /* Can be NULL */
+                                   int                  inOffset,
+                                   int                  inMax);
+float fuel_used[8];
+long  getFuelUsed(
+		void *               inRefcon,
+        float *              outValues,    /* Can be NULL */
+        int                  inOffset,
+        int                  inMax)
 {
-     return cdu_source_value;
+	int i;
+	int retMax = inMax;
+	if ((inOffset + inMax) > 7) retMax = 8 - inOffset;
+	if (outValues == NULL || inMax == 0) {
+		return 8;
+	} else {
+		for (i=0; i<retMax; i++) {
+			outValues[i] = fuel_used[i+inOffset];
+		}
+	}
+    return retMax;
 }
-void	setCDUSource(void* inRefcon, int inValue)
+void	setFuelUsed(
+		void *               inRefcon,
+        float *              inValues,
+        int                  inOffset,
+        int                  inCount)
 {
-      cdu_source_value = inValue;
+	int i;
+	int inMax = inCount;
+	if ((inOffset + inMax) > 7) inMax = 8 - inOffset;
+	if (inValues == NULL || inCount == 0) {
+		return;
+	} else {
+		for (i=0; i<inMax; i++) {
+			fuel_used[i+inOffset] = inValues[i];
+		}
+	}
+    return;
 }
 
+
+// xhsi/cdu_pilot/source
+int cdu_pilot_source_value;
+int     getPilotCDUSource(void* inRefcon)
+{
+     return cdu_pilot_source_value;
+}
+void	setPilotCDUSource(void* inRefcon, int inValue)
+{
+      cdu_pilot_source_value = inValue;
+}
+
+// xhsi/cdu_copilot/source
+int cdu_copilot_source_value;
+int     getCopilotCDUSource(void* inRefcon)
+{
+     return cdu_copilot_source_value;
+}
+void	setCopilotCDUSource(void* inRefcon, int inValue)
+{
+      cdu_copilot_source_value = inValue;
+}
 
 // custom datarefs for pilot
 
@@ -1157,6 +1222,15 @@ void registerMFDDataRefs(void) {
                                         getMFDMode, setMFDMode,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
+    // xhsi/mfd/fuel_used
+    mfd_fuel_used = XPLMRegisterDataAccessor("xhsi/mfd/fuel_used",
+    									xplmType_FloatArray,                                 // The types we support
+                                        1,                                                   // Writable
+                                        NULL, NULL,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL,
+                                        getFuelUsed, setFuelUsed, 								   // Float array accessors
+                                        NULL, NULL, NULL, NULL);                                   // Refcons not used
+
     XPLMDebugString("XHSI: custom MFD DataRefs registered\n");
 
 }
@@ -1166,11 +1240,17 @@ void registerCDUDataRefs(void) {
 
     XPLMDebugString("XHSI: registering custom CDU DataRefs\n");
 
-    // xhsi/cdu/source
-    cdu_source = XPLMRegisterDataAccessor("xhsi/cdu/source",
+    // xhsi/cdu_pilot/source
+    cdu_pilot_source = XPLMRegisterDataAccessor("xhsi/cdu_pilot/source",
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
-                                        getCDUSource, setCDUSource,      // Integer accessors
+                                        getPilotCDUSource, setPilotCDUSource,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+    // xhsi/cdu_copilot/source
+    cdu_copilot_source = XPLMRegisterDataAccessor("xhsi/cdu_copilot/source",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                                   // Writable
+                                        getCopilotCDUSource, setCopilotCDUSource,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
     XPLMDebugString("XHSI: custom CDU DataRefs registered\n");
@@ -1193,7 +1273,9 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rwy_length_min");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rwy_units");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/mode");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu/source");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/fuel_used");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu_pilot/source");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu_copilot/source");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/engine_type");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_scale");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/fuel_units");
@@ -1400,6 +1482,7 @@ float initMFDCallback(
 									float	inElapsedTimeSinceLastFlightLoop,
 									int		inCounter,
 									void *	inRefcon) {
+	float zero_tab[8]= { 0,0,0,0,0,0,0,0 };
 
     XPLMDebugString("XHSI: initializing custom MFD DataRefs\n");
 
@@ -1409,6 +1492,9 @@ float initMFDCallback(
     //mfd_mode = XPLMFindDataRef ("xhsi/mfd/mode");
     // mode 0 = Airport Chart / 1 = Flight Plan / 2 = Lower EICAS
     XPLMSetDatai(mfd_mode, 0);
+
+    // xhsi/mfd/fuel_used float[8]
+	XPLMSetDatavf(mfd_fuel_used, zero_tab, 0, 8);
 
 	XPLMDebugString("XHSI: custom MFD DataRefs initialized\n");
 
@@ -1428,7 +1514,8 @@ float initCDUCallback(
     // set a default for the CDU source
 
     // mode 0 = X-Plane legacy FMS / 1 = X-FMC / 2 = UFMC/X737FMC
-    XPLMSetDatai(cdu_source, 0);
+    XPLMSetDatai(cdu_pilot_source, 0);
+    XPLMSetDatai(cdu_copilot_source, 0);
 
 	XPLMDebugString("XHSI: custom CDU DataRefs initialized\n");
 
@@ -1549,12 +1636,18 @@ void unregisterMFDDataRefs(void) {
     // xhsi/mfd/mode
     XPLMUnregisterDataAccessor(mfd_mode);
 
+    // xhsi/mfd_fuel_used
+    XPLMUnregisterDataAccessor(mfd_fuel_used);
+
 }
 
 void unregisterCDUDataRefs(void) {
 
-    // xhsi/cdu/source
-    XPLMUnregisterDataAccessor(cdu_source);
+    // xhsi/cdu_pilot/source
+    XPLMUnregisterDataAccessor(cdu_pilot_source);
+
+    // xhsi/cdu_copilot/source
+    XPLMUnregisterDataAccessor(cdu_copilot_source);
 
 }
 
@@ -1606,20 +1699,23 @@ void findDataRefs(void) {
     g_load =  XPLMFindDataRef("sim/flightmodel/forces/g_nrml");
     turnrate_noroll = XPLMFindDataRef("sim/flightmodel/misc/turnrate_noroll");
 
-    //Instruments failures pilot
+    // Instruments failures pilot
     sim_op_fail_rel_ss_ahz = XPLMFindDataRef("sim/operation/failures/rel_ss_ahz");
     sim_op_fail_rel_ss_alt = XPLMFindDataRef("sim/operation/failures/rel_ss_alt");
     sim_op_fail_rel_ss_asi = XPLMFindDataRef("sim/operation/failures/rel_ss_asi");
     sim_op_fail_rel_ss_dgy = XPLMFindDataRef("sim/operation/failures/rel_ss_dgy");
     sim_op_fail_rel_ss_tsi = XPLMFindDataRef("sim/operation/failures/rel_ss_tsi");
     sim_op_fail_rel_ss_vvi = XPLMFindDataRef("sim/operation/failures/rel_ss_vvi");
-    //Instruments failures co-pilot
+    // Instruments failures co-pilot
     sim_op_fail_rel_cop_ahz = XPLMFindDataRef("sim/operation/failures/rel_cop_ahz");
     sim_op_fail_rel_cop_alt = XPLMFindDataRef("sim/operation/failures/rel_cop_alt");
     sim_op_fail_rel_cop_asi = XPLMFindDataRef("sim/operation/failures/rel_cop_asi");
     sim_op_fail_rel_cop_dgy = XPLMFindDataRef("sim/operation/failures/rel_cop_dgy");
     sim_op_fail_rel_cop_tsi = XPLMFindDataRef("sim/operation/failures/rel_cop_tsi");
     sim_op_fail_rel_cop_vvi = XPLMFindDataRef("sim/operation/failures/rel_cop_vvi");
+    // Gears failures
+    sim_op_fail_rel_gear_ind = XPLMFindDataRef("sim/operation/failures/rel_gear_ind");
+    sim_op_fail_rel_gear_act = XPLMFindDataRef("sim/operation/failures/rel_gear_act");
 
     // Electrical
     avionics_on = XPLMFindDataRef("sim/cockpit/electrical/avionics_on");
@@ -1770,6 +1866,7 @@ void findDataRefs(void) {
 	wind_direction_degt = XPLMFindDataRef("sim/weather/wind_direction_degt");
 	zulu_time_sec = XPLMFindDataRef("sim/time/zulu_time_sec");
 	local_time_sec = XPLMFindDataRef("sim/time/local_time_sec");
+	sim_paused = XPLMFindDataRef("sim/time/paused");
 	oat = XPLMFindDataRef("sim/weather/temperature_ambient_c");
 	isa = XPLMFindDataRef("sim/weather/temperature_sealevel_c");
 	tat = XPLMFindDataRef("sim/weather/temperature_le_c");
@@ -2156,9 +2253,9 @@ void writeDataRef(int id, float value) {
         // CDU
 
         case XHSI_CDU_SOURCE :
-            XPLMSetDatai(cdu_source , (int)value);
+        	XPLMSetDatai(cdu_pilot_source , (int)value & 0x0F);
+        	XPLMSetDatai(cdu_copilot_source , ((int)value &0xF0)>>4);
             break;
-
 
         // AP
 

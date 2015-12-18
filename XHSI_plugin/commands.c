@@ -86,7 +86,13 @@
 #define MFD_FCTL 13
 #define MFD_SYS 14
 #define MFD_STATUS 15
+#define MFD_RESET_FUEL_USED 32
 
+
+#define CDU_PILOT_CUSTOM 0
+#define CDU_PILOT_XFMC 1
+#define CDU_COPILOT_CUSTOM 2
+#define CDU_COPILOT_XFMC 3
 
 #define RTU_SELECT_NONE 0
 #define RTU_SELECT_COM1 1
@@ -410,7 +416,13 @@ XPLMCommandRef mfd_mode_status;
 XPLMCommandRef mfd_mode_down;
 XPLMCommandRef mfd_mode_up;
 XPLMCommandRef mfd_mode_cycle;
+XPLMCommandRef mfd_reset_fuel_used;
 
+// CDU
+XPLMCommandRef cdu_pilot_custom;
+XPLMCommandRef cdu_pilot_xfmc;
+XPLMCommandRef cdu_copilot_custom;
+XPLMCommandRef cdu_copilot_xfmc;
 
 // for an RTU
 XPLMCommandRef nav1_standy_flip;
@@ -1647,25 +1659,30 @@ XPLMCommandCallback_f copilot_mins_value_handler(XPLMCommandRef inCommand, XPLMC
 // MFD
 XPLMCommandCallback_f mfd_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
 {
+	float zero_tab[8]= { 0,0,0,0,0,0,0,0 };
     if (inPhase == xplm_CommandBegin)
     {
         int i = (int)((intptr_t)inRefcon);
-        if ( i == DOWN )
-        {
-            i = XPLMGetDatai(mfd_mode) - 1;
-            if (i<0) i = 0;
+        if ( i == MFD_RESET_FUEL_USED ) {
+        	XPLMSetDatavf(mfd_fuel_used, zero_tab, 0, 8);
+        } else {
+        	if ( i == DOWN )
+        	{
+        		i = XPLMGetDatai(mfd_mode) - 1;
+        		if (i<0) i = 0;
+        	}
+        	else if ( i == UP )
+        	{
+        		i = XPLMGetDatai(mfd_mode) + 1;
+        		if (i>15) i = 15;
+        	}
+        	else if ( i == CYCLE )
+        	{
+        		i = XPLMGetDatai(mfd_mode) + 1;
+        		if (i>15) i = 0;
+        	}
+        	XPLMSetDatai(mfd_mode, i);
         }
-        else if ( i == UP )
-        {
-            i = XPLMGetDatai(mfd_mode) + 1;
-            if (i>15) i = 15;
-        }
-        else if ( i == CYCLE )
-        {
-            i = XPLMGetDatai(mfd_mode) + 1;
-            if (i>15) i = 0;
-        }
-        XPLMSetDatai(mfd_mode, i);
         if ( qpac_plugin_status && (i>=3) ) {
             switch (i-3) {
 		case 0  : XPLMSetDatai(qpac_sd_eng,1); break;
@@ -1695,6 +1712,23 @@ XPLMCommandCallback_f mfd_handler(XPLMCommandRef inCommand, XPLMCommandPhase inP
 			break;
 		case 12 : XPLMSetDatai(qpac_sd_status,1); break;
             }
+        }
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+
+// CDU
+XPLMCommandCallback_f cdu_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        switch (i) {
+        case CDU_PILOT_CUSTOM : XPLMSetDatai(cdu_pilot_source,0); break;
+        case CDU_PILOT_XFMC : XPLMSetDatai(cdu_pilot_source,1); break;
+        case CDU_COPILOT_CUSTOM : XPLMSetDatai(cdu_copilot_source,0); break;
+        case CDU_COPILOT_XFMC : XPLMSetDatai(cdu_copilot_source,1); break;
         }
     }
     return (XPLMCommandCallback_f)1;
@@ -2906,12 +2940,26 @@ void registerCommands(void) {
 
     mfd_mode_down = XPLMCreateCommand("xhsi/mfd/mode_down", "Previous MFD mode");
     XPLMRegisterCommandHandler(mfd_mode_down, (XPLMCommandCallback_f)mfd_handler, 1, (void *)DOWN);
+
     mfd_mode_up = XPLMCreateCommand("xhsi/mfd/mode_up", "Next MFD mode");
     XPLMRegisterCommandHandler(mfd_mode_up, (XPLMCommandCallback_f)mfd_handler, 1, (void *)UP);
+
     mfd_mode_cycle = XPLMCreateCommand("xhsi/mfd/mode_cycle", "Cycle MFD modes");
     XPLMRegisterCommandHandler(mfd_mode_cycle, (XPLMCommandCallback_f)mfd_handler, 1, (void *)CYCLE);
 
+    mfd_reset_fuel_used = XPLMCreateCommand("xhsi/mfd/reset_fuel_used", "Reset Fuel Used");
+    XPLMRegisterCommandHandler(mfd_reset_fuel_used, (XPLMCommandCallback_f)mfd_handler, 1, (void *)MFD_RESET_FUEL_USED);
 
+
+    // CDU
+    cdu_pilot_custom = XPLMCreateCommand("xhsi/cdu_pilot/custom", "Aircraft custom CDU");
+    XPLMRegisterCommandHandler(cdu_pilot_custom, (XPLMCommandCallback_f)cdu_handler, 1, (void *)CDU_PILOT_CUSTOM);
+    cdu_pilot_xfmc = XPLMCreateCommand("xhsi/cdu_pilot/xfmc", "X-FMC CDU");
+    XPLMRegisterCommandHandler(cdu_pilot_xfmc, (XPLMCommandCallback_f)cdu_handler, 1, (void *)CDU_PILOT_XFMC);
+    cdu_copilot_custom = XPLMCreateCommand("xhsi/cdu_copilot/custom", "Aircraft custom CDU");
+    XPLMRegisterCommandHandler(cdu_copilot_custom, (XPLMCommandCallback_f)cdu_handler, 1, (void *)CDU_COPILOT_CUSTOM);
+    cdu_copilot_xfmc = XPLMCreateCommand("xhsi/cdu_copilot/xfmc", "X-FMC CDU");
+    XPLMRegisterCommandHandler(cdu_copilot_xfmc, (XPLMCommandCallback_f)cdu_handler, 1, (void *)CDU_COPILOT_XFMC);
 
     // xhsi/radios/...
 
@@ -3454,7 +3502,13 @@ void unregisterCommands(void) {
     XPLMUnregisterCommandHandler(mfd_mode_down, (XPLMCommandCallback_f)mfd_handler, 1, (void *)DOWN);
     XPLMUnregisterCommandHandler(mfd_mode_up, (XPLMCommandCallback_f)mfd_handler, 1, (void *)UP);
     XPLMUnregisterCommandHandler(mfd_mode_cycle, (XPLMCommandCallback_f)mfd_handler, 1, (void *)CYCLE);
+    XPLMUnregisterCommandHandler(mfd_reset_fuel_used, (XPLMCommandCallback_f)mfd_handler, 1, (void *)MFD_RESET_FUEL_USED);
 
+    // CDU Mode
+    XPLMUnregisterCommandHandler(cdu_pilot_custom, (XPLMCommandCallback_f)cdu_handler, 1, (void *)CDU_PILOT_CUSTOM);
+    XPLMUnregisterCommandHandler(cdu_pilot_xfmc, (XPLMCommandCallback_f)cdu_handler, 1, (void *)CDU_PILOT_XFMC);
+    XPLMUnregisterCommandHandler(cdu_copilot_custom, (XPLMCommandCallback_f)cdu_handler, 1, (void *)CDU_COPILOT_CUSTOM);
+    XPLMUnregisterCommandHandler(cdu_copilot_xfmc, (XPLMCommandCallback_f)cdu_handler, 1, (void *)CDU_COPILOT_XFMC);
 
     // nav1_sync
     XPLMUnregisterCommandHandler(nav1_sync, (XPLMCommandCallback_f)nav_sync_handler, 1, (void *)1);
