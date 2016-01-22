@@ -352,6 +352,123 @@ public class XPlaneAircraft implements Aircraft {
         return all_up;
     }
 
+
+    public float brake_temp(int brake) {
+    	/* by default, return OAT */
+    	if (this.avionics.is_jar_a320neo()) {
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_BRAKE_TEMP_ + brake);    		
+    	} else 
+    		return oat();
+    }
+
+    public boolean brake_hot() {
+    	if (this.avionics.is_jar_a320neo()) {
+    		int brake_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_BRAKE_STATUS);
+    		return (brake_status & 0x01) != 0;
+    	} else 
+    	/* Hot brake is true if one brake >= 300°c */
+    		return false;
+    }
+
+    public boolean brake_fan() {
+    	// by default, aircraft has no brake fan
+    	// TODO: Airbus brake fan status
+    	if (this.avionics.is_jar_a320neo()) {
+    		int brake_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_BRAKE_STATUS);
+    		return (brake_status & 0x02) != 0;
+    	} else 
+    		return false;
+    }    
+
+    public boolean brake_release_left() {
+    	int wheel_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.WHEEL_STATUS);
+    	return (wheel_status & 0x20) != 0;
+    }
+
+    public boolean brake_release_right() {
+    	int wheel_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.WHEEL_STATUS);
+    	return (wheel_status & 0x40) != 0;
+    }
+
+    public float brake_pressure_left() {
+    	// by default, equals left brake pedal deflection
+    	// should be 0 is left brake failure
+    	if (this.avionics.is_jar_a320neo()) {
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_BRAKE_LEFT_PSI);    		
+    	} else if (this.avionics.is_qpac()) {
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_TPI_LEFT);  
+    	} else 
+    		return brk_pedal_left();
+    }   
+
+    public float brake_pressure_right() {
+    	// by default, equals left brake pedal deflection
+    	// should be 0 is right brake failure
+    	if (this.avionics.is_jar_a320neo()) {
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_BRAKE_RIGHT_PSI);    		
+    	} else if (this.avionics.is_qpac()) {
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_TPI_RIGHT);  
+    	} else 
+    		return brk_pedal_right();
+    }
+
+    public float brake_pressure_accu() {
+    	// by default, full
+    	// should be 0 is both brakes failed
+    	if (this.avionics.is_jar_a320neo()) {
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_BRAKE_ACCU_PSI);    		
+    	} else if (this.avionics.is_qpac()) {
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_TPI_ACCU);    		
+    	} else 
+    		return 1.0f;
+    }
+    
+
+    public float tire_psi(int tire) {
+    	// TODO: Give a formula depending on GW, OAT and tire temperature
+    	// Tire pressure delta = temperature delta from 13° (ISA at sea level)
+    	// If tire if blown, set psi to pitot static pressure
+    	int tire_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.TIRE_STATUS);
+    	boolean tire_blown = ((0x01 << tire) & tire_status) != 0;
+    	float isa_k = 273.15f + 13;
+    	float oat_k = 273.15f + oat();
+    	float delta_t = 1+((oat_k-isa_k) / isa_k);
+    	return tire_blown ? 0.0f : tire_ref_psi(tire) * delta_t;
+    }
+
+    public float tire_ref_psi(int tire) {
+    	// TODO: Preferences to set tire reference pressures
+    	// Preset : reference pressure for A320
+    	if (tire==0) {
+    		// Nose gear
+    		return 180.0f;
+    	} else {
+    		// Main gears
+    		return 200.0f;
+    	}    	
+    }
+    
+    // TODO: remove !
+    public float tire_temp(int tire) {
+    	return oat();
+    }
+    
+    // TODO: fix with jarDesign A320.
+    public boolean nose_wheel_steering() {
+    	int wheel_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.WHEEL_STATUS);
+    	return (wheel_status & 0x01) != 0;
+    }
+    
+    public boolean gear_indicators() {
+    	int wheel_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.WHEEL_STATUS);
+    	return (wheel_status & 0x08) == 0;
+    }
+    
+    public boolean gear_actuators() {
+    	int wheel_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.WHEEL_STATUS);
+    	return (wheel_status & 0x10) == 0;
+    }   
+    
     public boolean on_ground() {
         return ( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_FAILURES_ONGROUND_ANY) == 1.0f );
     }
@@ -864,6 +981,17 @@ public class XPlaneAircraft implements Aircraft {
 				default : h_p = 0.0f;
         	}
         	return h_p / 5000.0f;
+        } else if (this.avionics.is_jar_a320neo()){
+        	switch (circuit) {
+    			case 0 : h_p = sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_HYD_G_PRESS);
+    				 	break;
+    			case 1 : h_p = sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_HYD_Y_PRESS);
+			 		 	break;
+    			case 2 : h_p = sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_HYD_B_PRESS);
+			 		 	break;
+    			default : h_p = 0.0f;
+        	}
+        	return h_p / 5000.0f;        	
         } else {
         	if ( circuit == 1 )
         		h_p = sim_data.get_sim_float(XPlaneSimDataRepository.SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO1);
@@ -884,7 +1012,15 @@ public class XPlaneAircraft implements Aircraft {
             return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_2);
     }
     
+    /* 
+     * 0 Green circuit 
+     * 1 Yellow circuit
+     * 2 Blue circuit
+     * 3 Yellow electric pump
+     * 4 RAT pump
+     */
     public HydPumpStatus get_hyd_pump(int circuit) {
+    	
     	if (this.avionics.is_qpac()) {
     		int qpac_hyd_pumps = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_HYD_PUMPS);
     		int pump_status = (qpac_hyd_pumps >> (6+circuit*2)) & 0x03;
@@ -894,6 +1030,22 @@ public class XPlaneAircraft implements Aircraft {
     		} else if (circuit==4) {
     			// RAT pump
     			pump_status = qpac_hyd_pumps & 0x03;    	    			
+    		}
+    		switch (pump_status) {
+				case 0 : return HydPumpStatus.OFF;
+				case 1 : return HydPumpStatus.ON;
+				case 2 : return HydPumpStatus.FAILED;
+				default : return HydPumpStatus.OFF; 
+    		}
+    	} else 	if (this.avionics.is_jar_a320neo()) {
+    		int hyd_pumps = (int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_HYD_PUMPS);
+    		int pump_status = (hyd_pumps >> (6+circuit*2)) & 0x03;
+    		if (circuit==3) {
+    			// Yellow ELEC pump
+    			pump_status = (hyd_pumps >> 2) & 0x03;    			
+    		} else if (circuit==4) {
+    			// RAT pump
+    			pump_status = hyd_pumps & 0x03;    	    			
     		}
     		switch (pump_status) {
 				case 0 : return HydPumpStatus.OFF;
@@ -917,6 +1069,28 @@ public class XPlaneAircraft implements Aircraft {
     			case 3 : return HydPTUStatus.RIGHT;
     		}
     		return HydPTUStatus.OFF;
+    	} else if (this.avionics.is_jar_a320neo()) {
+    		int hyd_pumps = (int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_HYD_PUMPS);
+    		int ptu_status = (hyd_pumps >> 4) & 0x03; 
+    		float ptu_delta =  sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_HYD_PTU);
+    		if (ptu_status == 0) {
+    			return HydPTUStatus.OFF;
+    		} else if (ptu_delta > 0) {
+    			return HydPTUStatus.RIGHT;
+    		} else if (ptu_delta < 0) {
+    			return HydPTUStatus.LEFT;
+    		} else {
+    			return HydPTUStatus.STANDBY;
+    		}
+    		/*
+    		switch (ptu_status) {
+    			case 0 : return HydPTUStatus.OFF;
+    			case 1 : return HydPTUStatus.STANDBY;
+    			case 2 : return HydPTUStatus.LEFT;
+    			case 3 : return HydPTUStatus.RIGHT;
+    			}
+    		return HydPTUStatus.OFF;
+    		*/
     	} else {
     		return HydPTUStatus.STANDBY;
     	}

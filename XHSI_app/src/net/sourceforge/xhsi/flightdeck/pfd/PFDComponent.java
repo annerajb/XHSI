@@ -28,21 +28,16 @@
 */
 package net.sourceforge.xhsi.flightdeck.pfd;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 
 import net.sourceforge.xhsi.PreferencesObserver;
 import net.sourceforge.xhsi.XHSIPreferences;
-import net.sourceforge.xhsi.XHSISettings;
-import net.sourceforge.xhsi.XHSIStatus;
 
 import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
@@ -61,14 +56,13 @@ public class PFDComponent extends Component implements Observer, PreferencesObse
 
     // subcomponents --------------------------------------------------------
     ArrayList<PFDSubcomponent> subcomponents = new ArrayList<PFDSubcomponent>();
-    long[] subcomponent_paint_times = new long[15];
+    long[] subcomponent_paint_times = new long[22];
     long total_paint_times = 0;
     long nb_of_paints = 0;
     Graphics2D g2;
     PFDGraphicsConfig pfd_gc;
     ModelFactory model_factory;
     boolean update_since_last_heartbeat = false;
-    //StatusMessage status_message_comp;
 
     Aircraft aircraft;
     Avionics avionics;
@@ -138,7 +132,7 @@ public class PFDComponent extends Component implements Observer, PreferencesObse
         //g2.setStroke(new BasicStroke(2.0f));
         g2.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g2.setBackground(pfd_gc.background_color);
-//logger.warning("PFDComponent drawAll calling update_config");
+
         // send Graphics object to pfd_gc to recompute positions, if necessary because the panel has been resized or a mode setting has been changed
         pfd_gc.update_config( g2, this.avionics.power(), this.avionics.get_instrument_style() );
 
@@ -168,7 +162,8 @@ public class PFDComponent extends Component implements Observer, PreferencesObse
             }
 
             // paint each of the subcomponents
-            ((PFDSubcomponent) this.subcomponents.get(i)).paint(g2);
+            // ((PFDSubcomponent) this.subcomponents.get(i)).paint(g2);
+            this.subcomponents.get(i).paint(g2);
 
             if (PFDComponent.COLLECT_PROFILING_INFORMATION) {
                 paint_time = System.currentTimeMillis() - time;

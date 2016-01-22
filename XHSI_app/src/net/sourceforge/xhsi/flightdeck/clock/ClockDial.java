@@ -22,31 +22,16 @@
 package net.sourceforge.xhsi.flightdeck.clock;
 
 import java.awt.BasicStroke;
-//import java.awt.Color;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
-//import java.awt.image.BufferedImage;
 
 import java.text.DecimalFormat;
 
 import java.util.logging.Logger;
 
-//import net.sourceforge.xhsi.XHSISettings;
-
-//import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
-//import net.sourceforge.xhsi.model.NavigationRadio;
-
-//import net.sourceforge.xhsi.panel.GraphicsConfig;
-//import net.sourceforge.xhsi.panel.Subcomponent;
 
 
 
@@ -63,6 +48,7 @@ public class ClockDial extends ClockSubcomponent {
 
     public ClockDial(ModelFactory model_factory, ClockGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
+        logger.finest("ClockDial instanciated");
     }
 
 
@@ -90,7 +76,7 @@ public class ClockDial extends ClockSubcomponent {
         int current_time = this.avionics.clock_shows_utc() ? (int)this.aircraft.sim_time_zulu() : (int)this.aircraft.sim_time_local();
         int hh = current_time / 3600;
         int mm = ( current_time / 60 ) % 60;
-        int ss = current_time % 60;
+        // int ss = current_time % 60;
         String current_time_str = hms_formatter.format(hh) + ":" + hms_formatter.format(mm); // + ":" + hms_formatter.format(ss);
 
         int current_time_x = clock_x - clock_gc.get_text_width(g2, clock_gc.font_zl, current_time_str)/2;

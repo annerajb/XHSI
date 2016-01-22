@@ -31,7 +31,6 @@
 package net.sourceforge.xhsi.flightdeck.cdu;
 
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -41,7 +40,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -83,10 +81,7 @@ public class CDUXfmc extends CDUSubcomponent {
     double row_coef = 19.8;
     int upper_y = 2;
     double scratch_y_coef = 13.0;
-    double char_width_coef = 1.5; // was: 1.5
-
-   
-//	int xfmc_keypath_code = 750;
+    double char_width_coef = 1.5; 
 
     XfmcData xfmcData = null;
     XPlaneUDPSender udp_sender = null; 
@@ -141,11 +136,12 @@ public class CDUXfmc extends CDUSubcomponent {
         regions.add(new ClickRegion(new Point(52, 454), new Point(180, 554), 2, 2, 
                         new int[][] {{23, 24}, {25, 26}} ));
 
-
         xfmcData = XfmcData.getInstance();
         udp_sender = XPlaneUDPSender.get_instance();
 
-        xfmcData.setLine(0, "1/1,38,Remote CDU for X-FMC");	      
+        xfmcData.setLine(0, "1/1,38,Remote CDU for X-FMC");
+        
+        logger.finest("CDUXfmc instanciated");
     }
     
     
@@ -272,6 +268,7 @@ public class CDUXfmc extends CDUSubcomponent {
                         g2.drawString((String)pts[2], xx, yy);
                 }
             }
+            xfmcData.updated=false;
 
     }
     

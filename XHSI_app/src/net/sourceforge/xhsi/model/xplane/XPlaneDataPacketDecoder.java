@@ -53,6 +53,9 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
     private boolean received_adc_packet = false;
     private boolean received_fms_packet = false;
     private boolean received_tcas_packet = false;
+    private boolean received_xfmc_packet = false;
+    private boolean received_ewd_packet = false;
+    private boolean received_cdu_packet = false;
 
     // list of sim data id's that need the anti-jitter filter
     private int[] jitter_id = { XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_MAGPSI,
@@ -398,6 +401,9 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
         } else if (packet_type.equals("XFMC")) {
         	
         	int buff_max = 80;
+            if (this.received_xfmc_packet == false)
+                logger.fine("Received first XFMC packet");
+            
             logger.fine("Receiving XFMC packet");
         	
             DataInputStream data_stream = new DataInputStream(new ByteArrayInputStream(sim_data));
@@ -422,8 +428,12 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
             
             xfmc.setLine(14, Integer.toString(status));
             
+            this.received_xfmc_packet = true;
+            
         } else if (packet_type.equals("QPAE")) {
         	int buff_max = 80;
+            if (this.received_ewd_packet == false)
+                logger.fine("Received first E/WD packet");
             logger.finest("Receiving QPAC E/WD packet");
         	
             DataInputStream data_stream = new DataInputStream(new ByteArrayInputStream(sim_data));
@@ -446,9 +456,13 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
                 	qpac_ewd.setLine(line_no, s);
                 }
             }
+            
+            this.received_ewd_packet = true;
        	
         } else if (packet_type.equals("QPAM")) {
         	int buff_max = 80;
+            if (this.received_cdu_packet == false)
+                logger.fine("Received first CDU packet");
             logger.finest("Receiving QPAC MCDU packet");
         	
             DataInputStream data_stream = new DataInputStream(new ByteArrayInputStream(sim_data));
@@ -466,10 +480,13 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
                 	// boolean sm = convertCodedStrings(buff);
                 	String s = new String(buff, 0, line_length, charset);
                 	logger.fine("QPAC MCDU packet line " + i + " = " + s);
+                	// TODO : compare with received data
                 	
                 	qpac_mcdu.setLine(line_no, s);
                 }
             }
+            
+            this.received_cdu_packet = true;
             
         }
 

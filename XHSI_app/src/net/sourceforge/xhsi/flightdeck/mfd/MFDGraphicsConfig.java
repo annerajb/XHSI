@@ -33,12 +33,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.TexturePaint;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.logging.Logger;
 import java.util.Map;
@@ -551,10 +553,14 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int wheel_tri_dy;
     public int wheel_nose_tri_y;
     public int wheel_nose_door_y;
+    public int wheel_nose_rel_center;
+    public int wheel_nose_rel_dx;
     public int wheel_nose_psi_legend_y;
     public int wheel_nose_psi_value_y;
     public int wheel_main_tri_y;
     public int wheel_main_tri_dx;
+    public int wheel_main_tri_shift_x;
+    public int wheel_main_tri_shift_y;
     public int wheel_main_door_y;
     public int wheel_main_temp_legend_y;
     public int wheel_main_temp_value_y;
@@ -567,12 +573,35 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int wheel_main_rel_dx;
     public int wheel_autobrk_legend_y;
     public int wheel_autobrk_value_y;
+    public int wheel_nw_steering_msg_y;
+    public int wheel_nw_steering_msg_x;
+    public int wheel_nw_steering_hydr_x;
+    public int wheel_nw_askid_msg_y;
+    public int wheel_nw_askid_msg_x;    
+    public int wheel_norm_brake_msg_y;
+    public int wheel_brake_hydr_x;
+    public int wheel_brake_msg_x;
+    public int wheel_alt_brake_msg_y;
+    public int wheel_accu_brake_msg_y;
+    public int wheel_accu_brake_msg_x;
+    public int wheel_accu_arrow_x1;
+    public int wheel_accu_arrow_x2;
+    public int wheel_accu_arrow_dx;
+    public int wheel_accu_arrow_y;
+    public int wheel_accu_arrow_dy;
+    public int wheel_accu_arrow_w;
+    public int wheel_accu_arrow_h;
     public int wheel_y_spoiler_top;
     public int wheel_y_spoiler_bottom;    
     public int wheel_door_edge_dx;
     public int wheel_door_axis_r;
     public int wheel_door_nose_l;
     public int wheel_door_main_l;
+    public int wheel_shape_w;
+    public BufferedImage wheel_shape_g;
+    public BufferedImage wheel_shape_r;
+    public TexturePaint wheel_paint_g;
+    public TexturePaint wheel_paint_r;
     
     // Door/oxy
     public int door_center_x;
@@ -1382,15 +1411,19 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             bleed_apu_valve_x = panel_rect.x + panel_rect.width * 493/1000;
 
             // Wheels
-            wheel_tri_dx = panel_rect.width * 60/1000;
-            wheel_tri_dy = mfd_size * 75/1000;
-            wheel_nose_tri_y = panel_rect.y + mfd_size * 150/1000;
-            wheel_nose_door_y = panel_rect.y + mfd_size * 100/1000;
-            wheel_nose_psi_legend_y = panel_rect.y + mfd_size * 220/1000;
-            wheel_nose_psi_value_y = panel_rect.y + mfd_size * 210/1000;
+            wheel_tri_dx = panel_rect.width * 40/1000;
+            wheel_tri_dy = mfd_size * 65/1000;
+            wheel_nose_tri_y = panel_rect.y + mfd_size * 120/1000;
+            wheel_nose_door_y = panel_rect.y + mfd_size * 65/1000;
+            wheel_nose_rel_center = panel_rect.y + mfd_size * 155/1000;
+            wheel_nose_rel_dx = panel_rect.width * 80/1000;         
+            wheel_nose_psi_legend_y = panel_rect.y + mfd_size * 240/1000;
+            wheel_nose_psi_value_y = panel_rect.y + mfd_size * 230/1000;
 
             wheel_main_tri_y = panel_rect.y + mfd_size * 220/1000;
-            wheel_main_tri_dx = panel_rect.width * 300/1000;
+            wheel_main_tri_dx = panel_rect.width * 320/1000;
+            wheel_main_tri_shift_x = panel_rect.width * 30/1000;
+            wheel_main_tri_shift_y = mfd_size * 15/1000;
             wheel_main_door_y = panel_rect.y + mfd_size * 200/1000;
             wheel_main_temp_legend_y = panel_rect.y + mfd_size * 500/1000;
             wheel_main_temp_value_y = panel_rect.y + mfd_size * 510/1000;
@@ -1404,6 +1437,26 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
 
             wheel_autobrk_legend_y = panel_rect.y + mfd_size * 700/1000;
             wheel_autobrk_value_y = panel_rect.y + mfd_size * 730/1000;
+            // TODO : adjust messages positions
+            wheel_nw_steering_msg_y = panel_rect.y + mfd_size * 430/1000;
+            wheel_nw_steering_msg_x = panel_rect.x + panel_rect.width * 420/1000;
+            wheel_nw_steering_hydr_x = panel_rect.x + panel_rect.width * 380/1000;
+            wheel_nw_askid_msg_y = panel_rect.y + mfd_size * 520/1000;
+            wheel_nw_askid_msg_x = panel_rect.x + panel_rect.width * 400/1000;   
+            wheel_norm_brake_msg_y = wheel_nw_askid_msg_y + mfd_size * 50/1000;
+            wheel_brake_hydr_x = wheel_nw_askid_msg_x;
+            wheel_brake_msg_x = panel_rect.x + panel_rect.width * 450/1000;
+            wheel_alt_brake_msg_y = wheel_nw_askid_msg_y + mfd_size * 100/1000;
+            wheel_accu_brake_msg_y = wheel_nw_askid_msg_y + mfd_size * 150/1000;
+            wheel_accu_brake_msg_x = panel_rect.x + panel_rect.width * 450/1000;
+            wheel_accu_arrow_x1 = wheel_nw_askid_msg_x + fctl_dx_box_width/4;
+            wheel_accu_arrow_x2 = wheel_accu_brake_msg_x + digit_width_l/2;
+            wheel_accu_arrow_dx = panel_rect.width * 10/1000;
+            wheel_accu_arrow_w = digit_width_l*3/2;
+            wheel_accu_arrow_y = wheel_accu_brake_msg_y - line_height_l/2;
+            wheel_accu_arrow_dy = line_height_l/3;
+            wheel_accu_arrow_h = wheel_accu_arrow_y - wheel_alt_brake_msg_y;
+            
             wheel_y_spoiler_top = panel_rect.y + mfd_size * 850/1000;            
             wheel_y_spoiler_bottom = panel_rect.y + mfd_size * 900/1000;
             
@@ -1411,6 +1464,23 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             wheel_door_axis_r = panel_rect.width * 5/1000;
             wheel_door_nose_l = panel_rect.width * 60/1000;
             wheel_door_main_l = panel_rect.width * 100/1000;
+            wheel_shape_w = mfd_size * 12/1000;
+            wheel_shape_g = new BufferedImage(wheel_shape_w,5, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2_s = wheel_shape_g.createGraphics();
+            g2_s.setColor(background_color);
+            g2_s.fillRect(0, 0, wheel_shape_w, 5);
+            g2_s.setColor(normal_color);
+            g2_s.drawLine(0, 0, 0, 5); 
+            Rectangle2D wheel_rect = new Rectangle2D.Double(0, 0, wheel_shape_w, 5);
+            wheel_paint_g = new TexturePaint(wheel_shape_g, wheel_rect);   
+            wheel_shape_r = new BufferedImage(wheel_shape_w,5, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2_r = wheel_shape_r.createGraphics();
+            g2_r.setColor(background_color);
+            g2_r.fillRect(0, 0, wheel_shape_w, 5);
+            g2_r.setColor(warning_color);
+            g2_r.drawLine(0, 0, 0, 5);               
+            wheel_paint_r = new TexturePaint(wheel_shape_r, wheel_rect);   
+
             
             // Door/oxy
             door_center_x = panel_rect.x + panel_rect.width / 2;

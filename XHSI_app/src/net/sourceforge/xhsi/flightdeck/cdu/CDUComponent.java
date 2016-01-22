@@ -1,9 +1,9 @@
 /**
-* AnnunComponent.java
+* CDUComponent.java
 * 
-* The root awt component. NDComponent creates and manages painting all
-* elements of the HSI. NDComponent also creates and updates NDGraphicsConfig
-* which is used by all HSI elements to determine positions and sizes.
+* The root awt component. CDUComponent creates and manages painting all
+* elements of the CDU inside XHSI. CDUComponent also creates and updates CDUGraphicsConfig
+* which is used by all CDU XHSI elements to determine positions and sizes.
 * 
 * This component is notified when new data packets from the flightsimulator
 * have been received and performs a repaint. This component is also triggered
@@ -28,7 +28,6 @@
 */
 package net.sourceforge.xhsi.flightdeck.cdu;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -40,44 +39,43 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 import javax.swing.event.MouseInputListener;
 
 import net.sourceforge.xhsi.PreferencesObserver;
 import net.sourceforge.xhsi.XHSIPreferences;
-import net.sourceforge.xhsi.XHSISettings;
-import net.sourceforge.xhsi.XHSIStatus;
 
 import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.Observer;
-
-//import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
+import net.sourceforge.xhsi.model.QpacMcduData;
+import net.sourceforge.xhsi.model.XfmcData;
 
 
 public class CDUComponent extends Component implements Observer, PreferencesObserver, MouseInputListener, KeyListener {
 
     private static final long serialVersionUID = 1L;
-    public static boolean COLLECT_PROFILING_INFORMATION = false;
+    public static boolean COLLECT_PROFILING_INFORMATION = true;
     public static long NB_OF_PAINTS_BETWEEN_PROFILING_INFO_OUTPUT = 100;
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
 
     // subcomponents --------------------------------------------------------
-    ArrayList subcomponents = new ArrayList();
+    ArrayList<CDUSubcomponent> subcomponents = new ArrayList<CDUSubcomponent>();
     long[] subcomponent_paint_times = new long[15];
     long total_paint_times = 0;
     long nb_of_paints = 0;
+    long paint_timestamp =0;
     Graphics2D g2;
     CDUGraphicsConfig cdu_gc;
     ModelFactory model_factory;
     XHSIPreferences preferences;
     boolean update_since_last_heartbeat = false;
-    //StatusMessage status_message_comp;
 
     Aircraft aircraft;
     Avionics avionics;
+    QpacMcduData qpac_mcdu_data;
+    XfmcData xfmc_data;
 
 
     public CDUComponent(ModelFactory model_factory, int du) {
@@ -87,6 +85,8 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
         this.aircraft = this.model_factory.get_aircraft_instance();
         this.avionics = this.aircraft.get_avionics();
         this.preferences = XHSIPreferences.get_instance();
+        this.qpac_mcdu_data = QpacMcduData.getInstance();
+        this.xfmc_data = XfmcData.getInstance();
 
         cdu_gc.reconfig = true;
 
@@ -103,6 +103,8 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
         this.repaint();
         this.setFocusable(true);
         this.requestFocus();
+        
+        paint_timestamp = System.currentTimeMillis();
 
     }
 
@@ -160,6 +162,7 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
 
         long time = 0;
         long paint_time = 0;
+        long elapsed_time = 0; 
 
         for (int i=0; i<this.subcomponents.size(); i++) {
             if (CDUComponent.COLLECT_PROFILING_INFORMATION) {
@@ -182,6 +185,8 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
 
         if (CDUComponent.COLLECT_PROFILING_INFORMATION) {
             if (this.nb_of_paints % CDUComponent.NB_OF_PAINTS_BETWEEN_PROFILING_INFO_OUTPUT == 0) {
+            	elapsed_time = System.currentTimeMillis() - paint_timestamp;
+            	float refresh_rate = nb_of_paints*1000.0f/elapsed_time;
                 logger.info("Paint profiling info");
                 logger.info("=[ Paint profile info begin ]=================================");
                 for (int i=0;i<this.subcomponents.size();i++) {
@@ -190,17 +195,29 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
                             "(" + ((this.subcomponent_paint_times[i] * 100) / this.total_paint_times) + "%)");
                 //    this.subcomponent_paint_times[i] = 0;
                 }
-                logger.info("Total                    " + (this.total_paint_times/this.nb_of_paints) + "ms \n");
+                logger.info("Refresh rate             " + refresh_rate + "fps");
+                logger.info("Total                    " + (this.total_paint_times/this.nb_of_paints) + "ms");
                 logger.info("=[ Paint profile info end ]===================================");
-                //this.total_paint_times = 0;
-                //this.nb_of_paints = 0;
+                this.total_paint_times = 0;
+                this.nb_of_paints = 0;
+                this.paint_timestamp = System.currentTimeMillis();
             }
         }
     }
 
 
+    /*
+     * update() is called by XPlaneSimDataRepository
+     * update() is triggered by xplane_data_repository.tick_updates();
+     */
     public void update() {
-        repaint();
+    	// TODO: repaint only if cdu_packet received or if mcdu_packet received
+    	if ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY) && avionics.is_qpac() && qpac_mcdu_data.updated ) {
+    		repaint();
+    	} else if (cdu_gc.cdu_source == Avionics.CDU_SOURCE_XFMC && this.xfmc_data.updated ) {	
+    		repaint();
+    	}
+        
         this.update_since_last_heartbeat = true;
     }
 
@@ -213,22 +230,16 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
 
 
     public void preference_changed(String key) {
-
         logger.finest("Preference changed");
-        // if (key.equals(XHSIPreferences.PREF_USE_MORE_COLOR)) {
-        // Don't bother checking the preference key that was changed, just reconfig...
         this.cdu_gc.reconfig = true;
         repaint();
-
     }
 
 
     public void forceReconfig() {
-
         componentResized();
         this.cdu_gc.reconfig = true;
         repaint();
-        
     }
     
 	public void mouseClicked(MouseEvent e) {

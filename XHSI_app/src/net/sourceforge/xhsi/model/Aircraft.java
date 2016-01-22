@@ -408,7 +408,76 @@ public interface Aircraft {
      */
     public boolean gear_is_up();
 
+    /**
+     * @return boolean - true if gear indicators are operational - false if failed
+     */
+    public boolean gear_indicators();
+    
+    /**
+     * @return boolean - true if gear actuators are operational - false if failed
+     */
+    public boolean gear_actuators();
 
+    /**
+     * @return float - brake temperature
+     */
+    public float brake_temp(int brake);
+
+    /**
+     * @return boolean hot brake status
+     */
+    public boolean brake_hot();
+
+    /**
+     * @return boolean brake fan status
+     */
+    public boolean brake_fan();
+    
+    /**
+     * @return boolean left brake release - left wheel skid
+     */
+    public boolean brake_release_left();
+
+    /**
+     * @return boolean left brake release - left wheel skid
+     */
+    public boolean brake_release_right();
+    
+    /**
+     * @return float % pressure on left brake  (range 0 to 1)
+     */
+    public float brake_pressure_left();
+    
+    /**
+     * @return float % pressure on left brake (range 0 to 1)
+     */
+    public float brake_pressure_right();
+
+    /**
+     * @return float % pressure on brake accumulator (range 0 to 1)
+     */
+    public float brake_pressure_accu();
+
+    /**
+     * @return float tire pressure (psi)
+     */
+    public float tire_psi(int tire);
+
+    /**
+     * @return float tire reference pressure (psi)
+     */
+    public float tire_ref_psi(int tire);
+
+    /**
+     * @return float tire temperature (°c)
+     */
+    public float tire_temp(int tire);
+    
+    /**
+     * @return boolean - true if nose wheel steering is active
+     */  
+    public boolean nose_wheel_steering();
+    
     /**
      * @return boolean - are we on the ground?
      */

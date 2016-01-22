@@ -196,7 +196,8 @@ public class CDUJarDesign extends CDUSubcomponent {
         		{JAR_A320_MCDU_CLICK_AIRPORT, -1}, 
         		{JAR_A320_MCDU_CLICK_SLEW_LEFT, JAR_A320_MCDU_CLICK_SLEW_UP},
         		{JAR_A320_MCDU_CLICK_SLEW_RIGHT, JAR_A320_MCDU_CLICK_SLEW_DOWN}} ));
-
+        
+        logger.finest("CDUJarDesign instanciated");
     }
 
     public void paint(Graphics2D g2) {
