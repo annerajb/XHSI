@@ -98,6 +98,11 @@ extern XPLMDataRef jar_a320_neo_flex_t;
 extern XPLMDataRef jar_a320_neo_autobrake_low;
 extern XPLMDataRef jar_a320_neo_autobrake_med;
 extern XPLMDataRef jar_a320_neo_autobrake_max;
+extern XPLMDataRef jar_a320_neo_autobrake_on;
+extern XPLMDataRef jar_a320_neo_brakes_accu_press;
+extern XPLMDataRef jar_a320_neo_brakes_left_press;
+extern XPLMDataRef jar_a320_neo_brakes_right_press;
+extern XPLMDataRef jar_a320_neo_brakes_mode_na;
 
 // FMS
 extern XPLMDataRef jar_a320_neo_fms_tr_alt;
@@ -123,6 +128,32 @@ extern XPLMDataRef jar_a320_neo_nd_mode;
 // MCDU
 #define JAR_A320_MAX_MCDU_KEYS 70
 extern XPLMDataRef jar_a320_mcdu_click[JAR_A320_MAX_MCDU_KEYS];
+
+// Hydraulics
+extern XPLMDataRef jar_a320_neo_hydr_b_elec_pump_fault_light;
+extern XPLMDataRef jar_a320_neo_hydr_b_elec_pump_mode;
+extern XPLMDataRef jar_a320_neo_hydr_b_press_aft_acc_old;
+extern XPLMDataRef jar_a320_neo_hydr_g_eng_pump_fault_light;
+extern XPLMDataRef jar_a320_neo_hydr_g_eng_pump_mode;
+extern XPLMDataRef jar_a320_neo_hydr_g_press_aft_acc_old;
+extern XPLMDataRef jar_a320_neo_hydr_ptu_delta;
+extern XPLMDataRef jar_a320_neo_hydr_ptu_mode;
+extern XPLMDataRef jar_a320_neo_hydr_y_elec_pump_fault_light;
+extern XPLMDataRef jar_a320_neo_hydr_y_elec_pump_mode;
+extern XPLMDataRef jar_a320_neo_hydr_y_eng_pump_fault_light;
+extern XPLMDataRef jar_a320_neo_hydr_y_eng_pump_mode;
+extern XPLMDataRef jar_a320_neo_hydr_y_press_aft_acc_old;
+
+// WHEELS
+extern XPLMDataRef jar_a320_neo_wheels_brake_fan;
+extern XPLMDataRef jar_a320_neo_wheels_brake_hot;
+extern XPLMDataRef jar_a320_neo_wheels_temp_l_1;
+extern XPLMDataRef jar_a320_neo_wheels_temp_l_2;
+extern XPLMDataRef jar_a320_neo_wheels_temp_r_1;
+extern XPLMDataRef jar_a320_neo_wheels_temp_r_2;
+extern XPLMDataRef jar_a320_neo_wheels_ped_disc;
+extern XPLMDataRef jar_a320_neo_wheels_anti_skid;
+
 
 extern int jar_a320_neo_ready;
 

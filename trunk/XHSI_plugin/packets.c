@@ -504,6 +504,8 @@ int createAvionicsPacket(void) {
     int std_gauges_failures_copilot;
     int apu_status;
     int xhsi_cdu_source;
+    int wheel_status;
+    int tire_status;
     // int elec_status;
 
     strncpy(sim_packet.packet_id, "AVIO", 4);
@@ -1016,6 +1018,42 @@ int createAvionicsPacket(void) {
     	i++;
     }
 
+    // Wheels, brakes, tires, steering, gears
+    if (qpac_ready) {
+        wheel_status = (XPLMGetDatai(qpac_right_brake_release) << 6) |
+        		(XPLMGetDatai(qpac_left_brake_release) << 5) |
+        		(XPLMGetDatai(sim_op_fail_rel_gear_act)==6) << 4 |
+        		(XPLMGetDatai(sim_op_fail_rel_gear_ind)==6) << 3 |
+        		(XPLMGetDatai(sim_op_fail_rel_rbrake)==6) << 2 |
+        		(XPLMGetDatai(sim_op_fail_rel_lbrake)==6) << 1 |
+        		XPLMGetDatai(qpac_nw_anti_skid); // Wheel steer on 1 bit
+    } else if (jar_a320_neo_ready) {
+    	wheel_status = (XPLMGetDatai(sim_op_fail_rel_gear_act)==6) << 4 |
+    			(XPLMGetDatai(sim_op_fail_rel_gear_ind)==6) << 3 |
+    			(XPLMGetDatai(sim_op_fail_rel_rbrake)==6) << 2 |
+    			(XPLMGetDatai(sim_op_fail_rel_lbrake)==6) << 1 |
+    			XPLMGetDatai(jar_a320_neo_wheels_anti_skid); // Wheel steer on 1 bit
+    } else
+    {
+    	wheel_status = (XPLMGetDatai(sim_op_fail_rel_gear_act)==6) << 4 |
+    			(XPLMGetDatai(sim_op_fail_rel_gear_ind)==6) << 3 |
+    			(XPLMGetDatai(sim_op_fail_rel_rbrake)==6) << 2 |
+    			(XPLMGetDatai(sim_op_fail_rel_lbrake)==6) << 1 |
+    			XPLMGetDatai(nose_wheel_steer_on); // Wheel steer on 1 bit
+    }
+    sim_packet.sim_data_points[i].id = custom_htoni(WHEEL_STATUS);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) wheel_status);
+    i++;
+    tire_status = (XPLMGetDatai(sim_op_fail_rel_tire5) == 6) << 4 |
+    		(XPLMGetDatai(sim_op_fail_rel_tire4) == 6) << 3 |
+    		(XPLMGetDatai(sim_op_fail_rel_tire3) == 6) << 2 |
+    		(XPLMGetDatai(sim_op_fail_rel_tire2) == 6) << 1 |
+    		(XPLMGetDatai(sim_op_fail_rel_tire1) == 6); // Wheel steer on 1 bit
+    sim_packet.sim_data_points[i].id = custom_htoni(TIRE_STATUS);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) tire_status);
+    i++;
+
+
     // now we know the number of datapoints
     sim_packet.nb_of_sim_data_points = custom_htoni( i );
 
@@ -1050,7 +1088,7 @@ int createCustomAvionicsPacket(void) {
     int qpac_fcc;
     float qpac_hyd_press_tab[3];
     float qpac_hyd_qty_tab[3];
-    int qpac_hyd_pumps = 0;
+    int hyd_pumps = 0;
     int qpac_hyd_pump_tab[3];
     int qpac_fuel_pumps = 0;
     int qpac_fuel_pump_tab[6];
@@ -1060,6 +1098,8 @@ int createCustomAvionicsPacket(void) {
     int qpac_bleed_valves;
 
     int auto_brake_level;
+    int brake_status;
+
     int pa_a320_failures;
 
     strncpy(sim_packet.packet_id, "AVIO", 4);
@@ -1543,6 +1583,16 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_AUTO_BRAKE_LEVEL);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) auto_brake_level );
         i++;
+        // Triple Pressure indicator
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_TPI_LEFT);
+        sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(qpac_tot_left_brake) );
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_TPI_RIGHT);
+        sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(qpac_tot_right_brake) );
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_TPI_ACCU);
+        sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(qpac_brake_accu) );
+        i++;
         // Flaps and slats
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FLAPS_REQ_POS);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) XPLMGetDatai(qpac_flaps_request_pos) );
@@ -1633,24 +1683,24 @@ int createCustomAvionicsPacket(void) {
         // Each pump status is on 2 bits
         if (qpac_hyd_pump_array != NULL) {
         	XPLMGetDatavi(qpac_hyd_pump_array, qpac_hyd_pump_tab, 0, 3);
-        	qpac_hyd_pumps = 0;
+        	hyd_pumps = 0;
         	for (j=0; j<3; j++) {
-        		qpac_hyd_pumps |= (qpac_hyd_pump_tab[j] & 0x03) << (j*2);
+        		hyd_pumps |= (qpac_hyd_pump_tab[j] & 0x03) << (j*2);
         	}
         	// Shift 6 bits left for rat, ptu and elec pumps
-        	qpac_hyd_pumps <<= 6;
-        	qpac_hyd_pumps |=
+        	hyd_pumps <<= 6;
+        	hyd_pumps |=
         			(XPLMGetDatai(qpac_hyd_rat_mode) & 0x03 ) |
         			(XPLMGetDatai(qpac_hyd_y_elec_mode) & 0x03) << 2 |
         			(XPLMGetDatai(qpac_hyd_ptu_mode) & 0x03) << 4 ;
 
         	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_HYD_PUMPS);
-        	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_hyd_pumps );
+        	sim_packet.sim_data_points[i].value = custom_htonf( (float) hyd_pumps );
         	i++;
         } else {
         	// dataref not available on QPAC v1, turn all pumps on
         	// TODO : find out the right value !
-        	qpac_hyd_pumps = 0xFF;
+        	hyd_pumps = 0xFF;
         	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_HYD_PUMPS);
         	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fcc );
         	i++;
@@ -1936,6 +1986,74 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_AUTO_BRAKE_LEVEL);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) auto_brake_level );
         i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_BRAKE_ACCU_PSI);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_brakes_accu_press));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_BRAKE_LEFT_PSI);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_brakes_left_press));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_BRAKE_RIGHT_PSI);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_brakes_right_press));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_BRAKE_TEMP_ + 0 );
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_wheels_temp_l_1));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_BRAKE_TEMP_ + 1 );
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_wheels_temp_l_2));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_BRAKE_TEMP_ + 2 );
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_wheels_temp_r_1));
+    	i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_BRAKE_TEMP_ + 3 );
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_wheels_temp_r_2));
+    	i++;
+        brake_status =
+        		XPLMGetDatai(jar_a320_neo_wheels_ped_disc) << 2 |
+        		XPLMGetDatai(jar_a320_neo_wheels_brake_fan) << 1 |
+        		XPLMGetDatai(jar_a320_neo_wheels_brake_hot) ;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_BRAKE_STATUS);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) brake_status);
+        i++;
+
+        // Hydraulics
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_HYD_B_PRESS);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_hydr_b_press_aft_acc_old));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_HYD_G_PRESS);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_hydr_g_press_aft_acc_old));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_HYD_Y_PRESS);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_hydr_y_press_aft_acc_old));
+        i++;
+        // Hydraulic pumps
+        // Each pump status is on ??? bits
+        // jar_a320_neo_hydr_b_elec_pump_fault_light
+        // jar_a320_neo_hydr_g_eng_pump_fault_light
+        // jar_a320_neo_hydr_y_elec_pump_fault_light
+        // jar_a320_neo_hydr_y_eng_pump_fault_light
+        hyd_pumps =
+        		(XPLMGetDatai(jar_a320_neo_hydr_g_eng_pump_mode) &0x01) |
+        		(XPLMGetDatai(jar_a320_neo_hydr_g_eng_pump_fault_light) &0x01) << 1 |
+        		(XPLMGetDatai(jar_a320_neo_hydr_y_eng_pump_mode) &0x01) << 2 |
+        		(XPLMGetDatai(jar_a320_neo_hydr_y_eng_pump_fault_light) &0x01) << 3 |
+        		(XPLMGetDatai(jar_a320_neo_hydr_b_elec_pump_mode) & 0x01) << 4 |
+        		(XPLMGetDatai(jar_a320_neo_hydr_b_elec_pump_fault_light) & 0x01) << 5 ;
+        // Shift 6 bits left for rat, ptu and elec pumps
+        hyd_pumps <<= 6;
+        hyd_pumps |=
+        		(XPLMGetDatai(qpac_hyd_rat_mode) & 0x03 ) |
+        		(XPLMGetDatai(jar_a320_neo_hydr_y_elec_pump_mode) & 0x01) << 2 |
+        		(XPLMGetDatai(jar_a320_neo_hydr_y_elec_pump_fault_light) & 0x01) << 3 |
+        		(XPLMGetDatai(jar_a320_neo_hydr_ptu_mode) & 0x01) << 4 |
+				(XPLMGetDatai(jar_a320_neo_hydr_ptu_delta) & 0x01) << 5;
+
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_HYD_PUMPS);
+        sim_packet.sim_data_points[i].value = custom_htonf( (float) hyd_pumps );
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_HYD_PTU);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_hydr_ptu_delta));
+        i++;
+
     }
 
 
