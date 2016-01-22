@@ -131,6 +131,20 @@ XPLMDataRef sim_op_fail_rel_cop_vvi;
 // Gears failures
 XPLMDataRef sim_op_fail_rel_gear_ind;
 XPLMDataRef sim_op_fail_rel_gear_act;
+// Brake failures
+XPLMDataRef sim_op_fail_rel_lbrake;
+XPLMDataRef sim_op_fail_rel_rbrake;
+// Tires
+XPLMDataRef sim_op_fail_rel_tire1;
+XPLMDataRef sim_op_fail_rel_tire2;
+XPLMDataRef sim_op_fail_rel_tire3;
+XPLMDataRef sim_op_fail_rel_tire4;
+XPLMDataRef sim_op_fail_rel_tire5;
+XPLMDataRef sim_op_fail_rel_tire6;
+XPLMDataRef sim_op_fail_rel_tire7;
+XPLMDataRef sim_op_fail_rel_tire8;
+XPLMDataRef sim_op_fail_rel_tire9;
+XPLMDataRef sim_op_fail_rel_tire10;
 
 XPLMDataRef avionics_on;
 XPLMDataRef battery_on;
@@ -435,6 +449,16 @@ XPLMDataRef  rudder_pos; 			// sim/flightmodel/controls/vstab1_rud1def float [-3
 								// sim/flightmodel/controls/rdruddef [-30 to +30°]
 								// sim/flightmodel/controls/ldruddef [-30 to +30°]
 
+// 4 wings - aileron and spoilers
+XPLMDataRef  left_wing_aileron_1_def[4];
+XPLMDataRef  left_wing_aileron_2_def[4];
+XPLMDataRef  left_wing_spoiler_1_def[4];
+XPLMDataRef  left_wing_spoiler_2_def[4];
+XPLMDataRef  right_wing_aileron_1_def[4];
+XPLMDataRef  right_wing_aileron_2_def[4];
+XPLMDataRef  right_wing_spoiler_1_def[4];
+XPLMDataRef  right_wing_spoiler_2_def[4];
+
 // Spoilers (1L to 4L and 1R to 4R)
 XPLMDataRef  spoiler_3l;  		// sim/flightmodel/controls/wing3l_spo1def float [0 to +40°]
 // Ailron (on airbus - ailrons_4l / cesna 172P ailron 1l)
@@ -456,6 +480,15 @@ XPLMDataRef cabin_altitude;
 XPLMDataRef cabin_vvi;
 XPLMDataRef cabin_delta_p;
 
+// Nose Wheel Steering
+XPLMDataRef nose_wheel_steer_on;
+XPLMDataRef tailwheel_lock_ratio;
+XPLMDataRef tire_steer_command_deg;
+XPLMDataRef tire_steer_actual_deg;
+XPLMDataRef acf_gear_steers;
+XPLMDataRef nose_wheel_steer;
+XPLMDataRef tire_steer_cmd;
+XPLMDataRef tire_steer_act;
 
 /*
  * END of datarefs not yet exported
@@ -1716,6 +1749,20 @@ void findDataRefs(void) {
     // Gears failures
     sim_op_fail_rel_gear_ind = XPLMFindDataRef("sim/operation/failures/rel_gear_ind");
     sim_op_fail_rel_gear_act = XPLMFindDataRef("sim/operation/failures/rel_gear_act");
+    // Brake failures
+    sim_op_fail_rel_lbrake = XPLMFindDataRef("sim/operation/failures/rel_lbrake");
+    sim_op_fail_rel_rbrake = XPLMFindDataRef("sim/operation/failures/rel_rbrake");
+    // Tires blownout
+    sim_op_fail_rel_tire1 = XPLMFindDataRef("sim/operation/failures/rel_tire1");
+    sim_op_fail_rel_tire2 = XPLMFindDataRef("sim/operation/failures/rel_tire2");
+    sim_op_fail_rel_tire3 = XPLMFindDataRef("sim/operation/failures/rel_tire3");
+    sim_op_fail_rel_tire4 = XPLMFindDataRef("sim/operation/failures/rel_tire4");
+    sim_op_fail_rel_tire5 = XPLMFindDataRef("sim/operation/failures/rel_tire5");
+    sim_op_fail_rel_tire6 = XPLMFindDataRef("sim/operation/failures/rel_tire6");
+    sim_op_fail_rel_tire7 = XPLMFindDataRef("sim/operation/failures/rel_tire7");
+    sim_op_fail_rel_tire8 = XPLMFindDataRef("sim/operation/failures/rel_tire8");
+    sim_op_fail_rel_tire9 = XPLMFindDataRef("sim/operation/failures/rel_tire9");
+    sim_op_fail_rel_tire10 = XPLMFindDataRef("sim/operation/failures/rel_tire10");
 
     // Electrical
     avionics_on = XPLMFindDataRef("sim/cockpit/electrical/avionics_on");
@@ -1941,8 +1988,41 @@ void findDataRefs(void) {
     // This is working only for Cesna172P in a first step
     right_aileron_pos = XPLMFindDataRef("sim/flightmodel/controls/rail1def");
     left_aileron_pos = XPLMFindDataRef("sim/flightmodel/controls/lail1def");
-
-
+    // For other A/C
+    // TODO: read a aircraft configuration file - values cannot be guessed
+    // 4 wings
+    left_wing_aileron_1_def[0] = XPLMFindDataRef("sim/flightmodel/controls/wing1l_ail1def");
+    left_wing_aileron_2_def[0] = XPLMFindDataRef("sim/flightmodel/controls/wing1l_ail2def");
+    left_wing_spoiler_1_def[0] = XPLMFindDataRef("sim/flightmodel/controls/wing1l_spo1def");
+    left_wing_spoiler_2_def[0] = XPLMFindDataRef("sim/flightmodel/controls/wing1l_spo2def");
+    right_wing_aileron_1_def[0] = XPLMFindDataRef("sim/flightmodel/controls/wing1r_ail1def");
+    right_wing_aileron_2_def[0] = XPLMFindDataRef("sim/flightmodel/controls/wing1r_ail2def");
+    right_wing_spoiler_1_def[0] = XPLMFindDataRef("sim/flightmodel/controls/wing1r_spo1def");
+    right_wing_spoiler_2_def[0] = XPLMFindDataRef("sim/flightmodel/controls/wing1r_spo2def");
+    left_wing_aileron_1_def[1] = XPLMFindDataRef("sim/flightmodel/controls/wing2l_ail1def");
+    left_wing_aileron_2_def[1] = XPLMFindDataRef("sim/flightmodel/controls/wing2l_ail2def");
+    left_wing_spoiler_1_def[1] = XPLMFindDataRef("sim/flightmodel/controls/wing2l_spo1def");
+    left_wing_spoiler_2_def[1] = XPLMFindDataRef("sim/flightmodel/controls/wing2l_spo2def");
+    right_wing_aileron_1_def[1] = XPLMFindDataRef("sim/flightmodel/controls/wing2r_ail1def");
+    right_wing_aileron_2_def[1] = XPLMFindDataRef("sim/flightmodel/controls/wing2r_ail2def");
+    right_wing_spoiler_1_def[1] = XPLMFindDataRef("sim/flightmodel/controls/wing2r_spo1def");
+    right_wing_spoiler_2_def[1] = XPLMFindDataRef("sim/flightmodel/controls/wing2r_spo2def");
+    left_wing_aileron_1_def[2] = XPLMFindDataRef("sim/flightmodel/controls/wing3l_ail1def");
+    left_wing_aileron_2_def[2] = XPLMFindDataRef("sim/flightmodel/controls/wing3l_ail2def");
+    left_wing_spoiler_1_def[2] = XPLMFindDataRef("sim/flightmodel/controls/wing3l_spo1def");
+    left_wing_spoiler_2_def[2] = XPLMFindDataRef("sim/flightmodel/controls/wing3l_spo2def");
+    right_wing_aileron_1_def[2] = XPLMFindDataRef("sim/flightmodel/controls/wing3r_ail1def");
+    right_wing_aileron_2_def[2] = XPLMFindDataRef("sim/flightmodel/controls/wing3r_ail2def");
+    right_wing_spoiler_1_def[2] = XPLMFindDataRef("sim/flightmodel/controls/wing3r_spo1def");
+    right_wing_spoiler_2_def[2] = XPLMFindDataRef("sim/flightmodel/controls/wing3r_spo2def");
+    left_wing_aileron_1_def[3] = XPLMFindDataRef("sim/flightmodel/controls/wing4l_ail1def");
+    left_wing_aileron_2_def[3] = XPLMFindDataRef("sim/flightmodel/controls/wing4l_ail2def");
+    left_wing_spoiler_1_def[3] = XPLMFindDataRef("sim/flightmodel/controls/wing4l_spo1def");
+    left_wing_spoiler_2_def[3] = XPLMFindDataRef("sim/flightmodel/controls/wing4l_spo2def");
+    right_wing_aileron_1_def[3] = XPLMFindDataRef("sim/flightmodel/controls/wing4r_ail1def");
+    right_wing_aileron_2_def[3] = XPLMFindDataRef("sim/flightmodel/controls/wing4r_ail2def");
+    right_wing_spoiler_1_def[3] = XPLMFindDataRef("sim/flightmodel/controls/wing4r_spo1def");
+    right_wing_spoiler_2_def[3] = XPLMFindDataRef("sim/flightmodel/controls/wing4r_spo2def");
     // Engines and fuel
     num_tanks = XPLMFindDataRef("sim/aircraft/overflow/acf_num_tanks");
     num_engines = XPLMFindDataRef("sim/aircraft/engine/acf_num_engines");
@@ -2032,6 +2112,17 @@ void findDataRefs(void) {
     cabin_altitude = XPLMFindDataRef("sim/cockpit2/pressurization/cabin_altitude_ft");
     cabin_vvi = XPLMFindDataRef("sim/cockpit2/pressurization/cabin_vvi_fpm");
     cabin_delta_p = XPLMFindDataRef("sim/cockpit2/pressurization/pressure_differential_psi");
+
+    // Nose Wheel Steering
+    nose_wheel_steer_on = XPLMFindDataRef("sim/cockpit2/controls/nosewheel_steer_on");
+    tailwheel_lock_ratio = XPLMFindDataRef("sim/cockpit2/controls/tailwheel_lock_ratio");
+    tire_steer_command_deg = XPLMFindDataRef("sim/flightmodel2/gear/tire_steer_command_deg");
+    tire_steer_actual_deg = XPLMFindDataRef("sim/flightmodel2/gear/tire_steer_actual_deg");
+    acf_gear_steers =  XPLMFindDataRef("sim/aircraft/overflow/acf_gear_steers"); // True is gear turn with rudder input
+    nose_wheel_steer = XPLMFindDataRef("sim/flightmodel/controls/nose_wheel_steer");
+    tire_steer_cmd = XPLMFindDataRef("sim/flightmodel/parts/controls/tire_steer_cmd");
+    tire_steer_act = XPLMFindDataRef("sim/flightmodel/parts/controls/tire_steer_act");
+
 
 //	// TCAS
 //	relative_bearing_degs = XPLMFindDataRef("sim/cockpit2/tcas/indicators/relative_bearing_degs");

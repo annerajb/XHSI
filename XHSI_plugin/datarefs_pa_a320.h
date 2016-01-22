@@ -21,6 +21,10 @@ extern XPLMDataRef pa_a320_fd1_yaw_bar;
 extern XPLMDataRef pa_a320_fd2_yaw_bar;
 extern XPLMDataRef pa_a320_fd_yaw_bar_show;
 extern XPLMDataRef pa_a320_brake_fan;
+extern XPLMDataRef pa_a320_brake_temp1;
+extern XPLMDataRef pa_a320_brake_temp2;
+extern XPLMDataRef pa_a320_brake_temp3;
+extern XPLMDataRef pa_a320_brake_temp4;
 extern XPLMDataRef pa_a320_left_aileron_pos;
 extern XPLMDataRef pa_a320_right_aileron_pos;
 

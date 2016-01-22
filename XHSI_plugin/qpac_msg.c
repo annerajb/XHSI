@@ -49,6 +49,7 @@ XPLMDataRef qpac_mcdu1_label_amber[QPAC_MCDU_LINES];
 XPLMDataRef qpac_mcdu1_label_green[QPAC_MCDU_LINES];
 XPLMDataRef qpac_mcdu1_label_white[QPAC_MCDU_LINES];
 XPLMDataRef qpac_mcdu1_label_magenta[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu1_label_special[QPAC_MCDU_LINES];
 
 XPLMDataRef qpac_mcdu1_small_yellow[QPAC_MCDU_LINES];
 XPLMDataRef qpac_mcdu1_small_blue[QPAC_MCDU_LINES];
@@ -56,6 +57,7 @@ XPLMDataRef qpac_mcdu1_small_amber[QPAC_MCDU_LINES];
 XPLMDataRef qpac_mcdu1_small_green[QPAC_MCDU_LINES];
 XPLMDataRef qpac_mcdu1_small_white[QPAC_MCDU_LINES];
 XPLMDataRef qpac_mcdu1_small_magenta[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu1_small_special[QPAC_MCDU_LINES];
 
 XPLMDataRef qpac_mcdu1_content_yellow[QPAC_MCDU_LINES];
 XPLMDataRef qpac_mcdu1_content_blue[QPAC_MCDU_LINES];
@@ -63,6 +65,7 @@ XPLMDataRef qpac_mcdu1_content_amber[QPAC_MCDU_LINES];
 XPLMDataRef qpac_mcdu1_content_green[QPAC_MCDU_LINES];
 XPLMDataRef qpac_mcdu1_content_white[QPAC_MCDU_LINES];
 XPLMDataRef qpac_mcdu1_content_magenta[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu1_content_special[QPAC_MCDU_LINES];
 
 XPLMDataRef qpac_mcdu1_scratch_yellow;
 XPLMDataRef qpac_mcdu1_scratch_green;
@@ -125,7 +128,8 @@ void findQpacMsgDataRefs(void) {
             qpac_mcdu1_label_white[i] = XPLMFindDataRef(buf);
             sprintf(buf, "AirbusFBW/MCDU1label%dm", i+1);
             qpac_mcdu1_label_magenta[i] = XPLMFindDataRef(buf);
-
+            sprintf(buf, "AirbusFBW/MCDU1label%ds", i+1);
+            qpac_mcdu1_label_special[i] = XPLMFindDataRef(buf);
 
             sprintf(buf, "AirbusFBW/MCDU1scont%dy", i+1);
             qpac_mcdu1_small_yellow[i] = XPLMFindDataRef(buf);
@@ -139,6 +143,8 @@ void findQpacMsgDataRefs(void) {
             qpac_mcdu1_small_white[i] = XPLMFindDataRef(buf);
             sprintf(buf, "AirbusFBW/MCDU1scont%dm", i+1);
             qpac_mcdu1_small_magenta[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU1scont%ds", i+1);
+            qpac_mcdu1_small_special[i] = XPLMFindDataRef(buf);
 
             sprintf(buf, "AirbusFBW/MCDU1cont%dy", i+1);
             qpac_mcdu1_content_yellow[i] = XPLMFindDataRef(buf);
@@ -152,6 +158,8 @@ void findQpacMsgDataRefs(void) {
             qpac_mcdu1_content_white[i] = XPLMFindDataRef(buf);
             sprintf(buf, "AirbusFBW/MCDU1cont%dm", i+1);
             qpac_mcdu1_content_magenta[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU1cont%ds", i+1);
+            qpac_mcdu1_content_special[i] = XPLMFindDataRef(buf);
         }
 
         qpac_mcdu1_scratch_yellow = XPLMFindDataRef("AirbusFBW/MCDU1spy");
@@ -319,7 +327,43 @@ int createQpacEwdPacket(void) {
 
 /*
  * Qpac A320 MCDU
+ *
+ * Decoding special text
+ * 0 = blue left arrow
+ * 1 = blue right arrow
+ * 2 = white left arrow
+ * 3 = white right arrow
+ * 4 = amber left arrow
+ * 5 = amber right arrow
+ * 6 = green left arrow
+ * 7 = green right arrow
+ * 8 = yellow left arrow
+ * 9 = yellow right arrow
+ * A = blue left bracket
+ * B = blue right bracket
+ * C = white up arrow
+ * D = white down arrow
+ * E = amber box
  */
+
+// char *sc_table   = "éèéèéèéèéè1234567[]§µ£";
+char sc_table[] = { 30, 31, 30, 31, 30, 31, 30, 31, 30, 31, 32, 32, 32, 32, 32, 32, 32, '[', ']', 26, 27, 28, 0 };
+char *sc_color_s = "bbwwaaggyyaaaaaaabbwwa";
+char *sc_color   = "BBWWAAGGYYBBAAAAAAAWWA";
+
+char special_char(char c) {
+	if (c>='0' && c <= 'F') return sc_table[c-'0']; else return ' ';
+}
+
+char special_color_s(char c) {
+	if (c>='0' && c <= 'F') return sc_color_s[c-'0']; else return ' ';
+}
+
+char special_color(char c) {
+	if (c>='0' && c <= 'F') return sc_color[c-'0']; else return 'a';
+}
+
+
 int createQpacMcduPacket(void) {
 
    int i,l;
@@ -327,8 +371,8 @@ int createQpacMcduPacket(void) {
    int datalen = 0;
    int p;
    char color = 'u';
-   int blue_len, amber_len, green_len, white_len, yellow_len, magenta_len;
-   int s_blue_len, s_amber_len, s_green_len, s_white_len, s_yellow_len, s_magenta_len;
+   int blue_len, amber_len, green_len, white_len, yellow_len, magenta_len, special_len;
+   int s_blue_len, s_amber_len, s_green_len, s_white_len, s_yellow_len, s_magenta_len,s_special_len;
    int space = 0;
    char yellow_buffer[MCDU_BUF_LEN];
    char white_buffer[MCDU_BUF_LEN];
@@ -336,12 +380,14 @@ int createQpacMcduPacket(void) {
    char magenta_buffer[MCDU_BUF_LEN];
    char green_buffer[MCDU_BUF_LEN];
    char amber_buffer[MCDU_BUF_LEN];
+   char special_buffer[MCDU_BUF_LEN];
    char s_yellow_buffer[MCDU_BUF_LEN];
    char s_white_buffer[MCDU_BUF_LEN];
    char s_blue_buffer[MCDU_BUF_LEN];
    char s_magenta_buffer[MCDU_BUF_LEN];
    char s_green_buffer[MCDU_BUF_LEN];
    char s_amber_buffer[MCDU_BUF_LEN];
+   char s_special_buffer[MCDU_BUF_LEN];
    char encoded_string[EWD_BUF_LEN];
 
    strncpy(qpacMcduMsgPacket.packet_id, "QPAM", 4);
@@ -411,6 +457,8 @@ int createQpacMcduPacket(void) {
      green_len = (datalen > 0) ? (int)strlen(green_buffer) : 0;
      datalen = XPLMGetDatab(qpac_mcdu1_label_amber[i],amber_buffer,0,sizeof(amber_buffer));
      amber_len = (datalen > 0) ? (int)strlen(amber_buffer) : 0;
+     datalen = XPLMGetDatab(qpac_mcdu1_label_special[i],special_buffer,0,sizeof(special_buffer));
+     special_len = (datalen > 0) ? (int)strlen(special_buffer) : 0;
 
      color = 'u';
      encoded_string[0] = 0;
@@ -509,19 +557,23 @@ int createQpacMcduPacket(void) {
      green_len = (datalen > 0) ? (int)strlen(green_buffer) : 0;
      datalen = XPLMGetDatab(qpac_mcdu1_content_amber[i],amber_buffer,0,sizeof(amber_buffer));
      amber_len = (datalen > 0) ? (int)strlen(amber_buffer) : 0;
+     datalen = XPLMGetDatab(qpac_mcdu1_content_special[i],special_buffer,0,sizeof(special_buffer));
+     special_len = (datalen > 0) ? (int)strlen(special_buffer) : 0;
 
-     datalen = XPLMGetDatab(qpac_mcdu1_small_yellow[i],s_yellow_buffer,0,sizeof(yellow_buffer));
+     datalen = XPLMGetDatab(qpac_mcdu1_small_yellow[i],s_yellow_buffer,0,sizeof(s_yellow_buffer));
      s_yellow_len = (datalen > 0) ? (int)strlen(s_yellow_buffer) : 0;
-     datalen = XPLMGetDatab(qpac_mcdu1_small_white[i],s_white_buffer,0,sizeof(white_buffer));
+     datalen = XPLMGetDatab(qpac_mcdu1_small_white[i],s_white_buffer,0,sizeof(s_white_buffer));
      s_white_len = (datalen > 0) ? (int)strlen(s_white_buffer) : 0;
-     datalen = XPLMGetDatab(qpac_mcdu1_small_blue[i],s_blue_buffer,0,sizeof(blue_buffer));
+     datalen = XPLMGetDatab(qpac_mcdu1_small_blue[i],s_blue_buffer,0,sizeof(s_blue_buffer));
      s_blue_len = (datalen > 0) ? (int)strlen(s_blue_buffer) : 0;
-     datalen = XPLMGetDatab(qpac_mcdu1_small_magenta[i],s_magenta_buffer,0,sizeof(magenta_buffer));
+     datalen = XPLMGetDatab(qpac_mcdu1_small_magenta[i],s_magenta_buffer,0,sizeof(s_magenta_buffer));
      s_magenta_len = (datalen > 0) ? (int)strlen(s_magenta_buffer) : 0;
-     datalen = XPLMGetDatab(qpac_mcdu1_small_green[i],s_green_buffer,0,sizeof(green_buffer));
+     datalen = XPLMGetDatab(qpac_mcdu1_small_green[i],s_green_buffer,0,sizeof(s_green_buffer));
      s_green_len = (datalen > 0) ? (int)strlen(s_green_buffer) : 0;
-     datalen = XPLMGetDatab(qpac_mcdu1_small_amber[i],s_amber_buffer,0,sizeof(amber_buffer));
+     datalen = XPLMGetDatab(qpac_mcdu1_small_amber[i],s_amber_buffer,0,sizeof(s_amber_buffer));
      s_amber_len = (datalen > 0) ? (int)strlen(s_amber_buffer) : 0;
+     datalen = XPLMGetDatab(qpac_mcdu1_small_special[i],s_special_buffer,0,sizeof(s_special_buffer));
+     s_special_len = (datalen > 0) ? (int)strlen(s_special_buffer) : 0;
 
 
      color = 'u';
@@ -601,6 +653,17 @@ int createQpacMcduPacket(void) {
     		 }
     		 if (magenta_buffer[j] < ' ') magenta_buffer[j] = '?';
     		 encoded_string[p++]= magenta_buffer[j];
+    	 } else if ((j < special_len) && (special_buffer[j] != ' ')) {
+    		 if (color != special_color(special_buffer[j])) {
+    			 color = special_color(special_buffer[j]);
+				 space=0;
+    			 if (p>0) { encoded_string[p++] = ';'; }
+    			 encoded_string[p++] = 'l';
+    			 encoded_string[p++] = special_color_s(special_buffer[j]);
+    			 encoded_string[p++] = '0' + j/10;
+    			 encoded_string[p++] = '0' + j%10;
+    		 }
+    		 encoded_string[p++]= special_char(special_buffer[j]);
     	 } else if ((j < s_blue_len) && (s_blue_buffer[j] != ' ')) {
     		 if (color != 'b') {
     			 color = 'b';
@@ -673,8 +736,21 @@ int createQpacMcduPacket(void) {
     		 }
     		 if (s_magenta_buffer[j] < ' ') s_magenta_buffer[j] = '?';
     		 encoded_string[p++]= s_magenta_buffer[j];
-    	 } else if (((j < blue_len) || (j < green_len)|| (j < amber_len)|| (j < yellow_len)|| (j < white_len) || (j<magenta_len)
-    			  || (j < s_blue_len) || (j < s_amber_len) || (j < s_yellow_len) || (j < s_green_len) || (j < s_white_len) || (j < s_magenta_len))
+    	 } else if ((j < s_special_len) && (s_special_buffer[j] != ' ')) {
+    		 if (color != special_color_s(s_special_buffer[j])) {
+    			 color = special_color_s(s_special_buffer[j]);
+				 space=0;
+    			 if (p>0) { encoded_string[p++] = ';'; }
+    			 encoded_string[p++] = 's';
+    			 encoded_string[p++] = special_color_s(s_special_buffer[j]);
+    			 encoded_string[p++] = '0' + j/10;
+    			 encoded_string[p++] = '0' + j%10;
+    		 }
+    		 encoded_string[p++]= special_char(s_special_buffer[j]);
+
+
+    	 } else if (((j < blue_len) || (j < green_len)|| (j < amber_len)|| (j < yellow_len)|| (j < white_len) || (j<magenta_len) || (j<special_len)
+    			  || (j < s_blue_len) || (j < s_amber_len) || (j < s_yellow_len) || (j < s_green_len) || (j < s_white_len) || (j < s_magenta_len) || (j < s_special_len))
     			  && (space<2) ) {
     		 encoded_string[p++]=' ';
     		 space++;

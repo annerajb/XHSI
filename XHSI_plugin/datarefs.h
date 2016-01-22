@@ -51,6 +51,20 @@ extern XPLMDataRef sim_op_fail_rel_cop_vvi;
 // Gears failures
 extern XPLMDataRef sim_op_fail_rel_gear_ind;
 extern XPLMDataRef sim_op_fail_rel_gear_act;
+// Brake failures
+extern XPLMDataRef sim_op_fail_rel_lbrake;
+extern XPLMDataRef sim_op_fail_rel_rbrake;
+// Tires blowout
+extern XPLMDataRef sim_op_fail_rel_tire1;
+extern XPLMDataRef sim_op_fail_rel_tire2;
+extern XPLMDataRef sim_op_fail_rel_tire3;
+extern XPLMDataRef sim_op_fail_rel_tire4;
+extern XPLMDataRef sim_op_fail_rel_tire5;
+extern XPLMDataRef sim_op_fail_rel_tire6; // DRE only see tires 1 to 6
+extern XPLMDataRef sim_op_fail_rel_tire7;
+extern XPLMDataRef sim_op_fail_rel_tire8;
+extern XPLMDataRef sim_op_fail_rel_tire9;
+extern XPLMDataRef sim_op_fail_rel_tire10;
 
 extern XPLMDataRef avionics_on;
 extern XPLMDataRef battery_on;
@@ -346,6 +360,15 @@ extern XPLMDataRef  right_elevator_pos;
 extern XPLMDataRef  rudder_pos;
 extern XPLMDataRef  right_aileron_pos;
 extern XPLMDataRef  left_aileron_pos;
+// 4 wings - aileron and spoilers
+extern XPLMDataRef  left_wing_aileron_1_def[4];
+extern XPLMDataRef  left_wing_aileron_2_def[4];
+extern XPLMDataRef  left_wing_spoiler_1_def[4];
+extern XPLMDataRef  left_wing_spoiler_2_def[4];
+extern XPLMDataRef  right_wing_aileron_1_def[4];
+extern XPLMDataRef  right_wing_aileron_2_def[4];
+extern XPLMDataRef  right_wing_spoiler_1_def[4];
+extern XPLMDataRef  right_wing_spoiler_2_def[4];
 // Control surfaces limits
 extern XPLMDataRef acf_controls_elev_dn;
 extern XPLMDataRef acf_controls_elev_up;
@@ -416,6 +439,15 @@ extern XPLMDataRef efis_copilot_da_bug;
 extern XPLMDataRef efis_copilot_mins_mode;
 extern XPLMDataRef efis_copilot_map_zoomin;
 
+// Nose Wheel Steering
+extern XPLMDataRef nose_wheel_steer_on;
+extern XPLMDataRef tailwheel_lock_ratio;
+extern XPLMDataRef tire_steer_command_deg;
+extern XPLMDataRef tire_steer_actual_deg;
+extern XPLMDataRef acf_gear_steers;
+extern XPLMDataRef nose_wheel_steer;
+extern XPLMDataRef tire_steer_cmd;
+extern XPLMDataRef tire_steer_act;
 
 // Multiplayer
 extern XPLMDataRef multiplayer_x[NUM_TCAS];

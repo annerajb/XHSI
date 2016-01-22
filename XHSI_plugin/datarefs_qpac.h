@@ -297,6 +297,14 @@ extern XPLMDataRef qpac_autobrake_max;
 extern XPLMDataRef qpac_left_brake_release;
 extern XPLMDataRef qpac_right_brake_release;
 extern XPLMDataRef qpac_nw_anti_skid;
+// Gears indicators
+extern XPLMDataRef qpac_left_gear_ind;
+extern XPLMDataRef qpac_nose_gear_ind;
+extern XPLMDataRef qpac_right_gear_ind;
+// Triple brake indicator
+extern XPLMDataRef qpac_brake_accu;
+extern XPLMDataRef qpac_tot_right_brake;
+extern XPLMDataRef qpac_tot_left_brake;
 // Flaps and slats
 extern XPLMDataRef qpac_flaps_request_pos;
 extern XPLMDataRef qpac_slats_request_pos;

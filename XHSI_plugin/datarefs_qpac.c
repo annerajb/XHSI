@@ -135,6 +135,14 @@ XPLMDataRef qpac_autobrake_max;
 XPLMDataRef qpac_left_brake_release;
 XPLMDataRef qpac_right_brake_release;
 XPLMDataRef qpac_nw_anti_skid;
+// Gears indicators
+XPLMDataRef qpac_left_gear_ind;
+XPLMDataRef qpac_nose_gear_ind;
+XPLMDataRef qpac_right_gear_ind;
+// Triple brake indicator
+XPLMDataRef qpac_brake_accu;
+XPLMDataRef qpac_tot_right_brake;
+XPLMDataRef qpac_tot_left_brake;
 // Flaps and slats
 XPLMDataRef qpac_flaps_request_pos;
 XPLMDataRef qpac_slats_request_pos;
@@ -362,6 +370,14 @@ void findQpacDataRefs(void) {
             qpac_left_brake_release = XPLMFindDataRef("AirbusFBW/LeftBrakeRelease");
             qpac_right_brake_release = XPLMFindDataRef("AirbusFBW/RightBrakeRelease");
             qpac_nw_anti_skid = XPLMFindDataRef("AirbusFBW/NWSnAntiSkid");
+            // Gears indicators
+            qpac_left_gear_ind = XPLMFindDataRef("AirbusFBW/LeftGearInd");
+            qpac_nose_gear_ind = XPLMFindDataRef("AirbusFBW/NoseGearInd");
+            qpac_right_gear_ind = XPLMFindDataRef("AirbusFBW/RightGearInd");
+            // Triple brake indicator
+            qpac_brake_accu = XPLMFindDataRef("AirbusFBW/BrakeAccu");
+            qpac_tot_right_brake = XPLMFindDataRef("AirbusFBW/TotRightBrake");
+            qpac_tot_left_brake = XPLMFindDataRef("AirbusFBW/TotLeftBrake");
             // Flaps and slats
             qpac_flaps_request_pos = XPLMFindDataRef("AirbusFBW/FlapsRequestPos");
             qpac_slats_request_pos = XPLMFindDataRef("AirbusFBW/SlatsRequestPos");

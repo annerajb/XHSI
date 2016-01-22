@@ -39,6 +39,10 @@ XPLMDataRef pa_a320_fd1_yaw_bar;
 XPLMDataRef pa_a320_fd2_yaw_bar;
 XPLMDataRef pa_a320_fd_yaw_bar_show;
 XPLMDataRef pa_a320_brake_fan;
+XPLMDataRef pa_a320_brake_temp1;
+XPLMDataRef pa_a320_brake_temp2;
+XPLMDataRef pa_a320_brake_temp3;
+XPLMDataRef pa_a320_brake_temp4;
 XPLMDataRef pa_a320_left_aileron_pos;
 XPLMDataRef pa_a320_right_aileron_pos;
 
@@ -80,6 +84,11 @@ void findPaA320DataRefs(void) {
             // Ailerons
             pa_a320_right_aileron_pos = XPLMFindDataRef("sim/flightmodel/controls/mwing13_ail1def");
             pa_a320_left_aileron_pos = XPLMFindDataRef("sim/flightmodel/controls/mwing14_ail1def");
+            // Brake Temp
+            pa_a320_brake_temp1 = XPLMFindDataRef("com/petersaircraft/airbus/BrakeTemp1");
+            pa_a320_brake_temp2 = XPLMFindDataRef("com/petersaircraft/airbus/BrakeTemp2");
+            pa_a320_brake_temp3 = XPLMFindDataRef("com/petersaircraft/airbus/BrakeTemp3");
+            pa_a320_brake_temp4 = XPLMFindDataRef("com/petersaircraft/airbus/BrakeTemp4");
         }
     }
 }
