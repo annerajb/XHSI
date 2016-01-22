@@ -390,6 +390,10 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT2_PRESSURIZATION_CABIN_ALT=656;
     public static final int SIM_COCKPIT2_PRESSURIZATION_CABIN_VVI=657;
     
+    // Brakes, wheels, steering
+    public static final int WHEEL_STATUS = 658;
+    public static final int TIRE_STATUS = 659;
+    
     // UFMC
     public static final int UFMC_STATUS = 700;
     // UFMC V-speeds
@@ -593,6 +597,10 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_ELEC_CX_RIGHT=1088;
     // Key press to commands
     public static final int QPAC_KEY_PRESS=1089;
+    // Triple pressure indicator
+    public static final int QPAC_TPI_LEFT=1091;
+    public static final int QPAC_TPI_RIGHT=1092;
+    public static final int QPAC_TPI_ACCU=1093;
     // IDs reserved for QPAC up to 1199
     
     // JarDesign Airbus A320neo
@@ -647,9 +655,22 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int JAR_A320NEO_FAILURES=1255;
     // BRAKES
     public static final int JAR_A320NEO_AUTO_BRAKE_LEVEL=1256;
+    public static final int JAR_A320NEO_BRAKE_ACCU_PSI=1257;
+    public static final int JAR_A320NEO_BRAKE_LEFT_PSI=1258;
+    public static final int JAR_A320NEO_BRAKE_RIGHT_PSI=1259;
+    public static final int JAR_A320NEO_BRAKE_TEMP_ = 1260; // Array [4]
+    public static final int JAR_A320NEO_BRAKE_STATUS = 1265;
     // MCDU Clics
-    public static final int JAR_A320NEO_MCDU_CLICK=1257;
-
+    public static final int JAR_A320NEO_MCDU_CLICK=1270;
+    // Hydraulic
+    public static final int JAR_A320NEO_HYD_B_PRESS=1271;
+    public static final int JAR_A320NEO_HYD_G_PRESS=1272;
+    public static final int JAR_A320NEO_HYD_Y_PRESS=1273;
+    public static final int JAR_A320NEO_HYD_B_QTY=1274;
+    public static final int JAR_A320NEO_HYD_G_QTY=1275;
+    public static final int JAR_A320NEO_HYD_Y_QTY=1276;
+    public static final int JAR_A320NEO_HYD_PUMPS=1277;
+    public static final int JAR_A320NEO_HYD_PTU=1278;
     
     // Plugin Version
     public static final int PLUGIN_VERSION_ID = 999;
@@ -657,11 +678,15 @@ public class XPlaneSimDataRepository implements SimDataRepository {
 
     // array with sim data for all sim data points defined above
     float[] sim_values_float = new float[1300];
-    // int[] sim_values_int = new int[1000];
     String[] sim_values_string = new String[1300];
+    // updated status and timestamp for all sim data
+    boolean[] sim_updated_float = new boolean[1300];
+    long[] sim_timestamp_float = new long[1300];
+    boolean[] sim_updated_string = new boolean[1300];
+    long[] sim_timestamp_string = new long[1300];
 
     long updates = 0;
-    ArrayList observers;
+    ArrayList<Observer> observers;
     public static boolean replaying = false;
   
 //    private static XPlaneSimDataRepository single_instance;
@@ -674,9 +699,13 @@ public class XPlaneSimDataRepository implements SimDataRepository {
 //    }
 
     public XPlaneSimDataRepository() {
-        observers = new ArrayList();
+        observers = new ArrayList<Observer>();
         for (int i=0; i<1300; i++) {
             sim_values_string[i] = "";
+            sim_timestamp_string[i] = 0;
+            sim_timestamp_float[i] = 0;
+            sim_updated_string[i] = false;
+            sim_updated_float[i] = false;
         }
     }
 
@@ -688,13 +717,13 @@ public class XPlaneSimDataRepository implements SimDataRepository {
         this.observers.add(observer);
     }
 
-    public void store_sim_float(int id, float value) {
-        sim_values_float[id] = value;
+    public void store_sim_float(int id, float value) {    	
+    	if (sim_values_float[id] != value) {
+    		sim_values_float[id] = value;
+    		sim_updated_float[id] = true;
+    		sim_timestamp_float[id] = System.currentTimeMillis();
+    	}      
     }
-
-//    public void store_sim_int(int id, int value) {
-//        sim_values_int[id % 5000] = value;
-//    }
 
     public void store_sim_string(int id, String value) {
         sim_values_string[id % 10000] = value;
@@ -704,12 +733,16 @@ public class XPlaneSimDataRepository implements SimDataRepository {
         return sim_values_float[id];
     }
 
-//    public int get_sim_int(int id) {
-//        return sim_values_int[id % 5000];
-//    }
-
+    public long get_sim_float_timestamp(int id) {
+    	return sim_timestamp_float[id];
+    }    
+    
     public String get_sim_string(int id) {
         return sim_values_string[id % 10000];
+    }
+    
+    public long get_sim_string_timestamp(int id) {
+    	return sim_timestamp_string[id];
     }
 
     public void tick_updates() {

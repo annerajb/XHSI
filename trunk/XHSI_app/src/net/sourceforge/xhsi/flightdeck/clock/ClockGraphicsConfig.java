@@ -1,8 +1,8 @@
 /**
- * AnnunGraphicsConfig.java
+ * ClockGraphicsConfig.java
  *
  * Calculates and provides access to screen positions and sizes based on the
- * size of HSIComponent.
+ * size of ClockComponent.
  *
  * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
  * Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
@@ -23,31 +23,13 @@
  */
 package net.sourceforge.xhsi.flightdeck.clock;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.GradientPaint;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
-import java.util.HashMap;
 import java.util.logging.Logger;
-import java.util.Map;
-
-import net.sourceforge.xhsi.XHSIInstrument;
-import net.sourceforge.xhsi.XHSIPreferences;
-
-import net.sourceforge.xhsi.model.Avionics;
 
 import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
 
@@ -66,13 +48,6 @@ public class ClockGraphicsConfig extends GraphicsConfig implements ComponentList
         this.display_unit = du;
         init();
     }
-
-
-//    public void init() {
-//
-//        super.init();
-//
-//    }
 
 
     public void update_config(Graphics2D g2, boolean power) {
@@ -104,6 +79,8 @@ public class ClockGraphicsConfig extends GraphicsConfig implements ComponentList
                     0, 0, frontpanel_color.brighter().brighter(),
                     clock_square.width, clock_square.height , frontpanel_color.darker().darker(),
                     false);
+            
+            logger.finest("ClockGraphicsConfig updated");
 
         }
 

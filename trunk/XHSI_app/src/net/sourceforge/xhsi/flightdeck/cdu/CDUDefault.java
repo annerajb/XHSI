@@ -33,15 +33,12 @@ package net.sourceforge.xhsi.flightdeck.cdu;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -54,9 +51,6 @@ import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.CduLine;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.QpacMcduData;
-import net.sourceforge.xhsi.model.SimDataRepository;
-import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
-import net.sourceforge.xhsi.model.xplane.XPlaneUDPSender;
 
 
 public class CDUDefault extends CDUSubcomponent {
@@ -107,7 +101,8 @@ public class CDUDefault extends CDUSubcomponent {
         } catch (IOException ioe){}
         
         this.aircraft = this.model_factory.get_aircraft_instance();
-        this.avionics = this.aircraft.get_avionics();        
+        this.avionics = this.aircraft.get_avionics();
+        logger.finest("CDUDefault instanciated");
     }
 
     public void paint(Graphics2D g2) {

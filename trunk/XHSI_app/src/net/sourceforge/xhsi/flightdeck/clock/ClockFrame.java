@@ -22,30 +22,15 @@
 package net.sourceforge.xhsi.flightdeck.clock;
 
 import java.awt.BasicStroke;
-//import java.awt.Color;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
-//import java.awt.image.BufferedImage;
 
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSIPreferences;
 
-//import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
-//import net.sourceforge.xhsi.model.NavigationRadio;
-
-//import net.sourceforge.xhsi.panel.GraphicsConfig;
-//import net.sourceforge.xhsi.panel.Subcomponent;
-
 
 
 public class ClockFrame extends ClockSubcomponent {
@@ -57,6 +42,7 @@ public class ClockFrame extends ClockSubcomponent {
 
     public ClockFrame(ModelFactory model_factory, ClockGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
+        logger.finest("ClockFrame instanciated");
     }
 
 

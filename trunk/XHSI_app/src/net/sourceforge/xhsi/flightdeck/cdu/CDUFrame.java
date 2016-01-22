@@ -21,31 +21,16 @@
 */
 package net.sourceforge.xhsi.flightdeck.cdu;
 
-import java.awt.BasicStroke;
-//import java.awt.Color;
+//import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
+//import java.awt.Stroke;
 //import java.awt.image.BufferedImage;
-
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSIPreferences;
-
-//import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
-//import net.sourceforge.xhsi.model.NavigationRadio;
-
-//import net.sourceforge.xhsi.panel.GraphicsConfig;
-//import net.sourceforge.xhsi.panel.Subcomponent;
-
 
 
 public class CDUFrame extends CDUSubcomponent {
@@ -57,8 +42,8 @@ public class CDUFrame extends CDUSubcomponent {
 
     public CDUFrame(ModelFactory model_factory, CDUGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
+        logger.finest("CDUFrame instanciated");
     }
-
 
     public void paint(Graphics2D g2) {
         if ( this.preferences.cdu_display_only() ) {
@@ -69,20 +54,17 @@ public class CDUFrame extends CDUSubcomponent {
         }
     }
 
-
+    /*
     private void drawRaisedPanel(Graphics2D g2) {
-
         Stroke original_stroke = g2.getStroke();
-
         g2.setColor(cdu_gc.frontpanel_color);
         g2.fillRoundRect(cdu_gc.raised_panel.x, cdu_gc.raised_panel.y, cdu_gc.raised_panel.width, cdu_gc.raised_panel.height, cdu_gc.raised_panel.width/16, cdu_gc.raised_panel.height/16);
         g2.setStroke(new BasicStroke(8.0f * cdu_gc.scaling_factor));
         g2.setPaint(cdu_gc.panel_gradient);
         g2.drawRoundRect(cdu_gc.raised_panel.x, cdu_gc.raised_panel.y, cdu_gc.raised_panel.width, cdu_gc.raised_panel.height, cdu_gc.raised_panel.width/16, cdu_gc.raised_panel.height/16);
-
         g2.setStroke(original_stroke);
-
     }
+    */
 
     private void drawSunkenDisplay(Graphics2D g2) {
 

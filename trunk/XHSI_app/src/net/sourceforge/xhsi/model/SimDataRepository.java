@@ -39,11 +39,15 @@ public interface SimDataRepository {
     public void store_sim_string(int id, String value);
 
     public float get_sim_float(int id);
+    
+    public long get_sim_float_timestamp(int id);
 
 //    public int get_sim_int(int id);
 
     public String get_sim_string(int id);
 
+    public long get_sim_string_timestamp(int id);
+    
     public void tick_updates();
 
     public long get_nb_of_updates();

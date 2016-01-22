@@ -11,6 +11,8 @@ public class XfmcData {
 	
 	private static XfmcData instance = null;
 	
+	public boolean updated = true;
+	
 	List xfmcLines = new ArrayList();
 	
 	public static XfmcData getInstance(){
@@ -43,8 +45,17 @@ public class XfmcData {
 
 	public void setLine(int i, String s){
 		Map m = (Map) xfmcLines.get(i);
-		if(m == null) m = new HashMap();
-		m.put("content", s);
+		if(m == null) {
+			m = new HashMap();
+			updated=true;
+			m.put("content", s);
+		} else {
+			String cs = (String) m.get("content");
+			if ( ! s.equals(cs)) {
+				m.put("content", s);
+				updated=true;
+			}
+		}
 	}
 
 	public static List decodeLine(String ln) {

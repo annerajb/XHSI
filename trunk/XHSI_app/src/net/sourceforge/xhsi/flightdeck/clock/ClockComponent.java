@@ -28,7 +28,6 @@
 */
 package net.sourceforge.xhsi.flightdeck.clock;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -37,12 +36,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
+
 
 import net.sourceforge.xhsi.PreferencesObserver;
 import net.sourceforge.xhsi.XHSIPreferences;
-import net.sourceforge.xhsi.XHSISettings;
-import net.sourceforge.xhsi.XHSIStatus;
 
 import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
@@ -61,7 +58,7 @@ public class ClockComponent extends Component implements Observer, PreferencesOb
 
 
     // subcomponents --------------------------------------------------------
-    ArrayList subcomponents = new ArrayList();
+    ArrayList<ClockSubcomponent> subcomponents = new ArrayList<ClockSubcomponent>();
     long[] subcomponent_paint_times = new long[15];
     long total_paint_times = 0;
     long nb_of_paints = 0;

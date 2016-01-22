@@ -6,7 +6,7 @@
  *
  * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
  * Copyright (C) 2015  Marc Rogiers (marrog.123@gmail.com)
- * Copyright (C) 2015  Nicoals Carel
+ * Copyright (C) 2015  Nicolas Carel
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,30 +24,19 @@
  */
 package net.sourceforge.xhsi.flightdeck.cdu;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.GradientPaint;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.font.TextAttribute;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
+
 import java.util.HashMap;
 import java.util.logging.Logger;
 import java.util.Map;
 
-import net.sourceforge.xhsi.XHSIInstrument;
-import net.sourceforge.xhsi.XHSIPreferences;
 
 import net.sourceforge.xhsi.model.Avionics;
 
@@ -94,6 +83,7 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
                 || (this.display_only != cdu_display_only)
             ) {
             // one of the settings has been changed
+        	logger.finest("CDUGraphicsConfig updated");
 
             // for the CDU, we use battery power, not avionics power
             this.powered = power;

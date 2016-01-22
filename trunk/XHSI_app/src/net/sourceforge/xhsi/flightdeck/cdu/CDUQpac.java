@@ -73,6 +73,7 @@ public class CDUQpac extends CDUSubcomponent {
 
     boolean drawregions = false;
     XPlaneUDPSender udp_sender = null; 
+    QpacMcduData qpac_mcdu_data;
     
     int displayunit_topleft_x = 81;
     int displayunit_topleft_y = 56;
@@ -145,6 +146,8 @@ public class CDUQpac extends CDUSubcomponent {
         } catch (IOException ioe){}
         
         udp_sender = XPlaneUDPSender.get_instance();
+        
+        qpac_mcdu_data = QpacMcduData.getInstance();
 
         qpac_regions = new ArrayList<ClickRegion>();        
 
@@ -203,6 +206,8 @@ public class CDUQpac extends CDUSubcomponent {
         		{QPAC_KEY_MDCU1_AIRPORT, -1}, 
         		{QPAC_KEY_MDCU1_SLEW_LEFT, QPAC_KEY_MDCU1_SLEW_UP},
         		{QPAC_KEY_MDCU1_SLEW_RIGHT, QPAC_KEY_MDCU1_SLEW_DOWN}} ));
+        
+        logger.finest("CDUQpac instanciated");
     }
 
     public void paint(Graphics2D g2) {
@@ -302,38 +307,12 @@ public class CDUQpac extends CDUSubcomponent {
     		case '`' : c = '°'; break;
     		case '|' : c = 'Δ'; break;    		
     		case '0' : c = 'O'; break;
-    		case 1 : c='?'; break;
-    		case 2 : c='?'; break;
-    		case 3 : c='?'; break;
-    		case 4 : c='?'; break;
-    		case 5 : c='?'; break;
-    		case 6 : c='?'; break;
-    		case 7 : c='?'; break;
-    		case 8 : c='?'; break;
-    		case 9 : c='?'; break;
-    		case 10 : c='?'; break;
-    		case 11 : c='?'; break;
-    		case 12 : c='?'; break;
-    		case 13 : c='?'; break;
-    		case 14 : c='?'; break;
-    		case 15 : c='?'; break;
-    		case 16 : c='?'; break;
-    		case 17 : c='?'; break;
-    		case 18 : c='?'; break;
-    		case 19 : c='?'; break;
-    		case 20 : c='?'; break;
-    		case 21 : c='?'; break;
-    		case 22 : c='?'; break;
-    		case 23 : c='?'; break;
-    		case 24 : c='?'; break;
-    		case 25 : c='?'; break;
-    		case 26 : c='?'; break;
-    		case 27 : c='?'; break;
-    		case 28 : c='?'; break;
-    		case 29 : c='?'; break;
-    		case 30 : c='?'; break;
-    		case 31 : c='?'; break;
-    		default : if (str.charAt(i) > 126) { c='!'; }  else { c = str.charAt(i); }
+    		case 30 : c = '←'; break; 
+    		case 31 : c = '→'; break;
+    		case 26 : c = '↑'; break;
+    		case 27 : c = '↓'; break;
+    		case 28 : c = '⎕'; break;
+    		default : c = str.charAt(i);
     		}
     		result += c;
     	}
@@ -367,6 +346,7 @@ public class CDUQpac extends CDUSubcomponent {
                     g2.drawString(translateCduLine(o.text), x, yy);
             }    
         }
+        qpac_mcdu_data.updated = false;
     }
 
     

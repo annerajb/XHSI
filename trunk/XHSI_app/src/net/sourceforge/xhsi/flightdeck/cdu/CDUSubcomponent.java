@@ -24,41 +24,22 @@
 */
 package net.sourceforge.xhsi.flightdeck.cdu;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
+
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.Transparency;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 
 import net.sourceforge.xhsi.XHSIPreferences;
-
-import net.sourceforge.xhsi.model.Aircraft;
-import net.sourceforge.xhsi.model.AircraftEnvironment;
-import net.sourceforge.xhsi.model.Avionics;
-import net.sourceforge.xhsi.model.FMS;
 import net.sourceforge.xhsi.model.ModelFactory;
-import net.sourceforge.xhsi.model.TCAS;
-
 import net.sourceforge.xhsi.flightdeck.Subcomponent;
 
 
 public abstract class CDUSubcomponent extends Subcomponent {
 
-    CDUGraphicsConfig cdu_gc;
-//    ModelFactory model_factory;
-//    Aircraft aircraft;
-//    Avionics avionics;
-//    AircraftEnvironment aircraft_environment;
-//    Component parent_component;
-//    FMS fms;
-//    TCAS tcas;
-//    XHSIPreferences preferences;
-
+	private static final long serialVersionUID = 1L;
+	
+	CDUGraphicsConfig cdu_gc;
 
     public CDUSubcomponent(ModelFactory model_factory, CDUGraphicsConfig annun_gc) {
         super(model_factory, annun_gc);
@@ -92,10 +73,6 @@ public abstract class CDUSubcomponent extends Subcomponent {
     public void keyPressed(KeyEvent k) {
     }
 
-
-//    public String toString() {
-//        return this.getClass().getName();
-//    }
 
 
 //    protected BufferedImage create_buffered_image(int width, int height) {

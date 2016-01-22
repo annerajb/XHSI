@@ -36,7 +36,7 @@ public class QpacMcduData {
 	
 	private static QpacMcduData instance = null;
 	
-
+	public boolean updated = false;
 	
 	static List qpacMcduLines = new ArrayList();
 	
@@ -70,9 +70,19 @@ public class QpacMcduData {
 
 	public void setLine(int i, String s){
 		Map m = (Map) qpacMcduLines.get(i);
-		if(m == null) m = new HashMap();
-		m.put("content", s);
+		if(m == null) { 
+			m = new HashMap();
+			m.put("content", s);
+			updated = true;
+		} else {
+			String cs = (String) m.get("content");
+			if ( ! s.equals(cs)) {
+				m.put("content", s);
+				updated = true;				
+			}
+		}
 	}
+
 
 	/*
 	 * LINE COMPRESSION PROTOCOL FOR QPAC MESSAGES

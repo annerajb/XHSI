@@ -1,8 +1,8 @@
 /**
-* AnnunSubcomponent.java
+* ClockSubcomponent.java
 * 
 * Superclass for all elements of the HSI which are subcomponents of
-* HSIComponent.
+* ClockComponent.
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * 
@@ -22,38 +22,20 @@
 */
 package net.sourceforge.xhsi.flightdeck.clock;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.Transparency;
-import java.awt.image.BufferedImage;
 
 import net.sourceforge.xhsi.XHSIPreferences;
-
-import net.sourceforge.xhsi.model.Aircraft;
-import net.sourceforge.xhsi.model.AircraftEnvironment;
-import net.sourceforge.xhsi.model.Avionics;
-import net.sourceforge.xhsi.model.FMS;
 import net.sourceforge.xhsi.model.ModelFactory;
-import net.sourceforge.xhsi.model.TCAS;
 
 import net.sourceforge.xhsi.flightdeck.Subcomponent;
 
 
 public abstract class ClockSubcomponent extends Subcomponent {
 
-    ClockGraphicsConfig clock_gc;
-//    ModelFactory model_factory;
-//    Aircraft aircraft;
-//    Avionics avionics;
-//    AircraftEnvironment aircraft_environment;
-//    Component parent_component;
-//    FMS fms;
-//    TCAS tcas;
-//    XHSIPreferences preferences;
+	private static final long serialVersionUID = 1L;
+	
+	ClockGraphicsConfig clock_gc;
 
 
     public ClockSubcomponent(ModelFactory model_factory, ClockGraphicsConfig annun_gc) {
@@ -82,10 +64,6 @@ public abstract class ClockSubcomponent extends Subcomponent {
 
     public abstract void paint(Graphics2D g2);
 
-
-//    public String toString() {
-//        return this.getClass().getName();
-//    }
 
 
 //    protected BufferedImage create_buffered_image(int width, int height) {
