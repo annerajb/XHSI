@@ -70,6 +70,43 @@ XPLMDataRef qpac_mcdu1_content_special[QPAC_MCDU_LINES];
 XPLMDataRef qpac_mcdu1_scratch_yellow;
 XPLMDataRef qpac_mcdu1_scratch_green;
 XPLMDataRef qpac_mcdu1_scratch_white;
+XPLMDataRef qpac_mcdu1_scratch_amber;
+
+//
+// MCDU2
+XPLMDataRef qpac_mcdu2_title_yellow;
+XPLMDataRef qpac_mcdu2_title_blue;
+XPLMDataRef qpac_mcdu2_title_green;
+XPLMDataRef qpac_mcdu2_title_white;
+
+XPLMDataRef qpac_mcdu2_label_yellow[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_label_blue[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_label_amber[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_label_green[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_label_white[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_label_magenta[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_label_special[QPAC_MCDU_LINES];
+
+XPLMDataRef qpac_mcdu2_small_yellow[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_small_blue[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_small_amber[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_small_green[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_small_white[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_small_magenta[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_small_special[QPAC_MCDU_LINES];
+
+XPLMDataRef qpac_mcdu2_content_yellow[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_content_blue[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_content_amber[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_content_green[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_content_white[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_content_magenta[QPAC_MCDU_LINES];
+XPLMDataRef qpac_mcdu2_content_special[QPAC_MCDU_LINES];
+
+XPLMDataRef qpac_mcdu2_scratch_yellow;
+XPLMDataRef qpac_mcdu2_scratch_green;
+XPLMDataRef qpac_mcdu2_scratch_white;
+XPLMDataRef qpac_mcdu2_scratch_amber;
 
 XPLMPluginID qpacV1PluginId = XPLM_NO_PLUGIN_ID;
 XPLMPluginID qpacPaPluginId = XPLM_NO_PLUGIN_ID;
@@ -116,6 +153,7 @@ void findQpacMsgDataRefs(void) {
     	qpac_mcdu_ready = 1;
 
         for (i=0; i<QPAC_MCDU_LINES-1; i++) {
+        	// MCDU1
             sprintf(buf, "AirbusFBW/MCDU1label%dy", i+1);
             qpac_mcdu1_label_yellow[i] = XPLMFindDataRef(buf);
             sprintf(buf, "AirbusFBW/MCDU1label%db", i+1);
@@ -160,15 +198,72 @@ void findQpacMsgDataRefs(void) {
             qpac_mcdu1_content_magenta[i] = XPLMFindDataRef(buf);
             sprintf(buf, "AirbusFBW/MCDU1cont%ds", i+1);
             qpac_mcdu1_content_special[i] = XPLMFindDataRef(buf);
+
+        	// MCDU2
+            sprintf(buf, "AirbusFBW/MCDU2label%dy", i+1);
+            qpac_mcdu2_label_yellow[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2label%db", i+1);
+            qpac_mcdu2_label_blue[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2label%da", i+1);
+            qpac_mcdu2_label_amber[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2label%dg", i+1);
+            qpac_mcdu2_label_green[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2label%dw", i+1);
+            qpac_mcdu2_label_white[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2label%dm", i+1);
+            qpac_mcdu2_label_magenta[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2label%ds", i+1);
+            qpac_mcdu2_label_special[i] = XPLMFindDataRef(buf);
+
+            sprintf(buf, "AirbusFBW/MCDU2scont%dy", i+1);
+            qpac_mcdu2_small_yellow[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2scont%db", i+1);
+            qpac_mcdu2_small_blue[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2scont%da", i+1);
+            qpac_mcdu2_small_amber[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2scont%dg", i+1);
+            qpac_mcdu2_small_green[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2scont%dw", i+1);
+            qpac_mcdu2_small_white[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2scont%dm", i+1);
+            qpac_mcdu2_small_magenta[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2scont%ds", i+1);
+            qpac_mcdu2_small_special[i] = XPLMFindDataRef(buf);
+
+            sprintf(buf, "AirbusFBW/MCDU2cont%dy", i+1);
+            qpac_mcdu2_content_yellow[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2cont%db", i+1);
+            qpac_mcdu2_content_blue[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2cont%da", i+1);
+            qpac_mcdu2_content_amber[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2cont%dg", i+1);
+            qpac_mcdu2_content_green[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2cont%dw", i+1);
+            qpac_mcdu2_content_white[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2cont%dm", i+1);
+            qpac_mcdu2_content_magenta[i] = XPLMFindDataRef(buf);
+            sprintf(buf, "AirbusFBW/MCDU2cont%ds", i+1);
+            qpac_mcdu2_content_special[i] = XPLMFindDataRef(buf);
+
         }
 
+        // MCDU1
         qpac_mcdu1_scratch_yellow = XPLMFindDataRef("AirbusFBW/MCDU1spy");
+        qpac_mcdu1_scratch_amber = XPLMFindDataRef("AirbusFBW/MCDU1spa");
         qpac_mcdu1_scratch_white = XPLMFindDataRef("AirbusFBW/MCDU1spw");
         qpac_mcdu1_title_yellow = XPLMFindDataRef("AirbusFBW/MCDU1titley");
         qpac_mcdu1_title_blue = XPLMFindDataRef("AirbusFBW/MCDU1titleb");
         qpac_mcdu1_title_green = XPLMFindDataRef("AirbusFBW/MCDU1titleg");
         qpac_mcdu1_title_white = XPLMFindDataRef("AirbusFBW/MCDU1titlew");
 
+        // MCDU2
+        qpac_mcdu2_scratch_yellow = XPLMFindDataRef("AirbusFBW/MCDU2spy");
+        qpac_mcdu2_scratch_amber = XPLMFindDataRef("AirbusFBW/MCDU2spa");
+        qpac_mcdu2_scratch_white = XPLMFindDataRef("AirbusFBW/MCDU2spw");
+        qpac_mcdu2_title_yellow = XPLMFindDataRef("AirbusFBW/MCDU2titley");
+        qpac_mcdu2_title_blue = XPLMFindDataRef("AirbusFBW/MCDU2titleb");
+        qpac_mcdu2_title_green = XPLMFindDataRef("AirbusFBW/MCDU2titleg");
+        qpac_mcdu2_title_white = XPLMFindDataRef("AirbusFBW/MCDU2titlew");
     } else {
     	qpac_mcdu_ready = 0;
     }
@@ -783,6 +878,8 @@ int createQpacMcduPacket(void) {
    yellow_len = (datalen > 0) ? (int)strlen(yellow_buffer) : 0;
    XPLMGetDatab(qpac_mcdu1_scratch_white,white_buffer,0,sizeof(white_buffer));
    white_len = (datalen > 0) ? (int)strlen(white_buffer) : 0;
+   XPLMGetDatab(qpac_mcdu1_scratch_amber,amber_buffer,0,sizeof(amber_buffer));
+   amber_len = (datalen > 0) ? (int)strlen(amber_buffer) : 0;
    color = 'u';
    encoded_string[0] = 0;
    p=0;
@@ -798,6 +895,12 @@ int createQpacMcduPacket(void) {
 	   encoded_string[p++] = '0';
 	   encoded_string[p++] = '0';
 	   strcpy(&encoded_string[p], yellow_buffer);
+   } else if ((amber_len>0) && (amber_buffer[0] > 32)) {
+	   encoded_string[p++] = 'l';
+	   encoded_string[p++] = 'a';
+	   encoded_string[p++] = '0';
+	   encoded_string[p++] = '0';
+	   strcpy(&encoded_string[p], amber_buffer);
    }
    strcpy(qpacMcduMsgPacket.lines[l].linestr, encoded_string);
    qpacMcduMsgPacket.lines[l].len = custom_htoni((int)strlen(qpacMcduMsgPacket.lines[l].linestr));
@@ -812,6 +915,7 @@ int createQpacMcduPacket(void) {
    return 4 + 4 + QPAC_MCDU_LINES * 88;
 
 }
+
 
 float sendQpacMsgCallback(
 									float	inElapsedSinceLastCall,

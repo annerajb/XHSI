@@ -405,6 +405,7 @@ extern XPLMDataRef override_trq_max;
 // custom datarefs - MFD
 extern XPLMDataRef mfd_mode;
 extern XPLMDataRef mfd_fuel_used;
+extern XPLMDataRef mfd_crew_oxy_psi;
 
 // custom datarefs - CDU
 extern XPLMDataRef cdu_pilot_source;

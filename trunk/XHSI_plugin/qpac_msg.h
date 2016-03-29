@@ -64,6 +64,42 @@ extern XPLMDataRef qpac_mcdu1_content_special[QPAC_MCDU_LINES];
 extern XPLMDataRef qpac_mcdu1_scratch_yellow;
 extern XPLMDataRef qpac_mcdu1_scratch_green;
 extern XPLMDataRef qpac_mcdu1_scratch_white;
+extern XPLMDataRef qpac_mcdu1_scratch_amber;
+
+// MCDU2
+extern XPLMDataRef qpac_mcdu2_title_yellow;
+extern XPLMDataRef qpac_mcdu2_title_blue;
+extern XPLMDataRef qpac_mcdu2_title_green;
+extern XPLMDataRef qpac_mcdu2_title_white;
+
+extern XPLMDataRef qpac_mcdu2_label_yellow[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_label_blue[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_label_amber[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_label_green[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_label_white[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_label_magenta[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_label_special[QPAC_MCDU_LINES];
+
+extern XPLMDataRef qpac_mcdu2_small_yellow[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_small_blue[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_small_amber[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_small_green[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_small_white[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_small_magenta[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_small_special[QPAC_MCDU_LINES];
+
+extern XPLMDataRef qpac_mcdu2_content_yellow[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_content_blue[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_content_amber[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_content_green[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_content_white[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_content_magenta[QPAC_MCDU_LINES];
+extern XPLMDataRef qpac_mcdu2_content_special[QPAC_MCDU_LINES];
+
+extern XPLMDataRef qpac_mcdu2_scratch_yellow;
+extern XPLMDataRef qpac_mcdu2_scratch_green;
+extern XPLMDataRef qpac_mcdu2_scratch_white;
+extern XPLMDataRef qpac_mcdu2_scratch_amber;
 
 extern struct QpacEwdMsgLinesDataPacket qpacEwdMsgPacket;
 

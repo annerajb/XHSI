@@ -339,10 +339,14 @@ extern XPLMDataRef qpac_cond_hot_air_valve;
 extern XPLMDataRef qpac_cond_cockpit_trim;
 extern XPLMDataRef qpac_cond_zone1_trim;
 extern XPLMDataRef qpac_cond_zone2_trim;
-// Doors
+extern XPLMDataRef qpac_cond_cockpit_temp;
+extern XPLMDataRef qpac_cond_aft_cabin_temp;
+extern XPLMDataRef qpac_cond_fwd_cabin_temp;
+// Doors - Oxygen
 extern XPLMDataRef qpac_door_pax_array;
 extern XPLMDataRef qpac_door_cargo_array;
 extern XPLMDataRef qpac_door_bulk_door;
+extern XPLMDataRef qpac_crew_oxy_mask;
 // Bleed
 extern XPLMDataRef qpac_bleed_intercon;
 extern XPLMDataRef qpac_bleed_x;
@@ -371,6 +375,7 @@ extern XPLMDataRef qpac_elec_battery_supply;
 extern XPLMDataRef qpac_elec_connectors;
 extern XPLMDataRef qpac_elec_ohp_array;
 extern XPLMDataRef qpac_elec_apu_box;
+extern XPLMDataRef qpac_elec_battery_volt;
 // FUEL
 extern XPLMDataRef qpac_fuel_pump_array;
 extern XPLMDataRef qpac_fuel_xfv_array ;

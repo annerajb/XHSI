@@ -177,10 +177,14 @@ XPLMDataRef qpac_cond_hot_air_valve;
 XPLMDataRef qpac_cond_cockpit_trim;
 XPLMDataRef qpac_cond_zone1_trim;
 XPLMDataRef qpac_cond_zone2_trim;
-// Doors
+XPLMDataRef qpac_cond_cockpit_temp;
+XPLMDataRef qpac_cond_aft_cabin_temp;
+XPLMDataRef qpac_cond_fwd_cabin_temp;
+// Doors - OXY
 XPLMDataRef qpac_door_pax_array;
 XPLMDataRef qpac_door_cargo_array;
 XPLMDataRef qpac_door_bulk_door;
+XPLMDataRef qpac_crew_oxy_mask;
 // Bleed
 XPLMDataRef qpac_bleed_intercon;
 XPLMDataRef qpac_bleed_x;
@@ -209,6 +213,7 @@ XPLMDataRef qpac_elec_battery_supply;
 XPLMDataRef qpac_elec_connectors;
 XPLMDataRef qpac_elec_ohp_array;
 XPLMDataRef qpac_elec_apu_box;
+XPLMDataRef qpac_elec_battery_volt;
 // FUEL
 XPLMDataRef qpac_fuel_pump_array;
 XPLMDataRef qpac_fuel_xfv_array ;
@@ -412,10 +417,14 @@ void findQpacDataRefs(void) {
             qpac_cond_cockpit_trim = XPLMFindDataRef("AirbusFBW/CockpitTrim");
             qpac_cond_zone1_trim = XPLMFindDataRef("AirbusFBW/Zone1Trim");
             qpac_cond_zone2_trim = XPLMFindDataRef("AirbusFBW/Zone2Trim");
-            // Doors
+            qpac_cond_cockpit_temp = XPLMFindDataRef("AirbusFBW/CockpitTemp");
+            qpac_cond_aft_cabin_temp = XPLMFindDataRef("AirbusFBW/AftCabinTemp");
+            qpac_cond_fwd_cabin_temp = XPLMFindDataRef("AirbusFBW/FwdCabinTemp");
+            // Doors - Oxygen
             qpac_door_pax_array = XPLMFindDataRef("AirbusFBW/PaxDoorArray");
             qpac_door_cargo_array = XPLMFindDataRef("AirbusFBW/CargoDoorArray");
             qpac_door_bulk_door = XPLMFindDataRef("AirbusFBW/BulkDoor");
+            qpac_crew_oxy_mask = XPLMFindDataRef("AirbusFBW/CrewOxyMask");
             // Bleed
             qpac_bleed_intercon = XPLMFindDataRef("AirbusFBW/BleedIntercon");
             qpac_bleed_x = XPLMFindDataRef("AirbusFBW/XBleedInd");
@@ -444,6 +453,7 @@ void findQpacDataRefs(void) {
             qpac_elec_connectors = XPLMFindDataRef("AirbusFBW/ElecConnectors"); // array [0,1]
             qpac_elec_ohp_array = XPLMFindDataRef("AirbusFBW/ElecOHPArray"); // array [0,1]
             qpac_elec_apu_box  = XPLMFindDataRef("AirbusFBW/SDAPUBox");
+            qpac_elec_battery_volt = XPLMFindDataRef("AirbusFBW/BatVolts"); // array [0,4]
 
             // FUEL
             qpac_fuel_pump_array = XPLMFindDataRef("AirbusFBW/FuelPumpOHPArray");
