@@ -1220,7 +1220,7 @@ public class XPlaneAircraft implements Aircraft {
 
     // Auxiliary Power Unit (APU)
     public boolean has_apu(){
-    	return true;
+    	return (num_generators()>1);
     }
     
     public float apu_n1() {
@@ -1300,13 +1300,11 @@ public class XPlaneAircraft implements Aircraft {
 
     public boolean gpu_gen_on() {
     	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.APU_STATUS);
-    	return (( apu_status & 0x40) > 0);
-   	
+    	return (( apu_status & 0x40) > 0);   	
     }
 
     public float gpu_gen_amps() {
-    	// float sim_data.get_sim_float(XPlaneSimDataRepository.GPU_AMPS);
-    	return 0.0f;
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.GPU_GEN_AMP);
    	}
 
     public int num_batteries() {
@@ -1317,12 +1315,26 @@ public class XPlaneAircraft implements Aircraft {
     	return (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_ELECTRICAL_NUM_BUSES);
     }
 
+    public float bus_load_amps(int bus) {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_ELECTRICAL_BUS_LOAD_+bus);
+    }
+
+    public boolean bus_powered(int bus) {
+    	int bus_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_ELECTRICAL_INV_BUS_STATUS);
+    	return (bus_status & (0x01 << bus)) != 0;
+    }
+        
     public int num_generators() {
     	return (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_ELECTRICAL_NUM_GENERATORS);
     }
 
     public int num_inverters() {
     	return (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_ELECTRICAL_NUM_INVERTERS);
+    }
+    
+    public boolean inverter_on(int inv) {
+    	int bus_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_ELECTRICAL_INV_BUS_STATUS);
+    	return (bus_status & (0x01 << (inv+6))) != 0;    	
     }
     
     public boolean ac_bus_tie() {
@@ -1357,6 +1369,15 @@ public class XPlaneAircraft implements Aircraft {
     	}    		
     }
     
+    public boolean apu_disc() {
+    	if (this.avionics.is_qpac()) {
+    		int overhead_elec = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ELEC_BUTTONS);
+    		return ((overhead_elec & (0x04)) != 0);
+    	} else {
+    		return false;
+    	}
+    }
+    
     public ElecBus gpu_on_bus() {
     	if (this.avionics.is_qpac()) {
         	// Complex aircrafts, GPU may be connected to bus 1, bus 2 or both buses
@@ -1388,6 +1409,24 @@ public class XPlaneAircraft implements Aircraft {
     		return ElecBus.BUS_1;
     	}
     }
+   
+    public ElecBus dc_ess_on_bus() {
+    	int qpac_elec_left, qpac_elec_right;
+    	if (this.avionics.is_qpac()) {
+    		qpac_elec_left = ((int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ELEC_CX_LEFT)) & 0x1C;
+    		qpac_elec_right = ((int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ELEC_CX_RIGHT)) & 0x1C;
+    		switch (qpac_elec_left) {
+    		case 9 : return ElecBus.NONE;
+    		case 10 : return ElecBus.BUS_1;
+    		case 11 : return ElecBus.BUS_2;
+    		default: return ElecBus.BOTH;
+    		}    		
+    	} else {
+    		// on DC 1 by default
+    		return ElecBus.BUS_1;
+    	}
+    }
+    
     
     public boolean eng_gen_on_bus(int eng) {
     	int qpac_elec_connectors;
@@ -1402,7 +1441,38 @@ public class XPlaneAircraft implements Aircraft {
     		return true;
     	}
     }
+
+    public boolean eng_gen_on(int eng) {
+    	int gen_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_ELECTRICAL_GENERATOR_STATUS);
+   		return (gen_status & (0x01<<eng)) != 0;
+    }
+        
+    /*
+     * True if engine generator disconnected by pilot action on the overhead panel
+     * 
+     */
+    public boolean eng_gen_disc(int eng) {
+    	if (this.avionics.is_qpac()) {
+    		int overhead_elec = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ELEC_BUTTONS);
+    		return ((overhead_elec & (0x01 << eng)) != 0);
+    	} else {
+    		return false;
+    	}
+    }   
     
+    public float battery_volt(int bat) {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_ELECTRICAL_BATTERY_VOLT_+bat);  
+    }    
+
+    public float battery_amp(int bat) {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_ELECTRICAL_BATTERY_AMP_+bat);  
+    }    
+    
+    public boolean battery_on(int bat) {
+    	int bat_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_ELECTRICAL_BATTERY_ON);
+    	return (bat_status & (0x01 << bat)) != 0;
+    }      
+
     // Bleed Air
     public boolean has_bleed_air() {
     	return true;
@@ -1459,4 +1529,71 @@ public class XPlaneAircraft implements Aircraft {
     	return 0.0f;
     }
 
+    public float cabin_temp(CabinZone zone) {
+    	float temp = -99.0f;
+    	if (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_STATUS) > 0.0f) {
+    		switch (zone) {
+    		case COCKPIT: temp = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_COND_COCKPIT_TEMP); break;
+    		case AFT: temp = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_COND_AFT_CABIN_TEMP); break;
+    		case FORWARD: temp = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_COND_FWD_CABIN_TEMP); break;
+    		default : temp = -20.0f;
+    		}
+    	}
+    	return temp;
+    }
+    
+    public float cabin_hot_air_trim(CabinZone zone) {
+    	float trim = 0.0f;
+    	if (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_STATUS) > 0.0f) {
+    		switch (zone) {
+    		case COCKPIT: trim = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_COND_COCKPIT_TRIM); break;
+    		case AFT: trim = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_COND_ZONE2_TRIM); break;
+    		case FORWARD: trim = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_COND_ZONE1_TRIM); break;
+    		default : trim = 0.15f;
+    		}
+    	}
+    	return trim;
+    }   
+    
+    public float crew_oxygen_psi() {
+    	// Cabin crew oxygen bottle pressure
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_CREW_OXY_PSI);
+    }    
+    
+    public boolean door_unlocked(DoorId door) {
+    	boolean door_position;   
+    	if (sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_STATUS) > 0.0f) {
+    		int door_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_DOOR_STATUS);
+    		switch (door) {
+    		case FRONT_LEFT: 	door_position = (door_status & 0x10) != 0; break;
+    		case FRONT_RIGHT: 	door_position = (door_status & 0x20) != 0; break;
+    		case AFT_LEFT: 		door_position = (door_status & 0x04) != 0; break;
+    		case AFT_RIGHT: 	door_position = (door_status & 0x08) != 0; break;
+    		case FRONT_CARGO: 	door_position = (door_status & 0x02) != 0; break;
+    		case AFT_CARGO: 	door_position = (door_status & 0x01) != 0; break;
+    		default: 			door_position = false; // Door is locked
+    		}
+    	} else if (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_STATUS) > 0.0f) {
+    		int door_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_DOOR_STATUS);
+    		switch (door) {
+    		case FRONT_LEFT: 	door_position = (door_status & 0x02) != 0; break;
+    		case FRONT_RIGHT: 	door_position = (door_status & 0x04) != 0; break;
+    		case AFT_LEFT: 		door_position = (door_status & 0x08) != 0; break;
+    		case AFT_RIGHT: 	door_position = (door_status & 0x10) != 0; break;
+    		case FRONT_CARGO: 	door_position = (door_status & 0x20) != 0; break;
+    		case AFT_CARGO: 	door_position = (door_status & 0x40) != 0; break;
+    		case BULK: 			door_position = (door_status & 0x01) != 0; break;
+    		default: 			door_position = false; // Door is locked
+    		}
+    	} else 	{
+    		// use beacon switch status
+    		if (! beacon_on() & (door == DoorId.FRONT_LEFT | door == DoorId.FRONT_CARGO | door == DoorId.AFT_CARGO | door == DoorId.BULK)) {
+    			door_position=true;
+    		} else {
+    			door_position=false;
+    		}
+    	}
+    	return door_position;
+    }
+      
 }

@@ -99,7 +99,8 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
             // some subcomponents need to be reminded to redraw immediately
             this.reconfigured = true;
             
-      
+            // TODO : adjust font spacing
+            // TODO : set a font for QPAC and another for JarDesign - not the same number of characters          
             if (display_only) {
             	cdu_screen_topleft_x = panel_rect.x;
             	cdu_screen_topleft_y = panel_rect.y;

@@ -86,8 +86,12 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT_ELECTRICAL_COCKPIT_LIGHTS_ON = 82;
     public static final int APU_N1 = 83;
     public static final int APU_GEN_AMP = 84;
-    public static final int APU_STATUS = 85;
-
+    public static final int GPU_GEN_AMP = 85;
+    public static final int APU_STATUS = 86;
+    // Battery array [4]
+    public static final int SIM_COCKPIT_ELECTRICAL_BATTERY_VOLT_ = 87;
+    public static final int SIM_COCKPIT_ELECTRICAL_BATTERY_AMP_ = 91;
+    
     // Radios
     public static final int SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ = 100;
     public static final int SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ = 101;
@@ -255,6 +259,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
 
     // MFD
     public static final int XHSI_MFD_MODE = 290;
+    public static final int XHSI_CREW_OXY_PSI = 291;
 
     
     // Environment
@@ -393,6 +398,12 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     // Brakes, wheels, steering
     public static final int WHEEL_STATUS = 658;
     public static final int TIRE_STATUS = 659;
+    
+    // Generators and elec buses
+    public static final int SIM_COCKPIT_ELECTRICAL_GENERATOR_AMPS_ = 660;
+    public static final int SIM_COCKPIT_ELECTRICAL_GENERATOR_STATUS = 668;
+    public static final int SIM_COCKPIT_ELECTRICAL_INV_BUS_STATUS = 669;
+    public static final int SIM_COCKPIT_ELECTRICAL_BUS_LOAD_ = 670; // Array [6]
     
     // UFMC
     public static final int UFMC_STATUS = 700;
@@ -583,8 +594,17 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_COND_COCKPIT_TRIM=1078;
     public static final int QPAC_COND_ZONE1_TRIM=1079;
     public static final int QPAC_COND_ZONE2_TRIM=1080;
+    public static final int QPAC_COND_COCKPIT_TEMP=1100;
+    public static final int QPAC_COND_AFT_CABIN_TEMP=1101;
+    public static final int QPAC_COND_FWD_CABIN_TEMP=1102;
+    public static final int QPAC_COND_AFT_CARGO_TEMP=1103;
+    public static final int QPAC_COND_FWD_CARGO_TEMP=1104;
     // BLEED AIR
     public static final int QPAC_BLEED_VALVES=1081;
+    public static final int QPAC_PACK1_FLOW=1105;
+    public static final int QPAC_PACK2_FLOW=1106;
+    public static final int QPAC_PACK1_TEMP=1107;
+    public static final int QPAC_PACK2_TEMP=1108;
     // APU
     public static final int QPAC_APU_EGT=1082;
     // FUEL
@@ -595,12 +615,17 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_ELEC_CX_LEFT=1086;
     public static final int QPAC_ELEC_CX_CENTER=1087;
     public static final int QPAC_ELEC_CX_RIGHT=1088;
+    public static final int QPAC_ELEC_BUTTONS=1099;
     // Key press to commands
     public static final int QPAC_KEY_PRESS=1089;
     // Triple pressure indicator
     public static final int QPAC_TPI_LEFT=1091;
     public static final int QPAC_TPI_RIGHT=1092;
     public static final int QPAC_TPI_ACCU=1093;
+    // Nacelle temperature [array 4]
+    public static final int QPAC_NACELLE_TEMP_ = 1094; // Array [4]
+    // Doors
+    public static final int QPAC_DOOR_STATUS = 1098;
     // IDs reserved for QPAC up to 1199
     
     // JarDesign Airbus A320neo
@@ -671,7 +696,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int JAR_A320NEO_HYD_Y_QTY=1276;
     public static final int JAR_A320NEO_HYD_PUMPS=1277;
     public static final int JAR_A320NEO_HYD_PTU=1278;
-    
+    // Doors
+    public static final int JAR_A320NEO_DOOR_STATUS=1279;
     // Plugin Version
     public static final int PLUGIN_VERSION_ID = 999;
 

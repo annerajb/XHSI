@@ -174,6 +174,7 @@ public class APU extends MFDSubcomponent {
 
         		// AVAIL indicator
         		// TODO : if A/C is not an Airbus, use "ON BUS" indicator
+        		// A320 FCOM 1.49.20 p2 : Avail when N1 > 99,5% or N1 > 95% for 2 seconds
         		if (avail) {
         			String avail_str="AVAIL";
         			int avail_x=mfd_gc.panel_rect.x + mfd_gc.panel_rect.width/2;
@@ -184,6 +185,7 @@ public class APU extends MFDSubcomponent {
         		}
 
         		// FLAP indicator
+        		// A320 FCOM 1.29.20 p4
         		if (flap) {
         			String avail_str="FLAP OPEN";
         			int flap_x=mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*3/4;
@@ -200,7 +202,10 @@ public class APU extends MFDSubcomponent {
         			int flap_y=mfd_gc.panel_rect.y + mfd_gc.mfd_size*65/100;
         			g2.setColor(mfd_gc.ecam_normal_color);
         			g2.setFont(mfd_gc.font_xl);
-        			g2.drawString( avail_str, flap_x - mfd_gc.get_text_width(g2, mfd_gc.font_xl, avail_str)/2, flap_y);		
+        			g2.drawString( avail_str, flap_x - mfd_gc.get_text_width(g2, mfd_gc.font_xl, avail_str)/2, flap_y);	
+        			
+        		// TODO : LOW OIL LEVEL
+        		// TODO : FUEL LO PR
         		}     
         	} else {
         		// No APU
@@ -556,6 +561,7 @@ public class APU extends MFDSubcomponent {
     
     private void drawAirbusEGT(Graphics2D g2, int pos, int num, boolean stabilized) {
 
+    	// A320 FCOM 1.49.20 p 5
         AffineTransform original_at = g2.getTransform();
         scalePen(g2);
 
@@ -636,6 +642,8 @@ public class APU extends MFDSubcomponent {
         
         // needle
         if (!egt_disabled) {
+        	// TODO: amber when EGT MAX - 33°C
+        	// TODO: red when EGT >= EGT MAX
         	int egt_needle_deg = Math.max(Math.round(egt_dial*deg_full_range)-deg_zero , -deg_start);
         	g2.rotate(Math.toRadians(egt_needle_deg), prim_dial_x[pos], egt_y);
         	g2.setColor(mfd_gc.ecam_normal_color);

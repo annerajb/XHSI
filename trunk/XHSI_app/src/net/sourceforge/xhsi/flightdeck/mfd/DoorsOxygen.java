@@ -51,7 +51,7 @@ public class DoorsOxygen extends MFDSubcomponent {
 			// Page ID
 			drawPageID(g2, "DOOR/OXY");
 			drawAircraft(g2);
-			drawSlides(g2, true);
+			// TODO : Sliders default status = armed when all cabin doors are closed			
 			drawCabinVS(g2);
 			drawCabinOxy(g2);
 			drawDoors(g2);
@@ -91,22 +91,7 @@ public class DoorsOxygen extends MFDSubcomponent {
 		resetPen(g2);
 	}
 
-	private void drawSlides(Graphics2D g2, boolean slide_armed){
-		String slide_str = "SLIDE";
-		int slide_left_x = mfd_gc.door_center_x - mfd_gc.door_cabin_width_dx - mfd_gc.door_slide_legend_dx - mfd_gc.get_text_width(g2, mfd_gc.font_l, slide_str);
-		int slide_right_x = mfd_gc.door_center_x + mfd_gc.door_cabin_width_dx + mfd_gc.door_slide_legend_dx;
-		g2.setColor(mfd_gc.ecam_markings_color);
-		g2.setFont(mfd_gc.font_l);
-		g2.drawString(slide_str, slide_left_x, mfd_gc.door_slide_wing_y);
-		g2.drawString(slide_str, slide_right_x, mfd_gc.door_slide_wing_y);
-		if (slide_armed) {
-			g2.drawString(slide_str, slide_left_x, mfd_gc.door_slide_top_y);
-			g2.drawString(slide_str, slide_right_x, mfd_gc.door_slide_top_y);
-			g2.drawString(slide_str, slide_left_x, mfd_gc.door_slide_aft_y);
-			g2.drawString(slide_str, slide_right_x, mfd_gc.door_slide_aft_y);
-		}
-	}
-	
+
 	private void drawCabinVS(Graphics2D g2) {
 		// Legends
 		String str_vs_legend = "V/S";
@@ -132,15 +117,40 @@ public class DoorsOxygen extends MFDSubcomponent {
 	}
 
 	private void drawCabinOxy(Graphics2D g2) {
+		/* A320 FCOM 1.35.20 p8 rev 25 
+		 * amber when < 400 psi, green when >= 400 psi
+		 * amber half frame when < 1500 psi (check minima)
+		 * 
+		 * REGUL LO PR : amber when <= 50 psi
+		 * 
+		 * OXY legend : amber when < 400 psi or OXYGEN CREW SUPPLY if set to OFF
+		 *
+		 * 		 
+		 * A330 FCOM 1.35.20 p8 rev 16 EIS version 2 MSN 0644 
+		 * Flash in green with < 600 psi
+		 * OXY legend amber < 300 psi
+		 * half frame when < 1000 psi
+		 * 
+		 */
+		// FCOM 1.35.20 p7 / cabin altitude above 35000 feet, 100% O2 in the mask
+		//  
+		
+		int oxy_val = Math.round(this.aircraft.crew_oxygen_psi());
 		// Legends
 		String str_oxy_legend = "OXY";
+		String str_regul_lo = "REGUL LO PR";
 		// Units
 		String str_oxy_units = "PSI";
 		// Values
-		String str_oxy = "XX";
+		String str_oxy = ""+Math.round(oxy_val/10)*10;
 		
-	    // Draw legends
-		g2.setColor(mfd_gc.ecam_markings_color);
+	    // Draw legends		
+		if (oxy_val < 400) {
+			g2.setColor(mfd_gc.ecam_caution_color);
+		} else {
+			g2.setColor(mfd_gc.ecam_markings_color);
+		}
+			
 		g2.setFont(mfd_gc.font_xl);
 		g2.drawString(str_oxy_legend , mfd_gc.door_oxy_legend_x, mfd_gc.door_oxy_y);
 
@@ -150,19 +160,76 @@ public class DoorsOxygen extends MFDSubcomponent {
 		g2.drawString(str_oxy_units, mfd_gc.door_oxy_unit_x, mfd_gc.door_oxy_y);
 		
 		// Draw values
-		g2.setColor(mfd_gc.ecam_caution_color);
+		if (oxy_val < 400) {
+			g2.setColor(mfd_gc.ecam_caution_color);
+		} else {
+			g2.setColor(mfd_gc.ecam_normal_color);
+		}
 		g2.setFont(mfd_gc.font_xxl);
 		g2.drawString(str_oxy, mfd_gc.door_oxy_value_x - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_oxy), mfd_gc.door_oxy_y);	
+		
+		// Low pressure alarm
+		if (oxy_val < 41) {
+			g2.setColor(mfd_gc.ecam_caution_color);
+			g2.setFont(mfd_gc.font_xxl);
+			g2.drawString(str_regul_lo , mfd_gc.door_oxy_legend_x, mfd_gc.door_oxy_y+ mfd_gc.line_height_xxl*10/8);			
+		}
+		
+		// Attention half box
+		if (oxy_val < 1500) {
+			int attn_y = mfd_gc.door_oxy_y + mfd_gc.line_height_xxl/8;
+			int attn_x = mfd_gc.door_oxy_value_x + mfd_gc.digit_width_xxl/8;
+			g2.setColor(mfd_gc.ecam_caution_color);
+			g2.drawLine(mfd_gc.door_oxy_value_x - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, str_oxy),attn_y, attn_x, attn_y);
+			g2.drawLine(attn_x,attn_y - mfd_gc.line_height_xxl, attn_x, attn_y);
+		}
 	}
 	
-	private void drawDoors(Graphics2D g2) {
+	private boolean allDoorClosed() {
 		for (int i = 0; i < mfd_gc.door_num; i++) {
-			if (mfd_gc.doors[i].closed) { 
-				g2.setColor(mfd_gc.ecam_normal_color); 
-			} else {
+			if (this.aircraft.door_unlocked(mfd_gc.doors[i].id)) return false;
+		}
+		return true;
+	}
+	
+	private void drawDoors(Graphics2D g2) { 
+		boolean slider_can_be_armed = allDoorClosed();
+		for (int i = 0; i < mfd_gc.door_num; i++) {
+			int legend_y = mfd_gc.doors[i].legend_m + mfd_gc.line_height_xl / 2;
+			if (this.aircraft.door_unlocked(mfd_gc.doors[i].id)) {				
 				g2.setColor(mfd_gc.ecam_caution_color);
-			}
-			g2.drawRect(mfd_gc.doors[i].x, mfd_gc.doors[i].y, mfd_gc.doors[i].width, mfd_gc.doors[i].height);
+				g2.fillRect(mfd_gc.doors[i].x, mfd_gc.doors[i].y, mfd_gc.doors[i].width, mfd_gc.doors[i].height);
+				if (mfd_gc.doors[i].legend_side == Door.LEGEND_LEFT) {
+					String legend_str = mfd_gc.doors[i].legend + " - - - - - ";
+					g2.setFont(mfd_gc.font_xl);
+					g2.drawString(legend_str, mfd_gc.door_center_x - mfd_gc.door_cabin_width_dx - mfd_gc.get_text_width(g2, mfd_gc.font_xl, legend_str), legend_y);
+				} else if (mfd_gc.doors[i].legend_side == Door.LEGEND_RIGHT) {
+					String legend_str = " - - - - - " + mfd_gc.doors[i].legend ;
+					g2.setFont(mfd_gc.font_xl);
+					g2.drawString(legend_str, mfd_gc.door_center_x + mfd_gc.door_cabin_width_dx, legend_y);					
+				}
+				mfd_gc.doors[i].closed = false;
+				mfd_gc.doors[i].slider_armed = false;
+			} else {
+				g2.setColor(mfd_gc.ecam_normal_color); 
+				g2.drawRect(mfd_gc.doors[i].x, mfd_gc.doors[i].y, mfd_gc.doors[i].width, mfd_gc.doors[i].height);
+				mfd_gc.doors[i].closed = true;
+				if (mfd_gc.doors[i].has_slider) {
+					mfd_gc.doors[i].slider_armed = slider_can_be_armed;
+					if (mfd_gc.doors[i].slider_armed) {
+						String slide_str = "SLIDE";
+						int slide_left_x = mfd_gc.door_center_x - mfd_gc.door_cabin_width_dx - mfd_gc.door_slide_legend_dx - mfd_gc.get_text_width(g2, mfd_gc.font_xl, slide_str);
+						int slide_right_x = mfd_gc.door_center_x + mfd_gc.door_cabin_width_dx + mfd_gc.door_slide_legend_dx;
+						g2.setColor(mfd_gc.ecam_markings_color);
+						g2.setFont(mfd_gc.font_xl);
+						if (mfd_gc.doors[i].legend_side == Door.LEGEND_LEFT) {
+							g2.drawString(slide_str, slide_left_x, legend_y);
+						} else {
+							g2.drawString(slide_str, slide_right_x, legend_y);
+						}
+					}
+				}
+			}				
 		}
 	}
 	

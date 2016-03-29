@@ -55,7 +55,7 @@ import net.sourceforge.xhsi.model.XfmcData;
 public class CDUComponent extends Component implements Observer, PreferencesObserver, MouseInputListener, KeyListener {
 
     private static final long serialVersionUID = 1L;
-    public static boolean COLLECT_PROFILING_INFORMATION = true;
+    public static boolean COLLECT_PROFILING_INFORMATION = false;
     public static long NB_OF_PAINTS_BETWEEN_PROFILING_INFO_OUTPUT = 100;
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 

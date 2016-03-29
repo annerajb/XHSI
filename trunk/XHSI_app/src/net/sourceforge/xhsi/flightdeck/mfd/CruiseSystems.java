@@ -33,13 +33,14 @@ import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSIPreferences;
 import net.sourceforge.xhsi.XHSISettings;
+import net.sourceforge.xhsi.model.Aircraft.CabinZone;
 import net.sourceforge.xhsi.model.Airport;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.FMSEntry;
 import net.sourceforge.xhsi.model.Localizer;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.NavigationObjectRepository;
-import net.sourceforge.xhsi.model.Aircraft.ValveStatus;
+
 
 public class CruiseSystems extends MFDSubcomponent {
 
@@ -287,15 +288,24 @@ public class CruiseSystems extends MFDSubcomponent {
         g2.drawString(unit_str, mfd_gc.crz_cab_zone2_x - mfd_gc.get_text_width(g2, mfd_gc.font_l, unit_str)/2 , mfd_gc.crz_cab_temp_legend_y-mfd_gc.line_height_xxl/5);
         
         // cabin air temperatures
-        g2.setColor(mfd_gc.ecam_caution_color);
-        String value_str="XX";
-        g2.setFont(mfd_gc.font_xxl);
-        g2.drawString(value_str, mfd_gc.crz_cab_gauge1_x - mfd_gc.line_height_xxl/2 - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, value_str), mfd_gc.crz_cab_temp_y);
-        g2.drawString(value_str, mfd_gc.crz_cab_gauge2_x - mfd_gc.line_height_xxl/2 - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, value_str), mfd_gc.crz_cab_temp_y);
-        g2.drawString(value_str, mfd_gc.crz_cab_gauge3_x - mfd_gc.line_height_xxl/2 - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, value_str), mfd_gc.crz_cab_temp_y);
-       
+        drawCabinTemp(g2, mfd_gc.crz_cab_gauge1_x, mfd_gc.crz_cab_temp_y, this.aircraft.cabin_temp(CabinZone.COCKPIT));
+        drawCabinTemp(g2, mfd_gc.crz_cab_gauge2_x, mfd_gc.crz_cab_temp_y, this.aircraft.cabin_temp(CabinZone.FORWARD));
+        drawCabinTemp(g2, mfd_gc.crz_cab_gauge3_x, mfd_gc.crz_cab_temp_y, this.aircraft.cabin_temp(CabinZone.AFT));
     }
 
+    private void drawCabinTemp(Graphics2D g2, int x, int y, float temp) {        
+        String value_str="XX";
+        g2.setFont(mfd_gc.font_xxl);
+        if (temp > -99.0f) {
+            g2.setColor(mfd_gc.ecam_normal_color);
+            value_str="" + Math.round(temp);
+        } else {
+            g2.setColor(mfd_gc.ecam_caution_color);
+            value_str="XX";	
+        }
+        g2.drawString(value_str, x - mfd_gc.line_height_xxl/2 - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, value_str), y);
+    }
+    
     private void drawStringSmallOneDecimal(Graphics2D g2, int x, int y, Font normalFont, Font smallFont, float value) {
     	// Value, decimal part in smaller font
     	// Justify Right
