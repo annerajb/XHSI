@@ -293,6 +293,12 @@ XPLMDataRef jar_a320_neo_hydr_y_eng_pump_fault_light;
 XPLMDataRef jar_a320_neo_hydr_y_eng_pump_mode;
 XPLMDataRef jar_a320_neo_hydr_y_press_aft_acc_old;
 
+// OXY
+XPLMDataRef jar_a320_neo_oxy_crewsupp;
+XPLMDataRef jar_a320_neo_oxy_manon;
+XPLMDataRef jar_a320_neo_oxy_sys_on;
+XPLMDataRef jar_a320_neo_oxy_textoxy;
+
 // PRESSURE
 XPLMDataRef jar_a320_neo_press_alt_rot;
 XPLMDataRef jar_a320_neo_press_mode;
@@ -341,7 +347,7 @@ XPLMDataRef jar_a320_mcdu_click[JAR_A320_MAX_MCDU_KEYS];
 int jar_a320_neo_ready = 0;
 
 /*
- * JarDesign a320neo dataref list
+ * JarDesign a320neo dataref todo list
  *
 sim/custom/rev[0]
 sim/custom/terr_on_nd
@@ -404,13 +410,6 @@ sim/custom/xap/lght_oh_cent[0]
 sim/custom/xap/lght_oh_left[0]
 sim/custom/xap/lght_oh_rght[0]
 sim/custom/xap/lght_upd[0]
-*
-* OXY
-*
-sim/custom/xap/oxy/crewsupp[0]
-sim/custom/xap/oxy/manon[0]
-sim/custom/xap/oxy/sys_on[0]
-sim/custom/xap/oxy/testoxy[0]
 *
 * RADIO
 *
@@ -712,6 +711,12 @@ void findJarA320NeoDataRefs(void) {
             jar_a320_neo_hydr_y_eng_pump_fault_light = XPLMFindDataRef("sim/custom/xap/hydr/y/engpump/faultlight");
             jar_a320_neo_hydr_y_eng_pump_mode = XPLMFindDataRef("sim/custom/xap/hydr/y/engpump/mode");
             jar_a320_neo_hydr_y_press_aft_acc_old = XPLMFindDataRef("sim/custom/xap/hydr/y/press_aft_acc_old");
+
+            // OXY
+            jar_a320_neo_oxy_crewsupp = XPLMFindDataRef("sim/custom/xap/oxy/crewsupp");
+            jar_a320_neo_oxy_manon = XPLMFindDataRef("sim/custom/xap/oxy/manon");
+            jar_a320_neo_oxy_sys_on = XPLMFindDataRef("sim/custom/xap/oxy/sys_on");
+            jar_a320_neo_oxy_textoxy = XPLMFindDataRef("sim/custom/xap/oxy/testoxy");
 
             // PRESSURE
             jar_a320_neo_press_alt_rot = XPLMFindDataRef("sim/custom/xap/press/alt_rot");

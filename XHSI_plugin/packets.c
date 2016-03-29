@@ -506,41 +506,109 @@ int createAvionicsPacket(void) {
     int xhsi_cdu_source;
     int wheel_status;
     int tire_status;
-    // int elec_status;
+    int elec_status;
+    int bat;
+    float battery_volt[8];
+    float battery_amp[8];
+    int battery_status[8];
+    int gen;
+    int generators_status;
+    int generators_on[8];
+    int inverters[2];
+    float generators_amps[8];
+    float bus_volts[6];
+    float bus_load_amps[6];
+    int bus_on[6];
+    int bus;
 
     strncpy(sim_packet.packet_id, "AVIO", 4);
 
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_ELECTRICAL_AVIONICS_ON);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(avionics_on));
     i++;
+
+    XPLMGetDatavi(elec_battery_on, battery_status,0,4);
+    bat = battery_status[0] | battery_status[1] << 1 | battery_status[2] << 2 | battery_status[3] << 3;
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_ELECTRICAL_BATTERY_ON);
-    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(battery_on));
+    // sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(battery_on));
+    sim_packet.sim_data_points[i].value = custom_htonf((float) bat);
     i++;
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_ELECTRICAL_COCKPIT_LIGHTS_ON);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(cockpit_lights_on));
     i++;
 
-    // electric status
-    /*
-    elec_status = XPLMGetDatai(elec_gpu_on) |
-    		XPLMGetDatai(ram_air_turbin) << 2;
-    */
-    		// 1 bits per engine generator on
-    /*
-     elec_battery_on [0/8];
-     elec_battery_amps [0/8];
-     elec_voltage_actual_volts [0/8];
-     elec_voltage_indicated_volts [0/8];
-     elec_generator_on [0/8];
-     elec_generator_amps [0/8];
-     elec_gpu_on;
-     elec_gpu_amps;
-     elec_inverter_on [0/2]
-     elec_bus_load_amps [0/6]
-     elec_bus_volts [0/6];
-     ram_air_turbin;
-     */
+    if (qpac_ready) {
+    	XPLMGetDatavf(qpac_elec_battery_volt, battery_volt, 0, 4);
+    } else {
+    	XPLMGetDatavf(elec_voltage_actual_volts, battery_volt, 0, 4);
+    }
+    XPLMGetDatavf(elec_battery_amps, battery_amp, 0, 4);
+    for (bat=0; bat<4; bat++) {
+        sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_ELECTRICAL_BATTERY_VOLT_ + bat);
+        sim_packet.sim_data_points[i].value = custom_htonf( battery_volt[bat] );
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_ELECTRICAL_BATTERY_AMP_ + bat);
+        sim_packet.sim_data_points[i].value = custom_htonf( battery_amp[bat] );
+        i++;
+    }
 
+    // electric status
+
+    XPLMGetDatavf(elec_bus_volts, bus_volts, 0, 6);
+    for (bus=0;bus<6;bus++) bus_on[bus] = bus_volts[bus] > 1.0;
+    XPLMGetDatavi(elec_inverter_on, inverters, 0, 2);
+    elec_status =
+    		bus_on[0] |
+    		bus_on[1] << 1 |
+    		bus_on[2] << 2 |
+    		bus_on[3] << 3 |
+    		bus_on[4] << 4 |
+    		bus_on[5] << 5 |
+    		inverters[0] << 6 |
+    		inverters[1] << 7;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_ELECTRICAL_INV_BUS_STATUS);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) elec_status);
+    i++;
+
+    XPLMGetDatavf(elec_bus_load_amps, bus_load_amps, 0, 6);
+    for (bus=0; bus<6; bus++) {
+        sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_ELECTRICAL_BUS_LOAD_ + bus);
+        sim_packet.sim_data_points[i].value = custom_htonf( bus_load_amps[bus] );
+        i++;
+    }
+
+    XPLMGetDatavf(elec_generator_amps, generators_amps, 0, 8);
+    for (gen=0; gen<8; gen++) {
+        sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_ELECTRICAL_GENERATOR_AMPS_ + gen);
+        sim_packet.sim_data_points[i].value = custom_htonf( generators_amps[gen] );
+        i++;
+    }
+
+    XPLMGetDatavi(elec_generator_on, generators_on, 0, 8);
+    generators_status = generators_on[0] | generators_on[1] << 1 | generators_on[2] << 2 | generators_on[3] << 3 |
+    		generators_on[4] << 4 | generators_on[5] << 5 | generators_on[6] << 6 | generators_on[7] << 7;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_ELECTRICAL_GENERATOR_STATUS);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) generators_status);
+    i++;
+
+    // APU, GPU, RAM AIR TURBIN
+    sim_packet.sim_data_points[i].id = custom_htoni(APU_N1);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(apu_n1));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(APU_GEN_AMP);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(apu_gen_amp));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(GPU_GEN_AMP);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(elec_gpu_amps));
+    i++;
+    apu_status = XPLMGetDatai(elec_gpu_on) << 6 |
+    		XPLMGetDatai(ram_air_turbin) << 5 |
+    		XPLMGetDatai(apu_running) << 4 |
+    		XPLMGetDatai(apu_gen_on) << 2 |
+    		XPLMGetDatai(apu_starter); // Starter on 2 bits
+    sim_packet.sim_data_points[i].id = custom_htoni(AUX_GEN_STATUS);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) apu_status);
+    i++;
 
     // Standard gauges failures
     // Each value is on 3 bits (enum failure integer 0 to 6)
@@ -892,6 +960,9 @@ int createAvionicsPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_MFD_MODE);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(mfd_mode));
     i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_CREW_OXY_PSI);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(mfd_crew_oxy_psi));
+    i++;
 
 
 // CDU
@@ -975,23 +1046,6 @@ int createAvionicsPacket(void) {
     i++;
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_AUTOPILOT_HEADING_ROLL_MODE);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(autopilot_heading_roll_mode));
-    i++;
-
-    // APU
-    // TODO : send only when data has been modified - i.e. when APU off, don't send
-    sim_packet.sim_data_points[i].id = custom_htoni(APU_N1);
-    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(apu_n1));
-    i++;
-    sim_packet.sim_data_points[i].id = custom_htoni(APU_GEN_AMP);
-    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(apu_gen_amp));
-    i++;
-    apu_status = XPLMGetDatai(elec_gpu_on) << 6 |
-    		XPLMGetDatai(ram_air_turbin) << 5 |
-    		XPLMGetDatai(apu_running) << 4 |
-    		XPLMGetDatai(apu_gen_on) << 2 |
-    		XPLMGetDatai(apu_starter); // Starter on 2 bits
-    sim_packet.sim_data_points[i].id = custom_htoni(AUX_GEN_STATUS);
-    sim_packet.sim_data_points[i].value = custom_htonf((float) apu_status);
     i++;
 
     // Cabin Pressure
@@ -1096,9 +1150,15 @@ int createCustomAvionicsPacket(void) {
     int qpac_fuel_valves_tab[6];
     int qpac_air_valves;
     int qpac_bleed_valves;
+    float qpac_door_pax_tab[4];
+    float qpac_door_cargo_tab[4];
+    int qpac_elec_buttons;
+    int qpac_elec_oph_tab[4];
+    float qpac_nacelle_temp_tab[4];
 
     int auto_brake_level;
     int brake_status;
+    int door_status;
 
     int pa_a320_failures;
 
@@ -1723,7 +1783,7 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_air_valves );
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_OUTFLOW_VALVE);
-        sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(qpac_outflow_valve) );
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_outflow_valve));
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_COND_COCKPIT_TRIM);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cond_cockpit_trim));
@@ -1748,20 +1808,49 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BLEED_VALVES);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_bleed_valves );
         i++;
+
         /*
-         *
         // ENG lower ECAM
         qpac_ewd_start_mode = XPLMFindDataRef("AirbusFBW/EWDStartMode");
         qpac_start_valve_array = XPLMFindDataRef("AirbusFBW/StartValveArray");
-        qpac_nacelle_temp_array = XPLMFindDataRef("AirbusFBW/NacelleTempArray");
+        */
+
+        XPLMGetDatavf(qpac_nacelle_temp_array, qpac_nacelle_temp_tab, 0, 2);
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_NACELLE_TEMP_ + 0);
+        sim_packet.sim_data_points[i].value = custom_htonf( qpac_nacelle_temp_tab[0] );
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_NACELLE_TEMP_ + 1);
+        sim_packet.sim_data_points[i].value = custom_htonf( qpac_nacelle_temp_tab[1] );
+        i++;
+
         // COND
+        // TODO: These temperature are the overhead panel target temp settings, not the real cabin temps
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_COND_COCKPIT_TEMP);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_cond_cockpit_temp));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_COND_AFT_CABIN_TEMP);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_cond_aft_cabin_temp));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_COND_FWD_CABIN_TEMP);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_cond_fwd_cabin_temp));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_PACK1_FLOW);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_bleed_pack1_flow));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_PACK2_FLOW);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_bleed_pack2_flow));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_PACK1_TEMP);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_bleed_pack1_temp));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_PACK2_TEMP);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_bleed_pack2_temp));
+        i++;
+
+        /*
         qpac_cond_hot_air_valve = XPLMFindDataRef("AirbusFBW/HotAirValve");
         // Bleed
         qpac_bleed_intercon = XPLMFindDataRef("AirbusFBW/BleedIntercon");
-        qpac_bleed_pack1_flow = XPLMFindDataRef("AirbusFBW/Pack1Flow");
-        qpac_bleed_pack2_flow = XPLMFindDataRef("AirbusFBW/Pack2Flow");
-        qpac_bleed_pack1_temp = XPLMFindDataRef("AirbusFBW/Pack1Temp");
-        qpac_bleed_pack2_temp = XPLMFindDataRef("AirbusFBW/Pack2Temp");
         qpac_bleed_ram_air = XPLMFindDataRef("AirbusFBW/RamAirValueSD");
         // APU
         qpac_apu_egt = XPLMFindDataRef("AirbusFBW/");
@@ -1810,6 +1899,25 @@ int createCustomAvionicsPacket(void) {
         qpac_fuel_tv_array;
         */
 
+        // Doors
+        if (qpac_door_pax_array != NULL) {
+        	XPLMGetDatavf(qpac_door_pax_array, qpac_door_pax_tab, 0, 4);
+        	XPLMGetDatavf(qpac_door_cargo_array, qpac_door_cargo_tab, 0, 4);
+        	door_status = (XPLMGetDataf(qpac_door_bulk_door)>0.0f) |
+        			(qpac_door_pax_tab[0]>0.0) << 1 |
+        			(qpac_door_pax_tab[1]>0.0) << 2 |
+        			(qpac_door_pax_tab[2]>0.0) << 3 |
+        			(qpac_door_pax_tab[3]>0.0) << 4 |
+        			(qpac_door_cargo_tab[0]>0.0) << 5 |
+        			(qpac_door_cargo_tab[1]>0.0) << 6 ;
+        } else {
+        	// TODO: based on beacon
+        	door_status = 0x01;
+        }
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_DOOR_STATUS);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) door_status);
+        i++;
+
         // ELEC
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ELEC_AC_CROSS);
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_elec_ac_cross_connect));
@@ -1823,6 +1931,15 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ELEC_CX_RIGHT);
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_elec_connect_right));
         i++;
+        XPLMGetDatavi(qpac_elec_ohp_array, qpac_elec_oph_tab, 0, 4);
+        qpac_elec_buttons = qpac_elec_oph_tab[0] |
+        		qpac_elec_oph_tab[1] << 1 |
+        		qpac_elec_oph_tab[2] << 2 |
+        		qpac_elec_oph_tab[3] << 3;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ELEC_BUTTONS);
+        sim_packet.sim_data_points[i].value = custom_htonf((float) qpac_elec_buttons);
+        i++;
+
 
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_SD_PAGE);
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_sd_page));
@@ -2054,6 +2171,16 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_hydr_ptu_delta));
         i++;
 
+        // Doors
+        door_status =  (XPLMGetDataf(jar_a320_neo_doors_c_b_now) > 0.01) |
+        		(XPLMGetDataf(jar_a320_neo_doors_c_f_now) > 0.01) << 1 |
+        		(XPLMGetDataf(jar_a320_neo_doors_p_b_l_now) > 0.01) << 2 |
+        		(XPLMGetDataf(jar_a320_neo_doors_p_b_r_now) > 0.01) << 3 |
+        		(XPLMGetDataf(jar_a320_neo_doors_p_f_l_now) > 0.01) << 4 |
+        		(XPLMGetDataf(jar_a320_neo_doors_p_f_r_now) > 0.01) << 5;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_DOOR_STATUS);
+        sim_packet.sim_data_points[i].value = custom_htonf( (float) door_status );
+        i++;
     }
 
 

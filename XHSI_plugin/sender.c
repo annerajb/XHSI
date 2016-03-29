@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#define XPLM200 1
+
 // mingw-64 demands that winsock2.h is loaded before windows.h
 #if IBM
 #include <winsock2.h>
@@ -35,6 +37,7 @@
 #include "packets.h"
 #include "net.h"
 #include "datarefs.h"
+#include "datarefs_qpac.h"
 
 //char pack_msg[200];
 
@@ -185,6 +188,9 @@ float sendEnginesCallback(
 	int e;
 	float tab_fuel_flow[8];
 	float tab_fuel_used[8];
+	float crew_oxygen;
+	float cabin_alt;
+	float oxy_ratio=100.0;
     int sim_run = !XPLMGetDatai(sim_paused);
 	// Compute fuel used
 	if (xhsi_plugin_enabled && sim_run) {
@@ -195,7 +201,48 @@ float sendEnginesCallback(
 	    	tab_fuel_used[e] += tab_fuel_flow[e] * inElapsedSinceLastCall;
 	    }
 	    XPLMSetDatavf(mfd_fuel_used, tab_fuel_used, 0, engines);
+	    crew_oxygen = XPLMGetDataf(mfd_crew_oxy_psi);
+	    if (crew_oxygen > 0.0f) {
+
+	    	// Small leak : 1 psi per hour
+	    	crew_oxygen -= 0.001 * inElapsedSinceLastCall;
+	    	if (qpac_ready && (qpac_crew_oxy_mask!=NULL)) {
+	    		// cabin_alt = XPLMGetDataf(qpac_cabin_alt);
+	    		cabin_alt = XPLMGetDataf(cabin_altitude);
+	    		if (XPLMGetDatai(qpac_crew_oxy_mask) == 1){
+	    			// O2 is diluted when cabin is below 35000 feet
+	    			if (cabin_alt<35000.0)
+	    				oxy_ratio = (cabin_alt-8000 > 6500.0 ? cabin_alt-8000 : 6500.0)/27000;
+	    			else
+	    				oxy_ratio = 100.0;
+	    			crew_oxygen -= (0.4794 * oxy_ratio - 0.05827) * inElapsedSinceLastCall;
+	    		}
+	    	}
+	    	XPLMSetDataf(mfd_crew_oxy_psi, crew_oxygen);
+
+	    	/* Airbus with mask on : 800 psi for 15 mn at cabin altitude of 8000 feet 100% O2
+	    	 *  - checked / coherent with formula
+	    	 * if qpac, rely on qpac_crew_oxy_mask = 1 and on cabin altitude
+	    	 * A320 AMM 35.11.00 page 1:
+	    	 *   The cylinder has a capacity of 2183 l (77 cubic feet) (NTPD: Normal
+	    	 *   Temperature Pressure Dry) at a pressure of 127.5 bar (1850 psig).
+	    	 * A330 AMM 35.11.00 page 7 : Same cylinder
+	    	 * Medical table for 1 adult body :
+	    	 * 100% O2 = 15 l/mn = 0.250 l/s [Maximum]
+	    	 * 80% O2 = 10 l/mn = 0.166 l/s
+	    	 * 40% O2 = 6 l/mn = 0.100 l/s
+	    	 * 24% O2 = 2 l/mn = 0.033 l/s [Minimum]
+	    	 * Formula from oxygen ratio to l/s (linear approximation)
+	    	 * f(x) = 0.283 * x - 0.0334
+	    	 * Formula from oxygen ratio to psi/s for 2 pilot based on A320 cylinder capacity
+	    	 * f(x) = 0.4794 * x - 0.05827
+	    	 * TODO : temperature correction (in flight Ref. temp. = cabin temp. - 10° c)
+	    	 */
+	    }
+
+
 	}
+
 
 	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open) {
 

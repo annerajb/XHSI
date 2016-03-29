@@ -104,6 +104,20 @@ extern XPLMDataRef jar_a320_neo_brakes_left_press;
 extern XPLMDataRef jar_a320_neo_brakes_right_press;
 extern XPLMDataRef jar_a320_neo_brakes_mode_na;
 
+// Doors
+extern XPLMDataRef jar_a320_neo_doors_c_b_kn;
+extern XPLMDataRef jar_a320_neo_doors_c_b_now;
+extern XPLMDataRef jar_a320_neo_doors_c_f_kn;
+extern XPLMDataRef jar_a320_neo_doors_c_f_now;
+extern XPLMDataRef jar_a320_neo_doors_p_b_l_kn;
+extern XPLMDataRef jar_a320_neo_doors_p_b_l_now;
+extern XPLMDataRef jar_a320_neo_doors_p_b_r_kn;
+extern XPLMDataRef jar_a320_neo_doors_p_b_r_now;
+extern XPLMDataRef jar_a320_neo_doors_p_f_l_kn;
+extern XPLMDataRef jar_a320_neo_doors_p_f_l_now;
+extern XPLMDataRef jar_a320_neo_doors_p_f_r_kn;
+extern XPLMDataRef jar_a320_neo_doors_p_f_r_now;
+
 // FMS
 extern XPLMDataRef jar_a320_neo_fms_tr_alt;
 // integer : transition altitude
@@ -143,6 +157,13 @@ extern XPLMDataRef jar_a320_neo_hydr_y_elec_pump_mode;
 extern XPLMDataRef jar_a320_neo_hydr_y_eng_pump_fault_light;
 extern XPLMDataRef jar_a320_neo_hydr_y_eng_pump_mode;
 extern XPLMDataRef jar_a320_neo_hydr_y_press_aft_acc_old;
+
+
+// OXY
+extern XPLMDataRef jar_a320_neo_oxy_crewsupp;
+extern XPLMDataRef jar_a320_neo_oxy_manon;
+extern XPLMDataRef jar_a320_neo_oxy_sys_on;
+extern XPLMDataRef jar_a320_neo_oxy_textoxy;
 
 // WHEELS
 extern XPLMDataRef jar_a320_neo_wheels_brake_fan;

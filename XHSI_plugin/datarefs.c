@@ -46,6 +46,7 @@ XPLMDataRef override_trq_max;
 // custom datarefs - MFD
 XPLMDataRef mfd_mode;
 XPLMDataRef mfd_fuel_used;
+XPLMDataRef mfd_crew_oxy_psi;
 
 // custom datarefs - CDU
 XPLMDataRef cdu_pilot_source;
@@ -658,6 +659,19 @@ void	setFuelUsed(
 }
 
 
+
+// xhsi/mfd/crew_oxy_psi
+float crew_oxy_psi;
+float getCrewOxyPsi(void *inRefcon)
+{
+    return crew_oxy_psi;
+}
+void	setCrewOxyPsi(void* inRefcon, float inValue)
+{
+	crew_oxy_psi = inValue;
+}
+
+
 // xhsi/cdu_pilot/source
 int cdu_pilot_source_value;
 int     getPilotCDUSource(void* inRefcon)
@@ -1257,12 +1271,22 @@ void registerMFDDataRefs(void) {
 
     // xhsi/mfd/fuel_used
     mfd_fuel_used = XPLMRegisterDataAccessor("xhsi/mfd/fuel_used",
-    									xplmType_FloatArray,                                 // The types we support
-                                        1,                                                   // Writable
-                                        NULL, NULL,      // Integer accessors
+    									xplmType_FloatArray,                // The types we support
+                                        1,                                  // Writable
+                                        NULL, NULL,      					// Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL,
-                                        getFuelUsed, setFuelUsed, 								   // Float array accessors
-                                        NULL, NULL, NULL, NULL);                                   // Refcons not used
+                                        getFuelUsed, setFuelUsed, 			// Float array accessors
+                                        NULL, NULL, NULL, NULL);            // Refcons not used
+
+    // xhsi/mfd/crew_oxy_psi
+    mfd_crew_oxy_psi = XPLMRegisterDataAccessor("xhsi/mfd/crew_oxy_psi",
+			xplmType_Float,  // The types we support
+            1,               // Writable
+            NULL, NULL,      // Integer accessors
+            getCrewOxyPsi, setCrewOxyPsi,		// Float accessors
+            NULL, NULL, NULL, NULL,
+            NULL, NULL, 	 // Float array accessors
+            NULL, NULL, NULL, NULL);
 
     XPLMDebugString("XHSI: custom MFD DataRefs registered\n");
 
@@ -1307,6 +1331,7 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rwy_units");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/mode");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/fuel_used");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/crew_oxy_psi");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu_pilot/source");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu_copilot/source");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/engine_type");
@@ -1529,6 +1554,10 @@ float initMFDCallback(
     // xhsi/mfd/fuel_used float[8]
 	XPLMSetDatavf(mfd_fuel_used, zero_tab, 0, 8);
 
+	// xhsi/mfd/crew_oxy_psi
+	// TODO: Init value should be read from XHSI Aircraft preference file
+	XPLMSetDataf(mfd_crew_oxy_psi, 1850.0f);
+
 	XPLMDebugString("XHSI: custom MFD DataRefs initialized\n");
 
     return 0.0f;
@@ -1671,6 +1700,9 @@ void unregisterMFDDataRefs(void) {
 
     // xhsi/mfd_fuel_used
     XPLMUnregisterDataAccessor(mfd_fuel_used);
+
+    // xhsi/mfd_crew_oxy_psi
+    XPLMUnregisterDataAccessor(mfd_crew_oxy_psi);
 
 }
 
@@ -2093,8 +2125,8 @@ void findDataRefs(void) {
     // Batteries
     elec_battery_on = XPLMFindDataRef("sim/cockpit2/electrical/battery_on");
     elec_battery_amps = XPLMFindDataRef("sim/cockpit2/electrical/battery_amps");
-    elec_voltage_actual_volts = XPLMFindDataRef("sim/cockpit2/electrical/battery_actual_volts");
-    elec_voltage_indicated_volts = XPLMFindDataRef("sim/cockpit2/electrical/battery_indicated_volts");
+    elec_voltage_actual_volts = XPLMFindDataRef("sim/cockpit2/electrical/battery_voltage_actual_volts");
+    elec_voltage_indicated_volts = XPLMFindDataRef("sim/cockpit2/electrical/battery_voltage_indicated_volts");
     // Generator
     elec_generator_on = XPLMFindDataRef("sim/cockpit2/electrical/generator_on");
     elec_generator_amps = XPLMFindDataRef("sim/cockpit2/electrical/generator_amps");
@@ -2340,6 +2372,9 @@ void writeDataRef(int id, float value) {
             XPLMSetDatai(mfd_mode , (int)value);
             break;
 
+        case XHSI_CREW_OXY_PSI :
+            XPLMSetDataf(mfd_crew_oxy_psi , value);
+            break;
 
         // CDU
 
