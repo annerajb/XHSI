@@ -32,6 +32,8 @@ public interface Aircraft {
     public enum PumpStatus { OFF, ON, LOW_PRESSURE, FAILED }; 
     public enum HydPTUStatus { OFF, STANDBY, LEFT, RIGHT };
     public enum ElecBus { NONE, BUS_1, BUS_2, BOTH };
+    public enum DoorId { FRONT_LEFT, FRONT_RIGHT, MIDDLE_LEFT, MIDDLE_RIGHT, AFT_LEFT, AFT_RIGHT, FRONT_CARGO, AFT_CARGO, BULK, NONE };
+    public enum CabinZone { COCKPIT, FORWARD, AFT, MIDDLE, CARGO_AFT, CARGO_FWD, UPPER_AFT, UPPER_FORWARD, UPPER_MIDDLE };
     
     // Bleed valve circuits
     public final static int BLEED_VALVE_CROSS = 0;
@@ -1128,6 +1130,16 @@ public interface Aircraft {
     public int num_buses();
 
     /**
+     * @return float - electric bus load (amps) 
+     */  
+    public float bus_load_amps(int bus);
+
+    /**
+     * @return boolean - true if electric bus is powered (volt > 1v) 
+     */  
+    public boolean bus_powered(int bus);
+    
+    /**
      * @return int - Number of generators (may differ from number of engines) 
      */  
     public int num_generators();
@@ -1135,7 +1147,12 @@ public interface Aircraft {
     /**
      * @return int - Number of inverters 
      */  
-    public int num_inverters();    
+    public int num_inverters();  
+    
+    /**
+     * @return boolean - True if the inverter is on 
+     */     
+    public boolean inverter_on(int inv);
     
     /**
      * @return boolean - AC bus tie 
@@ -1146,7 +1163,12 @@ public interface Aircraft {
      * @return ElecBus - APU AC bus connection 
      */  
     public ElecBus apu_on_bus();
-    
+
+    /**
+     * @return boolean - APU disconnected from overhead panel
+     */  
+    public boolean apu_disc();
+
     /**
      * @return ElecBus - GPU AC bus connection
      */  
@@ -1156,13 +1178,44 @@ public interface Aircraft {
      * @return ElecBus - AC Essential bus connection (AC1 or AC2) 
      */  
     public ElecBus ac_ess_on_bus();
-        
+
+    /**
+     * @return ElecBus - DC Essential bus connection (DC_1, DC_2, ESS_TR, DC_BAT, NONE) 
+     */  
+    public ElecBus dc_ess_on_bus();
+    
     /**
      * @return boolean - Engine Generator on bus (nb gen. may differ from number of engines) 
      */  
     public boolean eng_gen_on_bus(int eng);  
-        
     
+    /**
+     * @return boolean - Engine Generator on (nb gen. may differ from number of engines) 
+     */          
+    public boolean eng_gen_on(int eng);
+  
+    /**
+     * @return boolean - Engine Generator disconnected (nb gen. may differ from number of engines)
+     * Overhead panel action 
+     */          
+    public boolean eng_gen_disc(int eng);
+   
+    
+    /**
+     * @return float - Battery voltage 
+     */  
+    public float battery_volt(int bat);  
+    
+    /**
+     * @return float - Battery current 
+     */  
+    public float battery_amp(int bat);  
+
+    /**
+     * @return boolean - Battery is on 
+     */  
+    public boolean battery_on(int bat);  
+
     /**
      * @return boolean - Aircraft has Bleed Air Circuits (ENG & APU)
      */
@@ -1207,5 +1260,25 @@ public interface Aircraft {
      * @return Float - Cabin pressurization safety valve ratio (0.0=closed 1.0=fully opened)
      */
     public float cabin_safety_valve();
+
+    /**
+     * @return Float - Cabin air temperature
+     */
+    public float cabin_temp(CabinZone zone);
+
+    /**
+     * @return Float - Cabin hot air trim 
+     */
+    public float cabin_hot_air_trim(CabinZone zone);   
+    
+    /**
+     * @return Float - Cabin crew oxygen bottle pressure
+     */
+    public float crew_oxygen_psi(); 
+    
+    /**
+     * @return Boolean - True if door is unlocked, False if door is locked and secured
+     */
+    public boolean door_unlocked(DoorId door);
     
 }

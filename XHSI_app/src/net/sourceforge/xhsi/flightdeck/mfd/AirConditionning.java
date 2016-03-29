@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
+import net.sourceforge.xhsi.model.Aircraft.CabinZone;
 import net.sourceforge.xhsi.model.Aircraft.ValveStatus;
 
 public class AirConditionning extends MFDSubcomponent {
@@ -100,15 +101,23 @@ public class AirConditionning extends MFDSubcomponent {
         g2.drawString(legend_str, mfd_gc.cab_gauge3_x - mfd_gc.get_text_width(g2, mfd_gc.font_xl, legend_str), mfd_gc.cab_noose_y);
 
         // cabin air temperatures
+        /*
         g2.setColor(mfd_gc.ecam_caution_color);
         String value_str="XX";
         g2.setFont(mfd_gc.font_xxl);
         g2.drawString(value_str, mfd_gc.cab_zone1_x - mfd_gc.line_height_xxl/2 - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, value_str), mfd_gc.cab_noose_y);
         g2.drawString(value_str, mfd_gc.cab_zone2_x - mfd_gc.line_height_xxl/2 - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, value_str), mfd_gc.cab_noose_y);
         g2.drawString(value_str, mfd_gc.cab_aft_x + mfd_gc.line_height_xxl*10/8 - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, value_str), mfd_gc.cab_noose_y);
+        */
+        // cabin air temperatures
+        drawCabinTemp(g2, mfd_gc.cab_zone1_x, mfd_gc.cab_noose_y, this.aircraft.cabin_temp(CabinZone.COCKPIT));
+        drawCabinTemp(g2, mfd_gc.cab_zone2_x, mfd_gc.cab_noose_y, this.aircraft.cabin_temp(CabinZone.FORWARD));
+        drawCabinTemp(g2, mfd_gc.cab_aft_x + mfd_gc.line_height_xxl*14/8, mfd_gc.cab_noose_y, this.aircraft.cabin_temp(CabinZone.AFT));
         
         // inlet air temperatures (after trim valves)
         g2.setFont(mfd_gc.font_l);
+        g2.setColor(mfd_gc.ecam_caution_color);
+        String value_str="XX";
         int cab_inlet_air_y =  mfd_gc.cab_bottom_y + mfd_gc.line_height_l /2;
         g2.drawString(value_str, mfd_gc.cab_gauge1_x + mfd_gc.digit_width_l * 3 / 2 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, value_str), cab_inlet_air_y);
         g2.drawString(value_str, mfd_gc.cab_gauge2_x + mfd_gc.digit_width_l * 3 / 2 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, value_str), cab_inlet_air_y);
@@ -128,11 +137,25 @@ public class AirConditionning extends MFDSubcomponent {
         drawValveHoriz(g2, ValveStatus.VALVE_OPEN, mfd_gc.cab_hot_air_valve_x, mfd_gc.cab_hot_air_y);
 
         // trim gauges
-        drawGauge(g2, 0, mfd_gc.cab_gauge1_x, mfd_gc.cab_gauge_y);
-        drawGauge(g2, 0, mfd_gc.cab_gauge2_x, mfd_gc.cab_gauge_y);
-        drawGauge(g2, 0, mfd_gc.cab_gauge3_x, mfd_gc.cab_gauge_y);
+        drawGauge(g2, this.aircraft.cabin_hot_air_trim(CabinZone.COCKPIT), mfd_gc.cab_gauge1_x, mfd_gc.cab_gauge_y);
+        drawGauge(g2, this.aircraft.cabin_hot_air_trim(CabinZone.FORWARD), mfd_gc.cab_gauge2_x, mfd_gc.cab_gauge_y);
+        drawGauge(g2, this.aircraft.cabin_hot_air_trim(CabinZone.AFT), mfd_gc.cab_gauge3_x, mfd_gc.cab_gauge_y);
 
     }
+    
+    private void drawCabinTemp(Graphics2D g2, int x, int y, float temp) {        
+        String value_str="XX";
+        g2.setFont(mfd_gc.font_xxl);
+        if (temp > -99.0f) {
+            g2.setColor(mfd_gc.ecam_normal_color);
+            value_str="" + Math.round(temp);
+        } else {
+            g2.setColor(mfd_gc.ecam_caution_color);
+            value_str="XX";	
+        }
+        g2.drawString(value_str, x - mfd_gc.line_height_xxl/2 - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, value_str), y);
+    }
+    
     
     private void drawCargo(Graphics2D g2) {
     	// Cargo body
@@ -222,13 +245,18 @@ public class AirConditionning extends MFDSubcomponent {
     private void drawGauge(Graphics2D g2, float value, int x, int y) {
     	AffineTransform original_at = g2.getTransform();
     	int r = mfd_gc.cond_gauge_r;
+    	int needle = Math.round(value*84)-42; 
     	g2.setColor(mfd_gc.ecam_markings_color);
         g2.drawArc(x-r, y-r, r*2, r*2, 45, 90);
         g2.setFont(mfd_gc.font_l);
         g2.drawString("C",x-r*5/6-mfd_gc.digit_width_l,y-r/2);
         g2.drawString("H",x+r*5/6,y-r/2);
+
+        // debug
+        // g2.drawString(""+Math.round(value*1000)/1000.0f,x,y+mfd_gc.line_height_l);
+
+        g2.rotate(Math.toRadians(needle), x, y);
         
-        // g2.rotate(-10.0, x, y);
         g2.setColor(mfd_gc.ecam_normal_color);
         int dx = r/12;
         int arrow_base = y-r*4/5;

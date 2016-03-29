@@ -48,6 +48,7 @@ import java.util.Map;
 import net.sourceforge.xhsi.XHSIInstrument;
 import net.sourceforge.xhsi.XHSIPreferences;
 
+import net.sourceforge.xhsi.model.Aircraft.DoorId;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.Door;
 
@@ -357,6 +358,10 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int elec_bat_y;
     public int elec_bat_h;
     public int elec_bat_w;
+    public int elec_bat1_arrow_x;
+    public int elec_bat2_arrow_x;
+    public int elec_bat_arrow_dx;
+    public int elec_bat_arrow_dy;
     // Transverters
     public int elec_tr1_x;
     public int elec_tr2_x;
@@ -1223,6 +1228,11 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             elec_emer_gen_bus_x = panel_rect.x + panel_rect.width * 526/1000;
             elec_aux_y = panel_rect.y + mfd_size * 634/1000;
             elec_bus_box_h = mfd_size * 54/1000;
+            // Battery arrows
+            elec_bat1_arrow_x = elec_bat1_x + elec_bat_w + (elec_dc_bat_ess_box_x - (elec_bat1_x + elec_bat_w))/2;;
+            elec_bat2_arrow_x = elec_dc_bat_ess_box_x + elec_dc_bat_ess_box_w + (elec_bat2_x - (elec_dc_bat_ess_box_x + elec_dc_bat_ess_box_w) )/2;;
+            elec_bat_arrow_dx = elec_bat_w/8;
+            elec_bat_arrow_dy = elec_bat_w/8;
             // IDG temperature
             elec_idg_y = panel_rect.y + mfd_size * 933/1000;
 
@@ -1514,25 +1524,26 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             
             // A320-200 door layout
             door_num = 15;            
+            // DoorId.NONE is for doors that are always closed (never simulated)
             // PAX
-            doors[0] = new Door(door_center_x-door_cabin_width_dx,panel_rect.y + mfd_size * 276/1000,door_main_width,door_heigth,Door.PAX);
-            doors[1] = new Door(door_center_x+door_cabin_width_dx-door_main_width,panel_rect.y + mfd_size * 276/1000,door_main_width,door_heigth,Door.PAX);
-            doors[2] = new Door(door_center_x-door_cabin_width_dx,panel_rect.y + mfd_size * 870/1000,door_main_width,door_heigth,Door.PAX);
-            doors[3] = new Door(door_center_x+door_cabin_width_dx-door_main_width,panel_rect.y + mfd_size * 870/1000,door_main_width,door_heigth,Door.PAX);
+            doors[0] = new Door(door_center_x-door_cabin_width_dx,panel_rect.y + mfd_size * 276/1000,door_main_width,door_heigth,Door.PAX, Door.LEGEND_LEFT, DoorId.FRONT_LEFT);
+            doors[1] = new Door(door_center_x+door_cabin_width_dx-door_main_width,panel_rect.y + mfd_size * 276/1000,door_main_width,door_heigth,Door.PAX, Door.LEGEND_RIGHT, DoorId.FRONT_RIGHT);
+            doors[2] = new Door(door_center_x-door_cabin_width_dx,panel_rect.y + mfd_size * 870/1000,door_main_width,door_heigth,Door.PAX, Door.LEGEND_LEFT, DoorId.AFT_LEFT);
+            doors[3] = new Door(door_center_x+door_cabin_width_dx-door_main_width,panel_rect.y + mfd_size * 870/1000,door_main_width,door_heigth,Door.PAX, Door.LEGEND_RIGHT, DoorId.AFT_RIGHT);
             // EMERGENCY
-            doors[4] = new Door(door_center_x-door_cabin_width_dx,panel_rect.y + mfd_size * 545/1000,door_escape_width,door_heigth,Door.EMERGENCY);
-            doors[5] = new Door(door_center_x+door_cabin_width_dx-door_escape_width,panel_rect.y + mfd_size * 545/1000,door_escape_width,door_heigth,Door.EMERGENCY);
-            doors[6] = new Door(door_center_x-door_cabin_width_dx,panel_rect.y + mfd_size * 602/1000,door_escape_width,door_heigth,Door.EMERGENCY);
-            doors[7] = new Door(door_center_x+door_cabin_width_dx-door_escape_width,panel_rect.y + mfd_size * 602/1000,door_escape_width,door_heigth,Door.EMERGENCY);
+            doors[4] = new Door(door_center_x-door_cabin_width_dx,panel_rect.y + mfd_size * 545/1000,door_escape_width,door_heigth,Door.EMERGENCY, Door.LEGEND_LEFT, DoorId.NONE);
+            doors[5] = new Door(door_center_x+door_cabin_width_dx-door_escape_width,panel_rect.y + mfd_size * 545/1000,door_escape_width,door_heigth,Door.EMERGENCY, Door.LEGEND_RIGHT, DoorId.NONE);
+            doors[6] = new Door(door_center_x-door_cabin_width_dx,panel_rect.y + mfd_size * 602/1000,door_escape_width,door_heigth,Door.EMERGENCY_WITH_SLIDER, Door.LEGEND_LEFT, DoorId.NONE);
+            doors[7] = new Door(door_center_x+door_cabin_width_dx-door_escape_width,panel_rect.y + mfd_size * 602/1000,door_escape_width,door_heigth,Door.EMERGENCY_WITH_SLIDER, Door.LEGEND_RIGHT, DoorId.NONE);
             // CARGO & BULK
-            doors[8] = new Door(door_center_x+door_cabin_width_dx-door_cargo_width,panel_rect.y + mfd_size * 415/1000,door_cargo_width,door_heigth,Door.CARGO);
-            doors[9] = new Door(door_center_x+door_cabin_width_dx-door_cargo_width,panel_rect.y + mfd_size * 695/1000,door_cargo_width,door_heigth,Door.CARGO);
-            doors[10] = new Door(door_center_x+door_cabin_width_dx-door_escape_width*2,panel_rect.y + mfd_size * 776/1000,door_escape_width,door_heigth,Door.CARGO);
+            doors[8] = new Door(door_center_x+door_cabin_width_dx-door_cargo_width,panel_rect.y + mfd_size * 415/1000,door_cargo_width,door_heigth,Door.CARGO, Door.LEGEND_RIGHT, DoorId.FRONT_CARGO);
+            doors[9] = new Door(door_center_x+door_cabin_width_dx-door_cargo_width,panel_rect.y + mfd_size * 695/1000,door_cargo_width,door_heigth,Door.CARGO, Door.LEGEND_RIGHT, DoorId.AFT_CARGO);
+            doors[10] = new Door(door_center_x+door_cabin_width_dx-door_escape_width*2,panel_rect.y + mfd_size * 776/1000,door_escape_width,door_heigth,Door.BULK, Door.LEGEND_RIGHT, DoorId.BULK);
             // MAINTENANCE PANELS
-            doors[11] = new Door(door_center_x-door_main_width/2,panel_rect.y + mfd_size * 114/1000,door_main_width,door_avionics_dy,Door.MAINTENANCE);
-            doors[12] = new Door(door_center_x-door_avionics_dx*2,panel_rect.y + mfd_size * 185/1000,door_escape_width,door_avionics_heigth,Door.MAINTENANCE);
-            doors[13] = new Door(door_center_x+door_avionics_dx ,panel_rect.y + mfd_size * 185/1000,door_escape_width,door_avionics_heigth,Door.MAINTENANCE);
-            doors[14] = new Door(door_center_x,panel_rect.y + mfd_size * 350/1000,door_main_width,door_avionics_dy,Door.MAINTENANCE);
+            doors[11] = new Door(door_center_x-door_main_width/2,panel_rect.y + mfd_size * 114/1000,door_main_width,door_avionics_dy,Door.MAINTENANCE, Door.LEGEND_NONE, DoorId.NONE);
+            doors[12] = new Door(door_center_x-door_avionics_dx*2,panel_rect.y + mfd_size * 185/1000,door_escape_width,door_avionics_heigth,Door.MAINTENANCE, Door.LEGEND_NONE, DoorId.NONE);
+            doors[13] = new Door(door_center_x+door_avionics_dx ,panel_rect.y + mfd_size * 185/1000,door_escape_width,door_avionics_heigth,Door.MAINTENANCE, Door.LEGEND_NONE, DoorId.NONE);
+            doors[14] = new Door(door_center_x,panel_rect.y + mfd_size * 350/1000,door_main_width,door_avionics_dy,Door.MAINTENANCE, Door.LEGEND_NONE, DoorId.NONE);
 
             // Pressurisation
             press_id_x = panel_rect.x + panel_rect.width * 10/1000;
