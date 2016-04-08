@@ -66,7 +66,7 @@ public class SpeedsLabel extends NDSubcomponent {
 
     private void drawSpeeds(Graphics2D g2) {
 
-        int line_height = nd_gc.line_height_m;
+        int line_height = nd_gc.line_height_l;
 
         int wind_speed = (int) Math.round( aircraft_environment.wind_speed() );
 //wind_speed = 15;
@@ -86,9 +86,9 @@ public class SpeedsLabel extends NDSubcomponent {
         //int three_digits_width = nd_gc.max_char_advance_medium * 3;
 
         int gs_label_x = nd_gc.border_left + (int)(10*nd_gc.scaling_factor);
-        int gs_x = gs_label_x + 2 + nd_gc.get_text_width(g2, nd_gc.font_xs,"GS");
-        int tas_label_x = gs_x + nd_gc.get_text_width(g2, nd_gc.font_m, "999   "); // \u00A0 is Unicode non-breaking space
-        int tas_x = tas_label_x + 2 + nd_gc.get_text_width(g2, nd_gc.font_xs,"TAS");
+        int gs_x = gs_label_x + 2 + nd_gc.get_text_width(g2, nd_gc.font_s,"GS");
+        int tas_label_x = gs_x + nd_gc.digit_width_fixed_l*4; //  gs_x + nd_gc.get_text_width(g2, nd_gc.font_l, "999   "); // \u00A0 is Unicode non-breaking space
+        int tas_x = tas_label_x + 2 + nd_gc.get_text_width(g2, nd_gc.font_s,"TAS");
         int speeds_y = nd_gc.border_top + line_height;
         
         int wind_x = gs_label_x;
@@ -102,14 +102,14 @@ public class SpeedsLabel extends NDSubcomponent {
         //g2.clearRect(0, 0, nd_gc.border_left + nd_gc.digit_width_m*15, wind_y + line_height*2/10);
 
         g2.setColor(nd_gc.top_text_color);
-        g2.setFont(this.nd_gc.font_xs);
+        g2.setFont(this.nd_gc.font_s);
         g2.drawString("GS", gs_label_x, speeds_y);
-        g2.setFont(this.nd_gc.font_m);
+        g2.setFont(this.nd_gc.font_l);
         g2.drawString("" + Math.round(aircraft.ground_speed()), gs_x, speeds_y);
 
-        g2.setFont(this.nd_gc.font_xs);
+        g2.setFont(this.nd_gc.font_s);
         g2.drawString("TAS", tas_label_x, speeds_y);
-        g2.setFont(this.nd_gc.font_m);
+        g2.setFont(this.nd_gc.font_l);
         g2.drawString("" + Math.round(aircraft.true_air_speed()), tas_x, speeds_y);
 
         g2.setColor(nd_gc.wind_color);

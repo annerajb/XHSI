@@ -166,31 +166,31 @@ public class RefSourceLabel extends NDSubcomponent {
 
             }
 
-            int source_label_x = nd_gc.panel_rect.x + nd_gc.panel_rect.width*72/100;
-            int source_label_y = nd_gc.panel_rect.y + nd_gc.line_height_m;
+            int source_label_x = nd_gc.panel_rect.x + nd_gc.panel_rect.width*70/100;
+            int source_label_y = nd_gc.panel_rect.y + nd_gc.line_height_l;
             
             g2.setColor(this.label_color);
-            g2.setFont(nd_gc.font_m);
+            g2.setFont(nd_gc.font_l);
             g2.drawString(source_label, source_label_x, source_label_y);
 
             if ( detailed ) {
 
-                source_label_y += nd_gc.line_height_xs;
-                int crs_text_x = source_label_x + nd_gc.get_text_width(g2, nd_gc.font_xxxs, crs_label1);
+                source_label_y += nd_gc.line_height_s;
+                int crs_text_x = source_label_x + nd_gc.get_text_width(g2, nd_gc.font_xxs, crs_label1);
                 //g2.setColor(crs_color);
                 g2.setColor(nd_gc.top_text_color);
                 if ( ( ! this.preferences.is_auto_frontcourse_to_obs() ) && ( ( src_type == TYPE_ILS ) || ( src_type == TYPE_LOC ) ) ) {
                     // I don't remember why this is depending on the setting to adjust the OBS automatically to the Localizer frontcourse!
                     // Display the localizer's frontcourse
-                    g2.setFont(nd_gc.font_xxxs);
+                    g2.setFont(nd_gc.font_xxs);
                     g2.drawString(crs_label2, source_label_x, source_label_y);
-                    g2.setFont(nd_gc.font_xs);
+                    g2.setFont(nd_gc.font_s);
                     g2.drawString(crs_text2, crs_text_x, source_label_y);
-                    source_label_y += nd_gc.line_height_xs;
+                    source_label_y += nd_gc.line_height_s;
                 }
-                g2.setFont(nd_gc.font_xxxs);
+                g2.setFont(nd_gc.font_xxs);
                 g2.drawString(crs_label1, source_label_x, source_label_y);
-                g2.setFont(nd_gc.font_xs);
+                g2.setFont(nd_gc.font_s);
                 g2.drawString(crs_text1, crs_text_x, source_label_y);
 
             }
