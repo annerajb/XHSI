@@ -49,11 +49,14 @@ import net.sourceforge.xhsi.model.Runway;
 public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserver {
 
     private String NAV_file = "/earth_nav.dat";
-    private String NAV_xplane = "/Resources/default data" + "/earth_nav.dat";
+    private String NAV_xplane = "/Resources/default data" + NAV_file;
+    private String NAV_custom = "/Custom Data" + NAV_file;
     private String FIX_file = "/earth_fix.dat";
-    private String FIX_xplane = "/Resources/default data" + "/earth_fix.dat";
+    private String FIX_xplane = "/Resources/default data" + FIX_file;
+    private String FIX_custom = "/Custom Data" + FIX_file;
     private String AWY_file = "/earth_awy.dat";
-    private String AWY_xplane = "/Resources/default data" + "/earth_awy.dat";
+    private String AWY_xplane = "/Resources/default data" + AWY_file;
+    private String AWY_custom = "/Custom Data" + AWY_file;
     private String APT_file = "/apt.dat";
     private String APT_xplane = "/Resources/default scenery/default apt dat/Earth nav data" + "/apt.dat";
     private String pathname_to_aptnav;
@@ -374,7 +377,10 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
     public void read_nav_table() throws Exception {
 
         File file = null;
-        if ( new File( this.pathname_to_aptnav + this.NAV_xplane ).exists() ) {
+        if ( new File( this.pathname_to_aptnav + this.NAV_custom ).exists() ) {
+            logger.config("Reading NAV database ( " + this.pathname_to_aptnav + this.NAV_custom + " )");
+            file = new File( this.pathname_to_aptnav + this.NAV_custom );
+        } else if ( new File( this.pathname_to_aptnav + this.NAV_xplane ).exists() ) {
             logger.config("Reading NAV database ( " + this.pathname_to_aptnav + this.NAV_xplane + " )");
             file = new File( this.pathname_to_aptnav + this.NAV_xplane );
         } else if ( new File( this.pathname_to_aptnav + this.NAV_file ).exists() ) {
@@ -525,7 +531,10 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
     public void read_fix_table() throws Exception {
 
         File file = null;
-        if ( new File( this.pathname_to_aptnav + this.FIX_xplane ).exists() ) {
+        if ( new File( this.pathname_to_aptnav + this.FIX_custom ).exists() ) {
+            logger.config("Reading FIX database ( " + this.pathname_to_aptnav + this.FIX_custom + " )");
+            file = new File( this.pathname_to_aptnav + this.FIX_custom );
+        } else if ( new File( this.pathname_to_aptnav + this.FIX_xplane ).exists() ) {
             logger.config("Reading FIX database ( " + this.pathname_to_aptnav + this.FIX_xplane + " )");
             file = new File( this.pathname_to_aptnav + this.FIX_xplane );
         } else if ( new File( this.pathname_to_aptnav + this.FIX_file ).exists() ) {
@@ -571,10 +580,13 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
     public void read_awy_table() throws Exception {
 
         File file = null;
-        if ( new File( this.pathname_to_aptnav + this.AWY_xplane ).exists() ) {
+        if ( new File( this.pathname_to_aptnav + this.AWY_custom ).exists() ) {
+            logger.config("Reading AWY database ( " + this.pathname_to_aptnav + this.AWY_custom + " )");
+            file = new File( this.pathname_to_aptnav + this.AWY_custom );
+        } else if ( new File( this.pathname_to_aptnav + this.AWY_xplane ).exists() ) {
             logger.config("Reading AWY database ( " + this.pathname_to_aptnav + this.AWY_xplane + " )");
             file = new File( this.pathname_to_aptnav + this.AWY_xplane );
-        } else {
+        } else if ( new File( this.pathname_to_aptnav + this.AWY_file ).exists() ) {
             logger.info("Reading AWY database ( " + this.pathname_to_aptnav + this.AWY_file + " )    DEPRECATED!");
             file = new File( this.pathname_to_aptnav + this.AWY_file );
         }
