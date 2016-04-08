@@ -115,18 +115,18 @@ public class HeadingLabel extends NDSubcomponent {
 
             // TRK and MAG labels
             g2.setColor(nd_gc.heading_labels_color);
-            g2.setFont(nd_gc.font_m);
-            g2.drawString(up_label , nd_gc.map_center_x - nd_gc.digit_width_xl*3 - nd_gc.get_text_width(g2, nd_gc.font_m, up_label), heading_text_y);
+            g2.setFont(nd_gc.font_l);
+            g2.drawString(up_label , nd_gc.map_center_x - nd_gc.digit_width_xl*3 - nd_gc.get_text_width(g2, nd_gc.font_l, up_label), heading_text_y);
             g2.drawString("MAG", nd_gc.map_center_x + nd_gc.digit_width_xl*3, heading_text_y);
 
             // surrounding box and value
             g2.setColor(nd_gc.top_text_color);
             g2.drawPolyline(x_points_heading_box, y_points_heading_box, 4);
             //g2.clearRect(center_x - 34, nd_gc.border_top, 68, heading_text_y - nd_gc.border_top);
-            g2.setFont(nd_gc.font_xl);
+            g2.setFont(nd_gc.font_xxl);
             DecimalFormat degrees_formatter = new DecimalFormat("000");
             String text = degrees_formatter.format( mag_value );
-            g2.drawString(text , center_x - 3*nd_gc.digit_width_xl/2, heading_text_y);
+            g2.drawString(text , center_x - 3*nd_gc.digit_width_xxl/2, heading_text_y);
 
             // current heading pointer
             if ( ! nd_gc.mode_classic_hsi ) {
