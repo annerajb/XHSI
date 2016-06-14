@@ -35,7 +35,7 @@ void findXfmcDataRefs(void) {
     int         i;
     char        buf[100];
 
-    xfmcPluginId = XPLMFindPluginBySignature("klm-va.com");
+    xfmcPluginId = XPLMFindPluginBySignature("x-fmc.com");
     if(xfmcPluginId != XPLM_NO_PLUGIN_ID) {
         sprintf(buf, "XHSI: XFMC plugin found\n");
         XPLMDebugString(buf);
