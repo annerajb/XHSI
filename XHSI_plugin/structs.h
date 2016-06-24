@@ -18,7 +18,7 @@ struct SimDataPoint {
 struct SimDataPacket {
 	char				packet_id[4];
 	int				nb_of_sim_data_points;
-	struct SimDataPoint sim_data_points[150];
+	struct SimDataPoint sim_data_points[250];
 };
 
 struct FmsEntry {
