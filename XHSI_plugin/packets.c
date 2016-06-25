@@ -40,7 +40,12 @@ struct FmsDataPacket	fms_packet[10];
 struct TcasDataPacket	tcas_packet;
 struct IncomingPacket   efis_packet;
 
-int max_packet_size = 0;
+int max_adcd_size = 0;
+int max_avio_size = 0;
+int max_custom_avio_size = 0;
+int max_engi_size = 0;
+int max_stat_size = 0;
+
 char msg[200];
 // Used to calculate IAS relative speeds
 float ias=0.0f;
@@ -484,12 +489,13 @@ int createADCPacket(void) {
 
     // packet size : char[4] + int + ( # * ( int + float) )
     packet_size = 8 + i * 8;
-    if ( packet_size > max_packet_size) {
-        max_packet_size = packet_size;
-        sprintf(msg, "XHSI: max packet size so far (ADCD): %d\n", max_packet_size);
+    if ( packet_size > max_adcd_size) {
+        max_adcd_size = packet_size;
+        sprintf(msg, "XHSI: max packet size so far for ADCD: %d\n", max_adcd_size);
         XPLMDebugString(msg);
     }
-	return packet_size;
+    
+    return packet_size;
 
 }
 
@@ -1113,9 +1119,9 @@ int createAvionicsPacket(void) {
 
     // packet size : char[4] + int + ( # * ( int + float) )
     packet_size = 8 + i * 8;
-    if ( packet_size > max_packet_size) {
-        max_packet_size = packet_size;
-        sprintf(msg, "XHSI: max packet size so far (AVIO): %d\n", max_packet_size);
+    if ( packet_size > max_avio_size) {
+        max_avio_size = packet_size;
+        sprintf(msg, "XHSI: max packet size so far for AVIO: %d\n", max_avio_size);
         XPLMDebugString(msg);
     }
 
@@ -2189,11 +2195,12 @@ int createCustomAvionicsPacket(void) {
 
 	// packet size : char[4] + int + ( # * ( int + float) )
 	packet_size = 8 + i * 8;
-	if ( packet_size > max_packet_size) {
-        max_packet_size = packet_size;
-        sprintf(msg, "XHSI: max packet size so far (AVIO): %d\n", max_packet_size);
-        XPLMDebugString(msg);
-    }
+	if ( packet_size > max_custom_avio_size) {
+            max_custom_avio_size = packet_size;
+            sprintf(msg, "XHSI: max packet size so far for Custom AVIO: %d\n", max_custom_avio_size);
+            XPLMDebugString(msg);
+        }
+        
 	return packet_size;
 
 }
@@ -2520,9 +2527,9 @@ int createEnginesPacket(void) {
 
     // packet size : char[4] + int + ( # * ( int + float) )
     packet_size = 8 + i * 8;
-    if ( packet_size > max_packet_size) {
-        max_packet_size = packet_size;
-        sprintf(msg, "XHSI: max packet size so far (ENGI): %d\n", max_packet_size);
+    if ( packet_size > max_engi_size) {
+        max_engi_size = packet_size;
+        sprintf(msg, "XHSI: max packet size so far for ENGI: %d\n", max_engi_size);
         XPLMDebugString(msg);
     }
 
@@ -2667,9 +2674,9 @@ int createStaticPacket(void) {
 
     // packet size : char[4] + int + ( # * ( int + float) )
     packet_size = 8 + i * 8;
-    if ( packet_size > max_packet_size) {
-        max_packet_size = packet_size;
-        sprintf(msg, "XHSI: max packet size so far (STAT): %d\n", max_packet_size);
+    if ( packet_size > max_stat_size) {
+        max_stat_size = packet_size;
+        sprintf(msg, "XHSI: max packet size so far for STAT: %d\n", max_stat_size);
         XPLMDebugString(msg);
     }
     
