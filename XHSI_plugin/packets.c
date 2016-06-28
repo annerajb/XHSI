@@ -32,8 +32,25 @@
 #include "endianess.h"
 
 
-// the maximum number of datapoints in a packet to fit in the UDP payload of 1472 bytes
-#define MAX_DATAPOINTS 180
+// MTU Ethernet : 1500
+// UDP Payload : 1472
+//
+// struct SimDataPoint {
+//    int    id;    // 4 bytes
+//    float  value; // 4 bytes
+//};
+//
+//struct SimDataPacket {
+//    char                packet_id[4];          // 4 bytes
+//    int                 nb_of_sim_data_points; // 4 bytes 
+//    struct SimDataPoint sim_data_points[222];  // 222 * 8 bytes
+//};
+//
+// Free for SimDataPoint : 1472 - 8 = 1464
+// Maximum number of SimDataPoint records : 1464 / 8 = 183
+//
+// We set the maximum number of SimDataPoint records to 182.
+#define MAX_DATAPOINTS 182
 
 
 
@@ -51,6 +68,7 @@ int max_engi_size = 0;
 int max_stat_size = 0;
 
 char msg[200];
+
 // Used to calculate IAS relative speeds
 float ias=0.0f;
 
