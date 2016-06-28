@@ -610,19 +610,19 @@ void	setMFDMode(void* inRefcon, int inValue)
 }
 
 // xhsi/mfd/fuel_used
-XPLM_API int                  XPLMGetDatavf(
-                                   XPLMDataRef          inDataRef,
-                                   float *              outValues,    /* Can be NULL */
-                                   int                  inOffset,
-                                   int                  inMax);
-typedef int (* XPLMGetDatavf_f)(
-                                   void *               inRefcon,
-                                   float *              outValues,    /* Can be NULL */
-                                   int                  inOffset,
-                                   int                  inMax);
+//XPLM_API int                  XPLMGetDatavf(
+//                                   XPLMDataRef          inDataRef,
+//                                   float *              outValues,    /* Can be NULL */
+//                                   int                  inOffset,
+//                                   int                  inMax);
+//typedef int (* XPLMGetDatavf_f)(
+//                                   void *               inRefcon,
+//                                   float *              outValues,    /* Can be NULL */
+//                                   int                  inOffset,
+//                                   int                  inMax);
 float fuel_used[8];
-long  getFuelUsed(
-		void *               inRefcon,
+int  getFuelUsed(
+        void *               inRefcon,
         float *              outValues,    /* Can be NULL */
         int                  inOffset,
         int                  inMax)
