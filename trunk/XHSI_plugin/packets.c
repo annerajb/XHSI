@@ -32,6 +32,10 @@
 #include "endianess.h"
 
 
+// the maximum number of datapoints in a packet to fit in the UDP payload of 1472 bytes
+#define MAX_DATAPOINTS 180
+
+
 
 // Define global vars
 // The data packets =========================================
@@ -493,6 +497,10 @@ int createADCPacket(void) {
         max_adcd_size = packet_size;
         sprintf(msg, "XHSI: max packet size so far for ADCD: %d\n", max_adcd_size);
         XPLMDebugString(msg);
+        if ( i > MAX_DATAPOINTS ) {
+            sprintf(msg, "XHSI: max number of sim data points exceeded for ADCD: %d (max: %d)\n", i, MAX_DATAPOINTS);
+            XPLMDebugString(msg);
+        }
     }
     
     return packet_size;
@@ -1123,6 +1131,10 @@ int createAvionicsPacket(void) {
         max_avio_size = packet_size;
         sprintf(msg, "XHSI: max packet size so far for AVIO: %d\n", max_avio_size);
         XPLMDebugString(msg);
+        if ( i > MAX_DATAPOINTS ) {
+            sprintf(msg, "XHSI: max number of sim data points exceeded for AVIO: %d (max: %d)\n", i, MAX_DATAPOINTS);
+            XPLMDebugString(msg);
+        }
     }
 
     return packet_size;
@@ -2199,6 +2211,10 @@ int createCustomAvionicsPacket(void) {
             max_custom_avio_size = packet_size;
             sprintf(msg, "XHSI: max packet size so far for Custom AVIO: %d\n", max_custom_avio_size);
             XPLMDebugString(msg);
+            if ( i > MAX_DATAPOINTS ) {
+                sprintf(msg, "XHSI: max number of sim data points exceeded for Custom AVIO: %d (max: %d)\n", i, MAX_DATAPOINTS);
+                XPLMDebugString(msg);
+            }
         }
         
 	return packet_size;
@@ -2531,6 +2547,10 @@ int createEnginesPacket(void) {
         max_engi_size = packet_size;
         sprintf(msg, "XHSI: max packet size so far for ENGI: %d\n", max_engi_size);
         XPLMDebugString(msg);
+        if ( i > MAX_DATAPOINTS ) {
+            sprintf(msg, "XHSI: max number of sim data points exceeded for ENGI: %d (max: %d)\n", i, MAX_DATAPOINTS);
+            XPLMDebugString(msg);
+        }
     }
 
     return packet_size;
@@ -2678,6 +2698,10 @@ int createStaticPacket(void) {
         max_stat_size = packet_size;
         sprintf(msg, "XHSI: max packet size so far for STAT: %d\n", max_stat_size);
         XPLMDebugString(msg);
+        if ( i > MAX_DATAPOINTS ) {
+            sprintf(msg, "XHSI: max number of sim data points exceeded for STAT: %d (max: %d)\n", i, MAX_DATAPOINTS);
+            XPLMDebugString(msg);
+        }
     }
     
     return packet_size;
