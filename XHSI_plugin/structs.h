@@ -16,9 +16,9 @@ struct SimDataPoint {
 };
 
 struct SimDataPacket {
-	char				packet_id[4];
-	int				nb_of_sim_data_points;
-	struct SimDataPoint sim_data_points[250];
+	char			packet_id[4];
+	int			nb_of_sim_data_points;
+	struct SimDataPoint     sim_data_points[250]; // only 180 should be used, but by reserving more, we can avoid some inadvertent buffer overflows
 };
 
 struct FmsEntry {
