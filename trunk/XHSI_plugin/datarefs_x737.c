@@ -86,6 +86,34 @@ XPLMDataRef x737_right_turnoff_light_switch;
 XPLMDataRef x737_position_light_switch;
 XPLMDataRef x737_beacon_light_switch;
 
+// EFIS
+XPLMDataRef x737_efis0_nd_range_enum;
+XPLMDataRef x737_efis0_FPV;
+XPLMDataRef x737_efis0_MTR;
+XPLMDataRef x737_efis0_TFC;
+XPLMDataRef x737_efis0_CTR;
+XPLMDataRef x737_efis0_WXR;
+XPLMDataRef x737_efis0_STA;
+XPLMDataRef x737_efis0_WPT;
+XPLMDataRef x737_efis0_ARPT;
+XPLMDataRef x737_efis0_DATA;
+XPLMDataRef x737_efis0_POS;
+XPLMDataRef x737_efis0_TERR;
+            
+XPLMDataRef x737_efis1_nd_range_enum;
+XPLMDataRef x737_efis1_FPV;
+XPLMDataRef x737_efis1_MTR;
+XPLMDataRef x737_efis1_TFC;
+XPLMDataRef x737_efis1_CTR;
+XPLMDataRef x737_efis1_WXR;
+XPLMDataRef x737_efis1_STA;
+XPLMDataRef x737_efis1_WPT;
+XPLMDataRef x737_efis1_ARPT;
+XPLMDataRef x737_efis1_DATA;
+XPLMDataRef x737_efis1_POS;
+XPLMDataRef x737_efis1_TERR;
+
+            
 int x737_ready = 0;
 
 
@@ -175,6 +203,33 @@ void findX737DataRefs(void) {
             x737_position_light_switch = XPLMFindDataRef("x737/systems/exteriorLights/positionLightSwitch");
             x737_beacon_light_switch = XPLMFindDataRef("x737/systems/exteriorLights/beaconLightSwitch");
 
+            // EFIS
+            x737_efis0_nd_range_enum = XPLMFindDataRef("x737/cockpit/EFISCTRL_0/ND_RANGE_ENUM");
+            x737_efis0_FPV = XPLMFindDataRef("x737/cockpit/EFISCTRL_0/FPV_on");
+            x737_efis0_MTR = XPLMFindDataRef("x737/cockpit/EFISCTRL_0/MTR_on");
+            x737_efis0_TFC = XPLMFindDataRef("x737/cockpit/EFISCTRL_0/TFC_on");
+            x737_efis0_CTR = XPLMFindDataRef("x737/cockpit/EFISCTRL_0/CTR_on");
+            x737_efis0_WXR = XPLMFindDataRef("x737/cockpit/EFISCTRL_0/WXR_on");
+            x737_efis0_STA = XPLMFindDataRef("x737/cockpit/EFISCTRL_0/STA_on");
+            x737_efis0_WPT = XPLMFindDataRef("x737/cockpit/EFISCTRL_0/WPT_on");
+            x737_efis0_ARPT = XPLMFindDataRef("x737/cockpit/EFISCTRL_0/ARPT_on");
+            x737_efis0_DATA = XPLMFindDataRef("x737/cockpit/EFISCTRL_0/DATA_on");
+            x737_efis0_POS = XPLMFindDataRef("x737/cockpit/EFISCTRL_0/POS_on");
+            x737_efis0_TERR = XPLMFindDataRef("x737/cockpit/EFISCTRL_0/TERR_on");
+
+            x737_efis1_nd_range_enum = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/ND_RANGE_ENUM");
+            x737_efis1_FPV = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/FPV_on");
+            x737_efis1_MTR = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/MTR_on");
+            x737_efis1_TFC = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/TFC_on");
+            x737_efis1_CTR = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/CTR_on");
+            x737_efis1_WXR = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/WXR_on");
+            x737_efis1_STA = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/STA_on");
+            x737_efis1_WPT = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/WPT_on");
+            x737_efis1_ARPT = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/ARPT_on");
+            x737_efis1_DATA = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/DATA_on");
+            x737_efis1_POS = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/POS_on");
+            x737_efis1_TERR = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/TERR_on");
+            
         }
 
     }

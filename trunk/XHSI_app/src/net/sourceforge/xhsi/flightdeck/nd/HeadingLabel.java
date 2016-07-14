@@ -205,24 +205,47 @@ public class HeadingLabel extends NDSubcomponent {
                 // a label at half the range
                 g2.setFont(nd_gc.font_xs);
                 g2.setColor(nd_gc.dim_markings_color);
-                int range = nd_gc.map_range;
+//                int range = nd_gc.map_range;
+                
                 String ctr_ranges[] = {"2.5", "5", "10", "20", "40", "80", "160"};
                 String exp_ranges[] = {"5", "10", "20", "40", "80", "160", "320"};
                 String zoomin_ctr_ranges[] = {"0.025", "0.05", "0.10", "0.20", "0.40", "0.80", "1.60"};
                 String zoomin_exp_ranges[] = {"0.05", "0.10", "0.20", "0.40", "0.80", "1.60", "3.20"};
+                
+                String x737_ctr_ranges[] = {"1.25", "2.5", "5", "10", "20", "40", "80", "160"};
+                String x737_exp_ranges[] = {"2.5", "5", "10", "20", "40", "80", "160", "320"};
+                String x737_zoomin_ctr_ranges[] = {"0.0125", "0.025", "0.05", "0.10", "0.20", "0.40", "0.80", "1.60"};
+                String x737_zoomin_exp_ranges[] = {"0.025", "0.05", "0.10", "0.20", "0.40", "0.80", "1.60", "3.20"};
+                
                 String range_text;
                 int range_index = this.avionics.map_range_index();
-                if ( nd_gc.mode_centered ) {
-                    if ( nd_gc.map_zoomin ) {
-                       range_text = zoomin_ctr_ranges[range_index];
+                if ( this.avionics.is_x737() ) {
+                    if ( nd_gc.mode_centered ) {
+                        if ( nd_gc.map_zoomin ) {
+                           range_text = x737_zoomin_ctr_ranges[range_index];
+                        } else {
+                           range_text = x737_ctr_ranges[range_index];
+                        }
                     } else {
-                       range_text = ctr_ranges[range_index];
+                        if ( nd_gc.map_zoomin ) {
+                            range_text = x737_zoomin_exp_ranges[range_index];
+                        } else {
+                            range_text = x737_exp_ranges[range_index];
+                        }
                     }
                 } else {
-                    if ( nd_gc.map_zoomin ) {
-                        range_text = zoomin_exp_ranges[range_index];
+                    if ( nd_gc.mode_centered ) {
+                        if ( nd_gc.map_zoomin ) {
+                           range_text = zoomin_ctr_ranges[range_index];
+                        } else {
+                           range_text = ctr_ranges[range_index];
+                        }
                     } else {
-                        range_text = exp_ranges[range_index];
+                        if ( nd_gc.map_zoomin ) {
+                            range_text = zoomin_exp_ranges[range_index];
+                        } else {
+                            range_text = exp_ranges[range_index];
+                        }
                     }
                 }
                 g2.drawString(

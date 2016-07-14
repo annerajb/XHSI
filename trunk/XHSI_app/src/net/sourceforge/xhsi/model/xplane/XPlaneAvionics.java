@@ -360,15 +360,20 @@ public class XPlaneAvionics implements Avionics, Observer {
     public int map_range_index() {
 
         // ranges: 0:10, 1:20, 2:40, 3:80, 4:160, 5:320, 6:640
+        // for x737 : -1:5
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
     		if (this.qpac_version() > 150) {
     			return (int) (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_EFIS_ND_RANGE_CAPT)); 
+    		} else if (is_x737()) {
+    			return (int) (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_ND_RANGE_ENUM)); 
     		} else {
     			return (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_MAP_RANGE_SELECTOR);
     		}
         } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
     		if (this.qpac_version() > 150) {
     			return (int) (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_EFIS_ND_RANGE_FO)); 
+    		} else if (is_x737()) {
+    			return (int) (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_ND_RANGE_ENUM)); 
     		} else {
     			return (int) sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MAP_RANGE);
     		}
@@ -380,15 +385,20 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     public int map_range_index(InstrumentSide side) {
         // ranges: 0:10, 1:20, 2:40, 3:80, 4:160, 5:320, 6:640
+        // for x737 : -1:5
         if ( side == InstrumentSide.PILOT ) {
     		if (this.qpac_version() > 150) {
     			return (int) (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_EFIS_ND_RANGE_CAPT)); 
+    		} else if (is_x737()) {
+    			return (int) (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_ND_RANGE_ENUM)); 
     		} else {
     			return (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_MAP_RANGE_SELECTOR);
     		}
         } else if ( side == InstrumentSide.COPILOT ){
     		if (this.qpac_version() > 150) {
     			return (int) (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_EFIS_ND_RANGE_FO)); 
+    		} else if (is_x737()) {
+    			return (int) (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_ND_RANGE_ENUM)); 
     		} else {
     			return (int) sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MAP_RANGE);
     		}
@@ -404,12 +414,16 @@ public class XPlaneAvionics implements Avionics, Observer {
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
     		if (this.qpac_version() > 150) {
     			return EFIS_MAP_RANGE[ (int) (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_EFIS_ND_RANGE_CAPT))]; 
+    		} else if (is_x737()) {
+    			return X737_MAP_RANGE[ (int) (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_ND_RANGE_ENUM))]; 
     		} else {
     			return EFIS_MAP_RANGE[ (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_MAP_RANGE_SELECTOR) ];
     		}
         } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
     		if (this.qpac_version() > 150) {
     			return EFIS_MAP_RANGE[ (int) (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_EFIS_ND_RANGE_FO))]; 
+    		} else if (is_x737()) {
+    			return X737_MAP_RANGE[ (int) (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_ND_RANGE_ENUM))]; 
     		} else {
     			return EFIS_MAP_RANGE[ (int) sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MAP_RANGE) ];
     		}
@@ -608,131 +622,236 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     public boolean efis_shows_wpt() {
 
-        //return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WAYPOINTS) == 1.0f);
-        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WAYPOINTS) == 1.0f);
-        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WPT) == 1.0f);
+        if ( is_x737() ) {
+            if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_WPT) == 1.0f);
+            } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_WPT) == 1.0f);
+            } else {
+                return xhsi_settings.show_wpt;
+            }
         } else {
-            return xhsi_settings.show_wpt;
+            if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WAYPOINTS) == 1.0f);
+            } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WPT) == 1.0f);
+            } else {
+                return xhsi_settings.show_wpt;
+            }
         }
 
     }
 
     public boolean efis_shows_wpt(InstrumentSide side) {
-        if ( side == InstrumentSide.PILOT ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WAYPOINTS) == 1.0f);
-        } else if ( side == InstrumentSide.COPILOT ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WPT) == 1.0f);
+        if ( is_x737() ) {
+            if ( side == InstrumentSide.PILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_WPT) == 1.0f);
+            } else if ( side == InstrumentSide.COPILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_WPT) == 1.0f);
+            } else {
+                return xhsi_settings.show_wpt;
+            }
         } else {
-            return xhsi_settings.show_wpt;
+            if ( side == InstrumentSide.PILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WAYPOINTS) == 1.0f);
+            } else if ( side == InstrumentSide.COPILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WPT) == 1.0f);
+            } else {
+                return xhsi_settings.show_wpt;
+            }
         }
     }
 
 
     public boolean efis_shows_ndb() {
 
-        //return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_NDBS) == 1.0f);
-        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_NDBS) == 1.0f);
-        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_NDB) == 1.0f);
+        if ( is_x737() ) {
+            if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_STA) == 1.0f);
+            } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_STA) == 1.0f);
+            } else {
+                return xhsi_settings.show_ndb;
+            }
         } else {
-            return xhsi_settings.show_ndb;
+            if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_NDBS) == 1.0f);
+            } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_NDB) == 1.0f);
+            } else {
+                return xhsi_settings.show_ndb;
+            }
         }
 
     }
 
     public boolean efis_shows_ndb(InstrumentSide side) {
-        if ( side == InstrumentSide.PILOT ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_NDBS) == 1.0f);
-        } else if ( side == InstrumentSide.COPILOT ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_NDB) == 1.0f);
+        if ( is_x737() ) {
+            if ( side == InstrumentSide.PILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_STA) == 1.0f);
+            } else if ( side == InstrumentSide.COPILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_STA) == 1.0f);
+            } else {
+                return xhsi_settings.show_ndb;
+            }
         } else {
-            return xhsi_settings.show_ndb;
+            if ( side == InstrumentSide.PILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_NDBS) == 1.0f);
+            } else if ( side == InstrumentSide.COPILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_NDB) == 1.0f);
+            } else {
+                return xhsi_settings.show_ndb;
+            }
         }
-    }
+}
 
 
     public boolean efis_shows_vor() {
 
-        //return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_VORS) == 1.0f);
-        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_VORS) == 1.0f);
-        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_VOR) == 1.0f);
+        if ( is_x737() ) {
+            if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_STA) == 1.0f);
+            } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_STA) == 1.0f);
+            } else {
+                return xhsi_settings.show_vor;
+            }
         } else {
-            return xhsi_settings.show_vor;
+            if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_VORS) == 1.0f);
+            } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_VOR) == 1.0f);
+            } else {
+                return xhsi_settings.show_vor;
+            }
         }
 
     }
 
     public boolean efis_shows_vor(InstrumentSide side) {
-        if ( side == InstrumentSide.PILOT ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_VORS) == 1.0f);
-        } else if ( side == InstrumentSide.COPILOT ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_VOR) == 1.0f);
+        if ( is_x737() ) {
+            if ( side == InstrumentSide.PILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_STA) == 1.0f);
+            } else if ( side == InstrumentSide.COPILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_STA) == 1.0f);
+            } else {
+                return xhsi_settings.show_vor;
+            }
         } else {
-            return xhsi_settings.show_vor;
+            if ( side == InstrumentSide.PILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_VORS) == 1.0f);
+            } else if ( side == InstrumentSide.COPILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_VOR) == 1.0f);
+            } else {
+                return xhsi_settings.show_vor;
+            }
         }
     }
 
 
     public boolean efis_shows_arpt() {
 
-        //return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_AIRPORTS) == 1.0f);
-        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_AIRPORTS) == 1.0f);
-        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_ARPT) == 1.0f);
+        if ( is_x737() ) {
+            if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_ARPT) == 1.0f);
+            } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_ARPT) == 1.0f);
+            } else {
+                return xhsi_settings.show_arpt;
+            }
         } else {
-            return xhsi_settings.show_arpt;
+            if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_AIRPORTS) == 1.0f);
+            } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_ARPT) == 1.0f);
+            } else {
+                return xhsi_settings.show_arpt;
+            }
         }
 
     }
 
     public boolean efis_shows_arpt(InstrumentSide side) {
-        if ( side == InstrumentSide.PILOT ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_AIRPORTS) == 1.0f);
-        } else if ( side == InstrumentSide.COPILOT ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_ARPT) == 1.0f);
+        if ( is_x737() ) {
+            if ( side == InstrumentSide.PILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_ARPT) == 1.0f);
+            } else if ( side == InstrumentSide.COPILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_ARPT) == 1.0f);
+            } else {
+                return xhsi_settings.show_arpt;
+            }
         } else {
-            return xhsi_settings.show_arpt;
+            if ( side == InstrumentSide.PILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_AIRPORTS) == 1.0f);
+            } else if ( side == InstrumentSide.COPILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_ARPT) == 1.0f);
+            } else {
+                return xhsi_settings.show_arpt;
+            }
         }
     }
 
 
     public boolean efis_shows_tfc() {
 
-        //return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_TCAS) == 1.0f);
-        if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_TCAS) == 1.0f);
-        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_TFC) == 1.0f);
+        if ( is_x737() ) {
+            if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_TFC) == 1.0f);
+            } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_TFC) == 1.0f);
+            } else {
+                return xhsi_settings.show_tfc;
+            }
         } else {
-            return xhsi_settings.show_tfc;
+            if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_TCAS) == 1.0f);
+            } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_TFC) == 1.0f);
+            } else {
+                return xhsi_settings.show_tfc;
+            }
         }
     }
 
     public boolean efis_shows_tfc(InstrumentSide side) {
-        if ( side == InstrumentSide.PILOT ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_TCAS) == 1.0f);
-        } else if ( side == InstrumentSide.COPILOT ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_TFC) == 1.0f);
+        if ( is_x737() ) {
+            if ( side == InstrumentSide.PILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_TFC) == 1.0f);
+            } else if ( side == InstrumentSide.COPILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_TFC) == 1.0f);
+            } else {
+                return xhsi_settings.show_tfc;
+            }
         } else {
-            return xhsi_settings.show_tfc;
+            if ( side == InstrumentSide.PILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_TCAS) == 1.0f);
+            } else if ( side == InstrumentSide.COPILOT ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_TFC) == 1.0f);
+            } else {
+                return xhsi_settings.show_tfc;
+            }
         }
     }
 
 
     public boolean efis_shows_data() {
 
-        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_DATA) == 1.0f);
-        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_DATA) == 1.0f);
+        if ( is_x737() ) {
+            if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_DATA) == 1.0f);
+            } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_DATA) == 1.0f);
+            } else {
+                return xhsi_settings.show_data;
+            }
         } else {
-            return xhsi_settings.show_data;
+            if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_DATA) == 1.0f);
+            } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_DATA) == 1.0f);
+            } else {
+                return xhsi_settings.show_data;
+            }
         }
 
     }
@@ -740,12 +859,22 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     public boolean efis_shows_pos() {
 
-        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_POS) == 1.0f);
-        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
-            return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_POS) == 1.0f);
+        if ( is_x737() ) {
+            if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_POS) == 1.0f);
+            } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_POS) == 1.0f);
+            } else {
+                return xhsi_settings.show_pos;
+            }
         } else {
-            return xhsi_settings.show_pos;
+            if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_POS) == 1.0f);
+            } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+                return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_POS) == 1.0f);
+            } else {
+                return xhsi_settings.show_pos;
+            }
         }
 
     }
@@ -948,20 +1077,32 @@ public class XPlaneAvionics implements Avionics, Observer {
         }
     }
 
+    public float acf_pitch() {
+
+        return sim_data.get_sim_float(XPlaneSimDataRepository.DUPLICATE_THETA_FOR_PITCH);
+
+    }
+
     public float fd_roll() {
 
         if ( is_x737() ) {
 
             if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
-                return sim_data.get_sim_float(XPlaneSimDataRepository.X737_AFDS_B_ROLL);
+                return sim_data.get_sim_float(XPlaneSimDataRepository.X737_AFDS_B_ROLL) * 10.0f;
             } else {
 //logger.warning("FD_roll: "+sim_data.get_sim_float(XPlaneSimDataRepository.X737_AFDS_A_ROLL));
-                return sim_data.get_sim_float(XPlaneSimDataRepository.X737_AFDS_A_ROLL);
+                return sim_data.get_sim_float(XPlaneSimDataRepository.X737_AFDS_A_ROLL) * 10.0f;
             }
 
         } else {
             return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_FD_ROLL);
         }
+
+    }
+
+    public float acf_bank() {
+
+        return sim_data.get_sim_float(XPlaneSimDataRepository.DUPLICATE_PHI_FOR_BANK);
 
     }
 

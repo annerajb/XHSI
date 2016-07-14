@@ -2,7 +2,7 @@
 // Global constants ============================
 
 // version info
-#define PLUGIN_VERSION_TEXT "XHSI Plugin 2.0 Beta 9 alpha 4"
+#define PLUGIN_VERSION_TEXT "XHSI Plugin 2.0 Beta 9 alpha 5"
 #define PLUGIN_VERSION_NUMBER 20009
 
 

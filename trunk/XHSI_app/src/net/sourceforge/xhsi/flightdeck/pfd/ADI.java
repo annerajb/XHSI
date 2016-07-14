@@ -86,11 +86,8 @@ public class ADI extends PFDSubcomponent {
 
         boolean colorgradient_horizon = this.preferences.get_draw_colorgradient_horizon();
 
-        float pitch = this.aircraft.pitch(); // radians? no, degrees!
+        float pitch = this.aircraft.pitch(); // degrees
         float bank = this.aircraft.bank(); // degrees
-//logger.warning("pitch: " + pitch + " / " + Math.toDegrees(pitch));
-//bank *= 2.0f;
-//pitch = 11.75f;
 
         // full-scale pitch down = adi_pitchscale (eg: 22°)
         int pitch_y = cy + (int)(down * pitch / scale);
@@ -307,20 +304,26 @@ public class ADI extends PFDSubcomponent {
 
         // FD
         if ( this.avionics.autopilot_mode() >= 1 ) {
-//if ( true ) {
 
+            float acf_pitch = this.avionics.acf_pitch(); // degrees
+            float acf_bank = this.avionics.acf_bank(); // degrees
+
+            int fd_x;
             int fd_y;
-            if ( this.avionics.is_x737() )
+            if ( this.avionics.is_x737() ) {
+                fd_x = cx + (int)(down * (-acf_bank+this.avionics.fd_roll()) / scale) / 2; // divide by 2 to limit deflection
                 fd_y = cy + (int)(down * (-this.avionics.fd_pitch()) / scale);
-            else
-                fd_y = cy + (int)(down * (pitch-this.avionics.fd_pitch()) / scale);
+            } else {
+                fd_x = cx + (int)(down * (-acf_bank+this.avionics.fd_roll()) / scale) / 3; // divide by 3 to limit deflection
+                fd_y = cy + (int)(down * (acf_pitch-this.avionics.fd_pitch()) / scale);
+            }
 
             g2.setColor(pfd_gc.heading_bug_color);
 
             if ( this.preferences.get_single_cue_fd() ) {
                 
                 // V-bar
-                g2.rotate(Math.toRadians(-bank+this.avionics.fd_roll()), cx, fd_y);
+                g2.rotate(Math.toRadians(-acf_bank+this.avionics.fd_roll()), cx, fd_y);
 
                 int bar_o = left * 9 / 16;
                 int bar_d = down / 5;
@@ -372,7 +375,6 @@ public class ADI extends PFDSubcomponent {
             } else {
 
                 // cross-hair
-                int fd_x = cx + (int)(down * (-bank+this.avionics.fd_roll()) / scale) / 3; // divide by 3 to limit deflection
                 int fd_bar = down * 5 /8;
                 original_stroke = g2.getStroke();
                 g2.setStroke(new BasicStroke(3.0f * pfd_gc.scaling_factor));
