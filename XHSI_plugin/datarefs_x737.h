@@ -67,11 +67,32 @@ extern XPLMDataRef x737_right_turnoff_light_switch;
 extern XPLMDataRef x737_position_light_switch;
 extern XPLMDataRef x737_beacon_light_switch;
 
-
-//extern XPLMDataRef x737_;
-//extern XPLMDataRef x737_;
-//extern XPLMDataRef x737_;
-//extern XPLMDataRef x737_;
+// EFIS
+extern XPLMDataRef x737_efis0_nd_range_enum;
+extern XPLMDataRef x737_efis0_FPV;
+extern XPLMDataRef x737_efis0_MTR;
+extern XPLMDataRef x737_efis0_TFC;
+extern XPLMDataRef x737_efis0_CTR;
+extern XPLMDataRef x737_efis0_WXR;
+extern XPLMDataRef x737_efis0_STA;
+extern XPLMDataRef x737_efis0_WPT;
+extern XPLMDataRef x737_efis0_ARPT;
+extern XPLMDataRef x737_efis0_DATA;
+extern XPLMDataRef x737_efis0_POS;
+extern XPLMDataRef x737_efis0_TERR;
+            
+extern XPLMDataRef x737_efis1_nd_range_enum;
+extern XPLMDataRef x737_efis1_FPV;
+extern XPLMDataRef x737_efis1_MTR;
+extern XPLMDataRef x737_efis1_TFC;
+extern XPLMDataRef x737_efis1_CTR;
+extern XPLMDataRef x737_efis1_WXR;
+extern XPLMDataRef x737_efis1_STA;
+extern XPLMDataRef x737_efis1_WPT;
+extern XPLMDataRef x737_efis1_ARPT;
+extern XPLMDataRef x737_efis1_DATA;
+extern XPLMDataRef x737_efis1_POS;
+extern XPLMDataRef x737_efis1_TERR;
 
 
 extern int x737_ready;

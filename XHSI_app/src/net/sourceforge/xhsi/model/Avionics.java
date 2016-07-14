@@ -49,6 +49,7 @@ public interface Avionics {
     public static final int EFIS_MAP_PLN = 4;
 
     public static final int EFIS_MAP_RANGE[] = {10, 20, 40, 80, 160, 320, 640};
+    public static final int X737_MAP_RANGE[] = {5, 10, 20, 40, 80, 160, 320, 640};
 
     public static final int XPDR_OFF = 0;
     public static final int XPDR_STBY = 1;
@@ -455,9 +456,19 @@ public interface Avionics {
     public float fd_pitch();
 
     /**
+     * @return float - ACF pitch at the same transmit frequency as the FD data
+     */
+    public float acf_pitch();
+
+    /**
      * @return float - FD roll command
      */
     public float fd_roll();
+
+    /**
+     * @return float - ACF bank at the same transmit frequency as the FD data
+     */
+    public float acf_bank();
 
     /**
      * @return boolean - receiving X737 data

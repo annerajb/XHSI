@@ -179,6 +179,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT2_AUTOPILOT_BACKCOURSE_STATUS = 173;
     public static final int SIM_COCKPIT_AUTOPILOT_KEY_PRESS = 174; // to send commands to the plugin
     public static final int SIM_COCKPIT_AUTOPILOT_HEADING_ROLL_MODE = 175;
+    public static final int DUPLICATE_THETA_FOR_PITCH = 176;
+    public static final int DUPLICATE_PHI_FOR_BANK = 177;
 
 
     // Transponder
@@ -459,31 +461,57 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int X737_AFDS_A_ROLL = 829;
     public static final int X737_AFDS_B_ROLL = 830;
     public static final int X737_ATHR_ARMED = 831;
-// X737 N1
+    // X737 N1
     public static final int X737_N1_PHASE = 832;
     public static final int X737_N1_LIMIT_ENG1 = 833;
     public static final int X737_N1_LIMIT_ENG2 = 834;
     public static final int X737_STBY_PWR = 835;
     public static final int X737_PFD_PWR = 836;
+    public static final int X737_LVLCHANGE = 837;
+    // EFIS
+    public static final int X737_EFIS0_ND_RANGE_ENUM = 838;
+    public static final int X737_EFIS0_FPV = 839;
+    public static final int X737_EFIS0_MTR = 840;
+    public static final int X737_EFIS0_TFC = 841;
+    public static final int X737_EFIS0_CTR = 842;
+    public static final int X737_EFIS0_WXR = 843;
+    public static final int X737_EFIS0_STA = 844;
+    public static final int X737_EFIS0_WPT = 845;
+    public static final int X737_EFIS0_ARPT = 846;
+    public static final int X737_EFIS0_DATA = 847;
+    public static final int X737_EFIS0_POS = 848;
+    public static final int X737_EFIS0_TERR = 849;
+    public static final int X737_EFIS1_ND_RANGE_ENUM = 850;
+    public static final int X737_EFIS1_FPV = 851;
+    public static final int X737_EFIS1_MTR = 852;
+    public static final int X737_EFIS1_TFC = 853;
+    public static final int X737_EFIS1_CTR = 854;
+    public static final int X737_EFIS1_WXR = 855;
+    public static final int X737_EFIS1_STA = 856;
+    public static final int X737_EFIS1_WPT = 857;
+    public static final int X737_EFIS1_ARPT = 858;
+    public static final int X737_EFIS1_DATA = 859;
+    public static final int X737_EFIS1_POS = 860;
+    public static final int X737_EFIS1_TERR = 861;
 
     
     // CL30
-    public static final int CL30_STATUS = 850;
+    public static final int CL30_STATUS = 880;
     // CL30 REF
-    public static final int CL30_V1 = 851;
-    public static final int CL30_VR = 852;
-    public static final int CL30_V2 = 853;
-    public static final int CL30_VT = 854;
-    public static final int CL30_VGA = 855;
-    public static final int CL30_VREF = 856;
-    public static final int CL30_REFSPDS = 857;
+    public static final int CL30_V1 = 881;
+    public static final int CL30_VR = 882;
+    public static final int CL30_V2 = 883;
+    public static final int CL30_VT = 884;
+    public static final int CL30_VGA = 885;
+    public static final int CL30_VREF = 886;
+    public static final int CL30_REFSPDS = 887;
     // CL30 ANNUN
-    public static final int CL30_MAST_WARN = 858;
-    public static final int CL30_MAST_CAUT = 859;
+    public static final int CL30_MAST_WARN = 888;
+    public static final int CL30_MAST_CAUT = 889;
     // CL30 Thrust Mode
-    public static final int CL30_CARETS = 860;
-    public static final int CL30_TO_N1 = 861;
-    public static final int CL30_CLB_N1 = 862;
+    public static final int CL30_CARETS = 890;
+    public static final int CL30_TO_N1 = 891;
+    public static final int CL30_CLB_N1 = 892;
     
     
     // Settings & Preferences
