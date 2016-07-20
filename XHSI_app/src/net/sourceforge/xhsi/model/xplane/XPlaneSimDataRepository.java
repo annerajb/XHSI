@@ -371,7 +371,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_2 = 554;
     public static final int SIM_COCKPIT_FUEL_PUMPS = 555;
     public static final int SIM_AIRCRAFT_ENGINE_MAX_EGT = 556;
-    // 557 : free
+    public static final int SIM_COCKPIT_ENGINE_IGN_KEY = 557;
     public static final int XHSI_EICAS_OVERRIDE_TRQ_MAX = 558;
     public static final int SIM_AIRCRAFT_CONTROLS_ACF_TRQ_MAX_ENG = 559;
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_TRQ_ = 560;
@@ -629,6 +629,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_COND_FWD_CARGO_TEMP=1104;
     // BLEED AIR
     public static final int QPAC_BLEED_VALVES=1081;
+    public static final int QPAC_BLEED_LEFT_PRESS=1110;
+    public static final int QPAC_BLEED_RIGHT_PRESS=1111;
     public static final int QPAC_PACK1_FLOW=1105;
     public static final int QPAC_PACK2_FLOW=1106;
     public static final int QPAC_PACK1_TEMP=1107;
@@ -654,6 +656,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_NACELLE_TEMP_ = 1094; // Array [4]
     // Doors
     public static final int QPAC_DOOR_STATUS = 1098;
+    // Engines Ignition
+    public static final int QPAC_ENG_IGNITION = 1109;
     // IDs reserved for QPAC up to 1199
     
     // JarDesign Airbus A320neo

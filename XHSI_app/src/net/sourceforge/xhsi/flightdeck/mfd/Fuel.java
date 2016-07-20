@@ -179,13 +179,8 @@ public class Fuel extends MFDSubcomponent {
     	g2.setColor(mfd_gc.ecam_action_color);
     	g2.setFont(mfd_gc.font_m);
     	g2.drawString(units_str, mfd_gc.fuel_total_x + mfd_gc.get_text_width(g2, mfd_gc.fuel_eng_font, eng_str) + mfd_gc.fuel_eng_font_w*3, mfd_gc.fuel_total_y - mfd_gc.line_height_l*2 );
-    	
-    	
-    	
-        
-        resetPen(g2);
-        
-    	
+     
+        resetPen(g2);  	
     }
 
     private void drawTotalFuel(Graphics2D g2) {
@@ -396,6 +391,8 @@ public class Fuel extends MFDSubcomponent {
     private void drawEngineFuel(Graphics2D g2, int eng, int x) {        
 
         scalePen(g2);
+        
+        Aircraft.ValveStatus fuel_valve = this.aircraft.get_eng_fuel_valve(eng);
 
         // convert FF from kg/s to kg/h, lbs/h, usg/h or ltr/h
         float unit_multiplier = this.aircraft.fuel_multiplier() * 60;
@@ -438,10 +435,13 @@ public class Fuel extends MFDSubcomponent {
     			mfd_gc.fuel_eng_fused_value_y
     			);
 
+    	g2.setColor(mfd_gc.ecam_normal_color);
     	g2.drawLine(x, mfd_gc.fuel_eng_isol_valve_y + mfd_gc.hyd_valve_r, x, mfd_gc.fuel_x_feed_line_y);
+    	g2.setColor( (fuel_valve != Aircraft.ValveStatus.VALVE_OPEN) ?  mfd_gc.ecam_caution_color : mfd_gc.ecam_normal_color);
     	g2.drawLine(x, mfd_gc.fuel_eng_fused_value_y + mfd_gc.line_height_xl/3, x, mfd_gc.fuel_eng_isol_valve_y - mfd_gc.hyd_valve_r);
     	
-    	drawValveVert(g2, ValveStatus.VALVE_OPEN, x, mfd_gc.fuel_eng_isol_valve_y);
+    	// Engine Fuel Valve
+    	drawValveVert(g2, fuel_valve, x, mfd_gc.fuel_eng_isol_valve_y);
     	
         resetPen(g2);  	
     }
@@ -458,9 +458,12 @@ public class Fuel extends MFDSubcomponent {
         
     	if (valve_sts == ValveStatus.VALVE_CLOSED || valve_sts == ValveStatus.VALVE_CLOSED_FAILED) {
     		g2.drawLine(x-r, y, x+r, y);
+    	} else if (valve_sts == ValveStatus.TRANSIT) {
+    		int r2=(int)Math.round(0.707*r);
+    		g2.drawLine(x-r2, y+r2, x+r2, y-r2);
     	} else {
     		g2.drawLine(x, y-r, x, y+r);
-    	}
+    	} 
     }   
     
     private void drawValveHoriz(Graphics2D g2, ValveStatus valve_sts, int x, int y) {
@@ -475,6 +478,9 @@ public class Fuel extends MFDSubcomponent {
         
     	if (valve_sts == ValveStatus.VALVE_OPEN_FAILED || valve_sts == ValveStatus.VALVE_OPEN) {
     		g2.drawLine(x-r, y, x+r, y);
+    	} else if (valve_sts == ValveStatus.TRANSIT) {
+    		int r2=(int)Math.round(0.707*r);
+    		g2.drawLine(x-r2, y+r2, x+r2, y-r2);
     	} else {
     		g2.drawLine(x, y-r, x, y+r);
     	}

@@ -106,18 +106,22 @@ public class APU extends MFDSubcomponent {
 
         		// Bleed 
         		if (aircraft.has_bleed_air()){
-        			// Bleed Bloc
-        			int psi = avail ? 40 : 0;
+        			int psi = Math.round(aircraft.apu_bleed_psi());
         			int apu_bleed_x = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*700/1000;
         			int apu_bleed_y = mfd_gc.panel_rect.y + mfd_gc.mfd_size*250/1000;
+        			ValveStatus apu_bleed_status = avail ? ValveStatus.VALVE_OPEN : ValveStatus.VALVE_CLOSED ;
+        			if (avionics.is_qpac()) { 
+        				apu_bleed_status = aircraft.bleed_valve(Aircraft.BLEED_VALVE_APU);
+        				if (apu_bleed_status == ValveStatus.VALVE_CLOSED) psi=0;
+        			}
+        			
+        			// Bleed Bloc
         			drawBleed(g2,"BLEED", start, psi, apu_bleed_x, apu_bleed_y);
 
         			// Bleed Valve Bloc
         			int apu_bleed_valve_x = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width*700/1000 + mfd_gc.digit_width_l * 4;
         			int apu_bleed_valve_y = apu_bleed_y - mfd_gc.cond_valve_r*2;
 
-        			ValveStatus apu_bleed_status = avail ? ValveStatus.VALVE_OPEN : ValveStatus.VALVE_CLOSED ;
-        			if (avionics.is_qpac()) { apu_bleed_status = aircraft.bleed_valve(Aircraft.BLEED_VALVE_APU); }
         			drawValve(g2, apu_bleed_status, apu_bleed_valve_x, apu_bleed_valve_y);
         			g2.setColor(mfd_gc.ecam_normal_color);
         			g2.drawLine(apu_bleed_valve_x,apu_bleed_valve_y + mfd_gc.cond_valve_r, apu_bleed_valve_x,apu_bleed_y);
@@ -302,11 +306,11 @@ public class APU extends MFDSubcomponent {
     
     private void drawPageID(Graphics2D g2, String page_str) {
         g2.setColor(mfd_gc.ecam_markings_color);
-        g2.setFont(mfd_gc.font_xl);
-    	int page_id_x = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width/2 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, page_str)/2;
-    	int page_id_y = mfd_gc.panel_rect.y + mfd_gc.line_height_xl * 11/10;     	
+        g2.setFont(mfd_gc.font_xxl);
+    	int page_id_x = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width/2 - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, page_str)/2;
+    	int page_id_y = mfd_gc.panel_rect.y + mfd_gc.line_height_xxl * 11/10;     	
         g2.drawString(page_str, page_id_x, page_id_y);
-        g2.drawLine(page_id_x, page_id_y + mfd_gc.line_height_xl/8, page_id_x + mfd_gc.get_text_width(g2, mfd_gc.font_xl, page_str), page_id_y + mfd_gc.line_height_m/8);
+        g2.drawLine(page_id_x, page_id_y + mfd_gc.line_height_xxl/8, page_id_x + mfd_gc.get_text_width(g2, mfd_gc.font_xxl, page_str), page_id_y + mfd_gc.line_height_l/8);
     }
 
     
