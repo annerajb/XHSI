@@ -45,6 +45,7 @@ import net.sourceforge.xhsi.XHSIPreferences;
 import net.sourceforge.xhsi.XHSISettings;
 
 import net.sourceforge.xhsi.model.Aircraft;
+import net.sourceforge.xhsi.model.Aircraft.IgnitionKeyPosition;
 //import net.sourceforge.xhsi.model.Airport;
 import net.sourceforge.xhsi.model.Avionics;
 //import net.sourceforge.xhsi.model.ComRadio;
@@ -202,6 +203,11 @@ public class LowerEicas extends MFDSubcomponent {
         	} else {
     			// Airbus style
             	// Page ID
+        		boolean ignition = false;
+        		for (int e=0; (e<this.aircraft.num_engines()) && !ignition; e++) { 
+        			ignition = this.aircraft.get_igniter_on(e); 
+        			}
+        		boolean piston = ( this.avionics.get_engine_type() == XHSISettings.ENGINE_TYPE_MAP );
             	drawPageID(g2, "ENGINE");
     			drawEngineVib(g2);
     			drawFuelUsed(g2);          	
@@ -209,6 +215,11 @@ public class LowerEicas extends MFDSubcomponent {
     			drawAirbusOilQ(g2);
     			drawAirbusOilP(g2);
             	if (mfd_gc.num_eng < 3) drawSeparationLine(g2);
+            	if (piston) {
+            		drawMagnetos(g2);
+            	} else {
+            		if (ignition) drawIgnitors(g2); else drawNacelleTemp(g2);
+            	}
     		}
         }
 
@@ -548,6 +559,7 @@ public class LowerEicas extends MFDSubcomponent {
 	}
 
 	private void drawAirbusOilQ(Graphics2D g2){
+		// TODO: No red sector
 		String str_fuel_legend = "OIL";
 		String str_fuel_units = "QT%";
 		g2.setColor(mfd_gc.ecam_markings_color);
@@ -567,6 +579,9 @@ public class LowerEicas extends MFDSubcomponent {
 	}
 
 	private void drawAirbusOilP(Graphics2D g2){
+		// TODO : Red sector < 14% ; amber needle < 20%
+		// FCOM A320 : red sector below 40 psi / 300
+		// FCOM A320 : amber needle between 40 and 60 psi /300 
 		String str_fuel_units = "PSI";
 		g2.setColor(mfd_gc.ecam_action_color);
 		g2.setFont(mfd_gc.font_l);
@@ -692,9 +707,99 @@ public class LowerEicas extends MFDSubcomponent {
         resetPen(g2);
     }
   
+    private void drawMagnetos(Graphics2D g2) {
+    	// Piston engines : draw Magnetos status
+    	g2.setColor(mfd_gc.ecam_markings_color);
+    	String legend_str="MAGN";
+    	g2.setFont(mfd_gc.font_xl);
+        g2.drawString(legend_str, mfd_gc.eng_dial_center_x-mfd_gc.get_text_width(g2, mfd_gc.font_xl, legend_str)/2, mfd_gc.eng_ing_title_y);        
 
+    	String magneto_str="";
+    	g2.setFont(mfd_gc.font_fixed_xl);
+		for (int eng=0; eng<mfd_gc.num_eng; eng++) {
+			IgnitionKeyPosition key_pos = aircraft.get_ignition_key(eng);
+	    	g2.setColor(mfd_gc.ecam_normal_color);	    
+	    	switch (key_pos) {
+	    	case OFF :   magneto_str = "OFF"; g2.setColor(mfd_gc.ecam_warning_color); break;  
+	    	case RIGHT : magneto_str = "    R"; g2.setColor(mfd_gc.ecam_caution_color); break;
+	    	case LEFT :  magneto_str = "L    "; g2.setColor(mfd_gc.ecam_caution_color); break;
+	    	case BOTH :  magneto_str = "L + R"; g2.setColor(mfd_gc.ecam_normal_color); break;
+	    	case START : magneto_str = "START"; g2.setColor(mfd_gc.ecam_normal_color); break;
+	    	}   	
+	    	g2.drawString(magneto_str, mfd_gc.dial_x[eng] -mfd_gc.get_text_width(g2, mfd_gc.font_fixed_xl, magneto_str)/2 , mfd_gc.eng_ing_valve_y);    	
+		}    	
+    }
+    
+    
+    private void drawIgnitors(Graphics2D g2) {
 
+    	// Title
+    	g2.setColor(mfd_gc.ecam_markings_color);
+    	String legend_str="IGN";
+    	g2.setFont(mfd_gc.font_xl);
+        g2.drawString(legend_str, mfd_gc.eng_dial_center_x-mfd_gc.get_text_width(g2, mfd_gc.font_xl, legend_str)/2, mfd_gc.eng_ing_title_y);
+        
+        // Ignitor A or B
+    	String letter_str="A";
+    	int ignitor_letter_x = mfd_gc.eng_dial_center_x - mfd_gc.panel_rect.width*(318-268)/1000;
+    	g2.setColor(mfd_gc.ecam_normal_color);
+        g2.drawString(letter_str, ignitor_letter_x-mfd_gc.get_text_width(g2, mfd_gc.font_xl, letter_str)/2, mfd_gc.eng_ing_legend_y);    	    	
+    	
+        if (mfd_gc.num_eng<3) {
+        	// PSI legend  and value left engine
+        	legend_str="PSI";
+        	g2.setColor(mfd_gc.ecam_action_color);
+        	g2.setFont(mfd_gc.font_l);
+        	g2.drawString(legend_str, mfd_gc.dial_x[0]-mfd_gc.digit_width_l/2-mfd_gc.get_text_width(g2, mfd_gc.font_l, legend_str), mfd_gc.eng_ing_value_y);  
+
+        	int left_bleed=Math.round(this.aircraft.bleed_air_press(Aircraft.BLEED_LEFT));
+        	String value_str=""+left_bleed;
+        	g2.setFont(mfd_gc.font_xl);
+        	g2.setColor(left_bleed < 10 ? mfd_gc.ecam_caution_color: mfd_gc.ecam_normal_color);
+        	g2.drawString(value_str, mfd_gc.dial_x[0], mfd_gc.eng_ing_value_y);
+
+        	// PSI legend  and value right engine
+        	legend_str="PSI";
+        	g2.setColor(mfd_gc.ecam_action_color);
+        	g2.setFont(mfd_gc.font_l);
+        	g2.drawString(legend_str, mfd_gc.dial_x[1]+mfd_gc.digit_width_l/2, mfd_gc.eng_ing_value_y);
+
+        	int right_bleed=Math.round(this.aircraft.bleed_air_press(Aircraft.BLEED_RIGHT));
+        	value_str=""+right_bleed;
+        	g2.setFont(mfd_gc.font_xl);
+        	g2.setColor(right_bleed < 10 ? mfd_gc.ecam_caution_color: mfd_gc.ecam_normal_color);    	
+        	g2.drawString(value_str, mfd_gc.dial_x[1]-mfd_gc.get_text_width(g2, mfd_gc.font_xl, value_str), mfd_gc.eng_ing_value_y);
+        }
 	
+		for (int eng=0; eng<mfd_gc.num_eng; eng++) {
+	    	g2.setColor(mfd_gc.ecam_normal_color);
+	    	g2.drawLine(mfd_gc.eng_ing_bleed_x[eng], mfd_gc.eng_ing_valve_y, mfd_gc.eng_ing_bleed_x[eng], mfd_gc.eng_ing_bottom);    	
+	    	g2.drawLine(mfd_gc.eng_ing_valve_in_x[eng], mfd_gc.eng_ing_valve_y, mfd_gc.eng_ing_bleed_x[eng], mfd_gc.eng_ing_valve_y);
+			drawValveHoriz(g2, aircraft.get_ignition_bleed_valve(eng), mfd_gc.eng_ing_valve_x[eng], mfd_gc.eng_ing_valve_y);
+			if (aircraft.get_ignition_bleed_valve(eng)== ValveStatus.VALVE_OPEN)
+				g2.drawLine(mfd_gc.eng_ing_valve_out_x[eng], mfd_gc.eng_ing_valve_y, mfd_gc.eng_ing_edge_x[eng], mfd_gc.eng_ing_valve_y);
+		}
+    	
+    }
+	
+    private void drawNacelleTemp(Graphics2D g2) {
+    	g2.setColor(mfd_gc.ecam_markings_color);
+    	String legend_str="NAC";
+    	g2.setFont(mfd_gc.font_xl);
+        g2.drawString(legend_str, mfd_gc.eng_dial_center_x-mfd_gc.get_text_width(g2, mfd_gc.font_xl, legend_str)/2, mfd_gc.eng_ing_title_y);
+		
+		String str_units = "°C";
+		g2.setColor(mfd_gc.ecam_action_color);
+		g2.setFont(mfd_gc.font_l);
+		g2.drawString(str_units, mfd_gc.eng_dial_center_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_units)/2, mfd_gc.eng_ing_legend_y);
+		
+		int dial_r = mfd_gc.dial_r[mfd_gc.num_eng];
+		for (int eng=0; eng<mfd_gc.num_eng; eng++) {
+			int nac_temp_val = Math.round( this.aircraft.get_nac_temp(eng));	        
+			drawAirbusGauge(g2, mfd_gc.dial_x[eng], mfd_gc.eng_nac_y, dial_r, nac_temp_val, 500.0f);
+		}
+    }
+    
 	private void drawEngineVib(Graphics2D g2) {
 		String vib_n1_legend = "VIB   (N1)";
 		String vib_n2_legend = "VIB   (N2)";
@@ -719,8 +824,7 @@ public class LowerEicas extends MFDSubcomponent {
 			g2.drawString(vib_n2_legend, mfd_gc.crz_eng_center_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, vib_n2_legend)/2, mfd_gc.eng_vib_n2_title_y);
 
 		}
-			
-		
+				
 		// Values
 		g2.setColor(mfd_gc.ecam_normal_color);
 		str_vib_val="XX";

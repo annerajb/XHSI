@@ -135,6 +135,12 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int eng_ing_value_y;
     public int eng_ing_valve_y;
     public int eng_ing_bottom;
+    public int eng_ing_valve_x[] = new int[8];
+    public int eng_ing_edge_x[] = new int[8];
+    public int eng_ing_valve_in_x[] = new int[8];
+    public int eng_ing_valve_out_x[] = new int[8];
+    public int eng_ing_bleed_x[] = new int[8];
+    public int eng_nac_y;
     
     public int eng_vib_n1_title_y;
     public int eng_vib_n1_value_y;
@@ -1011,11 +1017,43 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             eng_oilt_line_top = panel_rect.y + mfd_size * 700/1000;
             eng_oilt_line_bottom = panel_rect.y + mfd_size * 720/1000;
 
-            eng_ing_title_y = panel_rect.y + mfd_size * 889/1000;
-            eng_ing_legend_y = panel_rect.y + mfd_size * 889/1000;
-            eng_ing_value_y = panel_rect.y + mfd_size * 889/1000;
-            eng_ing_valve_y = panel_rect.y + mfd_size * 889/1000;
-            eng_ing_bottom = panel_rect.y + mfd_size * 889/1000;
+            eng_ing_title_y = panel_rect.y + mfd_size * 857/1000;
+            eng_ing_legend_y = panel_rect.y + mfd_size * 888/1000;
+            eng_ing_value_y = panel_rect.y + mfd_size * 960/1000;
+            eng_ing_valve_y = panel_rect.y + mfd_size * 857/1000;
+            eng_ing_bottom = panel_rect.y + mfd_size * 897/1000;
+            eng_nac_y =  panel_rect.y + mfd_size * 897/1000;
+            
+        	if (num_eng<3) {
+            	eng_ing_valve_x[0] =  dial_x[0] - panel_rect.width*(159-113)/1000;
+            	eng_ing_valve_in_x[0] =  eng_ing_valve_x[0] + cond_valve_r;
+            	eng_ing_valve_out_x[0] =  eng_ing_valve_x[0] - cond_valve_r;
+            	eng_ing_edge_x[0] =  dial_x[0] - panel_rect.width*(159-49)/1000;
+            	eng_ing_bleed_x[0] =  dial_x[0] + panel_rect.width*(183-159)/1000;
+
+            	eng_ing_valve_x[1] =  dial_x[1] + panel_rect.width*(159-113)/1000;
+            	eng_ing_valve_in_x[1] =  eng_ing_valve_x[1] - cond_valve_r;
+            	eng_ing_valve_out_x[1] =  eng_ing_valve_x[1] + cond_valve_r;
+            	eng_ing_edge_x[1] =  dial_x[1] + panel_rect.width*(159-49)/1000;
+            	eng_ing_bleed_x[1] =  dial_x[1] - panel_rect.width*(183-159)/1000;
+            } else {
+            	for (int e=0; e<num_eng; e++) {
+            		eng_ing_valve_x[e] =  dial_x[e] - panel_rect.width*(159-113)/1000;
+            		eng_ing_valve_in_x[e] =  eng_ing_valve_x[e] + cond_valve_r;
+            		eng_ing_valve_out_x[e] =  eng_ing_valve_x[e] - cond_valve_r;
+            		eng_ing_edge_x[e] =  dial_x[e] - panel_rect.width*(159-49)/1000;
+            		eng_ing_bleed_x[e] =  dial_x[e] + panel_rect.width*(183-159)/1000;  	
+            	}
+            	// TODO : adjust values
+            	eng_ing_title_y = panel_rect.y + mfd_size * 940/1000;
+            	eng_ing_legend_y = panel_rect.y + mfd_size * 975/1000;
+            	eng_ing_value_y = panel_rect.y + mfd_size * 980/1000;
+            	eng_ing_valve_y = panel_rect.y + mfd_size * 940/1000;
+            	eng_ing_bottom = panel_rect.y + mfd_size * 990/1000;
+            	eng_nac_y =  panel_rect.y + mfd_size * 955/1000;
+
+            }
+            
             
             eng_vib_n1_title_y = panel_rect.y + mfd_size * 149/1000;
             eng_vib_n1_value_y = panel_rect.y + mfd_size * 222/1000;
@@ -1026,13 +1064,12 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             eng_vib_t_dy = mfd_size * 35/1000;
             eng_vib_t_dx = panel_rect.width * 14/1000;
             eng_vib_x = panel_rect.x + panel_rect.width * 834/1000;
-            
+                        
             if (num_eng>2) {
             	eng_vib_n1_value_y = panel_rect.y + mfd_size * 800/1000;
             	eng_vib_n2_value_y = panel_rect.y + mfd_size * 870/1000;
             	eng_vib_n1_title_y = eng_vib_n1_value_y;
             	eng_vib_n2_title_y = eng_vib_n2_value_y;
-
             }
             
             eng_line_x = panel_rect.x + panel_rect.width * 622/1000;

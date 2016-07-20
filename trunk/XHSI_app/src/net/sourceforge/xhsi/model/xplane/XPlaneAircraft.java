@@ -32,6 +32,7 @@ import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.NavigationObject;
 import net.sourceforge.xhsi.model.SimDataRepository;
 import net.sourceforge.xhsi.model.Aircraft.ElecBus;
+import net.sourceforge.xhsi.model.Aircraft.ValveStatus;
 
 
 public class XPlaneAircraft implements Aircraft {
@@ -804,6 +805,7 @@ public class XPlaneAircraft implements Aircraft {
     	if (avionics.is_qpac()) {
     		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FUEL_VALVES) >> 8) & 0x07 ;
     		switch (pump_status) {
+    			case 0: return ValveStatus.TRANSIT;
     			case 1: return ValveStatus.VALVE_CLOSED;
     			case 2: return ValveStatus.VALVE_OPEN;
     			case 3: return ValveStatus.VALVE_CLOSED_FAILED;
@@ -814,7 +816,24 @@ public class XPlaneAircraft implements Aircraft {
     		return ValveStatus.VALVE_CLOSED;
     	}
     }
-    
+
+    public ValveStatus get_eng_fuel_valve(int eng){
+    	if (avionics.is_qpac()) {
+    		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FUEL_VALVES) >> (eng*2)) & 0x03 ;
+    		switch (pump_status) {
+				case 0: return ValveStatus.TRANSIT;
+    			case 1: return ValveStatus.VALVE_CLOSED_FAILED;
+    			case 3: return ValveStatus.VALVE_OPEN;
+    			case 2: return ValveStatus.VALVE_CLOSED;
+    			case 4: return ValveStatus.VALVE_OPEN_FAILED;
+    			default :return ValveStatus.JAMMED;
+    		}    		
+    	} else {
+    		// TODO : Get the fire cut off status
+    		return ValveStatus.VALVE_OPEN;
+    	}    	
+    }
+
     public float gross_weight() {
     	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_WEIGHT_M_TOTAL);
     }
@@ -964,6 +983,13 @@ public class XPlaneAircraft implements Aircraft {
         return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_FLIGHTMODEL_ENGINE_VIB_ + engine);
     }
 
+    public float get_nac_temp(int engine) {
+    	if ( this.avionics.is_qpac() ) 
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_NACELLE_TEMP_+engine);
+    	else
+    		return oat();
+    }
+    
     public float get_hyd_press(int circuit) {
         float h_p;
         // TODO: QPAC hyd pressure
@@ -1173,6 +1199,44 @@ public class XPlaneAircraft implements Aircraft {
     public float get_throttle(int engine) {
         return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_ENGINE_ACTUATORS_THROTTLE_RATIO_ + engine);
     }
+    
+    public IgnitionKeyPosition get_ignition_key(int engine) {
+    	if (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_STATUS) > 0.0f) {    		
+    		int ignition_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ENG_IGNITION);
+    		return (ignition_status & 0x10) != 0  ? IgnitionKeyPosition.START  : IgnitionKeyPosition.OFF;
+    	} else {
+    		int key_pos = ( (int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_ENGINE_IGN_KEY) >> (engine*3)) & 0x07;
+    		switch (key_pos) {
+    		case 0 : return IgnitionKeyPosition.OFF;
+    		case 1 : return IgnitionKeyPosition.RIGHT;
+    		case 2 : return IgnitionKeyPosition.LEFT;
+    		case 3 : return IgnitionKeyPosition.BOTH;
+    		case 4 : return IgnitionKeyPosition.START;
+    		default : return IgnitionKeyPosition.OFF;
+    		}
+    	}
+        
+    }
+
+    public ValveStatus get_ignition_bleed_valve(int engine) {
+    	if (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_STATUS) > 0.0f) {    		
+    		int ignition_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ENG_IGNITION);
+    		boolean bleed_valve = (ignition_status & (0x01 << engine)) != 0;
+    		return (bleed_valve ? ValveStatus.VALVE_OPEN : ValveStatus.VALVE_CLOSED);
+    	} else 
+    	return ( get_ignition_key(engine) == IgnitionKeyPosition.START ? ValveStatus.VALVE_OPEN : ValveStatus.VALVE_CLOSED );
+    }
+
+    public boolean get_igniter_on(int engine) {
+    	if (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_STATUS) > 0.0f) {    		
+    		int ignition_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ENG_IGNITION);
+    		return (ignition_status & 0x10) != 0;
+    	} else 
+        return ( get_ignition_key(engine) == IgnitionKeyPosition.START );
+    	/* Piston Engine : igniter_on = ignition key on the start position 
+    	 * Turbine : ignitor_on = ignition key on the start position + N2 between 10% and 30%
+    	 */     	 
+    }  
 
     public boolean fire_extinguisher(int engine) {
     	return ( ( (int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_ENGINE_FIRE_EXTINGUISHER) & (1<<engine) ) != 0 );
@@ -1229,6 +1293,10 @@ public class XPlaneAircraft implements Aircraft {
     
     public float apu_gen_amp() {
     	return sim_data.get_sim_float(XPlaneSimDataRepository.APU_GEN_AMP);
+    }
+    
+    public float apu_bleed_psi() {
+    	return (apu_n1() < 50.0f) ? 0.0f : (apu_n1()-50.0f) * 0.82f;
     }
 
     public float apu_egt() {
@@ -1497,6 +1565,17 @@ public class XPlaneAircraft implements Aircraft {
     	}
     }
 
+    public float bleed_air_press(int circuit) {
+    	if (this.avionics.is_qpac()) {
+    		switch (circuit) {
+    		case BLEED_LEFT : return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_BLEED_LEFT_PRESS);
+    		case BLEED_RIGHT : return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_BLEED_RIGHT_PRESS);
+    		default : return 0;
+    		}
+    	} else
+    	return 0;
+    }
+    
     // Cabin pressurization
     public float cabin_altitude() {
     	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_PRESSURIZATION_CABIN_ALT);

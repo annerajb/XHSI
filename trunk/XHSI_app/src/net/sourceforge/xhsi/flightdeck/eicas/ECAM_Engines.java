@@ -1311,7 +1311,7 @@ public class ECAM_Engines extends EICASSubcomponent {
         float rpm_max = this.aircraft.get_max_prop_RPM();
         float rpm_value = this.aircraft.get_prop_RPM(pos);
         float rpm_dial = Math.min(rpm_value/rpm_max, 1.1f);
-        boolean rpm_alive = rpm_value>0;
+        boolean rpm_alive = rpm_value>1;
         
         int rpm_y = eicas_gc.dial_main2_y;
         int rpm_r = eicas_gc.dial_r[num];

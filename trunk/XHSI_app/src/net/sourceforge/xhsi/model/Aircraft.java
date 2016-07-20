@@ -26,7 +26,7 @@ import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 
 public interface Aircraft {
 	
-    public enum ValveStatus { VALVE_OPEN, VALVE_CLOSED, VALVE_OPEN_FAILED, VALVE_CLOSED_FAILED, JAMMED };
+    public enum ValveStatus { VALVE_OPEN, VALVE_CLOSED, VALVE_OPEN_FAILED, VALVE_CLOSED_FAILED, JAMMED, TRANSIT };
     public enum SpoilerStatus { RETRACTED, EXTENDED, FAILED, JAMMED };
     public enum HydPumpStatus { OFF, ON, FAILED };
     public enum PumpStatus { OFF, ON, LOW_PRESSURE, FAILED }; 
@@ -34,6 +34,7 @@ public interface Aircraft {
     public enum ElecBus { NONE, BUS_1, BUS_2, BOTH };
     public enum DoorId { FRONT_LEFT, FRONT_RIGHT, MIDDLE_LEFT, MIDDLE_RIGHT, AFT_LEFT, AFT_RIGHT, FRONT_CARGO, AFT_CARGO, BULK, NONE };
     public enum CabinZone { COCKPIT, FORWARD, AFT, MIDDLE, CARGO_AFT, CARGO_FWD, UPPER_AFT, UPPER_FORWARD, UPPER_MIDDLE };
+    public enum IgnitionKeyPosition { OFF, RIGHT, LEFT, BOTH, START };
     
     // Bleed valve circuits
     public final static int BLEED_VALVE_CROSS = 0;
@@ -46,7 +47,17 @@ public interface Aircraft {
     public final static int BLEED_VALVE_PACK2 = 7;
     // Air valve circuits
     public final static int AIR_VALVE_RAM_AIR = 0;
-    public final static int AIR_VALVE_HOT_AIR = 1;    
+    public final static int AIR_VALVE_HOT_AIR = 1;
+    // Air circuit pressure
+    public final static int BLEED_ENG1 = 0;
+    public final static int BLEED_ENG2 = 1;
+    public final static int BLEED_ENG3 = 2;
+    public final static int BLEED_ENG4 = 3;
+    public final static int BLEED_APU = 8;
+    public final static int BLEED_GPU = 9;
+    public final static int BLEED_LEFT = 10;
+    public final static int BLEED_RIGHT = 11;
+
     
     /**
      * @return int - xhsi plugin version
@@ -822,6 +833,11 @@ public interface Aircraft {
      */
     public ValveStatus get_tank_xfer_valve();
 
+    /**
+     * @return ValveStatus - Engine Fuel Valve
+     */
+    public ValveStatus get_eng_fuel_valve(int eng);
+
 
     public float fuel_multiplier();
     
@@ -931,6 +947,11 @@ public interface Aircraft {
     public float get_vib(int engine);
 
     /**
+     * @return float - Engine nacelle temperature
+     */
+    public float get_nac_temp(int engine);
+
+    /**
      * @return float - Hydraulics P ratio
      */
     public float get_hyd_press(int circuit);
@@ -1036,6 +1057,21 @@ public interface Aircraft {
     public float get_throttle(int engine);
 
     /**
+     * @return IgnitionKeyPosition - Engine Igniton Key position
+     */   
+    public IgnitionKeyPosition get_ignition_key(int engine);
+    
+    /**
+     * @return ValveStatus - Engine Ignition Bleed Air Valve
+     */
+    public ValveStatus get_ignition_bleed_valve(int engine);
+    
+    /**
+     * @return boolean - Engine Igniter On
+     */
+    public boolean get_igniter_on(int engine);
+    
+    /**
      * @return boolean - Fire extinguisher on
      */
     public boolean fire_extinguisher(int engine);
@@ -1088,6 +1124,11 @@ public interface Aircraft {
      * @return Float - Auxiliary Power Unit (APU) Generator output current (Amp)
      */
     public float apu_gen_amp();
+    
+    /**
+     * @return Float - Auxiliary Power Unit (APU) Bleed Air Pressure (psi)
+     */
+    public float apu_bleed_psi();
     
     /**
      * @return boolean - Auxiliary Power Unit (APU) - True if APU is running
@@ -1222,9 +1263,14 @@ public interface Aircraft {
     public boolean has_bleed_air();
 
     /**
-     * @return ValveStatus - Aircraft has Bleed Air Circuits (ENG & APU)
+     * @return ValveStatus - Bleed Air valve status
      */
     public ValveStatus bleed_valve(int circuit);
+    
+    /**
+     * @return float - Bleed Air circuit pressure
+     */
+    public float bleed_air_press(int circuit);
     
     /**
      * @return Float - Cabin altitude in feet
