@@ -1197,6 +1197,8 @@ int createCustomAvionicsPacket(void) {
     int qpac_elec_buttons;
     int qpac_elec_oph_tab[4];
     float qpac_nacelle_temp_tab[4];
+    int qpac_ignition;
+    int qpac_start_valve_tab[4];
 
     int auto_brake_level;
     int brake_status;
@@ -1914,6 +1916,7 @@ int createCustomAvionicsPacket(void) {
         i++;
 
 
+        // Bleed Air
         qpac_bleed_valves =
         		(XPLMGetDatai(qpac_bleed_x) & 0x03)  |
         		(XPLMGetDatai(qpac_bleed_apu) & 0x03) << 2 |
@@ -1926,12 +1929,25 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BLEED_VALVES);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_bleed_valves );
         i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BLEED_LEFT_PRESS);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_bleed_left_press));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BLEED_RIGHT_PRESS);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_bleed_right_press));
+        i++;
 
-        /*
-        // ENG lower ECAM
-        qpac_ewd_start_mode = XPLMFindDataRef("AirbusFBW/EWDStartMode");
-        qpac_start_valve_array = XPLMFindDataRef("AirbusFBW/StartValveArray");
-        */
+        // Ignition valves and switches
+        XPLMGetDatavi(qpac_start_valve_array, qpac_start_valve_tab, 0, 4);
+        qpac_ignition =
+        		(qpac_start_valve_tab[0] & 0x01) |
+        		(qpac_start_valve_tab[1] & 0x01) << 1 |
+        		(qpac_start_valve_tab[2] & 0x01) << 2 |
+        		(qpac_start_valve_tab[3] & 0x01) << 3 |
+        		(XPLMGetDatai(qpac_ewd_start_mode) & 0x01) << 4 |
+        		(XPLMGetDatai(qpac_eng_mode_switch) & 0x03) << 6;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ENG_IGNITION);
+        sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_ignition );
+        i++;
 
         XPLMGetDatavf(qpac_nacelle_temp_array, qpac_nacelle_temp_tab, 0, 2);
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_NACELLE_TEMP_ + 0);
@@ -2341,6 +2357,8 @@ int createEnginesPacket(void) {
     int fires[8];
     int extinguisher;
     int extinguishers[8];
+    int ign_keys_tab[8];
+    int ign_keys;
 
     strncpy(sim_packet.packet_id, "ENGI", 4);
 
@@ -2498,6 +2516,14 @@ int createEnginesPacket(void) {
 
     // Ignitors (ignition_key, igniter_on, ignition_on) - to send as an 8 bits field for the 3 datarefs
     // Fadec to send as an 8 bits field
+    XPLMGetDatavi(ignition_key, ign_keys_tab, 0, engines);
+    for (e=0, ign_keys=0; e<engines; e++) {
+    	ign_keys |= (ign_keys_tab[e] & 0x07) << (e*3);
+    }
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_ENGINE_IGN_KEY);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) ign_keys);
+    i++;
+
 
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO1);
     sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(hyd_p_1));

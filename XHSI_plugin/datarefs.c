@@ -372,6 +372,7 @@ XPLMDataRef oil_t_red;
 XPLMDataRef oil_p_red;
 XPLMDataRef throttle_ratio;
 XPLMDataRef engine_epr_red;
+XPLMDataRef ignition_key;
 
 // for VIB
 XPLMDataRef vib_running;
@@ -2084,7 +2085,7 @@ void findDataRefs(void) {
     oil_p_red = XPLMFindDataRef("sim/aircraft/limits/red_hi_oilP");
     oil_t_red = XPLMFindDataRef("sim/aircraft/limits/red_hi_oilT");
     engine_epr_red = XPLMFindDataRef("sim/aircraft/limits/red_hi_EPR");
-
+    ignition_key = XPLMFindDataRef("sim/cockpit2/engine/actuators/ignition_key");
     throttle_ratio = XPLMFindDataRef("sim/cockpit2/engine/actuators/throttle_ratio");
     // for VIB
     vib_running = XPLMFindDataRef("sim/flightmodel/engine/ENGN_running");

@@ -168,7 +168,8 @@ XPLMDataRef qpac_cabin_delta_p;
 XPLMDataRef qpac_cabin_alt;
 XPLMDataRef qpac_cabin_vs;
 XPLMDataRef qpac_outflow_valve;
-// ENG lower ECAM
+// ENG lower ECAM (ignition and nacelles)
+XPLMDataRef qpac_eng_mode_switch;
 XPLMDataRef qpac_ewd_start_mode;
 XPLMDataRef qpac_start_valve_array;
 XPLMDataRef qpac_nacelle_temp_array;
@@ -200,6 +201,8 @@ XPLMDataRef qpac_bleed_pack2_flow;
 XPLMDataRef qpac_bleed_pack1_temp;
 XPLMDataRef qpac_bleed_pack2_temp;
 XPLMDataRef qpac_bleed_ram_air;
+XPLMDataRef qpac_bleed_left_press;
+XPLMDataRef qpac_bleed_right_press;
 // APU
 XPLMDataRef qpac_apu_egt;
 XPLMDataRef qpac_apu_egt_limit;
@@ -410,6 +413,7 @@ void findQpacDataRefs(void) {
             qpac_outflow_valve = XPLMFindDataRef("AirbusFBW/OutflowValve");
             // ENG lower ECAM
             qpac_ewd_start_mode = XPLMFindDataRef("AirbusFBW/EWDStartMode");
+            qpac_eng_mode_switch = XPLMFindDataRef("AirbusFBW/ENGModeSwitch");
             qpac_start_valve_array = XPLMFindDataRef("AirbusFBW/StartValveArray");
             qpac_nacelle_temp_array = XPLMFindDataRef("AirbusFBW/NacelleTempArray");
             // COND
@@ -440,6 +444,8 @@ void findQpacDataRefs(void) {
             qpac_bleed_pack1_temp = XPLMFindDataRef("AirbusFBW/Pack1Temp");
             qpac_bleed_pack2_temp = XPLMFindDataRef("AirbusFBW/Pack2Temp");
             qpac_bleed_ram_air = XPLMFindDataRef("AirbusFBW/RamAirValueSD");
+            qpac_bleed_left_press = XPLMFindDataRef("AirbusFBW/LeftBleedPress");
+            qpac_bleed_right_press = XPLMFindDataRef("AirbusFBW/RightBleedPress");
             // APU
             qpac_apu_egt = XPLMFindDataRef("AirbusFBW/APUEGT");
             qpac_apu_egt_limit = XPLMFindDataRef("AirbusFBW/APUEGTLimit");
@@ -456,7 +462,9 @@ void findQpacDataRefs(void) {
             qpac_elec_battery_volt = XPLMFindDataRef("AirbusFBW/BatVolts"); // array [0,4]
 
             // FUEL
-            qpac_fuel_pump_array = XPLMFindDataRef("AirbusFBW/FuelPumpOHPArray");
+            // qpac_fuel_pump_array = XPLMFindDataRef("AirbusFBW/FuelPumpOHPArray");
+            // Fuel pump : 0 = closed amber ; 1 = open green ; 2 = closed amber ; 3 = LO amber
+            qpac_fuel_pump_array = XPLMFindDataRef("AirbusFBW/FuelPumpSDArray");
             // Fuel pump : 0 = closed amber ; 1 = open green ; 2 = closed amber ; 3 = LO amber
             qpac_fuel_xfv_array = XPLMFindDataRef("AirbusFBW/FuelXFVSDArray");
             // X Fer Valve 0 = jammed "/"  ; 1 = closed green ; 2 = open green; 3 = closed amber ; 4 = open amber
