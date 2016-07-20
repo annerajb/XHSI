@@ -330,7 +330,8 @@ extern XPLMDataRef qpac_cabin_delta_p;
 extern XPLMDataRef qpac_cabin_alt;
 extern XPLMDataRef qpac_cabin_vs;
 extern XPLMDataRef qpac_outflow_valve;
-// ENG lower ECAM
+// ENG lower ECAM (ignition and nacelles)
+extern XPLMDataRef qpac_eng_mode_switch;
 extern XPLMDataRef qpac_ewd_start_mode;
 extern XPLMDataRef qpac_start_valve_array;
 extern XPLMDataRef qpac_nacelle_temp_array;
@@ -362,6 +363,8 @@ extern XPLMDataRef qpac_bleed_pack2_flow;
 extern XPLMDataRef qpac_bleed_pack1_temp;
 extern XPLMDataRef qpac_bleed_pack2_temp;
 extern XPLMDataRef qpac_bleed_ram_air;
+extern XPLMDataRef qpac_bleed_left_press;
+extern XPLMDataRef qpac_bleed_right_press;
 // APU
 extern XPLMDataRef qpac_apu_egt;
 extern XPLMDataRef qpac_apu_egt_limit;

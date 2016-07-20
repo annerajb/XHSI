@@ -296,6 +296,7 @@ extern XPLMDataRef oil_t_red;
 extern XPLMDataRef oil_p_red;
 extern XPLMDataRef throttle_ratio;
 extern XPLMDataRef engine_epr_red;
+extern XPLMDataRef ignition_key;
 
 // for VIB
 extern XPLMDataRef vib_running;
