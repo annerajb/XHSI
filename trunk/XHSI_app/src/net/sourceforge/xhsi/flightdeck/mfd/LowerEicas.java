@@ -542,14 +542,14 @@ public class LowerEicas extends MFDSubcomponent {
     }
 
 
-
-	private void drawPageID(Graphics2D g2, String page_str) {
+    private void drawPageID(Graphics2D g2, String page_str) {
 		g2.setColor(mfd_gc.ecam_markings_color);
 		g2.setFont(mfd_gc.font_xxl);
-		int page_id_x = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width/2 - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, page_str)/2;
+		int text_width = mfd_gc.get_text_width(g2, mfd_gc.font_xxl, page_str);
+		int page_id_x = mfd_gc.eng_page_id_x - text_width/2;
 		int page_id_y = mfd_gc.panel_rect.y + mfd_gc.line_height_xxl * 11/10;     	
 		g2.drawString(page_str, page_id_x, page_id_y);
-		g2.drawLine(page_id_x, page_id_y + mfd_gc.line_height_xxl/8, page_id_x + mfd_gc.get_text_width(g2, mfd_gc.font_xxl, page_str), page_id_y + mfd_gc.line_height_m/8);
+		g2.drawLine(page_id_x, page_id_y + mfd_gc.line_height_xxl/8, page_id_x + text_width, page_id_y + mfd_gc.line_height_m/8);
 	}
 
 	
@@ -558,6 +558,7 @@ public class LowerEicas extends MFDSubcomponent {
 		g2.drawLine(mfd_gc.eng_line_x,mfd_gc.eng_line_top,mfd_gc.eng_line_x,mfd_gc.eng_line_bottom);
 	}
 
+	
 	private void drawAirbusOilQ(Graphics2D g2){
 		// TODO: No red sector
 		String str_fuel_legend = "OIL";
@@ -739,12 +740,17 @@ public class LowerEicas extends MFDSubcomponent {
     	g2.setFont(mfd_gc.font_xl);
         g2.drawString(legend_str, mfd_gc.eng_dial_center_x-mfd_gc.get_text_width(g2, mfd_gc.font_xl, legend_str)/2, mfd_gc.eng_ing_title_y);
         
-        // Ignitor A or B
+        // Ignitors : A, B or AB
     	String letter_str="A";
     	int ignitor_letter_x = mfd_gc.eng_dial_center_x - mfd_gc.panel_rect.width*(318-268)/1000;
     	g2.setColor(mfd_gc.ecam_normal_color);
         g2.drawString(letter_str, ignitor_letter_x-mfd_gc.get_text_width(g2, mfd_gc.font_xl, letter_str)/2, mfd_gc.eng_ing_legend_y);    	    	
     	
+        /* A320 FCOM 1.70.90 p12 rev 23
+         * Engine bleed pressure
+         * The green numbers show the bleed pressure upstream of the precooler
+         * They become amber when the pressure drops below 21 psi with N2>=10% or if the is an overpressure
+         */
         if (mfd_gc.num_eng<3) {
         	// PSI legend  and value left engine
         	legend_str="PSI";
@@ -755,7 +761,7 @@ public class LowerEicas extends MFDSubcomponent {
         	int left_bleed=Math.round(this.aircraft.bleed_air_press(Aircraft.BLEED_LEFT));
         	String value_str=""+left_bleed;
         	g2.setFont(mfd_gc.font_xl);
-        	g2.setColor(left_bleed < 10 ? mfd_gc.ecam_caution_color: mfd_gc.ecam_normal_color);
+        	g2.setColor(left_bleed < 21 ? mfd_gc.ecam_caution_color: mfd_gc.ecam_normal_color);
         	g2.drawString(value_str, mfd_gc.dial_x[0], mfd_gc.eng_ing_value_y);
 
         	// PSI legend  and value right engine
@@ -767,7 +773,7 @@ public class LowerEicas extends MFDSubcomponent {
         	int right_bleed=Math.round(this.aircraft.bleed_air_press(Aircraft.BLEED_RIGHT));
         	value_str=""+right_bleed;
         	g2.setFont(mfd_gc.font_xl);
-        	g2.setColor(right_bleed < 10 ? mfd_gc.ecam_caution_color: mfd_gc.ecam_normal_color);    	
+        	g2.setColor(right_bleed < 21 ? mfd_gc.ecam_caution_color: mfd_gc.ecam_normal_color);    	
         	g2.drawString(value_str, mfd_gc.dial_x[1]-mfd_gc.get_text_width(g2, mfd_gc.font_xl, value_str), mfd_gc.eng_ing_value_y);
         }
 	
@@ -783,6 +789,12 @@ public class LowerEicas extends MFDSubcomponent {
     }
 	
     private void drawNacelleTemp(Graphics2D g2) {
+    	/* A320 FCOM 1.70.90 p12 REV 23
+    	 * The screen displays both nacelle temperatures if at least one of them is above 240°c
+    	 * A nacelle temperature above 240° pulses green
+    	 * During the start sequence, an ignition indication replaces these temperatures
+    	 * (no gauge - only values)
+    	 */
     	g2.setColor(mfd_gc.ecam_markings_color);
     	String legend_str="NAC";
     	g2.setFont(mfd_gc.font_xl);
@@ -830,7 +842,7 @@ public class LowerEicas extends MFDSubcomponent {
 		str_vib_val="XX";
 		for (int eng=0; eng<mfd_gc.num_eng; eng++) {
 			drawStringSmallOneDecimal(g2, mfd_gc.crz_vib_x[eng]+mfd_gc.digit_width_xxl, mfd_gc.eng_vib_n1_value_y,mfd_gc.font_xxl,mfd_gc.font_xl, this.aircraft.get_vib(eng)/10 );
-			drawStringSmallOneDecimal(g2, mfd_gc.crz_vib_x[eng]+mfd_gc.digit_width_xxl, mfd_gc.eng_vib_n2_value_y,mfd_gc.font_xxl,mfd_gc.font_xl, this.aircraft.get_vib(eng)/10 );
+			drawStringSmallOneDecimal(g2, mfd_gc.crz_vib_x[eng]+mfd_gc.digit_width_xxl, mfd_gc.eng_vib_n2_value_y,mfd_gc.font_xxl,mfd_gc.font_xl, this.aircraft.get_vib_n2(eng)/10 );
 		}
 	}
     

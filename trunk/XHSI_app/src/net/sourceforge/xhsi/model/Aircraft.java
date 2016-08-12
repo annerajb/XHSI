@@ -45,6 +45,7 @@ public interface Aircraft {
     public final static int BLEED_VALVE_ENG2_HP = 5;
     public final static int BLEED_VALVE_PACK1 = 6;
     public final static int BLEED_VALVE_PACK2 = 7;
+    public final static int BLEED_GROUND = 8;   
     // Air valve circuits
     public final static int AIR_VALVE_RAM_AIR = 0;
     public final static int AIR_VALVE_HOT_AIR = 1;
@@ -942,10 +943,15 @@ public interface Aircraft {
     public float get_oil_quant_ratio(int engine);
 
     /**
-     * @return float - Engine vibration %
+     * @return float - Engine (N1) vibration %
      */
     public float get_vib(int engine);
 
+    /**
+     * @return float - Engine N2 vibration %
+     */
+    public float get_vib_n2(int engine);
+    
     /**
      * @return float - Engine nacelle temperature
      */
@@ -1271,6 +1277,36 @@ public interface Aircraft {
      * @return float - Bleed Air circuit pressure
      */
     public float bleed_air_press(int circuit);
+
+    /**
+     * @return float - Bleed Air circuit temperature
+     */
+    public float bleed_air_temp(int circuit);    
+    
+    /**
+     * @return ValveStatus - Ram Air valve
+     */
+    public ValveStatus ram_air_valve();        
+    
+    /**
+     * @return float - Air conditioning pack flow ratio (cold=0,hot=1)
+     */   
+    public float pack_flow(int pack);
+
+    /**
+     * @return float - Air conditioning pack output flow temperature
+     */   
+    public float pack_out_temp(int pack);
+
+    /**
+     * @return float - Air conditioning pack compressor output flow temperature
+     */   
+    public float pack_comp_temp(int pack);
+    
+    /**
+     * @return float - Air conditioning pack bypass ratio (low=0, high=1)
+     */   
+    public float pack_bypass_ratio(int pack);  
     
     /**
      * @return Float - Cabin altitude in feet
@@ -1313,9 +1349,19 @@ public interface Aircraft {
     public float cabin_temp(CabinZone zone);
 
     /**
+     * @return Float - Cabin inlet air duct temperature
+     */
+    public float cabin_inlet_temp(CabinZone zone);
+
+    /**
      * @return Float - Cabin hot air trim 
      */
     public float cabin_hot_air_trim(CabinZone zone);   
+    
+    /**
+     * @return ValveStatus - Cabin hot air valve 
+     */
+    public ValveStatus cabin_hot_air_valve(CabinZone zone);
     
     /**
      * @return Float - Cabin crew oxygen bottle pressure

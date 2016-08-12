@@ -365,6 +365,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_TEMP_C_ = 520; // array
     public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_PRESS_PSI_ = 530; // array
     public static final int XHSI_FLIGHTMODEL_ENGINE_VIB_ = 540; // array
+    public static final int XHSI_FLIGHTMODEL_ENGINE_VIB_N2_ = 680; // array
     public static final int SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO1 = 551;
     public static final int SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO2 = 552;
     public static final int SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_1 = 553;
@@ -521,6 +522,47 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_RWY_LENGTH_MIN = 901; // Override with this value if it is > 0
     public static final int XHSI_RWY_UNITS = 902; // 0:Meters 1:Feet
     
+    // ATA 21 AIR CONDITIONING AND PRESSURIZATION
+    // Trims
+    public static final int XHSI_COND_COCKPIT_TRIM = 950;
+    public static final int XHSI_COND_ZONE1_TRIM = 951;
+    public static final int XHSI_COND_ZONE2_TRIM = 952;
+    public static final int XHSI_COND_ZONE3_TRIM = 953;
+    public static final int XHSI_COND_ZONE4_TRIM = 954;
+    public static final int XHSI_COND_ZONE5_TRIM = 955;
+    public static final int XHSI_COND_ZONE6_TRIM = 956;
+    public static final int XHSI_COND_CARGO_FWD_TRIM = 957;
+    public static final int XHSI_COND_CARGO_AFT_TRIM = 958;
+    // Cabin temperatures
+    public static final int XHSI_COND_COCKPIT_TEMP = 960;
+    public static final int XHSI_COND_FWD_CABIN_TEMP = 961;
+    public static final int XHSI_COND_MID_CABIN_TEMP = 962;
+    public static final int XHSI_COND_AFT_CABIN_TEMP = 963;
+    public static final int XHSI_COND_FWD_CARGO_TEMP = 964;
+    public static final int XHSI_COND_AFT_CARGO_TEMP = 965;
+    // Inlet air duct temperatures
+    public static final int XHSI_COND_INLET_COCKPIT_TEMP = 970;
+    public static final int XHSI_COND_INLET_FWD1_CABIN_TEMP = 971;
+    public static final int XHSI_COND_INLET_FWD2_CABIN_TEMP = 972;
+    public static final int XHSI_COND_INLET_MID1_CABIN_TEMP = 973;
+    public static final int XHSI_COND_INLET_MID2_CABIN_TEMP = 974;
+    public static final int XHSI_COND_INLET_AFT1_CABIN_TEMP = 975;
+    public static final int XHSI_COND_INLET_AFT2_CABIN_TEMP = 976;
+    public static final int XHSI_COND_INLET_CARGO_FWD_TEMP = 977;
+    public static final int XHSI_COND_INLET_CARGO_AFT_TEMP = 978;
+
+    // Hot air valves - bit arrays (2 bits per valve)
+    // LSB order : Hot Air 1, Hot Air 2, Cargo 1, Cargo 2
+    public static final int XHSI_COND_HOT_AIR_VALVES = 980;
+    // Air conditioning packs
+    // bit array (2 bits per valve) : LSB order : PACK 1, PACK 2, RAM AIR, CAB FAN1, CAB FAN2
+    public static final int XHSI_COND_AIR_VALVES = 981;
+    public static final int XHSI_COND_PACK1_FLOW = 982;
+    public static final int XHSI_COND_PACK2_FLOW = 983;
+    public static final int XHSI_COND_PACK1_COMP_OUTLET_TEMP = 984;
+    public static final int XHSI_COND_PACK2_COMP_OUTLET_TEMP = 985;
+    public static final int XHSI_COND_PACK1_TEMP_CTRL_VALVE = 986;
+    public static final int XHSI_COND_PACK2_TEMP_CTRL_VALVE = 987;
     
     // QPAC AirbusFBW
     public static final int QPAC_STATUS=1000;
@@ -627,6 +669,9 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_COND_FWD_CABIN_TEMP=1102;
     public static final int QPAC_COND_AFT_CARGO_TEMP=1103;
     public static final int QPAC_COND_FWD_CARGO_TEMP=1104;
+    public static final int QPAC_COND_INLET_COCKPIT_TEMP=1112;
+    public static final int QPAC_COND_INLET_FWD_CABIN_TEMP=1113;
+    public static final int QPAC_COND_INLET_AFT_CABIN_TEMP=1114;
     // BLEED AIR
     public static final int QPAC_BLEED_VALVES=1081;
     public static final int QPAC_BLEED_LEFT_PRESS=1110;
@@ -730,18 +775,36 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int JAR_A320NEO_HYD_PTU=1278;
     // Doors
     public static final int JAR_A320NEO_DOOR_STATUS=1279;
+    // BLEED AIR
+    public static final int JAR_A320NEO_BLEED_VALVES = 1280;
+    public static final int JAR_A320NEO_BLEED_LEFT_PRESS = 1281;
+    public static final int JAR_A320NEO_BLEED_RIGHT_PRESS = 1282;
+    public static final int JAR_A320NEO_PACK1_FLOW = 1283;
+    public static final int JAR_A320NEO_PACK2_FLOW = 1284;
+    public static final int JAR_A320NEO_PACK1_TEMP = 1285;
+    public static final int JAR_A320NEO_PACK2_TEMP = 1286;
+    public static final int JAR_A320NEO_BLEED_LEFT_TEMP = 1287;
+    public static final int JAR_A320NEO_BLEED_RIGHT_TEMP = 1288;
+    public static final int JAR_A320NEO_PACK1_COMP_TEMP = 1289;
+    public static final int JAR_A320NEO_PACK2_COMP_TEMP = 1290;
+    public static final int JAR_A320NEO_PACK1_BYPASS_RATIO = 1291;
+    public static final int JAR_A320NEO_PACK2_BYPASS_RATIO = 1292;
+    // Nacelle
+    public static final int JAR_A320NEO_NACELLE_TEMP_ = 1300;
+    // System Display page
+    public static final int JAR_A320NEO_SD_PAGE = 1304;
     // Plugin Version
     public static final int PLUGIN_VERSION_ID = 999;
 
 
     // array with sim data for all sim data points defined above
-    float[] sim_values_float = new float[1300];
-    String[] sim_values_string = new String[1300];
+    float[] sim_values_float = new float[1400];
+    String[] sim_values_string = new String[1400];
     // updated status and timestamp for all sim data
-    boolean[] sim_updated_float = new boolean[1300];
-    long[] sim_timestamp_float = new long[1300];
-    boolean[] sim_updated_string = new boolean[1300];
-    long[] sim_timestamp_string = new long[1300];
+    boolean[] sim_updated_float = new boolean[1400];
+    long[] sim_timestamp_float = new long[1400];
+    boolean[] sim_updated_string = new boolean[1400];
+    long[] sim_timestamp_string = new long[1400];
 
     long updates = 0;
     ArrayList<Observer> observers;

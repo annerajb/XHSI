@@ -899,19 +899,41 @@ public class XPlaneAvionics implements Avionics, Observer {
     	return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_MFD_MODE);
     }
 
+    public int jar_a320neo_get_mfd_mode() {
+    	int sd_page = (int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_SD_PAGE);
+    	switch (sd_page) {
+    		case 0 : return Avionics.MFD_MODE_HYDR; 
+    		case 1 : return Avionics.MFD_MODE_FUEL; 
+    		case 2 : return Avionics.MFD_MODE_APU; 
+    		case 3 : return Avionics.MFD_MODE_CAB_PRESS; 
+    		case 4 : return Avionics.MFD_MODE_FCTL; 
+    		case 5 : return Avionics.MFD_MODE_WHEELS; 
+    		case 6 : return Avionics.MFD_MODE_ELEC; 
+    		case 7 : return Avionics.MFD_MODE_BLEED; 
+    		case 8 : return Avionics.MFD_MODE_COND; 
+    		case 9 : return Avionics.MFD_MODE_DOOR_OXY; 
+    		case 10: return Avionics.MFD_MODE_SYS; 
+    		case 11: return Avionics.MFD_MODE_ENGINE;      	
+    	}
+    	return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_MFD_MODE);
+    }
+    
     public int get_mfd_mode() {
+    	int xhsi_mfd_mode = (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_MFD_MODE);
 
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
             return xhsi_settings.mfd_mode;
         } else {
             if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_SWITCHABLE)) {
-                return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_MFD_MODE);
+                return xhsi_mfd_mode;
             } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_LINKED)) {
-            	if (is_qpac()) {
+            	if (is_qpac() && (xhsi_mfd_mode != Avionics.MFD_MODE_FPLN) && (xhsi_mfd_mode != Avionics.MFD_MODE_ARPT) && (xhsi_mfd_mode != Avionics.MFD_MODE_RTU)) {
             		return qpac_get_mfd_mode();
+            	} else if (is_jar_a320neo() && (xhsi_mfd_mode != Avionics.MFD_MODE_FPLN) && (xhsi_mfd_mode != Avionics.MFD_MODE_ARPT) && (xhsi_mfd_mode != Avionics.MFD_MODE_RTU)) {
+            		return jar_a320neo_get_mfd_mode();
             	} else {
             		// like mode_switchable
-            		return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_MFD_MODE);
+            		return xhsi_mfd_mode;
             	}
             } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_MFD_MODE).equals(XHSIPreferences.MFD_MODE_ARPT_CHART)) {
                 return Avionics.MFD_MODE_ARPT;
@@ -2187,15 +2209,13 @@ public class XPlaneAvionics implements Avionics, Observer {
 
 
     public void set_mfd_mode(int new_mode) {
-
+    	// Don't switch QPAC ECAM SD page if custom XHSI MFD page is displayed : Flight Plan , or Airport Chart
+    	// TODO : introduce a preference setting to disable MFD menu link to ECAM SD page
         if ( ! xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.INSTRUCTOR ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_MFD_MODE, (float) new_mode );
             if (this.is_qpac()) {
             	int sd_page = -1;
-            	// Don't switch QPAC ECAM SD page if custom XHSI MFD page is displayed : Flight Plan , or Airport Chart
-            	// TODO : introduce a preference setting to disable MFD menu link to ECAM SD page
             	switch (new_mode) {
-            		 
             		case Avionics.MFD_MODE_ARPT:
             		case Avionics.MFD_MODE_FPLN:
             		case Avionics.MFD_MODE_RTU: sd_page = -1; break;
@@ -2212,14 +2232,37 @@ public class XPlaneAvionics implements Avionics, Observer {
             		case Avionics.MFD_MODE_FCTL: sd_page = 10; break;
             		case Avionics.MFD_MODE_SYS: sd_page = 11; break; 
             		case Avionics.MFD_MODE_STATUS: sd_page = 12; break;
-
             	}
             	if (sd_page != -1) {
             		udp_sender.sendDataPoint( XPlaneSimDataRepository.QPAC_SD_PAGE, (float) sd_page );
             	}
             }
+            if (this.is_jar_a320neo()) {
+            	int sd_page = -1;
+            	switch (new_mode) {
+            		case Avionics.MFD_MODE_ARPT:
+            		case Avionics.MFD_MODE_FPLN:
+            		case Avionics.MFD_MODE_RTU: 
+            		case Avionics.MFD_MODE_STATUS: sd_page = -1; break;
+            		case Avionics.MFD_MODE_ENGINE: sd_page = 11; break; 
+            		case Avionics.MFD_MODE_BLEED: sd_page = 7; break;
+            		case Avionics.MFD_MODE_CAB_PRESS: sd_page = 3; break;
+            		case Avionics.MFD_MODE_ELEC: sd_page = 6; break;
+            		case Avionics.MFD_MODE_HYDR: sd_page = 0; break;
+            		case Avionics.MFD_MODE_FUEL: sd_page = 1; break;
+            		case Avionics.MFD_MODE_APU: sd_page = 2; break;
+            		case Avionics.MFD_MODE_COND: sd_page = 8; break;
+            		case Avionics.MFD_MODE_DOOR_OXY: sd_page = 9; break;
+            		case Avionics.MFD_MODE_WHEELS: sd_page = 5; break;
+            		case Avionics.MFD_MODE_FCTL: sd_page = 4; break;
+            		case Avionics.MFD_MODE_SYS: sd_page = 10; break; 
+            	}
+            	if (sd_page != -1) {
+                    // Send to : sim/custom/xap/disp/sys/mode
+            		udp_sender.sendDataPoint( XPlaneSimDataRepository.JAR_A320NEO_SD_PAGE, (float) sd_page );
+            	}
+            }
         }
-
     }
 
 

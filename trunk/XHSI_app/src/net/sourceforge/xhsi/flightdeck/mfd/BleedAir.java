@@ -47,8 +47,8 @@ public class BleedAir extends MFDSubcomponent {
 		if ( mfd_gc.powered && avionics.get_mfd_mode() == Avionics.MFD_MODE_BLEED ) {
 			// Page ID
 			drawPageID(g2, "BLEED");
-			drawPackMix(g2, mfd_gc.bleed_circuit1_x);
-			drawPackMix(g2, mfd_gc.bleed_circuit2_x);
+			drawPackMix(g2, mfd_gc.bleed_circuit1_x, aircraft.pack_comp_temp(1), aircraft.pack_out_temp(1), aircraft.pack_flow(1), aircraft.pack_bypass_ratio(1) );
+			drawPackMix(g2, mfd_gc.bleed_circuit2_x, aircraft.pack_comp_temp(2), aircraft.pack_out_temp(2), aircraft.pack_flow(2), aircraft.pack_bypass_ratio(2) );
 			drawBleedValvesStatus(g2);
 			drawPackOutFlow(g2);
 			drawEngineFlow(g2);
@@ -109,12 +109,13 @@ public class BleedAir extends MFDSubcomponent {
 		drawValveVert(g2, aircraft.bleed_valve(Aircraft.BLEED_VALVE_PACK1), mfd_gc.bleed_circuit1_x, mfd_gc.bleed_pack_valve_y);
 		drawValveVert(g2, aircraft.bleed_valve(Aircraft.BLEED_VALVE_PACK2), mfd_gc.bleed_circuit2_x, mfd_gc.bleed_pack_valve_y);
 
+		// RAM AIR
 		g2.setColor(mfd_gc.ecam_markings_color);
 		String ram_str = "RAM";
 		String air_str = "AIR";
 		g2.drawString(ram_str, mfd_gc.bleed_ram_air_valve_x - mfd_gc.get_text_width(g2, mfd_gc.font_xl, ram_str)/2 , mfd_gc.bleed_ram_air_legend_y1 );
 		g2.drawString(air_str, mfd_gc.bleed_ram_air_valve_x - mfd_gc.get_text_width(g2, mfd_gc.font_xl, air_str)/2 , mfd_gc.bleed_ram_air_legend_y2 );
-		drawValveVert(g2, aircraft.bleed_valve(Aircraft.BLEED_VALVE_ENG1), mfd_gc.bleed_ram_air_valve_x, mfd_gc.bleed_ram_air_valve_y);
+		drawValveVert(g2, aircraft.ram_air_valve(), mfd_gc.bleed_ram_air_valve_x, mfd_gc.bleed_ram_air_valve_y);
 		
 		// Ground Bleed (GPU)
 		g2.setColor(mfd_gc.ecam_normal_color);
@@ -127,22 +128,28 @@ public class BleedAir extends MFDSubcomponent {
 
 	}
 
-	private void drawPackOutFlow(Graphics2D g2) {		
-		g2.setColor(mfd_gc.ecam_markings_color);
+	private void drawPackOutFlow(Graphics2D g2) {	
+		boolean flow_status = (aircraft.bleed_valve(Aircraft.BLEED_VALVE_PACK1) == ValveStatus.VALVE_OPEN && this.aircraft.bleed_air_press(Aircraft.BLEED_LEFT) > 10) || 
+				(aircraft.bleed_valve(Aircraft.BLEED_VALVE_PACK2) == ValveStatus.VALVE_OPEN && this.aircraft.bleed_air_press(Aircraft.BLEED_RIGHT) > 10) || 
+				aircraft.ram_air_valve() == ValveStatus.VALVE_OPEN;
+		g2.setColor(flow_status ? mfd_gc.ecam_markings_color : mfd_gc.ecam_caution_color);
 		int tri_x1[] = { mfd_gc.bleed_out_tri_x1 - mfd_gc.bleed_out_tri_dx, mfd_gc.bleed_out_tri_x1, mfd_gc.bleed_out_tri_x1 + mfd_gc.bleed_out_tri_dx };
 		int tri_x2[] = { mfd_gc.bleed_out_tri_x2 - mfd_gc.bleed_out_tri_dx, mfd_gc.bleed_out_tri_x2, mfd_gc.bleed_out_tri_x2 + mfd_gc.bleed_out_tri_dx };
 		int tri_x3[] = { mfd_gc.bleed_out_tri_x3 - mfd_gc.bleed_out_tri_dx, mfd_gc.bleed_out_tri_x3, mfd_gc.bleed_out_tri_x3 + mfd_gc.bleed_out_tri_dx };
 		int tri_y[]  = { mfd_gc.bleed_out_tri_y, mfd_gc.bleed_out_tri_y - mfd_gc.bleed_out_tri_dy, mfd_gc.bleed_out_tri_y };
 		g2.drawPolygon(tri_x1, tri_y, 3);
 		g2.drawPolygon(tri_x2, tri_y, 3);
-		g2.drawPolygon(tri_x3, tri_y, 3);
-		g2.setColor(mfd_gc.ecam_normal_color);
+		g2.drawPolygon(tri_x3, tri_y, 3);		
+		g2.setColor(flow_status ? mfd_gc.ecam_normal_color : mfd_gc.ecam_caution_color);
 		g2.drawLine(mfd_gc.bleed_circuit1_x, mfd_gc.bleed_out_line_y, mfd_gc.bleed_circuit2_x, mfd_gc.bleed_out_line_y);
 		g2.drawLine(mfd_gc.bleed_circuit1_x, mfd_gc.bleed_out_line_y, mfd_gc.bleed_circuit1_x, mfd_gc.bleed_mix_box_top);
 		g2.drawLine(mfd_gc.bleed_circuit2_x, mfd_gc.bleed_out_line_y, mfd_gc.bleed_circuit2_x, mfd_gc.bleed_mix_box_top);		
 		// RAM AIR
 		g2.setColor(mfd_gc.ecam_normal_color);
 		g2.drawLine(mfd_gc.bleed_ram_air_valve_x, mfd_gc.bleed_ram_air_valve_y + mfd_gc.hyd_valve_r, mfd_gc.bleed_ram_air_valve_x, mfd_gc.bleed_ram_air_valve_y + mfd_gc.hyd_valve_r*2);
+		if (aircraft.ram_air_valve() == ValveStatus.VALVE_OPEN) {
+			g2.drawLine(mfd_gc.bleed_ram_air_valve_x, mfd_gc.bleed_ram_air_valve_y - mfd_gc.hyd_valve_r, mfd_gc.bleed_ram_air_valve_x, mfd_gc.bleed_out_line_y);
+		}
 	}
 
 	private void drawXBleed(Graphics2D g2) {
@@ -171,7 +178,7 @@ public class BleedAir extends MFDSubcomponent {
 
 	}
 	
-	private void drawPackMix(Graphics2D g2, int x) {
+	private void drawPackMix(Graphics2D g2, int x, float comp_out_temp, float out_temp, float flow, float bypass_ratio) {
 		int r = mfd_gc.cond_gauge_r*11/10;
 		int y = mfd_gc.bleed_pack_valve_y;
 		g2.setColor(mfd_gc.ecam_box_bg_color);
@@ -180,8 +187,8 @@ public class BleedAir extends MFDSubcomponent {
 		g2.setColor(mfd_gc.background_color);		
 		g2.fillArc(x-r, y-r, r*2, r*2, 0, 180);
 	
-		drawGauge(g2, 0.0f, x, mfd_gc.bleed_mix_gauge_y, true);
-		drawGauge(g2, 0.0f, x, mfd_gc.bleed_pack_valve_y, false);
+		drawGauge(g2, bypass_ratio, x, mfd_gc.bleed_mix_gauge_y, true);
+		drawGauge(g2, flow, x, mfd_gc.bleed_pack_valve_y, false);
 		g2.setColor(mfd_gc.ecam_normal_color);
 		g2.drawLine(x, mfd_gc.bleed_pack_valve_y + mfd_gc.hyd_valve_r, x, mfd_gc.bleed_eng_box_top_y);
 
@@ -193,14 +200,26 @@ public class BleedAir extends MFDSubcomponent {
 		g2.drawString(unit_str, x+mfd_gc.bleed_mix_box_dx-mfd_gc.get_text_width(g2, mfd_gc.font_m, unit_str), mfd_gc.bleed_ram_air_valve_y);
 		g2.drawString(unit_str, x+mfd_gc.bleed_mix_box_dx-mfd_gc.get_text_width(g2, mfd_gc.font_m, unit_str), mfd_gc.bleed_flow_temp_y);
 
-		// flow temperature
+		// Compressor output flow temperature
 		g2.setColor(mfd_gc.ecam_caution_color);
 		g2.setFont(mfd_gc.font_xxl);
 		String flow_temp_str="XX";
+		if (comp_out_temp>-99.00f) {
+			g2.setColor(mfd_gc.ecam_normal_color);
+			flow_temp_str = ""+Math.round(comp_out_temp);
+		} else {
+			g2.setColor(mfd_gc.ecam_caution_color);
+		}
 		g2.drawString(flow_temp_str, x-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, flow_temp_str)/2, mfd_gc.bleed_flow_temp_y);
 
-		// Mix temperature
+		// Pack output flow temperature
 		String mix_temp_str="XX";
+		if (out_temp>-99.00f) {
+			g2.setColor(mfd_gc.ecam_normal_color);
+			mix_temp_str = ""+Math.round(out_temp);
+		} else {
+			g2.setColor(mfd_gc.ecam_caution_color);
+		}
 		g2.drawString(mix_temp_str, x-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, mix_temp_str)/2, mfd_gc.bleed_ram_air_valve_y);
 		
 	}
@@ -209,7 +228,9 @@ public class BleedAir extends MFDSubcomponent {
 	private void drawEngineFlow(Graphics2D g2) {
 		g2.setColor(mfd_gc.ecam_normal_color);
 		// Engine 1
-		g2.drawLine(mfd_gc.bleed_circuit1_x, mfd_gc.bleed_circuit_eng_top_y, mfd_gc.bleed_circuit1_x, mfd_gc.bleed_eng_valve_y - mfd_gc.hyd_valve_r);
+		if ( aircraft.bleed_valve(Aircraft.BLEED_VALVE_ENG1) == ValveStatus.VALVE_OPEN ) {
+			g2.drawLine(mfd_gc.bleed_circuit1_x, mfd_gc.bleed_circuit_eng_top_y, mfd_gc.bleed_circuit1_x, mfd_gc.bleed_eng_valve_y - mfd_gc.hyd_valve_r);
+		}
 		g2.drawLine(mfd_gc.bleed_circuit1_x, mfd_gc.bleed_eng_valve_y + mfd_gc.hyd_valve_r, mfd_gc.bleed_circuit1_x, mfd_gc.bleed_circuit_bottom_y);
 		if ( aircraft.bleed_valve(Aircraft.BLEED_VALVE_ENG1_HP) == ValveStatus.VALVE_OPEN ) {
 			g2.drawLine(mfd_gc.bleed_circuit1_x, mfd_gc.bleed_hp_valve_y, mfd_gc.bleed_hp_valve_x1 - mfd_gc.hyd_valve_r, mfd_gc.bleed_hp_valve_y);
@@ -238,17 +259,27 @@ public class BleedAir extends MFDSubcomponent {
 		g2.setColor(mfd_gc.ecam_caution_color);
 		g2.setFont(mfd_gc.font_xxl);
 		String flow_temp_str="XX";
+		if (this.aircraft.bleed_air_temp(Aircraft.BLEED_LEFT)>-99.0) {
+			flow_temp_str = ""+Math.round(this.aircraft.bleed_air_temp(Aircraft.BLEED_LEFT));
+			g2.setColor(mfd_gc.ecam_normal_color);
+		}
 		g2.drawString(flow_temp_str, mfd_gc.bleed_circuit1_x-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, flow_temp_str)/2, mfd_gc.bleed_eng_flow_temp_y);
 
 		// flow pressure
 		String psi_str="XX";
+		if (this.aircraft.bleed_air_press(Aircraft.BLEED_LEFT)>-99.0) {
+			psi_str = ""+Math.round(this.aircraft.bleed_air_press(Aircraft.BLEED_LEFT));
+			g2.setColor(mfd_gc.ecam_normal_color);
+		}
 		g2.drawString(psi_str, mfd_gc.bleed_circuit1_x-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, psi_str)/2, mfd_gc.bleed_eng_flow_press_y);
 
 		
 		
 		if (mfd_gc.num_eng>1) {
 			g2.setColor(mfd_gc.ecam_normal_color);
-			g2.drawLine(mfd_gc.bleed_circuit2_x, mfd_gc.bleed_circuit_eng_top_y, mfd_gc.bleed_circuit2_x, mfd_gc.bleed_eng_valve_y - mfd_gc.hyd_valve_r);
+			if ( aircraft.bleed_valve(Aircraft.BLEED_VALVE_ENG2) == ValveStatus.VALVE_OPEN ) {
+				g2.drawLine(mfd_gc.bleed_circuit2_x, mfd_gc.bleed_circuit_eng_top_y, mfd_gc.bleed_circuit2_x, mfd_gc.bleed_eng_valve_y - mfd_gc.hyd_valve_r);
+			}
 			g2.drawLine(mfd_gc.bleed_circuit2_x, mfd_gc.bleed_eng_valve_y + mfd_gc.hyd_valve_r, mfd_gc.bleed_circuit2_x, mfd_gc.bleed_circuit_bottom_y);
 			if ( aircraft.bleed_valve(Aircraft.BLEED_VALVE_ENG2_HP) == ValveStatus.VALVE_OPEN ) {
 				g2.drawLine(mfd_gc.bleed_circuit2_x, mfd_gc.bleed_hp_valve_y, mfd_gc.bleed_hp_valve_x2 + mfd_gc.hyd_valve_r, mfd_gc.bleed_hp_valve_y);
@@ -277,10 +308,18 @@ public class BleedAir extends MFDSubcomponent {
 			g2.setColor(mfd_gc.ecam_caution_color);
 			g2.setFont(mfd_gc.font_xxl);
 			flow_temp_str="XX";
+			if (this.aircraft.bleed_air_temp(Aircraft.BLEED_RIGHT)>-99) {
+				flow_temp_str = ""+Math.round(this.aircraft.bleed_air_temp(Aircraft.BLEED_RIGHT));
+				g2.setColor(mfd_gc.ecam_normal_color);
+			}
 			g2.drawString(flow_temp_str, mfd_gc.bleed_circuit2_x-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, flow_temp_str)/2, mfd_gc.bleed_eng_flow_temp_y);
 
 			// flow pressure
 			psi_str="XX";
+			if (this.aircraft.bleed_air_press(Aircraft.BLEED_RIGHT)>-99) {
+				psi_str = ""+Math.round(this.aircraft.bleed_air_press(Aircraft.BLEED_RIGHT));
+				g2.setColor(mfd_gc.ecam_normal_color);
+			}
 			g2.drawString(psi_str, mfd_gc.bleed_circuit2_x-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, psi_str)/2, mfd_gc.bleed_eng_flow_press_y);
 
 		}
@@ -320,6 +359,9 @@ public class BleedAir extends MFDSubcomponent {
     	}
     } 
     
+    /**
+     * Value in range 0.0 to 1.0. Middle is 0.5 
+     */
     private void drawGauge(Graphics2D g2, float value, int x, int y, boolean temp_mode) {
     	AffineTransform original_at = g2.getTransform();
     	int r = mfd_gc.cond_gauge_r;
@@ -337,16 +379,15 @@ public class BleedAir extends MFDSubcomponent {
         // middle mark
         g2.drawLine(x, y-r, x, y-r*11/10);
         
-        // g2.rotate(-10.0, x, y);
+        // Needle         
+        g2.rotate(Math.toRadians(value-0.5f)*134, x, y);
         g2.setColor(mfd_gc.ecam_normal_color);
         int dx = r/12;
         int arrow_base = y-r*4/5;
         g2.drawLine(x, y-mfd_gc.cond_valve_r, x, arrow_base);
         g2.drawLine(x, y-r, x+dx, arrow_base);
         g2.drawLine(x, y-r, x-dx, arrow_base);
-        g2.drawLine(x-dx, arrow_base, x+dx, arrow_base);
-        
-        g2.setTransform(original_at);
-        
+        g2.drawLine(x-dx, arrow_base, x+dx, arrow_base);      
+        g2.setTransform(original_at);        
     }
 }
