@@ -31,6 +31,7 @@ import net.sourceforge.xhsi.model.CoordinateSystem;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.NavigationObject;
 import net.sourceforge.xhsi.model.SimDataRepository;
+import net.sourceforge.xhsi.model.Aircraft.CabinZone;
 import net.sourceforge.xhsi.model.Aircraft.ElecBus;
 import net.sourceforge.xhsi.model.Aircraft.ValveStatus;
 
@@ -983,12 +984,18 @@ public class XPlaneAircraft implements Aircraft {
         return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_FLIGHTMODEL_ENGINE_VIB_ + engine);
     }
 
+    public float get_vib_n2(int engine) {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_FLIGHTMODEL_ENGINE_VIB_N2_ + engine);
+    }
+    
     public float get_nac_temp(int engine) {
     	if ( this.avionics.is_qpac() ) 
     		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_NACELLE_TEMP_+engine);
+    	else if ( this.avionics.is_jar_a320neo() ) 
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_NACELLE_TEMP_+engine);
     	else
     		return oat();
-    }
+    } 
     
     public float get_hyd_press(int circuit) {
         float h_p;
@@ -1552,8 +1559,17 @@ public class XPlaneAircraft implements Aircraft {
     
     public ValveStatus bleed_valve(int circuit) {
     	if (this.avionics.is_qpac()) {
-    		int qpac_bleed = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_BLEED_VALVES);
-    		int valve = (qpac_bleed >> (circuit * 2)) & 0x03;
+    		int bleed = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_BLEED_VALVES);
+    		int valve = (bleed >> (circuit * 2)) & 0x03;
+    		switch (valve) {
+    		case 0 : return ValveStatus.VALVE_CLOSED;
+    		case 1 : return ValveStatus.VALVE_OPEN;
+    		case 2 : return ValveStatus.VALVE_CLOSED_FAILED;
+    		default : return ValveStatus.VALVE_OPEN_FAILED;
+    		}
+    	} if (this.avionics.is_jar_a320neo()) {
+    		int bleed = (int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_BLEED_VALVES);
+    		int valve = (bleed >> (circuit * 2)) & 0x03;
     		switch (valve) {
     		case 0 : return ValveStatus.VALVE_CLOSED;
     		case 1 : return ValveStatus.VALVE_OPEN;
@@ -1572,9 +1588,71 @@ public class XPlaneAircraft implements Aircraft {
     		case BLEED_RIGHT : return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_BLEED_RIGHT_PRESS);
     		default : return 0;
     		}
+    	} else if (this.avionics.is_jar_a320neo()) {
+    		switch (circuit) {
+    		case BLEED_LEFT : return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_BLEED_LEFT_PRESS);
+    		case BLEED_RIGHT : return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_BLEED_RIGHT_PRESS);
+    		default : return 0;
+    		}    		
     	} else
-    	return 0;
+    		return -99.0f;
     }
+    
+    public float bleed_air_temp(int circuit) {
+    	if (this.avionics.is_jar_a320neo()) {
+    		switch (circuit) {
+    		case BLEED_LEFT : return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_BLEED_LEFT_TEMP);
+    		case BLEED_RIGHT : return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_BLEED_RIGHT_TEMP);
+    		default : return 0;
+    		}    		
+    	} else
+    		return -99.0f;
+    }
+    
+    public ValveStatus ram_air_valve() {
+    	int air_valve = (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_AIR_VALVES);
+    	return (air_valve >> 4 & 0x03) > 0 ? ValveStatus.VALVE_OPEN : ValveStatus.VALVE_CLOSED;        
+    }
+   
+    public float pack_flow(int pack) {
+    	if (this.avionics.is_jar_a320neo()) {
+    		if (pack==1) 
+    			return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_PACK1_FLOW);
+   			else 
+       			return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_PACK2_FLOW); 				
+    	} else 
+    		return -99.0f;
+    }
+
+    public float pack_out_temp(int pack) {
+    	if (this.avionics.is_jar_a320neo()) {
+    		if (pack==1) 
+    			return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_PACK1_TEMP);
+   			else 
+       			return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_PACK2_TEMP); 				
+    	} else 
+    		return -99.0f;
+    }
+
+    public float pack_comp_temp(int pack){
+    	if (this.avionics.is_jar_a320neo()) {
+    		if (pack==1) 
+    			return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_PACK1_COMP_TEMP);
+   			else 
+       			return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_PACK2_COMP_TEMP); 				
+    	} else 
+    		return -99.0f;   	
+    }
+    
+    public float pack_bypass_ratio(int pack) {
+    	if (this.avionics.is_jar_a320neo()) {
+    		if (pack==1) 
+    			return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_PACK1_BYPASS_RATIO);
+   			else 
+       			return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_PACK2_BYPASS_RATIO); 				
+    	} else 
+    		return -99.0f;   	
+    } 
     
     // Cabin pressurization
     public float cabin_altitude() {
@@ -1610,11 +1688,28 @@ public class XPlaneAircraft implements Aircraft {
 
     public float cabin_temp(CabinZone zone) {
     	float temp = -99.0f;
-    	if (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_STATUS) > 0.0f) {
+    	if (this.avionics.is_qpac() || this.avionics.is_jar_a320neo()) {
     		switch (zone) {
-    		case COCKPIT: temp = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_COND_COCKPIT_TEMP); break;
-    		case AFT: temp = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_COND_AFT_CABIN_TEMP); break;
-    		case FORWARD: temp = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_COND_FWD_CABIN_TEMP); break;
+    		case COCKPIT: temp = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_COCKPIT_TEMP); break;
+    		case AFT: temp = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_AFT_CABIN_TEMP); break;
+    		case FORWARD: temp = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_FWD_CABIN_TEMP); break;
+    		case CARGO_FWD: temp = this.avionics.is_jar_a320neo() ? sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_FWD_CARGO_TEMP) : -99.0f; break;
+    		case CARGO_AFT: temp = this.avionics.is_jar_a320neo() ? sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_AFT_CARGO_TEMP) : -99.0f; break;
+    		default : temp = -20.0f;
+    		}
+    	}
+    	return temp;
+    }
+    
+    public float cabin_inlet_temp(CabinZone zone)  {
+    	float temp = -99.0f;
+    	if (this.avionics.is_qpac() || this.avionics.is_jar_a320neo()) {
+    		switch (zone) {
+    		case COCKPIT: temp = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_INLET_COCKPIT_TEMP); break;
+    		case AFT: temp = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_INLET_AFT1_CABIN_TEMP); break;
+    		case FORWARD: temp = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_INLET_FWD1_CABIN_TEMP); break;
+    		case CARGO_FWD: temp = this.avionics.is_jar_a320neo() ? sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_INLET_CARGO_FWD_TEMP) : -99.0f; break;
+    		case CARGO_AFT: temp = this.avionics.is_jar_a320neo() ? sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_INLET_CARGO_AFT_TEMP) : -99.0f; break;
     		default : temp = -20.0f;
     		}
     	}
@@ -1623,16 +1718,42 @@ public class XPlaneAircraft implements Aircraft {
     
     public float cabin_hot_air_trim(CabinZone zone) {
     	float trim = 0.0f;
-    	if (sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_STATUS) > 0.0f) {
+    	if (this.avionics.is_qpac() || this.avionics.is_jar_a320neo()) {
     		switch (zone) {
-    		case COCKPIT: trim = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_COND_COCKPIT_TRIM); break;
-    		case AFT: trim = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_COND_ZONE2_TRIM); break;
-    		case FORWARD: trim = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_COND_ZONE1_TRIM); break;
+    		case COCKPIT: trim = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_COCKPIT_TRIM); break;
+    		case AFT: trim = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_ZONE2_TRIM); break;
+    		case FORWARD: trim = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_ZONE1_TRIM); break;
+    		case CARGO_FWD: trim = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_CARGO_FWD_TRIM); break;
+    		case CARGO_AFT: trim = sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_CARGO_AFT_TRIM); break;
     		default : trim = 0.15f;
     		}
     	}
     	return trim;
     }   
+    
+    public ValveStatus cabin_hot_air_valve(CabinZone zone) {
+    	if (this.avionics.is_qpac()) {
+    		int air_valve = (int) sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_HOT_AIR_VALVES);
+    		int valve = air_valve & 0x03;
+    		switch (valve) {
+    		case 0 : return ValveStatus.VALVE_CLOSED;
+    		case 1 : return ValveStatus.VALVE_CLOSED_FAILED;
+    		case 2 : return ValveStatus.VALVE_OPEN;
+    		default : return ValveStatus.VALVE_OPEN_FAILED;
+    		}
+    	} else if (this.avionics.is_jar_a320neo()) {
+    		int air_valve = (int) sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_HOT_AIR_VALVES);
+    		int valve = (zone == CabinZone.CARGO_AFT) ? (air_valve >> 4) & 0x03 : air_valve & 0x03;
+    		switch (valve) {
+    		case 0 : return ValveStatus.VALVE_CLOSED;
+    		case 1 : return ValveStatus.VALVE_OPEN;
+    		case 2 : return ValveStatus.VALVE_CLOSED_FAILED;
+    		default : return ValveStatus.VALVE_OPEN_FAILED;
+    		}
+    	} else {
+    		return ValveStatus.VALVE_OPEN;
+    	}
+    }
     
     public float crew_oxygen_psi() {
     	// Cabin crew oxygen bottle pressure

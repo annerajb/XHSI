@@ -198,7 +198,7 @@ public class CruiseSystems extends MFDSubcomponent {
 		for (int eng=0; eng<mfd_gc.num_eng; eng++) {
 			str_vib_val = one_decimal_format.format(this.aircraft.get_vib(eng)/10);
 			drawStringSmallOneDecimal(g2, mfd_gc.crz_vib_x[eng]+mfd_gc.digit_width_xxl, mfd_gc.crz_vib_n1_value_y,mfd_gc.font_xxl,mfd_gc.font_xl, this.aircraft.get_vib(eng)/10 );
-			drawStringSmallOneDecimal(g2, mfd_gc.crz_vib_x[eng]+mfd_gc.digit_width_xxl, mfd_gc.crz_vib_n2_value_y,mfd_gc.font_xxl,mfd_gc.font_xl, this.aircraft.get_vib(eng)/10 );
+			drawStringSmallOneDecimal(g2, mfd_gc.crz_vib_x[eng]+mfd_gc.digit_width_xxl, mfd_gc.crz_vib_n2_value_y,mfd_gc.font_xxl,mfd_gc.font_xl, this.aircraft.get_vib_n2(eng)/10 );
 		}
 	}
 	

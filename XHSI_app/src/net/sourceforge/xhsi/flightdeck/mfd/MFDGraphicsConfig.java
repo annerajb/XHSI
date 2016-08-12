@@ -102,6 +102,7 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int ec_col3_unit;
     
     // ECAM Engine
+    public int eng_page_id_x;
     public int eng_dial_center_x;
     public int eng_fused_value_dx;
     public int eng_fused_title_y;
@@ -338,6 +339,15 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int cargo_hot_air_aft_x;
     public int cargo_x1;
     public int cargo_x2;
+    
+    public int cargo_fwd_front_x;
+    public int cargo_fwd_gauge_x;
+    public int cargo_fwd_aft_x;
+    public int cargo_fwd_hot_air_valve_x;
+    public int cargo_fwd_hot_air_aft_x;
+    public int cargo_fwd_x1;
+    public int cargo_fwd_x2;
+    
     public int cargo_hot_air_y;
     public int cargo_top_y;
     public int cargo_outlet_valve_y;
@@ -1024,7 +1034,12 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             eng_ing_bottom = panel_rect.y + mfd_size * 897/1000;
             eng_nac_y =  panel_rect.y + mfd_size * 897/1000;
             
+            eng_line_x = panel_rect.x + panel_rect.width * 622/1000;
+            eng_line_top = panel_rect.y + mfd_size * 142/1000;
+            eng_line_bottom = panel_rect.y + mfd_size * 889/1000;
+            
         	if (num_eng<3) {
+        		eng_page_id_x = eng_line_x;
             	eng_ing_valve_x[0] =  dial_x[0] - panel_rect.width*(159-113)/1000;
             	eng_ing_valve_in_x[0] =  eng_ing_valve_x[0] + cond_valve_r;
             	eng_ing_valve_out_x[0] =  eng_ing_valve_x[0] - cond_valve_r;
@@ -1037,6 +1052,7 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             	eng_ing_edge_x[1] =  dial_x[1] + panel_rect.width*(159-49)/1000;
             	eng_ing_bleed_x[1] =  dial_x[1] - panel_rect.width*(183-159)/1000;
             } else {
+            	eng_page_id_x = panel_rect.x + panel_rect.width/2;
             	for (int e=0; e<num_eng; e++) {
             		eng_ing_valve_x[e] =  dial_x[e] - panel_rect.width*(159-113)/1000;
             		eng_ing_valve_in_x[e] =  eng_ing_valve_x[e] + cond_valve_r;
@@ -1072,9 +1088,7 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             	eng_vib_n2_title_y = eng_vib_n2_value_y;
             }
             
-            eng_line_x = panel_rect.x + panel_rect.width * 622/1000;
-            eng_line_top = panel_rect.y + mfd_size * 142/1000;
-            eng_line_bottom = panel_rect.y + mfd_size * 889/1000;
+
             
             // Airbus Flight Controls
             fctl_mid_x = panel_rect.x + panel_rect.width / 2;  // middle axis
@@ -1184,7 +1198,7 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             cond_valve_r = mfd_size * 35/1000;
             // Gauges
             cond_gauge_r = mfd_size * 80/1000;
-            // Cargo
+            // Cargo Aft
             cargo_front_x = panel_rect.x + panel_rect.width * 538/1000;
             cargo_gauge_x = panel_rect.x + panel_rect.width * 695/1000;
             cargo_aft_x = panel_rect.x + panel_rect.width * 802/1000;
@@ -1192,6 +1206,15 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             cargo_hot_air_aft_x = panel_rect.x + panel_rect.width * 935/1000;
             cargo_x1 = panel_rect.x + panel_rect.width * 637/1000;
             cargo_x2 = panel_rect.x + panel_rect.width * 740/1000;
+            // Cargo Forward
+            cargo_fwd_front_x = panel_rect.x + panel_rect.width * 118/1000;
+            cargo_fwd_gauge_x = panel_rect.x + panel_rect.width * 275/1000;
+            cargo_fwd_aft_x = panel_rect.x + panel_rect.width * 382/1000;
+            cargo_fwd_hot_air_valve_x = panel_rect.x + panel_rect.width * 450/1000;
+            cargo_fwd_hot_air_aft_x = panel_rect.x + panel_rect.width * 460/1000;
+            cargo_fwd_x1 = panel_rect.x + panel_rect.width * 217/1000;
+            cargo_fwd_x2 = panel_rect.x + panel_rect.width * 320/1000;
+            // Cargo all
             cargo_hot_air_y = panel_rect.y + mfd_size * 915/1000;
             cargo_top_y = panel_rect.y + mfd_size * 540/1000;
             cargo_outlet_valve_y = panel_rect.y + mfd_size * 605/1000;

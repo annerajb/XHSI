@@ -83,7 +83,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    public static final String RELEASE = "2.0 Beta 9 Alpha 4";
+    public static final String RELEASE = "2.0 Beta 9 Alpha 5";
     public static final int EXPECTED_PLUGIN = 20009;
 
 
@@ -100,7 +100,7 @@ public class XHSI implements ActionListener {
     ModelFactory model_instance;
 
     private XHSIPreferences preferences;
-    private ArrayList running_threads;
+    private ArrayList<Object> running_threads;
 
     private ConWinComponent xhsi_ui;
     private JFrame xhsi_frame;
@@ -288,7 +288,7 @@ public class XHSI implements ActionListener {
 
     private void init() throws Exception {
 
-        this.running_threads = new ArrayList();
+        this.running_threads = new ArrayList<Object>();
 
         // load properties and create a new properties file, if none exists
         this.preferences = XHSIPreferences.get_instance();
@@ -670,7 +670,7 @@ public class XHSI implements ActionListener {
             // set minimum size
             if ( min_size ) {
 //                if ( this.preferences.get_hide_window_frames() ) {
-                    instrument_window.frame.setMinimumSize(new Dimension(instrument_window.du.get_min_width(), instrument_window.du.get_min_width()));
+                    instrument_window.frame.setMinimumSize(new Dimension(instrument_window.du.get_min_width(), instrument_window.du.get_min_height()));
 //                } else {
 //                    // reserve some extra space for the title bar (it's platform dependent, so this is only an estimate)
 //                    instrument_window.frame.setMinimumSize(new Dimension(340, 340 + 20));
