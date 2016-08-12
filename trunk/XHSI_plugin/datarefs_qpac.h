@@ -400,6 +400,14 @@ extern XPLMDataRef qpac_sd_wheel;
 extern XPLMDataRef qpac_sd_fctl;
 extern XPLMDataRef qpac_sd_status;
 
+// ECAM SD lines (a,b,g,r,w)
+#define QPAC_SD_LINES 18
+extern XPLMDataRef qpac_sd_line_amber[QPAC_SD_LINES];
+extern XPLMDataRef qpac_sd_line_blue[QPAC_SD_LINES];
+extern XPLMDataRef qpac_sd_line_green[QPAC_SD_LINES];
+extern XPLMDataRef qpac_sd_line_red[QPAC_SD_LINES];
+extern XPLMDataRef qpac_sd_line_white[QPAC_SD_LINES];
+
 //qpac FCU toggles, push/pull commands, RMP, MCDU
 extern XPLMCommandRef qpac_command[QPAC_KEY_MAX];
 

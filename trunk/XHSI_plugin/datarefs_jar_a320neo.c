@@ -98,6 +98,7 @@ XPLMDataRef jar_a320_neo_apu_flap;
 XPLMDataRef jar_a320_neo_apu_start_pb;
 
 // Bleed Air
+XPLMDataRef jar_a320_neo_bleed_apu_bleed_valve;
 XPLMDataRef jar_a320_neo_bleed_eng1_bleed_knob;
 XPLMDataRef jar_a320_neo_bleed_eng1_bleed_valve;
 XPLMDataRef jar_a320_neo_bleed_eng1_bleed_temp;
@@ -120,18 +121,18 @@ XPLMDataRef jar_a320_neo_brakes_left_press;
 XPLMDataRef jar_a320_neo_brakes_right_press;
 XPLMDataRef jar_a320_neo_brakes_mode_na;
 
-// Conditioning
+// ATA 21 Conditioning
 XPLMDataRef jar_a320_neo_cond_aft_duct;
 XPLMDataRef jar_a320_neo_cond_aft_temp;
 XPLMDataRef jar_a320_neo_cond_aft_trm_valve;
-XPLMDataRef jar_a320_neo_cond_cabin_aft_duct;
-XPLMDataRef jar_a320_neo_cond_cabin_adft_temp;
-XPLMDataRef jar_a320_neo_cond_cabin_aft_trm_valve;
-XPLMDataRef jar_a320_neo_cond_cabin_aft_valve;
-XPLMDataRef jar_a320_neo_cond_cabin_fwd_duct;
-XPLMDataRef jar_a320_neo_cond_cabin_fwd_temp;
-XPLMDataRef jar_a320_neo_cond_cabin_fwd_trm_valve;
-XPLMDataRef jar_a320_neo_cond_cabin_fwd_valve;
+XPLMDataRef jar_a320_neo_cond_cargo_aft_duct;
+XPLMDataRef jar_a320_neo_cond_cargo_aft_temp;
+XPLMDataRef jar_a320_neo_cond_cargo_aft_trm_valve;
+XPLMDataRef jar_a320_neo_cond_cargo_aft_valve;
+XPLMDataRef jar_a320_neo_cond_cargo_fwd_duct;
+XPLMDataRef jar_a320_neo_cond_cargo_fwd_temp;
+XPLMDataRef jar_a320_neo_cond_cargo_fwd_trm_valve;
+XPLMDataRef jar_a320_neo_cond_cargo_fwd_valve;
 XPLMDataRef jar_a320_neo_cond_cockpit_duct;
 XPLMDataRef jar_a320_neo_cond_cockpit_temp;
 XPLMDataRef jar_a320_neo_cond_cockpit_trm_valve;
@@ -140,7 +141,7 @@ XPLMDataRef jar_a320_neo_cond_fwd_duct;
 XPLMDataRef jar_a320_neo_cond_fwd_temp;
 XPLMDataRef jar_a320_neo_cond_fwd_trm_valve;
 XPLMDataRef jar_a320_neo_cond_hot_air;
-XPLMDataRef jar_a320_neo_cond_hot_air_temp;
+XPLMDataRef jar_a320_neo_cond_cargo_hot_air;
 XPLMDataRef jar_a320_neo_cond_pack1;
 XPLMDataRef jar_a320_neo_cond_pack12_line;
 XPLMDataRef jar_a320_neo_cond_pack1_comp_deg;
@@ -344,6 +345,9 @@ XPLMDataRef jar_a320_neo_nd_mode;
 // MCDU
 XPLMDataRef jar_a320_mcdu_click[JAR_A320_MAX_MCDU_KEYS];
 
+// SD_PAGE Display
+XPLMDataRef jar_a320_disp_sys_mode;
+
 int jar_a320_neo_ready = 0;
 
 /*
@@ -360,7 +364,6 @@ sim/custom/xap/ap/spdmanaged[0]
 *
 sim/custom/xap/debug[0]
 sim/custom/xap/disp/sys/emer_canc[0]
-sim/custom/xap/disp/sys/mode[0]
 *
 * CHRONO
 *
@@ -514,6 +517,7 @@ void findJarA320NeoDataRefs(void) {
             jar_a320_neo_apu_start_pb = XPLMFindDataRef("sim/custom/xap/apu/start_pb");
 
             // Bleed Air
+            jar_a320_neo_bleed_apu_bleed_valve = XPLMFindDataRef("sim/custom/xap/bleed/apu_blvlv");
             jar_a320_neo_bleed_eng1_bleed_knob = XPLMFindDataRef("sim/custom/xap/bleed/eng1_bl_knob");
             jar_a320_neo_bleed_eng1_bleed_valve = XPLMFindDataRef("sim/custom/xap/bleed/eng1_blvlv");
             jar_a320_neo_bleed_eng1_bleed_temp = XPLMFindDataRef("sim/custom/xap/bleed/eng1_deg");
@@ -541,14 +545,14 @@ void findJarA320NeoDataRefs(void) {
             jar_a320_neo_cond_aft_duct = XPLMFindDataRef("sim/custom/xap/cond/aft_duct");
             jar_a320_neo_cond_aft_temp = XPLMFindDataRef("sim/custom/xap/cond/aft_temp");
             jar_a320_neo_cond_aft_trm_valve = XPLMFindDataRef("sim/custom/xap/cond/aft_trmvlv");
-            jar_a320_neo_cond_cabin_aft_duct = XPLMFindDataRef("sim/custom/xap/cond/c_aft_duct");
-            jar_a320_neo_cond_cabin_adft_temp = XPLMFindDataRef("sim/custom/xap/cond/c_aft_temp");
-            jar_a320_neo_cond_cabin_aft_trm_valve = XPLMFindDataRef("sim/custom/xap/cond/c_aft_trmvlv");
-            jar_a320_neo_cond_cabin_aft_valve = XPLMFindDataRef("sim/custom/xap/cond/c_aft_vlv");
-            jar_a320_neo_cond_cabin_fwd_duct = XPLMFindDataRef("sim/custom/xap/cond/c_fwd_duct");
-            jar_a320_neo_cond_cabin_fwd_temp = XPLMFindDataRef("sim/custom/xap/cond/c_fwd_temp");
-            jar_a320_neo_cond_cabin_fwd_trm_valve = XPLMFindDataRef("sim/custom/xap/cond/c_fwd_trmvlv");
-            jar_a320_neo_cond_cabin_fwd_valve = XPLMFindDataRef("sim/custom/xap/cond/c_fwd_vlv");
+            jar_a320_neo_cond_cargo_aft_duct = XPLMFindDataRef("sim/custom/xap/cond/c_aft_duct");
+            jar_a320_neo_cond_cargo_aft_temp = XPLMFindDataRef("sim/custom/xap/cond/c_aft_temp");
+            jar_a320_neo_cond_cargo_aft_trm_valve = XPLMFindDataRef("sim/custom/xap/cond/c_aft_trmvlv");
+            jar_a320_neo_cond_cargo_aft_valve = XPLMFindDataRef("sim/custom/xap/cond/c_aft_vlv");
+            jar_a320_neo_cond_cargo_fwd_duct = XPLMFindDataRef("sim/custom/xap/cond/c_fwd_duct");
+            jar_a320_neo_cond_cargo_fwd_temp = XPLMFindDataRef("sim/custom/xap/cond/c_fwd_temp");
+            jar_a320_neo_cond_cargo_fwd_trm_valve = XPLMFindDataRef("sim/custom/xap/cond/c_fwd_trmvlv");
+            jar_a320_neo_cond_cargo_fwd_valve = XPLMFindDataRef("sim/custom/xap/cond/c_fwd_vlv");
             jar_a320_neo_cond_cockpit_duct = XPLMFindDataRef("sim/custom/xap/cond/ckpt_duct");
             jar_a320_neo_cond_cockpit_temp = XPLMFindDataRef("sim/custom/xap/cond/ckpt_temp");
             jar_a320_neo_cond_cockpit_trm_valve = XPLMFindDataRef("sim/custom/xap/cond/ckpt_trmvlv");
@@ -557,7 +561,7 @@ void findJarA320NeoDataRefs(void) {
             jar_a320_neo_cond_fwd_temp = XPLMFindDataRef("sim/custom/xap/cond/fwd_temp");
             jar_a320_neo_cond_fwd_trm_valve = XPLMFindDataRef("sim/custom/xap/cond/fwd_trmvlv");
             jar_a320_neo_cond_hot_air = XPLMFindDataRef("sim/custom/xap/cond/hot_air");
-            jar_a320_neo_cond_hot_air_temp = XPLMFindDataRef("sim/custom/xap/cond/hot_air_c");
+            jar_a320_neo_cond_cargo_hot_air = XPLMFindDataRef("sim/custom/xap/cond/hot_air_c");
             jar_a320_neo_cond_pack1 = XPLMFindDataRef("sim/custom/xap/cond/pack1");
             jar_a320_neo_cond_pack12_line = XPLMFindDataRef("sim/custom/xap/cond/pack12_line");
             jar_a320_neo_cond_pack1_comp_deg = XPLMFindDataRef("sim/custom/xap/cond/pack1_comp_deg");
@@ -829,6 +833,9 @@ void findJarA320NeoDataRefs(void) {
             jar_a320_mcdu_click[67] = XPLMFindDataRef("sim/custom/xap/mcdu/click_y");
             jar_a320_mcdu_click[68] = XPLMFindDataRef("sim/custom/xap/mcdu/click_z");
 
+            // SD_PAGE Display
+            jar_a320_disp_sys_mode = XPLMFindDataRef("sim/custom/xap/disp/sys/mode");
+
             findJar_a320MsgDataRefs();
 
         }
@@ -857,6 +864,9 @@ void writeJarA320neoDataRef(int id, float value) {
     switch (id) {
 		case JAR_A320NEO_MCDU_CLICK :
 			if ((value >= 0) && (value <= 68)) XPLMSetDatai(jar_a320_mcdu_click[(int)value], 1);
+			break;
+		case JAR_A320NEO_SD_PAGE :
+			if ((value >= 0) && (value <= 11)) XPLMSetDatai(jar_a320_disp_sys_mode,(int)value);
 			break;
     }
 }

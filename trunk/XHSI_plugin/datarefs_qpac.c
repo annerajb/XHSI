@@ -239,6 +239,13 @@ XPLMDataRef qpac_sd_fctl;
 XPLMDataRef qpac_sd_status;
 XPLMDataRef qpac_sd_to_config;
 
+// ECAM SD lines
+XPLMDataRef qpac_sd_line_amber[QPAC_SD_LINES];
+XPLMDataRef qpac_sd_line_blue[QPAC_SD_LINES];
+XPLMDataRef qpac_sd_line_green[QPAC_SD_LINES];
+XPLMDataRef qpac_sd_line_red[QPAC_SD_LINES];
+XPLMDataRef qpac_sd_line_white[QPAC_SD_LINES];
+
 //qpac FCU toggles, push/pull commands, RMP, MCDU
 XPLMCommandRef qpac_command[QPAC_KEY_MAX];
 
@@ -257,6 +264,8 @@ void findQpacDataRefs(void) {
 	// For datarefs checks, remove for release
 	// char msg[200];
 	// XPLMDataTypeID reftype;
+    int         i;
+    char        buf[100];
 
 	qpac_plugin_status = XPLMFindDataRef("AirbusFBW/APPhase");
 
@@ -673,6 +682,19 @@ void findQpacDataRefs(void) {
             qpac_command[QPAC_KEY_MDCU2_X] = XPLMFindCommand("AirbusFBW/MCDU2KeyX");
             qpac_command[QPAC_KEY_MDCU2_Y] = XPLMFindCommand("AirbusFBW/MCDU2KeyY");
             qpac_command[QPAC_KEY_MDCU2_Z] = XPLMFindCommand("AirbusFBW/MCDU2KeyZ");
+
+            for (i=0; i<QPAC_SD_LINES; i++) {
+                sprintf(buf, "AirbusFBW/SDline%da", i+1);
+                qpac_sd_line_amber[i] = XPLMFindDataRef(buf);
+                sprintf(buf, "AirbusFBW/SDline%db", i+1);
+                qpac_sd_line_blue[i] = XPLMFindDataRef(buf);
+                sprintf(buf, "AirbusFBW/SDline%dg", i+1);
+                qpac_sd_line_green[i] = XPLMFindDataRef(buf);
+                sprintf(buf, "AirbusFBW/SDline%dr", i+1);
+                qpac_sd_line_red[i] = XPLMFindDataRef(buf);
+                sprintf(buf, "AirbusFBW/SDline%dw", i+1);
+                qpac_sd_line_white[i] = XPLMFindDataRef(buf);
+            }
 
             findQpacMsgDataRefs();
 

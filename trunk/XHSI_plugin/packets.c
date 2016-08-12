@@ -52,7 +52,8 @@
 // We set the maximum number of SimDataPoint records to 182.
 #define MAX_DATAPOINTS 182
 
-
+// QPAC SD line buffer length
+#define QPAC_SD_LINE_BUF_LEN 40
 
 // Define global vars
 // The data packets =========================================
@@ -121,7 +122,7 @@ void decodeIncomingPacket(void) {
         float_value = custom_ntohf(efis_packet.data_points[i].value);
         if ((id > QPAC_STATUS) && (id < JAR_A320NEO_STATUS)) {
             writeQpacDataRef(id, float_value);
-        } else 	if ((id >= JAR_A320NEO_STATUS) && (id <= JAR_A320NEO_MCDU_CLICK)) {
+        } else 	if ((id >= JAR_A320NEO_STATUS) && (id <= JAR_A320NEO_END)) {
         	writeJarA320neoDataRef(id, float_value);
         } else {
         	writeDataRef(id, float_value);
@@ -1191,7 +1192,7 @@ int createCustomAvionicsPacket(void) {
     int qpac_fuel_valves = 0;
     int qpac_fuel_valves_tab[6];
     int qpac_air_valves;
-    int qpac_bleed_valves;
+    int bleed_valves;
     float qpac_door_pax_tab[4];
     float qpac_door_cargo_tab[4];
     int qpac_elec_buttons;
@@ -1199,6 +1200,11 @@ int createCustomAvionicsPacket(void) {
     float qpac_nacelle_temp_tab[4];
     int qpac_ignition;
     int qpac_start_valve_tab[4];
+    char qpac_sd_line_buffer[QPAC_SD_LINE_BUF_LEN];
+    int qpac_sd_data_len;
+    int qpac_sd_line_len;
+    float qpac_vib_n2;
+    float qpac_temp;
 
     int auto_brake_level;
     int brake_status;
@@ -1899,25 +1905,25 @@ int createCustomAvionicsPacket(void) {
 
         qpac_air_valves =
         		(XPLMGetDatai(qpac_cond_hot_air_valve) & 0x01) << 1 ;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_AIR_VALVES);
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_HOT_AIR_VALVES);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_air_valves );
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_OUTFLOW_VALVE);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_outflow_valve));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_COND_COCKPIT_TRIM);
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_COCKPIT_TRIM);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cond_cockpit_trim));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_COND_ZONE1_TRIM);
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_ZONE1_TRIM);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cond_zone1_trim));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_COND_ZONE2_TRIM);
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_ZONE2_TRIM);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cond_zone2_trim));
         i++;
 
 
         // Bleed Air
-        qpac_bleed_valves =
+        bleed_valves =
         		(XPLMGetDatai(qpac_bleed_x) & 0x03)  |
         		(XPLMGetDatai(qpac_bleed_apu) & 0x03) << 2 |
         		(XPLMGetDatai(qpac_bleed_eng1) & 0x03) << 4 |
@@ -1927,7 +1933,7 @@ int createCustomAvionicsPacket(void) {
 				(XPLMGetDatai(qpac_bleed_pack1_fcu) & 0x03) << 12 |
 				(XPLMGetDatai(qpac_bleed_pack2_fcu) & 0x03) << 14;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BLEED_VALVES);
-        sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_bleed_valves );
+        sim_packet.sim_data_points[i].value = custom_htonf( (float) bleed_valves );
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BLEED_LEFT_PRESS);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_bleed_left_press));
@@ -1957,27 +1963,91 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf( qpac_nacelle_temp_tab[1] );
         i++;
 
-        // COND
-        // TODO: These temperature are the overhead panel target temp settings, not the real cabin temps
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_COND_COCKPIT_TEMP);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_cond_cockpit_temp));
-        i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_COND_AFT_CABIN_TEMP);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_cond_aft_cabin_temp));
-        i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_COND_FWD_CABIN_TEMP);
-        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_cond_fwd_cabin_temp));
-        i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_PACK1_FLOW);
+        // ATA 21 CONDITIONING
+
+        // Grab SD Cabin temperatures- SD Page ID = 7
+        if ( XPLMGetDatai(qpac_sd_page) == 7 ) {
+        	// SD line 4 green
+            qpac_sd_data_len = XPLMGetDatab(qpac_sd_line_green[3],qpac_sd_line_buffer,0,sizeof(qpac_sd_line_buffer));
+            qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
+            if (qpac_sd_line_len>24) {
+            	// Cockpit
+            	qpac_temp = (qpac_sd_line_buffer[7]>='0'?(qpac_sd_line_buffer[7]-'0')*10:0) + (qpac_sd_line_buffer[8]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_COCKPIT_TEMP);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
+            	i++;
+
+            	// Forward
+            	qpac_temp = (qpac_sd_line_buffer[15]>='0'?(qpac_sd_line_buffer[15]-'0')*10:0) + (qpac_sd_line_buffer[16]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_FWD_CABIN_TEMP);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
+            	i++;
+
+            	// AFT
+            	qpac_temp = (qpac_sd_line_buffer[23]>='0'?(qpac_sd_line_buffer[23]-'0')*10:0) + (qpac_sd_line_buffer[24]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_AFT_CABIN_TEMP);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
+            	i++;
+            }
+        	// SD line 6 green
+            qpac_sd_data_len = XPLMGetDatab(qpac_sd_line_green[5],qpac_sd_line_buffer,0,sizeof(qpac_sd_line_buffer));
+            qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
+            if (qpac_sd_line_len>24) {
+            	// Cockpit
+            	qpac_temp = (qpac_sd_line_buffer[7]-'0')*10 + (qpac_sd_line_buffer[8]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_INLET_COCKPIT_TEMP);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
+            	i++;
+
+            	// Forward
+            	qpac_temp = (qpac_sd_line_buffer[15]-'0')*10 + (qpac_sd_line_buffer[16]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_INLET_FWD1_CABIN_TEMP);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
+            	i++;
+
+            	// AFT
+            	qpac_temp = (qpac_sd_line_buffer[23]-'0')*10 + (qpac_sd_line_buffer[24]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_INLET_AFT1_CABIN_TEMP);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
+            	i++;
+            }
+        }
+        // Grab SD Cabin cruise temperatures- SD Page ID = 11
+        if ( XPLMGetDatai(qpac_sd_page) == 11 ) {
+        	// SD line 15 green
+            qpac_sd_data_len = XPLMGetDatab(qpac_sd_line_green[14],qpac_sd_line_buffer,0,sizeof(qpac_sd_line_buffer));
+            qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
+            if (qpac_sd_line_len>17) {
+            	// Cockpit
+            	qpac_temp = (qpac_sd_line_buffer[3]>='0'?(qpac_sd_line_buffer[3]-'0')*10:0) + (qpac_sd_line_buffer[4]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_COCKPIT_TEMP);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
+            	i++;
+
+            	// Forward
+            	qpac_temp = (qpac_sd_line_buffer[9]>='0'?(qpac_sd_line_buffer[9]-'0')*10:0) + (qpac_sd_line_buffer[10]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_FWD_CABIN_TEMP);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
+            	i++;
+
+            	// AFT
+            	qpac_temp = (qpac_sd_line_buffer[16]>='0'?(qpac_sd_line_buffer[16]-'0')*10:0) + (qpac_sd_line_buffer[17]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_AFT_CABIN_TEMP);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
+            	i++;
+            }
+        }
+
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK1_FLOW);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_bleed_pack1_flow));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_PACK2_FLOW);
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK2_FLOW);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_bleed_pack2_flow));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_PACK1_TEMP);
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK1_TEMP_CTRL_VALVE);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_bleed_pack1_temp));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_PACK2_TEMP);
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK2_TEMP_CTRL_VALVE);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_bleed_pack2_temp));
         i++;
 
@@ -2078,6 +2148,79 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_SD_PAGE);
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_sd_page));
         i++;
+
+        // Grab SD Engine vibration values - Engine SD Page = 0
+        if ( XPLMGetDatai(qpac_sd_page) == 0 ) {
+        	// SD line 11 green
+            qpac_sd_data_len = XPLMGetDatab(qpac_sd_line_green[10],qpac_sd_line_buffer,0,sizeof(qpac_sd_line_buffer));
+            qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
+            if (qpac_sd_line_len>26) {
+            	// Engine 1
+            	qpac_vib_n2 = (qpac_sd_line_buffer[10]-'0')*10 + (qpac_sd_line_buffer[12]-'0');
+            	// qpac_vib_n2 = (qpac_sd_line_buffer[12]-'0')/10;
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_vib_n2);
+            	i++;
+
+            	// Engine 2
+            	qpac_vib_n2 = (qpac_sd_line_buffer[23]-'0')*10 + (qpac_sd_line_buffer[25]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_+1);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_vib_n2);
+            	i++;
+            }
+        	// SD line 12 green
+            qpac_sd_data_len = XPLMGetDatab(qpac_sd_line_green[11],qpac_sd_line_buffer,0,sizeof(qpac_sd_line_buffer));
+            qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
+            if (qpac_sd_line_len>26) {
+            	// Engine 1
+            	qpac_vib_n2 = (qpac_sd_line_buffer[10]-'0')*10 + (qpac_sd_line_buffer[12]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_N2_);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_vib_n2);
+            	i++;
+
+            	// Engine 2
+            	qpac_vib_n2 = (qpac_sd_line_buffer[23]-'0')*10 + (qpac_sd_line_buffer[25]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_N2_+1);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_vib_n2);
+            	i++;
+            }
+        }
+        // Grab SD Engine vibration values - Cruise SD Page = 11
+        if ( XPLMGetDatai(qpac_sd_page) == 11 ) {
+        	// SD line 7 green
+            qpac_sd_data_len = XPLMGetDatab(qpac_sd_line_green[6],qpac_sd_line_buffer,0,sizeof(qpac_sd_line_buffer));
+            qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
+            if (qpac_sd_line_len>26) {
+            	// Engine 1
+            	qpac_vib_n2 = (qpac_sd_line_buffer[8]-'0')*10 + (qpac_sd_line_buffer[10]-'0');
+            	// qpac_vib_n2 = (qpac_sd_line_buffer[12]-'0')/10;
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_vib_n2);
+            	i++;
+
+            	// Engine 2
+            	qpac_vib_n2 = (qpac_sd_line_buffer[25]-'0')*10 + (qpac_sd_line_buffer[27]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_+1);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_vib_n2);
+            	i++;
+            }
+        	// SD line 8 green
+            qpac_sd_data_len = XPLMGetDatab(qpac_sd_line_green[7],qpac_sd_line_buffer,0,sizeof(qpac_sd_line_buffer));
+            qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
+            if (qpac_sd_line_len>26) {
+            	// Engine 1
+            	qpac_vib_n2 = (qpac_sd_line_buffer[8]-'0')*10 + (qpac_sd_line_buffer[10]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_N2_);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_vib_n2);
+            	i++;
+
+            	// Engine 2
+            	qpac_vib_n2 = (qpac_sd_line_buffer[25]-'0')*10 + (qpac_sd_line_buffer[27]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_N2_+1);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_vib_n2);
+            	i++;
+            }
+        }
 
     }
 
@@ -2315,6 +2458,201 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_DOOR_STATUS);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) door_status );
         i++;
+
+        // ATA 21 Conditioning
+    	// Cockpit
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_COCKPIT_TEMP);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_cockpit_temp));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_INLET_COCKPIT_TEMP);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_cockpit_duct));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_COCKPIT_TRIM);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_cockpit_trm_valve));
+    	i++;
+
+    	// Forward
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_FWD_CABIN_TEMP);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_fwd_temp));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_INLET_FWD1_CABIN_TEMP);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_fwd_duct));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_ZONE1_TRIM);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_fwd_trm_valve));
+    	i++;
+
+    	// AFT
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_AFT_CABIN_TEMP);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_aft_temp));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_INLET_AFT1_CABIN_TEMP);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_aft_duct));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_ZONE2_TRIM);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_aft_trm_valve));
+    	i++;
+
+    	// CARGO FWD
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_FWD_CARGO_TEMP);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_cargo_fwd_temp));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_INLET_CARGO_FWD_TEMP);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_cargo_fwd_duct));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_CARGO_FWD_TRIM);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_cargo_fwd_trm_valve));
+    	i++;
+
+    	// CARGO AFT
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_AFT_CARGO_TEMP);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_cargo_aft_temp));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_INLET_CARGO_AFT_TEMP);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_cargo_aft_duct));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_CARGO_AFT_TRIM);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_cargo_aft_trm_valve));
+    	i++;
+
+    	// TODO: Valves
+    	// Hot air valves - bit arrays (2 bits per valve)
+    	// LSB order : Hot Air 1, Hot Air 2, Cargo 1, Cargo 2
+    	qpac_air_valves = ((XPLMGetDatai(jar_a320_neo_cond_hot_air) & 0x03) ) |
+    			((XPLMGetDatai(jar_a320_neo_cond_cargo_hot_air) & 0x03) << 4);
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_HOT_AIR_VALVES);
+    	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_air_valves );
+    	i++;
+
+    	// PACKs
+    	// bit array (2 bits per valve) : LSB order : PACK 1, PACK 2, RAM AIR, CAB FAN1, CAB FAN2
+    	qpac_air_valves = ((XPLMGetDatai(jar_a320_neo_cond_ram_air) & 0x01) << 5);
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_AIR_VALVES);
+    	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_air_valves );
+    	i++;
+
+    	/*
+        XPLMDataRef jar_a320_neo_cond_aft_duct;
+        XPLMDataRef jar_a320_neo_cond_aft_temp;
+        XPLMDataRef jar_a320_neo_cond_aft_trm_valve;
+
+        XPLMDataRef jar_a320_neo_cond_cabin_aft_duct;
+        XPLMDataRef jar_a320_neo_cond_cabin_aft_temp;
+        XPLMDataRef jar_a320_neo_cond_cabin_aft_trm_valve;
+        XPLMDataRef jar_a320_neo_cond_cabin_aft_valve;
+
+        XPLMDataRef jar_a320_neo_cond_cabin_fwd_duct;
+        XPLMDataRef jar_a320_neo_cond_cabin_fwd_temp;
+        XPLMDataRef jar_a320_neo_cond_cabin_fwd_trm_valve;
+        XPLMDataRef jar_a320_neo_cond_cabin_fwd_valve;
+
+        XPLMDataRef jar_a320_neo_cond_cockpit_duct;
+        XPLMDataRef jar_a320_neo_cond_cockpit_temp;
+        XPLMDataRef jar_a320_neo_cond_cockpit_trm_valve;
+
+        XPLMDataRef jar_a320_neo_cond_econ_flow;
+
+        XPLMDataRef jar_a320_neo_cond_fwd_duct;
+        XPLMDataRef jar_a320_neo_cond_fwd_temp;
+        XPLMDataRef jar_a320_neo_cond_fwd_trm_valve;
+
+        XPLMDataRef jar_a320_neo_cond_hot_air;
+        XPLMDataRef jar_a320_neo_cond_hot_air_temp;
+
+        XPLMDataRef jar_a320_neo_cond_pack1;
+        XPLMDataRef jar_a320_neo_cond_pack12_line;
+        XPLMDataRef jar_a320_neo_cond_pack1_comp_deg;
+        XPLMDataRef jar_a320_neo_cond_pack1_f;
+        XPLMDataRef jar_a320_neo_cond_pack1_flow;
+        XPLMDataRef jar_a320_neo_cond_pack1_line;
+        XPLMDataRef jar_a320_neo_cond_pack1_ndl;
+        XPLMDataRef jar_a320_neo_cond_pack1_out_deg;
+
+        XPLMDataRef jar_a320_neo_cond_pack2;
+        XPLMDataRef jar_a320_neo_cond_pack2_comp_deg;
+        XPLMDataRef jar_a320_neo_cond_pack2_f;
+        XPLMDataRef jar_a320_neo_cond_pack2_flow;
+        XPLMDataRef jar_a320_neo_cond_pack2_line;
+        XPLMDataRef jar_a320_neo_cond_pack2_ndl;
+        XPLMDataRef jar_a320_neo_cond_pack2_out_deg;
+
+        XPLMDataRef jar_a320_neo_cond_ram_air;
+        */
+
+    	// ATA 36 PNEUMATIC / Bleed Air
+    	/*
+    	XPLMDataRef jar_a320_neo_bleed_eng1_bleed_knob;
+    	XPLMDataRef jar_a320_neo_bleed_eng1_bleed_valve;
+    	XPLMDataRef jar_a320_neo_bleed_eng1_bleed_temp;
+    	XPLMDataRef jar_a320_neo_bleed_eng1_bleed_hp_valve;
+    	XPLMDataRef jar_a320_neo_bleed_eng1_bleed_psi;
+    	XPLMDataRef jar_a320_neo_bleed_eng2_bleed_knob;
+    	XPLMDataRef jar_a320_neo_bleed_eng2_bleed_valve;
+    	XPLMDataRef jar_a320_neo_bleed_eng2_bleed_temp;
+    	XPLMDataRef jar_a320_neo_bleed_eng2_bleed_hp_valve;
+    	XPLMDataRef jar_a320_neo_bleed_eng2_bleed_psi;
+    	XPLMDataRef jar_a320_neo_bleed_cross_valve;
+    	*/
+        // Bleed Air
+        bleed_valves =
+        		(XPLMGetDatai(jar_a320_neo_bleed_cross_valve) & 0x03)  |
+        		(XPLMGetDatai(jar_a320_neo_bleed_apu_bleed_valve) & 0x03) << 2 |
+        		(XPLMGetDatai(jar_a320_neo_bleed_eng1_bleed_valve) & 0x03) << 4 |
+        		(XPLMGetDatai(jar_a320_neo_bleed_eng2_bleed_valve) & 0x03) << 6 |
+        		(XPLMGetDatai(jar_a320_neo_bleed_eng1_bleed_hp_valve) & 0x03) << 8 |
+        		(XPLMGetDatai(jar_a320_neo_bleed_eng2_bleed_hp_valve) & 0x03) << 10 |
+				(XPLMGetDatai(jar_a320_neo_cond_pack1) & 0x03) << 12 |
+				(XPLMGetDatai(jar_a320_neo_cond_pack2) & 0x03) << 14;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_BLEED_VALVES);
+        sim_packet.sim_data_points[i].value = custom_htonf( (float) bleed_valves );
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_BLEED_LEFT_PRESS);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_bleed_eng1_bleed_psi));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_BLEED_RIGHT_PRESS);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_bleed_eng2_bleed_psi));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_BLEED_LEFT_TEMP);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_bleed_eng1_bleed_temp));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_BLEED_RIGHT_TEMP);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_bleed_eng2_bleed_temp));
+        i++;
+
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_PACK1_COMP_TEMP);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_pack1_comp_deg));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_PACK2_COMP_TEMP);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_pack2_comp_deg));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_PACK1_TEMP);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_pack1_out_deg));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_PACK2_TEMP);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_pack2_out_deg));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_PACK1_BYPASS_RATIO);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_pack1_ndl));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_PACK2_BYPASS_RATIO);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_pack2_ndl));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_PACK1_FLOW);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_pack1_flow));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_PACK2_FLOW);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_pack2_flow));
+        i++;
+
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_NACELLE_TEMP_ + 0);
+        sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(jar_a320_neo_eng_1_nac_temp) );
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_NACELLE_TEMP_ + 1);
+        sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(jar_a320_neo_eng_2_nac_temp) );
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_SD_PAGE);
+        sim_packet.sim_data_points[i].value = custom_htonf( (float) XPLMGetDatai(jar_a320_disp_sys_mode) );
+        i++;
     }
 
 
@@ -2501,17 +2839,20 @@ int createEnginesPacket(void) {
         i++;
     }
 
-    XPLMGetDatavi(vib_running, runs, 0, engines);
-    XPLMGetDatavi(vib_n1_low, n1lows, 0, engines);
-    XPLMGetDatavi(vib_n1_high, n1highs, 0, engines);
-    XPLMGetDatavi(vib_reverse, revs, 0, engines);
-    XPLMGetDatavi(vib_chip, chips, 0, engines);
-    XPLMGetDatavi(vib_fire, fires, 0, engines);
-    for (e=0; e<engines; e++) {
-        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_ + e);
-        vib = runs[e] * ( 5 + n1lows[e]*5 + n1highs[e]*10 + revs[e]*10 + chips[e]*35 + fires[e]*35 );
-        sim_packet.sim_data_points[i].value = custom_htonf( (float) vib );
-        i++;
+    // Let QPAC value override if present
+    if (!qpac_ready) {
+    	XPLMGetDatavi(vib_running, runs, 0, engines);
+    	XPLMGetDatavi(vib_n1_low, n1lows, 0, engines);
+    	XPLMGetDatavi(vib_n1_high, n1highs, 0, engines);
+    	XPLMGetDatavi(vib_reverse, revs, 0, engines);
+    	XPLMGetDatavi(vib_chip, chips, 0, engines);
+    	XPLMGetDatavi(vib_fire, fires, 0, engines);
+    	for (e=0; e<engines; e++) {
+    		sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_ + e);
+    		vib = runs[e] * ( 5 + n1lows[e]*5 + n1highs[e]*10 + revs[e]*10 + chips[e]*35 + fires[e]*35 );
+    		sim_packet.sim_data_points[i].value = custom_htonf( (float) vib );
+    		i++;
+    	}
     }
 
     // Ignitors (ignition_key, igniter_on, ignition_on) - to send as an 8 bits field for the 3 datarefs

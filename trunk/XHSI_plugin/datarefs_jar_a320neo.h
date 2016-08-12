@@ -93,6 +93,20 @@ extern XPLMDataRef jar_a320_neo_thr_mode;
 extern XPLMDataRef jar_a320_neo_flex_t;
 // integer
 
+// ATA 36 PNEUMATIC
+// Bleed Air
+extern XPLMDataRef jar_a320_neo_bleed_apu_bleed_valve;
+extern XPLMDataRef jar_a320_neo_bleed_eng1_bleed_knob;
+extern XPLMDataRef jar_a320_neo_bleed_eng1_bleed_valve;
+extern XPLMDataRef jar_a320_neo_bleed_eng1_bleed_temp;
+extern XPLMDataRef jar_a320_neo_bleed_eng1_bleed_hp_valve;
+extern XPLMDataRef jar_a320_neo_bleed_eng1_bleed_psi;
+extern XPLMDataRef jar_a320_neo_bleed_eng2_bleed_knob;
+extern XPLMDataRef jar_a320_neo_bleed_eng2_bleed_valve;
+extern XPLMDataRef jar_a320_neo_bleed_eng2_bleed_temp;
+extern XPLMDataRef jar_a320_neo_bleed_eng2_bleed_hp_valve;
+extern XPLMDataRef jar_a320_neo_bleed_eng2_bleed_psi;
+extern XPLMDataRef jar_a320_neo_bleed_cross_valve;
 
 // Brakes
 extern XPLMDataRef jar_a320_neo_autobrake_low;
@@ -103,6 +117,44 @@ extern XPLMDataRef jar_a320_neo_brakes_accu_press;
 extern XPLMDataRef jar_a320_neo_brakes_left_press;
 extern XPLMDataRef jar_a320_neo_brakes_right_press;
 extern XPLMDataRef jar_a320_neo_brakes_mode_na;
+
+// ATA 21 Conditioning
+extern XPLMDataRef jar_a320_neo_cond_aft_duct;
+extern XPLMDataRef jar_a320_neo_cond_aft_temp;
+extern XPLMDataRef jar_a320_neo_cond_aft_trm_valve;
+extern XPLMDataRef jar_a320_neo_cond_cargo_aft_duct;
+extern XPLMDataRef jar_a320_neo_cond_cargo_aft_temp;
+extern XPLMDataRef jar_a320_neo_cond_cargo_aft_trm_valve;
+extern XPLMDataRef jar_a320_neo_cond_cargo_aft_valve;
+extern XPLMDataRef jar_a320_neo_cond_cargo_fwd_duct;
+extern XPLMDataRef jar_a320_neo_cond_cargo_fwd_temp;
+extern XPLMDataRef jar_a320_neo_cond_cargo_fwd_trm_valve;
+extern XPLMDataRef jar_a320_neo_cond_cargo_fwd_valve;
+extern XPLMDataRef jar_a320_neo_cond_cockpit_duct;
+extern XPLMDataRef jar_a320_neo_cond_cockpit_temp;
+extern XPLMDataRef jar_a320_neo_cond_cockpit_trm_valve;
+extern XPLMDataRef jar_a320_neo_cond_econ_flow;
+extern XPLMDataRef jar_a320_neo_cond_fwd_duct;
+extern XPLMDataRef jar_a320_neo_cond_fwd_temp;
+extern XPLMDataRef jar_a320_neo_cond_fwd_trm_valve;
+extern XPLMDataRef jar_a320_neo_cond_hot_air;
+extern XPLMDataRef jar_a320_neo_cond_cargo_hot_air;
+extern XPLMDataRef jar_a320_neo_cond_pack1;
+extern XPLMDataRef jar_a320_neo_cond_pack12_line;
+extern XPLMDataRef jar_a320_neo_cond_pack1_comp_deg;
+extern XPLMDataRef jar_a320_neo_cond_pack1_f;
+extern XPLMDataRef jar_a320_neo_cond_pack1_flow;
+extern XPLMDataRef jar_a320_neo_cond_pack1_line;
+extern XPLMDataRef jar_a320_neo_cond_pack1_ndl;
+extern XPLMDataRef jar_a320_neo_cond_pack1_out_deg;
+extern XPLMDataRef jar_a320_neo_cond_pack2;
+extern XPLMDataRef jar_a320_neo_cond_pack2_comp_deg;
+extern XPLMDataRef jar_a320_neo_cond_pack2_f;
+extern XPLMDataRef jar_a320_neo_cond_pack2_flow;
+extern XPLMDataRef jar_a320_neo_cond_pack2_line;
+extern XPLMDataRef jar_a320_neo_cond_pack2_ndl;
+extern XPLMDataRef jar_a320_neo_cond_pack2_out_deg;
+extern XPLMDataRef jar_a320_neo_cond_ram_air;
 
 // Doors
 extern XPLMDataRef jar_a320_neo_doors_c_b_kn;
@@ -117,6 +169,20 @@ extern XPLMDataRef jar_a320_neo_doors_p_f_l_kn;
 extern XPLMDataRef jar_a320_neo_doors_p_f_l_now;
 extern XPLMDataRef jar_a320_neo_doors_p_f_r_kn;
 extern XPLMDataRef jar_a320_neo_doors_p_f_r_now;
+
+// Engines
+extern XPLMDataRef jar_a320_neo_eng_1_nac_temp;
+extern XPLMDataRef jar_a320_neo_eng_2_nac_temp;
+extern XPLMDataRef jar_a320_neo_eng_1_oil_press;
+extern XPLMDataRef jar_a320_neo_eng_2_oil_press;
+extern XPLMDataRef jar_a320_neo_eng_1_oil_qt;
+extern XPLMDataRef jar_a320_neo_eng_2_oil_qt;
+extern XPLMDataRef jar_a320_neo_eng_1_oil_temp;
+extern XPLMDataRef jar_a320_neo_eng_2_oil_temp;
+extern XPLMDataRef jar_a320_neo_eng_1_fire_pb;
+extern XPLMDataRef jar_a320_neo_eng_1_fuel_valve;
+extern XPLMDataRef jar_a320_neo_eng_2_fire_pb;
+extern XPLMDataRef jar_a320_neo_eng_2_fuel_valve;
 
 // FMS
 extern XPLMDataRef jar_a320_neo_fms_tr_alt;
@@ -175,6 +241,8 @@ extern XPLMDataRef jar_a320_neo_wheels_temp_r_2;
 extern XPLMDataRef jar_a320_neo_wheels_ped_disc;
 extern XPLMDataRef jar_a320_neo_wheels_anti_skid;
 
+// SD_PAGE Display
+extern XPLMDataRef jar_a320_disp_sys_mode;
 
 extern int jar_a320_neo_ready;
 
