@@ -82,8 +82,8 @@ float receiveCallback(
             } else if ( packet_size == 0 ) {
                 return recv_delay;
             } else {
-
-//                XPLMDebugString("XHSI: packet received\n");
+            	// XPLMDebugString("XHSI: packet received\n");
+            	// TODO: Check packet length versus (efis_packet.nb_of_data_points * 8 + 4)
                 decodeIncomingPacket();
                 return recv_delay;
 
