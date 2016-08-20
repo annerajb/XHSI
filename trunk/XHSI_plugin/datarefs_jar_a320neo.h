@@ -224,6 +224,12 @@ extern XPLMDataRef jar_a320_neo_hydr_y_eng_pump_fault_light;
 extern XPLMDataRef jar_a320_neo_hydr_y_eng_pump_mode;
 extern XPLMDataRef jar_a320_neo_hydr_y_press_aft_acc_old;
 
+// Ice and Rain
+extern XPLMDataRef jar_a320_neo_icerain_eng1;
+extern XPLMDataRef jar_a320_neo_icerain_eng2;
+extern XPLMDataRef jar_a320_neo_icerain_window;
+extern XPLMDataRef jar_a320_neo_icerain_wing;
+extern XPLMDataRef jar_a320_neo_icerain_wing_flt;
 
 // OXY
 extern XPLMDataRef jar_a320_neo_oxy_crewsupp;

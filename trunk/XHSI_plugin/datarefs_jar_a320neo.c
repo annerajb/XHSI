@@ -294,6 +294,13 @@ XPLMDataRef jar_a320_neo_hydr_y_eng_pump_fault_light;
 XPLMDataRef jar_a320_neo_hydr_y_eng_pump_mode;
 XPLMDataRef jar_a320_neo_hydr_y_press_aft_acc_old;
 
+// Ice and Rain
+XPLMDataRef jar_a320_neo_icerain_eng1;
+XPLMDataRef jar_a320_neo_icerain_eng2;
+XPLMDataRef jar_a320_neo_icerain_window;
+XPLMDataRef jar_a320_neo_icerain_wing;
+XPLMDataRef jar_a320_neo_icerain_wing_flt;
+
 // OXY
 XPLMDataRef jar_a320_neo_oxy_crewsupp;
 XPLMDataRef jar_a320_neo_oxy_manon;
@@ -715,6 +722,13 @@ void findJarA320NeoDataRefs(void) {
             jar_a320_neo_hydr_y_eng_pump_fault_light = XPLMFindDataRef("sim/custom/xap/hydr/y/engpump/faultlight");
             jar_a320_neo_hydr_y_eng_pump_mode = XPLMFindDataRef("sim/custom/xap/hydr/y/engpump/mode");
             jar_a320_neo_hydr_y_press_aft_acc_old = XPLMFindDataRef("sim/custom/xap/hydr/y/press_aft_acc_old");
+
+            // Ice and Rain
+            jar_a320_neo_icerain_eng1 = XPLMFindDataRef("sim/custom/xap/icerain/eng1_knob");
+            jar_a320_neo_icerain_eng2 = XPLMFindDataRef("sim/custom/xap/icerain/eng2_knob");
+            jar_a320_neo_icerain_window = XPLMFindDataRef("sim/custom/xap/icerain/window");
+            jar_a320_neo_icerain_wing = XPLMFindDataRef("sim/custom/xap/icerain/wing_knob");
+            jar_a320_neo_icerain_wing_flt = XPLMFindDataRef("sim/custom/xap/icerain/wing_knob_flt");
 
             // OXY
             jar_a320_neo_oxy_crewsupp = XPLMFindDataRef("sim/custom/xap/oxy/crewsupp");
