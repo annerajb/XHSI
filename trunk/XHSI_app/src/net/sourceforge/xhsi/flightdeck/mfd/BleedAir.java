@@ -35,11 +35,18 @@ import net.sourceforge.xhsi.model.Aircraft.ValveStatus;
 public class BleedAir extends MFDSubcomponent {
 
 	private static final long serialVersionUID = 1L;
+	
+	private long a_ice_ground_start;	
+	private boolean a_ice_warning;
+	private boolean a_ice_count_on;
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
-	public BleedAir(ModelFactory model_factory, MFDGraphicsConfig hsi_gc, Component parent_component) {
+	public BleedAir(ModelFactory model_factory, MFDGraphicsConfig hsi_gc, Component parent_component) {		
 		super(model_factory, hsi_gc, parent_component);
+		this.a_ice_ground_start = 0;
+		this.a_ice_warning = false;
+		this.a_ice_count_on = false;
 	}
 
 	public void paint(Graphics2D g2) {
@@ -54,6 +61,7 @@ public class BleedAir extends MFDSubcomponent {
 			drawEngineFlow(g2);
 			drawXBleed(g2);
 			drawAPUBleed(g2);
+			drawAntiIce(g2);
 		}
 	}
 
@@ -67,35 +75,10 @@ public class BleedAir extends MFDSubcomponent {
 		g2.drawLine(page_id_x, page_id_y + mfd_gc.line_height_xxl/8, page_id_x + mfd_gc.get_text_width(g2, mfd_gc.font_xxl, page_str), page_id_y + mfd_gc.line_height_m/8);
 	}
 
-	/*
-    public int bleed_id_x;
-    public int bleed_id_y;
-    public int bleed_circuit1_x;
-    public int bleed_circuit2_x;
-    public int bleed_out_line_y;
-    public int bleed_out_tri_y;
-    public int bleed_ram_air_valve_y;
-    public int bleed_ram_air_legend_y1;
-    public int bleed_ram_air_legend_y2;
-    public int bleed_mix_temp_y;
-    public int bleed_flow_temp_y;
-    public int bleed_pack_valve_y;
-    public int bleed_cross_valve_y;
-    public int bleed_cross_valve_x;
-    public int bleed_eng_valve_y;
-    public int bleed_hp_valve_y;
-    public int bleed_hp_valve_x1;
-    public int bleed_hp_valve_x2;
-    public int bleed_apu_legend_y;
-    */
-	
 	private void drawBleedValvesStatus(Graphics2D g2) {
-		int dy = mfd_gc.line_height_xl * 2;
-		int x = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width/2;
 		g2.setFont(mfd_gc.font_xl);
 		
 		drawValveHoriz(g2, aircraft.bleed_valve(Aircraft.BLEED_VALVE_CROSS), mfd_gc.bleed_cross_valve_x, mfd_gc.bleed_cross_valve_y);
-		
 		drawValveVert(g2, aircraft.bleed_valve(Aircraft.BLEED_VALVE_APU), mfd_gc.bleed_apu_valve_x, mfd_gc.bleed_apu_valve_y);
 
 		drawValveVert(g2, aircraft.bleed_valve(Aircraft.BLEED_VALVE_ENG1), mfd_gc.bleed_circuit1_x, mfd_gc.bleed_eng_valve_y);
@@ -110,6 +93,9 @@ public class BleedAir extends MFDSubcomponent {
 		drawValveVert(g2, aircraft.bleed_valve(Aircraft.BLEED_VALVE_PACK2), mfd_gc.bleed_circuit2_x, mfd_gc.bleed_pack_valve_y);
 
 		// RAM AIR
+		/* FCOM A320 1.21.10 p13 rev 23
+		 * Ram air inlet : green fully open in flight, amber fully open on ground, amber transit, green fully closed 
+		 */
 		g2.setColor(mfd_gc.ecam_markings_color);
 		String ram_str = "RAM";
 		String air_str = "AIR";
@@ -145,9 +131,10 @@ public class BleedAir extends MFDSubcomponent {
 		g2.drawLine(mfd_gc.bleed_circuit1_x, mfd_gc.bleed_out_line_y, mfd_gc.bleed_circuit1_x, mfd_gc.bleed_mix_box_top);
 		g2.drawLine(mfd_gc.bleed_circuit2_x, mfd_gc.bleed_out_line_y, mfd_gc.bleed_circuit2_x, mfd_gc.bleed_mix_box_top);		
 		// RAM AIR
-		g2.setColor(mfd_gc.ecam_normal_color);
+		g2.setColor(aircraft.ram_air_valve() != ValveStatus.VALVE_OPEN_FAILED ? mfd_gc.ecam_normal_color : mfd_gc.ecam_caution_color);
 		g2.drawLine(mfd_gc.bleed_ram_air_valve_x, mfd_gc.bleed_ram_air_valve_y + mfd_gc.hyd_valve_r, mfd_gc.bleed_ram_air_valve_x, mfd_gc.bleed_ram_air_valve_y + mfd_gc.hyd_valve_r*2);
-		if (aircraft.ram_air_valve() == ValveStatus.VALVE_OPEN) {
+		if (aircraft.ram_air_valve() == ValveStatus.VALVE_OPEN || aircraft.ram_air_valve() == ValveStatus.VALVE_OPEN_FAILED) {
+			g2.setColor(aircraft.ram_air_valve() == ValveStatus.VALVE_OPEN ? mfd_gc.ecam_normal_color : mfd_gc.ecam_caution_color);
 			g2.drawLine(mfd_gc.bleed_ram_air_valve_x, mfd_gc.bleed_ram_air_valve_y - mfd_gc.hyd_valve_r, mfd_gc.bleed_ram_air_valve_x, mfd_gc.bleed_out_line_y);
 		}
 	}
@@ -325,6 +312,54 @@ public class BleedAir extends MFDSubcomponent {
 		}
 	}
 	
+	private void drawAntiIce(Graphics2D g2) {
+		if (this.aircraft.get_wing_anti_ice()) {
+			g2.setColor(mfd_gc.ecam_markings_color);
+			g2.setFont(mfd_gc.font_xl);
+			String anti_str="ANTI";
+			String ice_str="ICE";
+			g2.drawString(anti_str, mfd_gc.bleed_anti_ice_left_x, mfd_gc.bleed_anti_ice_1_y);
+			g2.drawString(ice_str, mfd_gc.bleed_anti_ice_left_x, mfd_gc.bleed_anti_ice_2_y);
+			g2.drawString(anti_str, mfd_gc.bleed_anti_ice_right_x - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, anti_str), mfd_gc.bleed_anti_ice_1_y);
+			g2.drawString(ice_str, mfd_gc.bleed_anti_ice_right_x - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, ice_str), mfd_gc.bleed_anti_ice_2_y);
+			int tri_y[] = { mfd_gc.bleed_anti_ice_tri_1_y, mfd_gc.bleed_anti_ice_tri_2_y, mfd_gc.bleed_cross_valve_y };
+			int tri_x_left[] = { mfd_gc.bleed_anti_ice_left_tri_2_x, mfd_gc.bleed_anti_ice_left_tri_2_x, mfd_gc.bleed_anti_ice_left_tri_1_x }; 
+			int tri_x_right[] = { mfd_gc.bleed_anti_ice_right_tri_2_x, mfd_gc.bleed_anti_ice_right_tri_2_x, mfd_gc.bleed_anti_ice_right_tri_1_x };
+			
+			/* Anti-ice arrow
+			 * FCOM A320 1.36.20 p5 rev 23
+			 * not displayed when the corresponding valve is close
+			 * displayed in green when the corresponding valve is close
+			 * displayed in amber when :
+			 * 	- valve open and air pressure low or high
+			 *  - valve open on ground more than 10 seconds
+			 */
+			
+	    	if (this.aircraft.on_ground()) {
+	    		 if (!a_ice_warning && !a_ice_count_on) { 
+	    			 a_ice_ground_start = System.currentTimeMillis();
+	    			 a_ice_count_on=true;
+	    		 }
+	    		 if (a_ice_count_on && (System.currentTimeMillis() >  a_ice_ground_start + 10000)) a_ice_warning = true;
+	    	} else {
+	    		 a_ice_warning = false;
+	    		 a_ice_count_on = false;
+	    	}
+			
+			// LEFT anti ice
+			g2.setColor(this.aircraft.bleed_air_press(Aircraft.BLEED_LEFT)<4 || a_ice_warning ? mfd_gc.ecam_caution_color :mfd_gc.ecam_normal_color) ;
+			g2.drawPolygon(tri_x_left, tri_y, 3);
+			g2.drawLine(mfd_gc.bleed_circuit1_x , mfd_gc.bleed_cross_valve_y, mfd_gc.bleed_anti_ice_left_tri_2_x, mfd_gc.bleed_cross_valve_y);
+			// RIGHT anti ice
+			g2.setColor(this.aircraft.bleed_air_press(Aircraft.BLEED_RIGHT)<4 || a_ice_warning ? mfd_gc.ecam_caution_color :mfd_gc.ecam_normal_color) ;			
+			g2.drawPolygon(tri_x_right, tri_y, 3);			
+			g2.drawLine(mfd_gc.bleed_circuit2_x , mfd_gc.bleed_cross_valve_y, mfd_gc.bleed_anti_ice_right_tri_2_x, mfd_gc.bleed_cross_valve_y);
+		} else {
+			a_ice_warning = false;
+			a_ice_count_on = false;
+		}
+	}
+	  
     private void drawValveVert(Graphics2D g2, ValveStatus valve_sts, int x, int y) {
     	int r = mfd_gc.hyd_valve_r;
     	
@@ -337,10 +372,13 @@ public class BleedAir extends MFDSubcomponent {
         
     	if (valve_sts == ValveStatus.VALVE_CLOSED || valve_sts == ValveStatus.VALVE_CLOSED_FAILED) {
     		g2.drawLine(x-r, y, x+r, y);
+    	} else if (valve_sts == ValveStatus.TRANSIT) {
+    		int r2=(int)Math.round(0.707*r);
+    		g2.drawLine(x-r2, y+r2, x+r2, y-r2);
     	} else {
     		g2.drawLine(x, y-r, x, y+r);
-    	}
-    }
+    	} 
+    }   
     
     private void drawValveHoriz(Graphics2D g2, ValveStatus valve_sts, int x, int y) {
     	int r = mfd_gc.cond_valve_r;
@@ -379,7 +417,8 @@ public class BleedAir extends MFDSubcomponent {
         // middle mark
         g2.drawLine(x, y-r, x, y-r*11/10);
         
-        // Needle         
+        // Needle
+        if (value<0) value=0;
         g2.rotate(Math.toRadians(value-0.5f)*134, x, y);
         g2.setColor(mfd_gc.ecam_normal_color);
         int dx = r/12;
