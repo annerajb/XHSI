@@ -1121,14 +1121,16 @@ int createAvionicsPacket(void) {
         		(XPLMGetDatai(sim_op_fail_rel_lbrake)==6) << 1 |
         		XPLMGetDatai(qpac_nw_anti_skid); // Wheel steer on 1 bit
     } else if (jar_a320_neo_ready) {
-    	wheel_status = (XPLMGetDatai(sim_op_fail_rel_gear_act)==6) << 4 |
+    	wheel_status =
+    			(XPLMGetDatai(sim_op_fail_rel_gear_act)==6) << 4 |
     			(XPLMGetDatai(sim_op_fail_rel_gear_ind)==6) << 3 |
     			(XPLMGetDatai(sim_op_fail_rel_rbrake)==6) << 2 |
     			(XPLMGetDatai(sim_op_fail_rel_lbrake)==6) << 1 |
-    			XPLMGetDatai(jar_a320_neo_wheels_anti_skid); // Wheel steer on 1 bit
+    			XPLMGetDatai(jar_a320_neo_wheels_anti_skid) ; // Wheel steer on 1 bit
     } else
     {
-    	wheel_status = (XPLMGetDatai(sim_op_fail_rel_gear_act)==6) << 4 |
+    	wheel_status =
+    			(XPLMGetDatai(sim_op_fail_rel_gear_act)==6) << 4 |
     			(XPLMGetDatai(sim_op_fail_rel_gear_ind)==6) << 3 |
     			(XPLMGetDatai(sim_op_fail_rel_rbrake)==6) << 2 |
     			(XPLMGetDatai(sim_op_fail_rel_lbrake)==6) << 1 |
@@ -1192,6 +1194,7 @@ int createCustomAvionicsPacket(void) {
     int qpac_fuel_valves = 0;
     int qpac_fuel_valves_tab[6];
     int qpac_air_valves;
+    float ram_air_valve;
     int bleed_valves;
     float qpac_door_pax_tab[4];
     float qpac_door_cargo_tab[4];
@@ -1205,6 +1208,7 @@ int createCustomAvionicsPacket(void) {
     int qpac_sd_line_len;
     float qpac_vib_n2;
     float qpac_temp;
+    int anti_ice;
 
     int auto_brake_level;
     int brake_status;
@@ -1921,7 +1925,6 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cond_zone2_trim));
         i++;
 
-
         // Bleed Air
         bleed_valves =
         		(XPLMGetDatai(qpac_bleed_x) & 0x03)  |
@@ -1930,8 +1933,8 @@ int createCustomAvionicsPacket(void) {
         		(XPLMGetDatai(qpac_bleed_eng2) & 0x03) << 6 |
         		(XPLMGetDatai(qpac_bleed_eng1_hp) & 0x03) << 8 |
         		(XPLMGetDatai(qpac_bleed_eng2_hp) & 0x03) << 10 |
-				(XPLMGetDatai(qpac_bleed_pack1_fcu) & 0x03) << 12 |
-				(XPLMGetDatai(qpac_bleed_pack2_fcu) & 0x03) << 14;
+				(XPLMGetDatai(qpac_bleed_pack1_fcv) & 0x03) << 12 |
+				(XPLMGetDatai(qpac_bleed_pack2_fcv) & 0x03) << 14;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BLEED_VALVES);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) bleed_valves );
         i++;
@@ -2039,23 +2042,93 @@ int createCustomAvionicsPacket(void) {
         }
 
         sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK1_FLOW);
-        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_bleed_pack1_flow));
+        sim_packet.sim_data_points[i].value = custom_htonf((XPLMGetDataf(qpac_bleed_pack1_flow)-0.8)*2.5);
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK2_FLOW);
-        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_bleed_pack2_flow));
+        sim_packet.sim_data_points[i].value = custom_htonf((XPLMGetDataf(qpac_bleed_pack2_flow)-0.8)*2.5);
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK1_TEMP_CTRL_VALVE);
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK1_BYPASS_RATIO);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_bleed_pack1_temp));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK2_TEMP_CTRL_VALVE);
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK2_BYPASS_RATIO);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_bleed_pack2_temp));
         i++;
+        // Grab SD PACK temperatures and bleed air temperature - SD Page ID = 1
+        if ( XPLMGetDatai(qpac_sd_page) == 1 ) {
+        	// SD line 13 green
+            qpac_sd_data_len = XPLMGetDatab(qpac_sd_line_green[12],qpac_sd_line_buffer,0,sizeof(qpac_sd_line_buffer));
+            qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
+            if (qpac_sd_line_len>24) {
+            	// Left Bleed air temperature
+            	qpac_temp = (qpac_sd_line_buffer[5]>='0'?(qpac_sd_line_buffer[5]-'0')*100:0) +
+            			(qpac_sd_line_buffer[6]>='0'?(qpac_sd_line_buffer[6]-'0')*10:0) +
+            			(qpac_sd_line_buffer[7]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BLEED_LEFT_PRESS_TEMP);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
+            	i++;
+
+            	// Right bleed air temperature
+            	qpac_temp = (qpac_sd_line_buffer[27]>='0'?(qpac_sd_line_buffer[27]-'0')*100:0) +
+            			(qpac_sd_line_buffer[28]>='0'?(qpac_sd_line_buffer[28]-'0')*10:0) +
+            			(qpac_sd_line_buffer[29]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BLEED_RIGHT_PRESS_TEMP);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
+            	i++;
+            }
+        	// SD line 5 green
+            qpac_sd_data_len = XPLMGetDatab(qpac_sd_line_green[4],qpac_sd_line_buffer,0,sizeof(qpac_sd_line_buffer));
+            qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
+            if (qpac_sd_line_len>28) {
+            	// Pack 1 Compressor Outlet Temperature
+            	qpac_temp = (qpac_sd_line_buffer[4]>='0'?(qpac_sd_line_buffer[4]-'0')*100:0) +
+            			(qpac_sd_line_buffer[5]>='0'?(qpac_sd_line_buffer[5]-'0')*10:0) +
+            			(qpac_sd_line_buffer[6]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK1_COMP_OUTLET_TEMP);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
+            	i++;
+
+            	// Pack 2 Compressor Outlet Temperature
+            	qpac_temp = (qpac_sd_line_buffer[26]>='0'?(qpac_sd_line_buffer[26]-'0')*100:0) +
+            			(qpac_sd_line_buffer[27]>='0'?(qpac_sd_line_buffer[27]-'0')*10:0) +
+            			(qpac_sd_line_buffer[28]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK2_COMP_OUTLET_TEMP);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
+            	i++;
+            }
+        	// SD line 2 green
+            qpac_sd_data_len = XPLMGetDatab(qpac_sd_line_green[1],qpac_sd_line_buffer,0,sizeof(qpac_sd_line_buffer));
+            qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
+            if (qpac_sd_line_len>27) {
+            	// Pack 1 Outlet Temperature
+            	qpac_temp = (qpac_sd_line_buffer[4]>='0'?(qpac_sd_line_buffer[4]-'0')*100:0) +
+            			(qpac_sd_line_buffer[5]>='0'?(qpac_sd_line_buffer[5]-'0')*10:0) +
+            			(qpac_sd_line_buffer[6]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK1_TEMP);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
+            	i++;
+
+            	// Pack 2 Outlet Temperature
+            	qpac_temp = (qpac_sd_line_buffer[26]>='0'?(qpac_sd_line_buffer[26]-'0')*100:0) +
+            			(qpac_sd_line_buffer[27]>='0'?(qpac_sd_line_buffer[27]-'0')*10:0) +
+            			(qpac_sd_line_buffer[27]-'0');
+            	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK2_TEMP);
+            	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
+            	i++;
+            }
+        }
+
+        ram_air_valve = XPLMGetDataf(qpac_bleed_ram_air_valve);
+    	qpac_air_valves = ((XPLMGetDatai(qpac_bleed_ram_air) & 0x01) << 5);
+    	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_AIR_VALVES);
+    	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_air_valves );
+    	i++;
 
         /*
         qpac_cond_hot_air_valve = XPLMFindDataRef("AirbusFBW/HotAirValve");
         // Bleed
         qpac_bleed_intercon = XPLMFindDataRef("AirbusFBW/BleedIntercon");
-        qpac_bleed_ram_air = XPLMFindDataRef("AirbusFBW/RamAirValueSD");
+        qpac_bleed_ram_air [integer]
+        qpac_bleed_ram_air_valve [float] range 0 to 1
         // APU
         qpac_apu_egt = XPLMFindDataRef("AirbusFBW/");
         qpac_apu_egt_limit = XPLMFindDataRef("AirbusFBW/");
@@ -2222,6 +2295,17 @@ int createCustomAvionicsPacket(void) {
             }
         }
 
+        // Anti-ice
+        anti_ice =
+        		(XPLMGetDatai(qpac_wing_anti_ice) & 0x03)  |
+        		(XPLMGetDatai(qpac_wing_anti_ice_lights) & 0x03) << 2 |
+        		(XPLMGetDatai(qpac_eng1_anti_ice) & 0x03) << 4 |
+        		(XPLMGetDatai(qpac_eng1_anti_ice_lights) & 0x03) << 6 |
+        		(XPLMGetDatai(qpac_eng2_anti_ice) & 0x03) << 8 |
+        		(XPLMGetDatai(qpac_eng2_anti_ice_lights) & 0x03) << 10 ;
+    	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ANTI_ICE_STATUS);
+    	sim_packet.sim_data_points[i].value = custom_htonf((float)anti_ice);
+    	i++;
     }
 
 
@@ -2433,13 +2517,14 @@ int createCustomAvionicsPacket(void) {
         		(XPLMGetDatai(jar_a320_neo_hydr_b_elec_pump_mode) & 0x01) << 4 |
         		(XPLMGetDatai(jar_a320_neo_hydr_b_elec_pump_fault_light) & 0x01) << 5 ;
         // Shift 6 bits left for rat, ptu and elec pumps
+        // jar_a320_neo_hydr_ptu_delta is a float
         hyd_pumps <<= 6;
         hyd_pumps |=
         		(XPLMGetDatai(qpac_hyd_rat_mode) & 0x03 ) |
         		(XPLMGetDatai(jar_a320_neo_hydr_y_elec_pump_mode) & 0x01) << 2 |
         		(XPLMGetDatai(jar_a320_neo_hydr_y_elec_pump_fault_light) & 0x01) << 3 |
-        		(XPLMGetDatai(jar_a320_neo_hydr_ptu_mode) & 0x01) << 4 |
-				(XPLMGetDatai(jar_a320_neo_hydr_ptu_delta) & 0x01) << 5;
+        		(XPLMGetDatai(jar_a320_neo_hydr_ptu_mode) & 0x01) << 4;
+				// (XPLMGetDatai(jar_a320_neo_hydr_ptu_delta) & 0x01) << 5;
 
         sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_HYD_PUMPS);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) hyd_pumps );
@@ -2619,28 +2704,28 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_bleed_eng2_bleed_temp));
         i++;
 
-        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_PACK1_COMP_TEMP);
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK1_COMP_OUTLET_TEMP);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_pack1_comp_deg));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_PACK2_COMP_TEMP);
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK2_COMP_OUTLET_TEMP);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_pack2_comp_deg));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_PACK1_TEMP);
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK1_TEMP);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_pack1_out_deg));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_PACK2_TEMP);
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK2_TEMP);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_pack2_out_deg));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_PACK1_BYPASS_RATIO);
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK1_BYPASS_RATIO);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_pack1_ndl));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_PACK2_BYPASS_RATIO);
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK2_BYPASS_RATIO);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_pack2_ndl));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_PACK1_FLOW);
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK1_FLOW);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_pack1_flow));
         i++;
-        sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_PACK2_FLOW);
+        sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK2_FLOW);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(jar_a320_neo_cond_pack2_flow));
         i++;
 
@@ -2653,6 +2738,16 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_SD_PAGE);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) XPLMGetDatai(jar_a320_disp_sys_mode) );
         i++;
+
+        // Anti-ice
+        anti_ice =
+        		(XPLMGetDatai(jar_a320_neo_icerain_wing) & 0x03)  |
+        		(XPLMGetDatai(jar_a320_neo_icerain_wing_flt) & 0x03) << 2 |
+        		(XPLMGetDatai(jar_a320_neo_icerain_eng1) & 0x03) << 4 |
+        		(XPLMGetDatai(jar_a320_neo_icerain_eng2) & 0x03) << 8 ;
+    	sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_ANTI_ICE_STATUS);
+    	sim_packet.sim_data_points[i].value = custom_htonf((float)anti_ice);
+    	i++;
     }
 
 

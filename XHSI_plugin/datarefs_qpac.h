@@ -356,13 +356,14 @@ extern XPLMDataRef qpac_bleed_eng1;
 extern XPLMDataRef qpac_bleed_eng2;
 extern XPLMDataRef qpac_bleed_eng1_hp;
 extern XPLMDataRef qpac_bleed_eng2_hp;
-extern XPLMDataRef qpac_bleed_pack1_fcu;
-extern XPLMDataRef qpac_bleed_pack2_fcu;
+extern XPLMDataRef qpac_bleed_pack1_fcv;
+extern XPLMDataRef qpac_bleed_pack2_fcv;
 extern XPLMDataRef qpac_bleed_pack1_flow;
 extern XPLMDataRef qpac_bleed_pack2_flow;
 extern XPLMDataRef qpac_bleed_pack1_temp;
 extern XPLMDataRef qpac_bleed_pack2_temp;
 extern XPLMDataRef qpac_bleed_ram_air;
+extern XPLMDataRef qpac_bleed_ram_air_valve;
 extern XPLMDataRef qpac_bleed_left_press;
 extern XPLMDataRef qpac_bleed_right_press;
 // APU
@@ -407,6 +408,14 @@ extern XPLMDataRef qpac_sd_line_blue[QPAC_SD_LINES];
 extern XPLMDataRef qpac_sd_line_green[QPAC_SD_LINES];
 extern XPLMDataRef qpac_sd_line_red[QPAC_SD_LINES];
 extern XPLMDataRef qpac_sd_line_white[QPAC_SD_LINES];
+
+// Anti-ice
+extern XPLMDataRef qpac_wing_anti_ice;
+extern XPLMDataRef qpac_wing_anti_ice_lights;
+extern XPLMDataRef qpac_eng1_anti_ice;
+extern XPLMDataRef qpac_eng1_anti_ice_lights;
+extern XPLMDataRef qpac_eng2_anti_ice;
+extern XPLMDataRef qpac_eng2_anti_ice_lights;
 
 //qpac FCU toggles, push/pull commands, RMP, MCDU
 extern XPLMCommandRef qpac_command[QPAC_KEY_MAX];

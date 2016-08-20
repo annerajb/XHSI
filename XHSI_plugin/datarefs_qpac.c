@@ -194,13 +194,14 @@ XPLMDataRef qpac_bleed_eng1;
 XPLMDataRef qpac_bleed_eng2;
 XPLMDataRef qpac_bleed_eng1_hp;
 XPLMDataRef qpac_bleed_eng2_hp;
-XPLMDataRef qpac_bleed_pack1_fcu;
-XPLMDataRef qpac_bleed_pack2_fcu;
+XPLMDataRef qpac_bleed_pack1_fcv;
+XPLMDataRef qpac_bleed_pack2_fcv;
 XPLMDataRef qpac_bleed_pack1_flow;
 XPLMDataRef qpac_bleed_pack2_flow;
 XPLMDataRef qpac_bleed_pack1_temp;
 XPLMDataRef qpac_bleed_pack2_temp;
 XPLMDataRef qpac_bleed_ram_air;
+XPLMDataRef qpac_bleed_ram_air_valve;
 XPLMDataRef qpac_bleed_left_press;
 XPLMDataRef qpac_bleed_right_press;
 // APU
@@ -245,6 +246,14 @@ XPLMDataRef qpac_sd_line_blue[QPAC_SD_LINES];
 XPLMDataRef qpac_sd_line_green[QPAC_SD_LINES];
 XPLMDataRef qpac_sd_line_red[QPAC_SD_LINES];
 XPLMDataRef qpac_sd_line_white[QPAC_SD_LINES];
+
+// Anti-ice
+XPLMDataRef qpac_wing_anti_ice;
+XPLMDataRef qpac_wing_anti_ice_lights;
+XPLMDataRef qpac_eng1_anti_ice;
+XPLMDataRef qpac_eng1_anti_ice_lights;
+XPLMDataRef qpac_eng2_anti_ice;
+XPLMDataRef qpac_eng2_anti_ice_lights;
 
 //qpac FCU toggles, push/pull commands, RMP, MCDU
 XPLMCommandRef qpac_command[QPAC_KEY_MAX];
@@ -446,13 +455,14 @@ void findQpacDataRefs(void) {
             qpac_bleed_eng2 = XPLMFindDataRef("AirbusFBW/ENG2BleedInd");
             qpac_bleed_eng1_hp = XPLMFindDataRef("AirbusFBW/ENG1HPBleedInd");
             qpac_bleed_eng2_hp = XPLMFindDataRef("AirbusFBW/ENG2HPBleedInd");
-            qpac_bleed_pack1_fcu = XPLMFindDataRef("AirbusFBW/Pack1FCUInd");
-            qpac_bleed_pack2_fcu = XPLMFindDataRef("AirbusFBW/Pack2FCUInd");
+            qpac_bleed_pack1_fcv = XPLMFindDataRef("AirbusFBW/Pack1FCVInd");
+            qpac_bleed_pack2_fcv = XPLMFindDataRef("AirbusFBW/Pack2FCVInd");
             qpac_bleed_pack1_flow = XPLMFindDataRef("AirbusFBW/Pack1Flow");
             qpac_bleed_pack2_flow = XPLMFindDataRef("AirbusFBW/Pack2Flow");
             qpac_bleed_pack1_temp = XPLMFindDataRef("AirbusFBW/Pack1Temp");
             qpac_bleed_pack2_temp = XPLMFindDataRef("AirbusFBW/Pack2Temp");
-            qpac_bleed_ram_air = XPLMFindDataRef("AirbusFBW/RamAirValueSD");
+            qpac_bleed_ram_air = XPLMFindDataRef("AirbusFBW/RamAirSwitchLights");
+            qpac_bleed_ram_air_valve = XPLMFindDataRef("AirbusFBW/RamAirValveSD");
             qpac_bleed_left_press = XPLMFindDataRef("AirbusFBW/LeftBleedPress");
             qpac_bleed_right_press = XPLMFindDataRef("AirbusFBW/RightBleedPress");
             // APU
@@ -497,6 +507,14 @@ void findQpacDataRefs(void) {
             qpac_sd_fctl = XPLMFindDataRef("AirbusFBW/SDFCTL");
             qpac_sd_status = XPLMFindDataRef("AirbusFBW/SDSTATUS");
             qpac_sd_to_config = XPLMFindDataRef("AirbusFBW/TOConfigPress");
+
+            // Anti-ice
+            qpac_wing_anti_ice = XPLMFindDataRef("AirbusFBW/WAISwitch");
+            qpac_wing_anti_ice_lights = XPLMFindDataRef("AirbusFBW/WAILights");
+            qpac_eng1_anti_ice = XPLMFindDataRef("AirbusFBW/ENG1AISwitch");
+            qpac_eng1_anti_ice_lights = XPLMFindDataRef("AirbusFBW/ENG1AILights");
+            qpac_eng2_anti_ice  = XPLMFindDataRef("AirbusFBW/ENG2AISwitch");
+            qpac_eng2_anti_ice_lights = XPLMFindDataRef("AirbusFBW/ENG2AILights");
 
             //qpac fcu toggles and push/pull commands
             qpac_command[QPAC_KEY_TO_CONFIG] = XPLMFindCommand("AirbusFBW/TOConfigPress");
