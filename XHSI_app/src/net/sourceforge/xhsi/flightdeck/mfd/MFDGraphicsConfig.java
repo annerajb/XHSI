@@ -551,6 +551,16 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int bleed_pack_valve_y;
     public int bleed_cross_valve_y;
     public int bleed_cross_valve_x;
+    public int bleed_anti_ice_1_y;
+    public int bleed_anti_ice_2_y;
+    public int bleed_anti_ice_left_x;
+    public int bleed_anti_ice_right_x;
+    public int bleed_anti_ice_tri_1_y;
+    public int bleed_anti_ice_tri_2_y;
+    public int bleed_anti_ice_left_tri_1_x;
+    public int bleed_anti_ice_left_tri_2_x;
+    public int bleed_anti_ice_right_tri_1_x;
+    public int bleed_anti_ice_right_tri_2_x;
     public int bleed_eng_flow_temp_y;
     public int bleed_eng_flow_press_y;
     public int bleed_eng_box_top_y;
@@ -1461,6 +1471,18 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             bleed_pack_valve_y = panel_rect.y + mfd_size * 457/1000;
             bleed_cross_valve_y = panel_rect.y + mfd_size * 539/1000;
             bleed_cross_valve_x = panel_rect.x + panel_rect.width * 580/1000;
+            // Anti ice indicators
+            bleed_anti_ice_1_y = bleed_cross_valve_y - line_height_xl/8;
+            bleed_anti_ice_2_y = bleed_cross_valve_y + line_height_xl*5/4;
+            bleed_anti_ice_tri_1_y = bleed_cross_valve_y - mfd_size * 18/1000;
+            bleed_anti_ice_tri_2_y = bleed_cross_valve_y + mfd_size * 18/1000;
+            bleed_anti_ice_left_tri_1_x = bleed_circuit1_x - panel_rect.width * 45/1000;
+            bleed_anti_ice_left_tri_2_x = bleed_circuit1_x - panel_rect.width * 20/1000;
+            bleed_anti_ice_right_tri_1_x = bleed_circuit2_x + panel_rect.width * 45/1000;
+            bleed_anti_ice_right_tri_2_x = bleed_circuit2_x + panel_rect.width * 20/1000;
+            bleed_anti_ice_left_x = bleed_circuit1_x - panel_rect.width * 150/1000;
+            bleed_anti_ice_right_x = bleed_circuit2_x + panel_rect.width * 150/1000;
+            
             bleed_eng_flow_temp_y = panel_rect.y + mfd_size * 718/1000;
             bleed_eng_flow_press_y = panel_rect.y + mfd_size * 661/1000;
             bleed_eng_box_top_y = panel_rect.y + mfd_size * 612/1000;

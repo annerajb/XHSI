@@ -455,12 +455,11 @@ public class XPlaneAircraft implements Aircraft {
     	return oat();
     }
     
-    // TODO: fix with jarDesign A320.
     public boolean nose_wheel_steering() {
     	int wheel_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.WHEEL_STATUS);
     	return (wheel_status & 0x01) != 0;
     }
-    
+      
     public boolean gear_indicators() {
     	int wheel_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.WHEEL_STATUS);
     	return (wheel_status & 0x08) == 0;
@@ -997,6 +996,24 @@ public class XPlaneAircraft implements Aircraft {
     		return oat();
     } 
     
+    public boolean get_anti_ice(int engine) {
+    	if ( this.avionics.is_qpac() ) {
+    		return ((((int)sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ANTI_ICE_STATUS)) << (4+4*engine)) & 0x03) != 0;
+    	} else if ( this.avionics.is_jar_a320neo() ) {
+    		return ((((int)sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_ANTI_ICE_STATUS)) << (4+4*engine)) & 0x03) != 0;
+    	} else 
+    		return false;
+    }
+
+    public boolean get_wing_anti_ice() {
+    	if ( this.avionics.is_qpac() ) {
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ANTI_ICE_STATUS)) & 0x03) != 0;
+    	} else if ( this.avionics.is_jar_a320neo() ) {
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_ANTI_ICE_STATUS)) & 0x03) != 0;
+    	} else 
+    		return false;    	
+    }
+    
     public float get_hyd_press(int circuit) {
         float h_p;
         // TODO: QPAC hyd pressure
@@ -1115,15 +1132,6 @@ public class XPlaneAircraft implements Aircraft {
     		} else {
     			return HydPTUStatus.STANDBY;
     		}
-    		/*
-    		switch (ptu_status) {
-    			case 0 : return HydPTUStatus.OFF;
-    			case 1 : return HydPTUStatus.STANDBY;
-    			case 2 : return HydPTUStatus.LEFT;
-    			case 3 : return HydPTUStatus.RIGHT;
-    			}
-    		return HydPTUStatus.OFF;
-    		*/
     	} else {
     		return HydPTUStatus.STANDBY;
     	}
@@ -1605,51 +1613,63 @@ public class XPlaneAircraft implements Aircraft {
     		case BLEED_RIGHT : return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_BLEED_RIGHT_TEMP);
     		default : return 0;
     		}    		
+    	} else if (this.avionics.is_qpac()) {
+    		switch (circuit) {
+    		case BLEED_LEFT : return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_BLEED_LEFT_PRESS_TEMP);
+    		case BLEED_RIGHT : return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_BLEED_RIGHT_PRESS_TEMP);
+    		default : return 0;
+    		}    		
     	} else
     		return -99.0f;
     }
     
     public ValveStatus ram_air_valve() {
+    	/* FCOM A320 1.21.10 p13 rev 23
+		 * Ram air inlet : green fully open in flight, amber fully open on ground, amber transit, green fully closed 
+		 */
+    	// TODO : Better ram air valve status with transit position
     	int air_valve = (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_AIR_VALVES);
-    	return (air_valve >> 4 & 0x03) > 0 ? ValveStatus.VALVE_OPEN : ValveStatus.VALVE_CLOSED;        
+    	ValveStatus v_status =(air_valve >> 4 & 0x03) > 0 ? ValveStatus.VALVE_OPEN : ValveStatus.VALVE_CLOSED;
+    	if (v_status==ValveStatus.VALVE_OPEN && on_ground()) v_status=ValveStatus.VALVE_OPEN_FAILED;
+    	return v_status;        
     }
    
     public float pack_flow(int pack) {
-    	if (this.avionics.is_jar_a320neo()) {
+    	if (this.avionics.is_jar_a320neo() || this.avionics.is_qpac()) {
     		if (pack==1) 
-    			return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_PACK1_FLOW);
+    			return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_PACK1_FLOW);
    			else 
-       			return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_PACK2_FLOW); 				
+       			return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_PACK2_FLOW); 				
     	} else 
     		return -99.0f;
     }
 
     public float pack_out_temp(int pack) {
-    	if (this.avionics.is_jar_a320neo()) {
+    	if (this.avionics.is_jar_a320neo() || this.avionics.is_qpac()) {
     		if (pack==1) 
-    			return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_PACK1_TEMP);
+    			return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_PACK1_TEMP);
    			else 
-       			return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_PACK2_TEMP); 				
+       			return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_PACK2_TEMP); 				
     	} else 
     		return -99.0f;
     }
 
     public float pack_comp_temp(int pack){
-    	if (this.avionics.is_jar_a320neo()) {
+    	if (this.avionics.is_jar_a320neo() || this.avionics.is_qpac()) {
     		if (pack==1) 
-    			return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_PACK1_COMP_TEMP);
+    			return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_PACK1_COMP_OUTLET_TEMP);
    			else 
-       			return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_PACK2_COMP_TEMP); 				
+       			return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_PACK2_COMP_OUTLET_TEMP); 				
     	} else 
     		return -99.0f;   	
     }
     
     public float pack_bypass_ratio(int pack) {
-    	if (this.avionics.is_jar_a320neo()) {
+    	if (this.avionics.is_jar_a320neo() || this.avionics.is_qpac()) {
     		if (pack==1) 
-    			return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_PACK1_BYPASS_RATIO);
+    			return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_PACK1_BYPASS_RATIO);
    			else 
-       			return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_PACK2_BYPASS_RATIO); 				
+       			return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_PACK2_BYPASS_RATIO); 				
     	} else 
     		return -99.0f;   	
     } 

@@ -958,6 +958,16 @@ public interface Aircraft {
     public float get_nac_temp(int engine);
 
     /**
+     * @return boolean - Engine anti ice on
+     */
+    public boolean get_anti_ice(int engine);
+    
+    /**
+     * @return boolean - Wing anti ice on
+     */
+    public boolean get_wing_anti_ice();
+    
+    /**
      * @return float - Hydraulics P ratio
      */
     public float get_hyd_press(int circuit);

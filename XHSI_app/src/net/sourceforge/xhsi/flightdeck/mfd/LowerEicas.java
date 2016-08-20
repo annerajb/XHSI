@@ -23,6 +23,7 @@ package net.sourceforge.xhsi.flightdeck.mfd;
 
 import java.awt.BasicStroke;
 import java.awt.Font;
+import java.awt.Shape;
 //import java.awt.Color;
 //import java.awt.Color;
 import java.awt.Component;
@@ -76,6 +77,19 @@ public class LowerEicas extends MFDSubcomponent {
     private int dial_x[] = new int[8];
     private int tape_x[] = new int[8];
     
+    // This Stroke is used by the double lined value boxes
+	private class CompositeStroke implements Stroke {
+		private Stroke stroke1, stroke2;
+
+		public CompositeStroke( Stroke stroke1, Stroke stroke2 ) {
+			this.stroke1 = stroke1;
+			this.stroke2 = stroke2;
+		}
+
+		public Shape createStrokedShape( Shape shape ) {
+			return stroke2.createStrokedShape( stroke1.createStrokedShape( shape ) );
+		}
+	}
 
     public LowerEicas(ModelFactory model_factory, MFDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
@@ -633,11 +647,19 @@ public class LowerEicas extends MFDSubcomponent {
         }
         
 
+        // White Arc
         g2.setColor(mfd_gc.ecam_markings_color);
         g2.drawArc(dial_x-dial_r, dial_y-dial_r, 2*dial_r, 2*dial_r, deg_start, -deg_norm_range);
+        
+        // Red Arc
+       	int dial_r_red = dial_r * 98/100; 
         g2.setColor(mfd_gc.ecam_warning_color);
-        g2.drawArc(dial_x-dial_r, dial_y-dial_r, 2*dial_r, 2*dial_r, deg_warning, -deg_warn_range);
+        original_stroke = g2.getStroke();
+        g2.setStroke(new CompositeStroke( new BasicStroke( 3.0f * mfd_gc.grow_scaling_factor ), new BasicStroke( 2.0f * mfd_gc.grow_scaling_factor ) ));
+        g2.drawArc(dial_x-dial_r_red, dial_y-dial_r_red, 2*dial_r_red, 2*dial_r_red, deg_warning, -deg_warn_range);
+    	g2.setStroke(original_stroke);
         g2.setTransform(original_at);
+        
         // EGT max target
         g2.setColor(mfd_gc.ecam_caution_color);
         g2.rotate(Math.toRadians(360-deg_warning), dial_x, dial_y);

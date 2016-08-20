@@ -561,8 +561,10 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_COND_PACK2_FLOW = 983;
     public static final int XHSI_COND_PACK1_COMP_OUTLET_TEMP = 984;
     public static final int XHSI_COND_PACK2_COMP_OUTLET_TEMP = 985;
-    public static final int XHSI_COND_PACK1_TEMP_CTRL_VALVE = 986;
-    public static final int XHSI_COND_PACK2_TEMP_CTRL_VALVE = 987;
+    public static final int XHSI_COND_PACK1_BYPASS_RATIO = 986;
+    public static final int XHSI_COND_PACK2_BYPASS_RATIO = 987;
+    public static final int XHSI_COND_PACK1_TEMP = 988;
+    public static final int XHSI_COND_PACK2_TEMP = 989;
     
     // QPAC AirbusFBW
     public static final int QPAC_STATUS=1000;
@@ -593,116 +595,104 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_THR_LEVER_MODE=1022;
     public static final int QPAC_FMA_THR_WARNING=1023;
     public static final int QPAC_FLEX_TEMP=1024;
-    public static final int QPAC_THR_RATING_TYPE=1059;
-    public static final int QPAC_THR_RATING_N1=1060;
-    public static final int QPAC_THROTTLE_INPUT=1061;
+    public static final int QPAC_THR_RATING_TYPE=1025;
+    public static final int QPAC_THR_RATING_N1=1026;
+    public static final int QPAC_THROTTLE_INPUT=1027;
     // ILS Sig and Deviation Capt. and FO
-    public static final int QPAC_ILS_FLAGS=1025;
-    public static final int QPAC_LOC_VAL_CAPT=1026;
-    public static final int QPAC_GS_VAL_CAPT=1027;
-    public static final int QPAC_LOC_VAL_FO=1027;
-    public static final int QPAC_GS_VAL_FO=1029;
-    public static final int QPAC_ILS_CRS=1030;
-    public static final int QPAC_ILS_FREQ=1031;
-    public static final int QPAC_ILS_ID=11032;
-    public static final int QPAC_ILS_DME=1033;
-    
+    public static final int QPAC_ILS_FLAGS=1028;
+    public static final int QPAC_LOC_VAL_CAPT=1029;
+    public static final int QPAC_GS_VAL_CAPT=1030;
+    public static final int QPAC_LOC_VAL_FO=1031;
+    public static final int QPAC_GS_VAL_FO=1032;
+    public static final int QPAC_ILS_CRS=1033;
+    public static final int QPAC_ILS_FREQ=1034;
+    public static final int QPAC_ILS_ID=11035;
+    public static final int QPAC_ILS_DME=1036;    
     // FD
-    public static final int QPAC_FD1_VER_BAR=1034;
-    public static final int QPAC_FD1_HOR_BAR=1035;
-    public static final int QPAC_FD1_YAW_BAR=1036;
-    public static final int QPAC_FD2_VER_BAR=1037;
-    public static final int QPAC_FD2_HOR_BAR=1038;
-    public static final int QPAC_FD2_YAW_BAR=1039;
+    public static final int QPAC_FD1_VER_BAR=1037;
+    public static final int QPAC_FD1_HOR_BAR=1038;
+    public static final int QPAC_FD1_YAW_BAR=1039;
+    public static final int QPAC_FD2_VER_BAR=1040;
+    public static final int QPAC_FD2_HOR_BAR=1041;
+    public static final int QPAC_FD2_YAW_BAR=1042;
     // V Speeds
-    public static final int QPAC_V1_VALUE=1040;
-    public static final int QPAC_V1=1041;
-    public static final int QPAC_VR=1042;
-    public static final int QPAC_VMO=1043;
-    public static final int QPAC_VLS=1044;
-    public static final int QPAC_VF=1045;
-    public static final int QPAC_VS=1046;
-    public static final int QPAC_V_GREEN_DOT=1047;
-    public static final int QPAC_ALPHA_PROT=1048;
-    public static final int QPAC_ALPHA_MAX=1049;
+    public static final int QPAC_V1_VALUE=1043;
+    public static final int QPAC_V1=1044;
+    public static final int QPAC_VR=1045;
+    public static final int QPAC_VMO=1046;
+    public static final int QPAC_VLS=1047;
+    public static final int QPAC_VF=1048;
+    public static final int QPAC_VS=1049;
+    public static final int QPAC_V_GREEN_DOT=1050;
+    public static final int QPAC_ALPHA_PROT=1051;
+    public static final int QPAC_ALPHA_MAX=1052;
     // EFIS
-    public static final int QPAC_EFIS_ND_MODE_CAPT=1050;
-    public static final int QPAC_EFIS_ND_RANGE_CAPT=1051;
-    public static final int QPAC_EFIS_ND_MODE_FO=1052;
-    public static final int QPAC_EFIS_ND_RANGE_FO=1053;  
-    public static final int QPAC_EFIS_ND_SYMBOLS=1054;
+    public static final int QPAC_EFIS_ND_MODE_CAPT=1053;
+    public static final int QPAC_EFIS_ND_RANGE_CAPT=1054;
+    public static final int QPAC_EFIS_ND_MODE_FO=1055;
+    public static final int QPAC_EFIS_ND_RANGE_FO=1056;  
+    public static final int QPAC_EFIS_ND_SYMBOLS=1057;
     // Failures flags
-    public static final int QPAC_FAILURES=1055;
+    public static final int QPAC_FAILURES=1060;
     // Brakes
-    public static final int QPAC_AUTO_BRAKE_LEVEL=1056;
+    public static final int QPAC_AUTO_BRAKE_LEVEL=1061;
     // FLAPS and SLATS
-    public static final int QPAC_FLAPS_REQ_POS=1057;
-    public static final int QPAC_SLATS_REQ_POS=1058;
+    public static final int QPAC_FLAPS_REQ_POS=1062;
+    public static final int QPAC_SLATS_REQ_POS=1063;
     // SPOILERS
-    public static final int QPAC_SPOILERS_LEFT=1062;
-    public static final int QPAC_SPOILERS_RIGHT=1063;
+    public static final int QPAC_SPOILERS_LEFT=1064;
+    public static final int QPAC_SPOILERS_RIGHT=1065;
     // ELAC and SEC FCC
-    public static final int QPAC_FCC=1064;
+    public static final int QPAC_FCC=1066;
     // Rudder limit
-    public static final int QPAC_RUDDER_LIMIT=1065;
+    public static final int QPAC_RUDDER_LIMIT=1067;
     // Hydraulic
-    public static final int QPAC_HYD_B_PRESS=1066;
-    public static final int QPAC_HYD_G_PRESS=1067;
-    public static final int QPAC_HYD_Y_PRESS=1068;
-    public static final int QPAC_HYD_B_QTY=1069;
-    public static final int QPAC_HYD_G_QTY=1070;
-    public static final int QPAC_HYD_Y_QTY=1071;
-    public static final int QPAC_HYD_PUMPS=1077;
+    public static final int QPAC_HYD_B_PRESS=1068;
+    public static final int QPAC_HYD_G_PRESS=1069;
+    public static final int QPAC_HYD_Y_PRESS=1070;
+    public static final int QPAC_HYD_B_QTY=1071;
+    public static final int QPAC_HYD_G_QTY=1072;
+    public static final int QPAC_HYD_Y_QTY=1073;
+    public static final int QPAC_HYD_PUMPS=1074;
     // Cabin Pressure
-    public static final int QPAC_CABIN_DELTA_P=1072;
-    public static final int QPAC_CABIN_ALT=1073;
-    public static final int QPAC_CABIN_VS=1074;
-    public static final int QPAC_AIR_VALVES=1075;
-    public static final int QPAC_OUTFLOW_VALVE=1090;
+    public static final int QPAC_CABIN_DELTA_P=1075;
+    public static final int QPAC_CABIN_ALT=1076;
+    public static final int QPAC_CABIN_VS=1077;
+    public static final int QPAC_AIR_VALVES=1078;
+    public static final int QPAC_OUTFLOW_VALVE=1079;
     // ECAM System Display page
-    public static final int QPAC_SD_PAGE=1076;
-    public static final int QPAC_COND_COCKPIT_TRIM=1078;
-    public static final int QPAC_COND_ZONE1_TRIM=1079;
-    public static final int QPAC_COND_ZONE2_TRIM=1080;
-    public static final int QPAC_COND_COCKPIT_TEMP=1100;
-    public static final int QPAC_COND_AFT_CABIN_TEMP=1101;
-    public static final int QPAC_COND_FWD_CABIN_TEMP=1102;
-    public static final int QPAC_COND_AFT_CARGO_TEMP=1103;
-    public static final int QPAC_COND_FWD_CARGO_TEMP=1104;
-    public static final int QPAC_COND_INLET_COCKPIT_TEMP=1112;
-    public static final int QPAC_COND_INLET_FWD_CABIN_TEMP=1113;
-    public static final int QPAC_COND_INLET_AFT_CABIN_TEMP=1114;
+    public static final int QPAC_SD_PAGE=1080;
     // BLEED AIR
     public static final int QPAC_BLEED_VALVES=1081;
-    public static final int QPAC_BLEED_LEFT_PRESS=1110;
-    public static final int QPAC_BLEED_RIGHT_PRESS=1111;
-    public static final int QPAC_PACK1_FLOW=1105;
-    public static final int QPAC_PACK2_FLOW=1106;
-    public static final int QPAC_PACK1_TEMP=1107;
-    public static final int QPAC_PACK2_TEMP=1108;
+    public static final int QPAC_BLEED_LEFT_PRESS=1082;
+    public static final int QPAC_BLEED_RIGHT_PRESS=1083;
+    public static final int QPAC_BLEED_LEFT_PRESS_TEMP=1084;
+    public static final int QPAC_BLEED_RIGHT_PRESS_TEMP=1085;
+    // Anti-Ice
+    public static final int QPAC_ANTI_ICE_STATUS=1086;
     // APU
-    public static final int QPAC_APU_EGT=1082;
+    public static final int QPAC_APU_EGT=1087;
     // FUEL
-    public static final int QPAC_FUEL_PUMPS=1083;
-    public static final int QPAC_FUEL_VALVES=1084;
+    public static final int QPAC_FUEL_PUMPS=1088;
+    public static final int QPAC_FUEL_VALVES=1089;
     // ELEC
-    public static final int QPAC_ELEC_AC_CROSS=1085;
-    public static final int QPAC_ELEC_CX_LEFT=1086;
-    public static final int QPAC_ELEC_CX_CENTER=1087;
-    public static final int QPAC_ELEC_CX_RIGHT=1088;
-    public static final int QPAC_ELEC_BUTTONS=1099;
+    public static final int QPAC_ELEC_AC_CROSS=1090;
+    public static final int QPAC_ELEC_CX_LEFT=1091;
+    public static final int QPAC_ELEC_CX_CENTER=1092;
+    public static final int QPAC_ELEC_CX_RIGHT=1093;
+    public static final int QPAC_ELEC_BUTTONS=1094;
     // Key press to commands
-    public static final int QPAC_KEY_PRESS=1089;
+    public static final int QPAC_KEY_PRESS=1095;
     // Triple pressure indicator
-    public static final int QPAC_TPI_LEFT=1091;
-    public static final int QPAC_TPI_RIGHT=1092;
-    public static final int QPAC_TPI_ACCU=1093;
+    public static final int QPAC_TPI_LEFT=1096;
+    public static final int QPAC_TPI_RIGHT=1097;
+    public static final int QPAC_TPI_ACCU=1098;
     // Nacelle temperature [array 4]
-    public static final int QPAC_NACELLE_TEMP_ = 1094; // Array [4]
+    public static final int QPAC_NACELLE_TEMP_ = 1100; // Array [4]
     // Doors
-    public static final int QPAC_DOOR_STATUS = 1098;
+    public static final int QPAC_DOOR_STATUS = 1104;
     // Engines Ignition
-    public static final int QPAC_ENG_IGNITION = 1109;
+    public static final int QPAC_ENG_IGNITION = 1105;
     // IDs reserved for QPAC up to 1199
     
     // JarDesign Airbus A320neo
@@ -779,16 +769,11 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int JAR_A320NEO_BLEED_VALVES = 1280;
     public static final int JAR_A320NEO_BLEED_LEFT_PRESS = 1281;
     public static final int JAR_A320NEO_BLEED_RIGHT_PRESS = 1282;
-    public static final int JAR_A320NEO_PACK1_FLOW = 1283;
-    public static final int JAR_A320NEO_PACK2_FLOW = 1284;
-    public static final int JAR_A320NEO_PACK1_TEMP = 1285;
-    public static final int JAR_A320NEO_PACK2_TEMP = 1286;
     public static final int JAR_A320NEO_BLEED_LEFT_TEMP = 1287;
     public static final int JAR_A320NEO_BLEED_RIGHT_TEMP = 1288;
-    public static final int JAR_A320NEO_PACK1_COMP_TEMP = 1289;
-    public static final int JAR_A320NEO_PACK2_COMP_TEMP = 1290;
-    public static final int JAR_A320NEO_PACK1_BYPASS_RATIO = 1291;
-    public static final int JAR_A320NEO_PACK2_BYPASS_RATIO = 1292;
+    // Anti-Ice
+    public static final int JAR_A320NEO_ANTI_ICE_STATUS = 1289;
+
     // Nacelle
     public static final int JAR_A320NEO_NACELLE_TEMP_ = 1300;
     // System Display page
