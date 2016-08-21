@@ -81,9 +81,10 @@ float receiveCallback(
 
             } else if ( packet_size == 0 ) {
                 return recv_delay;
+            } else if (	custom_ntohi(efis_packet.nb_of_data_points)*8 + 4  != packet_size) {
+            	XPLMDebugString("XHSI: packet size mismatch while receiving packet! ");
+            	return recv_delay;
             } else {
-            	// XPLMDebugString("XHSI: packet received\n");
-            	// TODO: Check packet length versus (efis_packet.nb_of_data_points * 8 + 4)
                 decodeIncomingPacket();
                 return recv_delay;
 

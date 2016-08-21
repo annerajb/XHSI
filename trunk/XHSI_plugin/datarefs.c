@@ -41,6 +41,7 @@ XPLMDataRef xhsi_rtu_selected_radio;
 XPLMDataRef engine_type;
 XPLMDataRef trq_scale;
 XPLMDataRef fuel_units;
+XPLMDataRef temp_units;
 XPLMDataRef override_trq_max;
 
 // custom datarefs - MFD
@@ -596,6 +597,18 @@ int     getFuelUnits(void* inRefcon)
 void	setFuelUnits(void* inRefcon, int inValue)
 {
       eicas_fuel_units = inValue;
+}
+
+
+// xhsi/eicas/temp_units
+int eicas_temp_units;
+int     getTempUnits(void* inRefcon)
+{
+     return eicas_temp_units;
+}
+void	setTempUnits(void* inRefcon, int inValue)
+{
+      eicas_temp_units = inValue;
 }
 
 
@@ -1246,6 +1259,13 @@ void registerEICASDataRefs(void) {
                                         getFuelUnits, setFuelUnits,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
+    // xhsi/eicas/temp_units
+    temp_units = XPLMRegisterDataAccessor("xhsi/eicas/temp_units",
+                                        xplmType_Int,      // Integer accessors
+                                        1,                                                   // Writable
+                                        getTempUnits, setTempUnits,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
 	// xhsi/eicas/trq_max_lbft
 	override_trq_max = XPLMRegisterDataAccessor("xhsi/eicas/trq_max_lbft",
 										xplmType_Float,      // Integer accessors
@@ -1338,6 +1358,7 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/engine_type");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_scale");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/fuel_units");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/temp_units");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_max_lbft");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/sta");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/data");
@@ -2366,6 +2387,9 @@ void writeDataRef(int id, float value) {
 			XPLMSetDatai(fuel_units , (int)value);
             break;
 
+        case XHSI_TEMP_UNITS :
+			XPLMSetDatai(temp_units , (int)value);
+            break;
 
         // MFD
 
