@@ -589,7 +589,7 @@ public class LowerEicas extends MFDSubcomponent {
 	        int dial_x = mfd_gc.dial_x[eng];
 	        int dial_y = mfd_gc.eng_oilq_dial_y;
 	        int dial_r = mfd_gc.dial_r[mfd_gc.num_eng];
-			drawAirbusGauge(g2, dial_x, dial_y, dial_r, oilq_val, 100.0f);
+			drawAirbusGauge(g2, dial_x, dial_y, dial_r, false, oilq_val, 0, 100.0f, 0, 0);
 		}
 	}
 
@@ -601,25 +601,26 @@ public class LowerEicas extends MFDSubcomponent {
 		g2.setColor(mfd_gc.ecam_action_color);
 		g2.setFont(mfd_gc.font_l);
 		g2.drawString(str_fuel_units, mfd_gc.eng_dial_center_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_fuel_units)/2, mfd_gc.eng_oilp_legend_y);
-		float max_oil_p = Math.round(10*((this.aircraft.get_oil_press_max()+5)/10));
+		float max_oil_p = 10*Math.round(((this.aircraft.get_oil_press_max()+5)/10));
 		
 		for (int eng=0; eng<mfd_gc.num_eng; eng++) {
 			int oilp_val = Math.round(  this.aircraft.get_oil_press_psi(eng));
 	        int dial_x = mfd_gc.dial_x[eng];
 	        int dial_y = mfd_gc.eng_oilp_dial_y;
 	        int dial_r = mfd_gc.dial_r[mfd_gc.num_eng];
-			drawAirbusGauge(g2, dial_x, dial_y, dial_r, oilp_val, max_oil_p);
+			drawAirbusGauge(g2, dial_x, dial_y, dial_r, false, oilp_val, max_oil_p*0.15f, max_oil_p,30,0);
 		}
 	}
     
-    private void drawAirbusGauge(Graphics2D g2, int x, int y, int r, float value, float max) {
+    private void drawAirbusGauge(Graphics2D g2, int x, int y, int r, boolean horizontal, float value, float min, float max, int min_red_arc, int max_red_arc) {
     	
         AffineTransform original_at = g2.getTransform();
         scalePen(g2);
 
-        float egt_dial = value / max;
+        float dial = value / max;  // DIAL is a ratio of range between 0 and max
         int dial_value = Math.round(value);
         int max_limit = Math.round(max);
+        int min_limit = Math.round(min);
         boolean dial_disabled = false;
         int num = mfd_gc.num_eng;
 
@@ -627,52 +628,53 @@ public class LowerEicas extends MFDSubcomponent {
         int dial_y = y;
         int dial_r = r;
 
-        int deg_zero  = 225;	// Gauge zero (0%)
-        int deg_start = 225; 	// Gauge starting position white sector
-        int deg_full  = 50;     // Gauge full (100%)
-        int deg_full_range = deg_zero-deg_full;   // Deg range from 0 to 100%
-        // int deg_warning = stabilized ? 45 : 120;   // Gauge red sector (warning)
-        int deg_warning = 60;   // Gauge red sector (warning) 
-        int deg_end = 25;       // Gauge end
-        int deg_norm_range = deg_start-deg_warning;
-        int deg_warn_range = deg_warning-deg_end;
+        // Full Arc gauge
+        int deg_begin = horizontal ? 180 : 225;  // Gauge beginning position
+        int deg_end   = horizontal ? 0   : 25;   // Gauge ending position
+        int norm_arc  = deg_begin - deg_end - min_red_arc - max_red_arc; 
         
-        if ( egt_dial <= 1.0f ) {
-            // inhibit caution or warning below 1000ft
-            g2.setColor(mfd_gc.instrument_background_color);
-        } else if ( egt_dial < 1.1f ) {
-            g2.setColor(mfd_gc.caution_color.darker().darker());
-        } else {
-            g2.setColor(mfd_gc.warning_color.darker().darker());
-        }
+        // int deg_full  = horizontal ? 25  : 50;   // Gauge full (100%) position on the arc
+        int deg_full  = deg_end;   // Gauge full (100%) position on the arc        
+
+        int deg_zero  = deg_begin;	             // Gauge zero (0%) position on the arc
         
+        int deg_start = deg_begin;  // Gauge starting position white sector
+        
+        int deg_min_red_end = deg_begin - min_red_arc;
+        int deg_max_red_begin = deg_end + max_red_arc;
+
+        int deg_full_range = deg_zero-deg_full;  // Deg range from 0 to 100%
 
         // White Arc
         g2.setColor(mfd_gc.ecam_markings_color);
-        g2.drawArc(dial_x-dial_r, dial_y-dial_r, 2*dial_r, 2*dial_r, deg_start, -deg_norm_range);
+        g2.drawArc(dial_x-dial_r, dial_y-dial_r, 2*dial_r, 2*dial_r, deg_max_red_begin, norm_arc);
         
-        // Red Arc
+        // Min and Max Reds Arc
        	int dial_r_red = dial_r * 98/100; 
         g2.setColor(mfd_gc.ecam_warning_color);
         original_stroke = g2.getStroke();
         g2.setStroke(new CompositeStroke( new BasicStroke( 3.0f * mfd_gc.grow_scaling_factor ), new BasicStroke( 2.0f * mfd_gc.grow_scaling_factor ) ));
-        g2.drawArc(dial_x-dial_r_red, dial_y-dial_r_red, 2*dial_r_red, 2*dial_r_red, deg_warning, -deg_warn_range);
+        // Min
+        if (min_red_arc>0) g2.drawArc(dial_x-dial_r_red, dial_y-dial_r_red, 2*dial_r_red, 2*dial_r_red, deg_min_red_end, min_red_arc);        
+        // Max        
+        if (max_red_arc>0) g2.drawArc(dial_x-dial_r_red, dial_y-dial_r_red, 2*dial_r_red, 2*dial_r_red, deg_end, max_red_arc);
     	g2.setStroke(original_stroke);
         g2.setTransform(original_at);
         
         // EGT max target
+        /*
         g2.setColor(mfd_gc.ecam_caution_color);
-        g2.rotate(Math.toRadians(360-deg_warning), dial_x, dial_y);
+        g2.rotate(Math.toRadians(360-deg_max_warning), dial_x, dial_y);
         g2.drawLine(dial_x+dial_r*18/16, dial_y, dial_x+dial_r+1, dial_y);
         g2.setTransform(original_at);
+        */
 
         
-        // scale markings every 50%
-        
+        // scale markings every 50%        
         g2.setColor(mfd_gc.dim_markings_color);
         g2.rotate(Math.toRadians(360-deg_zero), dial_x, dial_y);
         for (int i=0; i<=10; i++) {
-        	if (i==0 || i==5 || i==10) {
+        	if ((i==0 && min_red_arc==0) || i==5 || i==10) {
         		g2.drawLine(dial_x+dial_r*14/16, dial_y, dial_x+dial_r-1, dial_y);
         	}
             g2.rotate(Math.toRadians(deg_full_range/10), dial_x, dial_y);
@@ -692,7 +694,7 @@ public class LowerEicas extends MFDSubcomponent {
         	if (i==0) {
         		g2.drawString(Integer.toString(i), n1_digit_x - mfd_gc.digit_width_m/2, n1_digit_y+mfd_gc.line_height_m*3/8);
         	} else if (i==10) {
-        		g2.drawString(Integer.toString(Math.round(max)), n1_digit_x - mfd_gc.digit_width_m/2, n1_digit_y+mfd_gc.line_height_m*3/8);
+        		g2.drawString(Integer.toString(Math.round(max)), n1_digit_x - mfd_gc.digit_width_m*3/4, n1_digit_y+mfd_gc.line_height_m*5/8);
         	}
         	
         	n1_digit_angle += deg_full_range/10;
@@ -700,25 +702,26 @@ public class LowerEicas extends MFDSubcomponent {
         
         // needle
         if (!dial_disabled) {
-        	int egt_needle_deg = Math.max(Math.round(egt_dial*deg_full_range)-deg_zero , -deg_start);
+        	int egt_needle_deg = Math.max(Math.round(dial*deg_full_range)-deg_zero , -deg_start);
         	g2.rotate(Math.toRadians(egt_needle_deg), dial_x, dial_y);
-        	g2.setColor(mfd_gc.ecam_normal_color);
+        	g2.setColor((value<min || value>max) ? mfd_gc.ecam_warning_color: mfd_gc.ecam_normal_color);
         	g2.drawLine(dial_x, dial_y, dial_x+dial_r-2, dial_y);
         	g2.setTransform(original_at);
         }
-             
-        
+                     
         // value
         String value_str = Integer.toString(dial_value);
         dial_y -= dial_r/8;       
-        if ( egt_dial <= 1.0f ) {
-        	// inhibit caution or warning below 1000ft
+        /*
+        if ( dial <= 1.0f ) {
         	g2.setColor(mfd_gc.ecam_normal_color);
-        } else if ( egt_dial < 1.1f ) {
+        } else if ( dial < 1.1f ) {
         	g2.setColor(mfd_gc.ecam_caution_color);
         } else {
         	g2.setColor(mfd_gc.ecam_warning_color);
         }
+        */
+        g2.setColor((value<min || value>max) ? mfd_gc.ecam_warning_color: mfd_gc.ecam_normal_color);
         if (dial_disabled) { 
         	value_str="XX";
         	g2.setColor(mfd_gc.ecam_caution_color);
@@ -820,17 +823,34 @@ public class LowerEicas extends MFDSubcomponent {
     	g2.setColor(mfd_gc.ecam_markings_color);
     	String legend_str="NAC";
     	g2.setFont(mfd_gc.font_xl);
-        g2.drawString(legend_str, mfd_gc.eng_dial_center_x-mfd_gc.get_text_width(g2, mfd_gc.font_xl, legend_str)/2, mfd_gc.eng_ing_title_y);
+        g2.drawString(legend_str, mfd_gc.eng_dial_center_x-mfd_gc.get_text_width(g2, mfd_gc.font_xl, legend_str)/2, mfd_gc.eng_nac_title_y);
 		
 		String str_units = "°C";
 		g2.setColor(mfd_gc.ecam_action_color);
 		g2.setFont(mfd_gc.font_l);
-		g2.drawString(str_units, mfd_gc.eng_dial_center_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_units)/2, mfd_gc.eng_ing_legend_y);
+		g2.drawString(str_units, mfd_gc.eng_dial_center_x -mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_units)/2, mfd_gc.eng_nac_legend_y);
 		
 		int dial_r = mfd_gc.dial_r[mfd_gc.num_eng];
-		for (int eng=0; eng<mfd_gc.num_eng; eng++) {
-			int nac_temp_val = Math.round( this.aircraft.get_nac_temp(eng));	        
-			drawAirbusGauge(g2, mfd_gc.dial_x[eng], mfd_gc.eng_nac_y, dial_r, nac_temp_val, 500.0f);
+		if (mfd_gc.num_eng<3) {
+			g2.setColor(mfd_gc.ecam_markings_color);
+			g2.drawLine(mfd_gc.eng_dial_center_x - mfd_gc.crz_eng_line_dx1, mfd_gc.eng_nac_line_top, mfd_gc.eng_dial_center_x - mfd_gc.crz_eng_line_dx2, mfd_gc.eng_nac_line_bottom);
+			g2.drawLine(mfd_gc.eng_dial_center_x + mfd_gc.crz_eng_line_dx1, mfd_gc.eng_nac_line_top, mfd_gc.eng_dial_center_x + mfd_gc.crz_eng_line_dx2, mfd_gc.eng_nac_line_bottom);
+
+			for (int eng=0; eng<mfd_gc.num_eng; eng++) {
+				// TODO : Pulse above 240
+				String nac_temp_str = ""+Math.round( this.aircraft.get_nac_temp(eng));
+				g2.setColor(mfd_gc.ecam_normal_color);
+				g2.setFont(mfd_gc.font_xxl);
+				// g2.drawString(nac_temp_str,  mfd_gc.dial_x[eng], mfd_gc.eng_nac_y);
+				// Justify Right
+				g2.drawString(nac_temp_str, mfd_gc.crz_eng_x[eng]+mfd_gc.digit_width_xxl-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, nac_temp_str) , mfd_gc.eng_nac_value_y);
+				
+			}
+		} else {
+			for (int eng=0; eng<mfd_gc.num_eng; eng++) {
+				int nac_temp_val = Math.round( this.aircraft.get_nac_temp(eng));	        
+				drawAirbusGauge(g2, mfd_gc.dial_x[eng], mfd_gc.eng_nac_y, dial_r, true, nac_temp_val, 0, 500.0f,0,0);
+			}
 		}
     }
     

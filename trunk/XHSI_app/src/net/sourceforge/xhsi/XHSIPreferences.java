@@ -117,6 +117,7 @@ public class XHSIPreferences {
     public static final String PREF_FUEL_UNITS = "fuel.units";
     public static final String PREF_ENGINE_TYPE = "eicas.engine.type";
     public static final String PREF_TRQ_SCALE = "eicas.trq.scale";
+    public static final String PREF_TEMP_UNITS = "temp.units";
 
     // MFD options
     public static final String PREF_MFD_MODE = "mfd.mode";
@@ -246,6 +247,12 @@ public class XHSIPreferences {
     public static final String TRQ_SCALE_LBFT = "LbFt";
     public static final String TRQ_SCALE_NM = "Nm";
     public static final String TRQ_SCALE_PERCENT = "Percent";
+ 
+    // for PREF_TEMP_UNITS
+    public static final String TEMP_UNITS_SWITCHABLE = "switchable";
+    public static final String TEMP_UNITS_CELCIUS = "Celcius";
+    public static final String TEMP_UNITS_FAHRENHEIT = "Fahrenheit";
+    public static final String TEMP_UNITS_KELVIN = "Kelvin";
     
     
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
@@ -1295,6 +1302,10 @@ public class XHSIPreferences {
             this.unsaved_changes = true;
         }
 
+        if ( ! this.preferences.containsKey(PREF_TEMP_UNITS) ) {
+            this.preferences.setProperty(PREF_TEMP_UNITS, TEMP_UNITS_SWITCHABLE);
+            this.unsaved_changes = true;
+        }
         
         // MFD
 

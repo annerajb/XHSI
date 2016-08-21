@@ -406,12 +406,20 @@ public interface Avionics {
      */
     public int get_fuel_units();
     
-    
     /**
      * @return float 
      */
     public float fuel_multiplier();
 
+    /**
+     * @return int - 0=Celcius, 1=Farhenheit, 2=Kelvin
+     */
+    public int get_temp_units();
+  
+    /**
+     * @return float / if temp_units in fahrenheit : T(°F) = 1,8 T(°C) + 32
+     */
+    public float convert_temperature(float temp_in_celcius);
     
     /**
      * @return int - Engine type (0=N1, 1=EPR, 2=TRQ, 3=MAP)
@@ -831,6 +839,8 @@ public interface Avionics {
     public void set_max_trq_override(float new_max_trq);
 
     public void set_fuel_units(int new_units);
+    
+    public void set_temp_units(int new_units);
 
     public void set_engine_type(int new_type);
     

@@ -77,6 +77,8 @@ public class LowerEcamCommon extends MFDSubcomponent {
             
             // this.inhibit = ( this.aircraft.agl_m() < 1000.0f / 3.28084f );
         	this.inhibit = false;
+        	
+        	String temp_unit_str = this.avionics.get_temp_units() == XHSISettings.TEMP_UNITS_C ? "°c" : "°F";
  
             // Draw separation lines
             // Version 1 have 2 text lines
@@ -95,23 +97,23 @@ public class LowerEcamCommon extends MFDSubcomponent {
             g2.setFont(mfd_gc.font_xl);
             g2.setColor(mfd_gc.ecam_markings_color);
             g2.drawString("TAT", mfd_gc.ec_col1, mfd_gc.ec_line1);
-            String tat_str = "" + Math.round(this.aircraft.tat());
+            String tat_str = "" + Math.round(this.avionics.convert_temperature(this.aircraft.tat()));
             g2.setColor(mfd_gc.ecam_normal_color);
             g2.drawString(tat_str, mfd_gc.ec_col1_val, mfd_gc.ec_line1);
             g2.setFont(mfd_gc.font_m);
             g2.setColor(mfd_gc.ecam_action_color);
-            g2.drawString("°c", mfd_gc.ec_col1_unit, mfd_gc.ec_line1);
+            g2.drawString(temp_unit_str, mfd_gc.ec_col1_unit, mfd_gc.ec_line1);
             
             // line 2 : SAT
             g2.setFont(mfd_gc.font_xl);
             g2.setColor(mfd_gc.ecam_markings_color);
             g2.drawString("SAT", mfd_gc.ec_col1, mfd_gc.ec_line2);
-            String oat_str = "" + Math.round(this.aircraft.oat());
+            String oat_str = "" + Math.round(this.avionics.convert_temperature(this.aircraft.oat()));
             g2.setColor(mfd_gc.ecam_normal_color);
             g2.drawString(oat_str, mfd_gc.ec_col1_val, mfd_gc.ec_line2);
             g2.setFont(mfd_gc.font_m);
             g2.setColor(mfd_gc.ecam_action_color);
-            g2.drawString("°c", mfd_gc.ec_col1_unit, mfd_gc.ec_line2);
+            g2.drawString(temp_unit_str, mfd_gc.ec_col1_unit, mfd_gc.ec_line2);
 
             // line 3 : ISA (version 2 only)
             /*
@@ -123,7 +125,7 @@ public class LowerEcamCommon extends MFDSubcomponent {
             g2.drawString(isa_str, mfd_gc.ec_col1_val, mfd_gc.ec_line3);
             g2.setFont(mfd_gc.font_m);
             g2.setColor(mfd_gc.ecam_action_color);
-            g2.drawString("°c", mfd_gc.ec_col1_unit, mfd_gc.ec_line3);
+            g2.drawString(temp_unit_str, mfd_gc.ec_col1_unit, mfd_gc.ec_line3);
             */
             
             

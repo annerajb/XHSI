@@ -1054,7 +1054,37 @@ public class XPlaneAvionics implements Avionics, Observer {
         
     }
 
+    /**
+     * @return int - 0=Celcius, 1=Farhenheit, 2=Kelvin
+     */
+    public int get_temp_units() {
 
+        if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_TEMP_UNITS).equals(XHSIPreferences.TEMP_UNITS_SWITCHABLE) ) {
+            return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_TEMP_UNITS);
+        } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_TEMP_UNITS).equals(XHSIPreferences.TEMP_UNITS_CELCIUS) ) {
+            return XHSISettings.TEMP_UNITS_C;
+        } else /* if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_FUEL_UNITS).equals(XHSIPreferences.TEMP_UNITS_FAHRENHEIT) ) { */
+            return XHSISettings.TEMP_UNITS_F;
+        /* Uncomment to activate Kelvins 
+        } else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_FUEL_UNITS).equals(XHSIPreferences.FUEL_UNITS_KELVIN) ) 
+            return XHSISettings.TEMP_UNITS_K;
+        */
+
+    };
+  
+    /**
+     * @return float / if temp_units in fahrenheit : T(°F) = 1,8 T(°C) + 32
+     */
+    public float convert_temperature(float temp_in_celcius) {
+    	if (get_temp_units() == XHSISettings.TEMP_UNITS_C) {
+    		return temp_in_celcius;
+    	} else {
+    		return temp_in_celcius * 1.8f + 32.0f;
+    	}
+    }
+    
+    
+    
     public int get_engine_type() {
 
         if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_ENGINE_TYPE).equals(XHSIPreferences.ENGINE_TYPE_SWITCHABLE) ) {
@@ -2302,7 +2332,12 @@ public class XPlaneAvionics implements Avionics, Observer {
         udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_FUEL_UNITS, (float) new_units );
 
     }
-    
+ 
+    public void set_temp_units(int new_units) {
+
+        udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_TEMP_UNITS, (float) new_units );
+
+    }
     
     public void set_engine_type(int new_type) {
 

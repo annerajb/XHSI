@@ -27,6 +27,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.logging.Logger;
 
+import net.sourceforge.xhsi.XHSISettings;
 import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
@@ -182,8 +183,7 @@ public class BleedAir extends MFDSubcomponent {
 		// Units
 		g2.setColor(mfd_gc.ecam_action_color);
 		g2.setFont(mfd_gc.font_m);
-		String unit_str="°C";
-		// TODO : Temperature unit switching to "°F"
+		String unit_str= this.avionics.get_temp_units() == XHSISettings.TEMP_UNITS_C ? "°c" : "°F";
 		g2.drawString(unit_str, x+mfd_gc.bleed_mix_box_dx-mfd_gc.get_text_width(g2, mfd_gc.font_m, unit_str), mfd_gc.bleed_ram_air_valve_y);
 		g2.drawString(unit_str, x+mfd_gc.bleed_mix_box_dx-mfd_gc.get_text_width(g2, mfd_gc.font_m, unit_str), mfd_gc.bleed_flow_temp_y);
 
@@ -193,7 +193,7 @@ public class BleedAir extends MFDSubcomponent {
 		String flow_temp_str="XX";
 		if (comp_out_temp>-99.00f) {
 			g2.setColor(mfd_gc.ecam_normal_color);
-			flow_temp_str = ""+Math.round(comp_out_temp);
+			flow_temp_str = ""+Math.round(this.avionics.convert_temperature(comp_out_temp));
 		} else {
 			g2.setColor(mfd_gc.ecam_caution_color);
 		}
@@ -203,7 +203,7 @@ public class BleedAir extends MFDSubcomponent {
 		String mix_temp_str="XX";
 		if (out_temp>-99.00f) {
 			g2.setColor(mfd_gc.ecam_normal_color);
-			mix_temp_str = ""+Math.round(out_temp);
+			mix_temp_str = ""+Math.round(this.avionics.convert_temperature(out_temp));
 		} else {
 			g2.setColor(mfd_gc.ecam_caution_color);
 		}
@@ -236,18 +236,18 @@ public class BleedAir extends MFDSubcomponent {
 		// Units
 		g2.setColor(mfd_gc.ecam_action_color);
 		g2.setFont(mfd_gc.font_m);
-		String unit_str="°C";
+		String t_unit_str=this.avionics.get_temp_units() == XHSISettings.TEMP_UNITS_C ? "°c" : "°F";
 		// TODO : Temperature unit switching to "°F"
-		g2.drawString(unit_str, mfd_gc.bleed_circuit1_x+mfd_gc.bleed_eng_box_inner_dx-mfd_gc.get_text_width(g2, mfd_gc.font_m, unit_str), mfd_gc.bleed_eng_flow_temp_y);
-		unit_str="PSI";
-		g2.drawString(unit_str, mfd_gc.bleed_circuit1_x+mfd_gc.bleed_eng_box_inner_dx-mfd_gc.get_text_width(g2, mfd_gc.font_m, unit_str), mfd_gc.bleed_eng_flow_press_y);
+		g2.drawString(t_unit_str, mfd_gc.bleed_circuit1_x+mfd_gc.bleed_eng_box_inner_dx-mfd_gc.get_text_width(g2, mfd_gc.font_m, t_unit_str), mfd_gc.bleed_eng_flow_temp_y);
+		String psi_unit_str="PSI";
+		g2.drawString(psi_unit_str, mfd_gc.bleed_circuit1_x+mfd_gc.bleed_eng_box_inner_dx-mfd_gc.get_text_width(g2, mfd_gc.font_m, psi_unit_str), mfd_gc.bleed_eng_flow_press_y);
 
 		// flow temperature
 		g2.setColor(mfd_gc.ecam_caution_color);
 		g2.setFont(mfd_gc.font_xxl);
 		String flow_temp_str="XX";
 		if (this.aircraft.bleed_air_temp(Aircraft.BLEED_LEFT)>-99.0) {
-			flow_temp_str = ""+Math.round(this.aircraft.bleed_air_temp(Aircraft.BLEED_LEFT));
+			flow_temp_str = ""+Math.round(this.avionics.convert_temperature(this.aircraft.bleed_air_temp(Aircraft.BLEED_LEFT)));
 			g2.setColor(mfd_gc.ecam_normal_color);
 		}
 		g2.drawString(flow_temp_str, mfd_gc.bleed_circuit1_x-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, flow_temp_str)/2, mfd_gc.bleed_eng_flow_temp_y);
@@ -285,18 +285,16 @@ public class BleedAir extends MFDSubcomponent {
 			// Units
 			g2.setColor(mfd_gc.ecam_action_color);
 			g2.setFont(mfd_gc.font_m);
-			unit_str="°C";
-			// TODO : Temperature unit switching to "°F"
-			g2.drawString(unit_str, mfd_gc.bleed_circuit2_x-mfd_gc.bleed_eng_box_inner_dx, mfd_gc.bleed_eng_flow_temp_y);
-			unit_str="PSI";
-			g2.drawString(unit_str, mfd_gc.bleed_circuit2_x-mfd_gc.bleed_eng_box_inner_dx, mfd_gc.bleed_eng_flow_press_y);
+			g2.drawString(t_unit_str, mfd_gc.bleed_circuit2_x-mfd_gc.bleed_eng_box_inner_dx, mfd_gc.bleed_eng_flow_temp_y);
+			
+			g2.drawString(psi_unit_str, mfd_gc.bleed_circuit2_x-mfd_gc.bleed_eng_box_inner_dx, mfd_gc.bleed_eng_flow_press_y);
 
 			// flow temperature
 			g2.setColor(mfd_gc.ecam_caution_color);
 			g2.setFont(mfd_gc.font_xxl);
 			flow_temp_str="XX";
 			if (this.aircraft.bleed_air_temp(Aircraft.BLEED_RIGHT)>-99) {
-				flow_temp_str = ""+Math.round(this.aircraft.bleed_air_temp(Aircraft.BLEED_RIGHT));
+				flow_temp_str = ""+Math.round(this.avionics.convert_temperature(this.aircraft.bleed_air_temp(Aircraft.BLEED_RIGHT)));
 				g2.setColor(mfd_gc.ecam_normal_color);
 			}
 			g2.drawString(flow_temp_str, mfd_gc.bleed_circuit2_x-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, flow_temp_str)/2, mfd_gc.bleed_eng_flow_temp_y);

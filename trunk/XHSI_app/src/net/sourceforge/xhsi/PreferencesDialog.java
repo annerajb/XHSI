@@ -163,6 +163,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private String trq_scales[] = { XHSIPreferences.TRQ_SCALE_SWITCHABLE, XHSIPreferences.TRQ_SCALE_LBFT, XHSIPreferences.TRQ_SCALE_NM, XHSIPreferences.TRQ_SCALE_PERCENT };;
     private JComboBox fuel_unit_combobox;
     private String fuel_units[] = { XHSIPreferences.FUEL_UNITS_SWITCHABLE, XHSIPreferences.FUEL_UNITS_KG, XHSIPreferences.FUEL_UNITS_LBS, XHSIPreferences.FUEL_UNITS_USG, XHSIPreferences.FUEL_UNITS_LTR };
+    private JComboBox temp_unit_combobox;
+    private String temp_units[] = { XHSIPreferences.TEMP_UNITS_SWITCHABLE, XHSIPreferences.TEMP_UNITS_CELCIUS, XHSIPreferences.TEMP_UNITS_FAHRENHEIT };
 
     private JComboBox mfd_mode_combobox;
     private String mfd_modes[] = { 
@@ -429,7 +431,12 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             }
         }
 
-
+        String temp = preferences.get_preference(XHSIPreferences.PREF_TEMP_UNITS);
+        for (int i=0; i<temp_units.length; i++) {
+            if ( temp.equals( temp_units[i] ) ) {
+                this.temp_unit_combobox.setSelectedIndex(i);
+            }
+        }
         // MFD Options (3)
 
         String mfd_mode = preferences.get_preference(XHSIPreferences.PREF_MFD_MODE);
@@ -1678,6 +1685,25 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         eicas_options_panel.add(this.fuel_unit_combobox, cons);
         dialog_line++;
 
+        // Temp units
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        eicas_options_panel.add(new JLabel("Temperature units", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.temp_unit_combobox = new JComboBox();
+        this.temp_unit_combobox.addItem("Switchable");
+        this.temp_unit_combobox.addItem(XHSIPreferences.TEMP_UNITS_CELCIUS);
+        this.temp_unit_combobox.addItem(XHSIPreferences.TEMP_UNITS_FAHRENHEIT);
+        // this.fuel_unit_combobox.addItem(XHSIPreferences.FUEL_UNITS_KELVIN);
+        this.temp_unit_combobox.addActionListener(this);
+        eicas_options_panel.add(this.temp_unit_combobox, cons);
+        dialog_line++;
+        
 //        // A reminder
 //        cons.gridx = 2;
 //        cons.gridwidth = 1;
@@ -2158,6 +2184,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
             if ( ! fuel_units[this.fuel_unit_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_FUEL_UNITS)) )
                 this.preferences.set_preference(XHSIPreferences.PREF_FUEL_UNITS, fuel_units[this.fuel_unit_combobox.getSelectedIndex()]);
+
+            if ( ! temp_units[this.temp_unit_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_TEMP_UNITS)) )
+                this.preferences.set_preference(XHSIPreferences.PREF_TEMP_UNITS, temp_units[this.temp_unit_combobox.getSelectedIndex()]);
 
 
             // MFD options

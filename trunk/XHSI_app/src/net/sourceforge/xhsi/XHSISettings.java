@@ -143,6 +143,13 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_FUEL_UNITS_LTR = "Ltr";
     public static final int FUEL_UNITS_LTR = 3;
 
+    public static final String ACTION_TEMP_UNITS_C = "Celcius";
+    public static final int TEMP_UNITS_C = 0;
+    public static final String ACTION_TEMP_UNITS_F = "Fahrenheit";
+    public static final int TEMP_UNITS_F = 1;
+    public static final String ACTION_TEMP_UNITS_K = "Kelvin";
+    public static final int TEMP_UNITS_K = 2;
+    
     public static final String ACTION_MAX_TRQ_AUTO = "Auto";
     public static final String ACTION_MAX_TRQ_SET = "Set ...";
     
@@ -222,6 +229,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public int trq_scale;
     public float max_trq;
     public int fuel_units;
+    public int temp_units;
     
     public int xpdr = Avionics.XPDR_TA;
 //    public FUEL_UNITS fuel_units = FUEL_UNITS.KG;
@@ -327,6 +335,10 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JRadioButtonMenuItem radio_button_fuel_units_lbs;
     private JRadioButtonMenuItem radio_button_fuel_units_usg;
     private JRadioButtonMenuItem radio_button_fuel_units_ltr;
+
+    private JRadioButtonMenuItem radio_button_temp_units_c;
+    private JRadioButtonMenuItem radio_button_temp_units_f;
+    // private JRadioButtonMenuItem radio_button_temp_units_k;
     
     private static XHSISettings single_instance = null;
 
@@ -1003,6 +1015,34 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // Add the Fuel units submenu to the EICAS menu
         xhsi_eicas_menu.add(fuel_units_submenu);
         
+        // define the "Temp units" submenu
+        JMenu temp_units_submenu = new JMenu("Temp units");
+
+        ButtonGroup temp_units_group = new ButtonGroup();
+
+        // define the menu items, and add them to the "Fix" menu
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_TEMP_UNITS_C);
+        radio_button_menu_item.setToolTipText("Celcius");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(true);
+        temp_units_submenu.add(radio_button_menu_item);
+        temp_units_group.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_temp_units_c = radio_button_menu_item;
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_TEMP_UNITS_F);
+        radio_button_menu_item.setToolTipText("Farhenheit");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
+        temp_units_submenu.add(radio_button_menu_item);
+        temp_units_group.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_temp_units_f = radio_button_menu_item;
+
+        // Add the Temp units submenu to the EICAS menu
+        xhsi_eicas_menu.add(temp_units_submenu);
+
+        
         xhsi_eicas_menu.addSeparator();
 
 //        menu_item = new JMenuItem(XHSISettings.ACTION_ESTIMATE_FUEL_CAPACITY);
@@ -1449,6 +1489,13 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             fuel_units = XHSISettings.FUEL_UNITS_LTR;
             this.avionics.set_fuel_units(fuel_units);
 
+        } else if (command.equals(XHSISettings.ACTION_TEMP_UNITS_C)) {
+            temp_units = XHSISettings.TEMP_UNITS_C;
+            this.avionics.set_temp_units(temp_units);
+        } else if (command.equals(XHSISettings.ACTION_TEMP_UNITS_F)) {
+            temp_units = XHSISettings.TEMP_UNITS_F;
+            this.avionics.set_temp_units(temp_units);
+            
 //        } else if (command.equals(XHSISettings.ACTION_ESTIMATE_FUEL_CAPACITY)) {
 //            // Estimate total fuel capacity
 //            this.avionics.get_aircraft().estimate_fuel_capacity();
@@ -1721,6 +1768,14 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_fuel_units_usg.setEnabled( switchable );
         this.radio_button_fuel_units_ltr.setEnabled( switchable );
 
+        int new_temp_units = avionics.get_temp_units();
+        this.radio_button_temp_units_c.setSelected( new_temp_units == XHSISettings.TEMP_UNITS_C );
+        this.radio_button_temp_units_f.setSelected( new_temp_units == XHSISettings.TEMP_UNITS_F );
+        // this.radio_button_temp_units_k.setSelected( new_temp_units == XHSISettings.TEMP_UNITS_K );
+        switchable = prefs.get_preference(XHSIPreferences.PREF_TEMP_UNITS).equals(XHSIPreferences.TEMP_UNITS_SWITCHABLE);
+        this.radio_button_temp_units_c.setEnabled( switchable );
+        this.radio_button_temp_units_f.setEnabled( switchable );
+        // this.radio_button_temp_units_k.setEnabled( switchable );
     }
 
 
