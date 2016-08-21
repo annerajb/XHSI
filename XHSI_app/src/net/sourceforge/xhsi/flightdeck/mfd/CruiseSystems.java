@@ -282,7 +282,7 @@ public class CruiseSystems extends MFDSubcomponent {
         g2.drawString(legend_str, mfd_gc.crz_cab_gauge3_x - mfd_gc.get_text_width(g2, mfd_gc.font_xl, legend_str), mfd_gc.crz_cab_temp_legend_y);
 
         // Units
-        String unit_str="°C";
+        String unit_str=this.avionics.get_temp_units() == XHSISettings.TEMP_UNITS_C ? "°c" : "°F";
     	g2.setColor(mfd_gc.ecam_action_color);
         g2.setFont(mfd_gc.font_l);
         g2.drawString(unit_str, mfd_gc.crz_cab_zone2_x - mfd_gc.get_text_width(g2, mfd_gc.font_l, unit_str)/2 , mfd_gc.crz_cab_temp_legend_y-mfd_gc.line_height_xxl/5);
@@ -298,7 +298,7 @@ public class CruiseSystems extends MFDSubcomponent {
         g2.setFont(mfd_gc.font_xxl);
         if (temp > -99.0f) {
             g2.setColor(mfd_gc.ecam_normal_color);
-            value_str="" + Math.round(temp);
+            value_str="" + Math.round(this.avionics.convert_temperature(temp));
         } else {
             g2.setColor(mfd_gc.ecam_caution_color);
             value_str="XX";	

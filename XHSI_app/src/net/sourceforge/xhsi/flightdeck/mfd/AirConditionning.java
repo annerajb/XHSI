@@ -27,6 +27,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.logging.Logger;
 
+import net.sourceforge.xhsi.XHSISettings;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.Aircraft.CabinZone;
@@ -68,7 +69,7 @@ public class AirConditionning extends MFDSubcomponent {
  
     private void drawTempLegend(Graphics2D g2) {
     	String temp_str="TEMP:";
-    	String temp_unit="°c";
+    	String temp_unit=this.avionics.get_temp_units() == XHSISettings.TEMP_UNITS_C ? "°c" : "°F";
     	int unit_legend_x = mfd_gc.cond_temp_legend_x + mfd_gc.get_text_width(g2, mfd_gc.font_xl, temp_str);
     	g2.setColor(mfd_gc.ecam_markings_color);
         g2.setFont(mfd_gc.font_xl);
@@ -139,7 +140,7 @@ public class AirConditionning extends MFDSubcomponent {
         g2.setFont(mfd_gc.font_xxl);
         if (temp > -99.0f) {
             g2.setColor(mfd_gc.ecam_normal_color);
-            value_str="" + Math.round(temp);
+            value_str="" + Math.round(this.avionics.convert_temperature(temp));
         } else {
             g2.setColor(mfd_gc.ecam_caution_color);
             value_str="XX";	
@@ -152,7 +153,7 @@ public class AirConditionning extends MFDSubcomponent {
         g2.setFont(mfd_gc.font_l);
         if (temp > -99.0f) {
             g2.setColor(mfd_gc.ecam_normal_color);
-            value_str="" + Math.round(temp);
+            value_str="" + Math.round(this.avionics.convert_temperature(temp));
         } else {
             g2.setColor(mfd_gc.ecam_caution_color);
             value_str="XX";	

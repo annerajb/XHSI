@@ -142,6 +142,11 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int eng_ing_valve_out_x[] = new int[8];
     public int eng_ing_bleed_x[] = new int[8];
     public int eng_nac_y;
+    public int eng_nac_title_y;
+    public int eng_nac_legend_y;
+    public int eng_nac_value_y;;
+    public int eng_nac_line_top;
+    public int eng_nac_line_bottom;
     
     public int eng_vib_n1_title_y;
     public int eng_vib_n1_value_y;
@@ -1042,7 +1047,13 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             eng_ing_value_y = panel_rect.y + mfd_size * 960/1000;
             eng_ing_valve_y = panel_rect.y + mfd_size * 857/1000;
             eng_ing_bottom = panel_rect.y + mfd_size * 897/1000;
+            
             eng_nac_y =  panel_rect.y + mfd_size * 897/1000;
+            eng_nac_legend_y =  panel_rect.y + mfd_size * 897/1000;
+            eng_nac_title_y = panel_rect.y + mfd_size * 857/1000;
+            eng_nac_value_y = panel_rect.y + mfd_size * 920/1000;
+            eng_nac_line_top = panel_rect.y + mfd_size * 890/1000;
+            eng_nac_line_bottom = panel_rect.y + mfd_size * 910/1000;
             
             eng_line_x = panel_rect.x + panel_rect.width * 622/1000;
             eng_line_top = panel_rect.y + mfd_size * 142/1000;
@@ -1076,7 +1087,12 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             	eng_ing_value_y = panel_rect.y + mfd_size * 980/1000;
             	eng_ing_valve_y = panel_rect.y + mfd_size * 940/1000;
             	eng_ing_bottom = panel_rect.y + mfd_size * 990/1000;
-            	eng_nac_y =  panel_rect.y + mfd_size * 955/1000;
+            	eng_nac_y =  panel_rect.y + mfd_size * 960/1000;
+                eng_nac_legend_y =  panel_rect.y + mfd_size * 975/1000;
+                eng_nac_title_y = panel_rect.y + mfd_size * 940/1000;
+                eng_nac_value_y = panel_rect.y + mfd_size * 930/1000;
+                eng_nac_line_top = panel_rect.y + mfd_size * 940/1000;
+                eng_nac_line_bottom = panel_rect.y + mfd_size * 940/1000;
 
             }
             

@@ -257,6 +257,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_ENGINE_TYPE = 280;
     public static final int XHSI_EICAS_TRQ_SCALE = 281;
     public static final int XHSI_FUEL_UNITS = 282;
+    public static final int XHSI_TEMP_UNITS = 283;
     
 
     // MFD

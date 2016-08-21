@@ -33,12 +33,14 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.logging.Logger;
 
+import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Airport;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.FMSEntry;
 import net.sourceforge.xhsi.model.Localizer;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.NavigationObjectRepository;
+import net.sourceforge.xhsi.model.Aircraft.ValveStatus;
 
 public class CabinPressure extends MFDSubcomponent {
 
@@ -105,8 +107,12 @@ public class CabinPressure extends MFDSubcomponent {
 			drawOutflowValve(g2,this.aircraft.cabin_outflow_valve());
 			drawCabin(g2);
 			drawVentFlags(g2);
-			drawPackStatus(g2,1,true);
-			drawPackStatus(g2,2,true);
+			
+			boolean pack1_flow_status = (aircraft.bleed_valve(Aircraft.BLEED_VALVE_PACK1) == ValveStatus.VALVE_OPEN && this.aircraft.bleed_air_press(Aircraft.BLEED_LEFT) > 10);  
+			boolean pack2_flow_status =	(aircraft.bleed_valve(Aircraft.BLEED_VALVE_PACK2) == ValveStatus.VALVE_OPEN && this.aircraft.bleed_air_press(Aircraft.BLEED_RIGHT) > 10); 
+			drawPackStatus(g2,1,pack1_flow_status);
+			drawPackStatus(g2,2,pack2_flow_status);
+			
 			drawSystemStatus(g2,1);
 			
 			// Legends
