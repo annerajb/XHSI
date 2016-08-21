@@ -987,7 +987,9 @@ int createAvionicsPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FUEL_UNITS);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(fuel_units));
     i++;
-
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_TEMP_UNITS);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(temp_units));
+    i++;
 
 // MFD
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_MFD_MODE);

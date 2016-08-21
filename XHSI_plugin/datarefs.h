@@ -400,6 +400,7 @@ extern XPLMDataRef xhsi_rtu_selected_radio;
 extern XPLMDataRef engine_type;
 extern XPLMDataRef trq_scale;
 extern XPLMDataRef fuel_units;
+extern XPLMDataRef temp_units;
 extern XPLMDataRef override_trq_max;
 
 
