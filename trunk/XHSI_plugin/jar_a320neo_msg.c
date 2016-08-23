@@ -62,6 +62,9 @@ int jar_a320_ewd_ready = 0;
 struct jar_a320EwdMsgLinesDataPacket jar_a320EwdMsgPacket;
 struct jar_a320McduMsgLinesDataPacket jar_a320McduMsgPacket;
 
+struct jar_a320EwdMsgLinesDataPacket jar_a320PreviousEwdMsgPacket;
+struct jar_a320McduMsgLinesDataPacket jar_a320PreviousMcduMsgPacket;
+
 float jar_a320_msg_delay;
 
 void findJar_a320MsgDataRefs(void) {
@@ -118,6 +121,9 @@ void findJar_a320MsgDataRefs(void) {
         jar_a320_mcdu_scratch_white = XPLMFindDataRef("sim/custom/xap/mcdu/scratchpad");
         jar_a320_mcdu_title_green = XPLMFindDataRef("sim/custom/xap/mcdu/title_g");
         jar_a320_mcdu_title_white = XPLMFindDataRef("sim/custom/xap/mcdu/title_w");
+
+        jar_a320PreviousEwdMsgPacket.nb_of_lines=0;
+        jar_a320PreviousMcduMsgPacket.nb_of_lines=0;
 
     } else {
     	jar_a320_mcdu_ready = 0;
@@ -332,6 +338,7 @@ int createJar_a320McduPacket(void) {
 
    strncpy(jar_a320McduMsgPacket.packet_id, "QPAM", 4);
    jar_a320McduMsgPacket.nb_of_lines = custom_htoni(JAR_A320_MCDU_LINES);
+   jar_a320McduMsgPacket.side = 0;
 
    l=0;
    // Page title
@@ -575,3 +582,4 @@ float sendJar_a320MsgCallback(
 	}
 
 }
+

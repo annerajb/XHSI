@@ -168,6 +168,7 @@
 
 // CDU source
 #define XHSI_CDU_SOURCE 192
+#define XHSI_CDU_SIDE 193
 
 
 // COM1 & 2 using 8.33kHz spacing

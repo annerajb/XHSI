@@ -537,6 +537,7 @@ int createAvionicsPacket(void) {
     int std_gauges_failures_copilot;
     int apu_status;
     int xhsi_cdu_source;
+    int xhsi_cdu_side;
     int wheel_status;
     int tire_status;
     int elec_status;
@@ -1004,6 +1005,10 @@ int createAvionicsPacket(void) {
     xhsi_cdu_source = (XPLMGetDatai(cdu_pilot_source) & 0x0F) | ((XPLMGetDatai(cdu_copilot_source) & 0x0F) << 4);
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_CDU_SOURCE);
     sim_packet.sim_data_points[i].value = custom_htonf((float) xhsi_cdu_source);
+    i++;
+    xhsi_cdu_side = (XPLMGetDatai(cdu_pilot_side) & 0x0F) | ((XPLMGetDatai(cdu_copilot_side) & 0x0F) << 4);
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_CDU_SIDE);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) xhsi_cdu_side);
     i++;
 
 // AP
