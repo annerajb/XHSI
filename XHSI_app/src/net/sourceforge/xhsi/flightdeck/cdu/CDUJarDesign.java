@@ -214,7 +214,7 @@ public class CDUJarDesign extends CDUSubcomponent {
     private void drawDisplayOnly(Graphics2D g2) {
         
         if ( cdu_gc.powered ) {
-        	String str_title = QpacMcduData.getLine(0);
+        	String str_title = QpacMcduData.getLine(Avionics.CDU_LEFT,0);
             
         	if (str_title.isEmpty()) {
         		str_title = "JarDesign A320";
@@ -317,7 +317,7 @@ public class CDUJarDesign extends CDUSubcomponent {
                 yy = cdu_gc.cdu_scratch_line;
             }
          
-            List<CduLine> l = QpacMcduData.decodeLine(QpacMcduData.getLine(i));
+            List<CduLine> l = QpacMcduData.decodeLine(QpacMcduData.getLine(Avionics.CDU_LEFT,i));
             for(CduLine o : l){                    
                     x = (int) Math.round( cdu_gc.cdu_screen_topleft_x + o.pos * cdu_gc.cdu_digit_width);
                     decodeColor(g2, o.color );

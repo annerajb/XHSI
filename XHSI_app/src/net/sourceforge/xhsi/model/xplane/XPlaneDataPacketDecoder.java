@@ -463,12 +463,14 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
         	int buff_max = 80;
             if (this.received_cdu_packet == false)
                 logger.fine("Received first CDU packet");
-            logger.finest("Receiving QPAC MCDU packet");
         	
             DataInputStream data_stream = new DataInputStream(new ByteArrayInputStream(sim_data));
             data_stream.skipBytes(4);    // skip the bytes containing the packet type id
 
             int nb_of_lines = data_stream.readInt();
+            int side = data_stream.readInt();
+            logger.finest("Receiving QPAC MCDU"+side+" packet");
+            
             byte[] buff = new byte[buff_max];
             
             if (nb_of_lines > 0 ) {
@@ -482,7 +484,7 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
                 	logger.fine("QPAC MCDU packet line " + i + " = " + s);
                 	// TODO : compare with received data
                 	
-                	qpac_mcdu.setLine(line_no, s);
+                	qpac_mcdu.setLine(side,line_no, s);
                 }
             }
             

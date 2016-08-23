@@ -177,6 +177,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_CDU_AIRCRAFT_OR_DUMMY      = "Aircraft's custom FMC (or a dummy)";
     public static final String ACTION_CDU_XFMC        = "X-FMC";
     public static final String ACTION_CDU_UFMC        = "UFMC/X737FMC";
+    public static final String ACTION_CDU_LEFT        = "Left CDU";
+    public static final String ACTION_CDU_RIGHT       = "Right CDU";
 
     public static final String ACTION_CLOCK_UTC = "UTC";
     public static final String ACTION_CLOCK_LT = "Local Time";
@@ -236,7 +238,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     
     public int mfd_mode = 0;
 
-    public int cdu_source = 0;
+    public int cdu_source = 0;    
+    public int cdu_side = 0;
 
     public int clock_mode = 0;
 
@@ -315,6 +318,9 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JRadioButtonMenuItem radio_button_cdu_aircraft;
     private JRadioButtonMenuItem radio_button_cdu_xfmc;
     private JRadioButtonMenuItem radio_button_cdu_ufmc;
+    
+    private JRadioButtonMenuItem radio_button_cdu_left;
+    private JRadioButtonMenuItem radio_button_cdu_right;
     
     private JRadioButtonMenuItem radio_button_clock_utc;
     private JRadioButtonMenuItem radio_button_clock_lt;
@@ -1255,6 +1261,36 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // keep a reference
         this.radio_button_cdu_ufmc = radio_button_menu_item;
 
+        xhsi_cdu_menu.addSeparator();
+        
+        // define the "CDU Side" submenu
+        JMenu cdu_side_submenu = new JMenu("CDU Side");
+
+        ButtonGroup cdu_side_group = new ButtonGroup();
+
+        // define the menu items, and add them to the "Fix" menu
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_CDU_LEFT);
+        radio_button_menu_item.setToolTipText("Display Captain CDU (Left)");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(true);
+        cdu_side_submenu.add(radio_button_menu_item);
+        cdu_side_group.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_cdu_left = radio_button_menu_item;
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_CDU_RIGHT);
+        radio_button_menu_item.setToolTipText("Display First Officer CDU (Right)");
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
+        cdu_side_submenu.add(radio_button_menu_item);
+        cdu_side_group.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_cdu_right = radio_button_menu_item;
+
+        // Add the Temp units submenu to the EICAS menu
+        xhsi_cdu_menu.add(cdu_side_submenu);
+
+        
         // add the "CDU" menu to the menubar
         menu_bar.add(xhsi_cdu_menu);
 
@@ -1570,7 +1606,15 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         } else if (command.equals(XHSISettings.ACTION_CDU_UFMC)) {
             cdu_source = Avionics.CDU_SOURCE_UFMC;
             this.avionics.set_cdu_source(cdu_source);
-
+            
+            //XHSI_CDU_SIDE
+        } else if (command.equals(XHSISettings.ACTION_CDU_LEFT)) {
+            cdu_side = Avionics.CDU_LEFT;
+            this.avionics.set_cdu_side(cdu_side);
+        } else if (command.equals(XHSISettings.ACTION_CDU_RIGHT)) {
+            cdu_side = Avionics.CDU_RIGHT;
+            this.avionics.set_cdu_side(cdu_side);
+            
         } else if (command.equals(XHSISettings.ACTION_CLOCK_UTC)) {
             clock_mode = Avionics.CLOCK_MODE_UTC;
             this.avionics.set_clock_mode(clock_mode);
@@ -1726,6 +1770,13 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_cdu_xfmc.setSelected( new_cdu_source == Avionics.CDU_SOURCE_XFMC );
         this.radio_button_cdu_ufmc.setSelected( new_cdu_source == Avionics.CDU_SOURCE_UFMC );
 
+        switchable = prefs.get_preference(XHSIPreferences.PREF_CDU_SIDE).equals(XHSIPreferences.CDU_SIDE_SWITCHABLE);
+        this.radio_button_cdu_left.setEnabled( switchable );
+        this.radio_button_cdu_right.setEnabled( switchable );
+        int new_cdu_side = avionics.get_cdu_side();
+        this.radio_button_cdu_left.setSelected( new_cdu_side == Avionics.CDU_LEFT );
+        this.radio_button_cdu_right.setSelected( new_cdu_side == Avionics.CDU_RIGHT );
+        
         boolean new_clock_mode = avionics.clock_shows_utc();
         this.radio_button_clock_utc.setSelected(new_clock_mode);
         this.radio_button_clock_lt.setSelected(!new_clock_mode);

@@ -202,6 +202,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     
     // CDU source
     public static final int XHSI_CDU_SOURCE = 192;
+    public static final int XHSI_CDU_SIDE = 193;
     
     
     // COM1 & 2 using 8.33kHz spacing
@@ -209,6 +210,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT2_RADIOS_ACTUATORS_COM1_STANDBY_FREQUENCY_HZ_833 = 195;
     public static final int SIM_COCKPIT2_RADIOS_ACTUATORS_COM2_FREQUENCY_HZ_833 = 196;
     public static final int SIM_COCKPIT2_RADIOS_ACTUATORS_COM2_STANDBY_FREQUENCY_HZ_833 = 197;
+    
     
     // GPS next waypoint ID
     public static final int SIM_COCKPIT2_RADIOS_INDICATORS_GPS_NAV_ID_0_3 = 10198; // the 4 first characters

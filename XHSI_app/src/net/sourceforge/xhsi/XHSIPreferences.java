@@ -127,6 +127,7 @@ public class XHSIPreferences {
     // CDU options
     public static final String PREF_CDU_DISPLAY_ONLY = "cdu.display.only";
     public static final String PREF_CDU_SOURCE = "cdu.source";
+    public static final String PREF_CDU_SIDE = "cdu.side";
 
 
     // constants
@@ -207,6 +208,10 @@ public class XHSIPreferences {
     public static final String CDU_SOURCE_XFMC = "xfmc";
     public static final String CDU_SOURCE_UFMC = "ufmc";
     
+    // for PREF_CDU_SIDE
+    public static final String CDU_SIDE_SWITCHABLE = "switchable";
+    public static final String CDU_SIDE_LEFT = "left";
+    public static final String CDU_SIDE_RIGHT = "right";
     
     
     public static enum Orientation {
@@ -1337,6 +1342,10 @@ public class XHSIPreferences {
             this.unsaved_changes = true;
         }
 
+        if ( ! this.preferences.containsKey(PREF_CDU_SIDE) ) {
+            this.preferences.setProperty(PREF_CDU_SIDE, CDU_SIDE_SWITCHABLE);
+            this.unsaved_changes = true;
+        }
         
         if (this.unsaved_changes) {
             store_preferences();

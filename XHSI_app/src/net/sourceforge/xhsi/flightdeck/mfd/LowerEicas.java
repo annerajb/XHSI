@@ -883,8 +883,22 @@ public class LowerEicas extends MFDSubcomponent {
 		g2.setColor(mfd_gc.ecam_normal_color);
 		str_vib_val="XX";
 		for (int eng=0; eng<mfd_gc.num_eng; eng++) {
-			drawStringSmallOneDecimal(g2, mfd_gc.crz_vib_x[eng]+mfd_gc.digit_width_xxl, mfd_gc.eng_vib_n1_value_y,mfd_gc.font_xxl,mfd_gc.font_xl, this.aircraft.get_vib(eng)/10 );
-			drawStringSmallOneDecimal(g2, mfd_gc.crz_vib_x[eng]+mfd_gc.digit_width_xxl, mfd_gc.eng_vib_n2_value_y,mfd_gc.font_xxl,mfd_gc.font_xl, this.aircraft.get_vib_n2(eng)/10 );
+			float vib_n1=this.aircraft.get_vib(eng)/10;
+			if (vib_n1>=0) {
+				drawStringSmallOneDecimal(g2, mfd_gc.crz_vib_x[eng]+mfd_gc.digit_width_xxl, mfd_gc.eng_vib_n1_value_y,mfd_gc.font_xxl,mfd_gc.font_xl, vib_n1 );
+			} else {
+				g2.setColor(mfd_gc.ecam_caution_color);
+				g2.setFont(mfd_gc.font_xxl);
+				g2.drawString(str_vib_val, mfd_gc.crz_vib_x[eng]-mfd_gc.digit_width_xl*3/2, mfd_gc.eng_vib_n1_value_y );
+			}
+			float vib_n2=this.aircraft.get_vib_n2(eng)/10;
+			if (vib_n2>=0) {
+				drawStringSmallOneDecimal(g2, mfd_gc.crz_vib_x[eng]+mfd_gc.digit_width_xxl, mfd_gc.eng_vib_n2_value_y,mfd_gc.font_xxl,mfd_gc.font_xl, vib_n1 );
+			} else {
+				g2.setColor(mfd_gc.ecam_caution_color);
+				g2.setFont(mfd_gc.font_xxl);
+				g2.drawString(str_vib_val, mfd_gc.crz_vib_x[eng]-mfd_gc.digit_width_xl*3/2, mfd_gc.eng_vib_n2_value_y );
+			}
 		}
 	}
     
