@@ -84,6 +84,9 @@ public interface Avionics {
     public static final int CDU_SOURCE_AIRCRAFT_OR_DUMMY = 0;
     public static final int CDU_SOURCE_XFMC = 1;
     public static final int CDU_SOURCE_UFMC = 2;
+    public static final int CDU_LEFT = 0;
+    public static final int CDU_RIGHT = 1;
+    public static final int CDU_BOTH = 2;
 
     public static final int RADIO_NAV1 = 1;
     public static final int RADIO_NAV2 = 2;
@@ -394,6 +397,11 @@ public interface Avionics {
      * @return int - CDU source (0=aircraft's custom FMC or dummy, 1=X-FMC, 2=UFMCS/X737FMC,)
      */
     public int get_cdu_source();
+    
+    /**
+     * @return int - CDU side (0=Captain Left CDU, 1=First Officer Right CDU, 2=Both CDU)
+     */
+    public int get_cdu_side();
     
     /**
      * @return int - 0=LbFt, 1=Nm, 2=percent
@@ -869,6 +877,12 @@ public interface Avionics {
     public void set_mfd_mode(int new_mode);
 
     public void set_cdu_source(int new_source);
+    
+    /**
+     * Set CDU send and display side 
+     * @param new_side CDU_LEFT=0 ; CDU_RIGHT=1
+     */
+    public void set_cdu_side(int new_side);
 
     // Failures
     public enum FailedElement { PFD_ATTITUDE, PFD_ALTITUDE, PFD_AIR_SPEED, PFD_HEADING, PFD_TURN, PFD_VSI };

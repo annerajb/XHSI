@@ -1012,7 +1012,37 @@ public class XPlaneAvionics implements Avionics, Observer {
     	}    	
     }
 
-
+    public int get_cdu_side() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+    		// PILOT CDU
+    		if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SIDE).equals(XHSIPreferences.CDU_SIDE_SWITCHABLE)) {
+    			return ((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_CDU_SIDE)) & 0x0F;
+    		} else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SIDE).equals(XHSIPreferences.CDU_SIDE_LEFT)) {
+    			return Avionics.CDU_LEFT;
+    		} else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SIDE).equals(XHSIPreferences.CDU_SIDE_RIGHT)) {
+    			return Avionics.CDU_RIGHT;
+    		} else {
+    			// Error, fallback
+    			return Avionics.CDU_LEFT;
+    		}
+    	} else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		// COPILOT CDU
+    		if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SIDE).equals(XHSIPreferences.CDU_SIDE_SWITCHABLE)) {
+    			return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_CDU_SIDE)) & 0xF0) >> 4;
+    		} else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SIDE).equals(XHSIPreferences.CDU_SIDE_LEFT)) {
+    			return Avionics.CDU_LEFT;
+    		} else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SIDE).equals(XHSIPreferences.CDU_SIDE_RIGHT)) {
+    			return Avionics.CDU_RIGHT;
+    		} else {
+    			// Error, fallback
+    			return Avionics.CDU_RIGHT;
+    		}
+    	} else {
+    		// INSTRUCTOR CDU
+    		return xhsi_settings.cdu_side;
+    	}    	
+    }
+    
     public int get_trq_scale() {
         
         if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_TRQ_SCALE).equals(XHSIPreferences.TRQ_SCALE_SWITCHABLE) ) {
@@ -2304,14 +2334,28 @@ public class XPlaneAvionics implements Avionics, Observer {
     		cdu_source = (cdu_source & 0xF0) | (new_source & 0x0F);
     	} else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
     		// COPILOT CDU
-    		cdu_source = (cdu_source & 0x0F) | ((new_source & 0xF0) >> 4);
-    	} else {
-    		// INSTRUCTOR CDU
-    		// ignore
-    	}
+    		cdu_source = (cdu_source & 0x0F) | ((new_source << 4) & 0xF0);
+    	} 
+    	// else INSTRUCTOR CDU
+    	// ignore
+
         udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_CDU_SOURCE, (float) cdu_source );
     }
     
+    public void set_cdu_side(int new_side) {
+    	int cdu_side = (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_CDU_SIDE);
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+    		// PILOT CDU
+    		cdu_side = (cdu_side & 0xF0) | (new_side & 0x0F);
+    	} else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		// COPILOT CDU
+    		cdu_side = (cdu_side & 0x0F) | ((new_side << 4) & 0xF0);
+    	} 
+    	// else INSTRUCTOR CDU
+    	// ignore
+    	    	
+    	udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_CDU_SIDE, (float) cdu_side );
+    }
     
     public void set_trq_scale(int new_scale) {
 

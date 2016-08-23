@@ -184,7 +184,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     		XHSIPreferences.MFD_MODE_DOOR_OXY,
     		XHSIPreferences.MFD_MODE_WHEELS,
     		XHSIPreferences.MFD_MODE_FCTL,
-                XHSIPreferences.MFD_MODE_SYS,
+            XHSIPreferences.MFD_MODE_SYS,
     		XHSIPreferences.MFD_MODE_STATUS };
     
     private JComboBox arpt_chart_color_combobox;
@@ -193,7 +193,10 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox cdu_display_only;
     private JComboBox cdu_source_combobox;
     private String cdu_sources[] = { XHSIPreferences.CDU_SOURCE_SWITCHABLE, XHSIPreferences.CDU_SOURCE_AIRCRAFT_OR_DUMMY, XHSIPreferences.CDU_SOURCE_XFMC, XHSIPreferences.CDU_SOURCE_UFMC };
-    
+
+    private JComboBox cdu_side_combobox;
+    private String cdu_sides[] = { XHSIPreferences.CDU_SIDE_SWITCHABLE, XHSIPreferences.CDU_SIDE_LEFT, XHSIPreferences.CDU_SIDE_RIGHT };
+
 
     private ArrayList<XHSIInstrument> flightdeck;
 
@@ -467,6 +470,12 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             }
         }
 
+        String cdu_side = preferences.get_preference(XHSIPreferences.PREF_CDU_SIDE);
+        for (int i=0; i<cdu_sides.length; i++) {
+            if ( cdu_side.equals( cdu_sides[i] ) ) {
+                this.cdu_side_combobox.setSelectedIndex(i);
+            }
+        }
 
     }
 
@@ -1846,6 +1855,24 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cdu_options_panel.add(this.cdu_source_combobox, cons);
         dialog_line++;
 
+        // CDU side
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        cdu_options_panel.add(new JLabel("CDU side", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.cdu_side_combobox = new JComboBox();
+        this.cdu_side_combobox.addItem("Switchable");
+        this.cdu_side_combobox.addItem("Left");
+        this.cdu_side_combobox.addItem("Right");        
+        this.cdu_side_combobox.addActionListener(this);
+        cdu_options_panel.add(this.cdu_side_combobox, cons);
+        dialog_line++;
+        
         return cdu_options_panel;
 
     }
@@ -2208,6 +2235,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
             if ( ! cdu_sources[this.cdu_source_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_CDU_SOURCE)) )
                 this.preferences.set_preference(XHSIPreferences.PREF_CDU_SOURCE, cdu_sources[this.cdu_source_combobox.getSelectedIndex()]);
+
+            if ( ! cdu_sides[this.cdu_side_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_CDU_SIDE)) )
+                this.preferences.set_preference(XHSIPreferences.PREF_CDU_SIDE, cdu_sides[this.cdu_side_combobox.getSelectedIndex()]);
 
         }
 

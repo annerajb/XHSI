@@ -213,19 +213,20 @@ public class CDUQpac extends CDUSubcomponent {
     public void paint(Graphics2D g2) {
     	if ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY) && (this.avionics.is_qpac()  )
     			) {
+    		int mcdu_side = avionics.get_cdu_side();
     		if ( this.preferences.cdu_display_only() ) {
-    			drawDisplayOnly(g2);
+    			drawDisplayOnly(g2,mcdu_side);
     		} else {
-    			drawFullPanel(g2);
+    			drawFullPanel(g2,mcdu_side);
     		}
     	}
     }
 
     
-    private void drawDisplayOnly(Graphics2D g2) {
+    private void drawDisplayOnly(Graphics2D g2, int mcdu_side) {
         
         if ( cdu_gc.powered ) {
-        	String str_title = QpacMcduData.getLine(0);
+        	String str_title = QpacMcduData.getLine(mcdu_side,0);
             
         	if (str_title.isEmpty()) {
         		str_title = "QPAC MCDU";
@@ -239,7 +240,7 @@ public class CDUQpac extends CDUSubcomponent {
             border_x = (double)cdu_gc.border_left;
             border_y = (double)cdu_gc.border_top;
 
-            drawDisplayLines(g2);
+            drawDisplayLines(g2, mcdu_side);
 
         } else {
         	String str_title = "POWER OFF";
@@ -250,7 +251,7 @@ public class CDUQpac extends CDUSubcomponent {
         
     }
     
-    private void drawFullPanel(Graphics2D g2) {
+    private void drawFullPanel(Graphics2D g2, int mcdu_side) {
         scalex = (double)cdu_gc.panel_rect.width /image.getWidth();
         scaley = (double)cdu_gc.panel_rect.height/image.getHeight();
         border = (double)cdu_gc.border;
@@ -266,7 +267,7 @@ public class CDUQpac extends CDUSubcomponent {
         g2.drawImage(image, null, 0, 0);
         g2.setTransform(orig);
         if ( cdu_gc.powered ) {
-        	drawDisplayLines(g2);
+        	drawDisplayLines(g2, mcdu_side);
         }
         g2.setTransform(orig);
         // for debugging
@@ -319,7 +320,7 @@ public class CDUQpac extends CDUSubcomponent {
     	return result;
     }
     
-    private void drawDisplayLines(Graphics2D g2) {
+    private void drawDisplayLines(Graphics2D g2, int mcdu_side) {
     	
         for(int i=0; i < 14; i++) {        
 
@@ -338,7 +339,7 @@ public class CDUQpac extends CDUSubcomponent {
             g2.drawString(QpacMcduData.getLine(i), cdu_gc.cdu_middle_x, yy);
             */            
             
-            List<CduLine> l = QpacMcduData.decodeLine(QpacMcduData.getLine(i));
+            List<CduLine> l = QpacMcduData.decodeLine(QpacMcduData.getLine(mcdu_side,i));
             for(CduLine o : l){                    
                     x = (int) Math.round( cdu_gc.cdu_screen_topleft_x + o.pos * cdu_gc.cdu_digit_width);
                     decodeColor(g2, o.color );
@@ -350,7 +351,7 @@ public class CDUQpac extends CDUSubcomponent {
     }
 
     
-    public void mousePressed(Graphics2D g2, MouseEvent e) {
+    public void mousePressed(Graphics2D g2, MouseEvent e) {    	
 		Point true_click = e.getPoint();
 		AffineTransform current_transform = g2.getTransform();
 		try {
@@ -365,7 +366,8 @@ public class CDUQpac extends CDUSubcomponent {
     		for(ClickRegion r : qpac_regions){
     			int w = r.check(true_click, scalex, scaley, border, border);
     			if(w > -1) {
-    				udp_sender.sendDataPoint( XPlaneSimDataRepository.QPAC_KEY_PRESS, (float) w );
+    				int mcdu_shift=avionics.get_cdu_side()*67;
+    				udp_sender.sendDataPoint( XPlaneSimDataRepository.QPAC_KEY_PRESS, (float) (w+mcdu_shift) );
     			}
     		}
     	}
@@ -423,7 +425,10 @@ public class CDUQpac extends CDUSubcomponent {
     			case KeyEvent.VK_PAUSE : w = QPAC_KEY_MDCU1_RAD_NAV; break;
     		}
 
-    		if (w > -0.5f) udp_sender.sendDataPoint( XPlaneSimDataRepository.QPAC_KEY_PRESS, (float) w );
+    		if (w > -0.5f) {
+    			int mcdu_shift=avionics.get_cdu_side()*67;
+    			udp_sender.sendDataPoint( XPlaneSimDataRepository.QPAC_KEY_PRESS, (float) (w+mcdu_shift) );
+    		}
     	}    
        
     }    

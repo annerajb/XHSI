@@ -38,7 +38,8 @@ public class QpacMcduData {
 	
 	public boolean updated = false;
 	
-	static List qpacMcduLines = new ArrayList();
+	static List qpacMcdu1Lines = new ArrayList();
+	static List qpacMcdu2Lines = new ArrayList();
 	
 	public static QpacMcduData getInstance(){
 		if(instance == null){
@@ -48,19 +49,25 @@ public class QpacMcduData {
 	}
 	
 	public QpacMcduData(){
-		qpacMcduLines = new ArrayList();
+		qpacMcdu1Lines = new ArrayList();
+		qpacMcdu2Lines = new ArrayList();
 		
 		for(int i=0; i < 15; i++){
-			qpacMcduLines.add(new HashMap());
+			qpacMcdu1Lines.add(new HashMap());
+			qpacMcdu2Lines.add(new HashMap());
 		}
 		
-        Map m = (Map) qpacMcduLines.get(14);
-        m.put("decode", 1);
+        Map m1 = (Map) qpacMcdu1Lines.get(14);
+        Map m2 = (Map) qpacMcdu2Lines.get(14);
+
+        m1.put("decode", 1);
+        m2.put("decode", 1);
+
 	}
 
 	
-	public static String getLine(int i){
-		Map m = (Map) qpacMcduLines.get(i);
+	public static String getLine(int mcdu_id, int i){
+		Map m = (mcdu_id==0) ? (Map) qpacMcdu1Lines.get(i) : (Map) qpacMcdu2Lines.get(i);
 		if(m != null) {
 			String s = (String) m.get("content");
 			if(s != null) return s;
@@ -68,8 +75,8 @@ public class QpacMcduData {
 		return "";
 	}	
 
-	public void setLine(int i, String s){
-		Map m = (Map) qpacMcduLines.get(i);
+	public void setLine(int mcdu_id, int i, String s){
+		Map m = (mcdu_id==0) ? (Map) qpacMcdu1Lines.get(i) : (Map) qpacMcdu2Lines.get(i);
 		if(m == null) { 
 			m = new HashMap();
 			m.put("content", s);
