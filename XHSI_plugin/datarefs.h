@@ -1,3 +1,5 @@
+#ifndef DATAREFS_H_
+#define DATAREFS_H_
 
 // global vars
 extern XPLMDataRef groundspeed;
@@ -412,6 +414,8 @@ extern XPLMDataRef mfd_crew_oxy_psi;
 // custom datarefs - CDU
 extern XPLMDataRef cdu_pilot_source;
 extern XPLMDataRef cdu_copilot_source;
+extern XPLMDataRef cdu_pilot_side;
+extern XPLMDataRef cdu_copilot_side;
 
 // custom datarefs - pilot
 extern XPLMDataRef efis_pilot_shows_stas;
@@ -489,3 +493,5 @@ void    unregisterMFDDataRefs(void);
 void    unregisterCDUDataRefs(void);
 
 void    writeDataRef(int, float);
+
+#endif /* DATAREFS_H_ */

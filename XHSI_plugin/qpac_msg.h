@@ -126,12 +126,13 @@ struct QpacEwdMsgLinesDataPacket {
 struct QpacMcduMsgLinesDataPacket {
     char packet_id[4];
 	int nb_of_lines;
+	int side;
 	struct qpacMcduDisplayLine lines[QPAC_MCDU_LINES];
 };
 
 
 int createQpacEwdPacket(void);
-int createQpacMcduPacket(void);
+int createQpacMcduPacket(int mcdu_id);
 
 
 float sendQpacMsgCallback(

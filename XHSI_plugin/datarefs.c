@@ -52,6 +52,8 @@ XPLMDataRef mfd_crew_oxy_psi;
 // custom datarefs - CDU
 XPLMDataRef cdu_pilot_source;
 XPLMDataRef cdu_copilot_source;
+XPLMDataRef cdu_pilot_side;
+XPLMDataRef cdu_copilot_side;
 
 // custom datarefs - pilot
 XPLMDataRef efis_pilot_shows_stas;
@@ -708,6 +710,28 @@ void	setCopilotCDUSource(void* inRefcon, int inValue)
       cdu_copilot_source_value = inValue;
 }
 
+// xhsi/cdu_pilot/side
+int cdu_pilot_side_value;
+int     getPilotCDUSide(void* inRefcon)
+{
+     return cdu_pilot_side_value;
+}
+void	setPilotCDUSide(void* inRefcon, int inValue)
+{
+	cdu_pilot_side_value = inValue;
+}
+
+// xhsi/cdu_copilot/side
+int cdu_copilot_side_value;
+int     getCopilotCDUSide(void* inRefcon)
+{
+     return cdu_copilot_side_value;
+}
+void	setCopilotCDUSide(void* inRefcon, int inValue)
+{
+	cdu_copilot_side_value = inValue;
+}
+
 // custom datarefs for pilot
 
 // xhsi/nd_pilot/sta
@@ -1330,6 +1354,18 @@ void registerCDUDataRefs(void) {
                                         1,                                                   // Writable
                                         getCopilotCDUSource, setCopilotCDUSource,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+    // xhsi/cdu_pilot/side
+    cdu_pilot_side = XPLMRegisterDataAccessor("xhsi/cdu_pilot/side",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                                   // Writable
+                                        getPilotCDUSide, setPilotCDUSide,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+    // xhsi/cdu_copilot/side
+    cdu_copilot_side = XPLMRegisterDataAccessor("xhsi/cdu_copilot/side",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                                   // Writable
+                                        getCopilotCDUSide, setCopilotCDUSide,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
     XPLMDebugString("XHSI: custom CDU DataRefs registered\n");
 
@@ -1355,6 +1391,7 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/crew_oxy_psi");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu_pilot/source");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu_copilot/source");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu_side");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/engine_type");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_scale");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/fuel_units");
@@ -1580,6 +1617,10 @@ float initMFDCallback(
 	// TODO: Init value should be read from XHSI Aircraft preference file
 	XPLMSetDataf(mfd_crew_oxy_psi, 1850.0f);
 
+	// xhsi/temp_units
+	// Set to Celcius
+    XPLMSetDatai(temp_units, 0);
+
 	XPLMDebugString("XHSI: custom MFD DataRefs initialized\n");
 
     return 0.0f;
@@ -1600,6 +1641,9 @@ float initCDUCallback(
     // mode 0 = X-Plane legacy FMS / 1 = X-FMC / 2 = UFMC/X737FMC
     XPLMSetDatai(cdu_pilot_source, 0);
     XPLMSetDatai(cdu_copilot_source, 0);
+    // cdu_pilot_side, cdu_copilote_side : 0=send left CDU, 1=send right CDU (Only QPAC based aircrafts have 2 independent MCDU)
+    XPLMSetDatai(cdu_pilot_side, 0);
+    XPLMSetDatai(cdu_copilot_side, 0);
 
 	XPLMDebugString("XHSI: custom CDU DataRefs initialized\n");
 
@@ -1735,6 +1779,12 @@ void unregisterCDUDataRefs(void) {
 
     // xhsi/cdu_copilot/source
     XPLMUnregisterDataAccessor(cdu_copilot_source);
+
+    // xhsi/cdu_pilot/side
+    XPLMUnregisterDataAccessor(cdu_pilot_side);
+
+    // xhsi/cdu_copilot/side
+    XPLMUnregisterDataAccessor(cdu_copilot_side);
 
 }
 
@@ -2406,6 +2456,11 @@ void writeDataRef(int id, float value) {
         case XHSI_CDU_SOURCE :
         	XPLMSetDatai(cdu_pilot_source , (int)value & 0x0F);
         	XPLMSetDatai(cdu_copilot_source , ((int)value &0xF0)>>4);
+            break;
+
+        case XHSI_CDU_SIDE :
+        	XPLMSetDatai(cdu_pilot_side , (int)value & 0x0F);
+        	XPLMSetDatai(cdu_copilot_side , ((int)value &0xF0)>>4);
             break;
 
         // AP

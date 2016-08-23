@@ -47,6 +47,7 @@ struct jar_a320EwdMsgLinesDataPacket {
 struct jar_a320McduMsgLinesDataPacket {
     char packet_id[4];
 	int nb_of_lines;
+	int side;
 	struct jar_a320McduDisplayLine lines[JAR_A320_MCDU_LINES];
 };
 
