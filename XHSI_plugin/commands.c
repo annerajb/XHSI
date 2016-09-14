@@ -2265,7 +2265,7 @@ XPLMCommandCallback_f rtu_handler(XPLMCommandRef inCommand, XPLMCommandPhase inP
                         XPLMCommandOnce(stby_nav2_coarse_down);
                         break;
                     case RTU_SELECT_COM2 :
-                        XPLMCommandOnce(stby_nav2_coarse_down);
+                        XPLMCommandOnce(stby_com2_coarse_down);
                         break;
                 }
                 break;
@@ -2296,7 +2296,7 @@ XPLMCommandCallback_f rtu_handler(XPLMCommandRef inCommand, XPLMCommandPhase inP
                         XPLMCommandOnce(stby_nav2_coarse_up);
                         break;
                     case RTU_SELECT_COM2 :
-                        XPLMCommandOnce(stby_nav2_coarse_up);
+                        XPLMCommandOnce(stby_com2_coarse_up);
                         break;
                 }
                 break;
