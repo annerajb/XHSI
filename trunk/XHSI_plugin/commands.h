@@ -44,6 +44,8 @@ extern XPLMCommandRef sim_lights_landing_lights_toggle;
 extern XPLMCommandRef sim_flight_controls_flaps_down;
 extern XPLMCommandRef sim_flight_controls_flaps_up;
 extern XPLMCommandRef sim_flight_controls_landing_gear_toggle;
+extern XPLMCommandRef sim_flight_controls_landing_gear_up;
+extern XPLMCommandRef sim_flight_controls_landing_gear_down;
 extern XPLMCommandRef sim_flight_controls_speed_brakes_down_one;
 extern XPLMCommandRef sim_flight_controls_speed_brakes_up_one;
 

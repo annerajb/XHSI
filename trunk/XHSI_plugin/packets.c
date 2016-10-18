@@ -29,6 +29,7 @@
 #include "datarefs_qpac.h"
 #include "datarefs_pa_a320.h"
 #include "datarefs_jar_a320neo.h"
+#include "datarefs_xjoymap.h"
 #include "endianess.h"
 
 
@@ -635,11 +636,25 @@ int createAvionicsPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(GPU_GEN_AMP);
     sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(elec_gpu_amps));
     i++;
-    apu_status = XPLMGetDatai(elec_gpu_on) << 6 |
-    		XPLMGetDatai(ram_air_turbin) << 5 |
-    		XPLMGetDatai(apu_running) << 4 |
-    		XPLMGetDatai(apu_gen_on) << 2 |
-    		XPLMGetDatai(apu_starter); // Starter on 2 bits
+    if (jar_a320_neo_ready) {
+    	// Jar A320 did not use default X-Plane APU and GPU datarefs
+    	// TODO : Specific JAR ID
+    	apu_status =
+    			XPLMGetDatai(jar_a320_neo_elec_gpu_av) << 7 |
+    			XPLMGetDatai(jar_a320_neo_elec_gpu_on) << 6 |
+    			XPLMGetDatai(jar_a320_neo_elec_rat_on) << 5 |
+    			XPLMGetDatai(apu_running) << 4 |
+    			XPLMGetDatai(jar_a320_neo_elec_apu_gen_on) << 2 |
+    			XPLMGetDatai(apu_starter); // Starter on 2 bits
+    } else {
+    	apu_status =
+    			(1 << 7) |  // GPU always avail
+    			XPLMGetDatai(elec_gpu_on) << 6 |
+    			XPLMGetDatai(ram_air_turbin) << 5 |
+    			XPLMGetDatai(apu_running) << 4 |
+    			XPLMGetDatai(apu_gen_on) << 2 |
+    			XPLMGetDatai(apu_starter); // Starter on 2 bits
+    }
     sim_packet.sim_data_points[i].id = custom_htoni(AUX_GEN_STATUS);
     sim_packet.sim_data_points[i].value = custom_htonf((float) apu_status);
     i++;
@@ -1222,6 +1237,7 @@ int createCustomAvionicsPacket(void) {
     int door_status;
 
     int pa_a320_failures;
+    int xjoymap_stick;
 
     strncpy(sim_packet.packet_id, "AVIO", 4);
 
@@ -1765,13 +1781,13 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_failures );
         i++;
         // Brakes
-        if (XPLMGetDatai(qpac_autobrake_low) == 1) {
+        if (XPLMGetDatai(qpac_autobrake_low) > 0) {
         	auto_brake_level=1;
         	}
-        else if (XPLMGetDatai(qpac_autobrake_med) == 1) {
+        else if (XPLMGetDatai(qpac_autobrake_med) > 0) {
         	auto_brake_level=2;
         	}
-        else if (XPLMGetDatai(qpac_autobrake_max) == 1) {
+        else if (XPLMGetDatai(qpac_autobrake_max) > 0) {
         	auto_brake_level=4;
         	}
         else {
@@ -2672,20 +2688,10 @@ int createCustomAvionicsPacket(void) {
         */
 
     	// ATA 36 PNEUMATIC / Bleed Air
-    	/*
-    	XPLMDataRef jar_a320_neo_bleed_eng1_bleed_knob;
-    	XPLMDataRef jar_a320_neo_bleed_eng1_bleed_valve;
-    	XPLMDataRef jar_a320_neo_bleed_eng1_bleed_temp;
-    	XPLMDataRef jar_a320_neo_bleed_eng1_bleed_hp_valve;
-    	XPLMDataRef jar_a320_neo_bleed_eng1_bleed_psi;
-    	XPLMDataRef jar_a320_neo_bleed_eng2_bleed_knob;
-    	XPLMDataRef jar_a320_neo_bleed_eng2_bleed_valve;
-    	XPLMDataRef jar_a320_neo_bleed_eng2_bleed_temp;
-    	XPLMDataRef jar_a320_neo_bleed_eng2_bleed_hp_valve;
-    	XPLMDataRef jar_a320_neo_bleed_eng2_bleed_psi;
-    	XPLMDataRef jar_a320_neo_bleed_cross_valve;
+    	/* Unused datarefs
+    	 * jar_a320_neo_bleed_eng1_bleed_knob;
+    	 * jar_a320_neo_bleed_eng2_bleed_knob;
     	*/
-        // Bleed Air
         bleed_valves =
         		(XPLMGetDatai(jar_a320_neo_bleed_cross_valve) & 0x03)  |
         		(XPLMGetDatai(jar_a320_neo_bleed_apu_bleed_valve) & 0x03) << 2 |
@@ -2755,8 +2761,70 @@ int createCustomAvionicsPacket(void) {
     	sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_ANTI_ICE_STATUS);
     	sim_packet.sim_data_points[i].value = custom_htonf((float)anti_ice);
     	i++;
+
+    	// Electrics
+    	/* Dataref
+    	jar_a320_neo_elec_ac1_source;
+    	jar_a320_neo_elec_ac2_source;
+    	jar_a320_neo_elec_ac_ess;
+    	jar_a320_neo_elec_ac_ess_alt;
+    	jar_a320_neo_elec_ac_ess_shed;
+    	jar_a320_neo_elec_apu_gen_on;
+    	jar_a320_neo_elec_bat1_amp;
+    	jar_a320_neo_elec_bat1_volt;
+    	jar_a320_neo_elec_bat1_on;
+    	jar_a320_neo_elec_bat2_amp;
+    	jar_a320_neo_elec_bat2_volt;
+    	jar_a320_neo_elec_bat2_on;
+    	jar_a320_neo_elec_bus_tie;
+    	jar_a320_neo_elec_commrc;
+    	jar_a320_neo_elec_dc1;
+    	jar_a320_neo_elec_dc2;
+    	jar_a320_neo_elec_dcbus;
+    	jar_a320_neo_elec_dc_ess;
+    	jar_a320_neo_elec_dc_ess_shed;
+    	jar_a320_neo_elec_dc_some_on;
+    	jar_a320_neo_elec_emer;
+    	jar_a320_neo_elec_ext_hz;
+    	jar_a320_neo_elec_ext_volt;
+    	jar_a320_neo_elec_galley;
+    	jar_a320_neo_elec_gen1_hz;
+    	jar_a320_neo_elec_gen1_line_on;
+    	jar_a320_neo_elec_gen1_per;
+    	jar_a320_neo_elec_gen1_volt;
+    	jar_a320_neo_elec_gen2_hz;
+    	jar_a320_neo_elec_gen2_line_on;
+    	jar_a320_neo_elec_gen2_per;
+    	jar_a320_neo_elec_gen2_volt;
+    	jar_a320_neo_elec_apu_hz;
+    	jar_a320_neo_elec_apu_per;
+    	jar_a320_neo_elec_apu_volt;
+    	jar_a320_neo_elec_gen_emer_hz;
+    	jar_a320_neo_elec_gen_emer_volt;
+    	jar_a320_neo_elec_gpu_av;
+    	jar_a320_neo_elec_gpu_on;
+    	jar_a320_neo_elec_lft_gen_on;
+    	jar_a320_neo_elec_man_rat_cover;
+    	jar_a320_neo_elec_man_rat_on;
+    	jar_a320_neo_elec_rat_av;
+    	jar_a320_neo_elec_rat_on;
+    	jar_a320_neo_elec_rgh_gen_on;
+    	jar_a320_neo_elec_tr1_amp;
+    	jar_a320_neo_elec_tr1_volt;
+    	jar_a320_neo_elec_tr2_amp;
+    	jar_a320_neo_elec_tr2_volt;
+    	jar_a320_neo_elec_tr_em_amp;
+    	jar_a320_neo_elec_tr_em_volt;
+    	*/
     }
 
+    if (xjoymap_ready) {
+    	xjoymap_stick = (XPLMGetDatai(xjoymap_side_stick_priority) & 0x03)  |
+        		(XPLMGetDatai(xjoymap_dual_input) & 0x01) << 4 ;
+    	sim_packet.sim_data_points[i].id = custom_htoni(XJOYMAP_STICK_PRIORITY);
+    	sim_packet.sim_data_points[i].value = custom_htonf((float)xjoymap_stick);
+    	i++;
+    }
 
 	// now we know the number of datapoints
 	sim_packet.nb_of_sim_data_points = custom_htoni( i );
@@ -2799,6 +2867,9 @@ int createEnginesPacket(void) {
     int extinguishers[8];
     int ign_keys_tab[8];
     int ign_keys;
+    int fadec;
+    int fadecs[8];
+
 
     strncpy(sim_packet.packet_id, "ENGI", 4);
 
@@ -3052,6 +3123,15 @@ int createEnginesPacket(void) {
     sim_packet.sim_data_points[i].value = custom_htonf((float) extinguisher );
     i++;
 
+    // FADECs : bit field, one bit per engine
+    fadec = 0;
+    XPLMGetDatavi(engine_fadec, fadecs, 0, engines);
+    for (e=0; e<engines; e++) {
+    	fadec |= ((fadecs[e] & 0x01) << e);
+    }
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_ENGINE_FADEC);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) fadec );
+    i++;
 
     sim_packet.sim_data_points[i].id = custom_htoni(UFMC_STATUS);
     sim_packet.sim_data_points[i].value = custom_htonf((float) ufmc_ready);

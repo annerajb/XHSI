@@ -323,6 +323,7 @@
 #define SIM_FLIGHTMODEL_WEIGHT_M_TOTAL 408
 #define SIM_COCKPIT2_ENGINE_FIRE_EXTINGUISHER 409
 #define SIM_COCKPIT2_FUEL_QUANTITY_ 410
+#define SIM_COCKPIT2_ENGINE_FADEC 419
 #define SIM_FLIGHTMODEL_ENGINE_ENGN_N1_ 420
 #define SIM_FLIGHTMODEL_ENGINE_ENGN_EGT_ 430
 #define SIM_FLIGHTMODEL_ENGINE_ENGN_EGT_C_ 440
@@ -489,6 +490,9 @@
 // Minimum runway length
 #define XHSI_RWY_LENGTH_MIN 901 // Override with this value if it is > 0
 #define XHSI_RWY_UNITS 902 // 0:Meters 1:Feet
+
+// Side stick priority - xjoymap dual commands
+#define XJOYMAP_STICK_PRIORITY 940 // mask 0x03 0=dual, 1=Capt, 2=F/O ; mask 0x40 : dual_input boolean
 
 // ATA 21 AIR CONDITIONING AND PRESSURIZATION
 // Trims

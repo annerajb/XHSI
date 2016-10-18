@@ -79,6 +79,7 @@
 #include "datarefs_pa_a320.h"
 #include "datarefs_jar_a320neo.h"
 #include "datarefs_pilotedge.h"
+#include "datarefs_xjoymap.h"
 #include "ui.h"
 #include "net.h"
 #include "packets.h"
@@ -262,6 +263,11 @@ PLUGIN_API int XPluginEnable(void) {
             checkJarA320NeoCallback,
             -1.0f,
             NULL);
+    // xjoymap - Dual commands
+    XPLMRegisterFlightLoopCallback(
+            checkXjoymapCallback,
+            -1.0f,
+            NULL);
 
     // X-FMC
     XPLMRegisterFlightLoopCallback(
@@ -331,6 +337,7 @@ PLUGIN_API void XPluginDisable(void) {
     XPLMUnregisterFlightLoopCallback(checkQpacCallback, NULL);
     XPLMUnregisterFlightLoopCallback(checkPaA320Callback, NULL);
     XPLMUnregisterFlightLoopCallback(checkJarA320NeoCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(checkXjoymapCallback, NULL);
 
     XPLMUnregisterFlightLoopCallback(sendXfmcCallback, NULL);
     XPLMUnregisterFlightLoopCallback(sendQpacMsgCallback, NULL);

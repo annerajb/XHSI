@@ -701,6 +701,11 @@ void findQpacDataRefs(void) {
             qpac_command[QPAC_KEY_MDCU2_Y] = XPLMFindCommand("AirbusFBW/MCDU2KeyY");
             qpac_command[QPAC_KEY_MDCU2_Z] = XPLMFindCommand("AirbusFBW/MCDU2KeyZ");
 
+            qpac_command[QPAC_KEY_AP1_PUSH] = XPLMFindCommand("airbus_qpac/ap1_push");
+            qpac_command[QPAC_KEY_AP2_PUSH] = XPLMFindCommand("airbus_qpac/ap2_push");
+            qpac_command[QPAC_KEY_FD1_PUSH] = XPLMFindCommand("airbus_qpac/fd1_push");
+            qpac_command[QPAC_KEY_FD2_PUSH] = XPLMFindCommand("airbus_qpac/fd2_push");
+
             for (i=0; i<QPAC_SD_LINES; i++) {
                 sprintf(buf, "AirbusFBW/SDline%da", i+1);
                 qpac_sd_line_amber[i] = XPLMFindDataRef(buf);

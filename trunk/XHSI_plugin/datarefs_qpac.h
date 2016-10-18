@@ -188,7 +188,13 @@
 #define QPAC_KEY_MDCU2_X          174
 #define QPAC_KEY_MDCU2_Y          175
 #define QPAC_KEY_MDCU2_Z          176
-#define QPAC_KEY_MAX              177
+// Commands on airbus_qpac/.. dataref tree
+#define QPAC_KEY_AP1_PUSH         177
+#define QPAC_KEY_AP2_PUSH         178
+#define QPAC_KEY_FD1_PUSH         179
+#define QPAC_KEY_FD2_PUSH         180
+// END
+#define QPAC_KEY_MAX              181
 
 // global vars
 

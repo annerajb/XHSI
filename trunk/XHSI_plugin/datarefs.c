@@ -23,7 +23,10 @@
 #include "structs.h"
 #include "ids.h"
 #include "xfmc.h"
+#include "datarefs.h"
 #include "datarefs_x737.h"
+#include "datarefs_qpac.h"
+#include "datarefs_xjoymap.h"
 
 #define MSG_ADD_DATAREF 0x01000000           //  Add dataref to DRE message
 
@@ -362,6 +365,7 @@ XPLMDataRef engine_egt_percent;
 XPLMDataRef engine_egt_value;
 XPLMDataRef engine_max_egt_value;
 XPLMDataRef engine_fire_extinguisher;
+XPLMDataRef engine_fadec;
 XPLMDataRef reverser_ratio;
 XPLMDataRef tank_ratio;
 XPLMDataRef engine_n2;
@@ -1605,10 +1609,16 @@ float initMFDCallback(
 
     // set a default for the MFD mode
 
-    //// xhsi/mfd/mode
-    //mfd_mode = XPLMFindDataRef ("xhsi/mfd/mode");
-    // mode 0 = Airport Chart / 1 = Flight Plan / 2 = Lower EICAS
-    XPLMSetDatai(mfd_mode, 0);
+    // xhsi/mfd/mode
+	/* MFD_MODE_ARPT = 0; MFD_MODE_FPLN = 1; MFD_MODE_RTU = 2; MFD_MODE_EICAS = 3; // MFD_MODE_ENGINE
+	 * MFD_MODE_ENGINE = 3; // MFD_MODE_EICAS
+	 * MFD_MODE_BLEED = 4; MFD_MODE_CAB_PRESS = 5; MFD_MODE_ELEC = 6; MFD_MODE_HYDR = 7;
+	 * MFD_MODE_FUEL = 8;  MFD_MODE_APU = 9; MFD_MODE_COND = 10; MFD_MODE_DOOR_OXY = 11;
+	 * MFD_MODE_WHEELS = 12; MFD_MODE_FCTL = 13; MFD_MODE_SYS = 14; // SYS on Boeing, CRUIZE on Airbus
+	 * MFD_MODE_STATUS = 15;
+	 * Set default mode to the engine page
+	 */
+    XPLMSetDatai(mfd_mode, 3);
 
     // xhsi/mfd/fuel_used float[8]
 	XPLMSetDatavf(mfd_fuel_used, zero_tab, 0, 8);
@@ -2143,7 +2153,8 @@ void findDataRefs(void) {
     engine_egt_percent = XPLMFindDataRef("sim/flightmodel/engine/ENGN_EGT");
     engine_egt_value = XPLMFindDataRef("sim/flightmodel/engine/ENGN_EGT_c");
     engine_max_egt_value = XPLMFindDataRef("sim/aircraft/engine/acf_max_EGT");
-    engine_fire_extinguisher = XPLMFindDataRef("sim/cockpit2/engine/fire_extinguisher_on");
+    engine_fire_extinguisher = XPLMFindDataRef("sim/cockpit2/engine/actuators/fire_extinguisher_on");
+    engine_fadec = XPLMFindDataRef("sim/cockpit2/engine/actuators/fadec_on");
     reverser_ratio = XPLMFindDataRef("sim/flightmodel2/engines/thrust_reverser_deploy_ratio");
     tank_ratio = XPLMFindDataRef("sim/aircraft/overflow/acf_tank_rat");
     engine_n2 = XPLMFindDataRef("sim/flightmodel/engine/ENGN_N2_");
@@ -2510,45 +2521,45 @@ void writeDataRef(int id, float value) {
         case SIM_COCKPIT_AUTOPILOT_KEY_PRESS :
              switch ((int)value) {
                 // MCP buttons
-                case 1 : //ismach
+                case AP_KEY_IS_MACH : //ismach
                     XPLMSetDatai(autopilot_airspeed_is_mach, ! XPLMGetDatai(autopilot_airspeed_is_mach));
                     break;
-                case 2 : //athr
+                case AP_KEY_CMD_A : //athr
                     if(x737_ready){
                         XPLMCommandOnce(x737_cmda_toggle);
                     } else {
                         XPLMCommandOnce(sim_autopilot_fdir_servos_toggle);
                     }
                     break;
-                case 3 :
+                case AP_KEY_SPD_TOGGLE :
                     if(x737_ready){
                         XPLMCommandOnce(x737_mcpspd_toggle);
                     } else {
                         XPLMCommandOnce(sim_autopilot_autothrottle_toggle);
                     }
                     break;
-                case 4 :
+                case AP_KEY_LVL_CHG_TOGGLE :
                     if(x737_ready){
                         XPLMCommandOnce(x737_lvlchange_toggle);
                     } else {
                         XPLMCommandOnce(sim_autopilot_level_change);
                     }
                     break;
-                case 5 :
+                case AP_KEY_HDG_SEL_TOGGLE :
                     if(x737_ready){
                         XPLMCommandOnce(x737_hdgsel_toggle);
                     } else {
                         XPLMCommandOnce(sim_autopilot_heading);
                     }
                     break;
-                case 6 :
+                case AP_KEY_VS_TOGGLE :
                     if(x737_ready){
                         XPLMCommandOnce(x737_vs_toggle);
                     } else {
                         XPLMCommandOnce(sim_autopilot_vertical_speed);
                     }
                     break;
-                case 7 :
+                case AP_KEY_NAV_TOGGLE :
                     if(x737_ready){
                         int navsrc = XPLMGetDatai(hsi_selector);
                         if(navsrc == 2){
@@ -2560,28 +2571,38 @@ void writeDataRef(int id, float value) {
                         XPLMCommandOnce(sim_autopilot_nav);
                     }
                     break;
-                case 8 :
+                case AP_KEY_APPR_TOGGLE :
                     if(x737_ready){
                         XPLMCommandOnce(x737_app_toggle);
                     } else {
                         XPLMCommandOnce(sim_autopilot_approach);
                     }
                     break;
-                case 9 :
+                case AP_KEY_GLIDE_SLOPE :
                     XPLMCommandOnce(sim_autopilot_glide_slope);
                     break;
-                case 10 :
+                case AP_KEY_BACK_COURSE :
                     XPLMCommandOnce(sim_autopilot_back_course);
                     break;
-                case 11 :
+                case AP_KEY_ALT_HOLD_TOGGLE :
                     if(x737_ready){
                         XPLMCommandOnce(x737_althld_toggle);
                     } else {
                         XPLMCommandOnce(sim_autopilot_altitude_hold);
                     }
                     break;
+                case AP_KEY_ILS_CAPT_TOGGLE :
+                	if (qpac_ready) {
+                		XPLMSetDatai(qpac_ils_on_capt, !XPLMGetDatai(qpac_ils_on_capt));
+                	}
+                	break;
+                case AP_KEY_ILS_FO_TOGGLE :
+                	if (qpac_ready) {
+                		XPLMSetDatai(qpac_ils_on_fo, !XPLMGetDatai(qpac_ils_on_fo));
+                	}
+                	break;
                 // lights
-                case 20 :
+                case AP_KEY_NAV_LIGHTS_TOGGLE :
                     if(x737_ready){
                         int posLightOld = XPLMGetDatai(x737_position_light_switch);
                         int posLightNew = (posLightOld == 1) || (posLightOld == -1) ? 0 : 1;
@@ -2590,14 +2611,14 @@ void writeDataRef(int id, float value) {
                         XPLMCommandOnce(sim_lights_nav_lights_toggle);
                     }
                     break;
-                case 21 :
+                case AP_KEY_BEACON_LIGHTS_TOGGLE :
                     if(x737_ready){
                         XPLMSetDatai(x737_beacon_light_switch, !XPLMGetDatai(x737_beacon_light_switch));
                     } else {
                         XPLMCommandOnce(sim_lights_beacon_lights_toggle);
                     }
                     break;
-                case 22 :
+                case AP_KEY_TAXI_LIGHTS_TOGGLE :
                     if(x737_ready){
                         int v = !XPLMGetDatai(x737_taxi_light_switch);
                         XPLMSetDatai(x737_taxi_light_switch, v);
@@ -2607,14 +2628,14 @@ void writeDataRef(int id, float value) {
                         XPLMCommandOnce(sim_lights_taxi_lights_toggle);
                     }
                     break;
-                case 23 :
+                case AP_KEY_STROBE_LIGHTS_TOGGLE :
                     if(x737_ready){
                         XPLMSetDatai(x737_position_light_switch, XPLMGetDatai(x737_position_light_switch) == -1 ? 0 : -1);
                     } else {
                         XPLMCommandOnce(sim_lights_strobe_lights_toggle);
                     }
                     break;
-                case 24 :
+                case AP_KEY_LDG_LIGHTS_TOGGLE :
                     if(x737_ready){
                         int v = !XPLMGetDatai(x737_left_fixed_land_light_switch);
                         XPLMSetDatai(x737_left_fixed_land_light_switch, v);
@@ -2627,35 +2648,52 @@ void writeDataRef(int id, float value) {
                     }
                     break;
                 //  flight_controls
-                case 30 :
+                case AP_KEY_LDG_GEAR_TOGGLE :
                     XPLMCommandOnce(sim_flight_controls_landing_gear_toggle);
                     break;
-                case 31 :
+                case AP_KEY_FLAPS_DOWN :
                     XPLMCommandOnce(sim_flight_controls_flaps_down);
                     break;
-                case 32 :
+                case AP_KEY_FLAPS_UP :
                     XPLMCommandOnce(sim_flight_controls_flaps_up);
                     break;
-                case 33 :
+                case AP_KEY_SPD_BREAK_DOWN :
                     XPLMCommandOnce(sim_flight_controls_speed_brakes_down_one);
                     break;
-                case 34 :
+                case AP_KEY_SPD_BREAK_UP :
                     XPLMCommandOnce(sim_flight_controls_speed_brakes_up_one);
                     break;
+                case AP_KEY_LDG_GEAR_DOWN :
+                    XPLMCommandOnce(sim_flight_controls_landing_gear_down);
+                    break;
+                case AP_KEY_LDG_GEAR_UP :
+                    XPLMCommandOnce(sim_flight_controls_landing_gear_up);
+                    break;
 				// pitot heat
-                case 35 :
+                case AP_KEY_PITOT_HEAT_TOGGLE :
                     XPLMSetDatai(pitot_heat_on, ! XPLMGetDatai(pitot_heat_on));
                     break;
                 // master caution, warning, accept
-                case 36 :
+                case AP_KEY_CLR_MASTER_WARNING :
                 	XPLMCommandOnce(sim_annunciator_clear_master_warning);
                 	break;
-                case 37 :
+                case AP_KEY_CLR_MASTER_CAUTION :
                 	XPLMCommandOnce(sim_annunciator_clear_master_caution);
                 	break;
-                case 38 :
+                case AP_KEY_CLR_MASTER_ACCEPT :
                 	XPLMCommandOnce(sim_annunciator_clear_master_accept);
                 	break;
+                // Dual commands
+                case AP_KEY_STICK_DUAL :
+                	if (xjoymap_ready) XPLMCommandOnce(xjoymap_stick_dual);
+                	break;
+                case AP_KEY_STICK_CAPT :
+                	if (xjoymap_ready) XPLMCommandOnce(xjoymap_stick_capt);
+                	break;
+                case AP_KEY_STICK_FO :
+                	if (xjoymap_ready) XPLMCommandOnce(xjoymap_stick_fo);
+                	break;
+
 
             }
             break;
