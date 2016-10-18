@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
+import net.sourceforge.xhsi.model.Aircraft.ElecBus;
 import net.sourceforge.xhsi.model.Aircraft.ValveStatus;
 
 public class Hydraulics extends MFDSubcomponent {
@@ -51,25 +52,53 @@ public class Hydraulics extends MFDSubcomponent {
 			// Page ID
 			drawPageID(g2, "HYD");
 			
+			/*
+			 * A320 FCOM 1.29.10 p 4
+			 * Reservoir pressurization
+			 * HP bleed air from engine 1 pressurizes the hydraulic reservoirs automatically
+			 * If the bleed air pressure is tow low, the system takes bleed air pressure from
+			 * the crossbleed duct. The systems maintain a high enough pressure to prevent
+			 * their pumps from cavitating. 
+			 */
+			boolean low_air_pressure = this.aircraft.bleed_air_press(Aircraft.BLEED_LEFT) < 1 && 
+					this.aircraft.bleed_air_press(Aircraft.BLEED_RIGHT) < 1;
+			
 			// GREEN circuit
 			str_circuit_legend = airbus ? "GREEN" : "1";
 			drawHydraulicGauge(g2, str_circuit_legend, 5000*this.aircraft.get_hyd_press(0), mfd_gc.hyd_1_x );
 			drawHydraulicPump(g2, aircraft.get_hyd_pump(0), mfd_gc.hyd_1_x, mfd_gc.hyd_1_2_pump_y);
-			drawValveVert(g2, this.aircraft.fire_extinguisher(0) ? ValveStatus.VALVE_CLOSED : ValveStatus.VALVE_OPEN, mfd_gc.hyd_1_x, mfd_gc.hyd_valve_y);
+			// drawValveVert(g2, this.aircraft.fire_extinguisher(0) ? ValveStatus.VALVE_CLOSED : ValveStatus.VALVE_OPEN, mfd_gc.hyd_1_x, mfd_gc.hyd_valve_y);
+			drawValveVert(g2, this.aircraft.get_fadec(0) ? ValveStatus.VALVE_OPEN : ValveStatus.VALVE_CLOSED_FAILED, mfd_gc.hyd_1_x, mfd_gc.hyd_valve_y);
 			drawHydraulicQty(g2, this.aircraft.get_hyd_quant(0), mfd_gc.hyd_1_x);
 			g2.setColor(mfd_gc.ecam_normal_color);
 			g2.drawLine(mfd_gc.hyd_1_x, mfd_gc.hyd_1_2_pump_y + mfd_gc.hyd_pump_h, mfd_gc.hyd_1_x, mfd_gc.hyd_valve_y-mfd_gc.hyd_valve_r );
 			g2.drawLine(mfd_gc.hyd_1_x, mfd_gc.hyd_valve_y+mfd_gc.hyd_valve_r, mfd_gc.hyd_1_x, mfd_gc.hyd_qty_top_y );
+			if (airbus & low_air_pressure)	drawLowAirPressure(g2, mfd_gc.hyd_1_x);		
+			
 					
 			// YELLOW circuit
 			str_circuit_legend = airbus ? "YELLOW" : "2";
 			drawHydraulicGauge(g2, str_circuit_legend, 5000*this.aircraft.get_hyd_press(1), mfd_gc.hyd_2_x );
 			drawHydraulicPump(g2, aircraft.get_hyd_pump(1), mfd_gc.hyd_2_x, mfd_gc.hyd_1_2_pump_y);
-			drawValveVert(g2, this.aircraft.fire_extinguisher(1) ? ValveStatus.VALVE_CLOSED : ValveStatus.VALVE_OPEN, mfd_gc.hyd_2_x, mfd_gc.hyd_valve_y);
+			// drawValveVert(g2, this.aircraft.fire_extinguisher(1) ? ValveStatus.VALVE_CLOSED : ValveStatus.VALVE_OPEN, mfd_gc.hyd_2_x, mfd_gc.hyd_valve_y);
+			drawValveVert(g2, this.aircraft.get_fadec(1) ? ValveStatus.VALVE_OPEN : ValveStatus.VALVE_CLOSED_FAILED, mfd_gc.hyd_2_x, mfd_gc.hyd_valve_y);
 			drawHydraulicQty(g2, this.aircraft.get_hyd_quant(1), mfd_gc.hyd_2_x);
 			g2.setColor(mfd_gc.ecam_normal_color);
 			g2.drawLine(mfd_gc.hyd_2_x, mfd_gc.hyd_1_2_pump_y + mfd_gc.hyd_pump_h, mfd_gc.hyd_2_x, mfd_gc.hyd_valve_y-mfd_gc.hyd_valve_r );
 			g2.drawLine(mfd_gc.hyd_2_x, mfd_gc.hyd_valve_y+mfd_gc.hyd_valve_r, mfd_gc.hyd_2_x, mfd_gc.hyd_qty_top_y );
+			if (airbus & low_air_pressure) drawLowAirPressure(g2, mfd_gc.hyd_2_x);				
+			// Yellow ELEC Pump 
+			if (airbus) {			
+				// ELEC pump on yellow circuit
+				// ELEC pump legend is amber when power supply fails (AC2 bus)
+				  boolean ac_2_status = this.aircraft.bus_powered(1) &&
+						  ( aircraft.apu_on_bus() == ElecBus.BUS_2 ||
+						  aircraft.apu_on_bus() == ElecBus.BOTH || 
+						  aircraft.gpu_on_bus() == ElecBus.BUS_2 ||
+						  aircraft.gpu_on_bus() == ElecBus.BOTH || 
+						  aircraft.eng_gen_on_bus(1) );
+				drawElecPump(g2, aircraft.get_hyd_pump(3), 5000*this.aircraft.get_hyd_press(1), ac_2_status, mfd_gc.hyd_2_x, mfd_gc.hyd_rat_pump_y);
+			}
 			
 			// BLUE circuit
 			if (airbus) {
@@ -78,20 +107,36 @@ public class Hydraulics extends MFDSubcomponent {
 				drawHydraulicQty(g2, this.aircraft.get_hyd_quant(2), mfd_gc.hyd_3_x);
 				g2.setColor(mfd_gc.ecam_normal_color);
 				g2.drawLine(mfd_gc.hyd_3_x, mfd_gc.hyd_3_pump_y + mfd_gc.hyd_pump_h, mfd_gc.hyd_3_x, mfd_gc.hyd_qty_top_y );
+				if (low_air_pressure) drawLowAirPressure(g2, mfd_gc.hyd_3_x);	
 			}
 			
 			// Pumps legends
 			g2.setColor(mfd_gc.ecam_markings_color);
 			g2.setFont(mfd_gc.font_xl);
+			// Pumps legend is amber if N2 is bellow idle
+			g2.setColor(this.aircraft.get_N2(0)<0.18f ? mfd_gc.ecam_caution_color : mfd_gc.ecam_markings_color );
 			g2.drawString("1", mfd_gc.hyd_1_pump_legend_x, mfd_gc.hyd_3_pump_y + mfd_gc.hyd_pump_h/2);
+			g2.setColor(this.aircraft.get_N2(1)<0.18f ? mfd_gc.ecam_caution_color : mfd_gc.ecam_markings_color );
 			g2.drawString("2", mfd_gc.hyd_2_pump_legend_x, mfd_gc.hyd_3_pump_y + mfd_gc.hyd_pump_h/2);
-			if (airbus) g2.drawString("ELEC", mfd_gc.hyd_3_pump_legend_x, mfd_gc.hyd_1_2_pump_y + mfd_gc.hyd_pump_h/3);
+			if (airbus){
+				// ELEC pump on blue circuit
+				// ELEC pump legend is amber when power supply fails (AC1 bus)
+				boolean ac_1_status = this.aircraft.bus_powered(0) &&
+						( aircraft.apu_on_bus() == ElecBus.BUS_1 ||
+						  aircraft.apu_on_bus() == ElecBus.BOTH || 
+						  aircraft.gpu_on_bus() == ElecBus.BUS_1 ||
+						  aircraft.gpu_on_bus() == ElecBus.BOTH || 
+						  aircraft.eng_gen_on_bus(0) );
+				
+				g2.setColor(ac_1_status ? mfd_gc.ecam_markings_color : mfd_gc.ecam_caution_color);
+				g2.drawString("ELEC", mfd_gc.hyd_3_pump_legend_x, mfd_gc.hyd_1_2_pump_y + mfd_gc.hyd_pump_h/3);
+			}
+				
 						
 			// Power Transfer Unit
 			drawPTU(g2, this.aircraft.get_hyd_ptu());
 			
-			// Yellow ELEC Pump
-			if (airbus) drawElecPump(g2, aircraft.get_hyd_pump(3), mfd_gc.hyd_2_x, mfd_gc.hyd_rat_pump_y);
+
 			
 			// RAT
 			if (airbus) drawRATPump(g2, aircraft.get_hyd_pump(4), mfd_gc.hyd_3_x, mfd_gc.hyd_rat_pump_y);
@@ -123,8 +168,8 @@ public class Hydraulics extends MFDSubcomponent {
 	
 	private void drawHydraulicGauge(Graphics2D g2, String gauge_str, float pressure, int x) {
 		String pressure_str = "" + Math.round(pressure);
-		Color legendColor = pressure > 2000.0f ? mfd_gc.ecam_markings_color : mfd_gc.ecam_caution_color;
-		Color pressureColor = pressure > 2000.0f ? mfd_gc.ecam_normal_color : mfd_gc.ecam_caution_color;
+		Color legendColor = pressure > 1450.0f ? mfd_gc.ecam_markings_color : mfd_gc.ecam_caution_color;
+		Color pressureColor = pressure > 1450.0f ? mfd_gc.ecam_normal_color : mfd_gc.ecam_caution_color;
 		g2.setColor(legendColor);
 		
 		g2.setFont(mfd_gc.font_xl);
@@ -139,6 +184,17 @@ public class Hydraulics extends MFDSubcomponent {
 		
 	}
 
+	private void drawLowAirPressure(Graphics2D g2, int x) {
+		String pressure_str_1 = "LO AIR";
+		String pressure_str_2 = "PRESS";
+
+		g2.setFont(mfd_gc.font_xxl);
+		g2.setColor(mfd_gc.ecam_caution_color);
+		g2.drawString(pressure_str_1, x + mfd_gc.digit_width_xxl*5 - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, pressure_str_1)/2, mfd_gc.hyd_low_air_1_y);		
+		g2.drawString(pressure_str_2, x + mfd_gc.digit_width_xxl*5 - mfd_gc.get_text_width(g2, mfd_gc.font_xxl, pressure_str_2)/2, mfd_gc.hyd_low_air_2_y);	
+	}
+	
+	
 	private void drawHydraulicQty(Graphics2D g2, float qty, int x) {
 		String qty_str = "" + Math.round(qty*100);
 		int qty_y = mfd_gc.hyd_qty_bottom_y - Math.round((mfd_gc.hyd_qty_bottom_y - mfd_gc.hyd_qty_top_y) * qty);
@@ -187,7 +243,7 @@ public class Hydraulics extends MFDSubcomponent {
 		g2.drawRect(x-mfd_gc.hyd_pump_w/2, y, mfd_gc.hyd_pump_w, mfd_gc.hyd_pump_h);	
 	}
 
-	private void drawElecPump(Graphics2D g2, Aircraft.HydPumpStatus pump_status, int x, int y) {
+	private void drawElecPump(Graphics2D g2, Aircraft.HydPumpStatus pump_status, float pressure, boolean powered, int x, int y) {
 		String elec_str = "ELEC";
 		int arrow_dx = mfd_gc.hyd_valve_r*5/4;
 		int str_x = x+arrow_dx*2 + mfd_gc.digit_width_xl/4;
@@ -197,21 +253,19 @@ public class Hydraulics extends MFDSubcomponent {
 		g2.setFont(mfd_gc.font_xl);
 		
 		if (pump_status == Aircraft.HydPumpStatus.ON ) {
-			g2.setColor(mfd_gc.ecam_normal_color);
+			g2.setColor(pressure > 1450 ? mfd_gc.ecam_normal_color : mfd_gc.ecam_caution_color);
 			g2.drawPolygon(tri_x, tri_y, 3);
 			g2.drawLine(x, y, x+arrow_dx, y);
-			g2.setColor(mfd_gc.ecam_markings_color);
-			g2.drawString(elec_str, str_x, y);
 		} else if (pump_status == Aircraft.HydPumpStatus.OFF ) {
 			g2.setColor(mfd_gc.ecam_markings_color);			
-			g2.drawPolygon(tri_x, tri_y, 3);
-			g2.drawString(elec_str, str_x, y);
-
+			g2.drawPolygon(tri_x, tri_y, 3);			
 		} else {
 			g2.setColor(mfd_gc.ecam_caution_color);
-			g2.drawPolygon(tri_x, tri_y, 3);
-			g2.drawString(elec_str, str_x, y);
+			g2.drawPolygon(tri_x, tri_y, 3);			
 		}
+		// TODO : Amber is power supply fails
+		g2.setColor(powered ? mfd_gc.ecam_markings_color : mfd_gc.ecam_caution_color );
+		g2.drawString(elec_str, str_x, y);
 	}
 
 	private void drawRATPump(Graphics2D g2, Aircraft.HydPumpStatus pump_status, int x, int y) {

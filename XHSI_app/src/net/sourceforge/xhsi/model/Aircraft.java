@@ -22,7 +22,6 @@
 */
 package net.sourceforge.xhsi.model;
 
-import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 
 public interface Aircraft {
 	
@@ -35,6 +34,7 @@ public interface Aircraft {
     public enum DoorId { FRONT_LEFT, FRONT_RIGHT, MIDDLE_LEFT, MIDDLE_RIGHT, AFT_LEFT, AFT_RIGHT, FRONT_CARGO, AFT_CARGO, BULK, NONE };
     public enum CabinZone { COCKPIT, FORWARD, AFT, MIDDLE, CARGO_AFT, CARGO_FWD, UPPER_AFT, UPPER_FORWARD, UPPER_MIDDLE };
     public enum IgnitionKeyPosition { OFF, RIGHT, LEFT, BOTH, START };
+    public enum StickPriority { NONE, CAPTAIN, FIRST_OFFICER };
     
     // Bleed valve circuits
     public final static int BLEED_VALVE_CROSS = 0;
@@ -172,6 +172,16 @@ public interface Aircraft {
     public float rudder_hdg();
 
     /**
+     * @return boolean - True if dual input (FO + CAPT) is applied on rudder or yoke
+     */
+    public boolean dual_input();
+
+    /**
+     * @return StickPriority - None, Captain, FirstOfficer
+     */
+    public StickPriority stick_priority();
+    
+    /**
      * @return float - Left and Right Pedal deflection (0.0f to +1.0f)
      */
     public float brk_pedal_left();
@@ -223,16 +233,19 @@ public interface Aircraft {
      * @return int - radar altimeter bug for pilot or copilot
      */
     public int ra_bug();
+    public int ra_bug(boolean pilot);
 
     /**
      * @return int - decision altitude bug for pilot or copilot
      */
     public int da_bug();
+    public int da_bug(boolean pilot);
 
     /**
      * @return boolean - minimums reference is decision altitude, not decision height
      */
     public boolean mins_is_baro();
+    public boolean mins_is_baro(boolean pilot);
 
     /**
      * @return int - qnh setting for pilot or copilot
@@ -382,7 +395,11 @@ public interface Aircraft {
      * @return AircraftEnvironment - reference to environment model of this aircraft
      */
     public AircraftEnvironment get_environment();
-
+    
+    /**
+     * @return SimCommand - reference to simulator commands model of this aircraft
+     */
+    public SimCommand get_sim_command();
 
     /**
      * @return int - number of gears
@@ -1091,7 +1108,12 @@ public interface Aircraft {
      * @return boolean - Fire extinguisher on
      */
     public boolean fire_extinguisher(int engine);
-
+    
+    /**
+     * @return boolean - Engine FADEC on
+     */
+    public boolean get_fadec(int engine);
+    
     /**
      * @return float - Minimum runway length
      */

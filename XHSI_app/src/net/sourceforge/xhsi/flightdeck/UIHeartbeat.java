@@ -51,11 +51,11 @@ public class UIHeartbeat extends StoppableThread {
 	public UIHeartbeat(ConWinComponent conwin, PFDComponent pfd, NDComponent nd, EICASComponent eicas, MFDComponent mfd, CDUComponent cdu, int watch_interval) {
 		this.watch_interval = watch_interval;
 		this.conwin = conwin;
-                this.pfd = pfd;
-                this.nd = nd;
-                this.eicas = eicas;
-                this.mfd = mfd;
-                this.cdu = cdu;
+		this.pfd = pfd;
+		this.nd = nd;
+		this.eicas = eicas;
+		this.mfd = mfd;
+		this.cdu = cdu;
 		this.keep_running = true;
 	}
 	

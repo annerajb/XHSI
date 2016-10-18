@@ -459,6 +459,8 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int hyd_qty_top_y;
     public int hyd_qty_bottom_y;
     public int hyd_qty_dx;
+    public int hyd_low_air_1_y;
+    public int hyd_low_air_2_y;
     
     // SYSTEM / CRUISE
     // Vertical separation line
@@ -1353,6 +1355,8 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             hyd_valve_y = panel_rect.y + mfd_size * 684/1000;
             hyd_valve_r = mfd_size * 35/1000;
             hyd_qty_dx= panel_rect.width * 19/1000;
+            hyd_low_air_1_y = panel_rect.y + mfd_size * 820/1000;
+            hyd_low_air_2_y = panel_rect.y + mfd_size * 870/1000;
 
          
             // SYSTEM / CRUISE

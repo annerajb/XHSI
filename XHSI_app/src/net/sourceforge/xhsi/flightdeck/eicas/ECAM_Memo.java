@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Graphics2D;
 import java.text.DecimalFormat;
 
+import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 
 public class ECAM_Memo extends EICASSubcomponent {
@@ -142,6 +143,8 @@ public class ECAM_Memo extends EICASSubcomponent {
     		takeoff_inhibit = true;
     	}
     		
+    	
+    	
     	
     	
     	// LDG INHIBIT
@@ -290,8 +293,13 @@ public class ECAM_Memo extends EICASSubcomponent {
         } else {
         	ememo_status[EMEMO_STROBE_LT_OFF] = false;
         }
-        
-        
+                
+        if ( this.avionics.transponder_mode() < Avionics.XPDR_TA && ! this.aircraft.on_ground() ) {
+        	ememo_status[EMEMO_TCAS_STBY] = true;
+        	ememo_color[EMEMO_STROBE_LT_OFF] = eicas_gc.ecam_caution_color;
+        } else {
+        	ememo_status[EMEMO_TCAS_STBY] = false;
+        }
         
         // display the first 8 lines of the pop list
         for (int i=0, line=0; i < MAX_EMEMO_MSG && line < 8; i++) {
