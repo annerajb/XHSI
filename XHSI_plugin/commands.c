@@ -525,6 +525,8 @@ XPLMCommandRef sim_lights_landing_lights_toggle;
 XPLMCommandRef sim_flight_controls_flaps_down;
 XPLMCommandRef sim_flight_controls_flaps_up;
 XPLMCommandRef sim_flight_controls_landing_gear_toggle;
+XPLMCommandRef sim_flight_controls_landing_gear_up;
+XPLMCommandRef sim_flight_controls_landing_gear_down;
 XPLMCommandRef sim_flight_controls_speed_brakes_down_one;
 XPLMCommandRef sim_flight_controls_speed_brakes_up_one;
 
@@ -3178,6 +3180,8 @@ void registerCommands(void) {
     sim_flight_controls_flaps_down = XPLMFindCommand("sim/flight_controls/flaps_down");
     sim_flight_controls_flaps_up = XPLMFindCommand("sim/flight_controls/flaps_up");
     sim_flight_controls_landing_gear_toggle = XPLMFindCommand("sim/flight_controls/landing_gear_toggle");
+    sim_flight_controls_landing_gear_up = XPLMFindCommand("sim/flight_controls/landing_gear_up");
+    sim_flight_controls_landing_gear_down = XPLMFindCommand("sim/flight_controls/landing_gear_down");
     sim_flight_controls_speed_brakes_down_one = XPLMFindCommand("sim/flight_controls/speed_brakes_down_one");
     sim_flight_controls_speed_brakes_up_one = XPLMFindCommand("sim/flight_controls/speed_brakes_up_one");
 

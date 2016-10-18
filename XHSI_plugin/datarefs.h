@@ -1,6 +1,47 @@
 #ifndef DATAREFS_H_
 #define DATAREFS_H_
 
+// Values for SIM_COCKPIT_AUTOPILOT_KEY_PRESS
+// Must be in sync with XPlaneCommand.java
+// MCP Buttons
+#define AP_KEY_IS_MACH 1
+#define AP_KEY_CMD_A 2
+#define AP_KEY_SPD_TOGGLE 3
+#define AP_KEY_LVL_CHG_TOGGLE 4
+#define AP_KEY_HDG_SEL_TOGGLE 5
+#define AP_KEY_VS_TOGGLE 6
+#define AP_KEY_NAV_TOGGLE 7
+#define AP_KEY_APPR_TOGGLE 8
+#define AP_KEY_GLIDE_SLOPE 9
+#define AP_KEY_BACK_COURSE 10
+#define AP_KEY_ALT_HOLD_TOGGLE 11
+#define AP_KEY_ILS_CAPT_TOGGLE 12
+#define AP_KEY_ILS_FO_TOGGLE 13
+// Lights
+#define AP_KEY_NAV_LIGHTS_TOGGLE 20
+#define AP_KEY_BEACON_LIGHTS_TOGGLE 21
+#define AP_KEY_TAXI_LIGHTS_TOGGLE 22
+#define AP_KEY_STROBE_LIGHTS_TOGGLE 23
+#define AP_KEY_LDG_LIGHTS_TOGGLE 24
+// Flight controls
+#define AP_KEY_LDG_GEAR_TOGGLE 30
+#define AP_KEY_FLAPS_DOWN 31
+#define AP_KEY_FLAPS_UP 32
+#define AP_KEY_SPD_BREAK_DOWN 33
+#define AP_KEY_SPD_BREAK_UP 34
+#define AP_KEY_LDG_GEAR_DOWN 35
+#define AP_KEY_LDG_GEAR_UP 36
+// Master caution, warning, accept
+#define AP_KEY_CLR_MASTER_WARNING 50
+#define AP_KEY_CLR_MASTER_CAUTION 51
+#define AP_KEY_CLR_MASTER_ACCEPT 52
+// Systems
+#define AP_KEY_PITOT_HEAT_TOGGLE 60
+// Dual commands - needs xjoymap-dual plugin
+#define AP_KEY_STICK_DUAL 70
+#define AP_KEY_STICK_CAPT 71
+#define AP_KEY_STICK_FO 72
+
 // global vars
 extern XPLMDataRef groundspeed;
 extern XPLMDataRef true_airspeed;
@@ -285,6 +326,7 @@ extern XPLMDataRef engine_egt_percent;
 extern XPLMDataRef engine_egt_value;
 extern XPLMDataRef engine_max_egt_value;
 extern XPLMDataRef engine_fire_extinguisher;
+extern XPLMDataRef engine_fadec;
 extern XPLMDataRef reverser_ratio;
 extern XPLMDataRef tank_ratio;
 extern XPLMDataRef engine_n2;
