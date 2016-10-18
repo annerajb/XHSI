@@ -30,9 +30,11 @@ import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.CoordinateSystem;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.NavigationObject;
+import net.sourceforge.xhsi.model.SimCommand;
 import net.sourceforge.xhsi.model.SimDataRepository;
 import net.sourceforge.xhsi.model.Aircraft.CabinZone;
 import net.sourceforge.xhsi.model.Aircraft.ElecBus;
+import net.sourceforge.xhsi.model.Aircraft.StickPriority;
 import net.sourceforge.xhsi.model.Aircraft.ValveStatus;
 
 
@@ -40,6 +42,7 @@ public class XPlaneAircraft implements Aircraft {
 
     private SimDataRepository sim_data;
     private Avionics avionics;
+    private SimCommand sim_command;
     private AircraftEnvironment environment;
     private XHSIPreferences xhsi_preferences;
     private XHSISettings xhsi_settings;
@@ -56,6 +59,7 @@ public class XPlaneAircraft implements Aircraft {
         this.sim_data = sim_model.get_repository_instance();
         this.environment = new XPlaneAircraftEnvironment(sim_model);
         this.avionics = new XPlaneAvionics(this, sim_model);
+        this.sim_command = new XPlaneCommand((Aircraft)this, sim_model);
         this.xhsi_preferences = XHSIPreferences.get_instance();
         this.xhsi_settings = XHSISettings.get_instance();
     }
@@ -66,6 +70,10 @@ public class XPlaneAircraft implements Aircraft {
 
     public AircraftEnvironment get_environment() {
         return this.environment;
+    }
+    
+    public SimCommand get_sim_command() {
+        return this.sim_command;
     }
 
     public int plugin_version() { return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.PLUGIN_VERSION_ID)); }
@@ -109,6 +117,20 @@ public class XPlaneAircraft implements Aircraft {
     public float brk_pedal_left() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_LEFT_BRK_RATIO); }
     public float brk_pedal_right() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_CONTROLS_RIGHT_BRK_RATIO); }
 
+    public boolean dual_input() {
+    	int stick_priority = (int) sim_data.get_sim_float(XPlaneSimDataRepository.XJOYMAP_STICK_PRIORITY); 
+    	return (stick_priority & 0x40) != 0; 
+    }
+
+    public StickPriority stick_priority() {
+    	int stick_priority = ((int) sim_data.get_sim_float(XPlaneSimDataRepository.XJOYMAP_STICK_PRIORITY)) & 0x03;
+    	switch (stick_priority) {
+    		case 0 : return StickPriority.NONE;
+    		case 1 : return StickPriority.CAPTAIN;
+    		case 2 : return StickPriority.FIRST_OFFICER;
+    		default : return StickPriority.FIRST_OFFICER;
+    	}    	
+    }
 
     public float track() {
         // degrees magnetic
@@ -178,6 +200,16 @@ public class XPlaneAircraft implements Aircraft {
         }
     }
 
+    public int ra_bug(boolean pilot) {
+        if (!pilot) {
+            // copilot
+            return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_GAUGES_ACTUATORS_RADIO_ALTIMETER_BUG_FT_COPILOT));
+        } else {
+            // pilot or instructor
+            return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_GAUGES_ACTUATORS_RADIO_ALTIMETER_BUG_FT_PILOT));
+        }
+    }
+    
     public int da_bug() {
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
             // copilot
@@ -188,6 +220,16 @@ public class XPlaneAircraft implements Aircraft {
         }
     }
 
+    public int da_bug(boolean pilot) {
+        if (!pilot) {
+            // copilot
+            return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_DA_BUG));
+        } else {
+            // pilot or instructor
+            return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_DA_BUG));
+        }
+    }
+    
     public boolean mins_is_baro() {
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
             // copilot
@@ -198,6 +240,16 @@ public class XPlaneAircraft implements Aircraft {
         }
     }
 
+    public boolean mins_is_baro(boolean pilot) {
+        if (!pilot) {
+            // copilot
+            return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MINS_MODE) == 1.0);
+        } else {
+            // pilot or instructor
+            return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_MINS_MODE) == 1.0);
+        }
+    }
+    
     public int qnh() {
         return Math.round( altimeter_in_hg() * 1013.0f / 29.92f );
     }
@@ -1255,6 +1307,10 @@ public class XPlaneAircraft implements Aircraft {
 
     public boolean fire_extinguisher(int engine) {
     	return ( ( (int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_ENGINE_FIRE_EXTINGUISHER) & (1<<engine) ) != 0 );
+    }
+    
+    public boolean get_fadec(int engine) {
+    	return ( ( (int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_ENGINE_FADEC) & (1<<engine) ) != 0 );
     }
     
     public float get_min_rwy_length() {

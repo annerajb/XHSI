@@ -84,7 +84,7 @@ public class CDUDefault extends CDUSubcomponent {
     String CduLine[] = { 
     		"lg10XHSI",    		
     		"sw00Software version",	"lb00"+XHSI.RELEASE,
-    		"", "",
+    		"sw00Active NAV data base", "",
     		"sw00Engines", "", 
     		"sw00A/C Registration", "",
     		"sw00Gears", "",
@@ -108,7 +108,8 @@ public class CDUDefault extends CDUSubcomponent {
     public void paint(Graphics2D g2) {
     	if ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY) && (!this.avionics.is_qpac() && (!this.avionics.is_jar_a320neo()) )
     			) {
-    		CduLine[6] = "lb00" + this.aircraft.num_engines();
+    		CduLine[4] = nav_db_status();
+     		CduLine[6] = "lb00" + this.aircraft.num_engines();
     		CduLine[8] = "lb00" + this.aircraft.aircraft_registration();
     		if (this.aircraft.has_retractable_gear()) { 
     			CduLine[10] = "lb00" + this.aircraft.num_gears() + " RETRACTABLE";	
@@ -251,4 +252,16 @@ public class CDUDefault extends CDUSubcomponent {
 
     }
     
+    private String nav_db_status() {
+        if (XHSIStatus.nav_db_status.equals(XHSIStatus.STATUS_NAV_DB_NOT_FOUND)) {
+        	return "la00NO NAV DB";	
+        } else {
+        	if (XHSIStatus.nav_db_cycle.length()>=6) {
+        		return "lb00AIRAC XP : CYCLE " + XHSIStatus.nav_db_cycle.substring(2, 6);
+        	} else {
+        		return "ly00LOADING";
+        	}
+        }
+
+    }
 }

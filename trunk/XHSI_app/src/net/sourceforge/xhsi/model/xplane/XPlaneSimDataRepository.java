@@ -355,20 +355,21 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_FLIGHTMODEL_WEIGHT_M_TOTAL = 408; // Gross Weight
     public static final int SIM_COCKPIT2_ENGINE_FIRE_EXTINGUISHER = 409; // Bit field
     public static final int SIM_COCKPIT2_FUEL_QUANTITY_ = 410; // 410..418 : array
-    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_N1_ = 420; // array
-    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_EGT_ = 430; // array
-    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_EGT_C_ = 440; // array
-    public static final int SIM_FLIGHTMODEL2_ENGINES_THRUST_REVERSER_DEPLOY_RATIO_ = 450; //array
-    public static final int SIM_AIRCRAFT_OVERFLOW_ACF_TANK_RATIO_ = 460; //array
-    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_N2_ = 470; // array
-    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_FF_ = 480; // array
-    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_PRESS_ = 490; // array
-    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_TEMP_ = 500; // array
-    public static final int SIM_COCKPIT2_ENGINE_INDICATORS_OIL_QUANTITY_RATIO_ = 510; // array
-    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_TEMP_C_ = 520; // array
-    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_PRESS_PSI_ = 530; // array
-    public static final int XHSI_FLIGHTMODEL_ENGINE_VIB_ = 540; // array
-    public static final int XHSI_FLIGHTMODEL_ENGINE_VIB_N2_ = 680; // array
+    public static final int SIM_COCKPIT2_ENGINE_FADEC = 419; // bit field
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_N1_ = 420; // array[8]
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_EGT_ = 430; // array[8]
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_EGT_C_ = 440; // array[8]
+    public static final int SIM_FLIGHTMODEL2_ENGINES_THRUST_REVERSER_DEPLOY_RATIO_ = 450; //array[8]
+    public static final int SIM_AIRCRAFT_OVERFLOW_ACF_TANK_RATIO_ = 460; //array[8]
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_N2_ = 470; // array[8]
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_FF_ = 480; // array[8]
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_PRESS_ = 490; // array[8]
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_TEMP_ = 500; // array[8]
+    public static final int SIM_COCKPIT2_ENGINE_INDICATORS_OIL_QUANTITY_RATIO_ = 510; // array[8]
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_TEMP_C_ = 520; // array[8]
+    public static final int SIM_FLIGHTMODEL_ENGINE_ENGN_OIL_PRESS_PSI_ = 530; // array[8]
+    public static final int XHSI_FLIGHTMODEL_ENGINE_VIB_ = 540; // array[8]
+    public static final int XHSI_FLIGHTMODEL_ENGINE_VIB_N2_ = 680; // array[8]
     public static final int SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO1 = 551;
     public static final int SIM_OPERATION_FAILURES_HYDRAULIC_PRESSURE_RATIO2 = 552;
     public static final int SIM_COCKPIT2_HYDRAULICS_INDICATORS_HYDRAULIC_FLUID_RATIO_1 = 553;
@@ -524,6 +525,9 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     // Minimum runway length
     public static final int XHSI_RWY_LENGTH_MIN = 901; // Override with this value if it is > 0
     public static final int XHSI_RWY_UNITS = 902; // 0:Meters 1:Feet
+    
+    // Side stick priority - xjoymap dual commands
+    public static final int XJOYMAP_STICK_PRIORITY = 940; // mask 0x03 0=dual, 1=Capt, 2=F/O ; mask 0x40 : dual_input boolean
     
     // ATA 21 AIR CONDITIONING AND PRESSURIZATION
     // Trims

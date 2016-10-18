@@ -372,6 +372,15 @@ public class FMA_A320 extends PFDSubcomponent {
             pfe_vert_armed.paint(g2);
         }
         
+        // TODO : ra_bug or da_bug     
+        String str_dh_mda_value ="";             
+        if (this.aircraft.ra_bug() != -10.0f) { 
+        	str_dh_mda_value = "" + this.aircraft.ra_bug();
+        	pfe_land_minimums.setTextValue("DH ", str_dh_mda_value, PFE_Color.PFE_COLOR_MARK);
+        } else {
+        	pfe_land_minimums.setText("NO DH", PFE_Color.PFE_COLOR_MARK);
+        }
+        		
     }
 
     private void drawA320FMA(Graphics2D g2) {
@@ -698,29 +707,25 @@ public class FMA_A320 extends PFDSubcomponent {
         // Minimums
     	// On QPAC v2.02 - MDA shown when npa_valid=1 and ap_phase == (4 or 5)
         int appr_type = this.avionics.qpac_appr_type();
-        if (ap_phase == 4 || ap_phase == 5 ) {
-        	String str_dh_mda ="";       
+        if (ap_phase == 4 || ap_phase == 5 ) {        	
         	String str_dh_mda_value ="";             
         	switch (appr_type) {
         	case 0: 
-        		if (this.aircraft.ra_bug() != -10.0f) { 
-        			str_dh_mda = "DH ";
-        			str_dh_mda_value = "" + this.aircraft.ra_bug();
+        		if (this.aircraft.ra_bug(true) != -10.0f) {         	
+        			str_dh_mda_value = "" + this.aircraft.ra_bug(true);
         			// draw2Mode(g2, 3, 2, str_dh_mda, str_dh_mda_value, false, pfd_gc.pfd_markings_color, pfd_gc.pfd_armed_color);
         			pfe_land_minimums.setTextValue("DH ", str_dh_mda_value, PFE_Color.PFE_COLOR_MARK);
         		} else {
         			pfe_land_minimums.setText("NO DH", PFE_Color.PFE_COLOR_MARK);
         		}
         		break;
-        	case 1: 
-        		str_dh_mda = "MDA "; 
+        	case 1:         	 
         		str_dh_mda_value = "" + (int)Math.round(this.avionics.qpac_appr_mda());         	
         		// draw2Mode(g2, 3, 2, str_dh_mda, str_dh_mda_value, false, pfd_gc.pfd_markings_color, pfd_gc.pfd_armed_color);
         		pfe_land_minimums.setTextValue("MDA ", str_dh_mda_value, PFE_Color.PFE_COLOR_MARK);
         		break;
-        	case 2: 
-        		str_dh_mda = "BARO ";
-        		str_dh_mda_value = "" + this.aircraft.da_bug(); 
+        	case 2:         	
+        		str_dh_mda_value = "" + this.aircraft.da_bug(true); 
         		// draw2Mode(g2, 3, 2, str_dh_mda, str_dh_mda_value, false, pfd_gc.pfd_markings_color, pfd_gc.pfd_armed_color);
         		pfe_land_minimums.setTextValue("BARO ", str_dh_mda_value, PFE_Color.PFE_COLOR_MARK);
         		break;
@@ -729,26 +734,21 @@ public class FMA_A320 extends PFDSubcomponent {
         pfe_land_minimums.paint(g2);
         
         // Landing capabilities
-        String ldg_cap_1 = "";
-        String ldg_cap_2 = "";
         if ( this.avionics.qpac_npa_no_points()==2 && this.avionics.qpac_npa_valid()>0 && this.avionics.qpac_ap_vertical_mode()==8 ) {
         	pfe_land_cat.setText("F-APP", PFE_Color.PFE_COLOR_MARK);
         	pfe_land_mode.setText("+RAW", PFE_Color.PFE_COLOR_MARK);
-            ldg_cap_1 = "F-APP";
-            ldg_cap_2 = "+RAW";
+
         } else if ( (ap_phase < 6) && (appr_type == 0) && (this.avionics.qpac_appr_illuminated() || this.avionics.qpac_loc_illuminated()) ) {
         	if (dual_ap) { 
             	pfe_land_cat.setText("CAT 3", PFE_Color.PFE_COLOR_MARK);
             	pfe_land_mode.setText("DUAL", PFE_Color.PFE_COLOR_MARK);
-        		ldg_cap_2="DUAL"; ldg_cap_1="CAT 3";
+
         	} else {
         		if (single_ap) { 
-        			ldg_cap_2="SINGLE";
         			pfe_land_mode.setText("SINGLE", PFE_Color.PFE_COLOR_MARK);
         		} else { 
         			pfe_land_mode.clearText(); 
         		}
-        		ldg_cap_1="CAT 1";
             	pfe_land_cat.setText("CAT 1", PFE_Color.PFE_COLOR_MARK);
             	
         	}
