@@ -1742,6 +1742,9 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ALPHA_MAX);
         sim_packet.sim_data_points[i].value = custom_htonf(qpac_ias_shift(XPLMGetDataf(qpac_alpha_max)));
         i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(QPAC_VFE_NEXT);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_vfe_next));
+        i++;
 
         // EFIS
         if (qpac_capt_efis_nd_mode != NULL) {

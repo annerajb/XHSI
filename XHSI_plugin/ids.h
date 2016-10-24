@@ -598,6 +598,7 @@
 #define QPAC_V_GREEN_DOT 1050
 #define QPAC_ALPHA_PROT 1051
 #define QPAC_ALPHA_MAX 1052
+#define QPAC_VFE_NEXT 1106
 //EFIS
 #define QPAC_EFIS_ND_MODE_CAPT 1053
 #define QPAC_EFIS_ND_RANGE_CAPT 1054
@@ -666,7 +667,7 @@
 #define QPAC_ENG_IGNITION 1104
 // Doors
 #define QPAC_DOOR_STATUS 1105
-// Next is 1105
+// Next is 1106
 // IDs reserved for QPAC up to 1199
 
 
