@@ -1893,6 +1893,9 @@ public class XPlaneAvionics implements Avionics, Observer {
     public int qpac_alpha_max() {
         return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ALPHA_MAX));
     }    
+    public int qpac_vfe_next() {
+        return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_VFE_NEXT));
+    }  
     // Failures
     public float qpac_failures() {
         return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FAILURES);

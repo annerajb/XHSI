@@ -401,6 +401,13 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         this.draw_gmeter_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_GMETER).equalsIgnoreCase("true"));
 
+        String yoke_input = preferences.get_preference(XHSIPreferences.PREF_PFD_DRAW_YOKE_INPUT);
+        for (int i=0; i<draw_yoke_input.length; i++) {
+            if ( yoke_input.equals( draw_yoke_input[i] ) ) {
+                this.draw_yoke_input_combobox.setSelectedIndex(i);
+            }
+        }
+
 
         // EICAS Options (5)
 

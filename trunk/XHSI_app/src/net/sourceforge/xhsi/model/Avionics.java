@@ -755,6 +755,7 @@ public interface Avionics {
     public int qpac_v_green_dot();
     public int qpac_alpha_prot();
     public int qpac_alpha_max();
+    public int qpac_vfe_next();
     
     // Failures
     public float qpac_failures();
