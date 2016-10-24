@@ -38,6 +38,10 @@ public class XHSIPreferences {
 
     private static final String PROPERTY_FILENAME = "XHSI.properties";
 
+    /*
+     * ----- Preference Key Section ----
+     */
+    
     // SYSTEM
     public static final String PREF_APTNAV_DIR = "aptnav.dir";
     public static final String PREF_REPLAY_DELAY_PER_FRAME = "replay.steps.delay";
@@ -130,6 +134,9 @@ public class XHSIPreferences {
     public static final String PREF_CDU_SIDE = "cdu.side";
 
 
+    /*
+     * ----- Preference value section ----- 
+     */
     // constants
 
     // for PREF_SIMCOM
@@ -303,7 +310,7 @@ public class XHSIPreferences {
 
 
     /**
-     * @param key        - the key of the preference
+     * @param key      - the key of the preference
      * @param value    - the new value of the preference
      *
      * @throws RuntimeException - in case key is null or empty

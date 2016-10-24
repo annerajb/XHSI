@@ -633,6 +633,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_V_GREEN_DOT=1050;
     public static final int QPAC_ALPHA_PROT=1051;
     public static final int QPAC_ALPHA_MAX=1052;
+    public static final int QPAC_VFE_NEXT=1106;
     // EFIS
     public static final int QPAC_EFIS_ND_MODE_CAPT=1053;
     public static final int QPAC_EFIS_ND_RANGE_CAPT=1054;

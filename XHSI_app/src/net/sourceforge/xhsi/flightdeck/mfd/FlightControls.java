@@ -1493,6 +1493,9 @@ public class FlightControls extends MFDSubcomponent {
     	 * - Solid amber indicates brake overheat condition on each
     	 *   wheel within the range of 5.0 to 9.9. Symbol remains until
     	 *   value is less than 3.5.
+    	 *   
+    	 *   Forums :
+    	 *   The scale is linear with 0 equal to >38C and 9.9 equal to 1038C.
     	 */
     	int wheel_axis = mfd_gc.panel_rect.y + mfd_gc.mfd_size*815/2000;
     	int wheel_dx = mfd_gc.mfd_size*400/2000;
@@ -1516,7 +1519,7 @@ public class FlightControls extends MFDSubcomponent {
     }
     
     private void drawOneWheel(Graphics2D g2, int x, int y, boolean left, float temp) {
-    	float rel_temp = temp / 90; // 5.0 is the alarm limit - 450° on brakes
+    	float rel_temp = (temp-38>0)?(temp-38)/95:0.0f; // 5.0 is the alarm limit - 450° on brakes
     	int round_height = mfd_gc.mfd_size*60/2000;
     	int wheel_width = mfd_gc.mfd_size*130/2000;
     	int side_width = mfd_gc.mfd_size*30/2000;

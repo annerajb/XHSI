@@ -83,7 +83,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    public static final String RELEASE = "2.0 Beta 9 Alpha 8";
+    public static final String RELEASE = "2.0 Beta 9 Alpha 9";
     public static final int EXPECTED_PLUGIN = 20009;
 
 
@@ -826,7 +826,7 @@ public class XHSI implements ActionListener {
                     "2007-2009 Georg Gruetter\n" +
                     "2009 Sandy Barbour\n" +
                     "2009-2015 Marc Rogiers\n" +
-                    "2014-2015 Nicolas Carel\n" +
+                    "2014-2016 Nicolas Carel\n" +
                     "\n" +
                     "Using Java " + System.getProperty("java.version") + "\n" +
                     "Running on " + this.ip_host,

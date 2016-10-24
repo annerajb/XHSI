@@ -362,7 +362,8 @@ public class SpeedTape_A320 extends PFDSubcomponent {
             drawVspeed(g2, this.avionics.qpac_vf() , ias, "F");
             drawVspeed(g2, this.avionics.qpac_vs() , ias, "S");
             drawGDotSpeed(g2, this.avionics.qpac_v_green_dot() , ias);          
-            drawFlapsLimit(g2, this.aircraft.get_Vfe(), ias); 
+            // drawFlapsLimit(g2, this.aircraft.get_Vfe(), ias);
+            drawFlapsLimit(g2, this.avionics.qpac_vfe_next(), ias);
             drawSpeedProtection(g2, vmax + 6.0f, ias);
             
         } else if ( this.avionics.is_jar_a320neo() ) {
