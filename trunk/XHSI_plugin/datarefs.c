@@ -2316,6 +2316,7 @@ void writeDataRef(int id, float value) {
 
         case SIM_COCKPIT_SWITCHES_EFIS_MAP_RANGE_SELECTOR :
             XPLMSetDatai(efis_map_range_selector, (int)value);
+            if (qpac_ready && qpac_version>150) { XPLMSetDatai(qpac_capt_efis_nd_range, (int)value); }
             break;
 
         case SIM_COCKPIT_SWITCHES_EFIS_DME_1_SELECTOR :
@@ -2364,6 +2365,7 @@ void writeDataRef(int id, float value) {
 
         case SIM_COCKPIT_SWITCHES_EFIS_MAP_SUBMODE :
             XPLMSetDatai(efis_map_submode, (int)value);
+            if (qpac_ready && qpac_version>110) { XPLMSetDatai(qpac_capt_efis_nd_mode, (int)value); }
             break;
 
         case XHSI_EFIS_PILOT_MAP_ZOOMIN :
@@ -2379,6 +2381,7 @@ void writeDataRef(int id, float value) {
 
         case XHSI_EFIS_COPILOT_MAP_RANGE :
             XPLMSetDatai(efis_copilot_map_range_selector, (int)value);
+            if (qpac_ready && qpac_version>150) { XPLMSetDatai(qpac_co_efis_nd_range, (int)value); }
             break;
 
         case XHSI_EFIS_COPILOT_RADIO1 :
@@ -2423,6 +2426,7 @@ void writeDataRef(int id, float value) {
 
         case XHSI_EFIS_COPILOT_MAP_MODE :
             XPLMSetDatai(efis_copilot_map_submode , (int)value);
+            if (qpac_ready && qpac_version>110) { XPLMSetDatai(qpac_co_efis_nd_mode, (int)value); }
             break;
 
         case XHSI_EFIS_COPILOT_MAP_ZOOMIN :

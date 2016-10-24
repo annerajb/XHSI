@@ -102,6 +102,8 @@ XPLMDataRef qpac_baro_hide_capt;
 XPLMDataRef qpac_baro_std_fo;
 XPLMDataRef qpac_baro_unit_fo;
 XPLMDataRef qpac_baro_hide_fo;
+// Compass
+XPLMDataRef qpac_true_mag;
 // V Speeds
 XPLMDataRef qpac_v1_value;
 XPLMDataRef qpac_v1;
@@ -113,6 +115,7 @@ XPLMDataRef qpac_vs;
 XPLMDataRef qpac_v_green_dot;
 XPLMDataRef qpac_alpha_prot;
 XPLMDataRef qpac_alpha_max;
+XPLMDataRef qpac_vfe_next;
 // Failures
 XPLMDataRef qpac_capt_hdg_valid;
 XPLMDataRef qpac_capt_att_valid;
@@ -362,6 +365,8 @@ void findQpacDataRefs(void) {
             qpac_baro_std_fo = XPLMFindDataRef("AirbusFBW/BaroStdFO");
             qpac_baro_unit_fo = XPLMFindDataRef("AirbusFBW/BaroUnitFO");
             qpac_baro_hide_fo = XPLMFindDataRef("AirbusFBW/HideBaroCO");
+            // Compass
+            qpac_true_mag = XPLMFindDataRef("AirbusFBW/truemag");
             // V Speeds
             qpac_v1_value = XPLMFindDataRef("AirbusFBW/V1Value");
             qpac_v1 = XPLMFindDataRef("AirbusFBW/V1Capt"); //  AirbusFBW/V1 or AirbusFBW/V1Capt
@@ -373,6 +378,7 @@ void findQpacDataRefs(void) {
             qpac_v_green_dot = XPLMFindDataRef("AirbusFBW/VGreenDot");
             qpac_alpha_prot = XPLMFindDataRef("AirbusFBW/AlphaProt");
             qpac_alpha_max = XPLMFindDataRef("AirbusFBW/AlphaMax");
+            qpac_vfe_next = XPLMFindDataRef("qpac_airbus/pfdoutputs/general/VFENext_value");
             // Failures
             qpac_capt_hdg_valid = XPLMFindDataRef("AirbusFBW/CaptHDGValid");
             qpac_capt_att_valid = XPLMFindDataRef("AirbusFBW/CaptATTValid");

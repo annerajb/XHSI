@@ -270,6 +270,8 @@ extern XPLMDataRef qpac_baro_hide_capt;
 extern XPLMDataRef qpac_baro_std_fo;
 extern XPLMDataRef qpac_baro_unit_fo;
 extern XPLMDataRef qpac_baro_hide_fo;
+// Compass
+extern XPLMDataRef qpac_true_mag;
 // V Speeds
 extern XPLMDataRef qpac_v1_value;
 extern XPLMDataRef qpac_v1;
@@ -281,6 +283,7 @@ extern XPLMDataRef qpac_vs;
 extern XPLMDataRef qpac_v_green_dot;
 extern XPLMDataRef qpac_alpha_prot;
 extern XPLMDataRef qpac_alpha_max;
+extern XPLMDataRef qpac_vfe_next;
 // Failures
 extern XPLMDataRef qpac_capt_hdg_valid;
 extern XPLMDataRef qpac_capt_att_valid;
