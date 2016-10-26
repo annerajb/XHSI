@@ -58,10 +58,11 @@
 
 // Define global vars
 // The data packets =========================================
-struct SimDataPacket	sim_packet;
-struct FmsDataPacket	fms_packet[10];
-struct TcasDataPacket	tcas_packet;
-struct IncomingPacket   efis_packet;
+struct SimDataPacket	   sim_packet;
+struct FmsDataPacket	   fms_packet[10];
+struct TcasDataPacket	   tcas_packet;
+struct IncomingPacket      efis_packet;
+struct RemoteCommandPacket rcmd_packet;
 
 int max_adcd_size = 0;
 int max_avio_size = 0;
@@ -3543,3 +3544,8 @@ int createTcasPacket(void) {
 
 }
 
+int createRemoteCommandPacket(int command) {
+    strncpy(rcmd_packet.packet_id, "RCMD", 4);
+    rcmd_packet.command = custom_htoni(command);
+    return 4 + 4;
+}

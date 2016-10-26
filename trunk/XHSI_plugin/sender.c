@@ -461,3 +461,47 @@ float sendTcasCallback(
 
 }
 
+int sendRemoteCommand(int cmd) {
+
+	int i;
+	int packet_size;
+	int res;
+	int send_error = 0;
+#if IBM
+	char msg[80];
+#endif
+
+	if (xhsi_plugin_enabled && xhsi_socket_open)  {
+
+		packet_size = createRemoteCommandPacket(cmd);
+
+        if ( packet_size > 0 ) {
+            for (i=0; i<NUM_DEST; i++) {
+                if (dest_enable[i]) {
+                    res = sendto(sockfd, (const char*)&rcmd_packet, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr));
+#if IBM
+                    if ( res == SOCKET_ERROR ) {
+						send_error = 1;
+                        XPLMDebugString("XHSI: caught error while sending RCMD packet! (");
+                        sprintf(msg, "%d", WSAGetLastError());
+                        XPLMDebugString(msg);
+                        XPLMDebugString(")\n");
+                    }
+#else
+                    if ( res < 0 ) {
+						send_error = 1;
+                        XPLMDebugString("XHSI: caught error while sending RCMD packet! (");
+                        XPLMDebugString((char * const) strerror(GET_ERRNO));
+                        XPLMDebugString(")\n");
+                    }
+#endif
+                }
+            }
+
+        }
+
+	}
+	return send_error;
+}
+
+

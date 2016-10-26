@@ -28,21 +28,26 @@
 #include "plugin.h"
 #include "settings.h"
 #include "net.h"
+#include "sender.h"
 
 
 // Menu items
 #define MENU_ITEM_SETTINGS 0
-//#define MENU_ITEM_RESET 1
+#define MENU_REMOTE 1
+//#define MENU_ITEM_RESET 2
 
-
+#define REMOTE_TIP_TEXT1 "Clic to send command to remote XHSI"
 
 // Define local vars
-int			xhsi_dialog_shows;
-int			xhsi_dialog_created;
+int			xhsi_settings_dialog_shows;
+int			xhsi_settings_dialog_created;
+int			xhsi_remote_dialog_shows;
+int			xhsi_remote_dialog_created;
 
 XPLMMenuID	menu_id;
 int			menu_item;
 
+// Settings box widgets
 XPWidgetID	settings_dialog, settings_receiver_subwindow, settings_sender_subwindow, settings_dest_subwindow;
 XPWidgetID	dest_ip_textbox[NUM_DEST], dest_port_textbox[NUM_DEST];
 XPWidgetID  src_port_textbox, nav_rate_textbox, fms_rate_textbox, tcas_rate_textbox;
@@ -52,17 +57,33 @@ XPWidgetID	src_port_default_label, nav_data_default_label, fms_data_default_labe
 XPWidgetID  dest_enable_checkbox[NUM_DEST];
 XPWidgetID  default_local_button, default_multicast_button, cancel_button, set_button;
 
+// Remote box widgets
+XPWidgetID  remote_dialog;
+XPWidgetID  rmt_tip;
+XPWidgetID  rmt_close_subwindow, rmt_close_label, rmt_close_button;
+XPWidgetID  rmt_shutdown_subwindow, rmt_shutdown_label, rmt_shutdown_button;
+XPWidgetID  rmt_cancel_button;
 
-void closeDialog() {
 
-	if (xhsi_dialog_shows) {
+void closeSettingsDialog() {
+
+	if (xhsi_settings_dialog_shows) {
 		XPHideWidget(settings_dialog);
-		xhsi_dialog_shows = 0;
+		xhsi_settings_dialog_shows = 0;
 		xhsi_send_enabled = 1;
 	}
 
 }
 
+void closeRemoteDialog() {
+
+	if (xhsi_remote_dialog_shows) {
+		XPHideWidget(remote_dialog);
+		xhsi_remote_dialog_shows = 0;
+		xhsi_send_enabled = 1;
+	}
+
+}
 
 void setWidgetValues() {
 
@@ -175,12 +196,12 @@ XPWidgetFunc_t settingsDialogHandler(
 
 			setAddresses();
 			bindSocket();
-			closeDialog();
+			closeSettingsDialog();
 			return (XPWidgetFunc_t)1;
 
 		} else if (inParam1 == (intptr_t)cancel_button) {
 			// Cancel button pressed
-			closeDialog();
+			closeSettingsDialog();
 			return (XPWidgetFunc_t)1;
 		}
 
@@ -419,11 +440,154 @@ void createSettingsDialog(int x, int y) {
 }
 
 
-void destroyDialog() {
+void destroySettingsDialog() {
 
-	if (xhsi_dialog_created) {
+	if (xhsi_settings_dialog_created) {
 		XPDestroyWidget(settings_dialog, 1);
-		xhsi_dialog_created = 0;
+		xhsi_settings_dialog_created = 0;
+	}
+
+}
+
+
+
+// define the handler before it is used
+XPWidgetFunc_t remoteDialogHandler(
+							   XPWidgetMessage		inMessage,
+							   XPWidgetID			inWidget,
+							   intptr_t				inParam1,
+							   intptr_t				inParam2) {
+
+
+	if (inMessage == xpMessage_CloseButtonPushed) {
+		// close (X) clicked
+		closeRemoteDialog();
+		return (XPWidgetFunc_t)1;
+	}
+
+	if (inMessage == xpMsg_PushButtonPressed) {
+
+		if (inParam1 == (intptr_t)rmt_close_button) {
+			// Remote close button pressed
+			sendRemoteCommand(1);
+			closeRemoteDialog();
+			return (XPWidgetFunc_t)1;
+
+		} else if (inParam1 == (intptr_t)rmt_shutdown_button) {
+			// Shutdown button pressed
+			sendRemoteCommand(2);
+			closeRemoteDialog();
+			return (XPWidgetFunc_t)1;
+
+		} else if (inParam1 == (intptr_t)rmt_cancel_button) {
+			// Cancel button pressed
+			closeRemoteDialog();
+			return (XPWidgetFunc_t)1;
+		}
+
+	}
+
+	return 0;
+
+}
+
+void createRemoteDialog(int x, int y) {
+
+	// h1 : height of first subwindow
+	int h1 = 60;
+	// h2 : height of second subwindow
+	int h2 = 60;
+	// x, y : lower left
+	int w = 400;
+	int h = 150 + h1 + h2;
+	// x0, y0 : top left
+	int x0 = x;
+	int y0 = y + h;
+	// x2, y2 : bottom right
+	int x2 = x + w;
+	int y2 = y;
+
+	// y1 : current line
+	int y1;
+
+	// root window
+	remote_dialog = XPCreateWidget(x0, y0, x2, y2,
+										1,								// visible
+										"XHSI Remote Operations",		// window title
+										1,								// root
+										NULL,							// no container
+										xpWidgetClass_MainWindow);
+	// Set the close box
+	// XPSetWidgetProperty(settings_dialog, xpProperty_MainWindowHasCloseBoxes, 1);
+
+	rmt_tip = XPCreateWidget(x0+80+10, y0-20-2-10, x0+80+210, y0-20-2-15-10,
+							  1, REMOTE_TIP_TEXT1, 0, remote_dialog,
+							  xpWidgetClass_Caption);
+
+	// remote close subwindow
+	y1 = y0-45-20;
+	rmt_close_subwindow = XPCreateWidget(x0+20, y1, x2-20, y1-h1,
+											   1,							// visible
+											   "Remote Close",				// window title
+											   0,							// not root
+											   remote_dialog,				// in container
+											   xpWidgetClass_SubWindow);
+	XPSetWidgetProperty(rmt_close_subwindow, xpProperty_SubWindowType, xpSubWindowStyle_SubWindow);
+
+	// Close label
+	y1 -= 5;
+	rmt_close_label = XPCreateWidget(x0+50, y1, x2-50, y1-15,
+							  1, "Close all XHSI Applications", 0, remote_dialog,
+							  xpWidgetClass_Caption);
+	y1 -= 25;
+	// Close button
+	rmt_close_button = XPCreateWidget(x0+(w/4), y1, x2-(w/4), y1-10,
+										 1, "SEND CLOSE", 0, remote_dialog,
+										 xpWidgetClass_Button);
+	XPSetWidgetProperty(rmt_close_button, xpProperty_ButtonType, xpPushButton);
+
+
+
+	// shutdown subwindow
+	y1 = y0-45-20-h1-15;
+	rmt_shutdown_subwindow = XPCreateWidget(x0+20, y1, x2-20, y1-h2,
+											   1,							// visible
+											   "Remote Shutdown",			// window title
+											   0,							// not root
+											   remote_dialog,				// in container
+											   xpWidgetClass_SubWindow);
+	XPSetWidgetProperty(rmt_shutdown_subwindow, xpProperty_SubWindowType, xpSubWindowStyle_SubWindow);
+
+	// shutdown label
+	y1 -= 5;
+	rmt_shutdown_label = XPCreateWidget(x0+50, y1, x2-50, y1-15,
+							  1, "Shutdown all computers running XHSI Application", 0, remote_dialog,
+							  xpWidgetClass_Caption);
+
+	// shutdown button
+	y1 -= 25;
+	rmt_shutdown_button = XPCreateWidget(x0+(w/4), y1, x2-(w/4), y1-10,
+										 1, "SEND SHUTDOWN", 0, remote_dialog,
+										 xpWidgetClass_Button);
+	XPSetWidgetProperty(rmt_shutdown_button, xpProperty_ButtonType, xpPushButton);
+
+
+	// Cancel buttons
+	rmt_cancel_button = XPCreateWidget(x0+(w/2)-40, y2+30, x0+(w/2)+40, y2+20,
+										 1, "Cancel", 0, remote_dialog,
+										 xpWidgetClass_Button);
+	XPSetWidgetProperty(rmt_cancel_button, xpProperty_ButtonType, xpPushButton);
+
+
+	XPAddWidgetCallback(remote_dialog, (XPWidgetFunc_t)remoteDialogHandler);
+
+}
+
+void destroyRemoteDialog() {
+
+	if (xhsi_remote_dialog_created) {
+		XPDestroyWidget(remote_dialog, 1);
+		xhsi_remote_dialog_created = 0;
 	}
 
 }
@@ -434,18 +598,28 @@ void menuHandler(void * mRef, void * iRef) {
 	intptr_t item_num = (intptr_t) iRef;
 
 	if (item_num == MENU_ITEM_SETTINGS) {
-		if (xhsi_dialog_created == 0) {
+		if (xhsi_settings_dialog_created == 0) {
 			createSettingsDialog(300, 200);
-			xhsi_dialog_created = 1;
+			xhsi_settings_dialog_created = 1;
 		}
 		setWidgetValues();
 		if(!XPIsWidgetVisible(settings_dialog)) {
 			XPShowWidget(settings_dialog);
 		}
 		xhsi_send_enabled = 0;
-		xhsi_dialog_shows = 1;
-//	} else if (item_num == MENU_ITEM_RESET) {
-//	    resetSocket();
+		xhsi_settings_dialog_shows = 1;
+	} else if (item_num == MENU_REMOTE) {
+		if (xhsi_remote_dialog_created == 0) {
+			createRemoteDialog(300, 200);
+			xhsi_remote_dialog_created = 1;
+		}
+		if(!XPIsWidgetVisible(remote_dialog)) {
+			XPShowWidget(remote_dialog);
+		}
+		xhsi_send_enabled = 0;
+		xhsi_remote_dialog_shows = 1;
+	//	} else if (item_num == MENU_ITEM_RESET) {
+	//	    resetSocket();
 	}
 
 }
@@ -458,6 +632,7 @@ void createUI() {
 	menu_item = XPLMAppendMenuItem(XPLMFindPluginsMenu(), "XHSI", NULL, 1);
 	menu_id = XPLMCreateMenu("XHSI", XPLMFindPluginsMenu(), menu_item, menuHandler, NULL);
 	XPLMAppendMenuItem(menu_id, "Settings", (void *) MENU_ITEM_SETTINGS, 1);
+	XPLMAppendMenuItem(menu_id, "Remote", (void *) MENU_REMOTE, 1);
 //    #if IBM
 //    XPLMAppendMenuItem(menu_id, "Reset net", (void *) MENU_ITEM_RESET, 1);
 //    #endif
@@ -476,7 +651,8 @@ void destroyMenu() {
 
 void destroyUI(void) {
 
-    destroyDialog();
+    destroySettingsDialog();
+    destroyRemoteDialog();
     destroyMenu();
 
 }
