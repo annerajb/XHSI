@@ -846,16 +846,36 @@ public class XHSI implements ActionListener {
     }
     
     public static void ShutDown() {
-    	String shutdownCommand;
+    	String[] shutdownCommand;
     	String operatingSystem = System.getProperty("os.name");
 
-    	if ("Linux".equals(operatingSystem) || "Mac OS X".equals(operatingSystem)) {
-    		shutdownCommand = "sudo shutdown -h now";
-    	}
-    	else if ("Windows".equals(operatingSystem)) {
-    		shutdownCommand = "shutdown.exe -s -t 0";
+    	if ("Linux".equals(operatingSystem)) {
+    		logger.warning("XHSI on Linux : Received Shutdown command");
+    		// Hard way
+    		// shutdownCommand = new String[] {"sudo", "shutdown -h now"};
+    		// Elegant way on ubuntu with console kit
+    		shutdownCommand = new String[] {"dbus-send",
+    		  "--system",
+    		  "--dest=org.freedesktop.ConsoleKit",
+    		  "--type=method_call",
+    		  "--print-reply",
+    		  "--reply-timeout=2000",
+    		  "/org/freedesktop/ConsoleKit/Manager",
+    		  "org.freedesktop.ConsoleKit.Manager.Stop"};
+    	} else if ("Mac OS X".equals(operatingSystem)) {
+    		logger.warning("XHSI on MacOS : Received Shutdown command");
+    		// Hard way
+    		// shutdownCommand = new String[] {"sudo", "shutdown -h now"};
+    		// Elegant way
+    		shutdownCommand = new String[] {"osascript", "-e", 
+    				"tell app \"System Events\" to shut down"};
+    		
+    	} 	else if ("Windows".equals(operatingSystem)) {
+    		logger.warning("XHSI on Windows : Received Shutdown command");
+    		shutdownCommand = new String[] {"shutdown.exe", "-s", "-t", "0"};
     	}
     	else {
+    		logger.warning("XHSI on Unsupported : Received Shutdown command");
     		throw new RuntimeException("Unsupported operating system.");
     	}
 
