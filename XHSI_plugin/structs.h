@@ -59,3 +59,8 @@ struct IncomingPacket {
 	struct  SimDataPoint    data_points[100];
 };
 
+struct RemoteCommandPacket {
+	char					packet_id[4];
+	int                     command;
+};
+

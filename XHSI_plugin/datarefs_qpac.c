@@ -116,6 +116,13 @@ XPLMDataRef qpac_v_green_dot;
 XPLMDataRef qpac_alpha_prot;
 XPLMDataRef qpac_alpha_max;
 XPLMDataRef qpac_vfe_next;
+XPLMDataRef qpac_v_green_dot_value;
+XPLMDataRef qpac_vf_value;
+XPLMDataRef qpac_vs_value;
+XPLMDataRef qpac_v2_value;
+XPLMDataRef qpac_vr_value;
+XPLMDataRef qpac_alpha_floor_mode;
+
 // Failures
 XPLMDataRef qpac_capt_hdg_valid;
 XPLMDataRef qpac_capt_att_valid;
@@ -379,6 +386,13 @@ void findQpacDataRefs(void) {
             qpac_alpha_prot = XPLMFindDataRef("AirbusFBW/AlphaProt");
             qpac_alpha_max = XPLMFindDataRef("AirbusFBW/AlphaMax");
             qpac_vfe_next = XPLMFindDataRef("qpac_airbus/pfdoutputs/general/VFENext_value");
+            qpac_v_green_dot_value = XPLMFindDataRef("qpac_airbus/pfdoutputs/general/VGreenDot_value");
+            qpac_vf_value = XPLMFindDataRef("qpac_airbus/pfdoutputs/general/VF_value");
+            qpac_vs_value = XPLMFindDataRef("qpac_airbus/pfdoutputs/general/VS_value");
+            qpac_v2_value = XPLMFindDataRef("qpac_airbus/performance/V2");
+            qpac_vr_value = XPLMFindDataRef("qpac_airbus/performance/VR");
+            qpac_alpha_floor_mode = XPLMFindDataRef("qpac_airbus/pfdoutputs/general/alpha_floor_mode");
+
             // Failures
             qpac_capt_hdg_valid = XPLMFindDataRef("AirbusFBW/CaptHDGValid");
             qpac_capt_att_valid = XPLMFindDataRef("AirbusFBW/CaptATTValid");

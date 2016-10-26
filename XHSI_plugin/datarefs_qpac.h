@@ -284,6 +284,13 @@ extern XPLMDataRef qpac_v_green_dot;
 extern XPLMDataRef qpac_alpha_prot;
 extern XPLMDataRef qpac_alpha_max;
 extern XPLMDataRef qpac_vfe_next;
+extern XPLMDataRef qpac_v_green_dot_value;
+extern XPLMDataRef qpac_vf_value;
+extern XPLMDataRef qpac_vs_value;
+extern XPLMDataRef qpac_v2_value;
+extern XPLMDataRef qpac_vr_value;
+extern XPLMDataRef qpac_alpha_floor_mode;
+
 // Failures
 extern XPLMDataRef qpac_capt_hdg_valid;
 extern XPLMDataRef qpac_capt_att_valid;
