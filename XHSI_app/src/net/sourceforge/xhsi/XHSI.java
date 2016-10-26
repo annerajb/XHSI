@@ -34,6 +34,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.lang.Runtime;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -93,6 +94,7 @@ public class XHSI implements ActionListener {
 
     // menu item commands must be unique...
     public static final String ACTION_QUIT  = "Quit";
+    public static final String ACTION_SHUTDOWN  = "Shutdown";
     public static final String ACTION_PREFERENCES = "Preferences ...";
     public static final String ACTION_ONTOP = "Windows on top";
     public static final String ACTION_ABOUT = "About XHSI ...";
@@ -792,10 +794,9 @@ public class XHSI implements ActionListener {
         String command = event.getActionCommand();
 
         if (command.equals(ACTION_QUIT)) {
-            logger.fine("stopping threads");
-            shutdown_threads();
-            logger.fine("clean exit from threads");
-            System.exit(0);
+            Quit();
+        } else if (command.equals(ACTION_SHUTDOWN)) { 
+        	ShutDown();
         } else if (command.equals(ACTION_PREFERENCES)) {
             // choose X-Plane directory etc
             this.preferences_dialog.setLocation(this.xhsi_frame.getX()+20, this.xhsi_frame.getY()+60);
@@ -837,5 +838,33 @@ public class XHSI implements ActionListener {
 
     }
 
+    public void Quit() {
+    	logger.fine("stopping threads");
+    	shutdown_threads();
+    	logger.fine("clean exit from threads");
+    	System.exit(0);
+    }
+    
+    public static void ShutDown() {
+    	String shutdownCommand;
+    	String operatingSystem = System.getProperty("os.name");
+
+    	if ("Linux".equals(operatingSystem) || "Mac OS X".equals(operatingSystem)) {
+    		shutdownCommand = "sudo shutdown -h now";
+    	}
+    	else if ("Windows".equals(operatingSystem)) {
+    		shutdownCommand = "shutdown.exe -s -t 0";
+    	}
+    	else {
+    		throw new RuntimeException("Unsupported operating system.");
+    	}
+
+    	try {
+			Runtime.getRuntime().exec(shutdownCommand);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
 
 }
