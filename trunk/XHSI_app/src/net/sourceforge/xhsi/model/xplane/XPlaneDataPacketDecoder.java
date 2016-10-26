@@ -32,6 +32,8 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.util.logging.Logger;
 
+import net.sourceforge.xhsi.XHSI;
+import net.sourceforge.xhsi.XHSIPreferences;
 //import net.sourceforge.xhsi.XHSISettings;
 import net.sourceforge.xhsi.model.CoordinateSystem;
 //import net.sourceforge.xhsi.model.Avionics;
@@ -50,12 +52,16 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
     private static String charset = "ISO-8859-1";
 
+    public static final int RCMD_CLOSE = 1;
+    public static final int RCMD_SHUTDOWN = 2;
+    
     private boolean received_adc_packet = false;
     private boolean received_fms_packet = false;
     private boolean received_tcas_packet = false;
     private boolean received_xfmc_packet = false;
     private boolean received_ewd_packet = false;
     private boolean received_cdu_packet = false;
+    public XHSIPreferences preferences;
 
     // list of sim data id's that need the anti-jitter filter
     private int[] jitter_id = { XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_MAGPSI,
@@ -86,6 +92,7 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
 
     public XPlaneDataPacketDecoder(ModelFactory sim_model) {
         this.xplane_data_repository = sim_model.get_repository_instance();
+        this.preferences = XHSIPreferences.get_instance();
     }
 
 
@@ -490,6 +497,18 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
             
             this.received_cdu_packet = true;
             
+        } else if (packet_type.equals("RCMD")) {
+            DataInputStream data_stream = new DataInputStream(new ByteArrayInputStream(sim_data));
+            data_stream.skipBytes(4);    // skip the bytes containing the packet type id
+
+            int remote_command = data_stream.readInt();
+            if (remote_command == RCMD_CLOSE) {
+            	System.exit(0);
+            } else if (remote_command == RCMD_SHUTDOWN && this.preferences.get_shutdown_allowed()) {
+            	XHSI.ShutDown();
+            	System.exit(0);
+            }
+        	
         }
 
         // no, only for sim data packets

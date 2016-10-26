@@ -71,6 +71,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JComboBox loglevel_combobox;
     private JComboBox operator_combobox;
     private String operators[] = { XHSIPreferences.PILOT, XHSIPreferences.COPILOT, XHSIPreferences.INSTRUCTOR };
+    private JCheckBox allow_shutdown;
 
     private JCheckBox conwin_minimized_checkbox;
     private JCheckBox start_ontop_checkbox;
@@ -254,6 +255,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
                 this.loglevel_combobox.setSelectedIndex(i);
             }
         }
+        this.allow_shutdown.setSelected(preferences.get_preference(XHSIPreferences.PREF_ALLOW_SHUTDOWN).equalsIgnoreCase("true"));;
 
         
         // GRAPHICS
@@ -678,6 +680,18 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         system_panel.add(this.operator_combobox, cons);
         dialog_line++;
 
+        // Remote Shutdown
+        cons.gridx = 0;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        system_panel.add(new JLabel("Allow remote shutdown", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.allow_shutdown = new JCheckBox("");
+        system_panel.add(this.allow_shutdown, cons);
+        dialog_line++;
+        
         // Empty line for spacing
         cons.gridx = 0;
         cons.gridwidth = 1;
@@ -2044,7 +2058,10 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             
             if ( ! operators[this.operator_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_INSTRUMENT_POSITION)) )
                 this.preferences.set_preference(XHSIPreferences.PREF_INSTRUMENT_POSITION, operators[this.operator_combobox.getSelectedIndex()]);
-
+ 
+            if ( this.allow_shutdown.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_ALLOW_SHUTDOWN).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_ALLOW_SHUTDOWN, this.allow_shutdown.isSelected()?"true":"false");
+ 
 
             // GRAPHICS
 

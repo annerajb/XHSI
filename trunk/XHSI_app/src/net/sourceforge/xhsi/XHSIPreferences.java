@@ -52,6 +52,7 @@ public class XHSIPreferences {
     public static final String PREF_INSTRUMENT_POSITION = "instrument.position";
     public static final String PREF_DISPLAY_STATUSBAR = "display.statusbar";
     public static final String PREF_SIMCOM = "simulator.communication";
+    public static final String PREF_ALLOW_SHUTDOWN = "simulator.allow_shutdown";
 
     // WINDOWS
     public static final String PREF_START_ONTOP = "windows.start.ontop";
@@ -361,6 +362,9 @@ public class XHSIPreferences {
         return get_preference(PREF_INSTRUMENT_POSITION);
     }
 
+    public boolean get_shutdown_allowed() {
+    	return get_preference(PREF_ALLOW_SHUTDOWN).equalsIgnoreCase("true");
+    }
     
     // WINDOWS
 
@@ -1016,6 +1020,11 @@ public class XHSIPreferences {
 
         if ( ! this.preferences.containsKey(PREF_SIMCOM) ) {
             this.preferences.setProperty(PREF_SIMCOM, XHSI_PLUGIN);
+            this.unsaved_changes = true;
+        }
+        
+        if ( ! this.preferences.containsKey(PREF_ALLOW_SHUTDOWN) ) {
+            this.preferences.setProperty(PREF_ALLOW_SHUTDOWN, "false");
             this.unsaved_changes = true;
         }
 
