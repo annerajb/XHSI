@@ -498,6 +498,10 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int X737_EFIS1_DATA = 859;
     public static final int X737_EFIS1_POS = 860;
     public static final int X737_EFIS1_TERR = 861;
+    public static final int X737_EFIS0_DH_SRC = 862;
+    public static final int X737_EFIS0_DH_VAL = 863;
+    public static final int X737_EFIS1_DH_SRC = 864;
+    public static final int X737_EFIS1_DH_VAL = 865;
 
     
     // CL30

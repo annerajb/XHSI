@@ -193,60 +193,72 @@ public class XPlaneAircraft implements Aircraft {
     public int ra_bug() {
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
             // copilot
-            return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_GAUGES_ACTUATORS_RADIO_ALTIMETER_BUG_FT_COPILOT));
+            if (this.avionics.is_x737()) return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_DH_VAL));
+            else return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_GAUGES_ACTUATORS_RADIO_ALTIMETER_BUG_FT_COPILOT));
         } else {
             // pilot or instructor
-            return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_GAUGES_ACTUATORS_RADIO_ALTIMETER_BUG_FT_PILOT));
+            if (this.avionics.is_x737()) return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_DH_VAL));
+            else return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_GAUGES_ACTUATORS_RADIO_ALTIMETER_BUG_FT_PILOT));
         }
     }
 
     public int ra_bug(boolean pilot) {
         if (!pilot) {
             // copilot
-            return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_GAUGES_ACTUATORS_RADIO_ALTIMETER_BUG_FT_COPILOT));
+            if (this.avionics.is_x737()) return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_DH_VAL));
+            else return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_GAUGES_ACTUATORS_RADIO_ALTIMETER_BUG_FT_COPILOT));
         } else {
             // pilot or instructor
-            return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_GAUGES_ACTUATORS_RADIO_ALTIMETER_BUG_FT_PILOT));
+            if (this.avionics.is_x737()) return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_DH_VAL));
+            else return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_GAUGES_ACTUATORS_RADIO_ALTIMETER_BUG_FT_PILOT));
         }
     }
     
     public int da_bug() {
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
             // copilot
-            return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_DA_BUG));
+            if (this.avionics.is_x737()) return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_DH_VAL));
+            else return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_DA_BUG));
         } else {
             // pilot or instructor
-            return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_DA_BUG));
+            if (this.avionics.is_x737()) return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_DH_VAL));
+            else return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_DA_BUG));
         }
     }
 
     public int da_bug(boolean pilot) {
         if (!pilot) {
             // copilot
-            return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_DA_BUG));
+            if (this.avionics.is_x737()) return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_DH_VAL));
+            else return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_DA_BUG));
         } else {
             // pilot or instructor
-            return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_DA_BUG));
+            if (this.avionics.is_x737()) return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_DH_VAL));
+            else return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_DA_BUG));
         }
     }
     
     public boolean mins_is_baro() {
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
             // copilot
-            return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MINS_MODE) == 1.0);
+            if (this.avionics.is_x737()) return ( sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_DH_SRC) == 1.0);
+            else return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MINS_MODE) == 1.0);
         } else {
             // pilot or instructor
-            return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_MINS_MODE) == 1.0);
+            if (this.avionics.is_x737()) return ( sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_DH_SRC) == 1.0);
+            else return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_MINS_MODE) == 1.0);
         }
     }
 
     public boolean mins_is_baro(boolean pilot) {
         if (!pilot) {
             // copilot
-            return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MINS_MODE) == 1.0);
+            if (this.avionics.is_x737()) return ( sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS1_DH_SRC) == 1.0);
+            else return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_MINS_MODE) == 1.0);
         } else {
             // pilot or instructor
-            return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_MINS_MODE) == 1.0);
+            if (this.avionics.is_x737()) return ( sim_data.get_sim_float(XPlaneSimDataRepository.X737_EFIS0_DH_SRC) == 1.0);
+            else return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_MINS_MODE) == 1.0);
         }
     }
     

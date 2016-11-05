@@ -1420,6 +1420,12 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(X737_EFIS0_TERR);
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(x737_efis0_TERR));
         i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(X737_EFIS0_DH_SRC);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(x737_efis0_DH_source));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(X737_EFIS0_DH_VAL);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(x737_efis0_DH_value));
+        i++;
         
         // EFIS f/o
         sim_packet.sim_data_points[i].id = custom_htoni(X737_EFIS1_ND_RANGE_ENUM);
@@ -1457,6 +1463,12 @@ int createCustomAvionicsPacket(void) {
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(X737_EFIS1_TERR);
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(x737_efis1_TERR));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(X737_EFIS1_DH_SRC);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(x737_efis1_DH_source));
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(X737_EFIS1_DH_VAL);
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(x737_efis1_DH_value));
         i++;
         
     }

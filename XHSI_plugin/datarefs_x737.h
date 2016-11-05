@@ -80,6 +80,8 @@ extern XPLMDataRef x737_efis0_ARPT;
 extern XPLMDataRef x737_efis0_DATA;
 extern XPLMDataRef x737_efis0_POS;
 extern XPLMDataRef x737_efis0_TERR;
+extern XPLMDataRef x737_efis0_DH_source;
+extern XPLMDataRef x737_efis0_DH_value;
             
 extern XPLMDataRef x737_efis1_nd_range_enum;
 extern XPLMDataRef x737_efis1_FPV;
@@ -93,6 +95,8 @@ extern XPLMDataRef x737_efis1_ARPT;
 extern XPLMDataRef x737_efis1_DATA;
 extern XPLMDataRef x737_efis1_POS;
 extern XPLMDataRef x737_efis1_TERR;
+extern XPLMDataRef x737_efis1_DH_source;
+extern XPLMDataRef x737_efis1_DH_value;
 
 
 extern int x737_ready;
