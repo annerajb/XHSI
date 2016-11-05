@@ -99,6 +99,8 @@ XPLMDataRef x737_efis0_ARPT;
 XPLMDataRef x737_efis0_DATA;
 XPLMDataRef x737_efis0_POS;
 XPLMDataRef x737_efis0_TERR;
+XPLMDataRef x737_efis0_DH_source;
+XPLMDataRef x737_efis0_DH_value;
             
 XPLMDataRef x737_efis1_nd_range_enum;
 XPLMDataRef x737_efis1_FPV;
@@ -112,6 +114,8 @@ XPLMDataRef x737_efis1_ARPT;
 XPLMDataRef x737_efis1_DATA;
 XPLMDataRef x737_efis1_POS;
 XPLMDataRef x737_efis1_TERR;
+XPLMDataRef x737_efis1_DH_source;
+XPLMDataRef x737_efis1_DH_value;
 
             
 int x737_ready = 0;
@@ -216,6 +220,8 @@ void findX737DataRefs(void) {
             x737_efis0_DATA = XPLMFindDataRef("x737/cockpit/EFISCTRL_0/DATA_on");
             x737_efis0_POS = XPLMFindDataRef("x737/cockpit/EFISCTRL_0/POS_on");
             x737_efis0_TERR = XPLMFindDataRef("x737/cockpit/EFISCTRL_0/TERR_on");
+            x737_efis0_DH_source = XPLMFindDataRef("x737/cockpit/EFISCTRL_0/DH_source");
+            x737_efis0_DH_value = XPLMFindDataRef("x737/cockpit/EFISCTRL_0/DH_value");
 
             x737_efis1_nd_range_enum = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/ND_RANGE_ENUM");
             x737_efis1_FPV = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/FPV_on");
@@ -229,6 +235,8 @@ void findX737DataRefs(void) {
             x737_efis1_DATA = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/DATA_on");
             x737_efis1_POS = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/POS_on");
             x737_efis1_TERR = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/TERR_on");
+            x737_efis1_DH_source = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/DH_source");
+            x737_efis1_DH_value = XPLMFindDataRef("x737/cockpit/EFISCTRL_1/DH_value");
             
         }
 
