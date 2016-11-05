@@ -1786,7 +1786,7 @@ public class MovingMap extends NDSubcomponent {
         
         if ( (next_entry != null) && ( ! next_entry.name.equals("NTFND") ) ) {
             // draw a line to the next waypoint
-            if ( inactive || ! next_entry.name.equals(this.avionics.gps_nav_id()) ) {
+            if ( inactive /* || ! next_entry.name.equals(this.avionics.gps_nav_id()) */ ) {
                 // the next FMS waypoint is not active, or it seems to be active, but the GPS datarefs is targetting another waypoint
                 g2.setColor(nd_gc.fmc_other_color);
             } else {
