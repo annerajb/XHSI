@@ -282,9 +282,9 @@ public class CDUJarDesign extends CDUSubcomponent {
     
     private void decodeFont(Graphics2D g2, char font_code) {
     	switch (font_code) {
-    	case 'l' : g2.setFont(cdu_gc.cdu_normal_font); break;
-    	case 's' : g2.setFont(cdu_gc.cdu_small_font); break;
-        default : g2.setFont(cdu_gc.cdu_normal_font); break;
+    	case 'l' : g2.setFont(cdu_gc.cdu_25_normal_font); break;
+    	case 's' : g2.setFont(cdu_gc.cdu_25_small_font); break;
+        default : g2.setFont(cdu_gc.cdu_25_normal_font); break;
     	}
     }
     
@@ -319,10 +319,10 @@ public class CDUJarDesign extends CDUSubcomponent {
          
             List<CduLine> l = QpacMcduData.decodeLine(QpacMcduData.getLine(Avionics.CDU_LEFT,i));
             for(CduLine o : l){                    
-                    x = (int) Math.round( cdu_gc.cdu_screen_topleft_x + o.pos * cdu_gc.cdu_digit_width);
+                    x = (int) Math.round( cdu_gc.cdu_screen_topleft_x + o.pos * cdu_gc.cdu_25_digit_width);
                     decodeColor(g2, o.color );
                     decodeFont(g2, o.font );
-                    g2.drawString(translateCduLine(o.text), x, yy);
+                    g2.drawString(translateCduLine(o.text), x, cdu_gc.cdu_line[i]);
             }    
         }
     }

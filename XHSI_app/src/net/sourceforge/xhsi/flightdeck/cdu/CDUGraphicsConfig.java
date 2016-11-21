@@ -52,6 +52,7 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int cdu_first_line;
     public int cdu_dy_line;
     public int cdu_scratch_line; 
+    public int cdu_line[] = new int [14];
     
     int cdu_screen_topleft_x = 81;
     int cdu_screen_topleft_y = 56;
@@ -60,8 +61,17 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
     
     Font cdu_small_font;
     Font cdu_normal_font;
-
     int cdu_digit_width;
+
+    // QPAC MCDU is calibated for 24 columns 
+    Font cdu_24_small_font;
+    Font cdu_24_normal_font;
+    int cdu_24_digit_width;
+
+    // JarDesing MCDU is calibated for 25 columns 
+    Font cdu_25_small_font;
+    Font cdu_25_normal_font;
+    int cdu_25_digit_width;
     
     public Rectangle raised_panel;
     public GradientPaint panel_gradient;
@@ -107,12 +117,32 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
             	cdu_screen_width = panel_rect.width;
             	cdu_screen_height = panel_rect.height;
             	cdu_normal_font = font_fixed_zl;
+            	
             	// Align font text spacing with normal font
             	Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>();
             	attributes.put(TextAttribute.TRACKING, 0.145);
             	cdu_small_font= font_fixed_xxxl.deriveFont(attributes);
             	// cdu_small_font = font_fixed_xxxl;
             	cdu_digit_width = digit_width_fixed_zl;
+
+            	// CDU 24
+            	float delta_24 = 1.0f-((digit_width_fixed_zl*24.6f)/cdu_screen_width);
+            	attributes.put(TextAttribute.TRACKING, delta_24);
+            	cdu_24_normal_font = font_fixed_zl.deriveFont(attributes);            	
+            	// attributes.put(TextAttribute.TRACKING, delta_24+0.145);
+            	attributes.put(TextAttribute.TRACKING, 1.0f-((digit_width_fixed_xxxl*25.5f)/cdu_screen_width) );
+            	cdu_24_small_font= font_fixed_xxxl.deriveFont(attributes);
+            	cdu_24_digit_width = Math.round(digit_width_fixed_zl*(1+delta_24));           	
+
+            	
+            	// CDU 25
+            	float delta_25 = 1.0f-((digit_width_fixed_zl*25.7f)/cdu_screen_width);
+            	attributes.put(TextAttribute.TRACKING, delta_25);
+            	cdu_25_normal_font = font_fixed_zl.deriveFont(attributes);
+            	attributes.put(TextAttribute.TRACKING, 1.0f-((digit_width_fixed_xxxl*26.5f)/cdu_screen_width));
+            	cdu_25_small_font= font_fixed_xxxl.deriveFont(attributes);
+            	cdu_25_digit_width = Math.round(digit_width_fixed_zl*(1+delta_25));           	
+            	
                 cdu_size = Math.min(cdu_screen_width, cdu_screen_height);
                 cdu_middle_x = cdu_screen_topleft_x + cdu_screen_width / 2;
                 cdu_dy_line = cdu_size / 14 ;
@@ -123,6 +153,7 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
             	cdu_screen_topleft_y = panel_rect.y+panel_rect.height*65/800;
             	cdu_screen_width = panel_rect.width*338/480;
             	cdu_screen_height = panel_rect.height*315/800;
+            	
             	cdu_normal_font = font_fixed_xxl;
             	// Align font text spacing with normal font
             	Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>();
@@ -130,13 +161,34 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
             	cdu_small_font= font_fixed_xl.deriveFont(attributes);
             	// cdu_small_font = font_fixed_xl;
             	cdu_digit_width = digit_width_fixed_xxl;
+            	
+            	// CDU 24
+            	float delta_24 = 1.0f-((digit_width_fixed_xxl*25.5f)/cdu_screen_width);
+            	attributes.put(TextAttribute.TRACKING, delta_24);
+            	cdu_24_normal_font = font_fixed_xxl.deriveFont(attributes);
+            	attributes.put(TextAttribute.TRACKING, 1.0f-((digit_width_fixed_xl*27.0f)/cdu_screen_width) );
+            	cdu_24_small_font= font_fixed_xl.deriveFont(attributes);
+            	cdu_24_digit_width = Math.round(digit_width_fixed_xxl*(1+delta_24));           	
+
+            	
+            	// CDU 25
+            	float delta_25 = 1.0f-((digit_width_fixed_xxl*26.3f)/cdu_screen_width);
+            	attributes.put(TextAttribute.TRACKING, delta_25);
+            	cdu_25_normal_font = font_fixed_xxl.deriveFont(attributes);
+            	attributes.put(TextAttribute.TRACKING, 1.0f-((digit_width_fixed_xl*28.0f)/cdu_screen_width));
+            	cdu_25_small_font= font_fixed_xl.deriveFont(attributes);
+            	cdu_25_digit_width = Math.round(digit_width_fixed_xxl*(1+delta_25));           	
+
                 cdu_size = Math.min(cdu_screen_width, cdu_screen_height);
                 cdu_middle_x = cdu_screen_topleft_x + cdu_screen_width / 2;
                 cdu_dy_line = cdu_screen_height / 14 ;
             	cdu_first_line = cdu_screen_topleft_y + line_height_fixed_xxl;
             	cdu_scratch_line = cdu_screen_topleft_y + cdu_screen_height - line_height_fixed_xxl/10;
             }
-            
+ 
+        	for (int i=0;i<14;i++) {
+        		cdu_line[i] = cdu_first_line + (i*cdu_screen_height)/14;
+        	}
                  
             float cdu_panel_aspect;
             switch (source) {
