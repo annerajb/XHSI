@@ -95,6 +95,7 @@ public class XPlaneCommand implements SimCommand {
     // Systems
     public static final int AP_KEY_PITOT_HEAT_TOGGLE = 60;
     
+
     ModelFactory model_factory;
     Aircraft aircraft;
     Avionics avionics;
@@ -109,7 +110,7 @@ public class XPlaneCommand implements SimCommand {
         this.preferences = XHSIPreferences.get_instance();
         this.udp_sender = XPlaneUDPSender.get_instance();
     }
-
+    
     public void send(int button_id) {
         switch (button_id) {
             case CMD_EFIS_CAPT_CSTR:

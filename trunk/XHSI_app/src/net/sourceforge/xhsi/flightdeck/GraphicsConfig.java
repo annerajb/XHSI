@@ -174,7 +174,7 @@ public class GraphicsConfig implements ComponentListener {
     public Color color_airbusknob = new Color(0xD1D2D3); // was : 0xEDEDEB
     
     // Airbus grey
-    public Color color_airbusgray = new Color(0x7f7f87);
+    public Color color_airbusgray = new Color(0x5f5f67); // was: 0x7f7f87
 
     // Airbus PFD Colors
     public Color color_airbus_selected = Color.cyan;
@@ -407,6 +407,7 @@ public class GraphicsConfig implements ComponentListener {
     public boolean resized = false;
     public boolean reconfig = true;
     public boolean reconfigured = true;
+    public long reconfigured_timestamp=0;
 
     public int display_unit;
 
@@ -852,6 +853,10 @@ public class GraphicsConfig implements ComponentListener {
     public void update_config(Graphics2D g2) {
 
         // we got here because one of the settings has been changed
+    	
+    	// remember the time of the graphic reconfiguration
+    	// some object might check this time to update their cached image
+    	reconfigured_timestamp = System.currentTimeMillis();
 
         // clear the flags
         this.resized = false;

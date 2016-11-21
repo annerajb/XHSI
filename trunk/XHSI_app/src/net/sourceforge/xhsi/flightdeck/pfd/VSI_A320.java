@@ -33,6 +33,8 @@ import java.text.DecimalFormat;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSIStatus;
+import net.sourceforge.xhsi.flightdeck.pfd.PFDFramedElement.PFE_Align;
+import net.sourceforge.xhsi.flightdeck.pfd.PFDFramedElement.PFE_Color;
 import net.sourceforge.xhsi.model.ModelFactory;
 
 public class VSI_A320 extends PFDSubcomponent {
@@ -42,9 +44,14 @@ public class VSI_A320 extends PFDSubcomponent {
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
+    PFDFramedElement failed_flag;
 
     public VSI_A320(ModelFactory model_factory, PFDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
+        failed_flag = new PFDFramedElement(PFDFramedElement.VS_FLAG, 0, hsi_gc, PFE_Color.PFE_COLOR_ALARM, PFE_Align.LEFT);
+        failed_flag.enableFlashing();
+        failed_flag.disableFraming();
+        failed_flag.setBigFont(true);
     }
 
 
@@ -55,6 +62,7 @@ public class VSI_A320 extends PFDSubcomponent {
     			// if the vertical speed information fails, the V/S flag (red) replaces the vertical speed scale
     			if ( pfd_gc.powered ) drawFailedDial(g2);
     		} else if ( pfd_gc.powered ) {
+    			failed_flag.clearText();
     			drawDial(g2);
     		} 
     	}
@@ -108,12 +116,9 @@ public class VSI_A320 extends PFDSubcomponent {
     	g2.setColor(pfd_gc.instrument_background_color);
     	g2.fillPolygon(vsi_scale_x, vsi_scale_y, 10);
     	pfd_gc.setOpaque(g2);
-
-        g2.setFont(pfd_gc.font_xxl);
-    	g2.setColor(pfd_gc.warning_color);
-        g2.drawString("V", pfd_gc.vsi_left+pfd_gc.vsi_width/5, pfd_gc.adi_cy - pfd_gc.line_height_xxl/2 - 4);
-        g2.drawString("/", pfd_gc.vsi_left+pfd_gc.vsi_width/5, pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 4);
-        g2.drawString("S", pfd_gc.vsi_left+pfd_gc.vsi_width/5, pfd_gc.adi_cy + pfd_gc.line_height_xxl*3/2 - 4);
+     
+    	failed_flag.setText("V","/", "S", PFE_Color.PFE_COLOR_ALARM);    	
+    	failed_flag.paint(g2);
     }
 
     private void drawDial(Graphics2D g2) {

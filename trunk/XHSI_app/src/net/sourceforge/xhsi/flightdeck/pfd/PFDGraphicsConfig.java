@@ -6,6 +6,7 @@
  *
  * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
  * Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
+ * Copyright (C) 2016  Nicolas Carel
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,32 +25,14 @@
 package net.sourceforge.xhsi.flightdeck.pfd;
 
 import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
-import java.util.HashMap;
 import java.util.logging.Logger;
-import java.util.Map;
-
-import net.sourceforge.xhsi.XHSIInstrument;
-import net.sourceforge.xhsi.XHSIPreferences;
 
 import net.sourceforge.xhsi.model.Avionics;
-
 import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
 
 
@@ -128,22 +111,13 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     
     
 
-
-
     public PFDGraphicsConfig(Component root_component, int du) {
         super(root_component);
         this.display_unit = du;
         init();
     }
 
-
-//    public void init() {
-//
-//        super.init();
-//
-//    }
-
-
+    
     public void update_config(Graphics2D g2, boolean power, int instrument_style) {
 
         if (this.resized
@@ -157,7 +131,7 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             this.powered = power;
             this.style = instrument_style;
             
-//logger.warning("PFD update_config");
+            //logger.warning("PFD update_config");
             // general instrument config
             super.update_config(g2);
 
@@ -284,26 +258,10 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             ils_line2 = ils_line3 + line_height_l;
             ils_line1 = ils_line2 + line_height_l;
             ils_x = speedtape_left;
-            
-//            // clear the flags
-//            this.resized = false;
-//            this.reconfig = false;
-//            // some subcomponents need to be reminded to redraw imediately
-//            this.reconfigured = true;
 
         }
 
     }
-
-
-//    public int get_text_width(Graphics graphics, Font font, String text) {
-//        return graphics.getFontMetrics(font).stringWidth(text);
-//    }
-
-
-//    public int get_text_height(Graphics graphics, Font font) {
-//        return graphics.getFontMetrics(font).getHeight();
-//    }
 
 
     public void componentResized(ComponentEvent event) {
@@ -344,6 +302,5 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             g2.setComposite(orig_cmpst);
         }
     }
-
 
 }

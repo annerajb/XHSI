@@ -308,6 +308,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_AIRCRAFT_ENGINE_RED_OIL_P = 342;
     public static final int SIM_AIRCRAFT_ENGINE_RED_OIL_T = 343;
     public static final int SIM_AIRCRAFT_ENGINE_RED_EPR = 344;
+    public static final int XHSI_AIRCRAFT_NOSE_TIRE_REF_PRESSURE = 345;
+    public static final int XHSI_AIRCRAFT_MAIN_TIRE_REF_PRESSURE = 346;
     
     // Controls & annunciators
     public static final int SIM_COCKPIT2_ANNUNCIATORS_MASTER_CAUTION = 350;
@@ -646,8 +648,14 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_EFIS_ND_SYMBOLS=1057;
     // Failures flags
     public static final int QPAC_FAILURES=1060;
-    // Brakes
+    // Brakes & Tyres
     public static final int QPAC_AUTO_BRAKE_LEVEL=1061;
+    public static final int QPAC_BRAKE_ACCU_PSI=1106;
+    public static final int QPAC_BRAKE_LEFT_PSI=1107;
+    public static final int QPAC_BRAKE_RIGHT_PSI=1108;
+    public static final int QPAC_BRAKE_TEMP_=1110; // Array[5]
+    public static final int QPAC_TYRE_PSI_=1115; // Array[5]
+    public static final int QPAC_BRAKE_STATUS=1120;
     // FLAPS and SLATS
     public static final int QPAC_FLAPS_REQ_POS=1062;
     public static final int QPAC_SLATS_REQ_POS=1063;

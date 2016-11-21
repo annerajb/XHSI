@@ -423,6 +423,8 @@ public class XPlaneAircraft implements Aircraft {
     	/* by default, return OAT */
     	if (this.avionics.is_jar_a320neo()) {
     		return sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_BRAKE_TEMP_ + brake);    		
+    	} else if (this.avionics.is_qpac()) {
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_BRAKE_TEMP_ + brake);  
     	} else 
     		return oat();
     }
@@ -499,19 +501,21 @@ public class XPlaneAircraft implements Aircraft {
     	float isa_k = 273.15f + 13;
     	float oat_k = 273.15f + oat();
     	float delta_t = 1+((oat_k-isa_k) / isa_k);
-    	return tire_blown ? 0.0f : tire_ref_psi(tire) * delta_t;
+    	float tire_pressure = tire_ref_psi(tire) * delta_t;
+    	if (this.avionics.is_qpac()) {
+    		tire_pressure = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_TYRE_PSI_+tire);
+    	// } else if (this.avionics.is_jar_a320neo()) {
+    	//	tire_pressure = sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_TYRE_PSI_+tire);
+    	}
+    	return tire_blown ? 0.0f : tire_pressure;
     }
 
     public float tire_ref_psi(int tire) {
-    	// TODO: Preferences to set tire reference pressures
-    	// Preset : reference pressure for A320
     	if (tire==0) {
-    		// Nose gear
-    		return 180.0f;
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_AIRCRAFT_NOSE_TIRE_REF_PRESSURE);
     	} else {
-    		// Main gears
-    		return 200.0f;
-    	}    	
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_AIRCRAFT_MAIN_TIRE_REF_PRESSURE);
+    	}
     }
     
     // TODO: remove !
