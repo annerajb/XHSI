@@ -249,13 +249,13 @@ public class CDUXfmc extends CDUSubcomponent {
             for(int i=0; i < 14; i++){
                 int x=i, xx = 0, yy = 0;
                 if(i==0) {
-                    xx = 0;
+                    // xx = 0;
                     yy = upper_y;
                 } else if ((i > 0) && (i < 13)){
                     x = (((i+1) / 2) * 2) - ((i % 2) == 1 ? 0 : 1);
                     yy = new Double(dy*(i)).intValue();
                 } else if(i == 13) { 
-                    xx = 0;
+                    // xx = 0;
                     yy = new Double(dy*scratch_y_coef).intValue();
                 }
 
@@ -263,13 +263,15 @@ public class CDUXfmc extends CDUSubcomponent {
                 for(Object o : l){
                         Object[] pts = (Object[]) o;
                         xx = new Double((Integer)pts[1]*char_width_coef).intValue();
-
-                        g2.setColor(((Integer)pts[0]).intValue() == 0 ? cdu_gc.markings_color : cdu_gc.color_boeingcyan);
+                        if (i ==13) {
+                        	g2.setColor(cdu_gc.cdu_scratch_pad_color);
+                        } else {
+                        	g2.setColor(((Integer)pts[0]).intValue() == 0 ? cdu_gc.cdu_title_color : cdu_gc.cdu_data_color);	
+                        }                      
                         g2.drawString((String)pts[2], xx, yy);
-                }
+                 }
             }
             xfmcData.updated=false;
-
     }
     
     public void mousePressed(Graphics2D g2, MouseEvent e) {

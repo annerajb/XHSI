@@ -294,9 +294,9 @@ public class CDUQpac extends CDUSubcomponent {
     
     private void decodeFont(Graphics2D g2, char font_code) {
     	switch (font_code) {
-    	case 'l' : g2.setFont(cdu_gc.cdu_normal_font); break;
-    	case 's' : g2.setFont(cdu_gc.cdu_small_font); break;
-        default : g2.setFont(cdu_gc.cdu_normal_font); break;
+    	case 'l' : g2.setFont(cdu_gc.cdu_24_normal_font); break;
+    	case 's' : g2.setFont(cdu_gc.cdu_24_small_font); break;
+        default : g2.setFont(cdu_gc.cdu_24_normal_font); break;
     	}
     }
     
@@ -320,31 +320,15 @@ public class CDUQpac extends CDUSubcomponent {
     	return result;
     }
     
-    private void drawDisplayLines(Graphics2D g2, int mcdu_side) {
-    	
+    private void drawDisplayLines(Graphics2D g2, int mcdu_side) {    	
         for(int i=0; i < 14; i++) {        
-
-            int x = 0, yy = 0;
-            if(i==0) {
-                yy = cdu_gc.cdu_first_line;
-            } else if ((i > 0) && (i < 13)){
-                yy = cdu_gc.cdu_first_line + cdu_gc.cdu_dy_line*i;
-            } else if(i == 13) { 
-                yy = cdu_gc.cdu_scratch_line;
-            }
-            /* Debug */
-            /*
-            g2.setColor(Color.GRAY);
-            g2.setFont(cdu_gc.font_s);
-            g2.drawString(QpacMcduData.getLine(i), cdu_gc.cdu_middle_x, yy);
-            */            
-            
+            int x = 0;          
             List<CduLine> l = QpacMcduData.decodeLine(QpacMcduData.getLine(mcdu_side,i));
             for(CduLine o : l){                    
-                    x = (int) Math.round( cdu_gc.cdu_screen_topleft_x + o.pos * cdu_gc.cdu_digit_width);
+                    x = (int) Math.round( cdu_gc.cdu_screen_topleft_x + o.pos * cdu_gc.cdu_24_digit_width);
                     decodeColor(g2, o.color );
                     decodeFont(g2, o.font );
-                    g2.drawString(translateCduLine(o.text), x, yy);
+                    g2.drawString(translateCduLine(o.text), x, cdu_gc.cdu_line[i]);
             }    
         }
         qpac_mcdu_data.updated = false;

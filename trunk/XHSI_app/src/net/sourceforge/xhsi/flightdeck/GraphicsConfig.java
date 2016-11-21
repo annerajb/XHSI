@@ -174,7 +174,7 @@ public class GraphicsConfig implements ComponentListener {
     public Color color_airbusknob = new Color(0xD1D2D3); // was : 0xEDEDEB
     
     // Airbus grey
-    public Color color_airbusgray = new Color(0x5f5f67); // was: 0x7f7f87
+    public Color color_airbusgray = new Color(0x585860); // was: 0x7f7f87
 
     // Airbus PFD Colors
     public Color color_airbus_selected = Color.cyan;
@@ -272,6 +272,11 @@ public class GraphicsConfig implements ComponentListener {
     public Color pfd_active_color;
     public Color pfd_caution_color;
     public Color pfd_alarm_color;
+    
+    // CDU colors
+    public Color cdu_title_color;
+    public Color cdu_data_color;
+    public Color cdu_scratch_pad_color;
 
     String font_name = "Verdana";   
     public Font font_statusbar;
@@ -683,7 +688,7 @@ public class GraphicsConfig implements ComponentListener {
         	ecam_markings_color = Color.white;
         	ecam_action_color = Color.cyan;
         	ecam_special_color = Color.magenta;    
-        	ecam_box_bg_color = new Color(0x0f1c60);
+        	ecam_box_bg_color = color_airbusgray.darker(); // was new Color(0x0f1c60);
             
             // PFD colors - used to managed PFD lightening
             if ( this.settings.style == Avionics.STYLE_AIRBUS ) {
@@ -727,6 +732,13 @@ public class GraphicsConfig implements ComponentListener {
             pfd_active_color = Color.green;
             pfd_caution_color = color_amber;
             pfd_alarm_color = Color.red;
+            
+            // CDU colors
+            cdu_title_color = Color.green;
+            cdu_data_color = Color.white;
+            cdu_scratch_pad_color = Color.white;
+            
+            
         } else {
             background_color = Color.BLACK;
             navaid_color = color_boeingcyan;
@@ -789,7 +801,7 @@ public class GraphicsConfig implements ComponentListener {
         	ecam_markings_color = Color.white;
         	ecam_action_color = Color.cyan;
         	ecam_special_color = Color.magenta;
-        	ecam_box_bg_color = new Color(0x0f1c60);
+        	ecam_box_bg_color = color_airbusgray; // was new Color(0x0f1c60);
         	
             // PFD Colors - used to managed PFD lightening
             if ( this.settings.style == Avionics.STYLE_AIRBUS ) {
@@ -830,6 +842,11 @@ public class GraphicsConfig implements ComponentListener {
             pfd_active_color = Color.green;
             pfd_caution_color = color_amber;
             pfd_alarm_color = Color.red;
+            
+            // CDU colors
+            cdu_title_color = Color.white;
+            cdu_data_color = Color.white;
+            cdu_scratch_pad_color = Color.white;
             
         }
 

@@ -191,7 +191,7 @@ public class FlightControls extends MFDSubcomponent {
     	// Hydraulic box "GBY"
     	// Text in green is circuit ok, amber when low pressure (<2000 psi)
     	if (this.airbus_controls) {
-    		g2.setColor(mfd_gc.color_airbusgray.darker());
+    		g2.setColor(mfd_gc.ecam_box_bg_color);
     		g2.fillRect(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_box , mfd_gc.fctl_y_wing_box, mfd_gc.fctl_dx_wing_box*2, mfd_gc.fctl_box_height);
     		g2.setFont(mfd_gc.font_l);
     		int hyd_str_x = mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_box * 2/3 -  mfd_gc.digit_width_l/2;
@@ -317,7 +317,7 @@ public class FlightControls extends MFDSubcomponent {
     	// Text in green is circuit ok, amber when low pressure (<2000 psi)
     	// LEFT 1
     	if (airbus_controls) {
-    		g2.setColor(mfd_gc.color_airbusgray.darker());
+    		g2.setColor(mfd_gc.ecam_box_bg_color);
     		if (elac1 && elac2) {
     			g2.fillRect(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail_box1 - mfd_gc.fctl_dx_box_width , mfd_gc.fctl_y_ail_box_top,
     					mfd_gc.fctl_dx_box_width, mfd_gc.fctl_box_height);
@@ -359,7 +359,7 @@ public class FlightControls extends MFDSubcomponent {
     	}
     	// LEFT 2
     	/* 
-    	g2.setColor(mfd_gc.color_airbusgray.darker());
+    	g2.setColor(mfd_gc.ecam_box_bg_color);
     	g2.fillRect(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_ail_box2 - mfd_gc.fctl_dx_box_width , mfd_gc.fctl_y_ail_box_top,
     			    mfd_gc.fctl_dx_box_width, mfd_gc.fctl_box_height);
     	g2.setFont(mfd_gc.font_l);    	
@@ -376,7 +376,7 @@ public class FlightControls extends MFDSubcomponent {
 
     	// RIGHT 1
     	if (airbus_controls) {
-    		g2.setColor(mfd_gc.color_airbusgray.darker());
+    		g2.setColor(mfd_gc.ecam_box_bg_color);
     		if (elac1 && elac2) {
     			g2.fillRect(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_ail_box1  , mfd_gc.fctl_y_ail_box_top,
     					mfd_gc.fctl_dx_box_width, mfd_gc.fctl_box_height);
@@ -421,7 +421,7 @@ public class FlightControls extends MFDSubcomponent {
 
     	// RIGHT 2
     	/*
-    	g2.setColor(mfd_gc.color_airbusgray.darker());
+    	g2.setColor(mfd_gc.ecam_box_bg_color);
     	g2.fillRect(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_ail_box2  , mfd_gc.fctl_y_ail_box_top,
     			    mfd_gc.fctl_dx_box_width, mfd_gc.fctl_box_height);
     	g2.setFont(mfd_gc.font_l);    	    	
@@ -536,7 +536,7 @@ public class FlightControls extends MFDSubcomponent {
     	// Text in green is circuit ok, amber when low pressure (<2000 psi)
     	if (airbus_controls) {
         	// LEFT
-    		g2.setColor(mfd_gc.color_airbusgray.darker());
+    		g2.setColor(mfd_gc.ecam_box_bg_color);
     		if ((elac1||sec1) && (elac2||sec2)) {
     			g2.fillRect(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_elev_box - mfd_gc.fctl_dx_box_width , mfd_gc.fctl_y_elev_box_top,
     					mfd_gc.fctl_dx_box_width, mfd_gc.fctl_box_height);
@@ -579,7 +579,7 @@ public class FlightControls extends MFDSubcomponent {
     				hyd_text_y);
 
     		// RIGHT
-    		g2.setColor(mfd_gc.color_airbusgray.darker());
+    		g2.setColor(mfd_gc.ecam_box_bg_color);
 
     		if ((elac1||sec1) && (elac2||sec2)) {
     			g2.fillRect(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_elev_box , mfd_gc.fctl_y_elev_box_top,
@@ -678,7 +678,7 @@ public class FlightControls extends MFDSubcomponent {
     	// Hydraulic box "GBY"
     	// Text in green is circuit ok, amber when low pressure (<2000 psi)
     	if (airbus_controls) {
-    		g2.setColor(mfd_gc.color_airbusgray.darker());
+    		g2.setColor(mfd_gc.ecam_box_bg_color);
     		g2.fillRect(mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_box , mfd_gc.fctl_y_rud_box_top, mfd_gc.fctl_dx_wing_box*2, mfd_gc.fctl_box_height);
     		g2.setFont(mfd_gc.font_l);
     		int hyd_str_x = mfd_gc.fctl_mid_x - mfd_gc.fctl_dx_wing_box * 2/3 -  mfd_gc.digit_width_l/2;
@@ -759,7 +759,7 @@ public class FlightControls extends MFDSubcomponent {
     	
     	// hydraulic box
     	if (airbus_controls) {
-    		g2.setColor(mfd_gc.color_airbusgray.darker());
+    		g2.setColor(mfd_gc.ecam_box_bg_color);
     		g2.fillRect(mfd_gc.fctl_mid_x + mfd_gc.fctl_dx_pitch_box, mfd_gc.fctl_y_pitch_box_top,
     				mfd_gc.fctl_dx_box_width, mfd_gc.fctl_box_height);
     		g2.setFont(mfd_gc.font_l);    	
