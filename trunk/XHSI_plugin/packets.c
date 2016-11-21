@@ -1232,6 +1232,8 @@ int createCustomAvionicsPacket(void) {
     float qpac_vib_n2;
     float qpac_temp;
     int anti_ice;
+    float qpac_tyre_delta_t;
+    float qpac_tyre_pressure;
 
     int auto_brake_level;
     int brake_status;
@@ -1627,8 +1629,10 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ATHR_MODE2);
         if (pa_a320_ready && (XPLMGetDatai(pa_a320_thr_a_floor) > 0)) {
         	sim_packet.sim_data_points[i].value = custom_htonf((float) (XPLMGetDatai(pa_a320_thr_a_floor)+10));
+        } else if (qpac_alpha_floor_mode != NULL && (XPLMGetDatai(qpac_alpha_floor_mode) > 0)) {
+        	sim_packet.sim_data_points[i].value = custom_htonf((float) (XPLMGetDatai(qpac_alpha_floor_mode)+10));
         } else {
-        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_athr_mode2));
+        	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_athr_mode2));
         }
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_ATHR_LIMITED);
@@ -1796,7 +1800,7 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FAILURES);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_failures );
         i++;
-        // Brakes
+        // Brakes & Tyres
         if (XPLMGetDatai(qpac_autobrake_low) > 0) {
         	auto_brake_level=1;
         	}
@@ -1812,6 +1816,85 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_AUTO_BRAKE_LEVEL);
         sim_packet.sim_data_points[i].value = custom_htonf( (float) auto_brake_level );
         i++;
+        // Brake temperatures
+        // Tyre pressures
+        if (pa_a320_ready) {
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BRAKE_TEMP_);
+            sim_packet.sim_data_points[i].value = custom_htonf( (float) 0.0f );
+            i++;
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BRAKE_TEMP_+1);
+            sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(pa_a320_brake_temp1) );
+            i++;
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BRAKE_TEMP_+2);
+            sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(pa_a320_brake_temp2) );
+            i++;
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BRAKE_TEMP_+3);
+            sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(pa_a320_brake_temp3) );
+            i++;
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BRAKE_TEMP_+4);
+            sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(pa_a320_brake_temp4) );
+            i++;
+
+            if (pa_a320_version==733) {
+                sim_packet.sim_data_points[i].id = custom_htoni(QPAC_TYRE_PSI_);
+                sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(pa_a320_tyre_press_f) );
+                i++;
+                sim_packet.sim_data_points[i].id = custom_htoni(QPAC_TYRE_PSI_+1);
+                sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(pa_a320_tyre_press_l1) );
+                i++;
+                sim_packet.sim_data_points[i].id = custom_htoni(QPAC_TYRE_PSI_+2);
+                sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(pa_a320_tyre_press_l2) );
+                i++;
+                sim_packet.sim_data_points[i].id = custom_htoni(QPAC_TYRE_PSI_+3);
+                sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(pa_a320_tyre_press_r1) );
+                i++;
+                sim_packet.sim_data_points[i].id = custom_htoni(QPAC_TYRE_PSI_+4);
+                sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(pa_a320_tyre_press_r2) );
+                i++;
+            }
+        } else {
+        	// Ref psi nose gear : 180 psi
+        	// Ref psi main gear : 200 psi
+        	qpac_tyre_delta_t = 1+(((273.15f + XPLMGetDataf(oat))-286.15f) / 286.15f);
+
+        	qpac_tyre_pressure = (XPLMGetDatai(sim_op_fail_rel_tire1) == 6) ? 0.0f : 180.0f * qpac_tyre_delta_t;
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_TYRE_PSI_);
+            sim_packet.sim_data_points[i].value = custom_htonf( qpac_tyre_pressure );
+            i++;
+        	qpac_tyre_pressure = (XPLMGetDatai(sim_op_fail_rel_tire2) == 6) ? 0.0f : 200.0f * qpac_tyre_delta_t;
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_TYRE_PSI_+1);
+            sim_packet.sim_data_points[i].value = custom_htonf( qpac_tyre_pressure );
+            i++;
+        	qpac_tyre_pressure = (XPLMGetDatai(sim_op_fail_rel_tire3) == 6) ? 0.0f : 200.0f * qpac_tyre_delta_t;
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_TYRE_PSI_+2);
+            sim_packet.sim_data_points[i].value = custom_htonf( qpac_tyre_pressure );
+            i++;
+        	qpac_tyre_pressure = (XPLMGetDatai(sim_op_fail_rel_tire4) == 6) ? 0.0f : 200.0f * qpac_tyre_delta_t;
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_TYRE_PSI_+3);
+            sim_packet.sim_data_points[i].value = custom_htonf( qpac_tyre_pressure );
+            i++;
+        	qpac_tyre_pressure = (XPLMGetDatai(sim_op_fail_rel_tire5) == 6) ? 0.0f : 200.0f * qpac_tyre_delta_t;
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_TYRE_PSI_+4);
+            sim_packet.sim_data_points[i].value = custom_htonf( qpac_tyre_pressure );
+            i++;
+            // Brake temperature not managed - return oat
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BRAKE_TEMP_);
+            sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(oat) );
+            i++;
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BRAKE_TEMP_+1);
+            sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(oat) );
+            i++;
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BRAKE_TEMP_+2);
+            sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(oat) );
+            i++;
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BRAKE_TEMP_+3);
+            sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(oat) );
+            i++;
+            sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BRAKE_TEMP_+4);
+            sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(oat) );
+            i++;
+        }
+
         // Triple Pressure indicator
         sim_packet.sim_data_points[i].id = custom_htoni(QPAC_TPI_LEFT);
         sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(qpac_tot_left_brake) );
@@ -2889,7 +2972,14 @@ int createEnginesPacket(void) {
 
     strncpy(sim_packet.packet_id, "ENGI", 4);
 
-    tanks = XPLMGetDatai(num_tanks);
+
+    if (jar_a320_neo_ready || pa_a320_ready) {
+    	// Fix JarDesign that set num_tank=1 instead of 5
+    	// Fix PeterAircraft that set num_tank=6 instead of 5
+    	tanks = 5;
+    } else {
+    	tanks = XPLMGetDatai(num_tanks);
+    }
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_OVERFLOW_ACF_NUM_TANKS);
     sim_packet.sim_data_points[i].value = custom_htonf((float) tanks);
     i++;
@@ -2919,11 +3009,30 @@ int createEnginesPacket(void) {
     sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(m_total));
     i++;
 	
-    XPLMGetDatavf(fuel_quantity, fuelfloat, 0, tanks);
-    for (e=0; e<tanks; e++) {
-        sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_FUEL_QUANTITY_ + e);
-        sim_packet.sim_data_points[i].value = custom_htonf( fuelfloat[e] );
+    // TODO: PeterAircraft custom fuel tanks
+    if (jar_a320_neo_ready) {
+        sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_FUEL_QUANTITY_ );
+        sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(jar_a320_neo_fuel_t2) );
         i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_FUEL_QUANTITY_ + 1 );
+        sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(jar_a320_neo_fuel_t1) );
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_FUEL_QUANTITY_ + 2 );
+        sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(jar_a320_neo_fuel_t3) );
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_FUEL_QUANTITY_ + 3 );
+        sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(jar_a320_neo_fuel_t0) );
+        i++;
+        sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_FUEL_QUANTITY_ + 4 );
+        sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(jar_a320_neo_fuel_t4) );
+        i++;
+    } else {
+        XPLMGetDatavf(fuel_quantity, fuelfloat, 0, tanks);
+        for (e=0; e<tanks; e++) {
+            sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_FUEL_QUANTITY_ + e);
+            sim_packet.sim_data_points[i].value = custom_htonf( fuelfloat[e] );
+            i++;
+        }
     }
 
     XPLMGetDatavf(mfd_fuel_used, engifloat, 0, engines);
@@ -3232,6 +3341,9 @@ int createStaticPacket(void) {
     XPLMNavRef arpt_navref;
     char arpt_id[40];
     char registration[40];
+    // default tire reference pressures
+    float nose_tire_ref_pressure = 180.0f;
+    float main_tire_ref_pressure = 200.0f;
 
     strncpy(sim_packet.packet_id, "STAT", 4);
 
@@ -3330,6 +3442,22 @@ int createStaticPacket(void) {
     i++;
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_AIRCRAFT_ELECTRICAL_NUM_INVERTERS);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(acf_inverters));
+    i++;
+
+    // Tyre pressure aircraft constants
+    // TODO: Should be read from an aircraft configuration file
+    if (pa_a320_ready) {
+    	nose_tire_ref_pressure = 180.0f;
+    	main_tire_ref_pressure = 200.0f;
+    } else if (qpac_ready) {
+    	nose_tire_ref_pressure = 180.0f;
+    	main_tire_ref_pressure = 210.0f;
+    }
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_AIRCRAFT_NOSE_TIRE_REF_PRESSURE);
+    sim_packet.sim_data_points[i].value = custom_htonf(nose_tire_ref_pressure);
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_AIRCRAFT_MAIN_TIRE_REF_PRESSURE);
+    sim_packet.sim_data_points[i].value = custom_htonf(main_tire_ref_pressure);
     i++;
 
     // ENGINE LIMITS

@@ -27,6 +27,12 @@ extern XPLMDataRef pa_a320_brake_temp3;
 extern XPLMDataRef pa_a320_brake_temp4;
 extern XPLMDataRef pa_a320_left_aileron_pos;
 extern XPLMDataRef pa_a320_right_aileron_pos;
+// 7.3.3 datarefs
+extern XPLMDataRef pa_a320_tyre_press_f;
+extern XPLMDataRef pa_a320_tyre_press_l1;
+extern XPLMDataRef pa_a320_tyre_press_l2;
+extern XPLMDataRef pa_a320_tyre_press_r1;
+extern XPLMDataRef pa_a320_tyre_press_r2;
 
 extern int pa_a320_ready;
 extern int pa_a320_version;

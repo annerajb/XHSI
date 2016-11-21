@@ -2520,6 +2520,9 @@ void writeDataRef(int id, float value) {
             XPLMSetDataf(baro_pilot, value);
             break;
 
+        case SIM_COCKPIT_AUTOPILOT_AUTOPILOT_STATE :
+        	XPLMSetDatai(autopilot_state, (int) value);
+            break;
 
        // MCP (and other) buttons (special case; don't set datarefs but trigger commands...)
         case SIM_COCKPIT_AUTOPILOT_KEY_PRESS :
