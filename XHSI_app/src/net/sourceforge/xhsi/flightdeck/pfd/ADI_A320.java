@@ -41,6 +41,7 @@ import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSIPreferences.DrawYokeInputMode;
 import net.sourceforge.xhsi.XHSIStatus;
+import net.sourceforge.xhsi.flightdeck.pfd.PFDFramedElement.PFE_Color;
 import net.sourceforge.xhsi.model.ModelFactory;
 
 
@@ -63,9 +64,14 @@ public class ADI_A320 extends PFDSubcomponent {
 	private FDLand fd_land = FDLand.NONE;
 	private FDAltCapture fd_alt_capture = FDAltCapture.NONE;
 
+    PFDFramedElement failed_flag;
 
 	public ADI_A320(ModelFactory model_factory, PFDGraphicsConfig hsi_gc, Component parent_component) {
 		super(model_factory, hsi_gc, parent_component);
+        failed_flag = new PFDFramedElement(PFDFramedElement.ATT_FLAG, 0, hsi_gc, PFE_Color.PFE_COLOR_ALARM);
+        failed_flag.enableFlashing();
+        failed_flag.disableFraming();
+        failed_flag.setBigFont(true);
 	}
 
 
@@ -76,6 +82,7 @@ public class ADI_A320 extends PFDSubcomponent {
 				// if the PFD loses attitude data, its entire sphere is cleared to display the ATT flag (red)
 				if ( pfd_gc.powered ) drawFailedADI(g2);
 			} else if ( pfd_gc.powered ) {
+				failed_flag.clearText();
 				drawADI(g2);
 				drawMarker(g2);
 			} 
@@ -83,9 +90,12 @@ public class ADI_A320 extends PFDSubcomponent {
 	}
 
 	private void drawFailedADI(Graphics2D g2) {
+
+		/*
+		 * Code for drawing a grey background ADI 		
+		 *
 		int cx = pfd_gc.adi_cx;
 		int cy = pfd_gc.adi_cy;
-		/*
 		int left = pfd_gc.adi_size_left;
 		int right = pfd_gc.adi_size_right;
 		int up = pfd_gc.adi_size_up;
@@ -93,12 +103,12 @@ public class ADI_A320 extends PFDSubcomponent {
 		Area airbus_horizon_area = new Area ( new Arc2D.Float ( (float) cx - left, (float) cy - up, (float) left + right, (float) up + down, 0.0f,360.0f,Arc2D.CHORD));
 		Area square_horizon_area = new Area ( new Rectangle(cx - left*9/10, cy - up*11/10, left*9/10 + right*9/10, up + down*12/10) );
 		airbus_horizon_area.intersect( square_horizon_area );
+		g2.setColor(pfd_gc.pfd_instrument_background_color);
+		g2.draw(airbus_horizon_area);
 		*/
-		g2.setColor(pfd_gc.pfd_alarm_color);
-		// g2.draw(airbus_horizon_area);
-		g2.setFont(pfd_gc.font_xxl);
-		String failed_str = "ATT";
-		g2.drawString(failed_str, cx - pfd_gc.get_text_width(g2, pfd_gc.font_xxl, failed_str)/2, cy);
+		
+    	failed_flag.setText("ATT", PFE_Color.PFE_COLOR_ALARM);    	
+    	failed_flag.paint(g2);
 	}
 
 	private void drawADI(Graphics2D g2) {

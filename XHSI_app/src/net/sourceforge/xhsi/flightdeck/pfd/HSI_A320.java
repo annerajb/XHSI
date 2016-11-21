@@ -37,6 +37,8 @@ import java.text.DecimalFormatSymbols;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSIStatus;
+import net.sourceforge.xhsi.flightdeck.pfd.PFDFramedElement.PFE_Align;
+import net.sourceforge.xhsi.flightdeck.pfd.PFDFramedElement.PFE_Color;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.FMS;
 import net.sourceforge.xhsi.model.Localizer;
@@ -68,6 +70,8 @@ public class HSI_A320 extends PFDSubcomponent {
 	private String type_list[] = { "NAV", "VOR", "DME", "ILS", "LOC", "FMC", "ERR" };
 
 	private Color navsource_color;
+	
+    PFDFramedElement failed_flag;
 
 	private static final float FIVEDEG = 7.5f;
 
@@ -83,7 +87,11 @@ public class HSI_A320 extends PFDSubcomponent {
 		format_symbols = one_decimal_formatter.getDecimalFormatSymbols();
 		format_symbols.setDecimalSeparator('.');
 		one_decimal_formatter.setDecimalFormatSymbols(format_symbols);
-
+		
+        failed_flag = new PFDFramedElement(PFDFramedElement.HDG_FLAG, 0, hsi_gc, PFE_Color.PFE_COLOR_ALARM, PFE_Align.CENTER);
+        failed_flag.enableFlashing();
+        failed_flag.disableFraming();
+        failed_flag.setBigFont(true);
 	}
 
 
@@ -94,6 +102,7 @@ public class HSI_A320 extends PFDSubcomponent {
 				// if the heading information fails, the HDG flag replaces the heading scale (red)
 				if ( pfd_gc.powered ) drawFailedHSI(g2);
 			} else if ( pfd_gc.powered ) {
+				failed_flag.clearText();
 				drawTape(g2);
 			} 
 			// Usefull for ATR72
@@ -114,13 +123,15 @@ public class HSI_A320 extends PFDSubcomponent {
 		int hdg_bottom = pfd_gc.hdg_top  + pfd_gc.hdg_height;
 		g2.setColor(pfd_gc.pfd_instrument_background_color);
 		g2.fillRect(pfd_gc.hdg_left, pfd_gc.hdg_top, pfd_gc.hdg_width, pfd_gc.hdg_height );
-		g2.setFont(pfd_gc.font_xxl);
+		// g2.setFont(pfd_gc.font_xxl);
 		g2.setColor(pfd_gc.warning_color);
-		String failed_str = "HDG";
-		g2.drawString(failed_str, pfd_gc.adi_cx - pfd_gc.get_text_width(g2, pfd_gc.font_xxl, failed_str)/2, pfd_gc.hdg_top + pfd_gc.line_height_xxl*5/4 );
+		// String failed_str = "HDG";
+		// g2.drawString(failed_str, pfd_gc.adi_cx - pfd_gc.get_text_width(g2, pfd_gc.font_xxl, failed_str)/2, pfd_gc.hdg_top + pfd_gc.line_height_xxl*5/4 );
 		g2.drawLine(pfd_gc.hdg_left, pfd_gc.hdg_top, hdg_right, pfd_gc.hdg_top);
 		g2.drawLine(pfd_gc.hdg_left, pfd_gc.hdg_top, pfd_gc.hdg_left, hdg_bottom);
-		g2.drawLine(hdg_right, pfd_gc.hdg_top, hdg_right, hdg_bottom);		
+		g2.drawLine(hdg_right, pfd_gc.hdg_top, hdg_right, hdg_bottom);	
+    	failed_flag.setText("HDG", PFE_Color.PFE_COLOR_ALARM);    	
+    	failed_flag.paint(g2);
 	}
 
 	private void drawTape(Graphics2D g2) {

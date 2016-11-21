@@ -36,6 +36,7 @@ import net.sourceforge.xhsi.model.Observer;
 import net.sourceforge.xhsi.model.RadioNavigationObject;
 import net.sourceforge.xhsi.model.RadioNavBeacon;
 import net.sourceforge.xhsi.model.ModelFactory;
+import net.sourceforge.xhsi.model.SimCommand;
 import net.sourceforge.xhsi.model.SimDataRepository;
 import net.sourceforge.xhsi.model.TCAS;
 import net.sourceforge.xhsi.model.Avionics.FailedElement;
@@ -53,7 +54,7 @@ public class XPlaneAvionics implements Avionics, Observer {
     private TCAS tcas;
     private XHSISettings xhsi_settings;
     private XHSIPreferences xhsi_preferences;
-    private XPlaneUDPSender udp_sender;
+    private XPlaneUDPSender udp_sender;   
 
     private NavigationRadio nav1_radio;
     private NavigationRadio nav2_radio;
@@ -1405,7 +1406,7 @@ public class XPlaneAvionics implements Avionics, Observer {
     public FMS get_fms() { return this.fms; }
 
     public TCAS get_tcas() { return this.tcas; }
-
+    
     public int transponder_mode() {
 
         //return (int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_TRANSPONDER_MODE);
@@ -2270,6 +2271,27 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     }
 
+
+    public void set_autopilot_altitude(float new_altitude){
+    	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_ALTITUDE,new_altitude);
+    }
+    
+    public void set_autopilot_speed(float new_speed){
+    	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_AIRSPEED,new_speed);    	
+    }
+    
+    public void set_autopilot_vv(float new_vertical_speed){
+    	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_VERTICAL_VELOCITY,new_vertical_speed); 
+    }
+    
+    public void set_autopilot_hdg(float new_heading){
+    	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_HEADING_MAG,new_heading); 
+    }
+    
+    public void set_autopilot_mode(int new_mode){
+    	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_AUTOPILOT_STATE,new_mode); 
+    }
+    
 
     public void set_mfd_mode(int new_mode) {
     	// Don't switch QPAC ECAM SD page if custom XHSI MFD page is displayed : Flight Plan , or Airport Chart

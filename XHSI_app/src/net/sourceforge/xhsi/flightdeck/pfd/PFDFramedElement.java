@@ -1,7 +1,7 @@
 /**
 * PFDFramedElement.java
 * 
-* Manage the element framing for FMA 
+* Manage framing and flashing elements for PFD 
 * 
 * Copyright (C) 2014  Nicolas Carel
 * 
@@ -22,24 +22,51 @@
 */
 package net.sourceforge.xhsi.flightdeck.pfd;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 
 public class PFDFramedElement {	
     private PFDGraphicsConfig pfd_gc;
-	private boolean framed ; // True if framed
-	private boolean framing; // True if framing active
-	private boolean cleared; // True if there is nothing to be display	
+	private boolean framed ;  // True if framed
+	private boolean framing;  // True if framing active
+	private boolean cleared;  // True if there is nothing to be display
+	private boolean flashing; // True text should flash when displayed
+	private boolean flash;    // True text is flashing
+	private boolean frame_flashing; // True if frame should flash when displayed
+	private boolean frame_flash;    // True if frame is flashing
+	private boolean big_font;
+	
 	public enum PFE_Align {LEFT, CENTER, RIGHT};
-	public enum PFE_Style {ONE_LINE, ONE_LINE_LR, TWO_LINES, TWO_LINES_LR, TWO_COLUMNS};
+	public enum PFE_Style {ONE_LINE, ONE_LINE_LR, TWO_LINES, THREE_LINES, TWO_LINES_LR, TWO_COLUMNS};
+	public final static int ALT_FLAG = 5;
+	public final static int ATT_FLAG = 6;
+	public final static int HDG_FLAG = 7;
+	public final static int SPD_FLAG = 8;
+	public final static int VS_FLAG  = 9;
 	private int raw; // FMA Raw
 	private int col; // FMA Column
 	private String str_line1_left;
 	private String str_line1_right;
 	private String str_line2_left;
 	private String str_line2_right;
+	private String str_line3_left;
+	private String str_line3_right;
 	private long paint_start;	
-	private long framed_milli;
+	private long framed_milli;		
+	private long flashed_milli;
+	private long frame_flashed_milli;
+	
+	long reconfigured_timestamp=0;
+	int frame_x;
+	int frame_y;
+	int frame_w;
+	int frame_h;
+	int text_x;
+	int text_y[] = new int[4];
+	int text_c;
+	Font text_font;
 	
     public enum PFE_Color { PFE_COLOR_MARK, PFE_COLOR_ACTIVE, PFE_COLOR_ARMED, PFE_COLOR_MANAGED, PFE_COLOR_CAUTION, PFE_COLOR_ALARM };
     PFE_Color text_color;
@@ -52,6 +79,10 @@ public class PFDFramedElement {
 		framed = false;
 		framing = true;
 		cleared = true;
+		flashing = false;
+		flash = false;
+		frame_flashing = false;
+		frame_flash = false;
 		str_line1_left = "";
 		str_line1_right = "";
 		str_line2_left = "";
@@ -61,17 +92,24 @@ public class PFDFramedElement {
 		this.pfd_gc = pfd_gc;
 		paint_start = 0;
 		framed_milli = 10000;
+		flashed_milli = 10000;
+		frame_flashed_milli = 10000;
 		text_color = default_pfe_color;
 		value_color = PFE_Color.PFE_COLOR_ARMED;
 		frame_color = PFE_Color.PFE_COLOR_MARK;
 		text_style = PFE_Style.ONE_LINE;
 		text_align = default_text_align;
+		big_font = false;		
 	}
     
 	public PFDFramedElement(int col, int raw, PFDGraphicsConfig pfd_gc, PFE_Color default_pfe_color) {
 		framed = false;
 		framing = true;
 		cleared = true;
+		flashing = false;
+		flash = false;
+		frame_flashing = false;
+		frame_flash = false;
 		str_line1_left = "";
 		str_line1_right = "";
 		str_line2_left = "";
@@ -81,33 +119,49 @@ public class PFDFramedElement {
 		this.pfd_gc = pfd_gc;
 		paint_start = 0;
 		framed_milli = 10000;
+		flashed_milli = 10000;
+		frame_flashed_milli = 10000;
 		text_color = default_pfe_color;
 		value_color = PFE_Color.PFE_COLOR_ARMED;
 		frame_color = PFE_Color.PFE_COLOR_MARK;
 		text_style = PFE_Style.ONE_LINE;
 		text_align = PFE_Align.CENTER;
+		big_font = false;
 	}
 
 	public void paint(Graphics2D g2) {    	 
+		 // Check GraphicConfig reconfiguration timestamp
+		 if (pfd_gc.reconfigured_timestamp > this.reconfigured_timestamp ) update_config();
     	 
     	 if (framed) {
     		 if (System.currentTimeMillis() > paint_start + framed_milli ) framed = false;
     	 }
-    	 if (!cleared) { 
-    		 switch (text_style) {
-    			 case ONE_LINE 		: draw1Mode(g2, raw, str_line1_left); break;
-    			 case ONE_LINE_LR 	: draw2Mode(g2, raw, str_line1_left, str_line1_right); break;
-    			 case TWO_COLUMNS 	: drawFinalMode(g2, raw, str_line1_left); break;
-    			 case TWO_LINES 	: draw1Mode(g2, raw, str_line1_left); draw1Mode(g2, raw+1, str_line2_left); break;
-    			 case TWO_LINES_LR 	: draw1Mode(g2, raw, str_line1_left); draw2Mode(g2, raw+1, str_line2_left, str_line2_right); break;
-    		} 
-    		if (framed && framing) drawFrame(g2); 
+    	 if (flash) {
+    		 if (System.currentTimeMillis() > paint_start + flashed_milli ) flash = false;    		 
+    	 }
+    	 boolean display_text = (flash && flashing) ? ((System.currentTimeMillis() % 1000) < 500) : true;    		 
+
+    	 if (!cleared) {
+    		 if (display_text) {
+    			 switch (text_style) {
+    			 	case ONE_LINE 		: draw1Mode(g2, 0, str_line1_left); break;
+    			 	case ONE_LINE_LR 	: draw2Mode(g2, 0, str_line1_left, str_line1_right); break;
+    			 	case TWO_COLUMNS 	: drawFinalMode(g2, 0, str_line1_left); break;
+    			 	case TWO_LINES 		: draw1Mode(g2, 0, str_line1_left); draw1Mode(g2, 1, str_line2_left); break;
+    			 	case THREE_LINES 	: draw1Mode(g2, 0, str_line1_left); 
+    			 						  draw1Mode(g2, 1, str_line2_left); 
+    			 						  draw1Mode(g2, 2, str_line3_left);
+    			 						  break;
+    			 	case TWO_LINES_LR 	: draw1Mode(g2, 0, str_line1_left); draw2Mode(g2, 1, str_line2_left, str_line2_right); break;
+    			 } 
+    		 }
+    		 if (framed && framing) drawFrame(g2); 
     	 }
     }
     
     public void setText ( String text, PFE_Color color ) {    	
     	if ((! str_line1_left.equals(text)) || (color != text_color) ) {
-    		if (text.equals("")) framed=false; else framed=true;
+    		if (text.equals("")) { framed=false; flash=false; } else { framed=true; flash=true;}
     		paint_start = System.currentTimeMillis();    		
     		str_line1_left = text;
     		text_color = color;
@@ -119,7 +173,7 @@ public class PFDFramedElement {
     
     public void setText ( String text1, String text2, PFE_Color color ) {    	
     	if ((! str_line1_left.equals(text1)) || (! str_line2_left.equals(text2)) || (color != text_color) ) {
-    		if (text1.equals("")) framed=false; else framed=true;
+    		if (text1.equals("")) { framed=false; flash=false; } else { framed=true; flash=true;}
     		paint_start = System.currentTimeMillis(); 
     		str_line1_left = text1;
     		str_line2_left = text2;
@@ -129,10 +183,24 @@ public class PFDFramedElement {
     		text_style = PFE_Style.TWO_LINES;
     	}    	
     }
+   
+    public void setText ( String text1, String text2, String text3, PFE_Color color ) {    	
+    	if ((! str_line1_left.equals(text1)) || (! str_line2_left.equals(text2)) || (color != text_color) ) {
+    		if (text1.equals("")) { framed=false; flash=false; } else { framed=true; flash=true;}
+    		paint_start = System.currentTimeMillis(); 
+    		str_line1_left = text1;
+    		str_line2_left = text2;
+    		str_line3_left = text3;
+    		text_color = color;
+    		frame_color = PFE_Color.PFE_COLOR_MARK;
+    		cleared = false;
+    		text_style = PFE_Style.THREE_LINES;
+    	}    	
+    }
     
     public void setTextValue ( String text, String value, PFE_Color color ) {    	
     	if ((! str_line1_left.equals(text)) || (color != text_color) || (! str_line1_right.equals(value))) {
-    		if (text.equals("")) framed=false; else framed=true;
+    		if (text.equals("")) { framed=false; flash=false; } else { framed=true; flash=true;}
     		paint_start = System.currentTimeMillis(); 
     		str_line1_left = text;
     		str_line1_right = value;
@@ -145,7 +213,7 @@ public class PFDFramedElement {
     
     public void setTextValue ( String text1, String text2, String value, PFE_Color color ) {    	
     	if ((! str_line1_left.equals(text1)) || (color != text_color) || (! str_line2_right.equals(value)) || (! str_line2_left.equals(text2))) {
-    		if (text1.equals("")) framed=false; else framed=true;
+    		if (text1.equals("")) { framed=false; flash=false; } else { framed=true; flash=true;}
     		paint_start = System.currentTimeMillis(); 
     		str_line1_left = text1;
     		str_line2_left = text2;
@@ -170,9 +238,27 @@ public class PFDFramedElement {
 		paint_start = System.currentTimeMillis(); 
     }
     
+    public void setFrameFlash() {
+    	frame_flash = true;
+		paint_start = System.currentTimeMillis(); 
+    }
+    
+    public void setFlash() {
+    	flash = true;
+		paint_start = System.currentTimeMillis(); 
+    }
+    
     public void clearFrame() {
     	framed = false;
-    }   
+    }  
+    
+    public void clearFrameFlash() {
+    	frame_flash = false;
+    }
+    
+    public void clearFlash() {
+    	flash = false;
+    } 
     
     public void enableFraming() {
     	framing = true;
@@ -182,9 +268,31 @@ public class PFDFramedElement {
     	framing = false;
     }
     
+    public void enableFlashing() {
+    	flashing = true;
+    }
+
+    public void disableFlashing() {
+    	flashing = false;
+    }
+
+    public void enableFrameFlashing() {
+    	frame_flashing = true;
+    }
+
+    public void disableFrameFlashing() {
+    	frame_flashing = false;
+    }
+    
+    public void setBigFont(boolean new_font_status) {
+    	big_font = new_font_status;
+    	this.update_config();
+    }
+    
     public void clearText ( ) {    	
     	framed = false;
     	cleared = true;
+    	flash = false;
 		str_line1_left = "";
 		str_line1_right = "";
 		str_line2_left = "";
@@ -213,109 +321,151 @@ public class PFDFramedElement {
     }
 
     private void drawFrame(Graphics2D g2) {
-        int box_x = pfd_gc.fma_left + pfd_gc.digit_width_xl / 4;
-        int box_w = 0; 
-        int box_h = pfd_gc.line_height_xl*18/16;
-        int mode_y = pfd_gc.fma_top + pfd_gc.fma_height*raw/3 + pfd_gc.line_height_xl - 2;
-        switch (col) {
-    	case 1:  
-    			box_x += pfd_gc.fma_col_1;
-    			box_w = (pfd_gc.fma_col_2 - pfd_gc.fma_col_1) - pfd_gc.digit_width_xl / 2;
-    			break;
-    	case 2: 
-    			box_x += pfd_gc.fma_col_2; 
-    			box_w = (pfd_gc.fma_col_3 - pfd_gc.fma_col_2) - pfd_gc.digit_width_xl / 2;
-    			break;
-    	case 3: 
-    			box_x += pfd_gc.fma_col_3;
-    			box_w = (pfd_gc.fma_col_4 - pfd_gc.fma_col_3) - pfd_gc.digit_width_xl / 2;
-    			break;
-    	case 4: 
-    			box_x += pfd_gc.fma_col_4;
-    			box_w = (pfd_gc.fma_width  - pfd_gc.fma_col_4) - pfd_gc.digit_width_xl / 2;
-    			break;
-    	default: 
-    			box_w = pfd_gc.fma_col_1 - pfd_gc.digit_width_xl / 2;
-    			break;
-        }
-        // TODO : concerns only columns 2+3 but should work for any col position
-        if (text_style == PFE_Style.TWO_COLUMNS) { box_w += (pfd_gc.fma_col_3 - pfd_gc.fma_col_2); }
-        if (text_style == PFE_Style.TWO_LINES || text_style == PFE_Style.TWO_LINES_LR ) box_h += pfd_gc.line_height_xl*18/16;       
     	g2.setColor(getColor(frame_color));        	        
-        g2.drawRect(box_x, mode_y - pfd_gc.line_height_xl*15/16, box_w, box_h);       
+        g2.drawRect(frame_x, frame_y, frame_w, frame_h);     	
     }
     
+    /*
+    private void drawFlag(Graphics2D g2,  String mode) {
+        int mode_w = pfd_gc.get_text_width(g2, text_font, mode);
+        setTextColor(g2);      
+        g2.setFont(text_font);
+        g2.drawString(mode, text_c  - mode_w/2, text_y1);
+    }
+    */
+    
     private void draw1Mode(Graphics2D g2, int raw, String mode) {
-        int mode_w = pfd_gc.get_text_width(g2, pfd_gc.font_xl, mode);
-        int mode_x = pfd_gc.fma_left;  // + pfd_gc.fma_width/10 + col*pfd_gc.fma_width/5 - mode_w/2;
-
-        if ( text_align== PFE_Align.CENTER ) {
-        switch (col) {
-        	case 1: mode_x += pfd_gc.fma_col_1 + (pfd_gc.fma_col_2 - pfd_gc.fma_col_1)/2 - mode_w/2; 
-        			break;
-        	case 2: mode_x += pfd_gc.fma_col_2 + (pfd_gc.fma_col_3 - pfd_gc.fma_col_2)/2 - mode_w/2;
-        			break;
-        	case 3: mode_x += pfd_gc.fma_col_3 + (pfd_gc.fma_col_4 - pfd_gc.fma_col_3)/2 - mode_w/2;
-        			break;
-        	case 4: mode_x += pfd_gc.fma_col_4 + (pfd_gc.fma_width - pfd_gc.fma_col_4)/2 - mode_w/2;
-        			break;
-        	default: mode_x += pfd_gc.fma_col_1 /2 - mode_w/2;
-        			break;
-        }
+        int mode_w = pfd_gc.get_text_width(g2, text_font, mode);
+        int mode_x = pfd_gc.fma_left + pfd_gc.digit_width_xl/2;;  
+        
+        if ( text_align == PFE_Align.CENTER ) {
+        	mode_x = text_c  - mode_w/2;
         } else {
-        	mode_x += pfd_gc.digit_width_xl/2;
+        	
             switch (col) {
-        	case 1: mode_x += pfd_gc.fma_col_1;
-					break;
-        	case 2: mode_x += pfd_gc.fma_col_2;
+        		case 2: mode_x += pfd_gc.fma_col_2;
         			mode_x += pfd_gc.fma_col_2 + (pfd_gc.fma_col_3 - pfd_gc.fma_col_2)/2 - mode_w/2;
         			break;
-        	case 3: mode_x += pfd_gc.fma_col_3;
-					break;
-        	case 4: mode_x += pfd_gc.fma_col_4; 
-         			break;       	
-        	default: 
+        		default: 
+        			mode_x = text_x;
         			break;
         }
         }
         	
-        int mode_y = pfd_gc.fma_top + pfd_gc.fma_height*raw/3 + pfd_gc.line_height_xl - 2;
         setTextColor(g2);      
-        g2.setFont(pfd_gc.font_xl);
-        g2.drawString(mode, mode_x, mode_y);
+        g2.setFont(text_font);
+        g2.drawString(mode, mode_x, text_y[raw]);
     }
     
     private void draw2Mode(Graphics2D g2, int raw, String mode, String value) {
-        int mode_w1 = pfd_gc.get_text_width(g2, pfd_gc.font_xl, mode);
-        int mode_w2 = pfd_gc.get_text_width(g2, pfd_gc.font_xl, value);
+        int mode_w1 = pfd_gc.get_text_width(g2, text_font, mode);
+        int mode_w2 = pfd_gc.get_text_width(g2, text_font, value);
         int mode_w = mode_w1 + mode_w2;
-        int mode_x = pfd_gc.fma_left; 
-        switch (col) {
-        	case 1: mode_x += pfd_gc.fma_col_1 + (pfd_gc.fma_col_2 - pfd_gc.fma_col_1)/2 - mode_w/2; break;
-        	case 2: mode_x += pfd_gc.fma_col_2 + (pfd_gc.fma_col_3 - pfd_gc.fma_col_2)/2 - mode_w/2; break;
-        	case 3: mode_x += pfd_gc.fma_col_3 + (pfd_gc.fma_col_4 - pfd_gc.fma_col_3)/2 - mode_w/2; break;
-        	case 4: mode_x += pfd_gc.fma_col_4 + (pfd_gc.fma_width - pfd_gc.fma_col_4)/2 - mode_w/2; break;
-        	default: mode_x += pfd_gc.fma_col_1 /2 - mode_w/2; break;
-        }        
+        int mode_x = text_c - mode_w/2;
         int mode_x2 = mode_x + mode_w1;        
-        int mode_y = pfd_gc.fma_top + pfd_gc.fma_height*raw/3 + pfd_gc.line_height_xl - 2;
         setTextColor(g2);          
-        g2.setFont(pfd_gc.font_xl);
-        g2.drawString(mode, mode_x, mode_y);        
+        g2.setFont(text_font);
+        g2.drawString(mode, mode_x, text_y[raw]);        
         setValueColor(g2);  
-        g2.drawString(value, mode_x2, mode_y);
+        g2.drawString(value, mode_x2, text_y[raw]);
     }
     
     private void drawFinalMode(Graphics2D g2, int raw, String mode) {
-        int mode_w = pfd_gc.get_text_width(g2, pfd_gc.font_xl, mode);
+        int mode_w = pfd_gc.get_text_width(g2, text_font, mode);
         int mode_x = pfd_gc.fma_left + pfd_gc.fma_col_1 + (pfd_gc.fma_col_3 - pfd_gc.fma_col_1)/2 - mode_w/2;
-        int mode_y = pfd_gc.fma_top + pfd_gc.fma_height*raw/3 + pfd_gc.line_height_xl - 2;
         // Erase middle line
         g2.setColor(pfd_gc.background_color);
         g2.drawLine(pfd_gc.fma_left + pfd_gc.fma_col_2, pfd_gc.fma_top, pfd_gc.fma_left + pfd_gc.fma_col_2, pfd_gc.fma_top + pfd_gc.fma_height * 2/3);
         setTextColor(g2);  
-        g2.setFont(pfd_gc.font_xl);
-        g2.drawString(mode, mode_x, mode_y);
+        g2.setFont(text_font);
+        g2.drawString(mode, mode_x, text_y[raw]);
     }
     
+    private void update_config () {
+    	reconfigured_timestamp = System.currentTimeMillis();
+    	frame_x = pfd_gc.fma_left + pfd_gc.digit_width_xl / 4;
+    	frame_y = pfd_gc.fma_top + pfd_gc.fma_height*raw/3 + pfd_gc.line_height_xl - 2 - pfd_gc.line_height_xl*15/16; 
+    	frame_w = 0;
+    	frame_h = pfd_gc.line_height_xl*18/16;
+        text_c = pfd_gc.fma_left;
+        text_x = pfd_gc.fma_left + pfd_gc.digit_width_xl/2;
+        text_y[0] = pfd_gc.fma_top + pfd_gc.fma_height*raw/3 + pfd_gc.line_height_xl - 2;
+        text_y[1] = pfd_gc.fma_top + pfd_gc.fma_height*(raw+1)/3 + pfd_gc.line_height_xl - 2;
+        text_y[2] = pfd_gc.fma_top + pfd_gc.fma_height*(raw+2)/3 + pfd_gc.line_height_xl - 2;
+        
+        switch (col) {
+    		case 1:  
+    			frame_x += pfd_gc.fma_col_1;
+    			frame_w = (pfd_gc.fma_col_2 - pfd_gc.fma_col_1) - pfd_gc.digit_width_xl / 2;
+    			text_c += pfd_gc.fma_col_1 + (pfd_gc.fma_col_2 - pfd_gc.fma_col_1)/2; 
+    			text_x += pfd_gc.fma_col_1;
+    			break;
+    		case 2: 
+    			frame_x += pfd_gc.fma_col_2; 
+    			frame_w = (pfd_gc.fma_col_3 - pfd_gc.fma_col_2) - pfd_gc.digit_width_xl / 2;
+    			text_c += pfd_gc.fma_col_2 + (pfd_gc.fma_col_3 - pfd_gc.fma_col_2)/2;
+    			text_x += pfd_gc.fma_col_2;    			
+    			break;
+    		case 3: 
+    			frame_x += pfd_gc.fma_col_3;
+    			frame_w = (pfd_gc.fma_col_4 - pfd_gc.fma_col_3) - pfd_gc.digit_width_xl / 2;
+    			text_c += pfd_gc.fma_col_3 + (pfd_gc.fma_col_4 - pfd_gc.fma_col_3)/2;
+    			text_x += pfd_gc.fma_col_3;
+    			break;
+    		case 4: 
+    			frame_x += pfd_gc.fma_col_4;
+    			frame_w = (pfd_gc.fma_width  - pfd_gc.fma_col_4) - pfd_gc.digit_width_xl / 2;
+    			text_c += pfd_gc.fma_col_4 + (pfd_gc.fma_width - pfd_gc.fma_col_4)/2;
+    			text_x += pfd_gc.fma_col_4; 
+    			break;
+    		case ALT_FLAG:
+    			frame_x = pfd_gc.altitape_left;
+    			frame_w = pfd_gc.tape_width*60/100;
+    			text_c = frame_x + frame_w/2;
+    			text_x = pfd_gc.altitape_left; 
+    			text_y[0] = pfd_gc.adi_cy + pfd_gc.line_height_l/2;			
+    			break;
+    		case HDG_FLAG:
+    			frame_x = pfd_gc.hdg_left;
+    			frame_w = pfd_gc.hdg_width;
+    			text_c = pfd_gc.adi_cx;
+    			text_x = frame_x; 
+    			text_y[0] = pfd_gc.hdg_top + pfd_gc.line_height_xxl*5/4;			
+    			break; 		
+    		case ATT_FLAG:
+    			frame_x = pfd_gc.hdg_left;  // stub
+    			frame_w = pfd_gc.hdg_width; // stub
+    			text_c = pfd_gc.adi_cx;
+    			text_x = frame_x;  // stub
+    			text_y[0] = pfd_gc.adi_cy;			
+    			break; 	    						
+    		case SPD_FLAG:
+    			frame_x = pfd_gc.speedtape_left;  
+    			frame_w = pfd_gc.tape_width*6/8;
+    			text_c = frame_x + frame_w/2;
+    			text_x = frame_x;  
+    			text_y[0] = pfd_gc.adi_cy + pfd_gc.line_height_l/2;			
+    			break; 	     			    			
+    		case VS_FLAG:
+    			frame_x = pfd_gc.vsi_left+pfd_gc.vsi_width/5;  
+    			frame_w = pfd_gc.vsi_width;
+    			text_c = pfd_gc.vsi_left+pfd_gc.vsi_width/5;
+    			text_x = frame_x;  
+    			text_y[0] = pfd_gc.adi_cy - pfd_gc.line_height_xxl/2 - 4;
+    			text_y[1] = pfd_gc.adi_cy + pfd_gc.line_height_xxl/2 - 4;
+    			text_y[2] = pfd_gc.adi_cy + pfd_gc.line_height_xxl*3/2 - 4;
+    			break; 	     			    			
+    		default: 
+    			frame_w = pfd_gc.fma_col_1 - pfd_gc.digit_width_xl / 2;
+    			text_c += pfd_gc.fma_col_1 / 2 ;
+    			break;
+        }    
+
+
+        // TODO : WARNING : text_style is not part of Graphic Context
+        if (text_style == PFE_Style.TWO_COLUMNS) { frame_w += (pfd_gc.fma_col_3 - pfd_gc.fma_col_2); }
+        if (text_style == PFE_Style.TWO_LINES || text_style == PFE_Style.TWO_LINES_LR ) frame_h += pfd_gc.line_height_xl*18/16; 
+        
+        text_font=big_font ? pfd_gc.font_xxl : pfd_gc.font_xl;
+    }
 }

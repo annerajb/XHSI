@@ -605,7 +605,7 @@ public interface Avionics {
      * @return TCAS - reference to tcas model class
      */
     public TCAS get_tcas();
-
+   
     /**
      * @return int - transponder mode
      */
@@ -874,6 +874,21 @@ public interface Avionics {
     public void set_show_pos(boolean new_pos);
 
     public void set_show_data(boolean new_data);
+    
+    /*
+     *  Autopilot 
+     */
+    
+    public void set_autopilot_altitude(float new_altitude);
+    
+    public void set_autopilot_speed(float new_speed);
+    
+    public void set_autopilot_vv(float new_vertical_speed);
+    
+    public void set_autopilot_hdg(float new_heading);
+    
+    public void set_autopilot_mode(int new_mode);
+    
     
     public void set_mfd_mode(int new_mode);
 

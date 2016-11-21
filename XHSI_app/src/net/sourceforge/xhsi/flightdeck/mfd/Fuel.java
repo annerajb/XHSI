@@ -69,6 +69,7 @@ public class Fuel extends MFDSubcomponent {
 					drawEngineFuel(g2, i, mfd_gc.fuel_eng_x[i]);
 				}
 				drawFuelTanks(g2);
+				drawOuterTankXFerValve(g2,ValveStatus.VALVE_CLOSED);
 				drawAirbusFuel(g2);
 				drawAPUFuel(g2,mfd_gc.fuel_apu_isol_valve_x);
 				drawAirbusFOB_v1(g2);
@@ -645,6 +646,10 @@ public class Fuel extends MFDSubcomponent {
     	g2.drawString(leg_str, mfd_gc.mfd_middle_x - mfd_gc.get_text_width(g2, mfd_gc.font_l, leg_str)/2 , mfd_gc.fuel_tank_legend_y);
     }
 
+    private void drawOuterTankXFerValve(Graphics2D g2, ValveStatus xfer_valve) {
+    	// TODO: Amber in transit. Green fully closed or fully opened
+    	
+    }
     
     private void scalePen(Graphics2D g2) {
 

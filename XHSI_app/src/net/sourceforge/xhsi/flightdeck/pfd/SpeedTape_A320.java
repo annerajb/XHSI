@@ -11,6 +11,8 @@ import java.text.DecimalFormatSymbols;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSIStatus;
+import net.sourceforge.xhsi.flightdeck.pfd.PFDFramedElement.PFE_Align;
+import net.sourceforge.xhsi.flightdeck.pfd.PFDFramedElement.PFE_Color;
 import net.sourceforge.xhsi.model.ModelFactory;
 
 public class SpeedTape_A320 extends PFDSubcomponent {
@@ -20,9 +22,15 @@ public class SpeedTape_A320 extends PFDSubcomponent {
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
     
     private boolean ias_trend_active = false;
+    
+    PFDFramedElement failed_flag;
 
     public SpeedTape_A320(ModelFactory model_factory, PFDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
+        failed_flag = new PFDFramedElement(PFDFramedElement.SPD_FLAG, 0, hsi_gc, PFE_Color.PFE_COLOR_ALARM, PFE_Align.LEFT);
+        failed_flag.enableFlashing();
+        failed_flag.disableFraming();
+        failed_flag.setBigFont(true);
     }
 
 
@@ -33,6 +41,7 @@ public class SpeedTape_A320 extends PFDSubcomponent {
     			// if the speed information fails, the SPD flag (red) replaces the speed scale
     			if ( pfd_gc.powered ) drawFailedTape(g2);
     		} else if ( pfd_gc.powered ) {
+    			failed_flag.clearText();
     			drawTape(g2);
     		}
         }
@@ -46,10 +55,15 @@ public class SpeedTape_A320 extends PFDSubcomponent {
     	g2.setColor(pfd_gc.pfd_alarm_color);
     	g2.drawLine(speedtape_right, pfd_gc.tape_top ,speedtape_right, pfd_gc.tape_top + pfd_gc.tape_height + 1 );
     	g2.drawLine(pfd_gc.speedtape_left, pfd_gc.tape_top ,pfd_gc.speedtape_left + pfd_gc.tape_width, pfd_gc.tape_top  );
-    	g2.drawLine(pfd_gc.speedtape_left, pfd_gc.tape_top + pfd_gc.tape_height + 1,pfd_gc.speedtape_left + pfd_gc.tape_width, pfd_gc.tape_top + pfd_gc.tape_height + 1 );       
+    	g2.drawLine(pfd_gc.speedtape_left, pfd_gc.tape_top + pfd_gc.tape_height + 1,pfd_gc.speedtape_left + pfd_gc.tape_width, pfd_gc.tape_top + pfd_gc.tape_height + 1 );
+    	
     	String failed_str = "SPD";
         g2.setFont(pfd_gc.font_xxl);
-    	g2.drawString( failed_str, pfd_gc.speedtape_left,  pfd_gc.adi_cy + pfd_gc.line_height_l/2 );
+    	// g2.drawString( failed_str, pfd_gc.speedtape_left,  pfd_gc.adi_cy + pfd_gc.line_height_l/2 );
+    	
+    	failed_flag.setText("SPD", PFE_Color.PFE_COLOR_ALARM);    	
+    	failed_flag.paint(g2);
+    	
     	failed_str = "SPD SEL";   	
     	g2.setFont(pfd_gc.font_l);
     	int str_w = pfd_gc.get_text_width(g2, pfd_gc.font_l, failed_str);

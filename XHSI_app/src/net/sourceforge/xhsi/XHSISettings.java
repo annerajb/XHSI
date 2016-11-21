@@ -36,8 +36,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
+import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.NavigationRadio;
+import net.sourceforge.xhsi.model.SimCommand;
 
 
 /**
@@ -122,6 +124,37 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_FIX_HIDE = "Hide CDU fix";
     public static final String ACTION_FIX_SHOW = "Define CDU fix ...";
 
+    public static final String ACTION_AP_SET_ALTITUDE = "Set Altitude ...";
+    
+    public static final String ACTION_AP_LEVEL_CHG = "Level Change";
+    public static final String ACTION_AP_LEVEL_CHG_MNG = "Level Change Managed";
+    public static final String ACTION_AP_LEVEL_HOLD = "Hold";
+    public static final String ACTION_AP_SET_SPEED = "Set Speed ...";
+    public static final String ACTION_AP_SPEED_MNG = "Speed Managed";
+    public static final String ACTION_AP_SPEED_SEL = "Speed Selected";
+    public static final String ACTION_AP_SET_HEADING = "Set Heading ...";
+    public static final String ACTION_AP_HDG_MODE = "Follow Heading";
+    public static final String ACTION_AP_NAV_MODE = "NAV";
+    public static final String ACTION_AP_VOR_MODE = "VOR";
+    public static final String ACTION_AP_SET_VS = "Set Vertical Speed ...";
+    public static final String ACTION_AP_LEVEL_OFF = "Level Off";
+    public static final String ACTION_AP_VS_MODE = "V/S Mode";
+    public static final String ACTION_AP_FD_SWITCH = "Flight director";
+    public static final String ACTION_AP_AP_SWITCH = "Autopilot";    
+    public static final String ACTION_AP_ILS_ON = "ILS on";
+    public static final String ACTION_AP_ILS_OFF = "ILS on";
+    public static final String ACTION_AP_LOC = "LOC capture";
+    public static final String ACTION_AP_GS = "Glide slope capture";
+    public static final String ACTION_AP_ATHR_ON = "A/THR on";
+    public static final String ACTION_AP_ATHR_OFF = "A/THR off";
+    public static final String ACTION_AP_METRIC_ON = "Display metric alt on";
+    public static final String ACTION_AP_METRIC_OFF = "Display metric alt off";
+    public static final String ACTION_AP_TRK_FPA_ON = "Bird on";
+    public static final String ACTION_AP_TRK_FPA_OFF = "Bird off";
+    public static final String ACTION_AP_TRK_MACH_ON = "Display Mach speed";
+    public static final String ACTION_AP_TRK_MACH_OFF = "Display Kts speed";
+   
+    
     public static final String ACTION_ENGINE_TYPE_N1 = "N1";    
     public static final String ACTION_ENGINE_TYPE_EPR = "EPR";    
     public static final String ACTION_ENGINE_TYPE_TRQ = "TRQ";
@@ -243,13 +276,23 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
     public int clock_mode = 0;
 
+    // ------ Style Sub Menu ------
     private JRadioButtonMenuItem radio_button_style_boeing;
     private JRadioButtonMenuItem radio_button_style_airbus;
     
+    // ------ Transponder Sub Menu ------
+    private JRadioButtonMenuItem radio_button_xpdr_off;
+    private JRadioButtonMenuItem radio_button_xpdr_stby;
+    private JRadioButtonMenuItem radio_button_xpdr_on;
+    private JRadioButtonMenuItem radio_button_xpdr_ta;
+    private JRadioButtonMenuItem radio_button_xpdr_tara;
+
+    // ------ Source Sub Menu ------
     private JRadioButtonMenuItem radio_button_source_nav1;
     private JRadioButtonMenuItem radio_button_source_nav2;
     private JRadioButtonMenuItem radio_button_source_fmc;
-
+    
+    // ------ ND Sub Menu ------
     private JRadioButtonMenuItem radio_button_radio1_adf;
     private JRadioButtonMenuItem radio_button_radio1_off;
     private JRadioButtonMenuItem radio_button_radio1_nav;
@@ -264,7 +307,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JRadioButtonMenuItem radio_button_submode_nav;
     private JRadioButtonMenuItem radio_button_submode_pln;
     private JCheckBoxMenuItem checkbox_mode_centered;
-//    private JCheckBoxMenuItem checkbox_map_zoomin;
+    //    private JCheckBoxMenuItem checkbox_map_zoomin;
 
     private JRadioButtonMenuItem[] radio_button_range = new JRadioButtonMenuItem[14];
 
@@ -276,11 +319,6 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JCheckBoxMenuItem checkbox_symbols_show_pos;
     private JCheckBoxMenuItem checkbox_symbols_show_data;
 
-    private JRadioButtonMenuItem radio_button_xpdr_off;
-    private JRadioButtonMenuItem radio_button_xpdr_stby;
-    private JRadioButtonMenuItem radio_button_xpdr_on;
-    private JRadioButtonMenuItem radio_button_xpdr_ta;
-    private JRadioButtonMenuItem radio_button_xpdr_tara;
 
     public JRadioButtonMenuItem radiobutton_holding_hide;
     public JRadioButtonMenuItem radiobutton_holding_show;
@@ -296,35 +334,23 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private HoldingDialog holding_dialog;
     private FixDialog fix_dialog;
     private MaxTRQDialog max_trq_dialog;
+    private AltitudeDialog altitude_dialog;
+    private HeadingDialog heading_dialog;
+    private VerticalSpeedDialog v_speed_dialog;
+    private SpeedDialog speed_dialog;
     //private FuelDialog fuel_dialog;
 
-    private JRadioButtonMenuItem radio_button_mfd_arpt;
-    private JRadioButtonMenuItem radio_button_mfd_fpln;
-    private JRadioButtonMenuItem radio_button_mfd_eicas;
-    private JRadioButtonMenuItem radio_button_mfd_rtu;
-    private JRadioButtonMenuItem radio_button_mfd_apu;
-    private JRadioButtonMenuItem radio_button_mfd_fctl;
-    private JRadioButtonMenuItem radio_button_mfd_sys;
-    private JRadioButtonMenuItem radio_button_mfd_elec;
-    private JRadioButtonMenuItem radio_button_mfd_wheels;
-    private JRadioButtonMenuItem radio_button_mfd_door_oxy;
-    private JRadioButtonMenuItem radio_button_mfd_bleed;
-    private JRadioButtonMenuItem radio_button_mfd_cond;
-    private JRadioButtonMenuItem radio_button_mfd_fuel;
-    private JRadioButtonMenuItem radio_button_mfd_cab_press;
-    private JRadioButtonMenuItem radio_button_mfd_hydr;
-    private JRadioButtonMenuItem radio_button_mfd_status;
-    
-    private JRadioButtonMenuItem radio_button_cdu_aircraft;
-    private JRadioButtonMenuItem radio_button_cdu_xfmc;
-    private JRadioButtonMenuItem radio_button_cdu_ufmc;
-    
-    private JRadioButtonMenuItem radio_button_cdu_left;
-    private JRadioButtonMenuItem radio_button_cdu_right;
-    
-    private JRadioButtonMenuItem radio_button_clock_utc;
-    private JRadioButtonMenuItem radio_button_clock_lt;
+    // ------ MCP Sub Menu ------
+    /*
+     *  private AltitudeDialog altitude_dialog;
+     *  private SpeedDialog speed_dialog;
+     *  private HeadingDialog heading_dialog;
+     *  private VerticalSpeedDialog vertical_speed_dialog;
+     */
+    private JCheckBoxMenuItem checkbox_autopilot;
+    private JCheckBoxMenuItem checkbox_flight_director;
 
+    // ------ EICAS Sub Menu ------
     private JRadioButtonMenuItem radio_button_engine_n1;
     private JRadioButtonMenuItem radio_button_engine_epr;
     private JRadioButtonMenuItem radio_button_engine_trq;
@@ -346,6 +372,36 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JRadioButtonMenuItem radio_button_temp_units_f;
     // private JRadioButtonMenuItem radio_button_temp_units_k;
     
+    // ------ MFD Sub Menu ------
+    private JRadioButtonMenuItem radio_button_mfd_arpt;
+    private JRadioButtonMenuItem radio_button_mfd_fpln;
+    private JRadioButtonMenuItem radio_button_mfd_eicas;
+    private JRadioButtonMenuItem radio_button_mfd_rtu;
+    private JRadioButtonMenuItem radio_button_mfd_apu;
+    private JRadioButtonMenuItem radio_button_mfd_fctl;
+    private JRadioButtonMenuItem radio_button_mfd_sys;
+    private JRadioButtonMenuItem radio_button_mfd_elec;
+    private JRadioButtonMenuItem radio_button_mfd_wheels;
+    private JRadioButtonMenuItem radio_button_mfd_door_oxy;
+    private JRadioButtonMenuItem radio_button_mfd_bleed;
+    private JRadioButtonMenuItem radio_button_mfd_cond;
+    private JRadioButtonMenuItem radio_button_mfd_fuel;
+    private JRadioButtonMenuItem radio_button_mfd_cab_press;
+    private JRadioButtonMenuItem radio_button_mfd_hydr;
+    private JRadioButtonMenuItem radio_button_mfd_status;
+    
+    // ------ CDU Sub Menu ------
+    private JRadioButtonMenuItem radio_button_cdu_aircraft;
+    private JRadioButtonMenuItem radio_button_cdu_xfmc;
+    private JRadioButtonMenuItem radio_button_cdu_ufmc;
+    
+    private JRadioButtonMenuItem radio_button_cdu_left;
+    private JRadioButtonMenuItem radio_button_cdu_right;
+    
+    // ------ Clock Sub Menu ------
+    private JRadioButtonMenuItem radio_button_clock_utc;
+    private JRadioButtonMenuItem radio_button_clock_lt;
+    
     private static XHSISettings single_instance = null;
 
 
@@ -365,7 +421,11 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.holding_dialog = new HoldingDialog(xhsi_main_frame);
         this.fix_dialog = new FixDialog(xhsi_main_frame);
         this.max_trq_dialog = new MaxTRQDialog(xhsi_main_frame);
-        //this.fuel_dialog = new FuelDialog(xhsi_main_frame);
+        this.altitude_dialog = new AltitudeDialog(xhsi_main_frame, avionics);
+        this.heading_dialog = new HeadingDialog(xhsi_main_frame, avionics);
+        this.v_speed_dialog = new VerticalSpeedDialog(xhsi_main_frame, avionics);
+        this.speed_dialog = new SpeedDialog(xhsi_main_frame, avionics);
+        // this.fuel_dialog = new FuelDialog(xhsi_main_frame);
 
     }
 
@@ -378,7 +438,9 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
 
         // Hmmm... code re-use? This looks more like code polycopy...
 
-        // define the "Style" menu
+        /*
+         *  define the "Style" menu
+         */
         JMenu xhsi_style_menu = new JMenu("Style");
 
         ButtonGroup style_group = new ButtonGroup();
@@ -404,7 +466,9 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         menu_bar.add(xhsi_style_menu);
 
 
-        // define the "Transponder" menu
+        /*
+         *  define the "Transponder" menu
+         */
         JMenu xhsi_xpdr_menu = new JMenu("Transponder");
 
         ButtonGroup xpdr_group = new ButtonGroup();
@@ -459,7 +523,9 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         menu_bar.add(xhsi_xpdr_menu);
 
 
-        // define the "Source" menu
+        /*
+         *  define the "Source" menu
+         */
         JMenu xhsi_source_menu = new JMenu("Source");
 
         ButtonGroup source_group = new ButtonGroup();
@@ -495,7 +561,9 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         menu_bar.add(xhsi_source_menu);
 
 
-        // define the "ND" menu
+        /*
+         *  define the "ND" menu
+         */
         JMenu nd_menu = new JMenu("ND");
         
         // define the "Radio1" submenu
@@ -853,8 +921,120 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // add the "ND" menu to the menubar
         menu_bar.add(nd_menu);
 
+        
+        /*
+         *  define the "AutoPilot" or MCP/FCU menu
+         */
+        JMenu ap_menu = new JMenu("AP");
+        
+        // Altitude Sub Menu
+        JMenu ap_altitude_submenu = new JMenu("Altitude");
+        
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SET_ALTITUDE);
+        menu_item.setToolTipText("Set the autopilot altitude target");
+        menu_item.addActionListener(this);
+        ap_altitude_submenu.add(menu_item);
+        
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_LEVEL_HOLD);
+        menu_item.setToolTipText("Hold current altitude");
+        menu_item.addActionListener(this);
+        ap_altitude_submenu.add(menu_item);
+        
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_LEVEL_CHG);
+        menu_item.setToolTipText("Engage level change - open mode");
+        menu_item.addActionListener(this);
+        ap_altitude_submenu.add(menu_item);
 
-        // define the "EICAS" menu
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_LEVEL_CHG_MNG);
+        menu_item.setToolTipText("Engage level change - managed mode");
+        menu_item.addActionListener(this);
+        ap_altitude_submenu.add(menu_item);
+        
+        ap_menu.add(ap_altitude_submenu);
+
+        // Speed Sub Menu
+        JMenu ap_speed_submenu = new JMenu("Speed");
+        
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SET_SPEED);
+        menu_item.setToolTipText("Set the auto/throttle/thrust speed target");
+        menu_item.addActionListener(this);
+        ap_speed_submenu.add(menu_item);
+   
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SPEED_MNG);
+        menu_item.setToolTipText("Autopilot speed managed");
+        menu_item.addActionListener(this);
+        ap_speed_submenu.add(menu_item);
+
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SPEED_SEL);
+        menu_item.setToolTipText("Autopilot speed selected");
+        menu_item.addActionListener(this);
+        ap_speed_submenu.add(menu_item);
+        
+        ap_menu.add(ap_speed_submenu);
+        
+        // Heading Sub Menu
+        JMenu ap_heading_submenu = new JMenu("Heading");
+        
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SET_HEADING);
+        menu_item.setToolTipText("Set the autopilot heading bug");
+        menu_item.addActionListener(this);
+        ap_heading_submenu.add(menu_item);
+
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_HDG_MODE);
+        menu_item.setToolTipText("Follow the heading bug");
+        menu_item.addActionListener(this);
+        ap_heading_submenu.add(menu_item);
+        
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_NAV_MODE);
+        menu_item.setToolTipText("Follow the flight plan");
+        menu_item.addActionListener(this);
+        ap_heading_submenu.add(menu_item);
+
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_VOR_MODE);
+        menu_item.setToolTipText("Follow tuned VOR 1");
+        menu_item.addActionListener(this);
+        ap_heading_submenu.add(menu_item);
+        
+        ap_menu.add(ap_heading_submenu);
+        
+        // Vertical Velocity Sub Menu
+        JMenu ap_vv_submenu = new JMenu("Vertical Velocity");
+        
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SET_VS);
+        menu_item.setToolTipText("Set the autopilot vertical velocity target");
+        menu_item.addActionListener(this);
+        ap_vv_submenu.add(menu_item);
+        
+        ap_menu.add(ap_vv_submenu);
+        
+        ap_menu.addSeparator();
+        
+        // TODO :
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_AP_AP_SWITCH);
+        checkbox_menu_item.setToolTipText("Set the autopilot on/off");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(false);
+        ap_menu.add(checkbox_menu_item);
+        // keep a reference
+        this.checkbox_autopilot = checkbox_menu_item;
+
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_AP_FD_SWITCH);
+        checkbox_menu_item.setToolTipText("Set the fligth director on/off");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(false);
+        ap_menu.add(checkbox_menu_item);
+        // keep a reference
+        this.checkbox_flight_director = checkbox_menu_item;
+
+        
+        // add the "AP" menu to the menubar
+        menu_bar.add(ap_menu);
+        
+        
+        
+        /*
+         *  define the "EICAS" menu
+         */
         JMenu xhsi_eicas_menu = new JMenu("EICAS");
 
 //        engine_type = 0;
@@ -1480,7 +1660,90 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             this.fix_dialog.setLocation(this.main_frame.getX()+this.main_frame.getWidth()/2-this.fix_dialog.getWidth()/2, this.main_frame.getY()+150);
             this.fix_dialog.setVisible(true);
             this.fix_dialog.pack();
-
+        } else if (command.equals(XHSISettings.ACTION_AP_SET_ALTITUDE)) {            
+            // Set & show altitude dialog
+            this.altitude_dialog.setLocation(this.main_frame.getX()+this.main_frame.getWidth()/2-this.altitude_dialog.getWidth()/2, this.main_frame.getY()+120);
+            this.altitude_dialog.init_altitude();
+            this.altitude_dialog.setVisible(true);
+            this.altitude_dialog.pack();
+            
+        } else if (command.equals(XHSISettings.ACTION_AP_LEVEL_CHG)) {
+        	this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_FCU_ALT_SEL);
+        } else if (command.equals(XHSISettings.ACTION_AP_LEVEL_CHG_MNG)) {
+        	this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_FCU_ALT_MNG);
+        } else if (command.equals(XHSISettings.ACTION_AP_SET_SPEED)) {
+            this.speed_dialog.setLocation(this.main_frame.getX()+this.main_frame.getWidth()/2-this.speed_dialog.getWidth()/2, this.main_frame.getY()+120);
+            this.speed_dialog.init_altitude();
+            this.speed_dialog.setVisible(true);
+            this.speed_dialog.pack();
+        } else if (command.equals(XHSISettings.ACTION_AP_SPEED_MNG)) {
+        	this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_FCU_SPD_MNG);
+        } else if (command.equals(XHSISettings.ACTION_AP_SPEED_SEL)) {
+        	this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_FCU_SPD_SEL);
+        } else if (command.equals(XHSISettings.ACTION_AP_SET_HEADING)) {           
+            // Set & show heading dialog
+            this.heading_dialog.setLocation(this.main_frame.getX()+this.main_frame.getWidth()/2-this.heading_dialog.getWidth()/2, this.main_frame.getY()+120);
+            this.heading_dialog.init_heading();
+            this.heading_dialog.setVisible(true);
+            this.heading_dialog.pack();
+        } else if (command.equals(XHSISettings.ACTION_AP_HDG_MODE)) {
+        	this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_FCU_HDG_SEL);
+        } else if (command.equals(XHSISettings.ACTION_AP_NAV_MODE)) {
+        	this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_FCU_HDG_MNG);
+        } else if (command.equals(XHSISettings.ACTION_AP_VOR_MODE)) {
+        } else if (command.equals(XHSISettings.ACTION_AP_SET_VS)) {
+            // Set & show vertical speed dialog
+            this.v_speed_dialog.setLocation(this.main_frame.getX()+this.main_frame.getWidth()/2-this.v_speed_dialog.getWidth()/2, this.main_frame.getY()+120);
+            this.v_speed_dialog.init_altitude();
+            this.v_speed_dialog.setVisible(true);
+            this.v_speed_dialog.pack();
+        } else if (command.equals(XHSISettings.ACTION_AP_VS_MODE)) {
+        } else if (command.equals(XHSISettings.ACTION_AP_FD_SWITCH)) { 
+        	// TODO: Flight director for all aicrafts
+    		boolean fd_on = this.avionics.autopilot_mode() >= 1;	    		
+    		if ( this.avionics.is_qpac()) { 
+    			fd_on = this.avionics.qpac_fd_on();
+    			this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_EFIS_CAPT_FD);
+    		} else {
+    			if (fd_on) {
+    				// This will set both autopilot and FD to OFF
+    				this.avionics.set_autopilot_mode(0);
+    			} else {
+    				this.avionics.set_autopilot_mode(1);;
+    			}
+    		}    		    		
+        } else if (command.equals(XHSISettings.ACTION_AP_AP_SWITCH)) {
+        	// TODO: Autopilot switch for all aircrafts
+    		boolean ap_on;
+    		if (this.avionics.is_qpac()) {
+    			// TODO: Set AP1 only
+    			ap_on = this.avionics.qpac_ap1() || this.avionics.qpac_ap2();
+    			this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_FCU_AP1);
+    		} else if (this.avionics.is_jar_a320neo()) {
+    			ap_on = this.avionics.jar_a320neo_ap1() || this.avionics.jar_a320neo_ap2();
+    		} else {
+    			ap_on = this.avionics.autopilot_mode() > 1;
+    			if (ap_on) {
+    				this.avionics.set_autopilot_mode(1);
+    			} else {
+    				// This will set both autopilot and FD to ON
+    				this.avionics.set_autopilot_mode(2);;
+    			}    			
+    		}        
+        } else if (command.equals(XHSISettings.ACTION_AP_ILS_ON)) {
+        } else if (command.equals(XHSISettings.ACTION_AP_ILS_OFF)) {
+        } else if (command.equals(XHSISettings.ACTION_AP_LOC)) {
+        } else if (command.equals(XHSISettings.ACTION_AP_GS)) {
+        } else if (command.equals(XHSISettings.ACTION_AP_ATHR_ON)) {
+        } else if (command.equals(XHSISettings.ACTION_AP_ATHR_OFF)) {
+        } else if (command.equals(XHSISettings.ACTION_AP_METRIC_ON)) {
+        } else if (command.equals(XHSISettings.ACTION_AP_METRIC_OFF)) {
+        } else if (command.equals(XHSISettings.ACTION_AP_TRK_FPA_ON)) {
+        } else if (command.equals(XHSISettings.ACTION_AP_TRK_FPA_OFF)) {
+        } else if (command.equals(XHSISettings.ACTION_AP_TRK_MACH_ON)) {
+        } else if (command.equals(XHSISettings.ACTION_AP_TRK_MACH_OFF)) {
+        	
+        	
         } else if (command.equals(XHSISettings.ACTION_ENGINE_TYPE_N1)) {
             engine_type = XHSISettings.ENGINE_TYPE_N1;
             this.avionics.set_engine_type(engine_type);
@@ -1722,6 +1985,12 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_xpdr_on.setSelected( new_xpdr == Avionics.XPDR_ON );
         this.radio_button_xpdr_ta.setSelected( new_xpdr == Avionics.XPDR_TA );
         this.radio_button_xpdr_tara.setSelected( new_xpdr == Avionics.XPDR_TARA );
+        
+        // Autopilot
+        // TODO: A320/B737 modes
+        int new_ap = avionics.autopilot_mode();
+        this.checkbox_autopilot.setSelected(new_ap>1);
+        this.checkbox_flight_director.setSelected(new_ap>0);
 
         int new_mfd_mode = avionics.get_mfd_mode();
         this.radio_button_mfd_arpt.setSelected( new_mfd_mode == Avionics.MFD_MODE_ARPT );

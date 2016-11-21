@@ -37,6 +37,8 @@ import java.text.DecimalFormatSymbols;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSIStatus;
+import net.sourceforge.xhsi.flightdeck.pfd.PFDFramedElement.PFE_Color;
+import net.sourceforge.xhsi.flightdeck.pfd.PFDFramedElement.PFE_Style;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.Localizer;
 import net.sourceforge.xhsi.model.ModelFactory;
@@ -57,12 +59,17 @@ public class AltiTape_A320 extends PFDSubcomponent {
     private boolean altitude_captured;
     private int altitude_captured_ap;
 
+    PFDFramedElement failed_flag;
 
     public AltiTape_A320(ModelFactory model_factory, PFDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
         altitude_alert_status = AltitudeAlert.NORMAL;
         altitude_captured = true;
         altitude_captured_ap = Math.round(this.avionics.autopilot_altitude());
+        failed_flag = new PFDFramedElement(PFDFramedElement.ALT_FLAG, 0, hsi_gc, PFE_Color.PFE_COLOR_ALARM);
+        failed_flag.enableFlashing();
+        failed_flag.disableFraming();
+        failed_flag.setBigFont(true);
     }
 
 
@@ -73,6 +80,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
     			// if the altitude information fails, the ALT flag (red) replaces the altitude scale
     			if ( pfd_gc.powered ) drawFailedTape(g2);
     		} else if ( pfd_gc.powered ) {
+    			failed_flag.clearText();
     			drawTape(g2);
     		}
     	}
@@ -80,8 +88,6 @@ public class AltiTape_A320 extends PFDSubcomponent {
 
     private void drawFailedTape(Graphics2D g2) {
         // Global style
-        
-        
         int altitape_right = pfd_gc.altitape_left + pfd_gc.tape_width*60/100;
         g2.setColor(pfd_gc.pfd_instrument_background_color);
         g2.fillRect(pfd_gc.altitape_left, pfd_gc.tape_top, 
@@ -93,10 +99,9 @@ public class AltiTape_A320 extends PFDSubcomponent {
     	g2.setColor(pfd_gc.background_color);   	
     	g2.fillRect(pfd_gc.altitape_left - pfd_gc.tape_width*3/50, pfd_gc.adi_cy - pfd_gc.line_height_xxl*6/9,
     			pfd_gc.tape_width, pfd_gc.line_height_xxl*12/9);
-        g2.setColor(pfd_gc.pfd_alarm_color);    	
-    	String failed_str = "ALT";
-        g2.setFont(pfd_gc.font_xxl);
-    	g2.drawString( failed_str, pfd_gc.altitape_left,  pfd_gc.adi_cy + pfd_gc.line_height_l/2 );
+
+    	failed_flag.setText("ALT", PFE_Color.PFE_COLOR_ALARM);    	
+    	failed_flag.paint(g2);
     }
     
     private void drawTape(Graphics2D g2) {
@@ -690,3 +695,4 @@ public class AltiTape_A320 extends PFDSubcomponent {
 
 
 }
+
