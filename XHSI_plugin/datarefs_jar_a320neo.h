@@ -262,6 +262,31 @@ extern XPLMDataRef jar_a320_neo_nd_mode;
 #define JAR_A320_MAX_MCDU_KEYS 70
 extern XPLMDataRef jar_a320_mcdu_click[JAR_A320_MAX_MCDU_KEYS];
 
+// FUEL
+extern XPLMDataRef jar_a320_neo_fuel_all_flow;
+extern XPLMDataRef jar_a320_neo_fuel_bus_left;
+extern XPLMDataRef jar_a320_neo_fuel_bus_right;
+extern XPLMDataRef jar_a320_neo_fuel_bus_t1;
+extern XPLMDataRef jar_a320_neo_fuel_bus_t3;
+extern XPLMDataRef jar_a320_neo_fuel_cent_mode;
+extern XPLMDataRef jar_a320_neo_fuel_inn_out_left;
+extern XPLMDataRef jar_a320_neo_fuel_inn_out_right;
+extern XPLMDataRef jar_a320_neo_fuel_t0;
+extern XPLMDataRef jar_a320_neo_fuel_t1;
+extern XPLMDataRef jar_a320_neo_fuel_t1_pump1;
+extern XPLMDataRef jar_a320_neo_fuel_t1_pump2;
+extern XPLMDataRef jar_a320_neo_fuel_t2;
+extern XPLMDataRef jar_a320_neo_fuel_t2_pump1;
+extern XPLMDataRef jar_a320_neo_fuel_t2_pump2;
+extern XPLMDataRef jar_a320_neo_fuel_t3;
+extern XPLMDataRef jar_a320_neo_fuel_t3_pump1;
+extern XPLMDataRef jar_a320_neo_fuel_t3_pump2;
+extern XPLMDataRef jar_a320_neo_fuel_t4;
+extern XPLMDataRef jar_a320_neo_fuel_used1;
+extern XPLMDataRef jar_a320_neo_fuel_used12;
+extern XPLMDataRef jar_a320_neo_fuel_used2;
+extern XPLMDataRef jar_a320_neo_fuel_xfeed;
+
 // Hydraulics
 extern XPLMDataRef jar_a320_neo_hydr_b_elec_pump_fault_light;
 extern XPLMDataRef jar_a320_neo_hydr_b_elec_pump_mode;

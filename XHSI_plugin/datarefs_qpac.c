@@ -409,7 +409,6 @@ void findQpacDataRefs(void) {
             qpac_co_efis_nd_range = XPLMFindDataRef("AirbusFBW/NDrangeFO");
             if (qpac_capt_efis_nd_range != NULL) qpac_version = 202;
             // Brakes
-            // TODO : check dataref qpac_autobrake_low = XPLMFindDataRef("AirbusFBW/AutoBrkLow");
             qpac_autobrake_low = XPLMFindDataRef("AirbusFBW/AutoBrkLo");
             qpac_autobrake_med = XPLMFindDataRef("AirbusFBW/AutoBrkMed");
             qpac_autobrake_max = XPLMFindDataRef("AirbusFBW/AutoBrkMax");

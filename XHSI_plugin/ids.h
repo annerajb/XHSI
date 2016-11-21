@@ -275,6 +275,8 @@
 #define SIM_AIRCRAFT_ENGINE_RED_OIL_P 342
 #define SIM_AIRCRAFT_ENGINE_RED_OIL_T 343
 #define SIM_AIRCRAFT_ENGINE_RED_EPR 344
+#define XHSI_AIRCRAFT_NOSE_TIRE_REF_PRESSURE 345
+#define XHSI_AIRCRAFT_MAIN_TIRE_REF_PRESSURE 346
 
 // Controls & annunciators
 #define SIM_COCKPIT2_ANNUNCIATORS_MASTER_CAUTION 350
@@ -610,8 +612,20 @@
 #define QPAC_EFIS_ND_SYMBOLS 1057
 // FAILURES
 #define QPAC_FAILURES 1060
-// BRAKES
+// BRAKES & TYRES
 #define QPAC_AUTO_BRAKE_LEVEL 1061
+// TODO: coherence in labels
+#define QPAC_BRAKE_ACCU_PSI 1106
+#define QPAC_BRAKE_LEFT_PSI 1107
+#define QPAC_BRAKE_RIGHT_PSI 1108
+// Triple pressure indicator
+#define QPAC_TPI_LEFT 1096
+#define QPAC_TPI_RIGHT 1097
+#define QPAC_TPI_ACCU 1098
+//
+#define QPAC_BRAKE_TEMP_ 1110
+#define QPAC_TYRE_PSI_ 1115
+#define QPAC_BRAKE_STATUS 1120
 // FLAPS and SLATS
 #define QPAC_FLAPS_REQ_POS 1062
 #define QPAC_SLATS_REQ_POS 1063
@@ -660,17 +674,14 @@
 // Keypress
 #define QPAC_KEY_PRESS 1095
 // next is 1091
-// Triple pressure indicator
-#define QPAC_TPI_LEFT 1096
-#define QPAC_TPI_RIGHT 1097
-#define QPAC_TPI_ACCU 1098
+
 // Nacelles temp
 #define QPAC_NACELLE_TEMP_ 1100 // Array [4]
 // Engines Ignition
 #define QPAC_ENG_IGNITION 1104
 // Doors
 #define QPAC_DOOR_STATUS 1105
-// Next is 1106
+// Next is 1121
 // IDs reserved for QPAC up to 1199
 
 

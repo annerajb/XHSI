@@ -45,6 +45,12 @@ XPLMDataRef pa_a320_brake_temp3;
 XPLMDataRef pa_a320_brake_temp4;
 XPLMDataRef pa_a320_left_aileron_pos;
 XPLMDataRef pa_a320_right_aileron_pos;
+// 7.3.3 datarefs
+XPLMDataRef pa_a320_tyre_press_f;
+XPLMDataRef pa_a320_tyre_press_l1;
+XPLMDataRef pa_a320_tyre_press_l2;
+XPLMDataRef pa_a320_tyre_press_r1;
+XPLMDataRef pa_a320_tyre_press_r2;
 
 int pa_a320_ready = 0;
 int pa_a320_version = 0;
@@ -89,6 +95,14 @@ void findPaA320DataRefs(void) {
             pa_a320_brake_temp2 = XPLMFindDataRef("com/petersaircraft/airbus/BrakeTemp2");
             pa_a320_brake_temp3 = XPLMFindDataRef("com/petersaircraft/airbus/BrakeTemp3");
             pa_a320_brake_temp4 = XPLMFindDataRef("com/petersaircraft/airbus/BrakeTemp4");
+            // Tire Pressure (7.3.3)
+            pa_a320_tyre_press_f = XPLMFindDataRef("com/petersaircraft/airbus/TyrePressF");
+            pa_a320_tyre_press_l1 = XPLMFindDataRef("com/petersaircraft/airbus/TyrePressL1");
+            pa_a320_tyre_press_l2 = XPLMFindDataRef("com/petersaircraft/airbus/TyrePressL2");
+            pa_a320_tyre_press_r1 = XPLMFindDataRef("com/petersaircraft/airbus/TyrePressR1");
+            pa_a320_tyre_press_r2 = XPLMFindDataRef("com/petersaircraft/airbus/TyrePressR2");
+        	if (pa_a320_tyre_press_f != NULL) pa_a320_version=733;
+
         }
     }
 }
