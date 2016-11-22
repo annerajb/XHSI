@@ -1016,11 +1016,14 @@ public class XPlaneAvionics implements Avionics, Observer {
     public int get_cdu_side() {
     	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
     		// PILOT CDU
+    		int pilot_cdu_side = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_CDU_SIDE)) & 0x0F;
     		if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SIDE).equals(XHSIPreferences.CDU_SIDE_SWITCHABLE)) {
-    			return ((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_CDU_SIDE)) & 0x0F;
+    			return pilot_cdu_side;
     		} else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SIDE).equals(XHSIPreferences.CDU_SIDE_LEFT)) {
+    			// if (pilot_cdu_side != Avionics.CDU_LEFT) set_cdu_side(Avionics.CDU_LEFT);
     			return Avionics.CDU_LEFT;
     		} else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SIDE).equals(XHSIPreferences.CDU_SIDE_RIGHT)) {
+    			// if (pilot_cdu_side != Avionics.CDU_RIGHT) set_cdu_side(Avionics.CDU_RIGHT);
     			return Avionics.CDU_RIGHT;
     		} else {
     			// Error, fallback
@@ -1028,11 +1031,14 @@ public class XPlaneAvionics implements Avionics, Observer {
     		}
     	} else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
     		// COPILOT CDU
+    		int copilot_cdu_side = (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_CDU_SIDE)) & 0xF0) >> 4;
     		if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SIDE).equals(XHSIPreferences.CDU_SIDE_SWITCHABLE)) {
-    			return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_CDU_SIDE)) & 0xF0) >> 4;
+    			return copilot_cdu_side;
     		} else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SIDE).equals(XHSIPreferences.CDU_SIDE_LEFT)) {
+    			if (copilot_cdu_side != Avionics.CDU_LEFT) set_cdu_side(Avionics.CDU_LEFT);
     			return Avionics.CDU_LEFT;
     		} else if ( xhsi_preferences.get_preference(XHSIPreferences.PREF_CDU_SIDE).equals(XHSIPreferences.CDU_SIDE_RIGHT)) {
+    			if (copilot_cdu_side != Avionics.CDU_RIGHT) set_cdu_side(Avionics.CDU_RIGHT);
     			return Avionics.CDU_RIGHT;
     		} else {
     			// Error, fallback
