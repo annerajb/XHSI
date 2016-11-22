@@ -29,6 +29,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Area;
@@ -86,8 +87,8 @@ public class AltiTape_A320 extends PFDSubcomponent {
     	}
     }
 
-    private void drawFailedTape(Graphics2D g2) {
-        // Global style
+    
+    private void drawFailedTape(Graphics2D g2) {        
         int altitape_right = pfd_gc.altitape_left + pfd_gc.tape_width*60/100;
         g2.setColor(pfd_gc.pfd_instrument_background_color);
         g2.fillRect(pfd_gc.altitape_left, pfd_gc.tape_top, 
@@ -103,23 +104,37 @@ public class AltiTape_A320 extends PFDSubcomponent {
     	failed_flag.setText("ALT", PFE_Color.PFE_COLOR_ALARM);    	
     	failed_flag.paint(g2);
     }
+   
     
     private void drawTape(Graphics2D g2) {
-        // Global style
-        // boolean pfd_airbus = this.avionics.get_instrument_style() == Avionics.STYLE_AIRBUS;
         boolean display_metric = false;
-        if (this.avionics.pfd_show_metric_alt() ) { display_metric = true; } 
+        if (this.avionics.pfd_show_metric_alt() ) { display_metric = true; }
         
-        // int altitape_right = pfd_gc.altitape_left + pfd_gc.digit_width_xxl*14/5;
+        // Set variables for QNH
+        int qnh = this.aircraft.qnh();
+        boolean qnh_display = true;
+        boolean qnh_is_hpa = this.avionics.pfd_show_baro_hpa();
+        float alt_inhg = this.aircraft.altimeter_in_hg();
+        boolean std = ( Math.round(alt_inhg * 100.0f) == 2992 );
+        if (this.avionics.is_qpac()) { 
+        	std = this.avionics.qpac_baro_std(); 
+        	qnh_display = this.avionics.qpac_baro_hide();        	
+        }
+        
         int altitape_right = pfd_gc.altitape_left + pfd_gc.tape_width*60/100;       
         
         pfd_gc.setTransparent(g2, this.preferences.get_draw_colorgradient_horizon());
         g2.setColor(pfd_gc.instrument_background_color);
-        g2.fillRect(pfd_gc.altitape_left - 1, pfd_gc.tape_top - 1, altitape_right - pfd_gc.altitape_left + 1, pfd_gc.tape_height + 2);	
+        g2.fillRect(pfd_gc.altitape_left + 1, pfd_gc.tape_top - 1, altitape_right - pfd_gc.altitape_left - 1, pfd_gc.tape_height + 2);	
         g2.setColor(pfd_gc.markings_color);
         g2.drawLine(altitape_right, pfd_gc.tape_top ,altitape_right, pfd_gc.tape_top + pfd_gc.tape_height + 1 );
-        g2.drawLine(pfd_gc.altitape_left, pfd_gc.tape_top, pfd_gc.altitape_left + pfd_gc.tape_width*7/8, pfd_gc.tape_top );
-        g2.drawLine(pfd_gc.altitape_left, pfd_gc.tape_top + pfd_gc.tape_height + 1,pfd_gc.altitape_left + pfd_gc.tape_width*7/8, pfd_gc.tape_top + pfd_gc.tape_height + 1 );            
+        if (std) {
+        	g2.drawLine(pfd_gc.altitape_left, pfd_gc.tape_top, altitape_right, pfd_gc.tape_top );
+        	g2.drawLine(pfd_gc.altitape_left, pfd_gc.tape_top + pfd_gc.tape_height + 1, altitape_right, pfd_gc.tape_top + pfd_gc.tape_height + 1 );
+        } else {
+            g2.drawLine(pfd_gc.altitape_left, pfd_gc.tape_top, pfd_gc.altitape_left + pfd_gc.tape_width*7/8, pfd_gc.tape_top );
+            g2.drawLine(pfd_gc.altitape_left, pfd_gc.tape_top + pfd_gc.tape_height + 1,pfd_gc.altitape_left + pfd_gc.tape_width*7/8, pfd_gc.tape_top + pfd_gc.tape_height + 1 );        	
+        }
         pfd_gc.setOpaque(g2);
 
         Shape original_clipshape = g2.getClip();
@@ -128,22 +143,12 @@ public class AltiTape_A320 extends PFDSubcomponent {
 
         g2.setColor(pfd_gc.markings_color);
         g2.setFont(pfd_gc.font_xxl);
-
       
         // Altitude scale
         float alt = this.aircraft.altitude_ind();
         int alt_range = 500;
         int alt_modulo = 500;
         float alt_f_range = 1100.0f;
-        
-        // int alt_range = pfd_airbus ? 500 : 400;
-        // int alt_modulo = pfd_airbus ? 500 : 200;
-        // float alt_f_range = pfd_airbus ? 1100.0f : 800.0f;
-        
-//alt = 39660;
-//float utc_time = this.aircraft.sim_time_zulu();
-//alt = (utc_time) % 10000 -5300;
-
 
         // Landing altitude
         boolean loc_receive = false;
@@ -210,7 +215,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
         if ( radio_altitude < 570f ) { 
             // Ground bar on Airbus
         	g2.setColor(pfd_gc.pfd_alarm_color); 
-        	g2.fillRect(altitape_right+1, ra_y, pfd_gc.tape_width / 7 ,  pfd_gc.tape_top + pfd_gc.tape_height - ra_y + 2);
+        	g2.fillRect(altitape_right+1, ra_y, pfd_gc.tape_width / 11 ,  pfd_gc.tape_top + pfd_gc.tape_height - ra_y + 2);
             // TODO : Airbus FCOM 1.31.40 p.13 (2) Landing elevation, an horizontal blue line indicates barometric Ground that may differ from radio altimeter ground
             g2.setColor(Color.blue);
             g2.drawLine(pfd_gc.altitape_left, gnd_y, altitape_right, gnd_y);
@@ -251,72 +256,8 @@ public class AltiTape_A320 extends PFDSubcomponent {
         g2.drawLine(pfd_gc.altitape_left - pfd_gc.tape_width*9/16, pfd_gc.tape_top + pfd_gc.tape_height / 2 , pfd_gc.altitape_left - pfd_gc.tape_width*3/16,  pfd_gc.tape_top + pfd_gc.tape_height / 2);
         g2.setStroke(original_stroke);
 
-        
-        // DA arrow
-        // Code for Boeing, not modified for Airbus -- let's see
-        /*
-        if ( this.aircraft.mins_is_baro() ) {
-
-            int da_bug = this.aircraft.da_bug();
-            if ( da_bug > 0 ) {
-                float da = (float)da_bug;
-                int da_y = pfd_gc.adi_cy - Math.round( (da - alt) * pfd_gc.tape_height / alt_f_range );
-                if ( ( alt > da ) || this.aircraft.on_ground() ) {
-                    g2.setColor(pfd_gc.color_lime);
-                } else {
-                    g2.setColor(pfd_gc.color_amber);
-                }
-                g2.drawLine(pfd_gc.altitape_left - 2, da_y, pfd_gc.altitape_left + pfd_gc.tape_width - 1, da_y);
-                int[] da_triangle_x = {
-                    pfd_gc.altitape_left - 1,
-                    pfd_gc.altitape_left - 1 - pfd_gc.tape_width*5/20,
-                    pfd_gc.altitape_left - 1 - pfd_gc.tape_width*5/20
-                };
-                int[] da_triangle_y = {
-                    da_y,
-                    da_y + pfd_gc.tape_width*6/20,
-                    da_y - pfd_gc.tape_width*6/20
-                };
-                g2.drawPolygon(da_triangle_x, da_triangle_y, 3);
-            }
-
-        }
-        */
-
-
-
-
-//        // a small bug with the _current_ AP Alt
-//        alt_y = pfd_gc.adi_cy - Math.round( (this.avionics.autopilot_current_altitude() - alt) * pfd_gc.tape_height / 800.0f );
-//        if ( alt_y < pfd_gc.tape_top ) {
-//            alt_y = pfd_gc.tape_top;
-//        } else if ( alt_y > pfd_gc.tape_top + pfd_gc.tape_height ) {
-//            alt_y = pfd_gc.tape_top + pfd_gc.tape_height;
-//        }
-//        int[] cur_bug_x = {
-//            pfd_gc.altitape_left - pfd_gc.tape_width*1/16,
-//            pfd_gc.altitape_left,
-//            pfd_gc.altitape_left - pfd_gc.tape_width*1/16
-//        };
-//        int[] cur_bug_y = {
-//            alt_y - pfd_gc.tape_width*3/40,
-//            alt_y,
-//            alt_y + pfd_gc.tape_width*3/40
-//        };
-//        g2.drawPolyline(cur_bug_x, cur_bug_y, 3);
-
-        
 
         // QNH setting   
-        int qnh = this.aircraft.qnh();
-        boolean qnh_display = true;
-        boolean qnh_is_hpa = this.avionics.pfd_show_baro_hpa();
-        float alt_inhg = this.aircraft.altimeter_in_hg();
-        boolean std = ( Math.round(alt_inhg * 100.0f) == 2992 );
-        if (this.avionics.is_qpac()) { 
-        	std = this.avionics.qpac_baro_std(); 
-        	qnh_display = this.avionics.qpac_baro_hide();        	
-        }
         String qnh_str;
         if ( std ) {
             qnh_str = "STD";
@@ -341,9 +282,11 @@ public class AltiTape_A320 extends PFDSubcomponent {
 
         	} else {
         		g2.setColor(pfd_gc.pfd_selected_color);
-        		g2.drawString("STD", pfd_gc.altitape_left + pfd_gc.digit_width_xl*18/8, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_xl*19/8);
+        		// g2.drawString("STD", pfd_gc.altitape_left + pfd_gc.digit_width_xl*18/8, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_xl*19/8);
+        		g2.drawString("STD", pfd_gc.altitape_left + pfd_gc.digit_width_xl*2/8, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_xl*19/8);
         		g2.setColor(pfd_gc.pfd_reference_color);
-        		g2.drawRect(pfd_gc.altitape_left + 2*pfd_gc.digit_width_xl, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_xl*11/8, pfd_gc.digit_width_xl*29/8, pfd_gc.line_height_xl*10/8);
+        		// g2.drawRect(pfd_gc.altitape_left + 2*pfd_gc.digit_width_xl, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_xl*11/8, pfd_gc.digit_width_xl*29/8, pfd_gc.line_height_xl*10/8);
+        		g2.drawRect(pfd_gc.altitape_left, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_xl*11/8, pfd_gc.tape_width*60/100, pfd_gc.line_height_xl*10/8);
         	}
         }
 
@@ -399,7 +342,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
     	}
     	
     	
-        // AP Alt bug
+        // AP Alt bug compute
         int alt_y = Math.round(pfd_gc.adi_cy - (ap_alt - alt) * pfd_gc.tape_height / alt_f_range );
         boolean hide_bug = false;
         if ( alt_y < pfd_gc.tape_top ) {
@@ -428,7 +371,8 @@ public class AltiTape_A320 extends PFDSubcomponent {
         		alt_y - pfd_gc.tape_height*2/18,
         		alt_y - pfd_gc.tape_width*2/21
         };       
-        if (! hide_bug ) { g2.drawPolygon(bug_x, bug_y, 7); }      
+    	// Draw Bug  at the end, with clipping on
+        // if (! hide_bug ) { g2.drawPolygon(bug_x, bug_y, 7); }      
     	
     	String alt_str = "FL";
     	int alt_str_x = pfd_gc.altitape_left + pfd_gc.tape_width - pfd_gc.tape_width*1/16 - 5*pfd_gc.digit_width_l;
@@ -455,9 +399,10 @@ public class AltiTape_A320 extends PFDSubcomponent {
 
     	}
     	int alt_str_w = pfd_gc.get_text_width(g2, pfd_gc.font_l, alt_str);
-    	g2.clearRect(pfd_gc.altitape_left-1, alt_str_y - pfd_gc.line_height_l*9/10, alt_str_w + pfd_gc.digit_width_l*2/3, pfd_gc.line_height_l);
-    	g2.setFont(pfd_gc.font_l);
-    	g2.drawString(alt_str, alt_str_x, alt_str_y);       	
+    	// Draw Bug text at the end, with clipping on
+    	// g2.clearRect(pfd_gc.altitape_left-1, alt_str_y - pfd_gc.line_height_l*9/10, alt_str_w + pfd_gc.digit_width_l*2/3, pfd_gc.line_height_l);
+    	// g2.setFont(pfd_gc.font_l);
+    	// g2.drawString(alt_str, alt_str_x, alt_str_y);       	
 
         // AP Alt metric display
         if (display_metric) {        	
@@ -689,6 +634,25 @@ public class AltiTape_A320 extends PFDSubcomponent {
         }
 
         g2.setClip(original_clipshape);
+        
+        // Alt bug 
+    	g2.setColor(pfd_gc.pfd_selected_color);
+    	if (this.avionics.is_qpac()) {
+    		if (this.avionics.qpac_alt_is_cstr()) {
+    	    	g2.setColor(pfd_gc.pfd_managed_color);
+    	    	ap_alt = this.avionics.qpac_constraint_alt();
+    		}
+    	}
+        // Clip outside area
+        Area outside = new Area(new Rectangle(pfd_gc.altitape_left - pfd_gc.tape_width*3/24, pfd_gc.tape_top, pfd_gc.tape_width + pfd_gc.tape_width*3/24, pfd_gc.tape_height));
+        outside.subtract(new Area(alt_ind_area));
+        g2.clip(outside);
+        if (! hide_bug ) g2.drawPolygon(bug_x, bug_y, 7);
+    	g2.clearRect(pfd_gc.altitape_left-1, alt_str_y - pfd_gc.line_height_l*9/10, alt_str_w + pfd_gc.digit_width_l*2/3, pfd_gc.line_height_l);
+    	g2.setFont(pfd_gc.font_l);
+    	if (! hide_bug ) g2.drawString(alt_str, alt_str_x, alt_str_y);   
+        g2.setClip(original_clipshape);
+        if ( hide_bug )  g2.drawString(alt_str, alt_str_x, alt_str_y);   
 
     }
 

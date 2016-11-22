@@ -109,8 +109,17 @@ public class SpeedTape_A320 extends PFDSubcomponent {
 
         // Yellow line and triangle for actual IAS
         g2.setColor(Color.yellow);
-        g2.drawLine(pfd_gc.speedtape_left- pfd_gc.tape_width/8, pfd_gc.tape_top + pfd_gc.tape_height/2, pfd_gc.speedtape_left + 1, pfd_gc.tape_top + pfd_gc.tape_height/2  );
-        g2.drawLine(speedtape_right - pfd_gc.tape_width*3/16, pfd_gc.tape_top + pfd_gc.tape_height/2, speedtape_right + pfd_gc.tape_width*3/16, pfd_gc.tape_top + pfd_gc.tape_height/2  );
+        int tape_middle_y=pfd_gc.tape_top + pfd_gc.tape_height/2;
+        // thick
+        Stroke original_stroke = g2.getStroke();
+        g2.setStroke(new BasicStroke(3.5f * pfd_gc.scaling_factor));
+        g2.drawLine(pfd_gc.speedtape_left- pfd_gc.tape_width/8, tape_middle_y, pfd_gc.speedtape_left + 1, tape_middle_y  );
+        g2.drawLine(speedtape_right - pfd_gc.tape_width*3/16, tape_middle_y, speedtape_right + pfd_gc.tape_width*3/16, tape_middle_y  );
+        // thin
+        g2.setStroke(new BasicStroke(0.6f * pfd_gc.scaling_factor));
+        g2.drawLine(pfd_gc.speedtape_left + 1, tape_middle_y, speedtape_right - pfd_gc.tape_width*3/16, tape_middle_y  );
+        g2.setStroke(original_stroke);
+        
         int[] speed_tri_x = {
                 speedtape_right + pfd_gc.tape_width/10,
            		speedtape_right + pfd_gc.tape_width*3/12,
@@ -162,6 +171,7 @@ public class SpeedTape_A320 extends PFDSubcomponent {
         } else if (	ias_trend_active && (Math.abs(ias_trend) < 1.0f)) {
         	ias_trend_active = false; 
         }
+        int ias_trend_x= speedtape_right - pfd_gc.tape_width/6;
         if ( ias_trend_active ) {
 
             if ( ( ias + ias_trend ) < 0.0f ) {
@@ -169,13 +179,14 @@ public class SpeedTape_A320 extends PFDSubcomponent {
             }
             int asi10_y = pfd_gc.adi_cy - Math.round( ias_trend * pfd_gc.tape_height / 80.0f );
             g2.setColor(Color.yellow);
-            g2.drawLine(speedtape_right - pfd_gc.tape_width/12, pfd_gc.adi_cy, speedtape_right - pfd_gc.tape_width/12 , asi10_y);
+            g2.drawLine(ias_trend_x, pfd_gc.adi_cy, ias_trend_x , asi10_y);
             int arrow_dx = pfd_gc.tape_width*1/16;
             int arrow_dy = pfd_gc.tape_width*2/16 * (int)Math.signum(ias_trend);
+            /*
             int[] arrow_x = {
-            	speedtape_right - pfd_gc.tape_width/12,
-            	speedtape_right - pfd_gc.tape_width/12 - arrow_dx,
-            	speedtape_right - pfd_gc.tape_width/12 + arrow_dx
+            	ias_trend_x,
+            	ias_trend_x - arrow_dx,
+            	ias_trend_x + arrow_dx
             };
             int[] arrow_y = {
                 asi10_y,
@@ -184,13 +195,16 @@ public class SpeedTape_A320 extends PFDSubcomponent {
             };
             g2.drawPolygon(arrow_x, arrow_y, 3);
             g2.fillPolygon(arrow_x, arrow_y, 3);
+            */
+            g2.drawLine(ias_trend_x - arrow_dx, asi10_y + arrow_dy, ias_trend_x, asi10_y);
+            g2.drawLine(ias_trend_x, asi10_y, ias_trend_x+ arrow_dx, asi10_y + arrow_dy);
 
         }
 
         
 
         // red max
-        Stroke original_stroke = g2.getStroke();
+        original_stroke = g2.getStroke();
         int halfstroke = pfd_gc.tape_width/16;
         float vmmo = 999.9f;
         float mmo = this.aircraft.get_Mmo();
