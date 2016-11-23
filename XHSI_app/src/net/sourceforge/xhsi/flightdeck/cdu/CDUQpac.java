@@ -70,6 +70,7 @@ public class CDUQpac extends CDUSubcomponent {
     double border_y;
     
     List<ClickRegion> qpac_regions;
+    List<ClickRegion> qpac_do_regions;
 
     boolean drawregions = false;
     XPlaneUDPSender udp_sender = null; 
@@ -149,9 +150,9 @@ public class CDUQpac extends CDUSubcomponent {
         
         qpac_mcdu_data = QpacMcduData.getInstance();
 
-        qpac_regions = new ArrayList<ClickRegion>();        
-
-        // QPAC MCDU Keyboard mapping
+        qpac_regions = new ArrayList<ClickRegion>();
+        
+        // QPAC MCDU Full Panel Keyboard mapping
         // LSK
         qpac_regions.add(new ClickRegion(new Point(6, 95), new Point(48+26, 365), 1, 6, 
                         new int[][] {
@@ -207,6 +208,27 @@ public class CDUQpac extends CDUSubcomponent {
         		{QPAC_KEY_MDCU1_SLEW_LEFT, QPAC_KEY_MDCU1_SLEW_UP},
         		{QPAC_KEY_MDCU1_SLEW_RIGHT, QPAC_KEY_MDCU1_SLEW_DOWN}} ));
         
+        // QPAC MCDU Display only Keyboard mapping - LSK 
+        qpac_do_regions = new ArrayList<ClickRegion>();
+        // LSK
+        qpac_do_regions.add(new ClickRegion(new Point(1, 20), new Point(110, 265), 1, 6, 
+                        new int[][] {
+        	{QPAC_KEY_MDCU1_LSK1L}, 
+        	{QPAC_KEY_MDCU1_LSK2L},
+        	{QPAC_KEY_MDCU1_LSK3L},
+        	{QPAC_KEY_MDCU1_LSK4L},
+        	{QPAC_KEY_MDCU1_LSK5L},
+        	{QPAC_KEY_MDCU1_LSK6L}} ));
+        // RSK
+        qpac_do_regions.add(new ClickRegion(new Point(250, 20), new Point(360, 265), 1, 6, 
+                        new int[][] {
+        	{QPAC_KEY_MDCU1_LSK1R},
+        	{QPAC_KEY_MDCU1_LSK2R},
+        	{QPAC_KEY_MDCU1_LSK3R},
+        	{QPAC_KEY_MDCU1_LSK4R},
+        	{QPAC_KEY_MDCU1_LSK5R},
+        	{QPAC_KEY_MDCU1_LSK6R}} ));    
+        
         logger.finest("CDUQpac instanciated");
     }
 
@@ -249,6 +271,13 @@ public class CDUQpac extends CDUSubcomponent {
        		g2.drawString(str_title, cdu_gc.cdu_middle_x - cdu_gc.get_text_width(g2, cdu_gc.font_xl, str_title), cdu_gc.cdu_first_line);
         }
         
+        // for debugging
+        if ( drawregions ) {
+            g2.setColor(cdu_gc.dim_markings_color);
+            for(ClickRegion r2 : qpac_do_regions){
+                    r2.draw(g2, scalex, scaley, border, border);
+            }
+        }    
     }
     
     private void drawFullPanel(Graphics2D g2, int mcdu_side) {
@@ -347,11 +376,21 @@ public class CDUQpac extends CDUSubcomponent {
 		
 		// logger.info("MCDU Click x="+ true_click.x + " y="+true_click.y+ "   /  mouse x="+e.getPoint().x+ "  y="+e.getPoint().y);
     	if ((cdu_gc.cdu_source == Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY) &&  this.avionics.is_qpac() ) {
-    		for(ClickRegion r : qpac_regions){
-    			int w = r.check(true_click, scalex, scaley, border, border);
-    			if(w > -1) {
-    				int mcdu_shift=avionics.get_cdu_side()*67;
-    				udp_sender.sendDataPoint( XPlaneSimDataRepository.QPAC_KEY_PRESS, (float) (w+mcdu_shift) );
+    		if (this.preferences.cdu_display_only()){
+    			for(ClickRegion r : qpac_do_regions){
+    				int w = r.check(true_click, scalex, scaley, border, border);
+    				if(w > -1) {
+    					int mcdu_shift=avionics.get_cdu_side()*67;
+    					udp_sender.sendDataPoint( XPlaneSimDataRepository.QPAC_KEY_PRESS, (float) (w+mcdu_shift) );
+    				}
+    			}   			
+    		} else {
+    			for(ClickRegion r : qpac_regions){
+    				int w = r.check(true_click, scalex, scaley, border, border);
+    				if(w > -1) {
+    					int mcdu_shift=avionics.get_cdu_side()*67;
+    					udp_sender.sendDataPoint( XPlaneSimDataRepository.QPAC_KEY_PRESS, (float) (w+mcdu_shift) );
+    				}
     			}
     		}
     	}
