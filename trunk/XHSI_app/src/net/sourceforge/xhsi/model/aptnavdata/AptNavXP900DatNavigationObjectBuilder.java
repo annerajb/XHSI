@@ -392,12 +392,27 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
         int info_type;
         String[] tokens;
         long line_number = 0;
+        boolean version11 = false;
+        int rowcode_field = 0;
+        int lat_field = 1;
+        int lon_field = 2;
+        int elev_field = 3;
+        int freq_field = 4;
+        int range_field = 5;
+        int bearing_field = 6;
+        int ident_field = 7;
+        int arpt_field = 8;
+        int region_field;
+        int rwy_field;
+        int name_field;
+        
         RadioNavigationObject coupled_rno;
         Localizer coupled_loc;
         RadioNavigationObject twin_rno;
         Localizer twin_loc;
         boolean has_a_twin;
         String twin_ilt;
+        Localizer new_loc;
 
         while ((line = reader.readLine()) != null) {
 
@@ -409,63 +424,83 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                 line = line.trim();
 
                 if ( (line_number == 2) && (line.length() >= 32) ) {
+                    
                     // the version info is on line 2, hopefully in a fixed location
                     XHSIStatus.nav_db_cycle = line.substring(25, 32);
+                    
+                    tokens = line.split("\\s+",2);
+                    logger.info("NAV file format : "+ tokens[0]);
+                    version11 = tokens[0].equals("1100");
+                    if (version11) logger.info("X-Plane 11");
+                    
                 } else if ( (line_number > 2)  && ( ! line.equals("99") ) ) {
                     try {
                         
-                        tokens = line.split("\\s+",9);
+                        // a generic split that works for types 2, 3 and 13
+                        tokens = line.split("\\s+",version11 ? 11 : 9);
                         info_type = Integer.parseInt(tokens[0]);
                         
                         if ( (info_type ==2) || (info_type == 3) || (info_type == 13) ) {
-                            
+                    
+                            if (version11) {
+                                name_field = 10;
+                            } else {
+                                name_field = 8;
+                            }
                             // 2=NDB, 3=VOR (VOR, VOR-DME, VORTAC) 13=DME (Standalone DME, TACAN)
-                            // tokens = line.split("\\s+",9);
                             nor.add_nav_object(new RadioNavBeacon(
-                                    tokens[8], // name
-                                    tokens[7], // ident
+                                    tokens[name_field], // name
+                                    tokens[ident_field], // ident
                                     info_type,
-                                    Float.parseFloat(tokens[1]), // lat
-                                    Float.parseFloat(tokens[2]), // lon
-                                    Integer.parseInt(tokens[3]), // elev MSL
-                                    Float.parseFloat(tokens[4]), // freq
-                                    Integer.parseInt(tokens[5]), // range
-                                    Float.parseFloat(tokens[6])  // NDB: zero , VOR: offset
+                                    Float.parseFloat(tokens[lat_field]), // lat
+                                    Float.parseFloat(tokens[lon_field]), // lon
+                                    Integer.parseInt(tokens[elev_field]), // elev MSL
+                                    Float.parseFloat(tokens[freq_field]), // freq
+                                    Integer.parseInt(tokens[range_field]), // range
+                                    Float.parseFloat(tokens[bearing_field])  // NDB: zero , VOR: offset
                                 ));
                             
                         } else if ((info_type == 4) || (info_type == 5)) {
                             
                             // ILS or LOC
-                            tokens = line.split("\\s+",11);
+                            tokens = line.split("\\s+",version11 ? 12 : 11);
+                            if (version11) {
+                                rwy_field = 10;
+                                name_field = 11;
+                            } else {
+                                rwy_field = 9;
+                                name_field = 10;
+                            }
+
                             // search for a twin, i.e. an ILS with the same frequency at the same airport
-                            twin_rno = nor.find_tuned_nav_object(Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]), Float.parseFloat(tokens[4])/100.0f, "");
+                            twin_rno = nor.find_tuned_nav_object(Float.parseFloat(tokens[lat_field]), Float.parseFloat(tokens[lon_field]), Float.parseFloat(tokens[freq_field])/100.0f, "");
                             has_a_twin = ( (twin_rno != null) && (twin_rno instanceof Localizer) );
                             twin_ilt = "";
                             if ( has_a_twin ) {
                                 twin_loc = (Localizer) twin_rno;
                                 twin_loc.has_twin = true;
-                                twin_loc.twin_ilt = tokens[7];
+                                twin_loc.twin_ilt = tokens[ident_field];
                                 twin_ilt = twin_loc.ilt;
                             }
-                            Localizer new_loc = new Localizer(
-                                    tokens[8] + " " + tokens[9], // arpt ICAO + RWY
-                                    tokens[7], // ident
+                            new_loc = new Localizer(
+                                    tokens[arpt_field] + " " + tokens[rwy_field], // arpt ICAO + RWY
+                                    tokens[ident_field], // ident
                                     info_type,
-                                    Float.parseFloat(tokens[1]), // lat
-                                    Float.parseFloat(tokens[2]), // lon
-                                    Integer.parseInt(tokens[3]), // elev MSL
-                                    Float.parseFloat(tokens[4]), // freq
-                                    Integer.parseInt(tokens[5]), // range
-                                    Float.parseFloat(tokens[6]), // bearing, true degrees
-                                    tokens[8], // ICAO
-                                    tokens[9], // RWY,
-                                    tokens[10],
+                                    Float.parseFloat(tokens[lat_field]), // lat
+                                    Float.parseFloat(tokens[lon_field]), // lon
+                                    Integer.parseInt(tokens[elev_field]), // elev MSL
+                                    Float.parseFloat(tokens[freq_field]), // freq
+                                    Integer.parseInt(tokens[range_field]), // range
+                                    Float.parseFloat(tokens[bearing_field]), // bearing, true degrees
+                                    tokens[arpt_field], // ICAO
+                                    tokens[rwy_field], // RWY,
+                                    tokens[name_field],
                                     has_a_twin,
                                     twin_ilt
                                 );
                             nor.add_nav_object(new_loc);
                             // add this localizer to the runway
-                            Runway rwy = nor.get_runway(tokens[8], tokens[9], Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]), true);
+                            Runway rwy = nor.get_runway(tokens[arpt_field], tokens[rwy_field], Float.parseFloat(tokens[lat_field]), Float.parseFloat(tokens[lon_field]), true);
                             if ( rwy != null ) {
                                 rwy.localizers.add(new_loc);
 //                                if ( rwy.rwy_num1.equals(tokens[9]) ) {
@@ -476,23 +511,31 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
 //                                    rwy.loc2 = new_loc;
 //                                }
                             } else {
-                                logger.warning("Error NAV.dat: no RWY found for " + tokens[8] + " " + tokens[9] + " " + tokens[7]);
+                                logger.warning("Error NAV.dat: no RWY found for " + tokens[arpt_field] + " " + tokens[rwy_field] + " " + tokens[ident_field]);
                             }
 
                         } else if (info_type == 6) {
 
                             // update the ILS (or IGS) with this GS
                             // (we can do this in the same loop, since the file is sorted by info_type; the ILS will already be stored)
-                            tokens = line.split("\\s+",11);
+                            tokens = line.split("\\s+",version11 ? 12 : 11);
+                            if (version11) {
+                                rwy_field = 10;
+                                name_field = 11;
+                            } else {
+                                rwy_field = 9;
+                                name_field = 10;
+                            }
+                            
                             // tokens[] 0=type, 1=lat, 2=lon, 3=elev, 4=freq, 5=range, 6=glide_angle*100000+course, 7=ident, 8=arpt, 9=rwy, 10="GS"
-                            coupled_rno = nor.find_tuned_nav_object(Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]), Float.parseFloat(tokens[4])/100.0f, tokens[7]);
+                            coupled_rno = nor.find_tuned_nav_object(Float.parseFloat(tokens[lat_field]), Float.parseFloat(tokens[lon_field]), Float.parseFloat(tokens[freq_field])/100.0f, tokens[ident_field]);
                             if ( (coupled_rno != null) && (coupled_rno instanceof Localizer) ) {
                                 coupled_loc = (Localizer) coupled_rno;
                                 coupled_loc.has_gs = true;
                                 // when an ILS has a GS, we are more interested in the elev of the GS than the LOC
-                                coupled_loc.elevation = Integer.parseInt(tokens[3]);
+                                coupled_loc.elevation = Integer.parseInt(tokens[elev_field]);
                             } else {
-                                logger.warning("Error NAV.dat: no ILS for GS " + tokens[7] + " " + tokens[4]);
+                                logger.warning("Error NAV.dat: no ILS for GS " + tokens[ident_field] + " " + tokens[freq_field]);
                             }
                             
                         } else if (info_type == 12) {
@@ -501,13 +544,13 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                             // (we can do this in the same loop, since the file is sorted by info_type)
                             tokens = line.split("\\s+",9);
                             // tokens[] 0=type, 1=lat, 2=lon, 3=elev, 4=freq, 5=range, 6=bias, 7=ident, 8=name
-                            coupled_rno = nor.find_tuned_nav_object(Float.parseFloat(tokens[1]), Float.parseFloat(tokens[2]), Float.parseFloat(tokens[4])/100.0f, tokens[7]);
+                            coupled_rno = nor.find_tuned_nav_object(Float.parseFloat(tokens[lat_field]), Float.parseFloat(tokens[lon_field]), Float.parseFloat(tokens[freq_field])/100.0f, tokens[ident_field]);
                             if (coupled_rno != null) {
                                 coupled_rno.has_dme = true;
-                                coupled_rno.dme_lat = Float.parseFloat(tokens[1]);
-                                coupled_rno.dme_lon = Float.parseFloat(tokens[2]);
+                                coupled_rno.dme_lat = Float.parseFloat(tokens[lat_field]);
+                                coupled_rno.dme_lon = Float.parseFloat(tokens[lon_field]);
                             } else {
-                                logger.warning("Error NAV.dat: no VOR or Loc for DME " + tokens[7] + " " + tokens[4]);
+                                logger.warning("Error NAV.dat: no VOR or Loc for DME " + tokens[ident_field] + " " + tokens[freq_field]);
                             }
                         }
                         
@@ -545,6 +588,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
         String line;
         String[] tokens;
         long line_number = 0;
+        boolean version11 = false;
 
         while ((line = reader.readLine()) != null) {
 
@@ -553,14 +597,21 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                 line_number++;
 
                 line = line.trim();
-                if ( (line_number > 2) && ( ! line.equals("99") ) ) {
+                
+                if ( (line_number == 2) && (line.length() >= 32) ) {
+                    
+                    tokens = line.split("\\s+",2);
+                    logger.info("FIX file format : "+ tokens[0]);
+                    version11 = tokens[0].equals("1100");
+                    
+                } else if ( (line_number > 2) && ( ! line.equals("99") ) ) {
                     try {
-                        tokens = line.split("\\s+",3);
+                        tokens = line.split("\\s+",5);
                         nor.add_nav_object(new Fix(
                                 tokens[2],
                                 Float.parseFloat(tokens[0]),
                                 Float.parseFloat(tokens[1]),
-                                false));
+                                version11 && tokens[3].equals("ENRT")));
                     } catch (Exception e) {
                         logger.warning("Parse error in " + file.getName() + ":" + line_number + " '" + line + "' (" + e + ")");
                     }
@@ -594,6 +645,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
         String line;
         String[] tokens;
         long line_number = 0;
+        boolean version11 = false;
 
         while ((line = reader.readLine()) != null) {
 
@@ -602,7 +654,14 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                 line_number++;
 
                 line = line.trim();
-                if ((line_number > 2) && ( ! line.equals("99") ) ) {
+                if ( (line_number == 2) && (line.length() >= 32) ) {
+                    
+                    tokens = line.split("\\s+",2);
+                    logger.info("AWY file format : "+ tokens[0]);
+                    version11 = tokens[0].equals("1100");
+                    
+                } else if ( (!version11) && (line_number > 2) && (!line.equals("99")) ) {
+                    // if the AWY file is version 1100, then the FIX file will be version 1100 too, and we will already know which fixes are terminal or enroute
                     try {
                         tokens = line.split("\\s+",10);
                         // tokens[] 0=WPT1, 1=lat1, 2=lon1, 3=WPT2, 4=lat2, 5=lon2, 6=low(1)/high(2), 7=bottom, 8=top, 9=ID(s)
