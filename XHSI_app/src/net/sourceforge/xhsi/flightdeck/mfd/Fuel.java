@@ -36,8 +36,10 @@ import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Aircraft.HydPumpStatus;
 import net.sourceforge.xhsi.model.Aircraft.PumpStatus;
 import net.sourceforge.xhsi.model.Aircraft.ValveStatus;
+import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
+import net.sourceforge.xhsi.model.SimDataRepository;
 
 public class Fuel extends MFDSubcomponent {
 
@@ -64,7 +66,7 @@ public class Fuel extends MFDSubcomponent {
 			} else {
 				for (int i=0; i<6; i++) {					
 					drawFuelPump(g2, aircraft.get_tank_pump(i), mfd_gc.fuel_pump_x[i], mfd_gc.fuel_pump_y[i]);
-				}
+				}				
 				for (int i=0; i<mfd_gc.num_eng; i++) {
 					drawEngineFuel(g2, i, mfd_gc.fuel_eng_x[i]);
 				}
@@ -368,7 +370,7 @@ public class Fuel extends MFDSubcomponent {
 			g2.drawLine(x, y, x, y+mfd_gc.hyd_pump_h);
 		} else if (pump_status == Aircraft.PumpStatus.OFF ) {
 			g2.setColor(mfd_gc.ecam_caution_color);
-			g2.drawLine(x-mfd_gc.hyd_pump_w/2, y+mfd_gc.hyd_pump_h/2, x+mfd_gc.hyd_pump_w/2, y+mfd_gc.hyd_pump_h/2);	
+			g2.drawLine(x-mfd_gc.hyd_pump_w/3, y+mfd_gc.hyd_pump_h/2, x+mfd_gc.hyd_pump_w/3, y+mfd_gc.hyd_pump_h/2);	
 		} else {
 			String lo_str = "LO";
 			g2.setColor(mfd_gc.ecam_caution_color);

@@ -75,7 +75,7 @@ public class XPlaneAircraft implements Aircraft {
     public SimCommand get_sim_command() {
         return this.sim_command;
     }
-
+   
     public int plugin_version() { return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.PLUGIN_VERSION_ID)); }
     
     public String aircraft_registration() {
@@ -856,6 +856,7 @@ public class XPlaneAircraft implements Aircraft {
 //    }
 
     public PumpStatus get_tank_pump(int tank) {
+    	// TODO: JarDesign pumps
     	if (avionics.is_qpac()) {
     		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FUEL_PUMPS) >> (tank*2)) & 0x03 ;
     		switch (pump_status) {
@@ -864,6 +865,14 @@ public class XPlaneAircraft implements Aircraft {
     			case 3: return PumpStatus.LOW_PRESSURE;
     			default :return PumpStatus.FAILED;
     		}    		
+    	} else if (avionics.is_jar_a320neo()) {
+    		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FUEL_PUMPS) >> (tank*2)) & 0x03 ;
+    		switch (pump_status) {
+    			case 0: return PumpStatus.OFF;
+    			case 1: return PumpStatus.ON;
+    			case 3: return PumpStatus.LOW_PRESSURE;
+    			default :return PumpStatus.FAILED;
+    		}
     	} else {
     		return ( ( (int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_FUEL_PUMPS) & (1<<tank) ) != 0 ? PumpStatus.ON : PumpStatus.OFF );
     	}
@@ -880,7 +889,14 @@ public class XPlaneAircraft implements Aircraft {
     			case 4: return ValveStatus.VALVE_OPEN_FAILED;
     			default :return ValveStatus.JAMMED;
     		}    		
-    	} else {
+    	} else if (avionics.is_jar_a320neo()) {
+    		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FUEL_VALVES) >> 8) & 0x07 ;
+    		switch (pump_status) {
+    			case 0: return ValveStatus.VALVE_CLOSED;
+    			case 1: return ValveStatus.VALVE_OPEN;
+    			default :return ValveStatus.JAMMED;
+    		} 
+    	}else {
     		return ValveStatus.VALVE_CLOSED;
     	}
     }
@@ -894,6 +910,13 @@ public class XPlaneAircraft implements Aircraft {
     			case 3: return ValveStatus.VALVE_OPEN;
     			case 2: return ValveStatus.VALVE_CLOSED;
     			case 4: return ValveStatus.VALVE_OPEN_FAILED;
+    			default :return ValveStatus.JAMMED;
+    		}    		
+    	} else if (avionics.is_jar_a320neo()) {
+    		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FUEL_VALVES) >> (eng*2)) & 0x03 ;
+    		switch (pump_status) {
+				case 0: return ValveStatus.VALVE_CLOSED_FAILED;
+    			case 1: return ValveStatus.VALVE_OPEN;
     			default :return ValveStatus.JAMMED;
     		}    		
     	} else {

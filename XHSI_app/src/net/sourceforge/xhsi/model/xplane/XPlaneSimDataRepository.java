@@ -793,6 +793,9 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int JAR_A320NEO_BLEED_RIGHT_TEMP = 1288;
     // Anti-Ice
     public static final int JAR_A320NEO_ANTI_ICE_STATUS = 1289;
+    // FUEL
+    public static final int JAR_A320NEO_FUEL_PUMPS = 1290;
+    public static final int JAR_A320NEO_FUEL_VALVES = 1291;
 
     // Nacelle
     public static final int JAR_A320NEO_NACELLE_TEMP_ = 1300;
