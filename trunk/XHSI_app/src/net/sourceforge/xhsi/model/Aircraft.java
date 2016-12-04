@@ -400,7 +400,7 @@ public interface Aircraft {
      * @return SimCommand - reference to simulator commands model of this aircraft
      */
     public SimCommand get_sim_command();
-
+  
     /**
      * @return int - number of gears
      */
