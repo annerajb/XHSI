@@ -233,6 +233,11 @@ XPLMDataRef qpac_fuel_pump_array;
 XPLMDataRef qpac_fuel_xfv_array ;
 XPLMDataRef qpac_fuel_eng_lp_valve_array;
 XPLMDataRef qpac_fuel_tv_array;
+XPLMDataRef qpac_fuel_auto_pump_ohp_array;
+XPLMDataRef qpac_fuel_auto_pump_sd_array;
+XPLMDataRef qpac_fuel_pump_ohp_array;
+XPLMDataRef qpac_fuel_pump_sd_array;
+XPLMDataRef qpac_fuel_ohp_auto_switch;
 // ECAM SD page selection
 XPLMDataRef qpac_sd_page;
 XPLMDataRef qpac_clear_illuminated;
@@ -500,15 +505,19 @@ void findQpacDataRefs(void) {
             qpac_elec_battery_volt = XPLMFindDataRef("AirbusFBW/BatVolts"); // array [0,4]
 
             // FUEL
-            // qpac_fuel_pump_array = XPLMFindDataRef("AirbusFBW/FuelPumpOHPArray");
+            // TODO select qpac_fuel_pump_array for packet send
+            qpac_fuel_auto_pump_ohp_array = XPLMFindDataRef("AirbusFBW/FuelAutoPumpOHPArray");
+            qpac_fuel_auto_pump_sd_array = XPLMFindDataRef("AirbusFBW/FuelAutoPumpSDArray");
+            qpac_fuel_pump_ohp_array = XPLMFindDataRef("AirbusFBW/FuelPumpOHPArray");
             // Fuel pump : 0 = closed amber ; 1 = open green ; 2 = closed amber ; 3 = LO amber
-            qpac_fuel_pump_array = XPLMFindDataRef("AirbusFBW/FuelPumpSDArray");
+            qpac_fuel_pump_sd_array = XPLMFindDataRef("AirbusFBW/FuelPumpSDArray");
             // Fuel pump : 0 = closed amber ; 1 = open green ; 2 = closed amber ; 3 = LO amber
             qpac_fuel_xfv_array = XPLMFindDataRef("AirbusFBW/FuelXFVSDArray");
             // X Fer Valve 0 = jammed "/"  ; 1 = closed green ; 2 = open green; 3 = closed amber ; 4 = open amber
             qpac_fuel_eng_lp_valve_array = XPLMFindDataRef("AirbusFBW/ENGFuelLPValveArray");
             // ENG LP Valve 0 = jammed "/"  ; 1 = amber closed ; 2 = amber open ; 3 = green open
             qpac_fuel_tv_array = XPLMFindDataRef("AirbusFBW/FuelTVSDArray");
+            qpac_fuel_ohp_auto_switch = XPLMFindDataRef("AirbusFBW/FuelOHPAutoSwitch");
 
             // ECAM SD page selection
             qpac_sd_page = XPLMFindDataRef("AirbusFBW/SDPage");
