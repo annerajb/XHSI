@@ -2263,8 +2263,8 @@ int createCustomAvionicsPacket(void) {
         // FUEL
         // Fuel pumps
         // Each pump status is on 2 bits
-        if (qpac_fuel_pump_array != NULL) {
-        	XPLMGetDatavi(qpac_fuel_pump_array, qpac_fuel_pump_tab, 0, 6);
+        if (qpac_fuel_pump_ohp_array != NULL) {
+        	XPLMGetDatavi(qpac_fuel_pump_ohp_array, qpac_fuel_pump_tab, 0, 6);
         	qpac_fuel_pumps = 0;
         	for (j=0; j<6; j++) {
         		qpac_fuel_pumps |= (qpac_fuel_pump_tab[j] & 0x03) << (j*2);
@@ -2861,6 +2861,31 @@ int createCustomAvionicsPacket(void) {
     	sim_packet.sim_data_points[i].value = custom_htonf((float)anti_ice);
     	i++;
 
+        // FUEL
+        // Fuel pumps
+        // Each pump status is on 2 bits
+    	qpac_fuel_pumps =
+    			(XPLMGetDatai(jar_a320_neo_fuel_t1_pump1) & 0x03) |
+    			(XPLMGetDatai(jar_a320_neo_fuel_t1_pump2) & 0x03) << 2 |
+    			(XPLMGetDatai(jar_a320_neo_fuel_t2_pump1) & 0x03) << 4 |
+    			(XPLMGetDatai(jar_a320_neo_fuel_t2_pump2) & 0x03) << 6 |
+    			(XPLMGetDatai(jar_a320_neo_fuel_t3_pump1) & 0x03) << 8 |
+    			(XPLMGetDatai(jar_a320_neo_fuel_t3_pump2) & 0x03) << 10 ;
+    	sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_FUEL_PUMPS);
+    	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fuel_pumps );
+    	i++;
+
+        // Fuel valves
+        // Each valve status is on 2 bits
+    	// X-Fer valve is on 3 bits
+    	qpac_fuel_valves = (XPLMGetDatai(jar_a320_neo_eng_2_fuel_valve) & 0x03) << 2 |
+    			(XPLMGetDatai(jar_a320_neo_eng_1_fuel_valve) & 0x03) |
+    			(XPLMGetDatai(jar_a320_neo_fuel_xfeed) & 0x07) << 8;
+
+    	sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_FUEL_VALVES);
+    	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fuel_valves );
+    	i++;
+
     	// Electrics
     	/* Dataref
     	jar_a320_neo_elec_ac1_source;
@@ -3009,7 +3034,6 @@ int createEnginesPacket(void) {
     sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(m_total));
     i++;
 	
-    // TODO: PeterAircraft custom fuel tanks
     if (jar_a320_neo_ready) {
         sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_FUEL_QUANTITY_ );
         sim_packet.sim_data_points[i].value = custom_htonf( XPLMGetDataf(jar_a320_neo_fuel_t2) );

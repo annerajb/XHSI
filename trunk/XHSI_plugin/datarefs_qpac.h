@@ -401,6 +401,11 @@ extern XPLMDataRef qpac_fuel_pump_array;
 extern XPLMDataRef qpac_fuel_xfv_array ;
 extern XPLMDataRef qpac_fuel_eng_lp_valve_array;
 extern XPLMDataRef qpac_fuel_tv_array;
+extern XPLMDataRef qpac_fuel_auto_pump_ohp_array;
+extern XPLMDataRef qpac_fuel_auto_pump_sd_array;
+extern XPLMDataRef qpac_fuel_pump_ohp_array;
+extern XPLMDataRef qpac_fuel_pump_sd_array;
+extern XPLMDataRef qpac_fuel_ohp_auto_switch;
 // ECAM SD page selection
 extern XPLMDataRef qpac_sd_page;
 extern XPLMDataRef qpac_clear_illuminated;
