@@ -1214,6 +1214,7 @@ int createCustomAvionicsPacket(void) {
     int qpac_hyd_pump_tab[3];
     int qpac_fuel_pumps = 0;
     int qpac_fuel_pump_tab[6];
+    int qpac_fuel_auto_pump_tab[6];
     int qpac_fuel_valves = 0;
     int qpac_fuel_valves_tab[6];
     int qpac_air_valves;
@@ -2260,15 +2261,25 @@ int createCustomAvionicsPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_apu_egt));
         i++;
 
-        // FUEL
+        // ATA 28 FUEL
         // Fuel pumps
         // Each pump status is on 2 bits
-        if (qpac_fuel_pump_ohp_array != NULL) {
+        // 0 = OFF amber(and automatic mode should be ON)
+        // 1 = ON green
+        // 2 = OFF green (automatic OFF or OFF when automatic should be OFF)
+        // 3 = Low Pressure amber
+        // Pumps index 2 and 3 are the center pumps with auto mode
+        if (qpac_fuel_auto_pump_sd_array != NULL) {
+        	XPLMGetDatavi(qpac_fuel_auto_pump_sd_array, qpac_fuel_auto_pump_tab, 0, 6);
         	XPLMGetDatavi(qpac_fuel_pump_ohp_array, qpac_fuel_pump_tab, 0, 6);
-        	qpac_fuel_pumps = 0;
-        	for (j=0; j<6; j++) {
-        		qpac_fuel_pumps |= (qpac_fuel_pump_tab[j] & 0x03) << (j*2);
-        	}
+        	if (qpac_fuel_auto_pump_tab[2] == 0) qpac_fuel_auto_pump_tab[2] = 2;
+        	if (qpac_fuel_auto_pump_tab[3] == 0) qpac_fuel_auto_pump_tab[3] = 2;
+        	qpac_fuel_pumps = (qpac_fuel_pump_tab[0] & 0x03)
+        	 | (qpac_fuel_pump_tab[1] & 0x03) << 2
+        	 | (qpac_fuel_auto_pump_tab[2] & 0x03) << 4
+        	 | (qpac_fuel_auto_pump_tab[3] & 0x03) << 6
+        	 | (qpac_fuel_pump_tab[4] & 0x03) << 8
+        	 | (qpac_fuel_pump_tab[5] & 0x03) << 10;
         	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FUEL_PUMPS);
         	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fuel_pumps );
         	i++;
