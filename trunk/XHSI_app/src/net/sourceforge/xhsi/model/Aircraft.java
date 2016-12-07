@@ -28,7 +28,7 @@ public interface Aircraft {
     public enum ValveStatus { VALVE_OPEN, VALVE_CLOSED, VALVE_OPEN_FAILED, VALVE_CLOSED_FAILED, JAMMED, TRANSIT };
     public enum SpoilerStatus { RETRACTED, EXTENDED, FAILED, JAMMED };
     public enum HydPumpStatus { OFF, ON, FAILED };
-    public enum PumpStatus { OFF, ON, LOW_PRESSURE, FAILED }; 
+    public enum PumpStatus { OFF, ON, LOW_PRESSURE, AUTO_OFF, FAILED }; 
     public enum HydPTUStatus { OFF, STANDBY, LEFT, RIGHT };
     public enum ElecBus { NONE, BUS_1, BUS_2, BOTH };
     public enum DoorId { FRONT_LEFT, FRONT_RIGHT, MIDDLE_LEFT, MIDDLE_RIGHT, AFT_LEFT, AFT_RIGHT, FRONT_CARGO, AFT_CARGO, BULK, NONE };

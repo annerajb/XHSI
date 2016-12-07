@@ -856,14 +856,13 @@ public class XPlaneAircraft implements Aircraft {
 //    }
 
     public PumpStatus get_tank_pump(int tank) {
-    	// TODO: JarDesign pumps
     	if (avionics.is_qpac()) {
     		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FUEL_PUMPS) >> (tank*2)) & 0x03 ;
     		switch (pump_status) {
     			case 0: return PumpStatus.OFF;
     			case 1: return PumpStatus.ON;
     			case 3: return PumpStatus.LOW_PRESSURE;
-    			default :return PumpStatus.FAILED;
+    			default :return PumpStatus.AUTO_OFF;
     		}    		
     	} else if (avionics.is_jar_a320neo()) {
     		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FUEL_PUMPS) >> (tank*2)) & 0x03 ;
@@ -871,7 +870,7 @@ public class XPlaneAircraft implements Aircraft {
     			case 0: return PumpStatus.OFF;
     			case 1: return PumpStatus.ON;
     			case 3: return PumpStatus.LOW_PRESSURE;
-    			default :return PumpStatus.FAILED;
+    			default :return PumpStatus.AUTO_OFF;
     		}
     	} else {
     		return ( ( (int)sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_FUEL_PUMPS) & (1<<tank) ) != 0 ? PumpStatus.ON : PumpStatus.OFF );

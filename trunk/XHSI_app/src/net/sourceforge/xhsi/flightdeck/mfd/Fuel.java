@@ -363,20 +363,18 @@ public class Fuel extends MFDSubcomponent {
     }
 
 	private void drawFuelPump(Graphics2D g2, Aircraft.PumpStatus pump_status, int x, int y) {
-		// TODO : this line should be managed by drawHydraulicGauge
-		// g2.drawLine(x,mfd_gc.hyd_line_top_y,x,y);
 		if (pump_status == Aircraft.PumpStatus.ON ) {
 			g2.setColor(mfd_gc.ecam_normal_color);
 			g2.drawLine(x, y, x, y+mfd_gc.hyd_pump_h);
-		} else if (pump_status == Aircraft.PumpStatus.OFF ) {
-			g2.setColor(mfd_gc.ecam_caution_color);
-			g2.drawLine(x-mfd_gc.hyd_pump_w/3, y+mfd_gc.hyd_pump_h/2, x+mfd_gc.hyd_pump_w/3, y+mfd_gc.hyd_pump_h/2);	
-		} else {
+		} else if (pump_status == Aircraft.PumpStatus.LOW_PRESSURE) {
 			String lo_str = "LO";
 			g2.setColor(mfd_gc.ecam_caution_color);
 			g2.setFont(mfd_gc.font_xxl);
 			g2.drawString(lo_str, x-mfd_gc.get_text_width(g2, mfd_gc.font_xxl, lo_str)/2, y+mfd_gc.hyd_pump_h/2+mfd_gc.line_height_xxl/2);
-		}
+		} else  { // OFF, AUTO_OFF or FAILED			
+			g2.setColor(pump_status == Aircraft.PumpStatus.AUTO_OFF ? mfd_gc.ecam_normal_color : mfd_gc.ecam_caution_color);
+			g2.drawLine(x-mfd_gc.hyd_pump_w/3, y+mfd_gc.hyd_pump_h/2, x+mfd_gc.hyd_pump_w/3, y+mfd_gc.hyd_pump_h/2);	
+		} 
 		g2.drawRect(x-mfd_gc.hyd_pump_w/2, y, mfd_gc.hyd_pump_w, mfd_gc.hyd_pump_h);	
 	}
     
