@@ -70,8 +70,13 @@ public class Fuel extends MFDSubcomponent {
 				for (int i=0; i<mfd_gc.num_eng; i++) {
 					drawEngineFuel(g2, i, mfd_gc.fuel_eng_x[i]);
 				}
-				drawFuelTanks(g2);
-				drawOuterTankXFerValve(g2,ValveStatus.VALVE_CLOSED);
+				if (this.avionics.is_jar_a320neo() || this.avionics.is_qpac()) {
+					drawFuelTanks(g2, true);
+					drawOuterTankXFerValve(g2, aircraft.get_tank_xfer_valve(false), false);
+					drawOuterTankXFerValve(g2, aircraft.get_tank_xfer_valve(true), true);
+				} else {
+					drawFuelTanks(g2, false);
+				}
 				drawAirbusFuel(g2);
 				drawAPUFuel(g2,mfd_gc.fuel_apu_isol_valve_x);
 				drawAirbusFOB_v1(g2);
@@ -487,96 +492,171 @@ public class Fuel extends MFDSubcomponent {
     	}
     }    
     
-    private void drawFuelTanks(Graphics2D g2) {        
+    private void drawFuelTanks(Graphics2D g2, boolean hasXferValve) {        
 
         original_stroke = g2.getStroke();
         g2.setStroke(new BasicStroke(0.5f * mfd_gc.grow_scaling_factor, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
-        int d_w = (int) mfd_gc.grow_scaling_factor*2;
-        
-        // convert FF from kg/s to kg/h, lbs/h, usg/h or ltr/h
-        float unit_multiplier = this.aircraft.fuel_multiplier() * 60;
-        float ff_value;
-        
         g2.setColor(mfd_gc.ecam_markings_color);
         
-        // Center tank
+        int d_w = (int) mfd_gc.grow_scaling_factor*2;      
+        
+        int fuel_tank_top_outer = mfd_gc.fuel_tank_top - d_w;
+        int fuel_tank_top_inner = mfd_gc.fuel_tank_top + d_w;
+        
         int tank_h = mfd_gc.fuel_tank_bottom - mfd_gc.fuel_tank_top;
+        int tank_h_inner = tank_h - d_w*2;
+        int tank_h_outer = tank_h + d_w*2;        
+        
+        // Center tank
         int tank_w= mfd_gc.fuel_tank_sep_x1*2;
         g2.drawRect(mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x1, mfd_gc.fuel_tank_top , tank_w, tank_h);
-        g2.drawRect(mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x1 + d_w, mfd_gc.fuel_tank_top + d_w, tank_w - d_w*2, tank_h - d_w*2);
-        g2.drawRect(mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x1 - d_w, mfd_gc.fuel_tank_top - d_w, tank_w + d_w*2, tank_h + d_w*2);
+        g2.drawRect(mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x1 + d_w, fuel_tank_top_inner, tank_w - d_w*2, tank_h_inner);
+        g2.drawRect(mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x1 - d_w, fuel_tank_top_outer, tank_w + d_w*2, tank_h_outer);
 
-        // Left inner tank
-        tank_w = mfd_gc.fuel_tank_sep_x2-mfd_gc.fuel_tank_sep_x1;
-        g2.drawRect(mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2, mfd_gc.fuel_tank_top , tank_w, tank_h);
-        g2.drawRect(mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2 + d_w, mfd_gc.fuel_tank_top + d_w, tank_w - d_w*2, tank_h - d_w*2);
-        g2.drawRect(mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2 - d_w, mfd_gc.fuel_tank_top - d_w, tank_w + d_w*2, tank_h + d_w*2);
+        if (hasXferValve) {
+        	// Left inner tank
+        	tank_w = mfd_gc.fuel_tank_sep_x2-mfd_gc.fuel_tank_sep_x1;
 
-        // Right inner tank
-        tank_w = mfd_gc.fuel_tank_sep_x2-mfd_gc.fuel_tank_sep_x1;
-        g2.drawRect(mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x1, mfd_gc.fuel_tank_top , tank_w, tank_h);
-        g2.drawRect(mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x1 + d_w, mfd_gc.fuel_tank_top + d_w, tank_w - d_w*2, tank_h - d_w*2);
-        g2.drawRect(mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x1 - d_w, mfd_gc.fuel_tank_top - d_w, tank_w + d_w*2, tank_h + d_w*2);
+        	// outer tanks
+        	int poly_left_x[] = { 
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x, 
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x1,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x1,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x
+        	};
+        	int poly_right_x[] = { 
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x, 
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x1,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x1,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x
+        	};
+        	int poly_left_x1[] = { 
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x + d_w, 
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2 - d_w,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x1 - d_w,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x1 - d_w,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2 - d_w,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x + d_w
+        	};
+        	int poly_right_x1[] = { 
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x - d_w, 
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2 + d_w,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x1 + d_w,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x1 + d_w,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2 + d_w,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x - d_w
+        	};
+        	int poly_left_x2[] = { 
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x - d_w, 
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2 + d_w,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x1 + d_w,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x1 + d_w,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2 + d_w,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x - d_w
+        	};
+        	int poly_right_x2[] = { 
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x + d_w, 
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2 - d_w,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x1 - d_w,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x1 - d_w,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2 - d_w,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x + d_w
+        	};
+        	int poly_y[] = {
+        			mfd_gc.fuel_tank_edge_top, mfd_gc.fuel_tank_top, mfd_gc.fuel_tank_top,
+        			mfd_gc.fuel_tank_bottom, mfd_gc.fuel_tank_bottom, mfd_gc.fuel_tank_edge_bottom
+        	};
+        	int poly_y_d1[] = {
+        			mfd_gc.fuel_tank_edge_top+d_w, fuel_tank_top_inner, fuel_tank_top_inner,
+        			mfd_gc.fuel_tank_bottom-d_w, mfd_gc.fuel_tank_bottom-d_w, mfd_gc.fuel_tank_edge_bottom-d_w
+        	};
+        	int poly_y_d2[] = {
+        			mfd_gc.fuel_tank_edge_top-d_w, fuel_tank_top_outer, fuel_tank_top_outer,
+        			mfd_gc.fuel_tank_bottom+d_w, mfd_gc.fuel_tank_bottom+d_w, mfd_gc.fuel_tank_edge_bottom+d_w
+        	};
 
-        // outer tanks
-        int poly_left_x[] = { 
-        		mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x, 
-        		mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2,
-        		mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2,
-        		mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x
-        };
-        int poly_right_x[] = { 
-        		mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x, 
-        		mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2,
-        		mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2,
-        		mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x
-        };
-        int poly_left_x1[] = { 
-        		mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x + d_w, 
-        		mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2 - d_w,
-        		mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2 - d_w,
-        		mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x + d_w
-        };
-        int poly_right_x1[] = { 
-        		mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x - d_w, 
-        		mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2 + d_w,
-        		mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2 + d_w,
-        		mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x - d_w
-        };
-        int poly_left_x2[] = { 
-        		mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x - d_w, 
-        		mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2 + d_w,
-        		mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2 + d_w,
-        		mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x - d_w
-        };
-        int poly_right_x2[] = { 
-        		mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x + d_w, 
-        		mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2 - d_w,
-        		mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2 - d_w,
-        		mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x + d_w
-        };
-        int poly_y[] = {
-        		mfd_gc.fuel_tank_edge_top, mfd_gc.fuel_tank_top,
-        		mfd_gc.fuel_tank_bottom, mfd_gc.fuel_tank_edge_bottom
-        };
-        int poly_y_d1[] = {
-        		mfd_gc.fuel_tank_edge_top+d_w, mfd_gc.fuel_tank_top+d_w,
-        		mfd_gc.fuel_tank_bottom-d_w, mfd_gc.fuel_tank_edge_bottom-d_w
-        };
-        int poly_y_d2[] = {
-        		mfd_gc.fuel_tank_edge_top-d_w, mfd_gc.fuel_tank_top-d_w,
-        		mfd_gc.fuel_tank_bottom+d_w, mfd_gc.fuel_tank_edge_bottom+d_w
-        };
-        
-        g2.drawPolygon(poly_left_x, poly_y, 4);
-        g2.drawPolygon(poly_left_x1, poly_y_d1, 4);
-        g2.drawPolygon(poly_left_x2, poly_y_d2, 4);
-        
-        g2.drawPolygon(poly_right_x, poly_y, 4);
-        g2.drawPolygon(poly_right_x1, poly_y_d1, 4);
-        g2.drawPolygon(poly_right_x2, poly_y_d2, 4);
-        
-        
+        	g2.drawPolygon(poly_left_x, poly_y, 6);
+        	g2.drawPolygon(poly_left_x1, poly_y_d1, 6);
+        	g2.drawPolygon(poly_left_x2, poly_y_d2, 6);
+
+        	g2.drawPolygon(poly_right_x, poly_y, 6);
+        	g2.drawPolygon(poly_right_x1, poly_y_d1, 6);
+        	g2.drawPolygon(poly_right_x2, poly_y_d2, 6);    
+        } else {
+        	// Left inner tank
+        	tank_w = mfd_gc.fuel_tank_sep_x2-mfd_gc.fuel_tank_sep_x1;
+        	g2.drawRect(mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2, mfd_gc.fuel_tank_top , tank_w, tank_h);
+        	g2.drawRect(mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2 + d_w, fuel_tank_top_inner, tank_w - d_w*2, tank_h_inner);
+        	g2.drawRect(mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2 - d_w, fuel_tank_top_outer, tank_w + d_w*2, tank_h_outer);
+
+        	// Right inner tank
+        	tank_w = mfd_gc.fuel_tank_sep_x2-mfd_gc.fuel_tank_sep_x1;
+        	g2.drawRect(mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x1, mfd_gc.fuel_tank_top , tank_w, tank_h);
+        	g2.drawRect(mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x1 + d_w, fuel_tank_top_inner, tank_w - d_w*2, tank_h_inner);
+        	g2.drawRect(mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x1 - d_w, fuel_tank_top_outer, tank_w + d_w*2, tank_h_outer);
+
+        	// outer tanks
+        	int poly_left_x[] = { 
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x, 
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x
+        	};
+        	int poly_right_x[] = { 
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x, 
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x
+        	};
+        	int poly_left_x1[] = { 
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x + d_w, 
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2 - d_w,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2 - d_w,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x + d_w
+        	};
+        	int poly_right_x1[] = { 
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x - d_w, 
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2 + d_w,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2 + d_w,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x - d_w
+        	};
+        	int poly_left_x2[] = { 
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x - d_w, 
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2 + d_w,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2 + d_w,
+        			mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_edge_x - d_w
+        	};
+        	int poly_right_x2[] = { 
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x + d_w, 
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2 - d_w,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2 - d_w,
+        			mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_edge_x + d_w
+        	};
+        	int poly_y[] = {
+        			mfd_gc.fuel_tank_edge_top, mfd_gc.fuel_tank_top,
+        			mfd_gc.fuel_tank_bottom, mfd_gc.fuel_tank_edge_bottom
+        	};
+        	int poly_y_d1[] = {
+        			mfd_gc.fuel_tank_edge_top+d_w, fuel_tank_top_inner,
+        			mfd_gc.fuel_tank_bottom-d_w, mfd_gc.fuel_tank_edge_bottom-d_w
+        	};
+        	int poly_y_d2[] = {
+        			mfd_gc.fuel_tank_edge_top-d_w, fuel_tank_top_outer,
+        			mfd_gc.fuel_tank_bottom+d_w, mfd_gc.fuel_tank_edge_bottom+d_w
+        	};
+
+        	g2.drawPolygon(poly_left_x, poly_y, 4);
+        	g2.drawPolygon(poly_left_x1, poly_y_d1, 4);
+        	g2.drawPolygon(poly_left_x2, poly_y_d2, 4);
+
+        	g2.drawPolygon(poly_right_x, poly_y, 4);
+        	g2.drawPolygon(poly_right_x1, poly_y_d1, 4);
+        	g2.drawPolygon(poly_right_x2, poly_y_d2, 4);    
+        }
         
         g2.setStroke(original_stroke);
     }
@@ -626,8 +706,8 @@ public class Fuel extends MFDSubcomponent {
         	g2.drawLine(mfd_gc.fuel_pump_x[4]-mfd_gc.fuel_pump_join_line_dx, mfd_gc.fuel_pump_y[4]-mfd_gc.fuel_pump_join_line_dy, 
         				mfd_gc.fuel_pump_x[5]+mfd_gc.fuel_pump_join_line_dx, mfd_gc.fuel_pump_y[4]-mfd_gc.fuel_pump_join_line_dy);
         	g2.drawLine(mfd_gc.fuel_pump_x[4], mfd_gc.fuel_pump_y[4]-mfd_gc.fuel_pump_join_line_dy, mfd_gc.fuel_pump_x[4], mfd_gc.fuel_pump_y[4]);
-        	drawValveHoriz(g2, aircraft.get_tank_xfer_valve(), mfd_gc.mfd_middle_x ,mfd_gc.fuel_x_feed_line_y);
-        	if (aircraft.get_tank_xfer_valve() == ValveStatus.VALVE_OPEN) {
+        	drawValveHoriz(g2, aircraft.get_tank_xfeed_valve(), mfd_gc.mfd_middle_x ,mfd_gc.fuel_x_feed_line_y);
+        	if (aircraft.get_tank_xfeed_valve() == ValveStatus.VALVE_OPEN) {
         		g2.drawLine(mfd_gc.fuel_pump_x[2], mfd_gc.fuel_x_feed_line_y, mfd_gc.mfd_middle_x - mfd_gc.hyd_valve_r, mfd_gc.fuel_x_feed_line_y);
         		g2.drawLine(mfd_gc.mfd_middle_x - mfd_gc.hyd_valve_r, mfd_gc.fuel_x_feed_line_y, mfd_gc.fuel_pump_x[3], mfd_gc.fuel_x_feed_line_y);
         	}
@@ -646,9 +726,29 @@ public class Fuel extends MFDSubcomponent {
     	g2.drawString(leg_str, mfd_gc.mfd_middle_x - mfd_gc.get_text_width(g2, mfd_gc.font_l, leg_str)/2 , mfd_gc.fuel_tank_legend_y);
     }
 
-    private void drawOuterTankXFerValve(Graphics2D g2, ValveStatus xfer_valve) {
+    /**
+     * 
+     * @param g2 : Graphic Context
+     * @param xfer_valve : Transfer Valve Status
+     * @param side : true=right, false=left
+     */
+    private void drawOuterTankXFerValve(Graphics2D g2, ValveStatus xfer_valve, boolean side) {
     	// TODO: Amber in transit. Green fully closed or fully opened
-    	
+    	int valve_x = side ? mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2 : mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2;
+
+        int tank_h = mfd_gc.fuel_tank_bottom - mfd_gc.fuel_tank_top;
+    	int valve_r = tank_h/11;    	
+    	int valve_y = mfd_gc.fuel_tank_top - tank_h/5 - valve_r;
+    	int valve_h = mfd_gc.fuel_tank_bottom - valve_y;
+    	g2.setColor(xfer_valve == ValveStatus.TRANSIT ? mfd_gc.ecam_caution_color : mfd_gc.ecam_normal_color);
+    	g2.drawArc(valve_x-valve_r, valve_y-valve_r, valve_r*2, valve_r*2, 0, 360);
+    	if (xfer_valve == ValveStatus.VALVE_CLOSED || xfer_valve == ValveStatus.VALVE_CLOSED_FAILED) {
+    		g2.drawLine(valve_x, valve_y+valve_r, valve_x, valve_y+valve_h);
+    	} else if (xfer_valve == ValveStatus.TRANSIT){
+    		g2.drawLine(valve_x, valve_y+valve_r+valve_h, valve_x, valve_y+valve_r+valve_h);
+    	} else {
+    		g2.drawLine(side ? valve_x-valve_r: valve_x+valve_r, valve_y, side ? valve_x-valve_h : valve_x+valve_h, valve_y);    		
+    	}
     }
     
     private void scalePen(Graphics2D g2) {
