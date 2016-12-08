@@ -2296,6 +2296,10 @@ int createCustomAvionicsPacket(void) {
         	XPLMGetDatavi(qpac_fuel_xfv_array, qpac_fuel_valves_tab, 0, 1);
         	qpac_fuel_valves |= (qpac_fuel_valves_tab[0] & 0x07) << 8;
 
+        	// Transfer valves from outer tanks to inner tanks
+        	// Boolean, 4 bits
+        	qpac_fuel_valves |= (XPLMGetDatai(qpac_fuel_tv_array) & 0x0F) << 11;
+
         	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FUEL_VALVES);
         	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fuel_valves );
         	i++;
