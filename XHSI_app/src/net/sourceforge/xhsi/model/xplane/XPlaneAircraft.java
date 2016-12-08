@@ -877,7 +877,7 @@ public class XPlaneAircraft implements Aircraft {
     	}
     }
 
-    public ValveStatus get_tank_xfer_valve() {
+    public ValveStatus get_tank_xfeed_valve() {
     	if (avionics.is_qpac()) {
     		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FUEL_VALVES) >> 8) & 0x07 ;
     		switch (pump_status) {
@@ -900,6 +900,27 @@ public class XPlaneAircraft implements Aircraft {
     	}
     }
 
+    public ValveStatus get_tank_xfer_valve(boolean side_right) {
+    	if (avionics.is_qpac()) {
+    		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FUEL_VALVES) >> 11) & 0x07 ;
+    		switch (pump_status) {
+    			case 0: return ValveStatus.VALVE_CLOSED;
+    			case 1: return ValveStatus.VALVE_OPEN;
+    			case 2: return ValveStatus.TRANSIT;
+    			default :return ValveStatus.JAMMED;
+    		}    		
+    	} else if (avionics.is_jar_a320neo()) {
+    		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FUEL_VALVES) >> 8) & 0x07 ;
+    		switch (pump_status) {
+    			case 0: return ValveStatus.VALVE_CLOSED;
+    			case 1: return ValveStatus.VALVE_OPEN;
+    			case 2: return ValveStatus.TRANSIT;
+    			default :return ValveStatus.JAMMED;
+    		} 
+    	}else {
+    		return ValveStatus.VALVE_CLOSED;
+    	}
+    }
     public ValveStatus get_eng_fuel_valve(int eng){
     	if (avionics.is_qpac()) {
     		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FUEL_VALVES) >> (eng*2)) & 0x03 ;

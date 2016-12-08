@@ -847,9 +847,15 @@ public interface Aircraft {
     public PumpStatus get_tank_pump(int tank);
 
     /**
-     * @return ValveStatus - Fuel XFer Valve
+     * @return ValveStatus - Fuel XFeed Valve
      */
-    public ValveStatus get_tank_xfer_valve();
+    public ValveStatus get_tank_xfeed_valve();
+
+    /**
+     * @return ValveStatus - Fuel XFer Valve
+     * side : true = right wing, false = left wing     * 
+     */
+    public ValveStatus get_tank_xfer_valve(boolean side);
 
     /**
      * @return ValveStatus - Engine Fuel Valve
