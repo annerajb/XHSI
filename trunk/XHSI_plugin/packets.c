@@ -2298,7 +2298,10 @@ int createCustomAvionicsPacket(void) {
 
         	// Transfer valves from outer tanks to inner tanks
         	// Boolean, 4 bits
-        	qpac_fuel_valves |= (XPLMGetDatai(qpac_fuel_tv_array) & 0x0F) << 11;
+        	XPLMGetDatavi(qpac_fuel_tv_array, qpac_fuel_valves_tab, 0, 4);
+        	for (j=0; j<4; j++) {
+        		qpac_fuel_valves |= (qpac_fuel_valves_tab[j] & 0x01) << (11+j);
+        	}
 
         	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_FUEL_VALVES);
         	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fuel_valves );
@@ -2890,12 +2893,21 @@ int createCustomAvionicsPacket(void) {
     	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fuel_pumps );
     	i++;
 
-        // Fuel valves
-        // Each valve status is on 2 bits
-    	// X-Fer valve is on 3 bits
+        /* Fuel valves
+         * Each engine fuel valve status is on 2 bits
+    	 * 0-1 : engine 0
+    	 * 1-2 : engine 1
+    	 * 3-4 : engine 2
+    	 * 5-6 : engine 3
+    	 * 7-8-9: X-Feed valve
+    	 * 10-11 : Left transfer valves
+    	 * 12-13 : Right transfer valves
+    	 */
     	qpac_fuel_valves = (XPLMGetDatai(jar_a320_neo_eng_2_fuel_valve) & 0x03) << 2 |
     			(XPLMGetDatai(jar_a320_neo_eng_1_fuel_valve) & 0x03) |
-    			(XPLMGetDatai(jar_a320_neo_fuel_xfeed) & 0x07) << 8;
+    			(XPLMGetDatai(jar_a320_neo_fuel_xfeed) & 0x07) << 8 |
+    			(XPLMGetDatai(jar_a320_neo_fuel_inn_out_left) & 0x03) << 11 |
+    			(XPLMGetDatai(jar_a320_neo_fuel_inn_out_right) & 0x03) << 13;
 
     	sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_FUEL_VALVES);
     	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fuel_valves );
