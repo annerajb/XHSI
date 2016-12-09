@@ -737,7 +737,8 @@ public class Fuel extends MFDSubcomponent {
     	int valve_x = side ? mfd_gc.mfd_middle_x + mfd_gc.fuel_tank_sep_x2 : mfd_gc.mfd_middle_x - mfd_gc.fuel_tank_sep_x2;
 
         int tank_h = mfd_gc.fuel_tank_bottom - mfd_gc.fuel_tank_top;
-    	int valve_r = tank_h/11;    	
+    	int valve_r = tank_h/11;  
+    	
     	int valve_y = mfd_gc.fuel_tank_top - tank_h/5 - valve_r;
     	int valve_h = mfd_gc.fuel_tank_bottom - valve_y;
     	g2.setColor(xfer_valve == ValveStatus.TRANSIT ? mfd_gc.ecam_caution_color : mfd_gc.ecam_normal_color);
@@ -745,7 +746,9 @@ public class Fuel extends MFDSubcomponent {
     	if (xfer_valve == ValveStatus.VALVE_CLOSED || xfer_valve == ValveStatus.VALVE_CLOSED_FAILED) {
     		g2.drawLine(valve_x, valve_y+valve_r, valve_x, valve_y+valve_h);
     	} else if (xfer_valve == ValveStatus.TRANSIT){
-    		g2.drawLine(valve_x, valve_y+valve_r+valve_h, valve_x, valve_y+valve_r+valve_h);
+    		int valve_cr=valve_r*71/100;
+    		int valve_ch=valve_h*71/100;
+    		g2.drawLine(side ? valve_x-valve_cr: valve_x+valve_cr, valve_y+valve_cr, valve_x+valve_ch, valve_y+valve_ch);
     	} else {
     		g2.drawLine(side ? valve_x-valve_r: valve_x+valve_r, valve_y, side ? valve_x-valve_h : valve_x+valve_h, valve_y);    		
     	}

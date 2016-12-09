@@ -902,20 +902,16 @@ public class XPlaneAircraft implements Aircraft {
 
     public ValveStatus get_tank_xfer_valve(boolean side_right) {
     	if (avionics.is_qpac()) {
-    		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FUEL_VALVES) >> 11) & 0x07 ;
+    		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FUEL_VALVES) >> (side_right ? 13 : 11) ) & 0x03 ;
     		switch (pump_status) {
     			case 0: return ValveStatus.VALVE_CLOSED;
-    			case 1: return ValveStatus.VALVE_OPEN;
-    			case 2: return ValveStatus.TRANSIT;
-    			default :return ValveStatus.JAMMED;
+    			default: return ValveStatus.VALVE_OPEN;
     		}    		
     	} else if (avionics.is_jar_a320neo()) {
-    		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FUEL_VALVES) >> 8) & 0x07 ;
+    		int pump_status = ((int)sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_FUEL_VALVES) >> (side_right ? 13 : 11)) & 0x03 ;
     		switch (pump_status) {
     			case 0: return ValveStatus.VALVE_CLOSED;
-    			case 1: return ValveStatus.VALVE_OPEN;
-    			case 2: return ValveStatus.TRANSIT;
-    			default :return ValveStatus.JAMMED;
+    			default: return ValveStatus.VALVE_OPEN;
     		} 
     	}else {
     		return ValveStatus.VALVE_CLOSED;
