@@ -1798,6 +1798,14 @@ public class XPlaneAircraft implements Aircraft {
     	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_PRESSURIZATION_CABIN_VVI);
     }
 
+    public boolean cabin_vs_man_mode() {
+    	if (this.avionics.is_jar_a320neo() || this.avionics.is_qpac()) {
+    		int air_valve = (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_COND_AIR_VALVES);
+    		return (air_valve & 0x01) != 0;
+    	} else
+    		return false;
+    }
+    
     public float cabin_outflow_valve() {    	
     	return sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_OUTFLOW_VALVE);
     }
@@ -1816,7 +1824,7 @@ public class XPlaneAircraft implements Aircraft {
     	// Cabin pressure safety valve - normaly closed - open when delta p > 8.5
     	return 0.0f;
     }
-
+   
     public float cabin_temp(CabinZone zone) {
     	float temp = -99.0f;
     	if (this.avionics.is_qpac() || this.avionics.is_jar_a320neo()) {

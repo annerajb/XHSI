@@ -1360,7 +1360,12 @@ public interface Aircraft {
      * @return Float - Cabin pressure vertical speed (feet / minute)
      */
     public float cabin_vs();
-
+    
+    /**
+     * @return Boolean - Cabin pressure v/s mode - true if manual mode, false if automatic mode 
+     */
+    public boolean cabin_vs_man_mode();
+    
     /**
      * @return Float - Cabin outflow valve ratio (0.0=closed 1.0=fully opened)
      */

@@ -370,7 +370,7 @@ public class Fuel extends MFDSubcomponent {
 	private void drawFuelPump(Graphics2D g2, Aircraft.PumpStatus pump_status, int x, int y) {
 		if (pump_status == Aircraft.PumpStatus.ON ) {
 			g2.setColor(mfd_gc.ecam_normal_color);
-			g2.drawLine(x, y, x, y+mfd_gc.hyd_pump_h);
+			g2.drawLine(x, y-mfd_gc.fuel_pump_join_line_dy, x, y+mfd_gc.hyd_pump_h);
 		} else if (pump_status == Aircraft.PumpStatus.LOW_PRESSURE) {
 			String lo_str = "LO";
 			g2.setColor(mfd_gc.ecam_caution_color);
@@ -688,31 +688,36 @@ public class Fuel extends MFDSubcomponent {
     private void drawTankFeed(Graphics2D g2) {
         g2.setColor(mfd_gc.ecam_normal_color);
         g2.drawLine(mfd_gc.fuel_eng_x[0], mfd_gc.fuel_x_feed_line_y, mfd_gc.fuel_pump_x[2], mfd_gc.fuel_x_feed_line_y);
-        g2.drawLine(mfd_gc.fuel_pump_x[2], mfd_gc.fuel_x_feed_line_y, mfd_gc.fuel_pump_x[2], mfd_gc.fuel_pump_y[2]);
-        g2.drawLine(mfd_gc.fuel_pump_x[0], mfd_gc.fuel_x_feed_line_y, mfd_gc.fuel_pump_x[0], mfd_gc.fuel_pump_y[0]);
+        g2.drawLine(mfd_gc.fuel_pump_x[2], mfd_gc.fuel_x_feed_line_y, mfd_gc.fuel_pump_x[2], mfd_gc.fuel_pump_y[2]-mfd_gc.fuel_pump_join_line_dy);
+        g2.drawLine(mfd_gc.fuel_pump_x[0], mfd_gc.fuel_x_feed_line_y, mfd_gc.fuel_pump_x[0], mfd_gc.fuel_pump_y[0]-mfd_gc.fuel_pump_join_line_dy);
+        // g2.drawLine(mfd_gc.fuel_pump_x[1], mfd_gc.fuel_pump_y[1]- mfd_gc.fuel_pump_join_line_dy, mfd_gc.fuel_pump_x[1], mfd_gc.fuel_pump_y[1]-mfd_gc.fuel_pump_join_line_dy);
+        g2.setColor(mfd_gc.ecam_markings_color);
         g2.drawLine(mfd_gc.fuel_pump_x[0]-mfd_gc.fuel_pump_join_line_dx, mfd_gc.fuel_pump_y[0]-mfd_gc.fuel_pump_join_line_dy,
         			mfd_gc.fuel_pump_x[1]+mfd_gc.fuel_pump_join_line_dx, mfd_gc.fuel_pump_y[0]-mfd_gc.fuel_pump_join_line_dy);
-        g2.drawLine(mfd_gc.fuel_pump_x[1], mfd_gc.fuel_pump_y[1]- mfd_gc.fuel_pump_join_line_dy, mfd_gc.fuel_pump_x[1], mfd_gc.fuel_pump_y[1]);
+        g2.setColor(mfd_gc.ecam_normal_color);
         // Center tanks feed
+        g2.setColor(mfd_gc.ecam_markings_color);
         g2.drawLine(mfd_gc.fuel_pump_x[2]-mfd_gc.fuel_pump_join_line_dx, mfd_gc.fuel_pump_y[2]-mfd_gc.fuel_pump_join_line_dy,
         			mfd_gc.fuel_pump_x[2]+mfd_gc.fuel_pump_join_line_dx, mfd_gc.fuel_pump_y[2]-mfd_gc.fuel_pump_join_line_dy);
         g2.drawLine(mfd_gc.fuel_pump_x[3]-mfd_gc.fuel_pump_join_line_dx, mfd_gc.fuel_pump_y[3]-mfd_gc.fuel_pump_join_line_dy,
         			mfd_gc.fuel_pump_x[3]+mfd_gc.fuel_pump_join_line_dx, mfd_gc.fuel_pump_y[3]-mfd_gc.fuel_pump_join_line_dy);
+        g2.setColor(mfd_gc.ecam_normal_color);
         // Right tanks feed
         if (mfd_gc.num_eng > 1) {
         	g2.drawLine(mfd_gc.fuel_pump_x[3], mfd_gc.fuel_x_feed_line_y, mfd_gc.fuel_eng_x[mfd_gc.num_eng-1], mfd_gc.fuel_x_feed_line_y);
-        	g2.drawLine(mfd_gc.fuel_pump_x[3], mfd_gc.fuel_x_feed_line_y, mfd_gc.fuel_pump_x[3], mfd_gc.fuel_pump_y[3]);
-        	g2.drawLine(mfd_gc.fuel_pump_x[5], mfd_gc.fuel_x_feed_line_y, mfd_gc.fuel_pump_x[5], mfd_gc.fuel_pump_y[5]);
+        	g2.drawLine(mfd_gc.fuel_pump_x[3], mfd_gc.fuel_x_feed_line_y, mfd_gc.fuel_pump_x[3], mfd_gc.fuel_pump_y[3]-mfd_gc.fuel_pump_join_line_dy);
+        	g2.drawLine(mfd_gc.fuel_pump_x[5], mfd_gc.fuel_x_feed_line_y, mfd_gc.fuel_pump_x[5], mfd_gc.fuel_pump_y[5]-mfd_gc.fuel_pump_join_line_dy);
+        	// g2.drawLine(mfd_gc.fuel_pump_x[4], mfd_gc.fuel_pump_y[4]-mfd_gc.fuel_pump_join_line_dy, mfd_gc.fuel_pump_x[4], mfd_gc.fuel_pump_y[4]-mfd_gc.fuel_pump_join_line_dy);
+        	g2.setColor(mfd_gc.ecam_markings_color);
         	g2.drawLine(mfd_gc.fuel_pump_x[4]-mfd_gc.fuel_pump_join_line_dx, mfd_gc.fuel_pump_y[4]-mfd_gc.fuel_pump_join_line_dy, 
         				mfd_gc.fuel_pump_x[5]+mfd_gc.fuel_pump_join_line_dx, mfd_gc.fuel_pump_y[4]-mfd_gc.fuel_pump_join_line_dy);
-        	g2.drawLine(mfd_gc.fuel_pump_x[4], mfd_gc.fuel_pump_y[4]-mfd_gc.fuel_pump_join_line_dy, mfd_gc.fuel_pump_x[4], mfd_gc.fuel_pump_y[4]);
+        	g2.setColor(mfd_gc.ecam_normal_color);	
         	drawValveHoriz(g2, aircraft.get_tank_xfeed_valve(), mfd_gc.mfd_middle_x ,mfd_gc.fuel_x_feed_line_y);
         	if (aircraft.get_tank_xfeed_valve() == ValveStatus.VALVE_OPEN) {
         		g2.drawLine(mfd_gc.fuel_pump_x[2], mfd_gc.fuel_x_feed_line_y, mfd_gc.mfd_middle_x - mfd_gc.hyd_valve_r, mfd_gc.fuel_x_feed_line_y);
         		g2.drawLine(mfd_gc.mfd_middle_x - mfd_gc.hyd_valve_r, mfd_gc.fuel_x_feed_line_y, mfd_gc.fuel_pump_x[3], mfd_gc.fuel_x_feed_line_y);
         	}
-        }
-        
+        }        
     }
 
     private void drawTankLegends(Graphics2D g2) {

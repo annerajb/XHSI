@@ -113,7 +113,7 @@ public class CabinPressure extends MFDSubcomponent {
 			drawPackStatus(g2,1,pack1_flow_status);
 			drawPackStatus(g2,2,pack2_flow_status);
 			
-			drawSystemStatus(g2,1);
+			drawSystemStatus(g2,this.aircraft.cabin_vs_man_mode() ? 0 : 1);
 			
 			// Legends
 			String str_unit = "PSI";
@@ -380,7 +380,7 @@ public class CabinPressure extends MFDSubcomponent {
         int vs_value = Math.round(aircraft.cabin_vs());	
         float dial_value = Math.min(aircraft.cabin_vs(), vs_max);
         dial_value = Math.max(dial_value, vs_min);
-        float vs_dial = dial_value/vs_max + 0.5f;
+        float vs_dial = dial_value/vs_range + 0.5f;
         
         int vs_x = mfd_gc.press_vs_x;
         int vs_y = mfd_gc.press_gauges_y;
@@ -389,27 +389,43 @@ public class CabinPressure extends MFDSubcomponent {
         int deg_start = -90;
         int deg_full_range = 180;
         int deg_norm_range = 180;
+        int deg_caution = 7;
+        int deg_gauge_end = 90;
         
         // V/S Gauge Arc
         g2.setColor(mfd_gc.ecam_markings_color);  
-        g2.drawArc(vs_x-vs_r, vs_y-vs_r, 2*vs_r, 2*vs_r, deg_start, -deg_norm_range);        
-        // V/S arc arrows
+        g2.drawArc(vs_x-vs_r, vs_y-vs_r, 2*vs_r, 2*vs_r, deg_start-deg_caution, -(deg_norm_range-deg_caution*2));   
+        // Min and Max amber arcs
+        original_stroke = g2.getStroke();
+        g2.setColor(mfd_gc.ecam_caution_color);
+        g2.setStroke(new CompositeStroke( new BasicStroke( 3.0f * mfd_gc.grow_scaling_factor ), new BasicStroke( 2.0f * mfd_gc.grow_scaling_factor ) ));
+        int vs_r_amber = vs_r * 98/100; 
+        g2.drawArc(vs_x-vs_r_amber, vs_y-vs_r_amber, 2*vs_r_amber, 2*vs_r_amber, deg_start, 1-deg_caution);
+        g2.drawArc(vs_x-vs_r_amber, vs_y-vs_r_amber, 2*vs_r_amber, 2*vs_r_amber, deg_gauge_end, deg_caution-1);
+        g2.setTransform(original_at);
+        g2.setStroke(original_stroke);
+        
+        // V/S arc arrows        
         int arrow_dx = vs_r / 10;
         int arrow_dy = vs_r / 10;
+        /*
         g2.drawLine(vs_x, vs_y - vs_r, vs_x - arrow_dx, vs_y - vs_r - arrow_dy);
         g2.drawLine(vs_x, vs_y - vs_r, vs_x - arrow_dx, vs_y - vs_r + arrow_dy);
         g2.drawLine(vs_x, vs_y + vs_r, vs_x - arrow_dx, vs_y + vs_r - arrow_dy);
         g2.drawLine(vs_x, vs_y + vs_r, vs_x - arrow_dx, vs_y + vs_r + arrow_dy);
+        */
         // UP and DN marks
         g2.setFont(mfd_gc.font_l);
-        g2.drawString("UP", vs_x + arrow_dx, vs_y - vs_r + mfd_gc.line_height_l/2);
-        g2.drawString("DN", vs_x + arrow_dx, vs_y + vs_r + mfd_gc.line_height_l/2);
+        g2.setColor(mfd_gc.ecam_markings_color);  
+        g2.drawString("UP", vs_x + arrow_dx*2, vs_y - vs_r + mfd_gc.line_height_l);
+        g2.drawString("DN", vs_x + arrow_dx*2, vs_y + vs_r );
 
         
         // scale markings every 25%
         g2.setColor(mfd_gc.ecam_markings_color);
         g2.rotate(Math.toRadians(360-deg_start), vs_x, vs_y);
-        for (int i=0; i<4; i++) {
+        g2.rotate(Math.toRadians(deg_full_range/4), vs_x, vs_y);
+        for (int i=0; i<3; i++) {
         	g2.drawLine(vs_x+vs_r*18/20, vs_y, vs_x+vs_r-1, vs_y);
         	g2.rotate(Math.toRadians(deg_full_range/4), vs_x, vs_y);
         }
@@ -463,15 +479,21 @@ public class CabinPressure extends MFDSubcomponent {
     		g2.setColor(mfd_gc.ecam_normal_color);
     		break;
     	case PULSING : 
-    		if ((System.currentTimeMillis() % 1000) < 500) g2.setColor(mfd_gc.ecam_caution_color);
+    		if ((System.currentTimeMillis() % 1000) < 500) 
+    			g2.setColor(mfd_gc.ecam_caution_color); 
+    		else 
+    			g2.setColor(mfd_gc.ecam_caution_color.darker());
     		break;
     	}
+    	/*
         if ( Math.abs(vs_value) < vs_max ) {
         	g2.setColor(mfd_gc.ecam_normal_color);
         } else {
         	g2.setColor(mfd_gc.ecam_caution_color);
         } 
-        if ( (vs_alert_status == PressAlert.PULSING) && ((System.currentTimeMillis() % 1000) < 500) ) { g2.setColor(mfd_gc.ecam_markings_color); }
+        if ( (vs_alert_status == PressAlert.PULSING) && ((System.currentTimeMillis() % 1000) < 500) ) 
+           { g2.setColor(mfd_gc.ecam_markings_color); }
+        */
         g2.setFont(mfd_gc.font_xl);
         String vs_str = Integer.toString(Math.round(vs_value/10)*10);
         int vs_txt_y = vs_y + mfd_gc.line_height_xl /2;
@@ -598,7 +620,7 @@ public class CabinPressure extends MFDSubcomponent {
         float dp_thr = 1.5f;
         float dp_reset = 0.1f;
 
-        float dp_range = 9;
+        float dp_range = 8.8f;
         int dp_value = Math.round(aircraft.cabin_delta_p());
         float dp_dial = Math.min(dp_value, dp_range) / dp_range;
     	float max_dp_dial = Math.min(dp_max, dp_range) / dp_range;
@@ -609,34 +631,46 @@ public class CabinPressure extends MFDSubcomponent {
         int dp_y = mfd_gc.press_gauges_y;
         int dp_r = mfd_gc.press_dial_r;        
         
-        int deg_start = full_arc ? 225 : 180;
-        int deg_warning = full_arc ? 25 : 0;
-        int deg_full_range = deg_start-deg_warning;
-        int deg_caution = deg_start-Math.round(max_dp_dial*deg_full_range)-10;
-        int deg_norm_range = deg_start-deg_caution;
-        int deg_warn_range = deg_caution-deg_warning;
+        int deg_gauge_start = full_arc ? 210 : 180;
+        int deg_gauge_end = full_arc ? 30 : 0;
+        int deg_min_caution_range = 7; 
+        int deg_max_caution_range = 7; 
+        int deg_min_caution = deg_gauge_start - deg_min_caution_range;
+        int deg_max_caution = deg_gauge_end + deg_max_caution_range;
+        int deg_zero = 195; 
+        int deg_max_mark = 45;
+        int deg_marking_range = deg_zero - deg_max_mark;
+        
+        int deg_full_range = deg_zero-deg_gauge_end;  // Full range is the needle range starting from zero
+        int deg_white_range = deg_min_caution - deg_max_caution; 
+        
+        // int deg_caution = deg_start-Math.round(max_dp_dial*deg_full_range)-20;
 
+        // int deg_norm_range = deg_start-deg_caution*2;
+        // int deg_warn_range = deg_caution-deg_warning;
+       
 
         // Delta P Gauge Arc
         g2.setColor(mfd_gc.ecam_markings_color);  
-        g2.drawArc(dp_x-dp_r, dp_y-dp_r, 2*dp_r, 2*dp_r, deg_start, -deg_norm_range);
-        g2.setColor(mfd_gc.ecam_warning_color);
-        // Delta P red arc 
-        // TODO: Dual red arc
+        g2.drawArc(dp_x-dp_r, dp_y-dp_r, 2*dp_r, 2*dp_r, deg_min_caution, -deg_white_range);
+
+        // Min and Max amber arcs
+        g2.setColor(mfd_gc.ecam_caution_color);
         original_stroke = g2.getStroke();
         g2.setStroke(new CompositeStroke( new BasicStroke( 3.0f * mfd_gc.grow_scaling_factor ), new BasicStroke( 2.0f * mfd_gc.grow_scaling_factor ) ));
         int dp_r_red = dp_r * 98/100; 
-        g2.drawArc(dp_x-dp_r_red, dp_y-dp_r_red, 2*dp_r_red, 2*dp_r_red, deg_caution, -deg_warn_range);
+        g2.drawArc(dp_x-dp_r_red, dp_y-dp_r_red, 2*dp_r_red, 2*dp_r_red, deg_min_caution+1, deg_min_caution_range);
+        g2.drawArc(dp_x-dp_r_red, dp_y-dp_r_red, 2*dp_r_red, 2*dp_r_red, deg_gauge_end-1, deg_max_caution_range);
         g2.setTransform(original_at);
         g2.setStroke(original_stroke);
 
 
         // scale markings every 50%
         g2.setColor(mfd_gc.ecam_markings_color);
-        g2.rotate(Math.toRadians(360-deg_start), dp_x, dp_y);
-        for (int i=0; i<2; i++) {
+        g2.rotate(Math.toRadians(360-deg_zero), dp_x, dp_y);
+        for (int i=0; i<3; i++) {
         	g2.drawLine(dp_x+dp_r*18/20, dp_y, dp_x+dp_r-1, dp_y);
-        	g2.rotate(Math.toRadians(deg_full_range/2), dp_x, dp_y);
+        	g2.rotate(Math.toRadians(deg_marking_range/2), dp_x, dp_y);
         }
         g2.setTransform(original_at);
         
@@ -648,12 +682,12 @@ public class CabinPressure extends MFDSubcomponent {
         g2.setColor(mfd_gc.ecam_markings_color);
         int egt_digit_x;
         int egt_digit_y;
-        int egt_digit_angle = 360-deg_start;
+        int egt_digit_angle = 360-deg_zero;
         // min
         egt_digit_x = dp_x + (int)(Math.cos(Math.toRadians(egt_digit_angle))*dp_r*11/16);
         egt_digit_y = dp_y + (int)(Math.sin(Math.toRadians(egt_digit_angle))*dp_r*11/16);
         g2.drawString(min_str, egt_digit_x - mfd_gc.digit_width_s/2, egt_digit_y+mfd_gc.line_height_s*3/8);
-        egt_digit_angle += deg_full_range;
+        egt_digit_angle += deg_marking_range;
         // max
         egt_digit_x = dp_x + (int)(Math.cos(Math.toRadians(egt_digit_angle))*dp_r*12/16);
         egt_digit_y = dp_y + (int)(Math.sin(Math.toRadians(egt_digit_angle))*dp_r*12/16);
@@ -663,7 +697,7 @@ public class CabinPressure extends MFDSubcomponent {
         resetPen(g2);
         scalePen(g2,3.0f);
         int needle_x = full_arc ? dp_x : dp_x+dp_r/2;
-        g2.rotate(Math.toRadians(Math.round(dp_dial*deg_full_range)-deg_start), dp_x, dp_y);
+        g2.rotate(Math.toRadians(Math.round(dp_dial*deg_full_range)-deg_zero), dp_x, dp_y);
         if (dp_value < dp_max)
         	g2.setColor(mfd_gc.ecam_normal_color);
         else
