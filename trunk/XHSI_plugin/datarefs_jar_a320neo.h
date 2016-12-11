@@ -315,6 +315,18 @@ extern XPLMDataRef jar_a320_neo_oxy_manon;
 extern XPLMDataRef jar_a320_neo_oxy_sys_on;
 extern XPLMDataRef jar_a320_neo_oxy_textoxy;
 
+// PRESSURE
+extern XPLMDataRef jar_a320_neo_press_alt_rot;
+extern XPLMDataRef jar_a320_neo_press_mode;
+extern XPLMDataRef jar_a320_neo_press_cab_alt;
+extern XPLMDataRef jar_a320_neo_press_cab_des;
+extern XPLMDataRef jar_a320_neo_press_cab_vs;
+extern XPLMDataRef jar_a320_neo_press_delta_p;
+extern XPLMDataRef jar_a320_neo_press_outflow_valve;
+extern XPLMDataRef jar_a320_neo_press_safety_valve;
+extern XPLMDataRef jar_a320_neo_press_sys1;
+extern XPLMDataRef jar_a320_neo_press_sys2;
+
 // WHEELS
 extern XPLMDataRef jar_a320_neo_wheels_brake_fan;
 extern XPLMDataRef jar_a320_neo_wheels_brake_hot;

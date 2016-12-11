@@ -475,6 +475,13 @@ int createADCPacket(void) {
 		sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_CONTROLS_RIGHT_AIL);
 		sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(pa_a320_right_aileron_pos));
 		i++;
+	} else if (jar_a320_neo_ready) {
+		sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_CONTROLS_LEFT_AIL);
+		sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(left_wing_aileron_1_def[1]));
+		i++;
+		sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_CONTROLS_RIGHT_AIL);
+		sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(right_wing_aileron_1_def[1]));
+		i++;
 	} else	{
 		sim_packet.sim_data_points[i].id = custom_htoni(SIM_FLIGHTMODEL_CONTROLS_LEFT_AIL);
 		sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(left_aileron_pos));
@@ -2240,8 +2247,10 @@ int createCustomAvionicsPacket(void) {
             }
         }
 
+        // bit array (2 bits per valve) : LSB order : PACK 1, PACK 2, RAM AIR, CAB FAN1, CAB FAN2, PRESS MAN MODE (1bit)
         ram_air_valve = XPLMGetDataf(qpac_bleed_ram_air_valve);
-    	qpac_air_valves = ((XPLMGetDatai(qpac_bleed_ram_air) & 0x01) << 5);
+    	qpac_air_valves = ((XPLMGetDatai(qpac_bleed_ram_air) & 0x01) << 5) |
+    			(XPLMGetDatai(qpac_cabin_man_press_mode) & 0x01);
     	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_AIR_VALVES);
     	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_air_valves );
     	i++;
@@ -2750,8 +2759,9 @@ int createCustomAvionicsPacket(void) {
     	i++;
 
     	// PACKs
-    	// bit array (2 bits per valve) : LSB order : PACK 1, PACK 2, RAM AIR, CAB FAN1, CAB FAN2
-    	qpac_air_valves = ((XPLMGetDatai(jar_a320_neo_cond_ram_air) & 0x01) << 5);
+    	// bit array (2 bits per valve) : LSB order : PACK 1, PACK 2, RAM AIR, CAB FAN1, CAB FAN2, PRESS MAN MODE (1bit)
+    	qpac_air_valves = ((XPLMGetDatai(jar_a320_neo_cond_ram_air) & 0x01) << 5) |
+    			(!(XPLMGetDatai(jar_a320_neo_press_mode)) & 0x01);
     	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_AIR_VALVES);
     	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_air_valves );
     	i++;

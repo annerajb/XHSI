@@ -346,6 +346,7 @@ extern XPLMDataRef qpac_cabin_delta_p;
 extern XPLMDataRef qpac_cabin_alt;
 extern XPLMDataRef qpac_cabin_vs;
 extern XPLMDataRef qpac_outflow_valve;
+extern XPLMDataRef qpac_cabin_man_press_mode;
 // ENG lower ECAM (ignition and nacelles)
 extern XPLMDataRef qpac_eng_mode_switch;
 extern XPLMDataRef qpac_ewd_start_mode;

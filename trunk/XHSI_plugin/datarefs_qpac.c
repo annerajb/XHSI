@@ -178,6 +178,7 @@ XPLMDataRef qpac_cabin_delta_p;
 XPLMDataRef qpac_cabin_alt;
 XPLMDataRef qpac_cabin_vs;
 XPLMDataRef qpac_outflow_valve;
+XPLMDataRef qpac_cabin_man_press_mode;
 // ENG lower ECAM (ignition and nacelles)
 XPLMDataRef qpac_eng_mode_switch;
 XPLMDataRef qpac_ewd_start_mode;
@@ -453,6 +454,7 @@ void findQpacDataRefs(void) {
             qpac_cabin_alt = XPLMFindDataRef("AirbusFBW/CabinAlt");
             qpac_cabin_vs = XPLMFindDataRef("AirbusFBW/CabinVS");
             qpac_outflow_valve = XPLMFindDataRef("AirbusFBW/OutflowValve");
+            qpac_cabin_man_press_mode = XPLMFindDataRef("AirbusFBW/CabPressMode");
             // ENG lower ECAM
             qpac_ewd_start_mode = XPLMFindDataRef("AirbusFBW/EWDStartMode");
             qpac_eng_mode_switch = XPLMFindDataRef("AirbusFBW/ENGModeSwitch");
