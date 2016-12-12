@@ -203,7 +203,6 @@ XPLMDataRef jar_a320_neo_elec_gen1_line_on;
 XPLMDataRef jar_a320_neo_elec_gen1_per;
 XPLMDataRef jar_a320_neo_elec_gen1_volt;
 XPLMDataRef jar_a320_neo_elec_gen2_hz;
-XPLMDataRef jar_a320_neo_elec_gen2_line_on;
 XPLMDataRef jar_a320_neo_elec_gen2_per;
 XPLMDataRef jar_a320_neo_elec_gen2_volt;
 XPLMDataRef jar_a320_neo_elec_apu_hz;
@@ -630,7 +629,6 @@ void findJarA320NeoDataRefs(void) {
             jar_a320_neo_elec_gen1_per = XPLMFindDataRef("sim/custom/xap/elec/gen1_per");
             jar_a320_neo_elec_gen1_volt = XPLMFindDataRef("sim/custom/xap/elec/gen1_volt");
             jar_a320_neo_elec_gen2_hz = XPLMFindDataRef("sim/custom/xap/elec/gen2_hz");
-            jar_a320_neo_elec_gen2_line_on = XPLMFindDataRef("sim/custom/xap/elec/gen2line_on");  // absent ?
             jar_a320_neo_elec_gen2_per = XPLMFindDataRef("sim/custom/xap/elec/gen2_per");
             jar_a320_neo_elec_gen2_volt = XPLMFindDataRef("sim/custom/xap/elec/gen2_volt");
             jar_a320_neo_elec_apu_hz = XPLMFindDataRef("sim/custom/xap/elec/genAPU_hz");
