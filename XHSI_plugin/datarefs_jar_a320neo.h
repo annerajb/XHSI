@@ -170,7 +170,7 @@ extern XPLMDataRef jar_a320_neo_doors_p_f_l_now;
 extern XPLMDataRef jar_a320_neo_doors_p_f_r_kn;
 extern XPLMDataRef jar_a320_neo_doors_p_f_r_now;
 
-// Electrics
+// ATA 24 Electrics
 extern XPLMDataRef jar_a320_neo_elec_ac1_source;
 extern XPLMDataRef jar_a320_neo_elec_ac2_source;
 extern XPLMDataRef jar_a320_neo_elec_ac_ess;
@@ -200,7 +200,6 @@ extern XPLMDataRef jar_a320_neo_elec_gen1_line_on;
 extern XPLMDataRef jar_a320_neo_elec_gen1_per;
 extern XPLMDataRef jar_a320_neo_elec_gen1_volt;
 extern XPLMDataRef jar_a320_neo_elec_gen2_hz;
-extern XPLMDataRef jar_a320_neo_elec_gen2_line_on;
 extern XPLMDataRef jar_a320_neo_elec_gen2_per;
 extern XPLMDataRef jar_a320_neo_elec_gen2_volt;
 extern XPLMDataRef jar_a320_neo_elec_apu_hz;
