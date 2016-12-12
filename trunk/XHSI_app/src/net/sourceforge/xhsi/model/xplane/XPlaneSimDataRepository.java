@@ -804,6 +804,29 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     // SPOILERS
     public static final int JAR_A320NEO_SPOILERS_LEFT = 1305;
     public static final int JAR_A320NEO_SPOILERS_RIGHT = 1306;
+    // ATA24 ELEC
+    public static final int JAR_A320NEO_EXT_HZ = 1314;
+    public static final int JAR_A320NEO_EXT_VOLT = 1315;
+    public static final int JAR_A320NEO_GEN1_HZ = 1316;
+    public static final int JAR_A320NEO_GEN1_PER = 1317;
+    public static final int JAR_A320NEO_GEN1_VOLT = 1318;
+    public static final int JAR_A320NEO_GEN2_HZ = 1319;
+    public static final int JAR_A320NEO_GEN2_PER = 1320;
+    public static final int JAR_A320NEO_GEN2_VOLT = 1321;
+    public static final int JAR_A320NEO_APU_HZ = 1322;
+    public static final int JAR_A320NEO_APU_PER = 1323;
+    public static final int JAR_A320NEO_APU_VOLT = 1324;
+    public static final int JAR_A320NEO_GEN_EM_HZ = 1325;
+    public static final int JAR_A320NEO_GEN_EM_VOLT = 1326;
+    public static final int JAR_A320NEO_TR1_AMP = 1327;
+    public static final int JAR_A320NEO_TR1_VOLT = 1328;
+    public static final int JAR_A320NEO_TR2_AMP = 1329;
+    public static final int JAR_A320NEO_TR2_VOLT = 1330;
+    public static final int JAR_A320NEO_TR_EM_AMP = 1331;
+    public static final int JAR_A320NEO_TR_EM_VOLT = 1332;
+    public static final int JAR_A320NEO_DC_STATUS = 1333;
+    public static final int JAR_A320NEO_AC_STATUS = 1334;
+    public static final int JAR_A320NEO_GEN_STATUS = 1335;
     // Plugin Version
     public static final int PLUGIN_VERSION_ID = 999;
 

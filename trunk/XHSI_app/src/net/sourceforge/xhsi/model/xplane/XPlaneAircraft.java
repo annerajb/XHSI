@@ -1551,7 +1551,9 @@ public class XPlaneAircraft implements Aircraft {
     			case 7 : return true;
     			default : return false;
     		}
-    	} else {
+    	} else if (this.avionics.is_jar_a320neo()) {
+     		return (((int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AC_STATUS) >> 8) & 0x01) == 0;     		
+     	} else {
         	// Common aircraft, no bus tie
         	return false;
     	}    		
@@ -1608,7 +1610,15 @@ public class XPlaneAircraft implements Aircraft {
     		case 2 : return ElecBus.BUS_2;
     		default: return ElecBus.BOTH;
     		}    		
-    	} else {
+    	} else if (this.avionics.is_jar_a320neo()) {
+    		int ac_status = ((int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AC_STATUS) >> 4) & 0x03;
+    		switch (ac_status) {
+    		case 0 : return ElecBus.NONE;
+    		case 1 : return ElecBus.BUS_1;
+    		case 2 : return ElecBus.BUS_2;
+    		default: return ElecBus.BOTH;
+    		}
+    	}   else {
     		// on AC 1 by default
     		return ElecBus.BUS_1;
     	}
@@ -1623,6 +1633,14 @@ public class XPlaneAircraft implements Aircraft {
     		case 9 : return ElecBus.NONE;
     		case 10 : return ElecBus.BUS_1;
     		case 11 : return ElecBus.BUS_2;
+    		default: return ElecBus.BOTH;
+    		}    		
+    	} else if (this.avionics.is_jar_a320neo()) {
+    		int ac_status = ((int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_DC_STATUS) >> 4) & 0x03;
+    		switch (ac_status) {
+    		case 0 : return ElecBus.NONE;
+    		case 1 : return ElecBus.BUS_1;
+    		case 2 : return ElecBus.BUS_2;
     		default: return ElecBus.BOTH;
     		}    		
     	} else {
@@ -1641,6 +1659,13 @@ public class XPlaneAircraft implements Aircraft {
     			qpac_elec_connectors = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ELEC_CX_RIGHT);
     		}
     		return ((qpac_elec_connectors & 0x01) != 0);
+    	} else if (this.avionics.is_jar_a320neo()) {
+    		int ac_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AC_STATUS);
+    		if (eng==0) {  
+    			return (ac_status & 0x03) == 1; 
+    		} else { 
+    			return ((ac_status>>2) & 0x03) == 2; 
+    		}   		   		
     	} else {
     		return true;
     	}
@@ -1659,6 +1684,9 @@ public class XPlaneAircraft implements Aircraft {
     	if (this.avionics.is_qpac()) {
     		int overhead_elec = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ELEC_BUTTONS);
     		return ((overhead_elec & (0x01 << eng)) != 0);
+    	} else if (this.avionics.is_jar_a320neo()) {
+    		int overhead_elec = (int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_GEN_STATUS);
+    		return ((overhead_elec & (0x01 << eng)) != 0); 		
     	} else {
     		return false;
     	}
