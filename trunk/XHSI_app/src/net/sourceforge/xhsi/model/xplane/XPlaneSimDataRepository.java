@@ -801,6 +801,9 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int JAR_A320NEO_NACELLE_TEMP_ = 1300;
     // System Display page
     public static final int JAR_A320NEO_SD_PAGE = 1304;
+    // SPOILERS
+    public static final int JAR_A320NEO_SPOILERS_LEFT = 1305;
+    public static final int JAR_A320NEO_SPOILERS_RIGHT = 1306;
     // Plugin Version
     public static final int PLUGIN_VERSION_ID = 999;
 

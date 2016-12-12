@@ -650,9 +650,14 @@ public class XPlaneAircraft implements Aircraft {
     		case 2: return SpoilerStatus.FAILED;
     		default: return SpoilerStatus.JAMMED;
     		}
-
+    	} else if ((this.avionics.is_jar_a320neo())) {
+    		spoiler = (Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_SPOILERS_LEFT)) >> (pos*2)) & 0x03 ;
+    		switch (spoiler) {
+    		case 0: return SpoilerStatus.RETRACTED;
+    		default: return SpoilerStatus.EXTENDED;
+    		}
     	} else {
-    	return get_speed_brake() > 0.1f ? SpoilerStatus.EXTENDED : SpoilerStatus.RETRACTED ;
+    		return get_speed_brake() > 0.1f ? SpoilerStatus.EXTENDED : SpoilerStatus.RETRACTED ;
     	}
     }
 
@@ -666,7 +671,12 @@ public class XPlaneAircraft implements Aircraft {
     		case 2: return SpoilerStatus.FAILED;
     		default: return SpoilerStatus.JAMMED;
     		}
-
+    	} else if ((this.avionics.is_jar_a320neo())) {
+    		spoiler = (Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_SPOILERS_RIGHT)) >> (pos*2)) & 0x03 ;
+    		switch (spoiler) {
+    		case 0: return SpoilerStatus.RETRACTED;
+    		default: return SpoilerStatus.EXTENDED;
+    		}
     	} else {
     	return get_speed_brake() > 0.1f ? SpoilerStatus.EXTENDED : SpoilerStatus.RETRACTED ;
     	}
