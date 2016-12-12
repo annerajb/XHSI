@@ -1212,7 +1212,7 @@ int createCustomAvionicsPacket(void) {
     int qpac_ils;
     int qpac_failures;
     int qpac_spoilers_tab[20];
-    int qpac_spoilers;
+    int spoilers;
     int qpac_fcc_tab[5];
     int qpac_fcc;
     float qpac_hyd_press_tab[3];
@@ -1225,7 +1225,7 @@ int createCustomAvionicsPacket(void) {
     int qpac_fuel_valves = 0;
     int qpac_fuel_valves_tab[6];
     int qpac_air_valves;
-    float ram_air_valve;
+    // float ram_air_valve;
     int bleed_valves;
     float qpac_door_pax_tab[4];
     float qpac_door_cargo_tab[4];
@@ -1926,21 +1926,21 @@ int createCustomAvionicsPacket(void) {
         // TODO : check qpac_spoilers_array type (int or float)
         if (qpac_spoilers_array != NULL) {
         	XPLMGetDatavi(qpac_spoilers_array, qpac_spoilers_tab, 0, 10);
-        	qpac_spoilers = (qpac_spoilers_tab[0] & 0x03) |
+        	spoilers = (qpac_spoilers_tab[0] & 0x03) |
         					(qpac_spoilers_tab[2] & 0x03) << 2 |
         					(qpac_spoilers_tab[4] & 0x03) << 4 |
         					(qpac_spoilers_tab[6] & 0x03) << 6 |
         					(qpac_spoilers_tab[8] & 0x03) << 8 ;
          	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_SPOILERS_LEFT);
-        	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_spoilers );
+        	sim_packet.sim_data_points[i].value = custom_htonf( (float) spoilers );
         	i++;
-        	qpac_spoilers = qpac_spoilers_tab[1] |
+        	spoilers = qpac_spoilers_tab[1] |
         					qpac_spoilers_tab[3] << 2 |
         					qpac_spoilers_tab[5] << 4 |
         					qpac_spoilers_tab[7] << 6 |
         					qpac_spoilers_tab[9] << 8 ;
         	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_SPOILERS_RIGHT);
-        	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_spoilers );
+        	sim_packet.sim_data_points[i].value = custom_htonf( (float) spoilers );
         	i++;
         } else {
          	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_SPOILERS_LEFT);
@@ -2248,7 +2248,7 @@ int createCustomAvionicsPacket(void) {
         }
 
         // bit array (2 bits per valve) : LSB order : PACK 1, PACK 2, RAM AIR, CAB FAN1, CAB FAN2, PRESS MAN MODE (1bit)
-        ram_air_valve = XPLMGetDataf(qpac_bleed_ram_air_valve);
+        // ram_air_valve = XPLMGetDataf(qpac_bleed_ram_air_valve);
     	qpac_air_valves = ((XPLMGetDatai(qpac_bleed_ram_air) & 0x01) << 5) |
     			(XPLMGetDatai(qpac_cabin_man_press_mode) & 0x01);
     	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_AIR_VALVES);
@@ -2921,6 +2921,25 @@ int createCustomAvionicsPacket(void) {
 
     	sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_FUEL_VALVES);
     	sim_packet.sim_data_points[i].value = custom_htonf( (float) qpac_fuel_valves );
+    	i++;
+
+    	// Spoilers
+    	spoilers= ((XPLMGetDataf(left_wing_spoiler_1_def[1])>12.5) & 0x01) |
+    			  ((XPLMGetDataf(left_wing_spoiler_1_def[1])>1.0) & 0x01) << 2 |
+    			  ((XPLMGetDataf(left_wing_spoiler_1_def[1])>1.0) & 0x01) << 4 |
+    			  ((XPLMGetDataf(left_wing_spoiler_2_def[1])>1.0) & 0x01) << 6 |
+    			  ((XPLMGetDataf(left_wing_spoiler_2_def[1])>0.5) & 0x01) << 8 ;
+
+    	sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_SPOILERS_LEFT);
+    	sim_packet.sim_data_points[i].value = custom_htonf( (float) spoilers );
+    	i++;
+    	spoilers= ((XPLMGetDataf(right_wing_spoiler_1_def[1])>12.5) & 0x01) |
+    			  ((XPLMGetDataf(right_wing_spoiler_1_def[1])>1.0) & 0x01) << 2 |
+    			  ((XPLMGetDataf(right_wing_spoiler_1_def[1])>1.0) & 0x01) << 4 |
+    			  ((XPLMGetDataf(right_wing_spoiler_2_def[1])>1.0) & 0x01) << 6 |
+    			  ((XPLMGetDataf(right_wing_spoiler_2_def[1])>0.5) & 0x01) << 8 ;
+    	sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_SPOILERS_RIGHT);
+    	sim_packet.sim_data_points[i].value = custom_htonf( (float) spoilers );
     	i++;
 
     	// Electrics
