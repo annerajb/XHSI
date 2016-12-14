@@ -56,20 +56,22 @@ public class Electrics extends MFDSubcomponent  {
 					  aircraft.apu_on_bus() == ElecBus.BOTH || 
 					  aircraft.gpu_on_bus() == ElecBus.BUS_1 ||
 					  aircraft.gpu_on_bus() == ElecBus.BOTH || 
-					  aircraft.eng_gen_on_bus(0) );
+					  aircraft.eng_gen_on_bus(0) ||
+					  (aircraft.eng_gen_on_bus(1) && aircraft.ac_bus_tie()) );
 			boolean ac_2_status = this.aircraft.bus_powered(1) &&
 					( aircraft.apu_on_bus() == ElecBus.BUS_2 ||
 					  aircraft.apu_on_bus() == ElecBus.BOTH || 
 					  aircraft.gpu_on_bus() == ElecBus.BUS_2 ||
 					  aircraft.gpu_on_bus() == ElecBus.BOTH || 
-					  aircraft.eng_gen_on_bus(1) );
-			boolean ac_ess_status = true;
+					  aircraft.eng_gen_on_bus(1) ||
+					  (aircraft.eng_gen_on_bus(0) && aircraft.ac_bus_tie()) );
+			boolean ac_ess_status = this.avionics.is_jar_a320neo() ? this.aircraft.bus_powered(4) : true;
 			boolean dc_1_status = this.aircraft.bus_powered(2);
 			boolean dc_2_status = this.aircraft.bus_powered(3);
-			boolean dc_ess_status = true;
-			boolean dc_bat_status = true;
+			boolean dc_ess_status = this.avionics.is_jar_a320neo() ? this.aircraft.bus_powered(5) : true;
+			boolean dc_bat_status = dc_1_status || dc_2_status || dc_ess_status || this.aircraft.battery_on(0) || this.aircraft.battery_on(1);
 			boolean tr_1_status = ac_1_status;
-			boolean tr_2_status = ac_2_status;
+			boolean tr_2_status = ac_2_status && (aircraft.num_generators() > 1);
 			// Page ID
 			drawPageID(g2, "ELEC");
 			drawBusBox(g2, "DC BAT", 0, dc_bat_status, mfd_gc.elec_dc_bat_ess_box_x, mfd_gc.elec_dc_bat_box_y, mfd_gc.elec_dc_bat_ess_box_w, mfd_gc.elec_bus_box_h);
@@ -99,8 +101,11 @@ public class Electrics extends MFDSubcomponent  {
 			if (aircraft.num_batteries()>1) { 
 				drawElecBatTr(g2, "BAT 2", true, Math.round(this.aircraft.battery_volt(1)), Math.round(this.aircraft.battery_amp(1)), this.aircraft.battery_on(1), mfd_gc.elec_bat2_x, mfd_gc.elec_bat_y );
 			}
+			
 			if (aircraft.num_generators()>0) {
 				drawElecBatTr(g2, "TR 1", true, ac_1_status ? 28 : 0, dc_1_status && ac_1_status ? 26 : 0, true, mfd_gc.elec_tr1_x, mfd_gc.elec_tr_y );
+			}
+			if (aircraft.num_generators()>1) {
 				drawElecBatTr(g2, "TR 2", true, ac_2_status ? 28 : 0, dc_2_status && ac_2_status ? 22 : 0, true, mfd_gc.elec_tr2_x, mfd_gc.elec_tr_y );
 				drawElecEmerGen(g2, "EMER GEN", false, 28, 0, mfd_gc.elec_emerg_x, mfd_gc.elec_ess_tr_emerg_y );
 				drawElecEmerTr(g2, "ESS TR", false, 28, 0, mfd_gc.elec_ess_tr_x, mfd_gc.elec_ess_tr_emerg_y );
@@ -115,16 +120,15 @@ public class Electrics extends MFDSubcomponent  {
         		int volt = v_avail ? Math.round(aircraft.apu_n1()/100*115) : 0;
         		int freq = v_avail ? Math.round(aircraft.apu_n1()/100*400) : 0;
         		drawElecAux(g2,"APU GEN", start, load, volt, freq, aircraft.apu_disc(),mfd_gc.elec_apugen_x, mfd_gc.elec_ext_apu_y);
-
         	}
 			
         	if (aircraft.num_generators()>0) {
-        		drawElecAux(g2,"EXT PWR", true, (int)aircraft.gpu_gen_amps(), 115, 400, true, mfd_gc.elec_extpwr_x, mfd_gc.elec_ext_apu_y);
+        		drawElecAux(g2,"EXT PWR", aircraft.gpu_gen_on(), (int)aircraft.gpu_gen_amps(), 115, 400, true, mfd_gc.elec_extpwr_x, mfd_gc.elec_ext_apu_y);
         	}
 			
-			if (aircraft.apu_gen_on()) {
+			if (aircraft.apu_on_bus() != ElecBus.NONE) {
 				drawElecAuxOnBus (g2, mfd_gc.elec_apugen_x + mfd_gc.elec_ext_apu_w/2, mfd_gc.elec_aux_y, mfd_gc.elec_ext_apu_y, aircraft.apu_on_bus());
-			} else if (aircraft.gpu_gen_on()) {
+			} else if (aircraft.gpu_on_bus() != ElecBus.NONE) {
 				drawElecAuxOnBus (g2, mfd_gc.elec_extpwr_x + mfd_gc.elec_ext_apu_w/2, mfd_gc.elec_aux_y, mfd_gc.elec_ext_apu_y, aircraft.gpu_on_bus());
 			} 
 			
@@ -152,6 +156,7 @@ public class Electrics extends MFDSubcomponent  {
 		g2.setColor(mfd_gc.ecam_normal_color);
 		// TR1 to DC1 bus
 		if (tr_1_status) g2.drawLine(mfd_gc.elec_ac1_x, mfd_gc.elec_dc_box_y + mfd_gc.elec_bus_box_h, mfd_gc.elec_ac1_x, mfd_gc.elec_tr_y);
+		
 		// TR2 to DC2 bus
 		if (tr_2_status) g2.drawLine(mfd_gc.elec_ac2_x, mfd_gc.elec_dc_box_y + mfd_gc.elec_bus_box_h, mfd_gc.elec_ac2_x, mfd_gc.elec_tr_y);
 		
@@ -219,9 +224,12 @@ public class Electrics extends MFDSubcomponent  {
 		// TR1 to AC1 bus
 		g2.setColor(ac_1_powered ? mfd_gc.ecam_normal_color : mfd_gc.ecam_caution_color);
 		g2.drawLine(mfd_gc.elec_ac1_x, mfd_gc.elec_tr_y+ mfd_gc.elec_tr_h, mfd_gc.elec_ac1_x, mfd_gc.elec_ac_box_y );
+		
 		// TR2 to AC2 bus
-		g2.setColor(ac_2_powered ? mfd_gc.ecam_normal_color : mfd_gc.ecam_caution_color);
-		g2.drawLine(mfd_gc.elec_ac2_x, mfd_gc.elec_tr_y+ mfd_gc.elec_tr_h, mfd_gc.elec_ac2_x, mfd_gc.elec_ac_box_y );
+		if (aircraft.num_generators()>1) {
+			g2.setColor(ac_2_powered ? mfd_gc.ecam_normal_color : mfd_gc.ecam_caution_color);
+			g2.drawLine(mfd_gc.elec_ac2_x, mfd_gc.elec_tr_y+ mfd_gc.elec_tr_h, mfd_gc.elec_ac2_x, mfd_gc.elec_ac_box_y );
+		}
 		
 		// GEN to AC bus
 		g2.setColor(mfd_gc.ecam_normal_color);
@@ -231,12 +239,16 @@ public class Electrics extends MFDSubcomponent  {
 		if (aircraft.eng_gen_on_bus(1) && (aircraft.num_generators()>1)) {
 			g2.drawLine(mfd_gc.elec_ac2_x, mfd_gc.elec_ac_box_y + mfd_gc.elec_bus_box_h, mfd_gc.elec_ac2_x, mfd_gc.elec_gen_y);
 		}
+		
 		// AC1 to AC ESS
-		if (aircraft.ac_ess_on_bus() == ElecBus.BUS_1 ) {
-			g2.drawLine(mfd_gc.elec_ac1_box_x + mfd_gc.elec_ac_box_w, mfd_gc.elec_ac_ess_y, mfd_gc.elec_ac_ess_box_x, mfd_gc.elec_ac_ess_y);
-		} else if (aircraft.ac_ess_on_bus() == ElecBus.BUS_2 ) {
-			g2.drawLine(mfd_gc.elec_ac2_box_x, mfd_gc.elec_ac_ess_y, mfd_gc.elec_ac_ess_box_x + mfd_gc.elec_ac_ess_box_w , mfd_gc.elec_ac_ess_y);
+		if (aircraft.num_generators()>1) {
+			if (aircraft.ac_ess_on_bus() == ElecBus.BUS_1 ) {
+				g2.drawLine(mfd_gc.elec_ac1_box_x + mfd_gc.elec_ac_box_w, mfd_gc.elec_ac_ess_y, mfd_gc.elec_ac_ess_box_x, mfd_gc.elec_ac_ess_y);
+			} else if (aircraft.ac_ess_on_bus() == ElecBus.BUS_2 ) {
+				g2.drawLine(mfd_gc.elec_ac2_box_x, mfd_gc.elec_ac_ess_y, mfd_gc.elec_ac_ess_box_x + mfd_gc.elec_ac_ess_box_w , mfd_gc.elec_ac_ess_y);
+			}
 		}
+		
 		// Bus Tie
 		if (aircraft.ac_bus_tie()) {
 			g2.drawLine(mfd_gc.elec_ac1_x, mfd_gc.elec_aux_y, mfd_gc.elec_ac2_x, mfd_gc.elec_aux_y);
@@ -378,14 +390,16 @@ public class Electrics extends MFDSubcomponent  {
     	int line2 = y + mfd_gc.line_height_l + mfd_gc.line_height_xxl*2;
     	int line3 = y + mfd_gc.line_height_l + mfd_gc.line_height_xxl*3;
         g2.setColor(mfd_gc.ecam_markings_color);
-        g2.setFont(mfd_gc.font_l);
-        scalePen(g2);
-        g2.drawRect(x,y,w,h);
-        resetPen(g2);
+        g2.setFont(mfd_gc.font_l);        
+        if ((display_values && active) || (!active)) {
+        	scalePen(g2);
+        	g2.drawRect(x,y,w,h);
+        	resetPen(g2);
+        }
         if (display_values && ( freq<390 || volt < 105)) { g2.setColor(mfd_gc.ecam_caution_color); }
         g2.drawString( bloc_str, x + w/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, bloc_str)/2, y + mfd_gc.line_height_l );
          
-        if (active) {
+        if (display_values && active) {
         	// Legends
         	g2.setColor(mfd_gc.ecam_action_color);
         	g2.setFont(mfd_gc.font_s);
@@ -466,18 +480,22 @@ public class Electrics extends MFDSubcomponent  {
     	int line2 = y + mfd_gc.line_height_l + mfd_gc.line_height_xxl*2;
     	g2.setColor(mfd_gc.ecam_markings_color);
     	g2.setFont(mfd_gc.font_l);
-    	scalePen(g2);
-    	g2.drawRect(x,y,w,h);
-    	resetPen(g2);
+    	if (display_values) {
+    		scalePen(g2);
+    		g2.drawRect(x,y,w,h);
+    		resetPen(g2);
+    	}
     	// if (display_values && ( freq<390 || volt < 105)) { g2.setColor(mfd_gc.ecam_caution_color); }
     	g2.drawString( bloc_str, x + w/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, bloc_str)/2, y + mfd_gc.line_height_l );
 
     	// Legends
-    	g2.setColor(mfd_gc.ecam_action_color);
-    	g2.setFont(mfd_gc.font_s);
-    	g2.drawString("V",  x+w-mfd_gc.digit_width_s*2, line1);
-    	g2.drawString("A",  x+w-mfd_gc.digit_width_s*2, line2);
-
+    	if (display_values) {
+    		g2.setColor(mfd_gc.ecam_action_color);
+    		g2.setFont(mfd_gc.font_s);
+    		g2.drawString("V",  x+w-mfd_gc.digit_width_s*2, line1);
+    		g2.drawString("A",  x+w-mfd_gc.digit_width_s*2, line2);
+    	}
+    	
     	// Values
     	if (display_values) {
     		String str_volt = ""+volt;
@@ -497,17 +515,21 @@ public class Electrics extends MFDSubcomponent  {
     	int line2 = y + mfd_gc.line_height_l + mfd_gc.line_height_xxl*2;
     	g2.setColor(mfd_gc.ecam_markings_color);
     	g2.setFont(mfd_gc.font_l);
-    	scalePen(g2);
-    	g2.drawRect(x,y,w,h);
-    	resetPen(g2);
+    	if (display_values) {
+    		scalePen(g2);
+    		g2.drawRect(x,y,w,h);
+    		resetPen(g2);
+    	}
     	// if (display_values && ( freq<390 || volt < 105)) { g2.setColor(mfd_gc.ecam_caution_color); }
     	g2.drawString( bloc_str, x + w/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, bloc_str)/2, y + mfd_gc.line_height_l );
 
     	// Legends
-    	g2.setColor(mfd_gc.ecam_action_color);
-    	g2.setFont(mfd_gc.font_s);
-    	g2.drawString("V",  x+w-mfd_gc.digit_width_s*2, line1);
-    	g2.drawString("HZ",  x+w-mfd_gc.digit_width_s*2, line2);
+    	if (display_values) {
+    		g2.setColor(mfd_gc.ecam_action_color);
+    		g2.setFont(mfd_gc.font_s);
+    		g2.drawString("V",  x+w-mfd_gc.digit_width_s*2, line1);
+    		g2.drawString("HZ",  x+w-mfd_gc.digit_width_s*2, line2);
+    	}
 
     	// Values
     	if (display_values) {

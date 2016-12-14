@@ -1482,29 +1482,29 @@ public class XPlaneAircraft implements Aircraft {
     }
     
     public boolean apu_running() {
-    	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.APU_STATUS);
+    	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.AUX_GEN_STATUS);
     	return (( apu_status & 0x10) > 0);
     }
 
     public boolean apu_gen_on() {
-    	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.APU_STATUS);
+    	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.AUX_GEN_STATUS);
     	return (( apu_status & 0x04) > 0);
    	
     }
     
     public int apu_starter() {
-    	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.APU_STATUS);
+    	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.AUX_GEN_STATUS);
     	return ( apu_status & 0x03);
     }
 
     public boolean ram_air_gen_on() {
-    	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.APU_STATUS);
+    	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.AUX_GEN_STATUS);
     	return (( apu_status & 0x20) > 0);   	
     }
 
     public boolean gpu_gen_on() {
-    	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.APU_STATUS);
-    	return (( apu_status & 0x40) > 0);   	
+    	int apu_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.AUX_GEN_STATUS);
+    	return (( apu_status >> 7) & 0x01) != 0;   	
     }
 
     public float gpu_gen_amps() {
@@ -1552,7 +1552,17 @@ public class XPlaneAircraft implements Aircraft {
     			default : return false;
     		}
     	} else if (this.avionics.is_jar_a320neo()) {
-     		return (((int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AC_STATUS) >> 8) & 0x01) == 0;     		
+    		// Bus Tie status is on JAR_A320NEO_AC_STATUS bit #8
+    		boolean bus_tie_off = (((int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AC_STATUS) >> 10) & 0x01) != 0;
+       		// AC1 source is on JAR_A320NEO_AC_STATUS bit 0 and 1
+    		int ac1_source = ((int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AC_STATUS)) & 0x07;
+    		// AC2 source is on JAR_A320NEO_AC_STATUS bit 2 and 3
+    		int ac2_source = (((int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AC_STATUS)) >> 3) & 0x07;  
+    		if (bus_tie_off ) {
+    			return false;
+    		} else {
+    			return (( ac1_source > 1 ) || (ac2_source != 2 && ac2_source != 0));    				
+    		}
      	} else {
         	// Common aircraft, no bus tie
         	return false;
@@ -1569,7 +1579,27 @@ public class XPlaneAircraft implements Aircraft {
     			case 3 : return ElecBus.BOTH;
     			default : return ElecBus.NONE;
     		}
-    	} else {
+    	} else if (this.avionics.is_jar_a320neo()) {
+    		// APU is on bus if AC1 or AC2 is on source #4 and APU Gen Status ON
+    		// APU gen status is on JAR_A320NEO_GEN_STATUS bit #2
+    		boolean apu_gen_on = (((int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_GEN_STATUS)) & 0x04) !=0 ;
+    		// AC1 source is on JAR_A320NEO_AC_STATUS bit 0 and 1
+    		int ac1_source = ((int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AC_STATUS)) & 0x07;
+    		// AC2 source is on JAR_A320NEO_AC_STATUS bit 2 and 3
+    		int ac2_source = (((int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AC_STATUS)) >> 3) & 0x07;
+     		if (apu_gen_on) {
+     			if ((ac1_source == 4) && (ac2_source == 4)) 
+     				return ElecBus.BOTH;
+     			else if ((ac1_source == 4) && (ac2_source != 4)) 
+     				return ElecBus.BUS_1;
+     			else if ((ac1_source != 4) && (ac2_source == 4)) 
+     				return ElecBus.BUS_2;
+     			else 
+     				return ElecBus.NONE;
+     		} else {
+     			return ElecBus.NONE;
+     		}   
+     	} else {
         	// Common aircraft, APU GEN ON = APU on BUS 1
         	return apu_gen_on() ? ElecBus.BUS_1 : ElecBus.NONE;
     	}    		
@@ -1579,6 +1609,9 @@ public class XPlaneAircraft implements Aircraft {
     	if (this.avionics.is_qpac()) {
     		int overhead_elec = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_ELEC_BUTTONS);
     		return ((overhead_elec & (0x04)) != 0);
+       	} else if (this.avionics.is_jar_a320neo()) {
+    		// APU gen status is on JAR_A320NEO_GEN_STATUS bit #2    		
+    		return (((int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_GEN_STATUS)) & 0x04) != 0;
     	} else {
     		return false;
     	}
@@ -1594,6 +1627,26 @@ public class XPlaneAircraft implements Aircraft {
     			case 6 : return ElecBus.BOTH;
     			default : return ElecBus.NONE;
     		}
+    	} else if (this.avionics.is_jar_a320neo()) {
+    		// GPU is on bus if AC1 or AC2 is on source #3 and GPU Gen Status ON
+    		// GPU gen status is on JAR_A320NEO_GEN_STATUS bit #3
+    		boolean gpu_gen_on = (((int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_GEN_STATUS)) & 0x10) !=0 ;
+    		// AC1 source is on JAR_A320NEO_AC_STATUS bit 0 and 1
+    		int ac1_source = ((int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AC_STATUS)) & 0x07;
+    		// AC2 source is on JAR_A320NEO_AC_STATUS bit 2 and 3
+    		int ac2_source = (((int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AC_STATUS)) >> 3) & 0x07;
+     		if (gpu_gen_on) {
+     			if ((ac1_source == 3) && (ac2_source == 3)) 
+     				return ElecBus.BOTH;
+     			else if ((ac1_source == 3) && (ac2_source != 3)) 
+     				return ElecBus.BUS_1;
+     			else if ((ac1_source != 3) && (ac2_source == 3)) 
+     				return ElecBus.BUS_2;
+     			else 
+     				return ElecBus.NONE;
+     		} else {
+     			return ElecBus.NONE;
+     		} 
     	} else {
         	// Common aircraft, APU GEN ON = APU on BUS 1
         	return gpu_gen_on() ? ElecBus.BUS_1 : ElecBus.NONE;
@@ -1611,7 +1664,7 @@ public class XPlaneAircraft implements Aircraft {
     		default: return ElecBus.BOTH;
     		}    		
     	} else if (this.avionics.is_jar_a320neo()) {
-    		int ac_status = ((int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AC_STATUS) >> 4) & 0x03;
+    		int ac_status = ((int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AC_STATUS) >> 6) & 0x03;
     		switch (ac_status) {
     		case 0 : return ElecBus.NONE;
     		case 1 : return ElecBus.BUS_1;
@@ -1662,9 +1715,9 @@ public class XPlaneAircraft implements Aircraft {
     	} else if (this.avionics.is_jar_a320neo()) {
     		int ac_status = (int) sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_AC_STATUS);
     		if (eng==0) {  
-    			return (ac_status & 0x03) == 1; 
+    			return ((ac_status & 0x07) == 1) || (((ac_status>>3) & 0x07) == 1); 
     		} else { 
-    			return ((ac_status>>2) & 0x03) == 2; 
+    			return ((ac_status & 0x07) == 2) || (((ac_status>>3) & 0x07) == 2); 
     		}   		   		
     	} else {
     		return true;
