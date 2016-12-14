@@ -87,7 +87,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int APU_N1 = 83;
     public static final int APU_GEN_AMP = 84;
     public static final int GPU_GEN_AMP = 85;
-    public static final int APU_STATUS = 86;
+    public static final int AUX_GEN_STATUS = 86;
     // Battery array [4]
     public static final int SIM_COCKPIT_ELECTRICAL_BATTERY_VOLT_ = 87;
     public static final int SIM_COCKPIT_ELECTRICAL_BATTERY_AMP_ = 91;
