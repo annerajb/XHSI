@@ -631,10 +631,12 @@ int createAvionicsPacket(void) {
     		(XPLMGetDatai(jar_a320_neo_elec_ac2_source) != 0) << 1  |
     		(XPLMGetDatai(jar_a320_neo_elec_dc1) != 0) << 2 |
     		(XPLMGetDatai(jar_a320_neo_elec_dc2) != 0) << 3 |
-    		bus_on[4] << 4 |
-    		bus_on[5] << 5 |
+    		(XPLMGetDatai(jar_a320_neo_elec_ac_ess) != 0) << 4 |
+    		(XPLMGetDatai(jar_a320_neo_elec_dc_ess) != 0) << 5 |
     		inverters[0] << 6 |
-    		inverters[1] << 7;
+    		inverters[1] << 7 |
+    		(XPLMGetDatai(jar_a320_neo_elec_commrc) != 0) << 8 |
+    		(XPLMGetDatai(jar_a320_neo_elec_galley) != 0) << 9;
     } else {
     	elec_status =
     		bus_on[0] |
@@ -667,7 +669,7 @@ int createAvionicsPacket(void) {
     if (jar_a320_neo_ready) {
     	generators_status =
     		((XPLMGetDataf(jar_a320_neo_elec_gen1_volt) > 110.0f) & 0x01) |
-    	    ((XPLMGetDatai(jar_a320_neo_elec_gen2_volt) > 110.0f) & 0x01) << 1 ;
+    	    ((XPLMGetDataf(jar_a320_neo_elec_gen2_volt) > 110.0f) & 0x01) << 1 ;
     } else {
     	XPLMGetDatavi(elec_generator_on, generators_on, 0, 8);
     	generators_status = generators_on[0] | generators_on[1] << 1 | generators_on[2] << 2 | generators_on[3] << 3 |
@@ -689,13 +691,12 @@ int createAvionicsPacket(void) {
     i++;
     if (jar_a320_neo_ready) {
     	// Jar A320 did not use default X-Plane APU and GPU datarefs
-    	// TODO : Specific JAR ID
     	apu_status =
     			XPLMGetDatai(jar_a320_neo_elec_gpu_av) << 7 |
     			XPLMGetDatai(jar_a320_neo_elec_gpu_on) << 6 |
     			XPLMGetDatai(jar_a320_neo_elec_rat_on) << 5 |
     			XPLMGetDatai(apu_running) << 4 |
-    			XPLMGetDatai(jar_a320_neo_elec_apu_gen_on) << 2 |
+    			(XPLMGetDataf(jar_a320_neo_elec_apu_volt)>380.0f) << 2 |
     			XPLMGetDatai(apu_starter); // Starter on 2 bits
     } else {
     	apu_status =
@@ -3055,14 +3056,14 @@ int createCustomAvionicsPacket(void) {
     	sim_packet.sim_data_points[i].value =  custom_htonf( (float) elec_status );
     	i++;
     	elec_status =
-    	    	(XPLMGetDatai(jar_a320_neo_elec_ac1_source) & 0x03) |
-    	    	(XPLMGetDatai(jar_a320_neo_elec_ac2_source) & 0x03) << 2 |
-    	    	(XPLMGetDatai(jar_a320_neo_elec_ac_ess) & 0x03) << 4 |
-    	    	(XPLMGetDatai(jar_a320_neo_elec_ac_ess_alt) & 0x01) << 6 |
-    	    	(XPLMGetDatai(jar_a320_neo_elec_ac_ess_shed) & 0x01) << 7 |
-    	    	(XPLMGetDatai(jar_a320_neo_elec_bus_tie) & 0x01) << 8 |
-    	    	(XPLMGetDatai(jar_a320_neo_elec_commrc) & 0x01) << 9 |
-    	  	    (XPLMGetDatai(jar_a320_neo_elec_galley) & 0x01) << 10 ;
+    	    	(XPLMGetDatai(jar_a320_neo_elec_ac1_source) & 0x07) |
+    	    	(XPLMGetDatai(jar_a320_neo_elec_ac2_source) & 0x07) << 3 |
+    	    	(XPLMGetDatai(jar_a320_neo_elec_ac_ess) & 0x03) << 6 |
+    	    	(XPLMGetDatai(jar_a320_neo_elec_ac_ess_alt) & 0x01) << 8 |
+    	    	(XPLMGetDatai(jar_a320_neo_elec_ac_ess_shed) & 0x01) << 9 |
+    	    	(XPLMGetDatai(jar_a320_neo_elec_bus_tie) & 0x01) << 10 ;
+    	    	// (XPLMGetDatai(jar_a320_neo_elec_commrc) & 0x01) << 11 |
+    	  	    // (XPLMGetDatai(jar_a320_neo_elec_galley) & 0x01) << 12 ;
     	sim_packet.sim_data_points[i].id = custom_htoni(JAR_A320NEO_AC_STATUS);
     	sim_packet.sim_data_points[i].value =  custom_htonf( (float) elec_status );
     	i++;
