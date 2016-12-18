@@ -34,6 +34,7 @@ extern XPLMCommandRef sim_autopilot_approach;
 extern XPLMCommandRef sim_autopilot_glide_slope;
 extern XPLMCommandRef sim_autopilot_back_course;
 extern XPLMCommandRef sim_autopilot_altitude_hold;
+extern XPLMCommandRef sim_autopilot_wing_leveler;
 
 extern XPLMCommandRef sim_lights_nav_lights_toggle;
 extern XPLMCommandRef sim_lights_beacon_lights_toggle;
