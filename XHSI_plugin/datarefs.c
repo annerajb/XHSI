@@ -2524,6 +2524,10 @@ void writeDataRef(int id, float value) {
         	XPLMSetDatai(autopilot_state, (int) value);
             break;
 
+        case SIM_COCKPIT_AUTOPILOT_MODE :
+        	XPLMSetDatai(autopilot_mode, (int) value);
+            break;
+
        // MCP (and other) buttons (special case; don't set datarefs but trigger commands...)
         case SIM_COCKPIT_AUTOPILOT_KEY_PRESS :
              switch ((int)value) {
@@ -2558,6 +2562,9 @@ void writeDataRef(int id, float value) {
                     } else {
                         XPLMCommandOnce(sim_autopilot_heading);
                     }
+                    break;
+                case AP_KEY_WLV :
+                    XPLMCommandOnce(sim_autopilot_wing_leveler);
                     break;
                 case AP_KEY_VS_TOGGLE :
                     if(x737_ready){

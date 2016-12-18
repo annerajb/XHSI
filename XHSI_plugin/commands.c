@@ -513,6 +513,7 @@ XPLMCommandRef sim_autopilot_approach;
 XPLMCommandRef sim_autopilot_glide_slope;
 XPLMCommandRef sim_autopilot_back_course;
 XPLMCommandRef sim_autopilot_altitude_hold;
+XPLMCommandRef sim_autopilot_wing_leveler;
 
 // lights
 XPLMCommandRef sim_lights_nav_lights_toggle;
@@ -3167,6 +3168,7 @@ void registerCommands(void) {
     sim_autopilot_glide_slope = XPLMFindCommand("sim/autopilot/glide_slope");
     sim_autopilot_back_course = XPLMFindCommand("sim/autopilot/back_course");
     sim_autopilot_altitude_hold = XPLMFindCommand("sim/autopilot/altitude_hold");
+    sim_autopilot_wing_leveler = XPLMFindCommand("sim/autopilot/wing_leveler");
 
 
     // special case: use these existing commands for lights
