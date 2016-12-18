@@ -63,6 +63,7 @@ public class XPlaneCommand implements SimCommand {
     // MCP Buttons
     public static final int AP_KEY_IS_MACH = 1;
     public static final int AP_KEY_CMD_A = 2;
+    public static final int AP_KEY_CMD_B = 2; // TODO : CMD B
     public static final int AP_KEY_SPD_TOGGLE = 3;
     public static final int AP_KEY_LVL_CHG_TOGGLE = 4;
     public static final int AP_KEY_HDG_SEL_TOGGLE = 5;
@@ -74,6 +75,7 @@ public class XPlaneCommand implements SimCommand {
     public static final int AP_KEY_ALT_HOLD_TOGGLE = 11;
     public static final int AP_KEY_ILS_CAPT_TOGGLE = 12;
     public static final int AP_KEY_ILS_FO_TOGGLE = 13;
+    public static final int AP_KEY_WLV = 14;
     // Lights
     public static final int AP_KEY_NAV_LIGHTS_TOGGLE = 20;
     public static final int AP_KEY_BEACON_LIGHTS_TOGGLE = 21;
@@ -396,11 +398,11 @@ public class XPlaneCommand implements SimCommand {
             case CMD_ECAM_FPLN: 
                 break;
             
-            case CMD_FCU_AP1: 
+            case CMD_FCU_AP1: // CMD A on Boeing
             	this.udp_sender.sendDataPoint(XPlaneSimDataRepository.QPAC_KEY_PRESS, QPAC_KEY_AP1_PUSH);
                 break;
             
-            case CMD_FCU_AP2: 
+            case CMD_FCU_AP2: // CMD B on Boeing
             	this.udp_sender.sendDataPoint(XPlaneSimDataRepository.QPAC_KEY_PRESS, QPAC_KEY_AP2_PUSH);
                 break;
             
@@ -413,7 +415,11 @@ public class XPlaneCommand implements SimCommand {
                 break;
             
             case CMD_FCU_APPR: 
-                this.udp_sender.sendDataPoint(XPlaneSimDataRepository.QPAC_KEY_PRESS, QPAC_KEY_APPR);
+            	if (this.avionics.is_qpac()) {
+            		this.udp_sender.sendDataPoint(XPlaneSimDataRepository.QPAC_KEY_PRESS, QPAC_KEY_APPR);
+            	} else {
+            		this.udp_sender.sendDataPoint(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_KEY_PRESS, AP_KEY_APPR_TOGGLE );
+            	}
                 break;
             
             case CMD_FCU_EXP: 
@@ -438,11 +444,19 @@ public class XPlaneCommand implements SimCommand {
                 break;
             
             case CMD_FCU_SPD_MNG: 
-                this.udp_sender.sendDataPoint(XPlaneSimDataRepository.QPAC_KEY_PRESS, QPAC_KEY_PUSH_SPD);
+            	if (this.avionics.is_qpac()) {
+            		this.udp_sender.sendDataPoint(XPlaneSimDataRepository.QPAC_KEY_PRESS, QPAC_KEY_PUSH_SPD);
+            	} else {
+            		this.udp_sender.sendDataPoint(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_KEY_PRESS, AP_KEY_SPD_TOGGLE );
+            	}
                 break;
             
-            case CMD_FCU_SPD_SEL: 
-                this.udp_sender.sendDataPoint(XPlaneSimDataRepository.QPAC_KEY_PRESS, QPAC_KEY_PULL_SPD);
+            case CMD_FCU_SPD_SEL:
+            	if (this.avionics.is_qpac()) {
+            		this.udp_sender.sendDataPoint(XPlaneSimDataRepository.QPAC_KEY_PRESS, QPAC_KEY_PULL_SPD);
+            	} else {
+            		this.udp_sender.sendDataPoint(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_KEY_PRESS, AP_KEY_SPD_TOGGLE );
+            	}
                 break;
             
             case CMD_FCU_HDG_UP: 
@@ -451,14 +465,23 @@ public class XPlaneCommand implements SimCommand {
             
             case CMD_FCU_HDG_DOWN: 
                 this.udp_sender.sendDataPoint(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_HEADING_MAG, this.avionics.heading_bug() - 1.0f);
-                break;
-            
+                break;   
+                
+            case CMD_FCU_WLV: 
+            	this.udp_sender.sendDataPoint(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_KEY_PRESS, AP_KEY_WLV );
+                break; 
+                
             case CMD_FCU_HDG_MNG: 
                 this.udp_sender.sendDataPoint(XPlaneSimDataRepository.QPAC_KEY_PRESS, QPAC_KEY_PUSH_HDG);
                 break;
             
             case CMD_FCU_HDG_SEL: 
-                this.udp_sender.sendDataPoint(XPlaneSimDataRepository.QPAC_KEY_PRESS, QPAC_KEY_PULL_HDG);
+            	if (this.avionics.is_qpac()) {
+            		this.udp_sender.sendDataPoint(XPlaneSimDataRepository.QPAC_KEY_PRESS, QPAC_KEY_PULL_HDG);
+            	} else {
+            		this.udp_sender.sendDataPoint(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_KEY_PRESS, AP_KEY_HDG_SEL_TOGGLE );
+            	}
+
                 break;
             
             case CMD_FCU_ALT_UP: 
@@ -472,7 +495,11 @@ public class XPlaneCommand implements SimCommand {
                 break;
             
             case CMD_FCU_ALT_SEL: 
-                this.udp_sender.sendDataPoint(XPlaneSimDataRepository.QPAC_KEY_PRESS, QPAC_KEY_PULL_ALT);
+            	if (this.avionics.is_qpac()) {
+            		this.udp_sender.sendDataPoint(XPlaneSimDataRepository.QPAC_KEY_PRESS, QPAC_KEY_PULL_ALT);
+            	} else {
+            		this.udp_sender.sendDataPoint(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_KEY_PRESS, AP_KEY_LVL_CHG_TOGGLE);
+            	}
                 break;
             
             case CMD_FCU_ALT_FINE: 
@@ -491,8 +518,12 @@ public class XPlaneCommand implements SimCommand {
                 this.udp_sender.sendDataPoint(XPlaneSimDataRepository.QPAC_KEY_PRESS, QPAC_KEY_PULL_VS);
                 break;
             
-            case CMD_FCU_VS_LVLOFF: 
-                this.udp_sender.sendDataPoint(XPlaneSimDataRepository.QPAC_KEY_PRESS, QPAC_KEY_PUSH_VS);
+            case CMD_FCU_VS_LVLOFF:
+            	if (this.avionics.is_qpac()) {
+            		this.udp_sender.sendDataPoint(XPlaneSimDataRepository.QPAC_KEY_PRESS, QPAC_KEY_PUSH_VS);
+            	}  else {
+            		this.udp_sender.sendDataPoint(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_KEY_PRESS, AP_KEY_ALT_HOLD_TOGGLE );
+            	}
                 break;
             
             case CMD_MASTER_WRN: 

@@ -2295,7 +2295,7 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
     
     public void set_autopilot_mode(int new_mode){
-    	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_AUTOPILOT_STATE,new_mode); 
+    	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_MODE,new_mode); 
     }
     
 
