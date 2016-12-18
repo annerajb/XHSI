@@ -133,9 +133,11 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_AP_SPEED_MNG = "Speed Managed";
     public static final String ACTION_AP_SPEED_SEL = "Speed Selected";
     public static final String ACTION_AP_SET_HEADING = "Set Heading ...";
-    public static final String ACTION_AP_HDG_MODE = "Follow Heading";
+    public static final String ACTION_AP_HDG_MODE = "HDG";
     public static final String ACTION_AP_NAV_MODE = "NAV";
-    public static final String ACTION_AP_VOR_MODE = "VOR";
+    public static final String ACTION_AP_VOR_MODE = "VOR / LOC";
+    public static final String ACTION_AP_APPR_MODE = "Approach";
+    public static final String ACTION_AP_WLV_MODE = "Wing Leveler";
     public static final String ACTION_AP_SET_VS = "Set Vertical Speed ...";
     public static final String ACTION_AP_LEVEL_OFF = "Level Off";
     public static final String ACTION_AP_VS_MODE = "V/S Mode";
@@ -522,7 +524,126 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // add the "Transponder" menu to the menubar
         menu_bar.add(xhsi_xpdr_menu);
 
+        
+        /*
+         *  define the "AutoPilot" or MCP/FCU menu
+         */
+        JMenu ap_menu = new JMenu("AP");
+        
+        // Altitude Sub Menu
+        JMenu ap_altitude_submenu = new JMenu("Altitude");
+        
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SET_ALTITUDE);
+        menu_item.setToolTipText("Set the autopilot altitude target");
+        menu_item.addActionListener(this);
+        ap_altitude_submenu.add(menu_item);
+        
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_LEVEL_HOLD);
+        menu_item.setToolTipText("Hold current altitude");
+        menu_item.addActionListener(this);
+        ap_altitude_submenu.add(menu_item);
+        
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_LEVEL_CHG);
+        menu_item.setToolTipText("Engage level change - open mode");
+        menu_item.addActionListener(this);
+        ap_altitude_submenu.add(menu_item);
 
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_LEVEL_CHG_MNG);
+        menu_item.setToolTipText("Engage level change - managed mode");
+        menu_item.addActionListener(this);
+        ap_altitude_submenu.add(menu_item);
+        
+        ap_menu.add(ap_altitude_submenu);
+
+        // Speed Sub Menu
+        JMenu ap_speed_submenu = new JMenu("Speed");
+        
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SET_SPEED);
+        menu_item.setToolTipText("Set the auto/throttle/thrust speed target");
+        menu_item.addActionListener(this);
+        ap_speed_submenu.add(menu_item);
+   
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SPEED_MNG);
+        menu_item.setToolTipText("Autopilot speed managed");
+        menu_item.addActionListener(this);
+        ap_speed_submenu.add(menu_item);
+
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SPEED_SEL);
+        menu_item.setToolTipText("Autopilot speed selected");
+        menu_item.addActionListener(this);
+        ap_speed_submenu.add(menu_item);
+        
+        ap_menu.add(ap_speed_submenu);
+        
+        // Heading Sub Menu
+        JMenu ap_heading_submenu = new JMenu("Heading");
+        
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SET_HEADING);
+        menu_item.setToolTipText("Set the autopilot heading bug");
+        menu_item.addActionListener(this);
+        ap_heading_submenu.add(menu_item);
+
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_HDG_MODE);
+        menu_item.setToolTipText("Follow the heading bug");
+        menu_item.addActionListener(this);
+        ap_heading_submenu.add(menu_item);
+        
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_NAV_MODE);
+        menu_item.setToolTipText("Follow the flight plan");
+        menu_item.addActionListener(this);
+        ap_heading_submenu.add(menu_item);
+
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_VOR_MODE);
+        menu_item.setToolTipText("Follow tuned VOR 1 / ILS LOC");
+        menu_item.addActionListener(this);
+        ap_heading_submenu.add(menu_item);
+   
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_APPR_MODE);
+        menu_item.setToolTipText("Engage ILS APPR mode (G/S + LOC)");
+        menu_item.addActionListener(this);
+        ap_heading_submenu.add(menu_item);
+
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_WLV_MODE);
+        menu_item.setToolTipText("Resume to Wing Leveler");
+        menu_item.addActionListener(this);
+        ap_heading_submenu.add(menu_item);
+        
+        ap_menu.add(ap_heading_submenu);
+        
+        // Vertical Velocity Sub Menu
+        JMenu ap_vv_submenu = new JMenu("Vertical Velocity");
+        
+        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SET_VS);
+        menu_item.setToolTipText("Set the autopilot vertical velocity target");
+        menu_item.addActionListener(this);
+        ap_vv_submenu.add(menu_item);
+        
+        ap_menu.add(ap_vv_submenu);
+        
+        ap_menu.addSeparator();
+        
+        // TODO :
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_AP_AP_SWITCH);
+        checkbox_menu_item.setToolTipText("Set the autopilot on/off");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(false);
+        ap_menu.add(checkbox_menu_item);
+        // keep a reference
+        this.checkbox_autopilot = checkbox_menu_item;
+
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_AP_FD_SWITCH);
+        checkbox_menu_item.setToolTipText("Set the fligth director on/off");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(false);
+        ap_menu.add(checkbox_menu_item);
+        // keep a reference
+        this.checkbox_flight_director = checkbox_menu_item;
+
+        
+        // add the "AP" menu to the menubar
+        menu_bar.add(ap_menu);
+
+        
         /*
          *  define the "Source" menu
          */
@@ -921,114 +1042,6 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // add the "ND" menu to the menubar
         menu_bar.add(nd_menu);
 
-        
-        /*
-         *  define the "AutoPilot" or MCP/FCU menu
-         */
-        JMenu ap_menu = new JMenu("AP");
-        
-        // Altitude Sub Menu
-        JMenu ap_altitude_submenu = new JMenu("Altitude");
-        
-        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SET_ALTITUDE);
-        menu_item.setToolTipText("Set the autopilot altitude target");
-        menu_item.addActionListener(this);
-        ap_altitude_submenu.add(menu_item);
-        
-        menu_item = new JMenuItem(XHSISettings.ACTION_AP_LEVEL_HOLD);
-        menu_item.setToolTipText("Hold current altitude");
-        menu_item.addActionListener(this);
-        ap_altitude_submenu.add(menu_item);
-        
-        menu_item = new JMenuItem(XHSISettings.ACTION_AP_LEVEL_CHG);
-        menu_item.setToolTipText("Engage level change - open mode");
-        menu_item.addActionListener(this);
-        ap_altitude_submenu.add(menu_item);
-
-        menu_item = new JMenuItem(XHSISettings.ACTION_AP_LEVEL_CHG_MNG);
-        menu_item.setToolTipText("Engage level change - managed mode");
-        menu_item.addActionListener(this);
-        ap_altitude_submenu.add(menu_item);
-        
-        ap_menu.add(ap_altitude_submenu);
-
-        // Speed Sub Menu
-        JMenu ap_speed_submenu = new JMenu("Speed");
-        
-        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SET_SPEED);
-        menu_item.setToolTipText("Set the auto/throttle/thrust speed target");
-        menu_item.addActionListener(this);
-        ap_speed_submenu.add(menu_item);
-   
-        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SPEED_MNG);
-        menu_item.setToolTipText("Autopilot speed managed");
-        menu_item.addActionListener(this);
-        ap_speed_submenu.add(menu_item);
-
-        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SPEED_SEL);
-        menu_item.setToolTipText("Autopilot speed selected");
-        menu_item.addActionListener(this);
-        ap_speed_submenu.add(menu_item);
-        
-        ap_menu.add(ap_speed_submenu);
-        
-        // Heading Sub Menu
-        JMenu ap_heading_submenu = new JMenu("Heading");
-        
-        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SET_HEADING);
-        menu_item.setToolTipText("Set the autopilot heading bug");
-        menu_item.addActionListener(this);
-        ap_heading_submenu.add(menu_item);
-
-        menu_item = new JMenuItem(XHSISettings.ACTION_AP_HDG_MODE);
-        menu_item.setToolTipText("Follow the heading bug");
-        menu_item.addActionListener(this);
-        ap_heading_submenu.add(menu_item);
-        
-        menu_item = new JMenuItem(XHSISettings.ACTION_AP_NAV_MODE);
-        menu_item.setToolTipText("Follow the flight plan");
-        menu_item.addActionListener(this);
-        ap_heading_submenu.add(menu_item);
-
-        menu_item = new JMenuItem(XHSISettings.ACTION_AP_VOR_MODE);
-        menu_item.setToolTipText("Follow tuned VOR 1");
-        menu_item.addActionListener(this);
-        ap_heading_submenu.add(menu_item);
-        
-        ap_menu.add(ap_heading_submenu);
-        
-        // Vertical Velocity Sub Menu
-        JMenu ap_vv_submenu = new JMenu("Vertical Velocity");
-        
-        menu_item = new JMenuItem(XHSISettings.ACTION_AP_SET_VS);
-        menu_item.setToolTipText("Set the autopilot vertical velocity target");
-        menu_item.addActionListener(this);
-        ap_vv_submenu.add(menu_item);
-        
-        ap_menu.add(ap_vv_submenu);
-        
-        ap_menu.addSeparator();
-        
-        // TODO :
-        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_AP_AP_SWITCH);
-        checkbox_menu_item.setToolTipText("Set the autopilot on/off");
-        checkbox_menu_item.addActionListener(this);
-        checkbox_menu_item.setSelected(false);
-        ap_menu.add(checkbox_menu_item);
-        // keep a reference
-        this.checkbox_autopilot = checkbox_menu_item;
-
-        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_AP_FD_SWITCH);
-        checkbox_menu_item.setToolTipText("Set the fligth director on/off");
-        checkbox_menu_item.addActionListener(this);
-        checkbox_menu_item.setSelected(false);
-        ap_menu.add(checkbox_menu_item);
-        // keep a reference
-        this.checkbox_flight_director = checkbox_menu_item;
-
-        
-        // add the "AP" menu to the menubar
-        menu_bar.add(ap_menu);
         
         
         
@@ -1685,12 +1698,17 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             this.heading_dialog.setLocation(this.main_frame.getX()+this.main_frame.getWidth()/2-this.heading_dialog.getWidth()/2, this.main_frame.getY()+120);
             this.heading_dialog.init_heading();
             this.heading_dialog.setVisible(true);
-            this.heading_dialog.pack();
+            this.heading_dialog.pack();                   
+        } else if (command.equals(XHSISettings.ACTION_AP_WLV_MODE)) {
+        	this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_FCU_WLV);
+        } else if (command.equals(XHSISettings.ACTION_AP_APPR_MODE)) {
+        	this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_FCU_APPR);        
         } else if (command.equals(XHSISettings.ACTION_AP_HDG_MODE)) {
         	this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_FCU_HDG_SEL);
         } else if (command.equals(XHSISettings.ACTION_AP_NAV_MODE)) {
         	this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_FCU_HDG_MNG);
         } else if (command.equals(XHSISettings.ACTION_AP_VOR_MODE)) {
+        	this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_FCU_LOC);
         } else if (command.equals(XHSISettings.ACTION_AP_SET_VS)) {
             // Set & show vertical speed dialog
             this.v_speed_dialog.setLocation(this.main_frame.getX()+this.main_frame.getWidth()/2-this.v_speed_dialog.getWidth()/2, this.main_frame.getY()+120);

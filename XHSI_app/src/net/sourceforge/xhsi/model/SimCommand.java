@@ -134,6 +134,7 @@ public interface SimCommand {
     public static final int CMD_FCU_SPD_SEL = 342;
     public static final int CMD_FCU_HDG_UP = 343;
     public static final int CMD_FCU_HDG_DOWN = 344;
+    public static final int CMD_FCU_WLV = 368; 
     public static final int CMD_FCU_HDG_MNG = 345;
     public static final int CMD_FCU_HDG_SEL = 346;
     public static final int CMD_FCU_ALT_UP = 347;
@@ -156,6 +157,6 @@ public interface SimCommand {
     public static final int CMD_BRK_FAN = 365;
     public static final int CMD_GEAR_UP = 366;
     public static final int CMD_GEAR_DOWN = 367;
-
+    // Next is 369
     public void send(int var1);
 }
