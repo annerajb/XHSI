@@ -541,7 +541,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         menu_item = new JMenuItem(XHSISettings.ACTION_AP_LEVEL_HOLD);
         menu_item.setToolTipText("Hold current altitude");
         menu_item.addActionListener(this);
-        ap_altitude_submenu.add(menu_item);
+        // TODO: ap_altitude_submenu.add(menu_item);
         
         menu_item = new JMenuItem(XHSISettings.ACTION_AP_LEVEL_CHG);
         menu_item.setToolTipText("Engage level change - open mode");
@@ -551,7 +551,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         menu_item = new JMenuItem(XHSISettings.ACTION_AP_LEVEL_CHG_MNG);
         menu_item.setToolTipText("Engage level change - managed mode");
         menu_item.addActionListener(this);
-        ap_altitude_submenu.add(menu_item);
+        // TODO : ap_altitude_submenu.add(menu_item);
         
         ap_menu.add(ap_altitude_submenu);
 
@@ -566,12 +566,12 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         menu_item = new JMenuItem(XHSISettings.ACTION_AP_SPEED_MNG);
         menu_item.setToolTipText("Autopilot speed managed");
         menu_item.addActionListener(this);
-        ap_speed_submenu.add(menu_item);
+        // ap_speed_submenu.add(menu_item);
 
         menu_item = new JMenuItem(XHSISettings.ACTION_AP_SPEED_SEL);
         menu_item.setToolTipText("Autopilot speed selected");
         menu_item.addActionListener(this);
-        ap_speed_submenu.add(menu_item);
+        // ap_speed_submenu.add(menu_item);
         
         ap_menu.add(ap_speed_submenu);
         
@@ -591,22 +591,22 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         menu_item = new JMenuItem(XHSISettings.ACTION_AP_NAV_MODE);
         menu_item.setToolTipText("Follow the flight plan");
         menu_item.addActionListener(this);
-        ap_heading_submenu.add(menu_item);
+        // TODO : ap_heading_submenu.add(menu_item);
 
         menu_item = new JMenuItem(XHSISettings.ACTION_AP_VOR_MODE);
         menu_item.setToolTipText("Follow tuned VOR 1 / ILS LOC");
         menu_item.addActionListener(this);
-        ap_heading_submenu.add(menu_item);
+        // TODO : ap_heading_submenu.add(menu_item);
    
         menu_item = new JMenuItem(XHSISettings.ACTION_AP_APPR_MODE);
         menu_item.setToolTipText("Engage ILS APPR mode (G/S + LOC)");
         menu_item.addActionListener(this);
-        ap_heading_submenu.add(menu_item);
+        // TODO: ap_heading_submenu.add(menu_item);
 
         menu_item = new JMenuItem(XHSISettings.ACTION_AP_WLV_MODE);
         menu_item.setToolTipText("Resume to Wing Leveler");
         menu_item.addActionListener(this);
-        ap_heading_submenu.add(menu_item);
+        // TODO: ap_heading_submenu.add(menu_item);
         
         ap_menu.add(ap_heading_submenu);
         
