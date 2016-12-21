@@ -425,13 +425,17 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
 
                 if ( (line_number == 2) && (line.length() >= 32) ) {
                     
-                    // the version info is on line 2, hopefully in a fixed location
-                    XHSIStatus.nav_db_cycle = line.substring(25, 32);
-                    
-                    tokens = line.split("\\s+",2);
+                    // the file format version and cycle number info is on line 2
+                    tokens = line.split("\\s+",8);
                     logger.info("NAV file format : "+ tokens[0]);
                     version11 = tokens[0].equals("1100");
                     if (version11) logger.info("X-Plane 11");
+                    if ( (tokens[5].length()>2) && (tokens[5].charAt(tokens[5].length()-1)==',') ) {
+                        // usually, the cycle number is followed by a comma
+                        XHSIStatus.nav_db_cycle = tokens[5].substring(0, tokens[5].length()-1);
+                    } else {
+                        XHSIStatus.nav_db_cycle = tokens[5];
+                    }
                     
                 } else if ( (line_number > 2)  && ( ! line.equals("99") ) ) {
                     try {
