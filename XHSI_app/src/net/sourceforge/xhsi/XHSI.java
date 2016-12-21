@@ -826,7 +826,7 @@ public class XHSI implements ActionListener {
                     "Main contributors:\n" +
                     "2007-2009 Georg Gruetter\n" +
                     "2009 Sandy Barbour\n" +
-                    "2009-2015 Marc Rogiers\n" +
+                    "2009-2016 Marc Rogiers\n" +
                     "2014-2016 Nicolas Carel\n" +
                     "\n" +
                     "Using Java " + System.getProperty("java.version") + "\n" +
