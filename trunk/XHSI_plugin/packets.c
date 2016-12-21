@@ -2150,19 +2150,19 @@ int createCustomAvionicsPacket(void) {
             qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
             if (qpac_sd_line_len>24) {
             	// Cockpit
-            	qpac_temp = (qpac_sd_line_buffer[7]>='0'?(qpac_sd_line_buffer[7]-'0')*10:0) + (qpac_sd_line_buffer[8]-'0');
+            	qpac_temp = (qpac_sd_line_buffer[7]>='0'?(qpac_sd_line_buffer[7]-'0')*10.0f:0.0f) + (qpac_sd_line_buffer[8]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_COCKPIT_TEMP);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
             	i++;
 
             	// Forward
-            	qpac_temp = (qpac_sd_line_buffer[15]>='0'?(qpac_sd_line_buffer[15]-'0')*10:0) + (qpac_sd_line_buffer[16]-'0');
+            	qpac_temp = (qpac_sd_line_buffer[15]>='0'?(qpac_sd_line_buffer[15]-'0')*10.0f:0.0f) + (qpac_sd_line_buffer[16]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_FWD_CABIN_TEMP);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
             	i++;
 
             	// AFT
-            	qpac_temp = (qpac_sd_line_buffer[23]>='0'?(qpac_sd_line_buffer[23]-'0')*10:0) + (qpac_sd_line_buffer[24]-'0');
+            	qpac_temp = (qpac_sd_line_buffer[23]>='0'?(qpac_sd_line_buffer[23]-'0')*10.0f:0.0f) + (qpac_sd_line_buffer[24]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_AFT_CABIN_TEMP);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
             	i++;
@@ -2172,19 +2172,19 @@ int createCustomAvionicsPacket(void) {
             qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
             if (qpac_sd_line_len>24) {
             	// Cockpit
-            	qpac_temp = (qpac_sd_line_buffer[7]-'0')*10 + (qpac_sd_line_buffer[8]-'0');
+            	qpac_temp = (qpac_sd_line_buffer[7]-'0')*10.0f + (qpac_sd_line_buffer[8]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_INLET_COCKPIT_TEMP);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
             	i++;
 
             	// Forward
-            	qpac_temp = (qpac_sd_line_buffer[15]-'0')*10 + (qpac_sd_line_buffer[16]-'0');
+            	qpac_temp = (qpac_sd_line_buffer[15]-'0')*10.0f + (qpac_sd_line_buffer[16]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_INLET_FWD1_CABIN_TEMP);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
             	i++;
 
             	// AFT
-            	qpac_temp = (qpac_sd_line_buffer[23]-'0')*10 + (qpac_sd_line_buffer[24]-'0');
+            	qpac_temp = (qpac_sd_line_buffer[23]-'0')*10.0f + (qpac_sd_line_buffer[24]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_INLET_AFT1_CABIN_TEMP);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
             	i++;
@@ -2197,19 +2197,19 @@ int createCustomAvionicsPacket(void) {
             qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
             if (qpac_sd_line_len>17) {
             	// Cockpit
-            	qpac_temp = (qpac_sd_line_buffer[3]>='0'?(qpac_sd_line_buffer[3]-'0')*10:0) + (qpac_sd_line_buffer[4]-'0');
+            	qpac_temp = (qpac_sd_line_buffer[3]>='0'?(qpac_sd_line_buffer[3]-'0')*10.0f:0.0f) + (qpac_sd_line_buffer[4]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_COCKPIT_TEMP);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
             	i++;
 
             	// Forward
-            	qpac_temp = (qpac_sd_line_buffer[9]>='0'?(qpac_sd_line_buffer[9]-'0')*10:0) + (qpac_sd_line_buffer[10]-'0');
+            	qpac_temp = (qpac_sd_line_buffer[9]>='0'?(qpac_sd_line_buffer[9]-'0')*10.0f:0.0f) + (qpac_sd_line_buffer[10]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_FWD_CABIN_TEMP);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
             	i++;
 
             	// AFT
-            	qpac_temp = (qpac_sd_line_buffer[16]>='0'?(qpac_sd_line_buffer[16]-'0')*10:0) + (qpac_sd_line_buffer[17]-'0');
+            	qpac_temp = (qpac_sd_line_buffer[16]>='0'?(qpac_sd_line_buffer[16]-'0')*10.0f:0.0f) + (qpac_sd_line_buffer[17]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_AFT_CABIN_TEMP);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
             	i++;
@@ -2217,10 +2217,10 @@ int createCustomAvionicsPacket(void) {
         }
 
         sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK1_FLOW);
-        sim_packet.sim_data_points[i].value = custom_htonf((XPLMGetDataf(qpac_bleed_pack1_flow)-0.8)*2.5);
+        sim_packet.sim_data_points[i].value = custom_htonf((XPLMGetDataf(qpac_bleed_pack1_flow)-0.8f)*2.5f);
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK2_FLOW);
-        sim_packet.sim_data_points[i].value = custom_htonf((XPLMGetDataf(qpac_bleed_pack2_flow)-0.8)*2.5);
+        sim_packet.sim_data_points[i].value = custom_htonf((XPLMGetDataf(qpac_bleed_pack2_flow)-0.8f)*2.5f);
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK1_BYPASS_RATIO);
         sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_bleed_pack1_temp));
@@ -2235,16 +2235,16 @@ int createCustomAvionicsPacket(void) {
             qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
             if (qpac_sd_line_len>24) {
             	// Left Bleed air temperature
-            	qpac_temp = (qpac_sd_line_buffer[5]>='0'?(qpac_sd_line_buffer[5]-'0')*100:0) +
-            			(qpac_sd_line_buffer[6]>='0'?(qpac_sd_line_buffer[6]-'0')*10:0) +
+            	qpac_temp = (qpac_sd_line_buffer[5]>='0'?(qpac_sd_line_buffer[5]-'0')*100.0f:0.0f) +
+            			(qpac_sd_line_buffer[6]>='0'?(qpac_sd_line_buffer[6]-'0')*10.0f:0.0f) +
             			(qpac_sd_line_buffer[7]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BLEED_LEFT_PRESS_TEMP);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
             	i++;
 
             	// Right bleed air temperature
-            	qpac_temp = (qpac_sd_line_buffer[27]>='0'?(qpac_sd_line_buffer[27]-'0')*100:0) +
-            			(qpac_sd_line_buffer[28]>='0'?(qpac_sd_line_buffer[28]-'0')*10:0) +
+            	qpac_temp = (qpac_sd_line_buffer[27]>='0'?(qpac_sd_line_buffer[27]-'0')*100.0f:0.0f) +
+            			(qpac_sd_line_buffer[28]>='0'?(qpac_sd_line_buffer[28]-'0')*10.0f:0.0f) +
             			(qpac_sd_line_buffer[29]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(QPAC_BLEED_RIGHT_PRESS_TEMP);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
@@ -2255,16 +2255,16 @@ int createCustomAvionicsPacket(void) {
             qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
             if (qpac_sd_line_len>28) {
             	// Pack 1 Compressor Outlet Temperature
-            	qpac_temp = (qpac_sd_line_buffer[4]>='0'?(qpac_sd_line_buffer[4]-'0')*100:0) +
-            			(qpac_sd_line_buffer[5]>='0'?(qpac_sd_line_buffer[5]-'0')*10:0) +
+            	qpac_temp = (qpac_sd_line_buffer[4]>='0'?(qpac_sd_line_buffer[4]-'0')*100.0f:0.0f) +
+            			(qpac_sd_line_buffer[5]>='0'?(qpac_sd_line_buffer[5]-'0')*10.0f:0.0f) +
             			(qpac_sd_line_buffer[6]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK1_COMP_OUTLET_TEMP);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
             	i++;
 
             	// Pack 2 Compressor Outlet Temperature
-            	qpac_temp = (qpac_sd_line_buffer[26]>='0'?(qpac_sd_line_buffer[26]-'0')*100:0) +
-            			(qpac_sd_line_buffer[27]>='0'?(qpac_sd_line_buffer[27]-'0')*10:0) +
+            	qpac_temp = (qpac_sd_line_buffer[26]>='0'?(qpac_sd_line_buffer[26]-'0')*100.0f:0.0f) +
+            			(qpac_sd_line_buffer[27]>='0'?(qpac_sd_line_buffer[27]-'0')*10.0f:0.0f) +
             			(qpac_sd_line_buffer[28]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK2_COMP_OUTLET_TEMP);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
@@ -2275,16 +2275,16 @@ int createCustomAvionicsPacket(void) {
             qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
             if (qpac_sd_line_len>27) {
             	// Pack 1 Outlet Temperature
-            	qpac_temp = (qpac_sd_line_buffer[4]>='0'?(qpac_sd_line_buffer[4]-'0')*100:0) +
-            			(qpac_sd_line_buffer[5]>='0'?(qpac_sd_line_buffer[5]-'0')*10:0) +
+            	qpac_temp = (qpac_sd_line_buffer[4]>='0'?(qpac_sd_line_buffer[4]-'0')*100.0f:0.0f) +
+            			(qpac_sd_line_buffer[5]>='0'?(qpac_sd_line_buffer[5]-'0')*10.0f:0.0f) +
             			(qpac_sd_line_buffer[6]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK1_TEMP);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
             	i++;
 
             	// Pack 2 Outlet Temperature
-            	qpac_temp = (qpac_sd_line_buffer[26]>='0'?(qpac_sd_line_buffer[26]-'0')*100:0) +
-            			(qpac_sd_line_buffer[27]>='0'?(qpac_sd_line_buffer[27]-'0')*10:0) +
+            	qpac_temp = (qpac_sd_line_buffer[26]>='0'?(qpac_sd_line_buffer[26]-'0')*100.0f:0.0f) +
+            			(qpac_sd_line_buffer[27]>='0'?(qpac_sd_line_buffer[27]-'0')*10.0f:0.0f) +
             			(qpac_sd_line_buffer[27]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_COND_PACK2_TEMP);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_temp);
@@ -2416,14 +2416,14 @@ int createCustomAvionicsPacket(void) {
             qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
             if (qpac_sd_line_len>26) {
             	// Engine 1
-            	qpac_vib_n2 = (qpac_sd_line_buffer[10]-'0')*10 + (qpac_sd_line_buffer[12]-'0');
+            	qpac_vib_n2 = (qpac_sd_line_buffer[10]-'0')*10.0f + (qpac_sd_line_buffer[12]-'0');
             	// qpac_vib_n2 = (qpac_sd_line_buffer[12]-'0')/10;
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_vib_n2);
             	i++;
 
             	// Engine 2
-            	qpac_vib_n2 = (qpac_sd_line_buffer[23]-'0')*10 + (qpac_sd_line_buffer[25]-'0');
+            	qpac_vib_n2 = (qpac_sd_line_buffer[23]-'0')*10.0f + (qpac_sd_line_buffer[25]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_+1);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_vib_n2);
             	i++;
@@ -2433,13 +2433,13 @@ int createCustomAvionicsPacket(void) {
             qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
             if (qpac_sd_line_len>26) {
             	// Engine 1
-            	qpac_vib_n2 = (qpac_sd_line_buffer[10]-'0')*10 + (qpac_sd_line_buffer[12]-'0');
+            	qpac_vib_n2 = (qpac_sd_line_buffer[10]-'0')*10.0f + (qpac_sd_line_buffer[12]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_N2_);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_vib_n2);
             	i++;
 
             	// Engine 2
-            	qpac_vib_n2 = (qpac_sd_line_buffer[23]-'0')*10 + (qpac_sd_line_buffer[25]-'0');
+            	qpac_vib_n2 = (qpac_sd_line_buffer[23]-'0')*10.0f + (qpac_sd_line_buffer[25]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_N2_+1);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_vib_n2);
             	i++;
@@ -2452,14 +2452,14 @@ int createCustomAvionicsPacket(void) {
             qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
             if (qpac_sd_line_len>26) {
             	// Engine 1
-            	qpac_vib_n2 = (qpac_sd_line_buffer[8]-'0')*10 + (qpac_sd_line_buffer[10]-'0');
+            	qpac_vib_n2 = (qpac_sd_line_buffer[8]-'0')*10.0f + (qpac_sd_line_buffer[10]-'0');
             	// qpac_vib_n2 = (qpac_sd_line_buffer[12]-'0')/10;
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_vib_n2);
             	i++;
 
             	// Engine 2
-            	qpac_vib_n2 = (qpac_sd_line_buffer[25]-'0')*10 + (qpac_sd_line_buffer[27]-'0');
+            	qpac_vib_n2 = (qpac_sd_line_buffer[25]-'0')*10.0f + (qpac_sd_line_buffer[27]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_+1);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_vib_n2);
             	i++;
@@ -2469,13 +2469,13 @@ int createCustomAvionicsPacket(void) {
             qpac_sd_line_len = (qpac_sd_data_len > 0) ? (int)strlen(qpac_sd_line_buffer) : 0;
             if (qpac_sd_line_len>26) {
             	// Engine 1
-            	qpac_vib_n2 = (qpac_sd_line_buffer[8]-'0')*10 + (qpac_sd_line_buffer[10]-'0');
+            	qpac_vib_n2 = (qpac_sd_line_buffer[8]-'0')*10.0f + (qpac_sd_line_buffer[10]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_N2_);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_vib_n2);
             	i++;
 
             	// Engine 2
-            	qpac_vib_n2 = (qpac_sd_line_buffer[25]-'0')*10 + (qpac_sd_line_buffer[27]-'0');
+            	qpac_vib_n2 = (qpac_sd_line_buffer[25]-'0')*10.0f + (qpac_sd_line_buffer[27]-'0');
             	sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FLIGHTMODEL_ENGINE_VIB_N2_+1);
             	sim_packet.sim_data_points[i].value = custom_htonf(qpac_vib_n2);
             	i++;
