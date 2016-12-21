@@ -190,7 +190,7 @@ float sendEnginesCallback(
 	float tab_fuel_used[8];
 	float crew_oxygen;
 	float cabin_alt;
-	float oxy_ratio=100.0;
+	float oxy_ratio=100.0f;
     int sim_run = !XPLMGetDatai(sim_paused);
 	// Compute fuel used
 	if (xhsi_plugin_enabled && sim_run) {
@@ -205,17 +205,17 @@ float sendEnginesCallback(
 	    if (crew_oxygen > 0.0f) {
 
 	    	// Small leak : 1 psi per hour
-	    	crew_oxygen -= 0.001 * inElapsedSinceLastCall;
+	    	crew_oxygen -= 0.001f * inElapsedSinceLastCall;
 	    	if (qpac_ready && (qpac_crew_oxy_mask!=NULL)) {
 	    		// cabin_alt = XPLMGetDataf(qpac_cabin_alt);
 	    		cabin_alt = XPLMGetDataf(cabin_altitude);
 	    		if (XPLMGetDatai(qpac_crew_oxy_mask) == 1){
 	    			// O2 is diluted when cabin is below 35000 feet
-	    			if (cabin_alt<35000.0)
-	    				oxy_ratio = (cabin_alt-8000 > 6500.0 ? cabin_alt-8000 : 6500.0)/27000;
+	    			if (cabin_alt<35000.0f)
+	    				oxy_ratio = (cabin_alt-8000.0f > 6500.0f ? cabin_alt-8000.0f : 6500.0f)/27000.0f;
 	    			else
-	    				oxy_ratio = 100.0;
-	    			crew_oxygen -= (0.4794 * oxy_ratio - 0.05827) * inElapsedSinceLastCall;
+	    				oxy_ratio = 100.0f;
+	    			crew_oxygen -= (0.4794f * oxy_ratio - 0.05827f) * inElapsedSinceLastCall;
 	    		}
 	    	}
 	    	XPLMSetDataf(mfd_crew_oxy_psi, crew_oxygen);
