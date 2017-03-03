@@ -122,7 +122,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                 this.progressObserver.set_progress("Loading databases", "Loading Default Scenery APT ...", 20.0f);
             }
             if ( new File( this.pathname_to_aptnav + this.APT_file ).exists() ) {
-                logger.info("Reading APT database ( " + this.pathname_to_aptnav + this.APT_file + " )    DEPRECATED!");
+                logger.info("Reading APT database ( " + this.pathname_to_aptnav + this.APT_file + " ) Reading from a single directory is DEPRECATED !");
                 File aptnav_apt_file = new File( this.pathname_to_aptnav + this.APT_file );
                 read_an_apt_file(aptnav_apt_file);
             }
@@ -384,7 +384,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
             logger.config("Reading NAV database ( " + this.pathname_to_aptnav + this.NAV_xplane + " )");
             file = new File( this.pathname_to_aptnav + this.NAV_xplane );
         } else if ( new File( this.pathname_to_aptnav + this.NAV_file ).exists() ) {
-            logger.info("Reading NAV database ( " + this.pathname_to_aptnav + this.NAV_file + " )    DEPRECATED!");
+            logger.info("Reading NAV database ( " + this.pathname_to_aptnav + this.NAV_file + " ) Reading from a single directory is DEPRECATED !");
             file = new File( this.pathname_to_aptnav + this.NAV_file );
         }
         BufferedReader reader = new BufferedReader( new FileReader( file ));
@@ -504,18 +504,20 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                                 );
                             nor.add_nav_object(new_loc);
                             // add this localizer to the runway
-                            Runway rwy = nor.get_runway(tokens[arpt_field], tokens[rwy_field], Float.parseFloat(tokens[lat_field]), Float.parseFloat(tokens[lon_field]), true);
-                            if ( rwy != null ) {
-                                rwy.localizers.add(new_loc);
-//                                if ( rwy.rwy_num1.equals(tokens[9]) ) {
-////if ( rwy.loc1 != null ) logger.warning(new_loc.ilt + " for " + rwy.name + "/" + rwy.rwy_num1 + " already defined");
-//                                    rwy.loc1 = new_loc;
-//                                } else if ( rwy.rwy_num2.equals(tokens[9]) ) {
-////if ( rwy.loc2 != null ) logger.warning(new_loc.ilt + " for " + rwy.name + "/" + rwy.rwy_num2 + " already defined");
-//                                    rwy.loc2 = new_loc;
-//                                }
+                            if (nor.get_airport(tokens[arpt_field]) == null) {
+                                logger.warning("Error NAV.dat: no AIRPORT found for ILS/LOC " + tokens[arpt_field] + " " + tokens[rwy_field] + " " + tokens[ident_field]);
                             } else {
-                                logger.warning("Error NAV.dat: no RWY found for " + tokens[arpt_field] + " " + tokens[rwy_field] + " " + tokens[ident_field]);
+                                Runway rwy = nor.get_runway(tokens[arpt_field], tokens[rwy_field], Float.parseFloat(tokens[lat_field]), Float.parseFloat(tokens[lon_field]), true);
+                                if ( rwy != null ) {
+                                    rwy.localizers.add(new_loc);
+                                } else {
+                                    rwy = nor.get_runway(tokens[arpt_field], tokens[rwy_field].substring(1), Float.parseFloat(tokens[lat_field]), Float.parseFloat(tokens[lon_field]), true);
+                                    if ( rwy != null ) {
+                                        rwy.localizers.add(new_loc);
+                                    } else {
+                                        logger.warning("Error NAV.dat: no RUNWAY  found for ILS/LOC " + tokens[arpt_field] + " " + tokens[rwy_field] + " " + tokens[ident_field]);
+                                    }
+                                }
                             }
 
                         } else if (info_type == 6) {
@@ -554,8 +556,32 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                                 coupled_rno.dme_lat = Float.parseFloat(tokens[lat_field]);
                                 coupled_rno.dme_lon = Float.parseFloat(tokens[lon_field]);
                             } else {
-                                logger.warning("Error NAV.dat: no VOR or Loc for DME " + tokens[ident_field] + " " + tokens[freq_field]);
+                                logger.warning("Error NAV.dat: no VOR or LOC for DME " + tokens[ident_field] + " " + tokens[freq_field]);
                             }
+
+// Not used yet ...
+//                        } else if ((info_type == 14) || (info_type == 16)) {
+//                            
+//                            // LP, LPV, WAAS or EGNOS
+//                            tokens = line.split("\\s+",version11 ? 12 : 11);
+//                            if (version11) {
+//                                rwy_field = 10;
+//                                name_field = 11;
+//                            } else {
+//                                // not used before X-Plane 11 !
+//                                rwy_field = 9;
+//                                name_field = 10;
+//                            }
+//
+//                            // make sure that there is a runway for this LP, LPV, WAAS or EGNOS
+//                            if (nor.get_airport(tokens[arpt_field]) == null) {
+//                                logger.warning("Error NAV.dat: no AIRPORT found for " + tokens[arpt_field] + " " + tokens[rwy_field] + " " + tokens[ident_field] + " " + tokens[name_field]);
+//                            } else {
+//                                if (nor.get_runway(tokens[arpt_field], tokens[rwy_field], Float.parseFloat(tokens[lat_field]), Float.parseFloat(tokens[lon_field]), true) == null) {
+//                                    logger.warning("Error NAV.dat: no RUNWAY  found for " + tokens[arpt_field] + " " + tokens[rwy_field] + " " + tokens[ident_field] + " " + tokens[name_field]);
+//                                }
+//                            }
+
                         }
                         
                     } catch (Exception e) {
@@ -585,7 +611,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
             logger.config("Reading FIX database ( " + this.pathname_to_aptnav + this.FIX_xplane + " )");
             file = new File( this.pathname_to_aptnav + this.FIX_xplane );
         } else if ( new File( this.pathname_to_aptnav + this.FIX_file ).exists() ) {
-            logger.info("Reading FIX database ( " + this.pathname_to_aptnav + this.FIX_file + " )    DEPRECATED!");
+            logger.info("Reading FIX database ( " + this.pathname_to_aptnav + this.FIX_file + " ) Reading from a single directory is DEPRECATED !");
             file = new File( this.pathname_to_aptnav + this.FIX_file );
         }
         BufferedReader reader = new BufferedReader( new FileReader( file ));
@@ -642,7 +668,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
             logger.config("Reading AWY database ( " + this.pathname_to_aptnav + this.AWY_xplane + " )");
             file = new File( this.pathname_to_aptnav + this.AWY_xplane );
         } else if ( new File( this.pathname_to_aptnav + this.AWY_file ).exists() ) {
-            logger.info("Reading AWY database ( " + this.pathname_to_aptnav + this.AWY_file + " )    DEPRECATED!");
+            logger.info("Reading AWY database ( " + this.pathname_to_aptnav + this.AWY_file + " ) Reading from a single directory is DEPRECATED !");
             file = new File( this.pathname_to_aptnav + this.AWY_file );
         }
         BufferedReader reader = new BufferedReader( new FileReader( file ));
