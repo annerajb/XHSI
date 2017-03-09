@@ -56,6 +56,8 @@ XPLMDataRef jar_a320_mcdu_scratch_yellow;
 XPLMDataRef jar_a320_mcdu_scratch_white;
 
 XPLMPluginID jar_a320_PluginId = XPLM_NO_PLUGIN_ID;
+XPLMPluginID jar_a330_PluginId = XPLM_NO_PLUGIN_ID;
+
 int jar_a320_mcdu_ready = 0;
 int jar_a320_ewd_ready = 0;
 
@@ -71,9 +73,10 @@ void findJar_a320MsgDataRefs(void) {
     int         i;
     char        buf[100];
 
-    jar_a320_PluginId = XPLMFindPluginBySignature("1-sim.sasl");  // jar_a320 plugin signature
-    if(jar_a320_PluginId != XPLM_NO_PLUGIN_ID) {
-        sprintf(buf, "XHSI: jar_a320 plugin found - loading EWD datarefs\n");
+    jar_a320_PluginId = XPLMFindPluginBySignature("1-sim.sasl");      // jar_a320 plugin signature
+    jar_a330_PluginId = XPLMFindPluginBySignature("jardesign.a330");  // jar_a330 plugin signature
+    if ( (jar_a320_PluginId != XPLM_NO_PLUGIN_ID) || (jar_a330_PluginId != XPLM_NO_PLUGIN_ID) ) {
+        sprintf(buf, "XHSI: JarDesign A320 / A330 plugin found - loading EWD datarefs\n");
         XPLMDebugString(buf);
         jar_a320_ewd_ready = 1;
 
@@ -97,8 +100,8 @@ void findJar_a320MsgDataRefs(void) {
     	jar_a320_ewd_ready = 0;
     }
 
-    if (jar_a320_PluginId != XPLM_NO_PLUGIN_ID) {
-    	sprintf(buf, "XHSI: jar_a320 v2 plugin found - loading MCDU datarefs\n");
+    if ((jar_a320_PluginId != XPLM_NO_PLUGIN_ID) || (jar_a330_PluginId != XPLM_NO_PLUGIN_ID)) {
+    	sprintf(buf, "XHSI: JarDesign A320 / A330 plugin found - loading MCDU datarefs\n");
     	XPLMDebugString(buf);
     	jar_a320_mcdu_ready = 1;
 
