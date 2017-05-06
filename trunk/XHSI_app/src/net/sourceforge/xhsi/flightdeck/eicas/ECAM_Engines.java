@@ -216,8 +216,8 @@ public class ECAM_Engines extends EICASSubcomponent {
         
         
         // main3
-        ind_str1 = piston ? "EGT" : ( turboprop ? "ITT" : "N2" );
-        ind_str2 = piston ? "°c" : ( turboprop ? " " : "%" );
+        ind_str1 = epr_jet ? "N1" : (piston ? "EGT" : ( turboprop ? "ITT" : "N2" ));
+        ind_str2 = epr_jet ? "%" : (piston ? "°c" : ( turboprop ? " " : "%" ));
         drawLegend(g2, ind_str1, ind_str2, ind_middle, eicas_gc.dial_main3_y - eicas_gc.line_height_l/2);
 
         ind_x1 = ind_middle - eicas_gc.get_text_width(g2, eicas_gc.font_m, ind_str1)/2;
@@ -243,8 +243,8 @@ public class ECAM_Engines extends EICASSubcomponent {
         else if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_LBS ) units_str = XHSIPreferences.FUEL_UNITS_LBS;
         else if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_USG ) units_str = XHSIPreferences.FUEL_UNITS_USG;
         else /* if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_LTR ) */ units_str = XHSIPreferences.FUEL_UNITS_LTR;
-        ind_str1 = turboprop ? "NG" : "F.F";
-        ind_str2 = turboprop ? " " : units_str+"/H";
+        ind_str1 = epr_jet ? "N2" : (turboprop ? "NG" : "F.F");
+        ind_str2 = epr_jet ? "%" : (turboprop ? " " : units_str+"/H");
        	ind_x1 = ind_middle  - eicas_gc.get_text_width(g2, eicas_gc.font_m, ind_str1)/2;
        	drawLegend(g2, ind_str1, ind_str2, ind_middle, eicas_gc.dial_main4_y- eicas_gc.line_height_l/2);
         if (! turboprop) {
