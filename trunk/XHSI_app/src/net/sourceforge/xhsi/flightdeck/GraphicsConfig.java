@@ -622,6 +622,7 @@ public class GraphicsConfig implements ComponentListener {
 
         if ( custom_colors ) {
             background_color = Color.BLACK;
+            
             navaid_color = color_boeingcyan;
             term_wpt_color = color_cornflowerblue.darker();
             wpt_color = color_cornflowerblue;
@@ -642,16 +643,73 @@ public class GraphicsConfig implements ComponentListener {
             pos_label_color = color_boeingcyan.darker();
             tcas_label_color = color_lightsteelblue;
             data_label_color = color_pastelhotpink;
-            fmc_active_color = color_hotpink;
-            fmc_disp_color = Color.WHITE;
-            fmc_other_color = Color.LIGHT_GRAY;
-            altitude_arc_color = color_yellowgreen;
-            fmc_ll_active_color = color_yellowgreen.brighter();
-            fmc_ll_disp_color = color_yellowgreen;
-            fmc_ll_other_color = color_yellowgreen.darker();
-            heading_labels_color = color_limegreen;
-            nav_needle_color = color_mediumviolet;
-            deviation_scale_color = Color.LIGHT_GRAY;
+            
+            // Navigation Display Colors
+            if ( this.settings.style == Avionics.STYLE_AIRBUS ) {
+                navaid_color = color_boeingcyan;
+                term_wpt_color = color_cornflowerblue.darker();
+                wpt_color = color_cornflowerblue;
+                awy_wpt_color = color_cornflowerblue.brighter();
+                arpt_color = color_mediumaquamarine;
+                tuned_localizer_color = color_aquamarine;
+                silent_localizer_color = color_mediumaquamarine.darker().darker();
+                reference_localizer_color = color_lightaquamarine;
+                receiving_localizer_color = color_aquamarine.darker();
+                tuned_ndb_color = color_dodgerblue;
+                no_rcv_ndb_color = color_dodgerblue.darker();
+                tuned_vor_color = color_lime;
+                no_rcv_vor_color = color_lime.darker();
+                unknown_nav_color = color_cadetblue;
+                holding_color = color_deeppink;
+                traffic_color = color_lightsteelblue;
+                faraway_color = color_lightsteelblue.darker().darker();
+                pos_label_color = color_boeingcyan.darker();
+                tcas_label_color = color_lightsteelblue;
+                data_label_color = color_pastelhotpink;
+                fmc_active_color = Color.GREEN;
+                fmc_disp_color = Color.WHITE;
+                fmc_other_color = Color.LIGHT_GRAY;
+                altitude_arc_color = color_yellowgreen;
+                fmc_ll_active_color = color_yellowgreen.brighter();
+                fmc_ll_disp_color = color_yellowgreen;
+                fmc_ll_other_color = color_yellowgreen.darker();
+                heading_labels_color = color_limegreen;
+                nav_needle_color = color_mediumviolet;
+                deviation_scale_color = Color.LIGHT_GRAY;
+            } else {
+                navaid_color = color_boeingcyan;
+                term_wpt_color = color_cornflowerblue.darker();
+                wpt_color = color_cornflowerblue;
+                awy_wpt_color = color_cornflowerblue.brighter();
+                arpt_color = color_mediumaquamarine;
+                tuned_localizer_color = color_aquamarine;
+                silent_localizer_color = color_mediumaquamarine.darker().darker();
+                reference_localizer_color = color_lightaquamarine;
+                receiving_localizer_color = color_aquamarine.darker();
+                tuned_ndb_color = color_dodgerblue;
+                no_rcv_ndb_color = color_dodgerblue.darker();
+                tuned_vor_color = color_lime;
+                no_rcv_vor_color = color_lime.darker();
+                unknown_nav_color = color_cadetblue;
+                holding_color = color_deeppink;
+                traffic_color = color_lightsteelblue;
+                faraway_color = color_lightsteelblue.darker().darker();
+                pos_label_color = color_boeingcyan.darker();
+                tcas_label_color = color_lightsteelblue;
+                data_label_color = color_pastelhotpink;
+                fmc_active_color = color_hotpink;
+                fmc_disp_color = Color.WHITE;
+                fmc_other_color = Color.LIGHT_GRAY;
+                altitude_arc_color = color_yellowgreen;
+                fmc_ll_active_color = color_yellowgreen.brighter();
+                fmc_ll_disp_color = color_yellowgreen;
+                fmc_ll_other_color = color_yellowgreen.darker();
+                heading_labels_color = color_limegreen;
+                nav_needle_color = color_mediumviolet;
+                deviation_scale_color = Color.LIGHT_GRAY;
+            }
+
+            
             markings_color = Color.WHITE;
 //                float hsb[] = new float[3];
 //                Color.RGBtoHSB(markings_color.getRed(), markings_color.getGreen(), markings_color.getBlue(), hsb);

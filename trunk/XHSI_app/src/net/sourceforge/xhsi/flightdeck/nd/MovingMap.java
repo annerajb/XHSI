@@ -255,13 +255,14 @@ public class MovingMap extends NDSubcomponent {
 
         // don't draw the map in classic-HSI-style APP CTR or VOR CTR
         if ( nd_gc.powered && ! nd_gc.mode_classic_hsi ) {
+        	boolean display_map = !(nd_gc.airbus_style && ( nd_gc.display_mode_change_msg() || nd_gc.display_range_change_msg()));
 
             // if (this.fix_image == null)
             //    render_navigation_object_images();
 
             this.active_chart_str = null;
             // taxichart not in plan mode ( ! nd_gc.mode_plan ) and only in zoomedin full map
-            if ( nd_gc.map_zoomin && nd_gc.mode_fullmap )
+            if ( nd_gc.map_zoomin && nd_gc.mode_fullmap && display_map)
                 drawChart(g2);
 
             // draw the scale rings before drawing the map
@@ -269,7 +270,7 @@ public class MovingMap extends NDSubcomponent {
                 draw_scale_rings(g2);
 
             // drawing the map over the scale rings
-            drawMap(g2, nd_gc.max_range);
+            if (display_map) drawMap(g2, nd_gc.max_range);
             
         }
 

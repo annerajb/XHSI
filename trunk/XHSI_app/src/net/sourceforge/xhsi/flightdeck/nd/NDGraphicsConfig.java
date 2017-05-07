@@ -57,7 +57,12 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 
     public static int INITIAL_EXPANDED_PLANE_Y_OFFSET = 100;
     public static int INITIAL_CENTER_BOTTOM = 55;
+    
+    public static long change_msg_duration = 1000; // Message display 1.0s
 
+    public boolean airbus_style;
+    public boolean boeing_style;
+    
     public int left_label_x;
     public int left_label_arpt_y;
     public int left_label_wpt_y;
@@ -91,6 +96,11 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 
     private int map_mode;
     private int map_submode;
+    
+    private long map_mode_timestamp;
+    private long map_submode_timestamp;
+    private long map_range_timestamp;
+    private long map_zoomin_timestamp;
 
     public boolean mode_app;
     public boolean mode_vor;
@@ -106,11 +116,16 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 
     public float max_range;
 
+    public int range_mode_message_y;
 
     public NDGraphicsConfig(Component root_component, int du) {
         super(root_component);
         this.display_unit = du;
         init();
+        map_mode_timestamp=0;
+        map_submode_timestamp=0;
+        map_range_timestamp=0;
+        map_zoomin_timestamp=0;
     }
 
 
@@ -140,6 +155,12 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             
 //logger.warning("ND update_config");
             super.update_config(g2);
+            
+            // Timestamp mode/submode/range settings
+            if (this.map_mode != mode) map_mode_timestamp = System.currentTimeMillis();            	
+            if (this.map_submode != submode) map_submode_timestamp = System.currentTimeMillis();
+            if (this.map_range != range) map_range_timestamp = System.currentTimeMillis();
+            if (this.map_zoomin != zoomin) map_zoomin_timestamp = System.currentTimeMillis();
 
             // remember the mode/submode/range settings
             this.map_mode = mode;
@@ -147,6 +168,11 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             this.map_range = range;
             this.map_zoomin = zoomin;
 
+            // remember instrument style settings
+            airbus_style = instrument_style == Avionics.STYLE_AIRBUS;
+            boeing_style = instrument_style == Avionics.STYLE_BOEING;
+            	
+            
             // set some booleans for easy checking
             if ( preferences.get_airbus_modes() ) {
                 // limit to Airbus display modes
@@ -255,6 +281,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
                     (rose_radius * 2) - (rose_thickness * 2)));
             this.sixty_deg_hlimit = (int)(Math.sin(Math.PI/3.0) * rose_radius);
 
+            // Range and Mode change message
+            range_mode_message_y = this.frame_size.height*38/100;
 
             // clear the flags
             this.resized = false;
@@ -266,7 +294,18 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 
     }
 
-
+    public boolean display_range_change_msg() {
+    	boolean range_msg = (map_range_timestamp+change_msg_duration) > System.currentTimeMillis();
+    	boolean zoomin_msg = (map_zoomin_timestamp+change_msg_duration) > System.currentTimeMillis();
+    	return range_msg || zoomin_msg;
+    }
+    
+    public boolean display_mode_change_msg() {
+    	boolean mode_msg = (map_mode_timestamp+change_msg_duration) > System.currentTimeMillis();
+    	boolean submode_msg = (map_submode_timestamp+change_msg_duration) > System.currentTimeMillis();
+    	return mode_msg || submode_msg;
+    }
+    
 //    public int get_text_width(Graphics graphics, Font font, String text) {
 //        return graphics.getFontMetrics(font).stringWidth(text);
 //    }
