@@ -3,8 +3,10 @@
 * 
 * Write the symbol selection labels, TCAS messages for TA and RA
 * and the EFIS MODE/NAV FREQ DISAGREE message
+* Write the mode and range change message (Airbus)
 * 
 * Copyright (C) 2009-2010  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2009-2017  Nicolas Carel
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -43,8 +45,8 @@ import net.sourceforge.xhsi.model.RadioNavBeacon;
 public class ForegroundMessages extends NDSubcomponent {
 
     private static final long serialVersionUID = 1L;
-
-
+    
+    
     public ForegroundMessages(ModelFactory model_factory, NDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
     }
@@ -53,9 +55,18 @@ public class ForegroundMessages extends NDSubcomponent {
     public void paint(Graphics2D g2) {
 
         if ( nd_gc.powered ) {
-            drawSymbolLabels(g2);
+            if (nd_gc.boeing_style) {
+            	drawSymbolLabels(g2);
+            }
             drawTrafficMessage(g2);
             drawDisagree(g2);
+            if (nd_gc.airbus_style) {
+                if (nd_gc.display_mode_change_msg()) {
+                	displayGlobalMessage(g2,"MODE CHANGED");
+                } else if (nd_gc.display_range_change_msg()) {
+                    	displayGlobalMessage(g2,"RANGE CHANGED");
+                }       	
+            } 
         }
 
     }
@@ -245,7 +256,7 @@ public class ForegroundMessages extends NDSubcomponent {
                             g2.setFont(nd_gc.font_l);
                             String disagree_str = "EFIS MODE/NAV FREQ DISAGREE";
                             int disagree_width = g2.getFontMetrics(nd_gc.font_l).stringWidth(disagree_str);
-                            g2.drawString(disagree_str, nd_gc.map_center_x - disagree_width / 2, nd_gc.right_label_disagree_y);;
+                            g2.drawString(disagree_str, nd_gc.map_center_x - disagree_width / 2, nd_gc.right_label_disagree_y);
                         }
                     }
                 }
@@ -257,4 +268,19 @@ public class ForegroundMessages extends NDSubcomponent {
     }
 
 
+    private void displayGlobalMessage(Graphics2D g2, String message){
+        g2.setColor(nd_gc.color_lime);
+        g2.setFont(nd_gc.font_xxxl);
+        int message_width = g2.getFontMetrics(nd_gc.font_xxxl).stringWidth(message);
+        // int box_width = message_width + 2*nd_gc.digit_width_xxxl;
+        // int box_height = nd_gc.line_height_xxxl * 12/8;
+        int message_x = nd_gc.map_center_x - message_width / 2;
+        int message_y = nd_gc.range_mode_message_y + nd_gc.line_height_xxxl / 2;
+        // int box_x = nd_gc.map_center_x - box_width / 2;
+        // int box_y = nd_gc.range_mode_message_y - (box_height * 3 / 8);
+        g2.drawString(message, message_x, message_y);
+        // g2.setColor(nd_gc.markings_color);
+        // g2.drawRect(box_x, box_y, box_width, box_height);    	
+    }
+    
 }
