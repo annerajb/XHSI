@@ -138,7 +138,13 @@ public class HeadingLabel extends NDSubcomponent {
                 int y_points_hdg_pointer[] = { nd_gc.rose_y_offset - 1, nd_gc.rose_y_offset - hdg_pointer_height, nd_gc.rose_y_offset - hdg_pointer_height };
                 rotate(g2, hdg_pointer);
                 g2.setColor(nd_gc.aircraft_color);
-                g2.drawPolygon(x_points_hdg_pointer, y_points_hdg_pointer, 3);
+                if (nd_gc.boeing_style) 
+                	g2.drawPolygon(x_points_hdg_pointer, y_points_hdg_pointer, 3);
+                else {
+                	int dx = Math.round(10.0f * nd_gc.scaling_factor / 3.0f);
+                	int dy = Math.round(60.0f * nd_gc.scaling_factor / 2.0f);
+                	g2.fillRect(center_x-dx, nd_gc.rose_y_offset-dy, dx*2, dy);
+                }
                 unrotate(g2);
             }
 
@@ -152,9 +158,13 @@ public class HeadingLabel extends NDSubcomponent {
                 g2.drawLine(center_x - plane_width/2 - plane_width/4, center_y + plane_height, center_x - plane_width/4, center_y + plane_height);
                 g2.drawLine(center_x + plane_width/4, center_y + plane_height, center_x + plane_width/2 + plane_width/4, center_y + plane_height);
             } else {
-                int x_points_airplane_symbol[] = { center_x, center_x - (plane_width/2), center_x + (plane_width/2) };
-                int y_points_airplane_symbol[] = { center_y, center_y + plane_height, center_y + plane_height };
-                g2.drawPolygon(x_points_airplane_symbol, y_points_airplane_symbol, 3);
+            	if (nd_gc.boeing_style) {
+            		int x_points_airplane_symbol[] = { center_x, center_x - (plane_width/2), center_x + (plane_width/2) };
+            		int y_points_airplane_symbol[] = { center_y, center_y + plane_height, center_y + plane_height };
+            		g2.drawPolygon(x_points_airplane_symbol, y_points_airplane_symbol, 3);
+            	} else {
+            		draw_airbus_aircraft_symbol(g2, center_x, center_y);
+            	}
             }
 
             // drift angle pointer or track line with map zoom indication
@@ -278,7 +288,66 @@ public class HeadingLabel extends NDSubcomponent {
 //        g2.drawPolyline(x_points_heading_box, y_points_heading_box, 4);
 //
 //    }
+    
+    private void draw_airbus_aircraft_symbol(Graphics2D g2, int px, int py) {
+        int ps = Math.round(14.0f * nd_gc.scaling_factor);
+        int cy = 80;
+        
+        int dx = 10;
+        int dy = 20;
+        int wing_x = 95;
+        int tail_x = 35;
+        int wing_y = cy-dy/2;
+        int tail_y = 165;
+        int b_y = 205;
 
+        int plan_x[] = {
+        	 dx * ps / 50 + px,
+             dx * ps / 50 + px,
+             wing_x * ps / 50 + px,
+             wing_x * ps / 50 + px,
+             dx * ps / 50 + px,
+             dx * ps / 50 + px,
+             tail_x * ps / 50 + px,
+             tail_x * ps / 50 + px,
+             dx * ps / 50 + px,
+             dx * ps / 50 + px,
+            -dx * ps / 50 + px,
+            -dx * ps / 50 + px,
+            -tail_x * ps / 50 + px,
+            -tail_x * ps / 50 + px,
+            -dx * ps / 50 + px,
+            -dx * ps / 50 + px,
+            -wing_x * ps / 50 + px,
+            -wing_x * ps / 50 + px,
+            -dx * ps / 50 + px,
+            -dx * ps / 50 + px
+        };
+        int plan_y[] = {
+            ( 0 - cy ) * ps / 50 + py,
+            ( wing_y - cy ) * ps / 50 + py,
+            ( wing_y - cy ) * ps / 50 + py,
+            ( wing_y + dy - cy ) * ps / 50 + py,
+            ( wing_y + dy - cy ) * ps / 50 + py,
+            ( tail_y - cy ) * ps / 50 + py,
+            ( tail_y - cy ) * ps / 50 + py,
+            ( tail_y + dy - cy ) * ps / 50 + py,
+            ( tail_y + dy - cy ) * ps / 50 + py,
+            ( b_y - cy ) * ps / 50 + py,
+            ( b_y - cy ) * ps / 50 + py,
+            ( tail_y + dy - cy ) * ps / 50 + py,
+            ( tail_y + dy- cy ) * ps / 50 + py,
+            ( tail_y  - cy ) * ps / 50 + py,
+            ( tail_y  - cy ) * ps / 50 + py,
+            ( wing_y + dy - cy ) * ps / 50 + py,
+            ( wing_y + dy - cy ) * ps / 50 + py,
+            ( wing_y - cy ) * ps / 50 + py,
+            ( wing_y - cy ) * ps / 50 + py,
+            ( 0 - cy ) * ps / 50 + py
+        };
+        g2.setColor(nd_gc.aircraft_color);
+        g2.fillPolygon(plan_x, plan_y, 20);
+    }
 
     private void rotate(Graphics2D g2, double angle) {
         this.original_at = g2.getTransform();

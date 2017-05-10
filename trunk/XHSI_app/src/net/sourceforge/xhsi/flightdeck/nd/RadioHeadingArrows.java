@@ -63,9 +63,10 @@ public class RadioHeadingArrows extends NDSubcomponent {
                 clip(g2, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, 0, nd_gc.sixty_deg_hlimit*2, nd_gc.frame_size.height);
                 clipped = true;
             } else clipped = false;
-                
-            int arrow_length = (int) Math.min(60, nd_gc.shrink_scaling_factor * 60);
-            int arrow_base_width = (int) Math.min(25, nd_gc.shrink_scaling_factor * 25);
+               
+            
+            // int arrow_length = (int) Math.min(60, nd_gc.shrink_scaling_factor * 60);
+            // int arrow_base_width = (int) Math.min(25, nd_gc.shrink_scaling_factor * 25);
             float drift;
             float deflect;
             if ( nd_gc.hdg_up ) drift = 0.0f;
@@ -83,10 +84,10 @@ public class RadioHeadingArrows extends NDSubcomponent {
                 deflect = selected_nav_radio1.get_rel_bearing() + drift;
                 if ( this.selected_nav_radio1.freq_is_nav() && ( ! this.selected_nav_radio1.freq_is_localizer() )) {
                     g2.setColor(nd_gc.tuned_vor_color);
-                    draw_nav1_arrow(g2, deflect, arrow_length, arrow_base_width);
+                    draw_nav1_arrow(g2, deflect, nd_gc.arrow_length, nd_gc.arrow_base_width);
                 } else if (this.selected_nav_radio1.freq_is_adf()) {
                     g2.setColor(nd_gc.tuned_ndb_color);
-                    draw_nav1_arrow(g2, deflect, arrow_length, arrow_base_width);
+                    draw_nav1_arrow(g2, deflect, nd_gc.arrow_length, nd_gc.arrow_base_width);
                 }
             }
 
@@ -96,10 +97,10 @@ public class RadioHeadingArrows extends NDSubcomponent {
                 deflect = selected_nav_radio2.get_rel_bearing() + drift;
                 if ( this.selected_nav_radio2.freq_is_nav() && ( ! this.selected_nav_radio2.freq_is_localizer() )) {
                     g2.setColor(nd_gc.tuned_vor_color);
-                    draw_nav2_arrow(g2, deflect, arrow_length, arrow_base_width);
+                    draw_nav2_arrow(g2, deflect, nd_gc.arrow_length, nd_gc.arrow_base_width);
                 } else if (this.selected_nav_radio2.freq_is_adf()) {
                     g2.setColor(nd_gc.tuned_ndb_color);
-                    draw_nav2_arrow(g2, deflect, arrow_length, arrow_base_width);
+                    draw_nav2_arrow(g2, deflect, nd_gc.arrow_length, nd_gc.arrow_base_width);
                 }
             }
 
@@ -140,16 +141,26 @@ public class RadioHeadingArrows extends NDSubcomponent {
     
     private void draw_nav1_arrow(Graphics2D g2, float deflection, int length, int base_width) {
         rotate(g2, deflection);
-        RadioHeadingArrowsHelper.draw_nav1_forward_arrow(g2, nd_gc.map_center_x, nd_gc.rose_y_offset, length, base_width);
-        RadioHeadingArrowsHelper.draw_nav1_backward_arrow(g2, nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius, length, base_width);
+        if (nd_gc.boeing_style) {
+        	RadioHeadingArrowsHelper.draw_nav1_forward_arrow(g2, nd_gc.map_center_x, nd_gc.rose_y_offset, length, base_width);
+        	RadioHeadingArrowsHelper.draw_nav1_backward_arrow(g2, nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius, length, base_width);
+        } else {
+        	RadioHeadingArrowsHelper.draw_nav1_airbus_forward_arrow(g2, nd_gc.map_center_x, nd_gc.rose_y_offset, length, base_width);
+        	RadioHeadingArrowsHelper.draw_nav1_airbus_backward_arrow(g2, nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius, length, base_width);
+        }
         unrotate(g2);
     }
 
 
     private void draw_nav2_arrow(Graphics2D g2, float deflection, int length, int base_width) {
         rotate(g2, deflection);
-        RadioHeadingArrowsHelper.draw_nav2_forward_arrow(g2, nd_gc.map_center_x, nd_gc.rose_y_offset, length, base_width);
-        RadioHeadingArrowsHelper.draw_nav2_backward_arrow(g2, nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius, length, base_width);
+        if (nd_gc.boeing_style) {
+        	RadioHeadingArrowsHelper.draw_nav2_forward_arrow(g2, nd_gc.map_center_x, nd_gc.rose_y_offset, length, base_width);
+        	RadioHeadingArrowsHelper.draw_nav2_backward_arrow(g2, nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius, length, base_width);
+        } else {
+            RadioHeadingArrowsHelper.draw_nav2_airbus_forward_arrow(g2, nd_gc.map_center_x, nd_gc.rose_y_offset, length, base_width);
+            RadioHeadingArrowsHelper.draw_nav2_airbus_backward_arrow(g2, nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius, length, base_width);        	
+        }
         unrotate(g2);
     }
 
