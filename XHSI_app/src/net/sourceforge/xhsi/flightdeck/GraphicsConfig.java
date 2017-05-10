@@ -622,28 +622,7 @@ public class GraphicsConfig implements ComponentListener {
 
         if ( custom_colors ) {
             background_color = Color.BLACK;
-            
-            navaid_color = color_boeingcyan;
-            term_wpt_color = color_cornflowerblue.darker();
-            wpt_color = color_cornflowerblue;
-            awy_wpt_color = color_cornflowerblue.brighter();
-            arpt_color = color_mediumaquamarine;
-            tuned_localizer_color = color_aquamarine;
-            silent_localizer_color = color_mediumaquamarine.darker().darker();
-            reference_localizer_color = color_lightaquamarine;
-            receiving_localizer_color = color_aquamarine.darker();
-            tuned_ndb_color = color_dodgerblue;
-            no_rcv_ndb_color = color_dodgerblue.darker();
-            tuned_vor_color = color_lime;
-            no_rcv_vor_color = color_lime.darker();
-            unknown_nav_color = color_cadetblue;
-            holding_color = color_deeppink;
-            traffic_color = color_lightsteelblue;
-            faraway_color = color_lightsteelblue.darker().darker();
-            pos_label_color = color_boeingcyan.darker();
-            tcas_label_color = color_lightsteelblue;
-            data_label_color = color_pastelhotpink;
-            
+                       
             // Navigation Display Colors
             if ( this.settings.style == Avionics.STYLE_AIRBUS ) {
                 navaid_color = color_boeingcyan;
@@ -655,10 +634,10 @@ public class GraphicsConfig implements ComponentListener {
                 silent_localizer_color = color_mediumaquamarine.darker().darker();
                 reference_localizer_color = color_lightaquamarine;
                 receiving_localizer_color = color_aquamarine.darker();
-                tuned_ndb_color = color_dodgerblue;
-                no_rcv_ndb_color = color_dodgerblue.darker();
-                tuned_vor_color = color_lime;
-                no_rcv_vor_color = color_lime.darker();
+                tuned_ndb_color = Color.GREEN;
+                no_rcv_ndb_color = Color.GREEN.darker();
+                tuned_vor_color = Color.WHITE;
+                no_rcv_vor_color = Color.WHITE.darker();
                 unknown_nav_color = color_cadetblue;
                 holding_color = color_deeppink;
                 traffic_color = color_lightsteelblue;
@@ -676,6 +655,8 @@ public class GraphicsConfig implements ComponentListener {
                 heading_labels_color = color_limegreen;
                 nav_needle_color = color_mediumviolet;
                 deviation_scale_color = Color.LIGHT_GRAY;
+                range_arc_color = Color.WHITE; 
+                aircraft_color = Color.YELLOW;
             } else {
                 navaid_color = color_boeingcyan;
                 term_wpt_color = color_cornflowerblue.darker();
@@ -707,6 +688,8 @@ public class GraphicsConfig implements ComponentListener {
                 heading_labels_color = color_limegreen;
                 nav_needle_color = color_mediumviolet;
                 deviation_scale_color = Color.LIGHT_GRAY;
+                range_arc_color = Color.DARK_GRAY; // was: Color.GRAY
+                aircraft_color = Color.WHITE;
             }
 
             
@@ -716,13 +699,13 @@ public class GraphicsConfig implements ComponentListener {
 //                hsb[2] *= 0.25f;
 //                markings_color = Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
             dim_markings_color = Color.LIGHT_GRAY;
-            range_arc_color = Color.DARK_GRAY; // was: Color.GRAY
+
             dim_label_color = Color.DARK_GRAY;
             normal_color = color_lime;
             unusual_color = color_deepskyblue;
             caution_color = color_amber;
             warning_color = Color.RED;
-            aircraft_color = Color.WHITE;
+            
             heading_bug_color = color_magenta;
             wind_color = color_palegreen; // was color_lavender
             efb_color = color_lavender;
@@ -797,7 +780,8 @@ public class GraphicsConfig implements ComponentListener {
             cdu_scratch_pad_color = Color.white;
             
             
-        } else {
+        } else { // STANDARD COLORS (i.e. not customed)
+        	
             background_color = Color.BLACK;
             navaid_color = color_boeingcyan;
             term_wpt_color = color_boeingcyan;

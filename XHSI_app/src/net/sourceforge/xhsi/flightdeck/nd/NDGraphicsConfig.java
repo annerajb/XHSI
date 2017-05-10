@@ -90,7 +90,9 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int pixel_distance_plane_lower_left_corner;
     public float half_view_angle;
     public int big_tick_length;
+    public int medium_tick_length;
     public int small_tick_length;
+    public int tick_text_y_offset;
     public Area inner_rose_area;
     public int sixty_deg_hlimit;
 
@@ -114,6 +116,18 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int map_range;
     public boolean map_zoomin;
 
+    public Font compass_text_font;
+    public Font compass_small_text_font;
+    public int compass_two_digit_hdg_text_width = 0;
+    public int compass_one_digit_hdg_text_width = 0;
+    public int compass_two_digit_hdg_small_text_width = 0;
+    public int compass_one_digit_hdg_small_text_width = 0;
+    public int compass_hdg_text_height = 0;
+    public int compass_hdg_small_text_height = 0;
+    
+    public int arrow_length;
+    public int arrow_base_width;
+    
     public float max_range;
 
     public int range_mode_message_y;
@@ -172,6 +186,22 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             airbus_style = instrument_style == Avionics.STYLE_AIRBUS;
             boeing_style = instrument_style == Avionics.STYLE_BOEING;
             	
+            // Fonts and graphics settings for compass rose
+            if (boeing_style) {
+                compass_text_font=this.font_m;
+                compass_small_text_font=this.font_s;
+            } else {
+                compass_text_font=this.font_xxl;
+                compass_small_text_font=this.font_l;
+            }
+            // calculate text widths and heights
+            compass_two_digit_hdg_text_width = (int) this.get_text_width(g2, this.compass_text_font, "33");
+            compass_one_digit_hdg_text_width = (int) this.get_text_width(g2, this.compass_text_font, "8");
+            compass_two_digit_hdg_small_text_width = (int) this.get_text_width(g2, this.compass_small_text_font, "33");
+            compass_one_digit_hdg_small_text_width = (int) this.get_text_width(g2, this.compass_small_text_font, "8");
+            compass_hdg_text_height = (int) (this.get_text_height(g2, this.compass_text_font)*0.8f);
+            compass_hdg_small_text_height = (int) (this.get_text_height(g2, this.compass_small_text_font)*0.8f);
+            
             
             // set some booleans for easy checking
             if ( preferences.get_airbus_modes() ) {
@@ -209,7 +239,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             // position of the plane and size of the rose
             this.map_center_x = this.frame_size.width / 2;
 //            this.rose_y_offset = 50 + 4 + this.border_top;
-            this.rose_y_offset = 3 * this.line_height_m + this.border_top;
+            this.rose_y_offset = (airbus_style ? 5 : 3) * this.line_height_m + this.border_top;
             //if ( ( (this.map_mode == Avionics.EFIS_MAP_CENTERED) && (this.map_submode != Avionics.EFIS_MAP_NAV) ) || (this.map_submode == Avionics.EFIS_MAP_PLN) ) {
             if ( this.mode_centered || this.mode_plan ) {
                 // CENTERED (or PLAN)
@@ -256,9 +286,28 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 
             
             // compass rose ticks get shorter when the frame is smaller than 600px
-            this.big_tick_length = (int) (20 * shrink_scaling_factor);
-            this.small_tick_length = this.big_tick_length / 3;
+            if (boeing_style) {
+            	this.big_tick_length = (int) (20 * shrink_scaling_factor);
+            	this.medium_tick_length = this.big_tick_length / 3;
+            	this.small_tick_length = this.big_tick_length / 3;
+            	this.tick_text_y_offset = rose_y_offset + big_tick_length + compass_hdg_text_height;
+            } else {
+            	this.big_tick_length = (int) (-20 * shrink_scaling_factor);
+            	this.medium_tick_length = this.big_tick_length / 2;
+            	this.small_tick_length = this.big_tick_length / 3;
+            	this.tick_text_y_offset = rose_y_offset + big_tick_length*10/8;
+            }
 
+            // NDB/VOR arrows
+            if (boeing_style) {
+            	arrow_length = (int) Math.min(60, shrink_scaling_factor * 60);
+            	arrow_base_width = (int) Math.min(25, shrink_scaling_factor * 25);
+            } else {
+            	arrow_length = mode_centered ? rose_radius/2 : rose_radius/4;
+            	arrow_base_width = (int) Math.min(25, shrink_scaling_factor * 25);           	
+            }
+            	
+            
             // what is all this about?
             //if (this.pixel_distance_plane_bottom_screen >= (this.rose_radius - this.big_tick_length)) {
             //    // Complete rose

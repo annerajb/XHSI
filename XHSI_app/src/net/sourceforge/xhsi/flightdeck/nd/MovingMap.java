@@ -101,6 +101,8 @@ public class MovingMap extends NDSubcomponent {
     float pixels_per_deg_lat;
     float pixels_per_nm;
     
+    float range_dashes[] = { 10.0f, 10.0f };
+    
     float longdashes_1[] = { 16.0f, 6.0f };
     float longdashes_2[] = { 10.0f, 2.0f, 10.0f, 8.0f };
     
@@ -1199,77 +1201,159 @@ public class MovingMap extends NDSubcomponent {
 
         if ( nd_gc.mode_plan ) {
             // moving aircraft symbol
-            map_projection.setPoint(this.aircraft.lat(), this.aircraft.lon());
-            int px = map_projection.getX();
-            int py = map_projection.getY();
-            int ps = Math.round(2.0f * nd_gc.grow_scaling_factor);
-            int cy = 105;
-            int plan_x[] = {
-                  0 * ps / 10 + px,
-                 15 * ps / 10 + px,
-                 15 * ps / 10 + px,
-                 95 * ps / 10 + px,
-                 95 * ps / 10 + px,
-                 35 * ps / 10 + px,
-                 15 * ps / 10 + px,
-                 15 * ps / 10 + px,
-                 30 * ps / 10 + px,
-                 30 * ps / 10 + px,
-                  0 * ps / 10 + px,
-                -30 * ps / 10 + px,
-                -30 * ps / 10 + px,
-                -15 * ps / 10 + px,
-                -15 * ps / 10 + px,
-                -35 * ps / 10 + px,
-                -95 * ps / 10 + px,
-                -95 * ps / 10 + px,
-                -15 * ps / 10 + px,
-                -15 * ps / 10 + px
-            };
-            int plan_y[] = {
-                (   0 - cy ) * ps / 10 + py,
-                (  25 - cy ) * ps / 10 + py,
-                (  75 - cy ) * ps / 10 + py,
-                ( 140 - cy ) * ps / 10 + py,
-                ( 155 - cy ) * ps / 10 + py,
-                ( 125 - cy ) * ps / 10 + py,
-                ( 125 - cy ) * ps / 10 + py,
-                ( 185 - cy ) * ps / 10 + py,
-                ( 200 - cy ) * ps / 10 + py,
-                ( 215 - cy ) * ps / 10 + py,
-                ( 200 - cy ) * ps / 10 + py,
-                ( 215 - cy ) * ps / 10 + py,
-                ( 200 - cy ) * ps / 10 + py,
-                ( 185 - cy ) * ps / 10 + py,
-                ( 125 - cy ) * ps / 10 + py,
-                ( 125 - cy ) * ps / 10 + py,
-                ( 155 - cy ) * ps / 10 + py,
-                ( 140 - cy ) * ps / 10 + py,
-                (  75 - cy ) * ps / 10 + py,
-                (  25 - cy ) * ps / 10 + py
-            };
-            g2.rotate(
-                    Math.toRadians( this.aircraft.heading() - this.aircraft.magnetic_variation() ),
-                    px,
-                    py
-            );
-            g2.setColor(nd_gc.aircraft_color);
-            g2.drawPolygon(plan_x, plan_y, 20);
+        	if (nd_gc.boeing_style) 
+        		draw_aircraft_symbol(g2);
+        	else
+        		draw_airbus_aircraft_symbol(g2);
             g2.setTransform(original_at);
         }
 
     }
 
+    
+    private void draw_aircraft_symbol(Graphics2D g2) {
+        // moving aircraft symbol
+        map_projection.setPoint(this.aircraft.lat(), this.aircraft.lon());
+        int px = map_projection.getX();
+        int py = map_projection.getY();
+        int ps = Math.round(2.0f * nd_gc.grow_scaling_factor);
+        int cy = 105;
+        int plan_x[] = {
+              0 * ps / 10 + px,
+             15 * ps / 10 + px,
+             15 * ps / 10 + px,
+             95 * ps / 10 + px,
+             95 * ps / 10 + px,
+             35 * ps / 10 + px,
+             15 * ps / 10 + px,
+             15 * ps / 10 + px,
+             30 * ps / 10 + px,
+             30 * ps / 10 + px,
+              0 * ps / 10 + px,
+            -30 * ps / 10 + px,
+            -30 * ps / 10 + px,
+            -15 * ps / 10 + px,
+            -15 * ps / 10 + px,
+            -35 * ps / 10 + px,
+            -95 * ps / 10 + px,
+            -95 * ps / 10 + px,
+            -15 * ps / 10 + px,
+            -15 * ps / 10 + px
+        };
+        int plan_y[] = {
+            (   0 - cy ) * ps / 10 + py,
+            (  25 - cy ) * ps / 10 + py,
+            (  75 - cy ) * ps / 10 + py,
+            ( 140 - cy ) * ps / 10 + py,
+            ( 155 - cy ) * ps / 10 + py,
+            ( 125 - cy ) * ps / 10 + py,
+            ( 125 - cy ) * ps / 10 + py,
+            ( 185 - cy ) * ps / 10 + py,
+            ( 200 - cy ) * ps / 10 + py,
+            ( 215 - cy ) * ps / 10 + py,
+            ( 200 - cy ) * ps / 10 + py,
+            ( 215 - cy ) * ps / 10 + py,
+            ( 200 - cy ) * ps / 10 + py,
+            ( 185 - cy ) * ps / 10 + py,
+            ( 125 - cy ) * ps / 10 + py,
+            ( 125 - cy ) * ps / 10 + py,
+            ( 155 - cy ) * ps / 10 + py,
+            ( 140 - cy ) * ps / 10 + py,
+            (  75 - cy ) * ps / 10 + py,
+            (  25 - cy ) * ps / 10 + py
+        };
+        g2.rotate(
+                Math.toRadians( this.aircraft.heading() - this.aircraft.magnetic_variation() ),
+                px,
+                py
+        );
+        g2.setColor(nd_gc.aircraft_color);
+        g2.drawPolygon(plan_x, plan_y, 20);
+        // g2.setTransform(original_at);
+    }
 
+    private void draw_airbus_aircraft_symbol(Graphics2D g2) {
+        // moving aircraft symbol
+        map_projection.setPoint(this.aircraft.lat(), this.aircraft.lon());
+        int px = map_projection.getX();
+        int py = map_projection.getY();
+        int ps = Math.round(14.0f * nd_gc.scaling_factor);
+        int cy = 80;
+        
+        int dx = 10;
+        int dy = 20;
+        int wing_x = 95;
+        int tail_x = 35;
+        int wing_y = cy-dy/2;
+        int tail_y = 165;
+        int b_y = 205;
+
+        int plan_x[] = {
+        	 dx * ps / 50 + px,
+             dx * ps / 50 + px,
+             wing_x * ps / 50 + px,
+             wing_x * ps / 50 + px,
+             dx * ps / 50 + px,
+             dx * ps / 50 + px,
+             tail_x * ps / 50 + px,
+             tail_x * ps / 50 + px,
+             dx * ps / 50 + px,
+             dx * ps / 50 + px,
+            -dx * ps / 50 + px,
+            -dx * ps / 50 + px,
+            -tail_x * ps / 50 + px,
+            -tail_x * ps / 50 + px,
+            -dx * ps / 50 + px,
+            -dx * ps / 50 + px,
+            -wing_x * ps / 50 + px,
+            -wing_x * ps / 50 + px,
+            -dx * ps / 50 + px,
+            -dx * ps / 50 + px
+        };
+        int plan_y[] = {
+            ( 0 - cy ) * ps / 50 + py,
+            ( wing_y - cy ) * ps / 50 + py,
+            ( wing_y - cy ) * ps / 50 + py,
+            ( wing_y + dy - cy ) * ps / 50 + py,
+            ( wing_y + dy - cy ) * ps / 50 + py,
+            ( tail_y - cy ) * ps / 50 + py,
+            ( tail_y - cy ) * ps / 50 + py,
+            ( tail_y + dy - cy ) * ps / 50 + py,
+            ( tail_y + dy - cy ) * ps / 50 + py,
+            ( b_y - cy ) * ps / 50 + py,
+            ( b_y - cy ) * ps / 50 + py,
+            ( tail_y + dy - cy ) * ps / 50 + py,
+            ( tail_y + dy- cy ) * ps / 50 + py,
+            ( tail_y  - cy ) * ps / 50 + py,
+            ( tail_y  - cy ) * ps / 50 + py,
+            ( wing_y + dy - cy ) * ps / 50 + py,
+            ( wing_y + dy - cy ) * ps / 50 + py,
+            ( wing_y - cy ) * ps / 50 + py,
+            ( wing_y - cy ) * ps / 50 + py,
+            ( 0 - cy ) * ps / 50 + py
+        };
+        g2.rotate(
+                Math.toRadians( this.aircraft.heading() - this.aircraft.magnetic_variation() ),
+                px,
+                py
+        );
+        g2.setColor(nd_gc.aircraft_color);
+        g2.fillPolygon(plan_x, plan_y, 20);
+        // g2.setTransform(original_at);
+    }
+    
+    
     private void draw_scale_rings(Graphics2D g2) {
 
-        // dim the scale rings
+        // dim or dash the scale rings
         g2.setColor(nd_gc.range_arc_color);
-        //for ( int radius=(nd_gc.rose_radius/4); radius < nd_gc.rose_radius; radius += (nd_gc.rose_radius/4) ) {
+        Stroke original_stroke = g2.getStroke();
+        if (nd_gc.airbus_style) g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, range_dashes, 0.0f));
+
         for ( int i=1; i<=3; i++ ) {
             int radius = i * nd_gc.rose_radius/4;
             if ( nd_gc.mode_centered || nd_gc.mode_plan ) {
-                g2.drawOval( nd_gc.map_center_x - radius, nd_gc.map_center_y - radius, radius*2, radius*2 );
+                if (nd_gc.boeing_style || i==2) g2.drawOval( nd_gc.map_center_x - radius, nd_gc.map_center_y - radius, radius*2, radius*2 );
             } else {
                 if ( this.preferences.get_draw_only_inside_rose() && this.preferences.get_limit_arcs_at_60() ) {
                     g2.draw(new Arc2D.Float( nd_gc.map_center_x - radius, nd_gc.map_center_y - radius, radius*2, radius*2, 30.0f, 120.0f, Arc2D.OPEN ) );
@@ -1278,6 +1362,7 @@ public class MovingMap extends NDSubcomponent {
                 }
             }
         }
+        g2.setStroke(original_stroke);
 
     }
 
