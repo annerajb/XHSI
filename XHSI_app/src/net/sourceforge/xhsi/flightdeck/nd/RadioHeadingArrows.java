@@ -145,8 +145,8 @@ public class RadioHeadingArrows extends NDSubcomponent {
         	RadioHeadingArrowsHelper.draw_nav1_forward_arrow(g2, nd_gc.map_center_x, nd_gc.rose_y_offset, length, base_width);
         	RadioHeadingArrowsHelper.draw_nav1_backward_arrow(g2, nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius, length, base_width);
         } else {
-        	RadioHeadingArrowsHelper.draw_nav1_airbus_forward_arrow(g2, nd_gc.map_center_x, nd_gc.rose_y_offset, length, base_width);
-        	RadioHeadingArrowsHelper.draw_nav1_airbus_backward_arrow(g2, nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius, length, base_width);
+        	RadioHeadingArrowsHelper.draw_nav1_airbus_forward_arrow(g2, nd_gc.map_center_x, nd_gc.rose_y_offset, length, base_width, selected_nav_radio1.freq_is_adf());
+        	RadioHeadingArrowsHelper.draw_nav1_airbus_backward_arrow(g2, nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius, length, base_width, selected_nav_radio1.freq_is_adf());
         }
         unrotate(g2);
     }
@@ -158,8 +158,8 @@ public class RadioHeadingArrows extends NDSubcomponent {
         	RadioHeadingArrowsHelper.draw_nav2_forward_arrow(g2, nd_gc.map_center_x, nd_gc.rose_y_offset, length, base_width);
         	RadioHeadingArrowsHelper.draw_nav2_backward_arrow(g2, nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius, length, base_width);
         } else {
-            RadioHeadingArrowsHelper.draw_nav2_airbus_forward_arrow(g2, nd_gc.map_center_x, nd_gc.rose_y_offset, length, base_width);
-            RadioHeadingArrowsHelper.draw_nav2_airbus_backward_arrow(g2, nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius, length, base_width);        	
+            RadioHeadingArrowsHelper.draw_nav2_airbus_forward_arrow(g2, nd_gc.map_center_x, nd_gc.rose_y_offset, length, base_width, selected_nav_radio2.freq_is_adf());
+            RadioHeadingArrowsHelper.draw_nav2_airbus_backward_arrow(g2, nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius, length, base_width, selected_nav_radio2.freq_is_adf());        	
         }
         unrotate(g2);
     }

@@ -148,7 +148,9 @@ public class HeadingLabel extends NDSubcomponent {
                 unrotate(g2);
             }
 
+            
             // plane symbol
+            /* CODE MOVED to CompassRose
             g2.setColor(nd_gc.aircraft_color);
             if ( nd_gc.mode_classic_hsi ) {
                 g2.drawLine(center_x - plane_width/4, center_y - plane_height, center_x - plane_width/4, center_y + plane_height);
@@ -166,8 +168,11 @@ public class HeadingLabel extends NDSubcomponent {
             		draw_airbus_aircraft_symbol(g2, center_x, center_y);
             	}
             }
+            */
 
-            // drift angle pointer or track line with map zoom indication
+            // drift angle pointer or track line 
+            // -- with map zoom indication 
+            // Range label code moved to CompassRose Class
             rotate(g2, trk_line);
             if ( nd_gc.mode_classic_hsi ) {
                 // old style HSI
@@ -212,6 +217,8 @@ public class HeadingLabel extends NDSubcomponent {
                         nd_gc.map_center_x - tick_halfwidth, nd_gc.map_center_y - (nd_gc.rose_radius/4),
                         nd_gc.map_center_x + tick_halfwidth, nd_gc.map_center_y - (nd_gc.rose_radius/4) );
                 }
+                
+                /* CODE MOVED TO CompassRose Class
                 // a label at half the range
                 g2.setFont(nd_gc.font_xs);
                 g2.setColor(nd_gc.dim_markings_color);
@@ -263,6 +270,7 @@ public class HeadingLabel extends NDSubcomponent {
                     nd_gc.map_center_x - nd_gc.get_text_width(g2, nd_gc.font_xs, range_text) - 4,
                     nd_gc.map_center_y - (nd_gc.rose_radius / 2) - (nd_gc.get_text_height(g2, g2.getFont()) / 2) + 5
                 );
+                */
             }
             unrotate(g2);
 
@@ -288,67 +296,7 @@ public class HeadingLabel extends NDSubcomponent {
 //        g2.drawPolyline(x_points_heading_box, y_points_heading_box, 4);
 //
 //    }
-    
-    private void draw_airbus_aircraft_symbol(Graphics2D g2, int px, int py) {
-        int ps = Math.round(14.0f * nd_gc.scaling_factor);
-        int cy = 80;
-        
-        int dx = 10;
-        int dy = 20;
-        int wing_x = 95;
-        int tail_x = 35;
-        int wing_y = cy-dy/2;
-        int tail_y = 165;
-        int b_y = 205;
-
-        int plan_x[] = {
-        	 dx * ps / 50 + px,
-             dx * ps / 50 + px,
-             wing_x * ps / 50 + px,
-             wing_x * ps / 50 + px,
-             dx * ps / 50 + px,
-             dx * ps / 50 + px,
-             tail_x * ps / 50 + px,
-             tail_x * ps / 50 + px,
-             dx * ps / 50 + px,
-             dx * ps / 50 + px,
-            -dx * ps / 50 + px,
-            -dx * ps / 50 + px,
-            -tail_x * ps / 50 + px,
-            -tail_x * ps / 50 + px,
-            -dx * ps / 50 + px,
-            -dx * ps / 50 + px,
-            -wing_x * ps / 50 + px,
-            -wing_x * ps / 50 + px,
-            -dx * ps / 50 + px,
-            -dx * ps / 50 + px
-        };
-        int plan_y[] = {
-            ( 0 - cy ) * ps / 50 + py,
-            ( wing_y - cy ) * ps / 50 + py,
-            ( wing_y - cy ) * ps / 50 + py,
-            ( wing_y + dy - cy ) * ps / 50 + py,
-            ( wing_y + dy - cy ) * ps / 50 + py,
-            ( tail_y - cy ) * ps / 50 + py,
-            ( tail_y - cy ) * ps / 50 + py,
-            ( tail_y + dy - cy ) * ps / 50 + py,
-            ( tail_y + dy - cy ) * ps / 50 + py,
-            ( b_y - cy ) * ps / 50 + py,
-            ( b_y - cy ) * ps / 50 + py,
-            ( tail_y + dy - cy ) * ps / 50 + py,
-            ( tail_y + dy- cy ) * ps / 50 + py,
-            ( tail_y  - cy ) * ps / 50 + py,
-            ( tail_y  - cy ) * ps / 50 + py,
-            ( wing_y + dy - cy ) * ps / 50 + py,
-            ( wing_y + dy - cy ) * ps / 50 + py,
-            ( wing_y - cy ) * ps / 50 + py,
-            ( wing_y - cy ) * ps / 50 + py,
-            ( 0 - cy ) * ps / 50 + py
-        };
-        g2.setColor(nd_gc.aircraft_color);
-        g2.fillPolygon(plan_x, plan_y, 20);
-    }
-
+ 
     private void rotate(Graphics2D g2, double angle) {
         this.original_at = g2.getTransform();
         AffineTransform rotate = AffineTransform.getRotateInstance(
