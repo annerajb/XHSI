@@ -215,11 +215,13 @@ public class GraphicsConfig implements ComponentListener {
     public Color fmc_ll_disp_color;
     public Color fmc_ll_other_color;
     public Color heading_labels_color;
+    public Color cardinal_labels_color;
     public Color nav_needle_color;
     public Color deviation_scale_color;
     public Color markings_color;
     public Color dim_markings_color;
     public Color range_arc_color;
+    public Color range_label_color;
     public Color dim_label_color;
     public Color no_rcv_ndb_color;
     public Color no_rcv_vor_color;
@@ -626,9 +628,9 @@ public class GraphicsConfig implements ComponentListener {
             // Navigation Display Colors
             if ( this.settings.style == Avionics.STYLE_AIRBUS ) {
                 navaid_color = color_boeingcyan;
-                term_wpt_color = color_cornflowerblue.darker();
+                term_wpt_color = Color.magenta;
                 wpt_color = color_cornflowerblue;
-                awy_wpt_color = color_cornflowerblue.brighter();
+                awy_wpt_color = Color.magenta.brighter();
                 arpt_color = color_mediumaquamarine;
                 tuned_localizer_color = color_aquamarine;
                 silent_localizer_color = color_mediumaquamarine.darker().darker();
@@ -653,9 +655,11 @@ public class GraphicsConfig implements ComponentListener {
                 fmc_ll_disp_color = color_yellowgreen;
                 fmc_ll_other_color = color_yellowgreen.darker();
                 heading_labels_color = color_limegreen;
+                cardinal_labels_color = Color.WHITE;
                 nav_needle_color = color_mediumviolet;
                 deviation_scale_color = Color.LIGHT_GRAY;
                 range_arc_color = Color.WHITE; 
+                range_label_color = Color.cyan;
                 aircraft_color = Color.YELLOW;
             } else {
                 navaid_color = color_boeingcyan;
@@ -686,9 +690,11 @@ public class GraphicsConfig implements ComponentListener {
                 fmc_ll_disp_color = color_yellowgreen;
                 fmc_ll_other_color = color_yellowgreen.darker();
                 heading_labels_color = color_limegreen;
+                cardinal_labels_color = color_limegreen;
                 nav_needle_color = color_mediumviolet;
                 deviation_scale_color = Color.LIGHT_GRAY;
                 range_arc_color = Color.DARK_GRAY; // was: Color.GRAY
+                range_label_color = dim_markings_color;
                 aircraft_color = Color.WHITE;
             }
 
@@ -811,11 +817,13 @@ public class GraphicsConfig implements ComponentListener {
             fmc_ll_disp_color = color_lime;
             fmc_ll_other_color = color_lime;
             heading_labels_color = color_lime;
+            cardinal_labels_color = color_limegreen;
             nav_needle_color = color_magenta;
             deviation_scale_color = Color.LIGHT_GRAY;
             markings_color = Color.WHITE;
             dim_markings_color = Color.LIGHT_GRAY;
             range_arc_color = Color.GRAY; // was: Color.GRAY.brighter()
+            range_label_color = dim_markings_color;
             dim_label_color = Color.BLACK;
             normal_color = color_lime;
             unusual_color = color_deepskyblue;

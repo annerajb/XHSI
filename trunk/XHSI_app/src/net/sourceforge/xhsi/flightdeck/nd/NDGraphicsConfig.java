@@ -23,6 +23,7 @@
  */
 package net.sourceforge.xhsi.flightdeck.nd;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -32,6 +33,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -39,6 +41,7 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.logging.Logger;
 import java.util.Map;
@@ -124,6 +127,44 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int compass_one_digit_hdg_small_text_width = 0;
     public int compass_hdg_text_height = 0;
     public int compass_hdg_small_text_height = 0;
+    // Range labels
+    public Font range_label_font;
+    public int range_label_half_y;
+    public int range_label_half_x;
+    public int range_label_full_y;
+    public int range_label_full_x;
+    // Cardinal winds
+    public Font cardinal_labels_font;
+    public int cardinal_vert_x;
+    public int cardinal_N_y;
+    public int cardinal_S_y;
+    public int cardinal_horiz_y;
+    public int cardinal_E_x;
+    public int cardinal_W_x;
+    public Polygon cardinal_tri_N;
+    public Polygon cardinal_tri_S;
+    public Polygon cardinal_tri_E;
+    public Polygon cardinal_tri_W;
+    
+    // Moving Map Symbols
+    public Font navaid_font;
+    public BufferedImage fix_awy_symbol_img;
+    public BufferedImage fix_term_symbol_img;
+    public BufferedImage ndb_symbol_img;
+    public BufferedImage dme_symbol_img;
+    public BufferedImage vor_symbol_img;
+    public BufferedImage vordme_symbol_img;
+    public BufferedImage loc_symbol_img;
+    public BufferedImage airport_symbol_img;
+    
+    // RadioLabel & Radio info box -> rib prefix
+    int rib_width;
+    int rib_line_1;
+    int rib_line_2;
+    int rib_line_3;
+    int rib_line_4;
+    int rib_height;
+
     
     public int arrow_length;
     public int arrow_base_width;
@@ -140,6 +181,10 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
         map_submode_timestamp=0;
         map_range_timestamp=0;
         map_zoomin_timestamp=0;
+        cardinal_tri_N=new Polygon();
+        cardinal_tri_S=new Polygon();
+        cardinal_tri_E=new Polygon();
+        cardinal_tri_W=new Polygon();
     }
 
 
@@ -186,22 +231,14 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             airbus_style = instrument_style == Avionics.STYLE_AIRBUS;
             boeing_style = instrument_style == Avionics.STYLE_BOEING;
             	
-            // Fonts and graphics settings for compass rose
-            if (boeing_style) {
-                compass_text_font=this.font_m;
-                compass_small_text_font=this.font_s;
-            } else {
-                compass_text_font=this.font_xxl;
-                compass_small_text_font=this.font_l;
-            }
-            // calculate text widths and heights
-            compass_two_digit_hdg_text_width = (int) this.get_text_width(g2, this.compass_text_font, "33");
-            compass_one_digit_hdg_text_width = (int) this.get_text_width(g2, this.compass_text_font, "8");
-            compass_two_digit_hdg_small_text_width = (int) this.get_text_width(g2, this.compass_small_text_font, "33");
-            compass_one_digit_hdg_small_text_width = (int) this.get_text_width(g2, this.compass_small_text_font, "8");
-            compass_hdg_text_height = (int) (this.get_text_height(g2, this.compass_text_font)*0.8f);
-            compass_hdg_small_text_height = (int) (this.get_text_height(g2, this.compass_small_text_font)*0.8f);
-            
+
+            // compute radio info box 
+            rib_line_1 = line_height_l + line_height_l/5;
+            rib_line_2 = rib_line_1 + line_height_l;
+            rib_line_3 = rib_line_2 + line_height_s;
+            rib_line_4 = rib_line_3 + line_height_s;
+            rib_height = rib_line_4 + line_height_l/2;
+            rib_width = digit_width_l * 9;
             
             // set some booleans for easy checking
             if ( preferences.get_airbus_modes() ) {
@@ -333,6 +370,84 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             // Range and Mode change message
             range_mode_message_y = this.frame_size.height*38/100;
 
+            // Fonts and graphics settings for compass rose
+            if (boeing_style) {
+                compass_text_font=this.font_m;
+                compass_small_text_font=this.font_s;
+                range_label_font=this.font_xs;               
+                range_label_half_y = map_center_y - rose_radius/2 + line_height_xs;
+                range_label_half_x = map_center_x;
+                range_label_full_y = map_center_y - rose_radius + line_height_xs;
+                range_label_full_x = map_center_x;
+                cardinal_labels_font=this.font_s;
+                cardinal_vert_x = map_center_x - max_char_advance_xs/2;
+                cardinal_N_y = map_center_y - rose_radius - 10;
+                cardinal_S_y = map_center_y + rose_radius + 10 + line_height_s - 3;
+                cardinal_horiz_y = map_center_y + line_height_s/2;
+                cardinal_E_x = map_center_x + rose_radius + 10;
+                cardinal_W_x = map_center_x - rose_radius - 10 - max_char_advance_s;
+                // We don't need cardinal winds triangle in Boeing style
+                cardinal_tri_N.reset();
+                cardinal_tri_S.reset();
+                cardinal_tri_E.reset();
+                cardinal_tri_W.reset();
+            } else {
+                compass_text_font=this.font_xxl;
+                compass_small_text_font=this.font_l;
+                range_label_font=this.font_l;
+                cardinal_labels_font=this.font_l;
+                range_label_half_y = map_center_y + rose_radius*66/200 - line_height_xs;
+                range_label_half_x = map_center_x - rose_radius*66/200;
+                range_label_full_y = map_center_y + rose_radius*68/100 - line_height_xs;
+                range_label_full_x = map_center_x - rose_radius*68/100;
+                cardinal_vert_x = map_center_x - max_char_advance_m/2;
+                cardinal_N_y = map_center_y - rose_radius + line_height_l*15/8;
+                cardinal_S_y = map_center_y + rose_radius - line_height_l*10/8;
+                cardinal_horiz_y = map_center_y + line_height_m/2;
+                cardinal_E_x = map_center_x + rose_radius - max_char_advance_l*15/8;
+                cardinal_W_x = map_center_x - rose_radius + max_char_advance_l*10/8;
+                int tri_dx = max_char_advance_l/2;
+                int tri_dy = line_height_l/2;
+                cardinal_tri_N.reset();
+                cardinal_tri_N.addPoint(map_center_x, map_center_y - rose_radius);
+                cardinal_tri_N.addPoint(map_center_x+tri_dx, map_center_y - rose_radius + line_height_l);
+                cardinal_tri_N.addPoint(map_center_x-tri_dx, map_center_y - rose_radius + line_height_l);
+                cardinal_tri_S.reset();
+                cardinal_tri_S.addPoint(map_center_x, map_center_y + rose_radius);
+                cardinal_tri_S.addPoint(map_center_x+tri_dx, map_center_y + rose_radius - line_height_l);
+                cardinal_tri_S.addPoint(map_center_x-tri_dx, map_center_y + rose_radius - line_height_l);
+                cardinal_tri_E.reset();
+                cardinal_tri_E.addPoint(map_center_x + rose_radius, map_center_y);
+                cardinal_tri_E.addPoint(map_center_x + rose_radius - max_char_advance_l, map_center_y - tri_dy);
+                cardinal_tri_E.addPoint(map_center_x + rose_radius - max_char_advance_l, map_center_y + tri_dy);
+                cardinal_tri_W.reset();
+                cardinal_tri_W.addPoint(map_center_x - rose_radius, map_center_y);
+                cardinal_tri_W.addPoint(map_center_x - rose_radius + max_char_advance_l, map_center_y - tri_dy);
+                cardinal_tri_W.addPoint(map_center_x - rose_radius + max_char_advance_l, map_center_y + tri_dy);
+
+            }
+            
+            // compute text widths and heights
+            compass_two_digit_hdg_text_width = (int) this.get_text_width(g2, this.compass_text_font, "33");
+            compass_one_digit_hdg_text_width = (int) this.get_text_width(g2, this.compass_text_font, "8");
+            compass_two_digit_hdg_small_text_width = (int) this.get_text_width(g2, this.compass_small_text_font, "33");
+            compass_one_digit_hdg_small_text_width = (int) this.get_text_width(g2, this.compass_small_text_font, "8");
+            compass_hdg_text_height = (int) (this.get_text_height(g2, this.compass_text_font)*0.8f);
+            compass_hdg_small_text_height = (int) (this.get_text_height(g2, this.compass_small_text_font)*0.8f);
+            
+            
+            // Moving Map Symbols
+            navaid_font = (boeing_style ? font_s : font_l);
+            fix_awy_symbol_img = create_fix_symbol(awy_wpt_color);
+            fix_term_symbol_img = create_fix_symbol(term_wpt_color);
+            
+            ndb_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);;
+            dme_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);;
+            vor_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);;
+            vordme_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);;
+            loc_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);;
+            airport_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);;
+            
             // clear the flags
             this.resized = false;
             this.reconfig = false;
@@ -343,6 +458,37 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 
     }
 
+    private BufferedImage create_fix_symbol(Color fix_color) {
+    	
+    	// fix_symbol_img.setBackground(new Color(255, 255, 255, 0));
+    	int x4 = Math.round(4.0f*scaling_factor);
+    	int x5 = Math.round(5.0f*scaling_factor);
+    	int y3 = Math.round(3.0f*scaling_factor);
+    	int y4 = Math.round(4.0f*scaling_factor);
+    	int y5 = Math.round(5.0f*scaling_factor);
+    	int y6 = Math.round(6.0f*scaling_factor);
+        int shift=2; // Shift to avoid rendering being clipped 
+    	
+    	int x_points_triangle[] = { shift, x5*2+shift, x5+shift };
+    	int y_points_triangle[] = { y6+y3+shift, y6+y3+shift, shift };
+
+    	int x_points_diamond[] = { shift, x5+shift, x5*2+shift, x5+shift };
+    	int y_points_diamond[] = { y5+shift, y5*2+shift, y5+shift, shift };
+
+    	BufferedImage fix_image = new BufferedImage(x5*2+shift*2,y5*2+shift*2,BufferedImage.TYPE_INT_ARGB);
+    	Graphics2D g_fix = fix_image.createGraphics();
+    	g_fix.setRenderingHints(rendering_hints);
+    	g_fix.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+    	g_fix.setColor(fix_color);
+    	if (boeing_style) 
+    		g_fix.drawPolygon(x_points_triangle, y_points_triangle, 3);
+    	else 
+    		g_fix.drawPolygon(x_points_diamond, y_points_diamond, 4);
+    	return fix_image;
+    }
+    
+    
+    
     public boolean display_range_change_msg() {
     	boolean range_msg = (map_range_timestamp+change_msg_duration) > System.currentTimeMillis();
     	boolean zoomin_msg = (map_zoomin_timestamp+change_msg_duration) > System.currentTimeMillis();

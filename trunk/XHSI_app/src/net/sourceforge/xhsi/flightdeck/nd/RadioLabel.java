@@ -67,12 +67,14 @@ public class RadioLabel extends NDSubcomponent {
     int radio_label_y;
     int dme_text_width = 0;
 
+    /*
     int radio_info_box_width;
     int line_1;
     int line_2;
     int line_3;
     int line_4;
     int radio_info_box_height;
+    */
 
     NavigationObjectRepository nor;
 
@@ -236,36 +238,30 @@ public class RadioLabel extends NDSubcomponent {
 
         if ( nd_gc.powered ) {
 
-            line_1 = nd_gc.line_height_l + nd_gc.line_height_l/5;
-            line_2 = line_1 + nd_gc.line_height_l;
-            line_3 = line_2 + nd_gc.line_height_s;
-            line_4 = line_3 + nd_gc.line_height_s;
-            radio_info_box_height = line_4 + nd_gc.line_height_l/2;
-
             dme_text_width = nd_gc.get_text_width(g2, nd_gc.font_xs, "DME ");
-            radio_label_y = nd_gc.frame_size.height - radio_info_box_height - nd_gc.border_bottom;
+            radio_label_y = nd_gc.frame_size.height - nd_gc.rib_height - nd_gc.border_bottom;
 
             // get currently tuned in radios
             this.selected_radio1 = this.avionics.get_selected_radio(1);
             this.selected_radio2 = this.avionics.get_selected_radio(2);
 
-            radio_info_box_width = nd_gc.digit_width_l * 9;
+            
             if (this.selected_radio1 != null) {
                 this.radio1_box_info = new RadioBoxInfo(this.selected_radio1);
-                this.left_radio_box_buf_image = create_buffered_image(radio_info_box_width, radio_info_box_height);
+                this.left_radio_box_buf_image = create_buffered_image(nd_gc.rib_width, nd_gc.rib_height);
                 Graphics2D gImg = get_graphics(this.left_radio_box_buf_image);
-                draw_radio_box_info(gImg, this.radio1_box_info, nd_gc.digit_width_l, 1, radio_info_box_width - nd_gc.digit_width_l);
+                draw_radio_box_info(gImg, this.radio1_box_info, nd_gc.digit_width_l, 1, nd_gc.rib_width - nd_gc.digit_width_l);
                 gImg.dispose();
                 g2.drawImage(this.left_radio_box_buf_image, this.nd_gc.border_left, radio_label_y, null);
             }
 
             if (this.selected_radio2 != null) {
                 this.radio2_box_info = new RadioBoxInfo(this.selected_radio2);
-                this.right_radio_box_buf_image = create_buffered_image(radio_info_box_width, radio_info_box_height);
+                this.right_radio_box_buf_image = create_buffered_image(nd_gc.rib_width, nd_gc.rib_height);
                 Graphics2D gImg = get_graphics(this.right_radio_box_buf_image);
                 draw_radio_box_info(gImg, this.radio2_box_info, nd_gc.digit_width_l * 25/10, 2, nd_gc.digit_width_l);
                 gImg.dispose();
-                g2.drawImage(this.right_radio_box_buf_image, this.nd_gc.frame_size.width - this.nd_gc.border_right - radio_info_box_width, radio_label_y, null);
+                g2.drawImage(this.right_radio_box_buf_image, this.nd_gc.frame_size.width - this.nd_gc.border_right - nd_gc.rib_width, radio_label_y, null);
             }
 
         }
@@ -277,31 +273,36 @@ public class RadioLabel extends NDSubcomponent {
 
         g2.setColor(radio_box_info.color);
         g2.setBackground(nd_gc.background_color);
-        g2.clearRect(0, 0, radio_info_box_width, radio_info_box_height);
+        g2.clearRect(0, 0, nd_gc.rib_width, nd_gc.rib_height);
         g2.setFont(nd_gc.font_l);
-        g2.drawString(radio_box_info.type, text_x, line_1);
-        g2.drawString(radio_box_info.id, text_x, line_2);
+        g2.drawString(radio_box_info.type, text_x, nd_gc.rib_line_1);
+        g2.drawString(radio_box_info.id, text_x, nd_gc.rib_line_2);
         if ( ! radio_box_info.dme.equals("") ) {
             g2.setFont(nd_gc.font_s);
-            g2.drawString(radio_box_info.dme, dme_text_width + text_x, line_3);
+            g2.drawString(radio_box_info.dme, dme_text_width + text_x, nd_gc.rib_line_3);
             g2.setFont(nd_gc.font_xs);
-            g2.drawString("DME", text_x, line_3);
+            g2.drawString("DME", text_x, nd_gc.rib_line_3);
         }
         g2.setFont(nd_gc.font_xs);
         if ( this.avionics.efis_shows_pos() )
-            g2.drawString(radio_box_info.radial_text, text_x, line_4);
+            g2.drawString(radio_box_info.radial_text, text_x, nd_gc.rib_line_4);
         else
-            g2.drawString(radio_box_info.obs_text, text_x, line_4);
+            g2.drawString(radio_box_info.obs_text, text_x, nd_gc.rib_line_4);
         if ( ! nd_gc.mode_plan && ( ! avionics.efis_shows_pos() || ( nd_gc.mode_classic_hsi ) ) ) {
             Stroke original_stroke = g2.getStroke();
             g2.setStroke(new BasicStroke(1.0f));
             int arrow_t = nd_gc.line_height_l/2;
             int arrow_l = nd_gc.line_height_l*2;
             int arrow_w = arrow_l*10/25;
-            if ( radio_box_info.draw_arrow && arrow_type==1 )
+            if ( radio_box_info.draw_arrow && arrow_type==1 && nd_gc.boeing_style)
                 RadioHeadingArrowsHelper.draw_nav1_forward_arrow(g2, arrow_x, arrow_t, arrow_l, arrow_w);
-            if ( radio_box_info.draw_arrow && arrow_type==2 )
+            if ( radio_box_info.draw_arrow && arrow_type==2 && nd_gc.boeing_style)
                 RadioHeadingArrowsHelper.draw_nav2_forward_arrow(g2, arrow_x, arrow_t, arrow_l, arrow_w);
+            if ( radio_box_info.draw_arrow && arrow_type==1 && nd_gc.airbus_style)
+                RadioHeadingArrowsHelper.draw_nav1_airbus_forward_arrow(g2, arrow_x, arrow_t, arrow_l, arrow_w, selected_radio1.freq_is_adf());
+            if ( radio_box_info.draw_arrow && arrow_type==2 && nd_gc.airbus_style)
+                RadioHeadingArrowsHelper.draw_nav2_airbus_forward_arrow(g2, arrow_x, arrow_t, arrow_l, arrow_w, selected_radio2.freq_is_adf());
+
             g2.setStroke(original_stroke);
         }
 

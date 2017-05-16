@@ -55,14 +55,14 @@ import net.sourceforge.xhsi.model.Observer;
 public class NDComponent extends Component implements Observer, PreferencesObserver {
 
     private static final long serialVersionUID = 1L;
-    public static boolean COLLECT_PROFILING_INFORMATION = false;
+    public static boolean COLLECT_PROFILING_INFORMATION = true;
     public static long NB_OF_PAINTS_BETWEEN_PROFILING_INFO_OUTPUT = 100;
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
 
     // subcomponents --------------------------------------------------------
     ArrayList subcomponents = new ArrayList();
-    long[] subcomponent_paint_times = new long[15];
+    long[] subcomponent_paint_times = new long[20];
     long total_paint_times = 0;
     long nb_of_paints = 0;
     Graphics2D g2;
@@ -184,7 +184,7 @@ public class NDComponent extends Component implements Observer, PreferencesObser
                             "(" + ((this.subcomponent_paint_times[i] * 100) / this.total_paint_times) + "%)");
                 //    this.subcomponent_paint_times[i] = 0;
                 }
-                logger.info("Total                    " + (this.total_paint_times/this.nb_of_paints) + "ms \n");
+                logger.info("Total                    " + (1.0f*this.total_paint_times/this.nb_of_paints) + "ms \n");
                 logger.info("=[ Paint profile info end ]===================================");
                 //this.total_paint_times = 0;
                 //this.nb_of_paints = 0;

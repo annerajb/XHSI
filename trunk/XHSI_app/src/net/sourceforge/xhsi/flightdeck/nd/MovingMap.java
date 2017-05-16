@@ -268,8 +268,10 @@ public class MovingMap extends NDSubcomponent {
                 drawChart(g2);
 
             // draw the scale rings before drawing the map
+            /* Code moved to CompassRose class
             if ( ( ! nd_gc.mode_plan ) && ( this.preferences.get_draw_range_arcs() ) )
                 draw_scale_rings(g2);
+            */ 
 
             // drawing the map over the scale rings
             if (display_map) drawMap(g2, nd_gc.max_range);
@@ -1342,7 +1344,8 @@ public class MovingMap extends NDSubcomponent {
         // g2.setTransform(original_at);
     }
     
-    
+    // Code move to Compass Rose
+    /*
     private void draw_scale_rings(Graphics2D g2) {
 
         // dim or dash the scale rings
@@ -1365,6 +1368,7 @@ public class MovingMap extends NDSubcomponent {
         g2.setStroke(original_stroke);
 
     }
+    */
 
 
     private void draw_nav_objects(Graphics2D g2, int type, ArrayList nav_objects) {
@@ -1631,24 +1635,29 @@ public class MovingMap extends NDSubcomponent {
     private void drawFix(Graphics2D g2, int x, int y, Fix fix) {
 
         int x5 = Math.round(5.0f*nd_gc.scaling_factor);
-        int x12 = Math.round(12.0f*nd_gc.scaling_factor);
-        int y3 = Math.round(3.0f*nd_gc.scaling_factor);
+        int name_x = x + Math.round((nd_gc.boeing_style ? 12.0f : 10.5f)*nd_gc.scaling_factor);
+        // int y3 = Math.round(3.0f*nd_gc.scaling_factor);
         int y6 = Math.round(6.0f*nd_gc.scaling_factor);
-        int y12 = Math.round(12.0f*nd_gc.scaling_factor);
-        int x_points_triangle[] = { x-x5, x+x5, x };
-        int y_points_triangle[] = { y+y3, y+y3, y-y6  };
+        int name_y = y + (nd_gc.boeing_style ? Math.round(12.0f*nd_gc.scaling_factor) : 0);
+        // int x_points_triangle[] = { x-x5, x+x5, x };
+        // int y_points_triangle[] = { y+y3, y+y3, y-y6  };
 
         AffineTransform original_at = g2.getTransform();
         g2.rotate(Math.toRadians(this.map_up), x, y);
-        //g2.drawImage(this.fix_image, x-6,y-6, null);
+        
         if (fix.on_awy)
             g2.setColor(nd_gc.awy_wpt_color);
         else
             g2.setColor(nd_gc.term_wpt_color);
-        g2.drawPolygon(x_points_triangle, y_points_triangle, 3);
+
+        // Shift = 2 pixels
+        g2.drawImage((fix.on_awy)? nd_gc.fix_awy_symbol_img :nd_gc.fix_term_symbol_img, x-x5-2,y-y6-2, null); 
+
+        // g2.drawPolygon(x_points_triangle, y_points_triangle, 3);
+
         if ( (fix.on_awy) || (nd_gc.map_range <= 20) || nd_gc.map_zoomin ) {
-            g2.setFont(nd_gc.font_s);
-            g2.drawString(fix.name, x + x12, y + y12);
+            g2.setFont(nd_gc.navaid_font);
+            g2.drawString(fix.name, name_x, name_y);
         }
         g2.setTransform(original_at);
 
