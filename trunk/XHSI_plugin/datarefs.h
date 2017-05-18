@@ -426,6 +426,12 @@ extern XPLMDataRef acf_controls_rudder_lr;
 extern XPLMDataRef cabin_altitude;
 extern XPLMDataRef cabin_vvi;
 extern XPLMDataRef cabin_delta_p;
+extern XPLMDataRef pressurization_alt_target;
+extern XPLMDataRef pressurization_vvi_target;
+extern XPLMDataRef pressurization_mode;
+extern XPLMDataRef pressurization_dump_all;
+extern XPLMDataRef pressurization_dump_to_alt;
+extern XPLMDataRef pressurization_max_alt;
 
 //// TCAS
 //extern XPLMDataRef relative_bearing_degs;

@@ -488,6 +488,12 @@ XPLMDataRef acf_controls_rudder_lr;
 XPLMDataRef cabin_altitude;
 XPLMDataRef cabin_vvi;
 XPLMDataRef cabin_delta_p;
+XPLMDataRef pressurization_alt_target;
+XPLMDataRef pressurization_vvi_target;
+XPLMDataRef pressurization_mode;
+XPLMDataRef pressurization_dump_all;
+XPLMDataRef pressurization_dump_to_alt;
+XPLMDataRef pressurization_max_alt;
 
 // Nose Wheel Steering
 XPLMDataRef nose_wheel_steer_on;
@@ -2224,10 +2230,15 @@ void findDataRefs(void) {
     // RAM air turbin
     ram_air_turbin = XPLMFindDataRef("sim/cockpit2/switches/ram_air_turbin_on");
     // Pressurization
-    cabin_altitude = XPLMFindDataRef("sim/cockpit2/pressurization/cabin_altitude_ft");
-    cabin_vvi = XPLMFindDataRef("sim/cockpit2/pressurization/cabin_vvi_fpm");
-    cabin_delta_p = XPLMFindDataRef("sim/cockpit2/pressurization/pressure_differential_psi");
-
+    cabin_altitude = XPLMFindDataRef("sim/cockpit2/pressurization/indicators/cabin_altitude_ft");
+    cabin_vvi = XPLMFindDataRef("sim/cockpit2/pressurization/indicators/cabin_vvi_fpm");
+    cabin_delta_p = XPLMFindDataRef("sim/cockpit2/pressurization/indicators/pressure_diffential_psi");
+    pressurization_alt_target = XPLMFindDataRef("sim/cockpit2/pressurization/actuators/cabin_altitude_ft");
+    pressurization_vvi_target = XPLMFindDataRef("sim/cockpit2/pressurization/actuators/cabin_vvi_fpm");
+    pressurization_mode = XPLMFindDataRef("sim/cockpit2/pressurization/actuators/bleed_air_mode");
+    pressurization_dump_all = XPLMFindDataRef("sim/cockpit2/pressurization/actuators/dump_all");
+    pressurization_dump_to_alt = XPLMFindDataRef("sim/cockpit2/pressurization/actuators/dump_to_altitude");
+    pressurization_max_alt  = XPLMFindDataRef("sim/cockpit2/pressurization/actuators/max_allowable_altitude_ft");
     // Nose Wheel Steering
     nose_wheel_steer_on = XPLMFindDataRef("sim/cockpit2/controls/nosewheel_steer_on");
     tailwheel_lock_ratio = XPLMFindDataRef("sim/cockpit2/controls/tailwheel_lock_ratio");

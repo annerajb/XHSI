@@ -1183,6 +1183,29 @@ int createAvionicsPacket(void) {
     	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_VVI);
     	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(cabin_vvi));
     	i++;
+    	// Cabin Pressure actuators
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_ACT_ALT);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(pressurization_alt_target));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_ACT_VVI);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(pressurization_vvi_target));
+    	i++;
+    	// TODO: bit array
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_MODES);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDatai(pressurization_mode));
+    	i++;
+    	/*
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_MODES);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDatai(pressurization_dump_to_alt));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_MODES);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDatai(pressurization_dump_all));
+    	i++;
+    	*/
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_MAX_ALT);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(pressurization_max_alt));
+    	i++;
+
     }
 
     // Wheels, brakes, tires, steering, gears
