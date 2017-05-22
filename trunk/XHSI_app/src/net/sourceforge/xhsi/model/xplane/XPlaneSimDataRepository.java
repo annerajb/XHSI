@@ -413,7 +413,14 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT_ELECTRICAL_GENERATOR_STATUS = 668;
     public static final int SIM_COCKPIT_ELECTRICAL_INV_BUS_STATUS = 669;
     public static final int SIM_COCKPIT_ELECTRICAL_BUS_LOAD_ = 670; // Array [6]
+    // 680 to 688 used by VIB_N2_
     
+    // Cabin Pressure actuators
+    public static final int SIM_COCKPIT2_PRESSURIZATION_ACT_ALT = 690;
+    public static final int SIM_COCKPIT2_PRESSURIZATION_ACT_VVI = 691;
+    public static final int SIM_COCKPIT2_PRESSURIZATION_MODES = 692;
+    public static final int SIM_COCKPIT2_PRESSURIZATION_MAX_ALT = 693;
+
     // UFMC
     public static final int UFMC_STATUS = 700;
     // UFMC V-speeds
