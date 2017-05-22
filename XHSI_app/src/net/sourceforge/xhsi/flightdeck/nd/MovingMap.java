@@ -1634,30 +1634,25 @@ public class MovingMap extends NDSubcomponent {
 
     private void drawFix(Graphics2D g2, int x, int y, Fix fix) {
 
-        int x5 = Math.round(5.0f*nd_gc.scaling_factor);
-        int name_x = x + Math.round((nd_gc.boeing_style ? 12.0f : 10.5f)*nd_gc.scaling_factor);
+        // int x5 = Math.round(5.0f*nd_gc.scaling_factor);
+        // int name_x = x + Math.round((nd_gc.boeing_style ? 12.0f : 10.5f)*nd_gc.scaling_factor);
         // int y3 = Math.round(3.0f*nd_gc.scaling_factor);
-        int y6 = Math.round(6.0f*nd_gc.scaling_factor);
-        int name_y = y + (nd_gc.boeing_style ? Math.round(12.0f*nd_gc.scaling_factor) : 0);
+        // int y6 = Math.round(6.0f*nd_gc.scaling_factor);
+        // int name_y = y + (nd_gc.boeing_style ? Math.round(12.0f*nd_gc.scaling_factor) : 0);
         // int x_points_triangle[] = { x-x5, x+x5, x };
         // int y_points_triangle[] = { y+y3, y+y3, y-y6  };
 
         AffineTransform original_at = g2.getTransform();
         g2.rotate(Math.toRadians(this.map_up), x, y);
-        
-        if (fix.on_awy)
-            g2.setColor(nd_gc.awy_wpt_color);
-        else
-            g2.setColor(nd_gc.term_wpt_color);
 
-        // Shift = 2 pixels
-        g2.drawImage((fix.on_awy)? nd_gc.fix_awy_symbol_img :nd_gc.fix_term_symbol_img, x-x5-2,y-y6-2, null); 
+        g2.drawImage((fix.on_awy)? nd_gc.fix_awy_symbol_img : nd_gc.fix_term_symbol_img, x-nd_gc.fix_shift_x,y-nd_gc.fix_shift_y, null); 
 
         // g2.drawPolygon(x_points_triangle, y_points_triangle, 3);
 
         if ( (fix.on_awy) || (nd_gc.map_range <= 20) || nd_gc.map_zoomin ) {
+            g2.setColor(fix.on_awy ? nd_gc.awy_wpt_color : nd_gc.term_wpt_color );
             g2.setFont(nd_gc.navaid_font);
-            g2.drawString(fix.name, name_x, name_y);
+            g2.drawString(fix.name, x+nd_gc.fix_name_x, y+nd_gc.fix_name_y);
         }
         g2.setTransform(original_at);
 

@@ -29,6 +29,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Frame;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -88,6 +89,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int map_center_y;
 
     public float pixels_per_nm;
+    public float pixels_per_deg;
 
     public int pixel_distance_plane_bottom_screen;
     public int pixel_distance_plane_lower_left_corner;
@@ -118,7 +120,9 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public boolean trk_up;
     public int map_range;
     public boolean map_zoomin;
-
+    
+    // Compass Rose 
+    public BufferedImage compass_rose_img;
     public Font compass_text_font;
     public Font compass_small_text_font;
     public int compass_two_digit_hdg_text_width = 0;
@@ -150,6 +154,10 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public Font navaid_font;
     public BufferedImage fix_awy_symbol_img;
     public BufferedImage fix_term_symbol_img;
+    public int fix_shift_x;
+    public int fix_shift_y;
+    public int fix_name_x;
+    public int fix_name_y;
     public BufferedImage ndb_symbol_img;
     public BufferedImage dme_symbol_img;
     public BufferedImage vor_symbol_img;
@@ -292,6 +300,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
                 this.rose_radius = this.map_center_y - this.rose_y_offset;
             }
             this.pixels_per_nm = (float)this.rose_radius / this.max_range; // float for better precision
+            this.pixels_per_deg = (float)Math.PI*this.rose_radius/180.0f;
             if ( zoomin ) this.pixels_per_nm *= 100.0f;
 
 
@@ -435,18 +444,26 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             compass_hdg_text_height = (int) (this.get_text_height(g2, this.compass_text_font)*0.8f);
             compass_hdg_small_text_height = (int) (this.get_text_height(g2, this.compass_small_text_font)*0.8f);
             
+            // BufferedImage to cache CompassRose SubComponenet
+            compass_rose_img = new BufferedImage(this.frame_size.width,this.frame_size.height,BufferedImage.TYPE_INT_ARGB);
+            
             
             // Moving Map Symbols
             navaid_font = (boeing_style ? font_s : font_l);
             fix_awy_symbol_img = create_fix_symbol(awy_wpt_color);
             fix_term_symbol_img = create_fix_symbol(term_wpt_color);
+            // Shift = 2 pixels
+            fix_shift_x = Math.round(5.0f*scaling_factor) - 2;
+            fix_shift_y = Math.round(6.0f*scaling_factor) - 2;
+            fix_name_x = Math.round((boeing_style ? 12.0f : 10.5f)*scaling_factor);
+            fix_name_y = (boeing_style ? Math.round(12.0f*scaling_factor) : 0);
             
-            ndb_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);;
-            dme_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);;
-            vor_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);;
-            vordme_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);;
-            loc_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);;
-            airport_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);;
+            ndb_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
+            dme_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
+            vor_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
+            vordme_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
+            loc_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
+            airport_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
             
             // clear the flags
             this.resized = false;
