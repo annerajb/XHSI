@@ -473,6 +473,8 @@ extern XPLMDataRef efis_pilot_shows_pos;
 extern XPLMDataRef efis_pilot_da_bug;
 extern XPLMDataRef efis_pilot_mins_mode;
 extern XPLMDataRef efis_pilot_map_zoomin;
+extern XPLMDataRef efis_pilot_chrono;
+extern XPLMDataRef efis_pilot_chrono_running;
 
 
 // custom datarefs - copilot
@@ -494,6 +496,8 @@ extern XPLMDataRef copilot_hsi_selector;
 extern XPLMDataRef efis_copilot_da_bug;
 extern XPLMDataRef efis_copilot_mins_mode;
 extern XPLMDataRef efis_copilot_map_zoomin;
+extern XPLMDataRef efis_copilot_chrono;
+extern XPLMDataRef efis_copilot_chrono_running;
 
 // Nose Wheel Steering
 extern XPLMDataRef nose_wheel_steer_on;
@@ -533,6 +537,7 @@ float   initCopilotCallback(float, float, int, void *);
 float   initEICASCallback(float, float, int, void *);
 float   initMFDCallback(float, float, int, void *);
 float   initCDUCallback(float, float, int, void *);
+float	computeChronoCallback(float, float, int, void *);
 
 void    unregisterPilotDataRefs(void);
 void    unregisterCopilotDataRefs(void);

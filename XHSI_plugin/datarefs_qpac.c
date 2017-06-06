@@ -271,6 +271,10 @@ XPLMDataRef qpac_eng1_anti_ice_lights;
 XPLMDataRef qpac_eng2_anti_ice;
 XPLMDataRef qpac_eng2_anti_ice_lights;
 
+// Chrono
+XPLMDataRef qpac_chrono_nd1;
+XPLMDataRef qpac_chrono_nd2;
+
 //qpac FCU toggles, push/pull commands, RMP, MCDU
 XPLMCommandRef qpac_command[QPAC_KEY_MAX];
 
@@ -545,6 +549,10 @@ void findQpacDataRefs(void) {
             qpac_eng1_anti_ice_lights = XPLMFindDataRef("AirbusFBW/ENG1AILights");
             qpac_eng2_anti_ice  = XPLMFindDataRef("AirbusFBW/ENG2AISwitch");
             qpac_eng2_anti_ice_lights = XPLMFindDataRef("AirbusFBW/ENG2AILights");
+
+            // Chrono (starting v2.0.3)
+            qpac_chrono_nd1   = XPLMFindDataRef("AirbusFBW/ChronoTimeND1");
+            qpac_chrono_nd2   = XPLMFindDataRef("AirbusFBW/ChronoTimeND2");
 
             //qpac fcu toggles and push/pull commands
             qpac_command[QPAC_KEY_TO_CONFIG] = XPLMFindCommand("AirbusFBW/TOConfigPress");

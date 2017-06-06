@@ -390,12 +390,20 @@ XPLMCommandRef auto_range_copilot;
 XPLMCommandRef auto_ext_range_pilot;
 XPLMCommandRef auto_ext_range_copilot;
 
+// Clock & Chrono
 XPLMCommandRef chr_start_stop_reset;
 XPLMCommandRef chr_start_stop;
 XPLMCommandRef chr_reset;
 
 XPLMCommandRef timer_start_stop;
 XPLMCommandRef timer_reset;
+
+XPLMCommandRef pilot_chrono_stop_reset;
+XPLMCommandRef pilot_chrono_start_stop;
+XPLMCommandRef pilot_chrono_reset;
+XPLMCommandRef copilot_chrono_stop_reset;
+XPLMCommandRef copilot_chrono_start_stop;
+XPLMCommandRef copilot_chrono_reset;
 
 XPLMCommandRef mfd_mode_arpt;
 XPLMCommandRef mfd_mode_fpln;
@@ -1937,6 +1945,43 @@ XPLMCommandCallback_f clock_handler(XPLMCommandRef inCommand, XPLMCommandPhase i
     return (XPLMCommandCallback_f)1;
 }
 
+// Chrono
+XPLMCommandCallback_f chrono_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        switch ( i )
+        {
+        	case 0 : // START-STOP-RESET
+        		if ( ( XPLMGetDataf(efis_pilot_chrono) == 0.0f ) || XPLMGetDatai(efis_pilot_chrono_running) ) {
+        			XPLMSetDatai(efis_pilot_chrono_running, XPLMGetDatai(efis_pilot_chrono_running) != 0 ? 0 : 1);
+        		} else
+        		    XPLMSetDataf(efis_pilot_chrono, 0.0f);
+        		break;
+        	case 1 : // START-STOP
+        		XPLMSetDatai(efis_pilot_chrono_running, XPLMGetDatai(efis_pilot_chrono_running) != 0 ? 0 : 1);
+        		break;
+        	case 2 : // RESET
+        		XPLMSetDataf(efis_pilot_chrono, 0.0f);
+        		break;
+        	case 3 : // START-STOP-RESET
+        		if ( ( XPLMGetDataf(efis_copilot_chrono) == 0.0f ) || XPLMGetDatai(efis_copilot_chrono_running) ) {
+        			XPLMSetDatai(efis_copilot_chrono_running, XPLMGetDatai(efis_copilot_chrono_running) != 0 ? 0 : 1);
+        		} else
+        		    XPLMSetDataf(efis_copilot_chrono, 0.0f);
+        		break;
+        	case 4 : // START-STOP
+        		XPLMSetDatai(efis_copilot_chrono_running, XPLMGetDatai(efis_copilot_chrono_running) != 0 ? 0 : 1);
+        		break;
+        	case 5 : // RESET
+        		XPLMSetDataf(efis_copilot_chrono, 0.0f);
+        		break;
+        }
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
 
 //// contact_atc
 //XPLMCommandCallback_f contact_atc_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon)
@@ -3010,6 +3055,20 @@ void registerCommands(void) {
     timer_start_stop = XPLMFindCommand("sim/instruments/timer_start_stop");
     timer_reset = XPLMFindCommand("sim/instruments/timer_reset");
 
+    // Chrono
+    pilot_chrono_stop_reset = XPLMCreateCommand("xhsi/nd_pilot/chr_start_stop_reset", "ND Pilot Chronograph start/stop/reset");
+    XPLMRegisterCommandHandler(pilot_chrono_stop_reset, (XPLMCommandCallback_f)chrono_handler, 1, (void *)0);
+    pilot_chrono_start_stop = XPLMCreateCommand("xhsi/nd_pilot/chr_start_stop", "ND Pilot Chronograph start/stop");
+    XPLMRegisterCommandHandler(pilot_chrono_start_stop, (XPLMCommandCallback_f)chrono_handler, 1, (void *)1);
+    pilot_chrono_reset = XPLMCreateCommand("xhsi/nd_pilot/chr_reset", "ND Pilot Chronograph reset");
+    XPLMRegisterCommandHandler(pilot_chrono_reset, (XPLMCommandCallback_f)chrono_handler, 1, (void *)2);
+    copilot_chrono_stop_reset = XPLMCreateCommand("xhsi/nd_copilot/chr_start_stop_reset", "ND Copilot Chronograph start/stop/reset");
+    XPLMRegisterCommandHandler(copilot_chrono_stop_reset, (XPLMCommandCallback_f)chrono_handler, 1, (void *)3);
+    copilot_chrono_start_stop = XPLMCreateCommand("xhsi/nd_copilot/chr_start_stop", "ND Copilot Chronograph start/stop");
+    XPLMRegisterCommandHandler(copilot_chrono_start_stop, (XPLMCommandCallback_f)chrono_handler, 1, (void *)4);
+    copilot_chrono_reset = XPLMCreateCommand("xhsi/nd_copilot/chr_reset", "ND Copilot Chronograph reset");
+    XPLMRegisterCommandHandler(copilot_chrono_reset, (XPLMCommandCallback_f)chrono_handler, 1, (void *)5);
+
 
     // special case: use these existing commands to flip active/standby radios
     // (typos are Laminar Research's, not ours!)
@@ -3531,10 +3590,18 @@ void unregisterCommands(void) {
     XPLMUnregisterCommandHandler(auto_ext_range_copilot, (XPLMCommandCallback_f)auto_ext_range_handler, 1, (void *)EFIS_COPILOT);
 
 
-    // chronometer
+    // Main chronometer
     XPLMUnregisterCommandHandler(chr_start_stop_reset, (XPLMCommandCallback_f)clock_handler, 1, (void *)0);
     XPLMUnregisterCommandHandler(chr_start_stop, (XPLMCommandCallback_f)clock_handler, 1, (void *)1);
     XPLMUnregisterCommandHandler(chr_reset, (XPLMCommandCallback_f)clock_handler, 1, (void *)2);
+
+    // ND Chronometers
+    XPLMUnregisterCommandHandler(pilot_chrono_stop_reset, (XPLMCommandCallback_f)chrono_handler, 1, (void *)0);
+    XPLMUnregisterCommandHandler(pilot_chrono_start_stop, (XPLMCommandCallback_f)chrono_handler, 1, (void *)1);
+    XPLMUnregisterCommandHandler(pilot_chrono_reset, (XPLMCommandCallback_f)clock_handler, 1, (void *)2);
+    XPLMUnregisterCommandHandler(copilot_chrono_stop_reset, (XPLMCommandCallback_f)chrono_handler, 1, (void *)3);
+    XPLMUnregisterCommandHandler(copilot_chrono_start_stop, (XPLMCommandCallback_f)chrono_handler, 1, (void *)4);
+    XPLMUnregisterCommandHandler(copilot_chrono_reset, (XPLMCommandCallback_f)clock_handler, 1, (void *)5);
 
 //    // cancel the interception of a standard X-Plane command
 //    XPLMUnregisterCommandHandler(contact_atc_cmd, (XPLMCommandCallback_f)contact_atc_handler, 1, (void *)0);

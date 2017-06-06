@@ -18,6 +18,7 @@
 //#include "XPStandardWidgets.h"
 
 
+#include "plugin.h"
 #include "commands.h"
 #include "globals.h"
 #include "structs.h"
@@ -65,6 +66,8 @@ XPLMDataRef efis_pilot_shows_pos;
 XPLMDataRef efis_pilot_da_bug;
 XPLMDataRef efis_pilot_mins_mode;
 XPLMDataRef efis_pilot_map_zoomin;
+XPLMDataRef efis_pilot_chrono;
+XPLMDataRef efis_pilot_chrono_running;
 
 // custom datarefs - copilot
 XPLMDataRef efis_copilot_map_range_selector;
@@ -85,6 +88,8 @@ XPLMDataRef copilot_hsi_selector;
 XPLMDataRef efis_copilot_da_bug;
 XPLMDataRef efis_copilot_mins_mode;
 XPLMDataRef efis_copilot_map_zoomin;
+XPLMDataRef efis_copilot_chrono;
+XPLMDataRef efis_copilot_chrono_running;
 
 // standard datarefs
 XPLMDataRef groundspeed;
@@ -810,6 +815,27 @@ void	setPilotMapRange100(void* inRefcon, int inValue)
       pilot_map_zoomin = inValue;
 }
 
+// xhsi/nd_pilot/chrono
+float pilot_chrono;
+float    getPilotChrono(void* inRefcon)
+{
+    return pilot_chrono;
+}
+void	setPilotChrono(void* inRefcon, float inValue)
+{
+	pilot_chrono = inValue;
+}
+
+// xhsi/nd_pilot/chrono_run
+int pilot_chrono_run; // Boolean
+int    getPilotChronoRun(void* inRefcon)
+{
+    return pilot_chrono_run;
+}
+void	setPilotChronoRun(void* inRefcon, int inValue)
+{
+	pilot_chrono_run = inValue != 0 ? 1 : 0;
+}
 
 // custom datarefs for copilot
 
@@ -1000,6 +1026,29 @@ void	setCopilotMapRange100(void* inRefcon, int inValue)
       copilot_map_zoomin = inValue;
 }
 
+// xhsi/nd_copilot/chrono
+float copilot_chrono;
+float    getCopilotChrono(void* inRefcon)
+{
+    return copilot_chrono;
+}
+void	setCopilotChrono(void* inRefcon, float inValue)
+{
+	copilot_chrono = inValue;
+}
+
+// xhsi/nd_copilot/chrono_run
+int copilot_chrono_run; // Boolean
+int    getCopilotChronoRun(void* inRefcon)
+{
+    return copilot_chrono_run;
+}
+void	setCopilotChronoRun(void* inRefcon, int inValue)
+{
+	copilot_chrono_run = inValue != 0 ? 1 : 0;
+}
+
+
 //// xhsi/rtu/contact_atc
 //int contact_atc;
 //int     getContactATC(void* inRefcon)
@@ -1073,6 +1122,21 @@ void registerPilotDataRefs(void) {
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getPilotMapRange100, setPilotMapRange100,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_pilot/chrono_elapsed
+    efis_pilot_chrono = XPLMRegisterDataAccessor("xhsi/nd_pilot/chrono_elapsed",
+                                        xplmType_Float,                                  // The types we support
+                                        1,                                               // Writable
+                                        NULL, NULL,
+                                        getPilotChrono, setPilotChrono,                  // Float accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_pilot/chrono_run
+    efis_pilot_chrono_running = XPLMRegisterDataAccessor("xhsi/nd_pilot/chrono_running",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getPilotChronoRun, setPilotChronoRun,            // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
@@ -1216,6 +1280,21 @@ void registerCopilotDataRefs(void) {
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getCopilotMapRange100, setCopilotMapRange100,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_copilot/chrono_elapsed
+    efis_copilot_chrono = XPLMRegisterDataAccessor("xhsi/nd_copilot/chrono_elapsed",
+                                        xplmType_Float,                                  // The types we support
+                                        1,                                               // Writable
+                                        NULL, NULL,
+                                        getCopilotChrono, setCopilotChrono,              // Float accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_copilot/chrono_running
+    efis_copilot_chrono_running = XPLMRegisterDataAccessor("xhsi/nd_copilot/chrono_running",
+    									xplmType_Int,                                  // The types we support
+                                        1,                                               // Writable
+                                        getCopilotChronoRun, setCopilotChronoRun,        // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
@@ -1411,6 +1490,8 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/data");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/pos");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/map_zoomin");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/chrono");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/chrono_run");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_pilot/da_bug");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_pilot/mins_mode");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/map_range");
@@ -1428,6 +1509,8 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/map_mode");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/nav_source");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/map_zoomin");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/chrono");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/chrono_run");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/da_bug");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/mins_mode");
 //        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rtu/contact_atc");
@@ -1501,6 +1584,12 @@ float initPilotCallback(
     // normal scale
     XPLMSetDatai(efis_pilot_map_zoomin, 0);
 
+    // chrono at 00:00
+    XPLMSetDataf(efis_pilot_chrono, 0);
+
+    // chrono stop
+    XPLMSetDatai(efis_pilot_chrono_running, 0);
+
 
     XPLMDebugString("XHSI: custom pilot DataRefs initialized\n");
 
@@ -1570,6 +1659,11 @@ float initCopilotCallback(
     // scale * 100
     XPLMSetDatai(efis_copilot_map_zoomin, 1);
 
+    // chrono at 00:00
+    XPLMSetDataf(efis_copilot_chrono, 0);
+
+    // chrono stop
+    XPLMSetDatai(efis_copilot_chrono_running, 0);
 
     XPLMDebugString("XHSI: custom copilot DataRefs initialized\n");
 
@@ -1688,6 +1782,12 @@ void unregisterPilotDataRefs(void) {
     // xhsi/nd_pilot/map_zoomin
     XPLMUnregisterDataAccessor(efis_pilot_map_zoomin);
 
+    // xhsi/nd_pilot/chrono
+    XPLMUnregisterDataAccessor(efis_pilot_chrono);
+
+    // xhsi/nd_pilot/chrono_run
+    XPLMUnregisterDataAccessor(efis_pilot_chrono_running);
+
 }
 
 
@@ -1744,6 +1844,11 @@ void unregisterCopilotDataRefs(void) {
     // xhsi/nd_copilot/map_zoomin
     XPLMUnregisterDataAccessor(efis_copilot_map_zoomin);
 
+    // xhsi/nd_copilot/chrono
+    XPLMUnregisterDataAccessor(efis_copilot_chrono);
+
+    // xhsi/nd_copilot/chrono_run
+    XPLMUnregisterDataAccessor(efis_copilot_chrono_running);
 }
 
 void unregisterGeneralDataRefs(void) {
@@ -1805,6 +1910,29 @@ void unregisterCDUDataRefs(void) {
 }
 
 
+float computeChronoCallback(
+                                   float	inElapsedSinceLastCall,
+                                   float	inElapsedTimeSinceLastFlightLoop,
+                                   int		inCounter,
+                                   void *	inRefcon) {
+	int sim_run = !XPLMGetDatai(sim_paused);
+	float chrono;
+	int chrono_running;
+	// Compute ND Chronometers
+	if (xhsi_plugin_enabled && sim_run) {
+		chrono=XPLMGetDataf(efis_pilot_chrono);
+		chrono_running=XPLMGetDatai(efis_pilot_chrono_running);
+	    if (chrono_running) {
+	    	XPLMSetDataf(efis_pilot_chrono, chrono + inElapsedSinceLastCall);
+	    }
+		chrono=XPLMGetDataf(efis_copilot_chrono);
+		chrono_running=XPLMGetDatai(efis_copilot_chrono_running);
+	    if (chrono_running) {
+	    	XPLMSetDataf(efis_copilot_chrono, chrono + inElapsedSinceLastCall);
+	    }
+	}
+	return 1.0f;
+}
 
 void findDataRefs(void) {
 
@@ -2838,7 +2966,26 @@ void writeDataRef(int id, float value) {
                 case 2 :
                     XPLMCommandOnce(chr_reset);
                     break;
+                case 3 :
+                    XPLMCommandOnce(pilot_chrono_stop_reset);
+                    break;
+                case 4 :
+                    XPLMCommandOnce(pilot_chrono_start_stop);
+                    break;
+                case 5 :
+                    XPLMCommandOnce(pilot_chrono_reset);
+                    break;
+                case 6 :
+                    XPLMCommandOnce(copilot_chrono_stop_reset);
+                    break;
+                case 7 :
+                    XPLMCommandOnce(copilot_chrono_start_stop);
+                    break;
+                case 8 :
+                    XPLMCommandOnce(copilot_chrono_reset);
+                    break;
             }
+
             break;
 
     }

@@ -293,6 +293,11 @@ PLUGIN_API int XPluginEnable(void) {
             -1.0f,
             NULL);
 
+    // Compute Chronometer
+    XPLMRegisterFlightLoopCallback(
+    		computeChronoCallback,
+            -1.0f,
+            NULL);
 
     XPLMDebugString("XHSI: flightloop callbacks registered\n");
 
@@ -342,6 +347,8 @@ PLUGIN_API void XPluginDisable(void) {
     XPLMUnregisterFlightLoopCallback(sendXfmcCallback, NULL);
     XPLMUnregisterFlightLoopCallback(sendQpacMsgCallback, NULL);
     XPLMUnregisterFlightLoopCallback(sendJar_a320MsgCallback, NULL);
+
+    XPLMUnregisterFlightLoopCallback(computeChronoCallback, NULL);
 
     XPLMDebugString("XHSI: flightloop callbacks unregistered\n");
 
