@@ -439,6 +439,11 @@ extern XPLMDataRef qpac_eng1_anti_ice_lights;
 extern XPLMDataRef qpac_eng2_anti_ice;
 extern XPLMDataRef qpac_eng2_anti_ice_lights;
 
+// Chrono
+extern XPLMDataRef qpac_chrono_nd1;
+extern XPLMDataRef qpac_chrono_nd2;
+
+
 //qpac FCU toggles, push/pull commands, RMP, MCDU
 extern XPLMCommandRef qpac_command[QPAC_KEY_MAX];
 

@@ -987,7 +987,9 @@ int createAvionicsPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_PILOT_MAP_ZOOMIN);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_pilot_map_zoomin));
     i++;
-
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_PILOT_ELAPSED_TIME_SEC);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(efis_pilot_chrono));
+    i++;
 // copilot
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_COPILOT_HSI_SOURCE);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(copilot_hsi_selector));
@@ -1043,7 +1045,9 @@ int createAvionicsPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_COPILOT_MAP_ZOOMIN);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_copilot_map_zoomin));
     i++;
-
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_COPILOT_ELAPSED_TIME_SEC);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(efis_copilot_chrono));
+    i++;
 
 // EICAS
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_ENGINE_TYPE);

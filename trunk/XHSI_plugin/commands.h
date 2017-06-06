@@ -64,6 +64,15 @@ extern XPLMCommandRef chr_start_stop_reset;
 extern XPLMCommandRef chr_start_stop;
 extern XPLMCommandRef chr_reset;
 
+extern XPLMCommandRef pilot_chrono_stop_reset;
+extern XPLMCommandRef pilot_chrono_start_stop;
+extern XPLMCommandRef pilot_chrono_reset;
+
+extern XPLMCommandRef copilot_chrono_stop_reset;
+extern XPLMCommandRef copilot_chrono_start_stop;
+extern XPLMCommandRef copilot_chrono_reset;
+
+
 extern XPLMCommandRef sim_annunciator_clear_master_warning;
 extern XPLMCommandRef sim_annunciator_clear_master_caution;
 extern XPLMCommandRef sim_annunciator_clear_master_accept;
