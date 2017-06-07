@@ -166,13 +166,38 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public BufferedImage airport_symbol_img;
     
     // RadioLabel & Radio info box -> rib prefix
-    int rib_width;
-    int rib_line_1;
-    int rib_line_2;
-    int rib_line_3;
-    int rib_line_4;
-    int rib_height;
+    public int rib_width;
+    public int rib_line_1;
+    public int rib_line_2;
+    public int rib_line_3;
+    public int rib_line_4;
+    public int rib_height;
+    public int radio1_text_x;
+    public int radio2_text_x;
+    public int radio1_arrow_x;
+    public int radio2_arrow_x;
+    public int radio1_box_x;
+    public int radio2_box_x;
+    public int radio_box_y;
+    public BufferedImage left_radio_box_img;
+    public BufferedImage right_radio_box_img;
 
+    // Clock - Time - Chrono
+    public Font clock_font;
+    public int clock_time_x;
+    public int clock_time_y;
+    public int clock_box_x;
+    public int clock_box_y;
+    public int clock_box_w;
+    public int clock_box_h;
+    public int chrono_time_x;
+    public int chrono_time_y;
+    public int chrono_box_x;
+    public int chrono_box_y;
+    public int chrono_box_w;
+    public int chrono_box_h;
+    public BufferedImage clock_img;
+    public BufferedImage chrono_img;
     
     public int arrow_length;
     public int arrow_base_width;
@@ -247,6 +272,25 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             rib_line_4 = rib_line_3 + line_height_s;
             rib_height = rib_line_4 + line_height_l/2;
             rib_width = digit_width_l * 9;
+            left_radio_box_img = new BufferedImage(rib_width, rib_height, BufferedImage.TYPE_INT_ARGB);
+            right_radio_box_img = new BufferedImage(rib_width, rib_height, BufferedImage.TYPE_INT_ARGB);
+            if (boeing_style) {
+            	radio1_text_x = digit_width_l;
+            	radio2_text_x = digit_width_l * 25/10;
+            	radio1_arrow_x = rib_width - digit_width_l;
+            	radio2_arrow_x = digit_width_l;
+            	radio1_box_x = border_left;
+            	radio2_box_x = frame_size.width - border_right - rib_width;
+            	radio_box_y = frame_size.height - rib_height - border_bottom;
+            } else {
+                radio2_text_x = digit_width_l;
+                radio1_text_x = digit_width_l * 25/10;
+                radio2_arrow_x = rib_width - digit_width_l;
+                radio1_arrow_x = digit_width_l;
+                radio1_box_x = border_left;
+                radio2_box_x = frame_size.width - border_right - rib_width;
+                radio_box_y = frame_size.height - rib_height - border_bottom;
+            }
             
             // set some booleans for easy checking
             if ( preferences.get_airbus_modes() ) {
@@ -464,6 +508,44 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             vordme_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
             loc_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
             airport_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
+            
+            
+            // Clock - Time - Chrono
+            if (boeing_style) {
+            	clock_font = font_s;
+            	
+            	clock_box_x = map_center_x - digit_width_s*6;
+            	clock_box_y	= panel_rect.y + panel_rect.height - line_height_s*3/2;
+            	clock_box_w = digit_width_s*12;
+            	clock_box_h = line_height_s*5/4;
+            	clock_time_y = line_height_s;
+            	clock_time_x = digit_width_s*13/2;           
+            	
+            	chrono_box_x = map_center_x - digit_width_s*6;
+            	chrono_box_y= panel_rect.y + panel_rect.height - line_height_s*5/2;
+            	chrono_box_w = digit_width_s*12;
+            	chrono_box_h = line_height_s*5/4;
+            	chrono_time_y = line_height_s;
+            	chrono_time_x = digit_width_s*13/2;
+            } else {
+            	clock_font = font_xl;
+      
+            	clock_box_x = map_center_x - digit_width_xl*11/2;
+            	clock_box_y	= panel_rect.y + panel_rect.height - line_height_xl*3/2;
+            	clock_box_w = digit_width_xl*11;
+            	clock_box_h = line_height_xl*2;
+            	clock_time_y = line_height_xl;
+            	clock_time_x = digit_width_s*16/2;   
+            	
+            	chrono_box_x = border_left;
+            	chrono_box_y = radio_box_y - line_height_xl*5/4;
+            	chrono_box_w = digit_width_xl*7;
+            	chrono_box_h = line_height_xl*5/4;
+            	chrono_time_y = line_height_xl;
+            	chrono_time_x = digit_width_xl;
+            }
+            clock_img = new BufferedImage(clock_box_w,clock_box_h,BufferedImage.TYPE_INT_ARGB);
+            chrono_img = new BufferedImage(chrono_box_w,chrono_box_h,BufferedImage.TYPE_INT_ARGB);
             
             // clear the flags
             this.resized = false;

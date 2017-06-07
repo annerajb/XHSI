@@ -23,6 +23,7 @@
 */
 package net.sourceforge.xhsi.flightdeck.nd;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -49,7 +50,16 @@ import net.sourceforge.xhsi.model.RadioNavBeacon;
 public class RadioLabel extends NDSubcomponent {
 
     private static final long serialVersionUID = 1L;
+    
+    public static boolean USE_BUFFERED_IMAGE = true;
 
+    
+    private long left_refreshed_timestamp;
+    private long right_refreshed_timestamp;
+    
+    private Graphics2D g2_left;
+    private Graphics2D g2_right;
+    
     BufferedImage left_radio_box_buf_image;
     BufferedImage right_radio_box_buf_image;
 
@@ -64,7 +74,7 @@ public class RadioLabel extends NDSubcomponent {
     public static DecimalFormat far_dme_formatter;
     public static DecimalFormat degrees_formatter;
 
-    int radio_label_y;
+    // int radio_label_y;
     int dme_text_width = 0;
 
     /*
@@ -231,6 +241,8 @@ public class RadioLabel extends NDSubcomponent {
         RadioLabel.near_dme_formatter.setDecimalFormatSymbols(symbols);
         RadioLabel.far_dme_formatter.setDecimalFormatSymbols(symbols);
         RadioLabel.degrees_formatter = new DecimalFormat("000");
+        left_refreshed_timestamp = 0;
+        right_refreshed_timestamp = 0;
     }
 
 
@@ -239,7 +251,7 @@ public class RadioLabel extends NDSubcomponent {
         if ( nd_gc.powered ) {
 
             dme_text_width = nd_gc.get_text_width(g2, nd_gc.font_xs, "DME ");
-            radio_label_y = nd_gc.frame_size.height - nd_gc.rib_height - nd_gc.border_bottom;
+            // radio_label_y = nd_gc.frame_size.height - nd_gc.rib_height - nd_gc.border_bottom;
 
             // get currently tuned in radios
             this.selected_radio1 = this.avionics.get_selected_radio(1);
@@ -248,20 +260,55 @@ public class RadioLabel extends NDSubcomponent {
             
             if (this.selected_radio1 != null) {
                 this.radio1_box_info = new RadioBoxInfo(this.selected_radio1);
-                this.left_radio_box_buf_image = create_buffered_image(nd_gc.rib_width, nd_gc.rib_height);
-                Graphics2D gImg = get_graphics(this.left_radio_box_buf_image);
-                draw_radio_box_info(gImg, this.radio1_box_info, nd_gc.digit_width_l, 1, nd_gc.rib_width - nd_gc.digit_width_l);
-                gImg.dispose();
-                g2.drawImage(this.left_radio_box_buf_image, this.nd_gc.border_left, radio_label_y, null);
+                boolean refresh_radio1 = true;
+            	if (USE_BUFFERED_IMAGE) {
+            		g2_left = nd_gc.left_radio_box_img.createGraphics();
+            		g2_left.setRenderingHints(nd_gc.rendering_hints);
+            		g2_left.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+            		if (refresh_radio1) {
+            			left_refreshed_timestamp = System.currentTimeMillis();
+            			// Clear the buffered Image first
+            			g2_left.setComposite(AlphaComposite.Clear);
+            			g2_left.fillRect(0, 0, nd_gc.frame_size.width, nd_gc.frame_size.height);
+            			g2_left.setComposite(AlphaComposite.SrcOver);
+                		draw_radio_box_info(g2_left, this.radio1_box_info, nd_gc.radio1_text_x, 1, nd_gc.radio1_arrow_x);
+                		// gImg.dispose();
+                		g2.drawImage(nd_gc.left_radio_box_img, nd_gc.radio1_box_x, nd_gc.radio_box_y, null);
+            		}
+            	} else {
+                    // left_radio_box_img
+            		this.left_radio_box_buf_image = create_buffered_image(nd_gc.rib_width, nd_gc.rib_height);
+            		Graphics2D gImg = get_graphics(this.left_radio_box_buf_image);
+            		draw_radio_box_info(gImg, this.radio1_box_info, nd_gc.radio1_text_x, 1, nd_gc.radio1_arrow_x);
+            		gImg.dispose();
+            		g2.drawImage(this.left_radio_box_buf_image, nd_gc.radio1_box_x, nd_gc.radio_box_y, null);
+            	}
             }
 
             if (this.selected_radio2 != null) {
                 this.radio2_box_info = new RadioBoxInfo(this.selected_radio2);
-                this.right_radio_box_buf_image = create_buffered_image(nd_gc.rib_width, nd_gc.rib_height);
-                Graphics2D gImg = get_graphics(this.right_radio_box_buf_image);
-                draw_radio_box_info(gImg, this.radio2_box_info, nd_gc.digit_width_l * 25/10, 2, nd_gc.digit_width_l);
-                gImg.dispose();
-                g2.drawImage(this.right_radio_box_buf_image, this.nd_gc.frame_size.width - this.nd_gc.border_right - nd_gc.rib_width, radio_label_y, null);
+                boolean refresh_radio2 = true;
+            	if (USE_BUFFERED_IMAGE) {
+            		g2_right = nd_gc.right_radio_box_img.createGraphics();
+            		g2_right.setRenderingHints(nd_gc.rendering_hints);
+            		g2_right.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+            		if (refresh_radio2) {
+            			right_refreshed_timestamp = System.currentTimeMillis();
+            			// Clear the buffered Image first
+            			g2_right.setComposite(AlphaComposite.Clear);
+            			g2_right.fillRect(0, 0, nd_gc.frame_size.width, nd_gc.frame_size.height);
+            			g2_right.setComposite(AlphaComposite.SrcOver);
+                		draw_radio_box_info(g2_right, this.radio2_box_info, nd_gc.radio2_text_x, 2, nd_gc.radio2_arrow_x);
+                		// gImg.dispose();
+                		g2.drawImage(nd_gc.right_radio_box_img, nd_gc.radio2_box_x, nd_gc.radio_box_y, null);
+            		}
+            	} else {
+            		this.right_radio_box_buf_image = create_buffered_image(nd_gc.rib_width, nd_gc.rib_height);
+            		Graphics2D gImg = get_graphics(this.right_radio_box_buf_image);
+            		draw_radio_box_info(gImg, this.radio2_box_info, nd_gc.radio2_text_x, 2, nd_gc.radio2_arrow_x);
+            		gImg.dispose();
+            		g2.drawImage(this.right_radio_box_buf_image, nd_gc.radio2_box_x, nd_gc.radio_box_y, null);
+            	}
             }
 
         }
@@ -298,9 +345,9 @@ public class RadioLabel extends NDSubcomponent {
                 RadioHeadingArrowsHelper.draw_nav1_forward_arrow(g2, arrow_x, arrow_t, arrow_l, arrow_w);
             if ( radio_box_info.draw_arrow && arrow_type==2 && nd_gc.boeing_style)
                 RadioHeadingArrowsHelper.draw_nav2_forward_arrow(g2, arrow_x, arrow_t, arrow_l, arrow_w);
-            if ( radio_box_info.draw_arrow && arrow_type==1 && nd_gc.airbus_style)
+            if ( radio_box_info.draw_arrow && arrow_type==1 && nd_gc.airbus_style && radio_box_info.receiving)
                 RadioHeadingArrowsHelper.draw_nav1_airbus_forward_arrow(g2, arrow_x, arrow_t, arrow_l, arrow_w, selected_radio1.freq_is_adf());
-            if ( radio_box_info.draw_arrow && arrow_type==2 && nd_gc.airbus_style)
+            if ( radio_box_info.draw_arrow && arrow_type==2 && nd_gc.airbus_style && radio_box_info.receiving)
                 RadioHeadingArrowsHelper.draw_nav2_airbus_forward_arrow(g2, arrow_x, arrow_t, arrow_l, arrow_w, selected_radio2.freq_is_adf());
 
             g2.setStroke(original_stroke);

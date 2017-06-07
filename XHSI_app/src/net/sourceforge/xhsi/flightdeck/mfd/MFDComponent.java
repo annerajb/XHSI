@@ -62,7 +62,7 @@ public class MFDComponent extends Component implements Observer, PreferencesObse
 
     // subcomponents --------------------------------------------------------
     ArrayList subcomponents = new ArrayList();
-    long[] subcomponent_paint_times = new long[15];
+    long[] subcomponent_paint_times = new long[20];
     long total_paint_times = 0;
     long nb_of_paints = 0;
     Graphics2D g2;
