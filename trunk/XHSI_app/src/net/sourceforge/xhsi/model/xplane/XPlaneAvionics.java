@@ -879,7 +879,21 @@ public class XPlaneAvionics implements Avionics, Observer {
         }
 
     }
-
+    
+    public float efis_chrono_elapsed_time() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) 
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_ELAPSED_TIME_SEC);
+    	else
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_ELAPSED_TIME_SEC);
+    }
+    
+    public float efis_chrono_elapsed_time(InstrumentSide side) {
+    	if ( side == InstrumentSide.PILOT ) 
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_ELAPSED_TIME_SEC);
+    	else
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_ELAPSED_TIME_SEC);
+    }
+    
     public int qpac_get_mfd_mode() {
     	int sd_page = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_SD_PAGE);
     	switch (sd_page) {

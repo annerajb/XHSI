@@ -226,6 +226,12 @@ public interface Avionics {
     public boolean efis_shows_pos();
 
     /**
+     * @return float - EFIS Chronometer elapsed time (used for the ND)
+     */
+    public float efis_chrono_elapsed_time();
+    public float efis_chrono_elapsed_time(InstrumentSide side);
+    
+    /**
      * @return NavigationRadio - model class representing the currently selected radio or null, if none is selected
      */
     public NavigationRadio get_selected_radio(int bank);

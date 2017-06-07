@@ -81,6 +81,7 @@ public class GraphicsConfig implements ComponentListener {
     public Color color_seagreen = new Color(0x2E8B57);
     public Color color_palegreen = new Color(0x98FB98);
     public Color color_verypalegreen = new Color(0xCCFFCC);
+    public Color color_darkpalegreen = new Color(0x227722);
     public Color color_verydarkgreen = new Color(0x003400);
 
     // red, orange, brown
@@ -245,7 +246,9 @@ public class GraphicsConfig implements ComponentListener {
     public Color brightground_color;
     public Color instrument_background_color;
     public Color fpv_color;
-    public Color clock_color;
+    public Color clock_color;   
+    public Color chrono_background_color;
+    public Color chrono_color;
     
     // ECAM COLORS
     public Color ecam_caution_color;
@@ -661,6 +664,8 @@ public class GraphicsConfig implements ComponentListener {
                 range_arc_color = Color.WHITE; 
                 range_label_color = Color.cyan;
                 aircraft_color = Color.YELLOW;
+                chrono_background_color = color_airbusgray; // color_darkpalegreen.darker();
+                chrono_color = Color.GREEN.brighter();
             } else {
                 navaid_color = color_boeingcyan;
                 term_wpt_color = color_cornflowerblue.darker();
@@ -696,6 +701,8 @@ public class GraphicsConfig implements ComponentListener {
                 range_arc_color = Color.DARK_GRAY; // was: Color.GRAY
                 range_label_color = dim_markings_color;
                 aircraft_color = Color.WHITE;
+                chrono_background_color = Color.BLACK;
+                chrono_color = Color.WHITE;
             }
 
             
@@ -843,6 +850,15 @@ public class GraphicsConfig implements ComponentListener {
             brightground_color = color_ground.brighter();            
             fpv_color = Color.WHITE;
             clock_color = Color.WHITE;
+            
+            // Navigation Display Colors
+            if ( this.settings.style == Avionics.STYLE_AIRBUS ) {
+                chrono_background_color = color_darkpalegreen;
+                chrono_color = Color.GREEN;
+            } else {
+                chrono_background_color = Color.BLACK;
+                chrono_color = Color.WHITE;
+        	}
             
             // ECAM COLORS
         	ecam_warning_color = Color.red;
