@@ -64,6 +64,10 @@ public class StatusBar extends ConWinSubcomponent {
     int nav_db_status_y;
     int nav_db_text_width = 0;
 
+    int egpws_db_status_x;
+    int egpws_db_status_y;
+    int egpws_db_text_width = 0;
+    
     int utc_x;
     int utc_y;
     int utc_text_width = 0;
@@ -119,6 +123,11 @@ public class StatusBar extends ConWinSubcomponent {
                 nav_db_text_width = this.gc.get_text_width(g2, this.gc.font_statusbar, "NAV DB 2000.99");
             }
 
+            // compute egpws db text width only once
+            if (egpws_db_text_width == 0) {
+            	egpws_db_text_width = this.gc.get_text_width(g2, this.gc.font_statusbar, "EGPWS DB 000");
+            }
+            
             // compute UTC time width only once
             if (utc_text_width == 0) {
                 utc_text_width = this.gc.get_text_width(g2, this.gc.font_statusbar, "00:00:00");
@@ -134,12 +143,16 @@ public class StatusBar extends ConWinSubcomponent {
             nav_db_status_x = gc.panel_size.width - gc.border_right - nav_db_text_width;
             nav_db_status_y = ConWinGraphicsConfig.STATUS_BAR_HEIGHT - 25;
 
-            utc_x = gc.panel_size.width - gc.border_right - nav_db_text_width - 65 - utc_text_width;
+            egpws_db_status_x = nav_db_status_x - egpws_db_text_width;
+            egpws_db_status_y = ConWinGraphicsConfig.STATUS_BAR_HEIGHT - 25;
+            
+            utc_x = gc.panel_size.width - gc.border_right - nav_db_text_width - egpws_db_text_width - 65 - utc_text_width;
             utc_y = ConWinGraphicsConfig.STATUS_BAR_HEIGHT - 25;
 
             draw_data_source(g2);
             draw_frame_rate(g2);
             draw_nav_db_status(g2);
+            draw_egpws_db_status(g2);
             draw_utc_clock(g2);
     }
 
@@ -194,6 +207,20 @@ public class StatusBar extends ConWinSubcomponent {
 
     }
 
+    public void draw_egpws_db_status(Graphics2D g2) {
+
+        g2.setColor(Color.BLACK);
+        g2.setFont(gc.font_statusbar);
+        g2.drawString("EGPWS DB", egpws_db_status_x, egpws_db_status_y+13);
+
+        if (XHSIStatus.egpws_db_status.equals(XHSIStatus.STATUS_EGPWS_DB_NOT_FOUND)) {
+            g2.setColor(Color.RED);
+            // cross out text
+            g2.drawLine(egpws_db_status_x+15, egpws_db_status_y+14, egpws_db_status_x+30, egpws_db_status_y+2);
+            g2.drawLine(egpws_db_status_x+15, egpws_db_status_y+2, egpws_db_status_x+30, egpws_db_status_y+14);
+        }
+
+    }
 
     public void draw_utc_clock(Graphics2D g2) {
 

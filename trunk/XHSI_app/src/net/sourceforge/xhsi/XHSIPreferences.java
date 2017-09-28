@@ -44,6 +44,7 @@ public class XHSIPreferences {
     
     // SYSTEM
     public static final String PREF_APTNAV_DIR = "aptnav.dir";
+    public static final String PREF_EGPWS_DB_DIR = "egpws_database.dir";
     public static final String PREF_REPLAY_DELAY_PER_FRAME = "replay.steps.delay";
     public static final String PREF_PORT = "port";
     public static final String PREF_GROUP = "multicast.group";
@@ -997,7 +998,12 @@ public class XHSIPreferences {
             this.preferences.setProperty(PREF_APTNAV_DIR, ".");
             this.unsaved_changes = true;
         }
-
+        
+        if ( ! this.preferences.containsKey(PREF_EGPWS_DB_DIR) ) {
+            this.preferences.setProperty(PREF_EGPWS_DB_DIR, ".");
+            this.unsaved_changes = true;
+        }
+        
         if ( ! this.preferences.containsKey(PREF_REPLAY_DELAY_PER_FRAME) ) {
             this.preferences.setProperty(PREF_REPLAY_DELAY_PER_FRAME, "50");
             this.unsaved_changes = true;
@@ -1397,6 +1403,28 @@ public class XHSIPreferences {
         } else {
             logger.fine("Navigation databases found");
             XHSIStatus.nav_db_status = XHSIStatus.STATUS_NAV_DB_NOT_LOADED;
+        }
+        
+        // verify that EGPWS directory exists
+        if (new File(this.preferences.getProperty(PREF_EGPWS_DB_DIR)).exists() == false) {
+            logger.severe("Globe EGPWS Elevation Resources directory not found. Will not read EGPWS data!");
+            XHSIStatus.egpws_db_status = XHSIStatus.STATUS_EGPWS_DB_NOT_FOUND;
+        } else if (
+                ! ( new File(this.preferences.getProperty(PREF_EGPWS_DB_DIR) + "/a10g").exists() ) ||
+                ! ( new File(this.preferences.getProperty(PREF_EGPWS_DB_DIR) + "/b10g").exists() ) ||
+                ! ( new File(this.preferences.getProperty(PREF_EGPWS_DB_DIR) + "/c10g").exists() ) ||
+                ! ( new File(this.preferences.getProperty(PREF_EGPWS_DB_DIR) + "/d10g").exists() ) ||
+                ! ( new File(this.preferences.getProperty(PREF_EGPWS_DB_DIR) + "/e10g").exists() ) ||
+                ! ( new File(this.preferences.getProperty(PREF_EGPWS_DB_DIR) + "/f10g").exists() ) ||
+                ! ( new File(this.preferences.getProperty(PREF_EGPWS_DB_DIR) + "/g10g").exists() ) ||
+                ! ( new File(this.preferences.getProperty(PREF_EGPWS_DB_DIR) + "/h10g").exists() )
+                )
+        {
+            logger.warning("One or more of the Globe EGPWS elevation databases (a10g, b10g...) could not be found!");
+            XHSIStatus.egpws_db_status = XHSIStatus.STATUS_EGPWS_DB_NOT_FOUND;
+        } else {
+            logger.fine("Globe EGPWS Elevation database found");
+            XHSIStatus.egpws_db_status = XHSIStatus.STATUS_EGPWS_DB_NOT_LOADED;
         }
     }
 

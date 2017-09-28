@@ -55,6 +55,7 @@ import javax.swing.JOptionPane;
 import net.sourceforge.xhsi.model.ModelFactory;
 
 import net.sourceforge.xhsi.model.aptnavdata.AptNavXP900DatNavigationObjectBuilder;
+import net.sourceforge.xhsi.model.elevationdata.GlobeElevationBuilder;
 //import net.sourceforge.xhsi.model.aptnavdata.AptNavXP900DatTaxiChartBuilder;
 
 import net.sourceforge.xhsi.model.xplane.XPlaneDataPacketDecoder;
@@ -84,7 +85,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    public static final String RELEASE = "2.0 Beta 10 Alpha 3";
+    public static final String RELEASE = "2.0 Beta 10 Alpha 4";
     public static final int EXPECTED_PLUGIN = 20009;
 
 
@@ -111,6 +112,7 @@ public class XHSI implements ActionListener {
 
     private PreferencesDialog preferences_dialog;
     private ProgressDialog nob_progress_dialog;
+    private ProgressDialog geb_progress_dialog;
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
@@ -436,6 +438,16 @@ public class XHSI implements ActionListener {
             XHSIStatus.nav_db_status = XHSIStatus.STATUS_NAV_DB_LOADED;
         }
 
+        // load EGPWS databases
+        GlobeElevationBuilder geb = new GlobeElevationBuilder(this.preferences.get_preference(XHSIPreferences.PREF_EGPWS_DB_DIR));
+        this.preferences.add_subsciption(geb, XHSIPreferences.PREF_EGPWS_DB_DIR);
+        geb.set_progress_observer((ProgressObserver) this.geb_progress_dialog);
+        if ( ! XHSIStatus.egpws_db_status.equals(XHSIStatus.STATUS_EGPWS_DB_NOT_FOUND) ) {
+            geb.map_database();
+            XHSIStatus.egpws_db_status = XHSIStatus.STATUS_EGPWS_DB_LOADED;
+        }      
+        
+        
 //// test load TaxiChart
 //AptNavXP900DatTaxiChartBuilder taxi = new AptNavXP900DatTaxiChartBuilder(this.preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR));
 //taxi.get_chart("YMML");
@@ -690,6 +702,7 @@ public class XHSI implements ActionListener {
         // Preferences dialog
         this.preferences_dialog = new PreferencesDialog(this.xhsi_frame, this.instruments);
         this.nob_progress_dialog = new ProgressDialog(this.xhsi_frame);
+        this.geb_progress_dialog = new ProgressDialog(this.xhsi_frame);
 
         // define the frames for other dialog windows
         XHSISettings.get_instance().init_frames(this.xhsi_frame);

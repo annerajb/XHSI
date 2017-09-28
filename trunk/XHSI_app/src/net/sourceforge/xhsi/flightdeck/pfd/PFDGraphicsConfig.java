@@ -44,9 +44,6 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     private Composite orig_cmpst;
     private boolean draw_transparent;
     
-    public boolean airbus_style;
-    public boolean boeing_style;
-
     public int instrument_size;
     public int panel_offset_y;
     public int adi_cx;
@@ -131,7 +128,6 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             this.powered = power;
             this.style = instrument_style;
             
-            //logger.warning("PFD update_config");
             // general instrument config
             super.update_config(g2);
 

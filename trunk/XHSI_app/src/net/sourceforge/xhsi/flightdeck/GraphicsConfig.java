@@ -423,7 +423,11 @@ public class GraphicsConfig implements ComponentListener {
 
     public boolean powered;
     public int cdu_source;
+    
     public int style;
+    public boolean airbus_style;
+    public boolean boeing_style;
+    public boolean unknown_style;
 
 
 
@@ -437,7 +441,13 @@ public class GraphicsConfig implements ComponentListener {
 
         this.preferences = XHSIPreferences.get_instance();
         this.settings = XHSISettings.get_instance();
-
+        
+        // Setup instrument style
+        style = this.settings.style;
+        airbus_style = ( style == Avionics.STYLE_AIRBUS );
+        boeing_style = ( style == Avionics.STYLE_BOEING );
+        unknown_style = ( !airbus_style & !boeing_style); // possible if dataref tool used to set an unknown value 
+        
         set_colors(false, XHSIPreferences.BORDER_GRAY);
 
         this.rendering_hints = new HashMap();
@@ -629,7 +639,7 @@ public class GraphicsConfig implements ComponentListener {
             background_color = Color.BLACK;
                        
             // Navigation Display Colors
-            if ( this.settings.style == Avionics.STYLE_AIRBUS ) {
+            if ( airbus_style ) {
                 navaid_color = color_boeingcyan;
                 term_wpt_color = Color.magenta;
                 wpt_color = color_cornflowerblue;
@@ -667,6 +677,7 @@ public class GraphicsConfig implements ComponentListener {
                 chrono_background_color = color_airbusgray; // color_darkpalegreen.darker();
                 chrono_color = Color.GREEN.brighter();
             } else {
+            	// Boeing style (default)
                 navaid_color = color_boeingcyan;
                 term_wpt_color = color_cornflowerblue.darker();
                 wpt_color = color_cornflowerblue;
@@ -745,7 +756,7 @@ public class GraphicsConfig implements ComponentListener {
         	ecam_box_bg_color = color_airbusgray.darker(); // was new Color(0x0f1c60);
             
             // PFD colors - used to managed PFD lightening
-            if ( this.settings.style == Avionics.STYLE_AIRBUS ) {
+            if ( airbus_style ) {
                 // PFD colors Airbus Style 
                 pfd_armed_color = Color.cyan;
                 pfd_managed_color = Color.magenta;
@@ -763,7 +774,7 @@ public class GraphicsConfig implements ComponentListener {
             	heading_bug_color = Color.cyan;           	
             	pfd_sky_color = color_airbussky;
             } else {
-                // PFD colors Boeing Style 
+                // PFD colors Boeing Style (default)
                 pfd_armed_color = Color.cyan;
                 pfd_managed_color = Color.magenta;
                 pfd_selected_color = Color.magenta;
@@ -870,7 +881,7 @@ public class GraphicsConfig implements ComponentListener {
         	ecam_box_bg_color = color_airbusgray; // was new Color(0x0f1c60);
         	
             // PFD Colors - used to managed PFD lightening
-            if ( this.settings.style == Avionics.STYLE_AIRBUS ) {
+            if ( airbus_style ) {
                 // PFD colors Airbus Style 
                 pfd_armed_color = Color.cyan;
                 pfd_managed_color = Color.magenta;
@@ -887,7 +898,7 @@ public class GraphicsConfig implements ComponentListener {
             	heading_bug_color = Color.cyan;
             	pfd_sky_color = color_airbussky;
             } else {
-            	// PFD colors Boeing Style
+            	// PFD colors Boeing Style (default)
             	pfd_armed_color = Color.cyan;
             	pfd_managed_color = Color.magenta;
             	pfd_selected_color = Color.magenta;            	
@@ -945,6 +956,10 @@ public class GraphicsConfig implements ComponentListener {
         this.resized = false;
         this.reconfig = false;
 
+        // Setup instrument style
+        airbus_style = ( style == Avionics.STYLE_AIRBUS );
+        boeing_style = ! ( style == Avionics.STYLE_AIRBUS );
+        
         // anti-aliasing
         this.rendering_hints.put(RenderingHints.KEY_ANTIALIASING, preferences.get_anti_alias() ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
         this.rendering_hints.put(RenderingHints.KEY_TEXT_ANTIALIASING, preferences.get_anti_alias() ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
