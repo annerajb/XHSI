@@ -105,7 +105,19 @@ public interface Avionics {
     public static final int RADIO_COM2_STDBY = -6;
     public static final int RADIO_COM2_STDBY_833 = -106;
 
-    
+    /**
+     * Chronograph action on main, ND1 (CAPT) and ND2 (FO) 
+     */
+    public static final int CHR_ACT_MAIN_START_RESET = 0;
+    public static final int CHR_ACT_MAIN_START_STOP = 1;
+    public static final int CHR_ACT_MAIN_RESET = 2;
+    public static final int CHR_ACT_CAPT_START_RESET = 3;
+    public static final int CHR_ACT_CAPT_START_STOP = 4;
+    public static final int CHR_ACT_CAPT_RESET = 5;
+    public static final int CHR_ACT_FO_START_RESET = 6;
+    public static final int CHR_ACT_FO_START_STOP = 7;
+    public static final int CHR_ACT_FO_RESET = 8;
+
     /**
      * @return int - general instrument style STYLE_BOEING, STYLE_AIRBUS
      */
@@ -225,6 +237,12 @@ public interface Avionics {
      */
     public boolean efis_shows_pos();
 
+    /**
+     * @return boolean - true if EFIS displays EGPWS Terrain, false otherwise
+     */
+    public boolean efis_shows_terrain();
+    public boolean efis_shows_terrain(InstrumentSide side);
+    
     /**
      * @return float - EFIS Chronometer elapsed time (used for the ND)
      */
@@ -467,6 +485,11 @@ public interface Avionics {
      */
     public boolean autopilot_speed_is_mach();
 
+    /**
+     * @return boolean - autopilot autoland warning indicator
+     */
+    public boolean autopilot_autoland_warning();
+    
     /**
      * @return float - heading in degrees selected in autopilot
      */
@@ -880,6 +903,8 @@ public interface Avionics {
     public void set_show_pos(boolean new_pos);
 
     public void set_show_data(boolean new_data);
+    
+    public void set_show_terrain(boolean new_data);
     
     /*
      *  Autopilot 

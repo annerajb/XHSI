@@ -33,9 +33,15 @@ public class XHSIStatus {
     public static final String STATUS_NAV_DB_NOT_LOADED = "NAV Databases not loaded";
     public static final String STATUS_NAV_DB_NOT_FOUND = "NAV Databases not found";
 
+    public static final String STATUS_EGPWS_DB_LOADED = "EGPWS Databases loaded";
+    public static final String STATUS_EGPWS_DB_NOT_LOADED = "EGPWS Databases not loaded";
+    public static final String STATUS_EGPWS_DB_NOT_FOUND = "EGPWS Databases not found";
+    
     public static String status = STATUS_STARTUP;
     public static String nav_db_status = STATUS_NAV_DB_LOADED;
     public static String nav_db_cycle = "";
+    
+    public static String egpws_db_status = STATUS_EGPWS_DB_LOADED;
     
     public static boolean receiving = true;
 

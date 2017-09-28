@@ -63,10 +63,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public static int INITIAL_CENTER_BOTTOM = 55;
     
     public static long change_msg_duration = 1000; // Message display 1.0s
-
-    public boolean airbus_style;
-    public boolean boeing_style;
-    
+  
     public int left_label_x;
     public int left_label_arpt_y;
     public int left_label_wpt_y;
@@ -199,6 +196,25 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public BufferedImage clock_img;
     public BufferedImage chrono_img;
     
+    // Speed Labels (and wind arrow)
+    public int sl_line_height;
+    public int sl_gs_label_x;
+    public int sl_gs_x;
+    public int sl_tas_label_x;
+    public int sl_tas_x;
+    public int sl_speeds_y;    
+    public int sl_wind_x;
+    public int sl_wind_y;
+    public int sl_wind_dir_arrow_length;
+    public int sl_arrow_head;
+    public int sl_wind_dir_arrow_cx;
+    public int sl_wind_dir_arrow_cy;
+    public int sl_box_x;
+    public int sl_box_y;
+    public int sl_box_h;
+    public int sl_box_w;
+    public BufferedImage sl_img;
+    
     public int arrow_length;
     public int arrow_base_width;
     
@@ -245,7 +261,6 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             this.powered = power;
             this.style = instrument_style;
             
-//logger.warning("ND update_config");
             super.update_config(g2);
             
             // Timestamp mode/submode/range settings
@@ -259,11 +274,6 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             this.map_submode = submode;
             this.map_range = range;
             this.map_zoomin = zoomin;
-
-            // remember instrument style settings
-            airbus_style = instrument_style == Avionics.STYLE_AIRBUS;
-            boeing_style = instrument_style == Avionics.STYLE_BOEING;
-            	
 
             // compute radio info box 
             rib_line_1 = line_height_l + line_height_l/5;
@@ -546,6 +556,28 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             }
             clock_img = new BufferedImage(clock_box_w,clock_box_h,BufferedImage.TYPE_INT_ARGB);
             chrono_img = new BufferedImage(chrono_box_w,chrono_box_h,BufferedImage.TYPE_INT_ARGB);
+            
+            // Speed Labels (and wind arrow)
+            sl_line_height = line_height_l;
+            sl_gs_label_x = border_left + (int)(10*scaling_factor);
+            sl_gs_x = sl_gs_label_x + 2 + get_text_width(g2, font_s,"GS");
+            sl_tas_label_x = sl_gs_x + digit_width_fixed_l*4; //  gs_x + nd_gc.get_text_width(g2, nd_gc.font_l, "999   "); // \u00A0 is Unicode non-breaking space
+            sl_tas_x = sl_tas_label_x + 2 + get_text_width(g2, font_s,"TAS");
+            sl_speeds_y = border_top + sl_line_height;
+            
+            sl_wind_x = sl_gs_label_x;
+            sl_wind_y = border_top + sl_line_height*24/10;
+            sl_wind_dir_arrow_length = Math.round(40.0f * scaling_factor);
+            sl_arrow_head = Math.round(3.0f * scaling_factor);
+            sl_wind_dir_arrow_cx = sl_wind_x + sl_wind_dir_arrow_length/2;
+            sl_wind_dir_arrow_cy = sl_wind_y + sl_line_height*2/10 + sl_wind_dir_arrow_length*1/8 + sl_wind_dir_arrow_length/2;
+            
+            sl_box_x = border_left;
+            sl_box_y = border_top;
+            sl_box_w = border_left + digit_width_m*15;
+            sl_box_h = sl_wind_y + sl_line_height*2/10;
+            sl_img = new BufferedImage(sl_box_w,sl_box_h,BufferedImage.TYPE_INT_ARGB);
+            
             
             // clear the flags
             this.resized = false;

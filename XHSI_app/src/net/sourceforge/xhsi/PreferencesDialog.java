@@ -65,6 +65,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
     //private JComboBox simcom_combobox;
     private JTextField aptnav_dir_textfield;
+    private JTextField egpws_db_dir_textfield;
     private JTextField port_textfield;
     private JTextField group_textfield;
     private JCheckBox multicast_checkbox;
@@ -431,7 +432,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         String trq_scale = preferences.get_preference(XHSIPreferences.PREF_TRQ_SCALE);
         for (int i=0; i<trq_scales.length; i++) {
-            if ( engine.equals( trq_scales[i] ) ) {
+            if ( trq_scale.equals( trq_scales[i] ) ) {
                 this.trq_scale_combobox.setSelectedIndex(i);
             }
         }
@@ -557,7 +558,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
         JButton browse_button = new JButton("Browse");
-        browse_button.setActionCommand("browse");
+        browse_button.setActionCommand("nav_browse");
         browse_button.addActionListener(this);
         system_panel.add(browse_button, cons);
         dialog_line++;
@@ -576,6 +577,40 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         system_panel.add(new JLabel(" ", JLabel.TRAILING), cons);
         dialog_line++;
 
+        // EGPWS Database directory
+        cons.gridx = 0;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        system_panel.add(new JLabel("EGPWS database directory", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.egpws_db_dir_textfield = new JTextField(40);
+        system_panel.add(this.egpws_db_dir_textfield, cons);
+        dialog_line++;
+        cons.gridx = 2;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        JButton egpws_browse_button = new JButton("Browse");
+        egpws_browse_button.setActionCommand("egpws_browse");
+        egpws_browse_button.addActionListener(this);
+        system_panel.add(egpws_browse_button, cons);
+        dialog_line++;
+        
+        cons.gridx = 2;
+        cons.gridy = dialog_line;
+        cons.gridwidth = 1;
+        cons.anchor = GridBagConstraints.WEST;
+        system_panel.add(new JLabel("(Download GLOBE database from noaa.gov)", JLabel.TRAILING), cons);
+        dialog_line++;
+        
+        // Empty line for spacing
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        system_panel.add(new JLabel(" ", JLabel.TRAILING), cons);
+        dialog_line++;
+        
         // incoming UDP port
         cons.gridx = 0;
         cons.gridy = dialog_line;
@@ -1927,7 +1962,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
     public void actionPerformed(ActionEvent event) {
 
-        if ( event.getActionCommand().equals("browse") ) {
+        if ( event.getActionCommand().equals("nav_browse") ) {
             JFileChooser fc = new JFileChooser();
             fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             int ret = fc.showOpenDialog(this);
@@ -1936,6 +1971,15 @@ public class PreferencesDialog extends JDialog implements ActionListener {
                 File file = fc.getSelectedFile();
                 this.aptnav_dir_textfield.setText(file.getAbsolutePath());
             }
+        } else if ( event.getActionCommand().equals("egpws_browse") ) {
+            JFileChooser fc = new JFileChooser();
+            fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int ret = fc.showOpenDialog(this);
+
+            if (ret == JFileChooser.APPROVE_OPTION) {
+                File file = fc.getSelectedFile();
+                this.egpws_db_dir_textfield.setText(file.getAbsolutePath());
+            }    
         } else if ( event.getActionCommand().equals("drawtoggle")) {
             enable_lock_fields();
         } else if ( event.getActionCommand().equals("locktoggle")) {
@@ -2046,7 +2090,10 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
             if ( this.aptnav_dir_textfield.getText().equals(this.preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR)) == false )
                 this.preferences.set_preference(XHSIPreferences.PREF_APTNAV_DIR, this.aptnav_dir_textfield.getText());
-
+            
+            if ( this.aptnav_dir_textfield.getText().equals(this.preferences.get_preference(XHSIPreferences.PREF_EGPWS_DB_DIR)) == false )
+                this.preferences.set_preference(XHSIPreferences.PREF_EGPWS_DB_DIR, this.egpws_db_dir_textfield.getText());
+            
             if ( this.port_textfield.getText().equals(this.preferences.get_preference(XHSIPreferences.PREF_PORT)) == false )
                 this.preferences.set_preference(XHSIPreferences.PREF_PORT, this.port_textfield.getText());
 

@@ -767,11 +767,7 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             
             // remember the number of engines
             this.num_eng = nb_engines;
-
-            // Setup instrument style
-            airbus_style = ( instrument_style == Avionics.STYLE_AIRBUS );
-            boeing_style = ! ( instrument_style == Avionics.STYLE_AIRBUS );
-            
+          
             // some subcomponents need to be reminded to redraw imediately
             this.reconfigured = true;
 

@@ -111,6 +111,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_SYMBOLS_SHOW_TFC = "TFC";
     public static final String ACTION_SYMBOLS_SHOW_POS = "POS";
     public static final String ACTION_SYMBOLS_SHOW_DATA = "DATA";
+    public static final String ACTION_SYMBOLS_SHOW_TERRAIN = "TERRAIN";
 
     public static final String ACTION_XPDR_OFF = "OFF";
     public static final String ACTION_XPDR_STBY = "STBY";
@@ -248,6 +249,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public boolean show_tfc = true;
     public boolean show_data = true;
     public boolean show_pos = true;
+    public boolean show_terrain = true;
 
     public boolean draw_holding = false;
     public String holding_fix = "";
@@ -320,7 +322,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JCheckBoxMenuItem checkbox_symbols_show_tfc;
     private JCheckBoxMenuItem checkbox_symbols_show_pos;
     private JCheckBoxMenuItem checkbox_symbols_show_data;
-
+    private JCheckBoxMenuItem checkbox_symbols_show_terrain;
 
     public JRadioButtonMenuItem radiobutton_holding_hide;
     public JRadioButtonMenuItem radiobutton_holding_show;
@@ -981,6 +983,14 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // keep a reference to the checkbox to set or clear it in a non-standard way
         this.checkbox_symbols_show_data = checkbox_menu_item;
 
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_SYMBOLS_SHOW_TERRAIN);
+        checkbox_menu_item.setToolTipText("Show EGPWS Terrain");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(true);
+        nd_symbols_submenu.add(checkbox_menu_item);
+        // keep a reference to the checkbox to set or clear it in a non-standard way
+        this.checkbox_symbols_show_terrain = checkbox_menu_item;
+        
         // add the "Symbols" menu to the menubar
         nd_menu.add(nd_symbols_submenu);
 
@@ -1639,7 +1649,10 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         } else if (command.equals(XHSISettings.ACTION_SYMBOLS_SHOW_DATA)) {
             show_data = this.checkbox_symbols_show_data.isSelected();
             this.avionics.set_show_data(show_data);
-
+        } else if (command.equals(XHSISettings.ACTION_SYMBOLS_SHOW_TERRAIN)) {
+            show_terrain = this.checkbox_symbols_show_terrain.isSelected();
+            this.avionics.set_show_terrain(show_terrain);
+            
         } else if (command.equals(XHSISettings.ACTION_XPDR_OFF)) {
             xpdr = Avionics.XPDR_OFF;
             this.avionics.set_xpdr_mode(xpdr);

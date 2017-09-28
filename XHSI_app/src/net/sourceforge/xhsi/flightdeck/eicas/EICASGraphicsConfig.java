@@ -58,8 +58,6 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
     public int num_eng = 0; 
     public int eng_label = 0; // engine at the left of engines labels 
 
-    public boolean airbus_style;
-    public boolean boeing_style;
     public int ecam_version = 1;
       
     public int eicas_size;
@@ -206,8 +204,9 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
             this.reconfigured = true;
 
             // Setup instrument style
-            airbus_style = ( instrument_style == Avionics.STYLE_AIRBUS );
-            boeing_style = ! ( instrument_style == Avionics.STYLE_AIRBUS );
+            // moved in super.update_config
+            // airbus_style = ( instrument_style == Avionics.STYLE_AIRBUS );
+            // boeing_style = ! ( instrument_style == Avionics.STYLE_AIRBUS );
             
             // Airbus software version
             // TODO : add a preference panel option for version 2 with 2 engines

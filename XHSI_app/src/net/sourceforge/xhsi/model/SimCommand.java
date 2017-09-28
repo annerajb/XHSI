@@ -61,6 +61,7 @@ public interface SimCommand {
     public static final int CMD_EFIS_CAPT_CHRONO = 134;
     public static final int CMD_EFIS_CAPT_STICK = 135;
     public static final int CMD_EFIS_CAPT_TERRAIN_ND = 136;
+    
     public static final int CMD_EFIS_FO_CSTR = 200;
     public static final int CMD_EFIS_FO_TFC = 237;
     public static final int CMD_EFIS_FO_WPT = 201;
@@ -99,6 +100,7 @@ public interface SimCommand {
     public static final int CMD_EFIS_FO_CHRONO = 234;
     public static final int CMD_EFIS_FO_STICK = 235;
     public static final int CMD_EFIS_FO_TERRAIN_ND = 236;
+    
     public static final int CMD_ECAM_TO_CFG = 300;
     public static final int CMD_ECAM_EMER_CANC = 301;
     public static final int CMD_ECAM_ENG = 302;
