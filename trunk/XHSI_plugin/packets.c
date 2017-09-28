@@ -978,6 +978,9 @@ int createAvionicsPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_PILOT_POS);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_pilot_shows_pos));
     i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_PILOT_TERRAIN);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_pilot_shows_terrain));
+    i++;
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_PILOT_DA_BUG);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_pilot_da_bug));
     i++;
@@ -1035,6 +1038,9 @@ int createAvionicsPacket(void) {
     i++;
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_COPILOT_POS);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_copilot_shows_pos));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_COPILOT_TERRAIN);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_copilot_shows_terrain));
     i++;
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_COPILOT_DA_BUG);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_copilot_da_bug));

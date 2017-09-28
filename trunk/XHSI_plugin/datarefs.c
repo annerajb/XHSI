@@ -63,11 +63,13 @@ XPLMDataRef cdu_copilot_side;
 XPLMDataRef efis_pilot_shows_stas;
 XPLMDataRef efis_pilot_shows_data;
 XPLMDataRef efis_pilot_shows_pos;
+XPLMDataRef efis_pilot_shows_terrain;
 XPLMDataRef efis_pilot_da_bug;
 XPLMDataRef efis_pilot_mins_mode;
 XPLMDataRef efis_pilot_map_zoomin;
 XPLMDataRef efis_pilot_chrono;
 XPLMDataRef efis_pilot_chrono_running;
+
 
 // custom datarefs - copilot
 XPLMDataRef efis_copilot_map_range_selector;
@@ -82,6 +84,7 @@ XPLMDataRef efis_copilot_shows_ndbs;
 XPLMDataRef efis_copilot_shows_stas;
 XPLMDataRef efis_copilot_shows_data;
 XPLMDataRef efis_copilot_shows_pos;
+XPLMDataRef efis_copilot_shows_terrain;
 XPLMDataRef efis_copilot_map_mode;
 XPLMDataRef efis_copilot_map_submode;
 XPLMDataRef copilot_hsi_selector;
@@ -782,6 +785,17 @@ void	setPilotPOS(void* inRefcon, int inValue)
       pilot_pos = inValue;
 }
 
+// xhsi/nd_pilot/terrain
+int pilot_terrain;
+int     getPilotTerrain(void* inRefcon)
+{
+     return pilot_terrain;
+}
+void	setPilotTerrain(void* inRefcon, int inValue)
+{
+      pilot_terrain = inValue;
+}
+
 // xhsi/pfd_pilot/da_bug
 int pilot_da_bug;
 int     getPilotDAbug(void* inRefcon)
@@ -960,6 +974,17 @@ void	setCopilotPOS(void* inRefcon, int inValue)
       copilot_pos = inValue;
 }
 
+// xhsi/nd_copilot/terrain
+int copilot_terrain;
+int     getCopilotTerrain(void* inRefcon)
+{
+     return copilot_terrain;
+}
+void	setCopilotTerrain(void* inRefcon, int inValue)
+{
+      copilot_terrain = inValue;
+}
+
 // xhsi/nd_copilot/map_ctr
 int copilot_map_ctr;
 int     getCopilotMapCTR(void* inRefcon)
@@ -1100,6 +1125,13 @@ void registerPilotDataRefs(void) {
                                         getPilotPOS, setPilotPOS,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
+    // xhsi/nd_pilot/terrain
+    efis_pilot_shows_terrain = XPLMRegisterDataAccessor("xhsi/nd_pilot/terrain",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                                   // Writable
+                                        getPilotTerrain, setPilotTerrain,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
 
     // xhsi/pfd_pilot/da_bug
     efis_pilot_da_bug = XPLMRegisterDataAccessor("xhsi/pfd_pilot/da_bug",
@@ -1234,6 +1266,12 @@ void registerCopilotDataRefs(void) {
                                         getCopilotPOS, setCopilotPOS,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
+    // xhsi/nd_copilot/terrain
+    efis_copilot_shows_terrain = XPLMRegisterDataAccessor("xhsi/nd_copilot/terrain",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                                   // Writable
+                                        getCopilotTerrain, setCopilotTerrain,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
     // xhsi/nd_copilot/map_ctr
     efis_copilot_map_mode = XPLMRegisterDataAccessor("xhsi/nd_copilot/map_ctr",
@@ -1575,6 +1613,9 @@ float initPilotCallback(
     // POS off
     XPLMSetDatai(efis_pilot_shows_pos, 0);
 
+    // TERRAIN on ND - EGPWS off
+    XPLMSetDatai(efis_pilot_shows_terrain, 0);
+
     // just a default DA
     XPLMSetDatai(efis_pilot_da_bug, 0);
 
@@ -1640,6 +1681,9 @@ float initCopilotCallback(
 
     // POS off
     XPLMSetDatai(efis_copilot_shows_pos, 0);
+
+    // TERRAIN on ND - EGPWS off
+    XPLMSetDatai(efis_copilot_shows_terrain, 0);
 
     // CTR on ! (just to be a little different from the pilot's ND default)
     XPLMSetDatai(efis_copilot_map_mode, 0);
@@ -1773,6 +1817,9 @@ void unregisterPilotDataRefs(void) {
     // xhsi/nd_pilot/pos
     XPLMUnregisterDataAccessor(efis_pilot_shows_pos);
 
+    // xhsi/nd_pilot/terrain
+    XPLMUnregisterDataAccessor(efis_pilot_shows_terrain);
+
     // xhsi/pfd_pilot/da_bug
     XPLMUnregisterDataAccessor(efis_pilot_da_bug);
 
@@ -1825,6 +1872,9 @@ void unregisterCopilotDataRefs(void) {
 
     // xhsi/nd_copilot/pos
     XPLMUnregisterDataAccessor(efis_copilot_shows_pos);
+
+    // xhsi/nd_copilot/terrain
+    XPLMUnregisterDataAccessor(efis_copilot_shows_terrain);
 
     // xhsi/nd_copilot/map_ctr
     XPLMUnregisterDataAccessor(efis_copilot_map_mode);
@@ -2498,6 +2548,10 @@ void writeDataRef(int id, float value) {
             XPLMSetDatai(efis_pilot_shows_pos, (int)value);
             break;
 
+        case XHSI_EFIS_PILOT_TERRAIN :
+            XPLMSetDatai(efis_pilot_shows_terrain, (int)value);
+            break;
+
         case SIM_COCKPIT_SWITCHES_EFIS_MAP_MODE :
             XPLMSetDatai(efis_map_mode, (int)value);
             break;
@@ -2557,6 +2611,10 @@ void writeDataRef(int id, float value) {
 
         case XHSI_EFIS_COPILOT_POS :
             XPLMSetDatai(efis_copilot_shows_pos, (int)value);
+            break;
+
+        case XHSI_EFIS_COPILOT_TERRAIN :
+            XPLMSetDatai(efis_copilot_shows_terrain, (int)value);
             break;
 
         case XHSI_EFIS_COPILOT_MAP_CTR :

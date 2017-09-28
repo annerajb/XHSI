@@ -251,6 +251,10 @@ XPLMCommandRef pos_toggle;
 XPLMCommandRef pos_on;
 XPLMCommandRef pos_off;
 
+XPLMCommandRef terrain_toggle;
+XPLMCommandRef terrain_on;
+XPLMCommandRef terrain_off;
+
 XPLMCommandRef mins_toggle;
 XPLMCommandRef mins_radio;
 XPLMCommandRef mins_baro;
@@ -372,6 +376,10 @@ XPLMCommandRef copilot_data_off;
 XPLMCommandRef copilot_pos_toggle;
 XPLMCommandRef copilot_pos_on;
 XPLMCommandRef copilot_pos_off;
+
+XPLMCommandRef copilot_terrain_toggle;
+XPLMCommandRef copilot_terrain_on;
+XPLMCommandRef copilot_terrain_off;
 
 XPLMCommandRef copilot_mins_toggle;
 XPLMCommandRef copilot_mins_radio;
@@ -1049,6 +1057,18 @@ XPLMCommandCallback_f pos_handler(XPLMCommandRef inCommand, XPLMCommandPhase inP
     return (XPLMCommandCallback_f)1;
 }
 
+// terrain on ND
+XPLMCommandCallback_f terrain_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_pilot_shows_terrain);
+        XPLMSetDatai(efis_pilot_shows_terrain, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
 // mins mode
 XPLMCommandCallback_f mins_mode_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
 {
@@ -1602,6 +1622,18 @@ XPLMCommandCallback_f copilot_pos_handler(XPLMCommandRef inCommand, XPLMCommandP
         int i = (int)((intptr_t)inRefcon);
         if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_copilot_shows_pos);
         XPLMSetDatai(efis_copilot_shows_pos, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+// copilot terrain
+XPLMCommandCallback_f copilot_terrain_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_copilot_shows_terrain);
+        XPLMSetDatai(efis_copilot_shows_terrain, i);
     }
     return (XPLMCommandCallback_f)1;
 }
@@ -2593,6 +2625,13 @@ void registerCommands(void) {
     pos_off = XPLMCreateCommand("xhsi/nd_pilot/pos_off", "ND symbols POS off");
     XPLMRegisterCommandHandler(pos_off, (XPLMCommandCallback_f)pos_handler, 1, (void *)OFF);
 
+    // terrain on ND
+    terrain_toggle = XPLMCreateCommand("xhsi/nd_pilot/terrain_toggle", "Toggle Terrain on ND");
+    XPLMRegisterCommandHandler(terrain_toggle, (XPLMCommandCallback_f)terrain_handler, 1, (void *)TOGGLE);
+    terrain_on = XPLMCreateCommand("xhsi/nd_pilot/terrain_on", "Terrain on ND on");
+    XPLMRegisterCommandHandler(terrain_on, (XPLMCommandCallback_f)terrain_handler, 1, (void *)ON);
+    terrain_off = XPLMCreateCommand("xhsi/nd_pilot/terrain_off", "Terrain on ND off");
+    XPLMRegisterCommandHandler(terrain_off, (XPLMCommandCallback_f)terrain_handler, 1, (void *)OFF);
 
 
     // xhsi/nd_ext_range_pilot/...
@@ -2852,6 +2891,14 @@ void registerCommands(void) {
     XPLMRegisterCommandHandler(copilot_pos_on, (XPLMCommandCallback_f)copilot_pos_handler, 1, (void *)ON);
     copilot_pos_off = XPLMCreateCommand("xhsi/nd_copilot/pos_off", "ND symbols POS off - copilot");
     XPLMRegisterCommandHandler(copilot_pos_off, (XPLMCommandCallback_f)copilot_pos_handler, 1, (void *)OFF);
+
+    // copilot terrain
+    copilot_terrain_toggle = XPLMCreateCommand("xhsi/nd_copilot/terrain_toggle", "Toggle Terrain on ND - copilot");
+    XPLMRegisterCommandHandler(copilot_terrain_toggle, (XPLMCommandCallback_f)copilot_terrain_handler, 1, (void *)TOGGLE);
+    copilot_terrain_on = XPLMCreateCommand("xhsi/nd_copilot/terrain_on", "Terrain on ND on - copilot");
+    XPLMRegisterCommandHandler(copilot_terrain_on, (XPLMCommandCallback_f)copilot_terrain_handler, 1, (void *)ON);
+    copilot_terrain_off = XPLMCreateCommand("xhsi/nd_copilot/terrain_off", "Terrain on ND off - copilot");
+    XPLMRegisterCommandHandler(copilot_terrain_off, (XPLMCommandCallback_f)copilot_terrain_handler, 1, (void *)OFF);
 
 
     // xhsi/nd_ext_range_copilot/...
