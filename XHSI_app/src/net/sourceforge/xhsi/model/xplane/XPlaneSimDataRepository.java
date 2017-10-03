@@ -235,6 +235,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_EFIS_PILOT_POS = 214;
     public static final int XHSI_EFIS_PILOT_MAP_ZOOMIN = 215;
     public static final int XHSI_EFIS_PILOT_ELAPSED_TIME_SEC = 216;
+    public static final int XHSI_EFIS_PILOT_TERRAIN = 217;
 
 
     // Copilot EFIS
@@ -255,6 +256,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_EFIS_COPILOT_POS = 264;
     public static final int XHSI_EFIS_COPILOT_MAP_ZOOMIN = 265;
     public static final int XHSI_EFIS_COPILOT_ELAPSED_TIME_SEC = 266;
+    public static final int XHSI_EFIS_COPILOT_TERRAIN = 267;
 
 
     // EICAS

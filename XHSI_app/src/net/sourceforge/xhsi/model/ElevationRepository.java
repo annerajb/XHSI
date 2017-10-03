@@ -46,23 +46,60 @@ public class ElevationRepository {
         init();
     }
     
-    public void AddElevationArea(ElevationArea area) {
+    public void addElevationArea(ElevationArea area) {
     	elevation_areas.add(area);
+    	logger.info(" First value: " + area.check_bof());
     }
     
     public void init() { 
     	elevation_areas = new ArrayList<ElevationArea>();
     }
     
+    public void dumpAreas() {
+    	logger.info("Dumping Elevation areas... ");
+    	for (ElevationArea area:elevation_areas ) {
+    		logger.info("Tile name: " + area.file_tile);
+    		logger.info(" min_lat: " + area.min_lat);
+    		logger.info(" max_lat: " + area.max_lat);
+    		logger.info(" min_lon: " + area.min_lon);
+    		logger.info(" max_lon: " + area.max_lon);
+    		logger.info(" number_of_rows: " + area.number_of_rows);
+    		logger.info(" number_of_columns: " + area.number_of_columns);
+    		logger.info(" grid_size_x: " + area.grid_size_x);
+    		logger.info(" grid_size_y: " + area.grid_size_y);
+    	}
+    }
+    
 	public float get_elevation( float lat, float lon ) {
 		float elevation = 0.0f;
 		// find the aera containing the coordinates
 		for (ElevationArea area:elevation_areas ) {
-			if (lat >= area.lower_map_y && lat <= area.upper_map_y && lon >= area.left_map_x && lon <= area.right_map_x) {
+			if (lat >= area.min_lat && lat <= area.max_lat && lon >= area.min_lon && lon <= area.max_lon) {
 				elevation = area.get_elevation(lat, lon);
 			}
 		}
 		return elevation;
 	}
     
+	public String get_area_name( float lat, float lon ) {
+		String name = "none";
+		// find the aera containing the coordinates
+		for (ElevationArea area:elevation_areas ) {
+			if (lat >= area.min_lat && lat <= area.max_lat && lon >= area.min_lon && lon <= area.max_lon) {
+				name = area.file_tile;
+			}
+		}
+		return name;
+	}
+	
+	public int get_offset( float lat, float lon ) {
+		int offset = -1;
+		// find the aera containing the coordinates
+		for (ElevationArea area:elevation_areas ) {
+			if (lat >= area.min_lat && lat <= area.max_lat && lon >= area.min_lon && lon <= area.max_lon) {
+				offset = area.get_offset(lat, lon);
+			}
+		}
+		return offset;
+	}
 }

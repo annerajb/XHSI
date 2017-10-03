@@ -879,6 +879,26 @@ public class XPlaneAvionics implements Avionics, Observer {
         }
 
     }
+  
+    public boolean efis_shows_terrain() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_TERRAIN) == 1.0f);
+    	} else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_TERRAIN) == 1.0f);
+    	} else {
+    		return xhsi_settings.show_terrain;
+    	}
+    }
+    
+    public boolean efis_shows_terrain(InstrumentSide side) {
+    	if ( side == InstrumentSide.PILOT ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_TERRAIN) == 1.0f);
+    	} else if ( side == InstrumentSide.COPILOT ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_TERRAIN) == 1.0f);
+    	} else {
+    		return xhsi_settings.show_terrain;
+    	}
+    }
     
     public float efis_chrono_elapsed_time() {
     	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) 
@@ -1163,6 +1183,23 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     public boolean autopilot_speed_is_mach() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_AIRSPEED_IS_MACH) == 1.0f;    }
 
+    /**
+     * Autoland warning conditions:
+     *  - Airborne
+     *  - G/S LOC captured mode
+     *  - Autopilot on 
+     *  
+     * Below 200 ft, the AUTOLAND red light illuminates if
+     * - Both APs trip off
+     * - Excessive beam deviation is sensed
+     * - Localizer or glide slope transmitter or receiver fails
+     * - A RA discrepancy of at least 15 ft is sensed.
+     * TODO: This flag should be computed inside the plugin.
+     */
+    public boolean autopilot_autoland_warning() {
+    	return false;
+    }
+    
     public float heading_bug() { return normalize( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_HEADING_MAG) ); }
 
     public float fd_pitch() {
@@ -2291,6 +2328,15 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     }
 
+    public void set_show_terrain(boolean new_data)  {
+
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_TERRAIN, new_data ? 1.0f : 0.0f );
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_TERRAIN, new_data ? 1.0f : 0.0f );
+        }
+
+    }
 
     public void set_autopilot_altitude(float new_altitude){
     	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_ALTITUDE,new_altitude);

@@ -116,6 +116,7 @@ public class XPlaneCommand implements SimCommand {
     public void send(int button_id) {
         switch (button_id) {
             case CMD_EFIS_CAPT_CSTR:
+            	this.avionics.set_show_data(!this.avionics.efis_shows_data());
                 break;
             
             case CMD_EFIS_CAPT_WPT:
@@ -252,6 +253,7 @@ public class XPlaneCommand implements SimCommand {
                 break;
             
             case CMD_EFIS_CAPT_CHRONO: 
+            	this.avionics.chr_control(Avionics.CHR_ACT_CAPT_START_RESET);
                 break;
             
             case CMD_EFIS_CAPT_STICK: 
@@ -261,7 +263,9 @@ public class XPlaneCommand implements SimCommand {
                 break;
             
             case CMD_EFIS_FO_CSTR:
-            	break;
+            	//TODO: Data and constraint are slightly different
+                this.avionics.set_show_data(!this.avionics.efis_shows_data());
+                break;
             	
             case CMD_EFIS_FO_WPT: 
                 this.avionics.set_show_wpt(!this.avionics.efis_shows_wpt(InstrumentSide.COPILOT));
@@ -284,7 +288,7 @@ public class XPlaneCommand implements SimCommand {
             	break;            
             
             case CMD_EFIS_FO_ILS: 
-                this.udp_sender.sendDataPoint(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_KEY_PRESS, AP_KEY_ILS_CAPT_TOGGLE);
+                this.udp_sender.sendDataPoint(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_KEY_PRESS, AP_KEY_ILS_FO_TOGGLE);
                 break;
                 
             case CMD_EFIS_FO_INHG: break;
@@ -318,7 +322,9 @@ public class XPlaneCommand implements SimCommand {
             case CMD_EFIS_FO_MODE_PLN: break;
             case CMD_EFIS_FO_MODE_INC: break;
             case CMD_EFIS_FO_MODE_DEC: break;
-            case CMD_EFIS_FO_CHRONO: break;
+            case CMD_EFIS_FO_CHRONO: 
+            	this.avionics.chr_control(Avionics.CHR_ACT_FO_START_RESET);
+            	break;
             case CMD_EFIS_FO_STICK: break;
             case CMD_EFIS_FO_TERRAIN_ND: break;
           

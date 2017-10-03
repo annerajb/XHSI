@@ -74,6 +74,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int left_label_data_y;
     public int left_label_taonly_y;
     public int left_label_xpdr_y;
+    public int left_label_terrain_y;
     public int right_label_x;
     public int right_label_tcas_y;
     public int right_label_disagree_y;
@@ -221,6 +222,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public float max_range;
 
     public int range_mode_message_y;
+    
+    public Color terrain_colors[];
 
     public NDGraphicsConfig(Component root_component, int du) {
         super(root_component);
@@ -234,6 +237,12 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
         cardinal_tri_S=new Polygon();
         cardinal_tri_E=new Polygon();
         cardinal_tri_W=new Polygon();
+        
+        // Built a default gray scale color schema for terrain 
+        terrain_colors = new Color[256];
+        for (int i=0; i<255; i++) {
+        	terrain_colors[i] = new Color(i,i,i);
+        }
     }
 
 
@@ -370,6 +379,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             this.left_label_tfc_y = this.left_label_data_y + this.line_height_xs*10/8;
             this.left_label_taonly_y = this.left_label_tfc_y + this.line_height_xxs*10/8;
             this.left_label_xpdr_y = this.left_label_taonly_y + this.line_height_xxs*10/8;
+            this.left_label_terrain_y = this.left_label_xpdr_y + this.line_height_xxs*10/8;
 
             // labels at the right
             this.right_label_x = this.frame_size.width - this.border_right - Math.round(20.0f * this.scaling_factor);

@@ -158,6 +158,18 @@ public class ForegroundMessages extends NDSubcomponent {
                 g2.setColor(nd_gc.tcas_label_color);
                 g2.drawString(label_str, nd_gc.left_label_x, nd_gc.left_label_tfc_y);
             }
+            // TERRAIN
+            if ( this.avionics.efis_shows_terrain() ) {
+                label_str = "TERRAIN";
+                g2.clearRect(nd_gc.left_label_x - nd_gc.digit_width_s/2, nd_gc.left_label_terrain_y - nd_gc.line_height_s, g2.getFontMetrics(nd_gc.font_s).stringWidth(label_str) + nd_gc.digit_width_s, nd_gc.line_height_s*10/8);
+                if ( ! nd_gc.map_zoomin ) {
+                	g2.setColor(nd_gc.terrain_label_color);
+                } else {
+                	g2.setColor(nd_gc.dim_label_color);
+                }
+                	
+                g2.drawString(label_str, nd_gc.left_label_x, nd_gc.left_label_terrain_y);
+            }
 
         }
 
