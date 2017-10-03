@@ -63,25 +63,25 @@ public class GlobeElevationBuilder implements PreferencesObserver {
     		6000, 6000, 6000, 6000,
     		4800, 4800, 4800, 4800 };
     
-    private float min_lon[] = {
+    private float min_lat[] = {
     		50.0f, 50.0f, 50.0f, 50.0f, 
     		0.0f, 0.0f, 0.0f, 0.0f, 
     		-50.0f, -50.0f, -50.0f, -50.0f,
     		-90.0f, -90.0f, -90.0f, -90.0f };
 
-    private float max_lon[] = {
+    private float max_lat[] = {
     		90.0f, 90.0f, 90.0f, 90.0f, 
     		50.0f, 50.0f, 50.0f, 50.0f,
     		0.0f, 0.0f, 0.0f, 0.0f,
     		-50.0f, -50.0f, -50.0f, -50.0f };
 
-    private float min_lat[] = {
+    private float min_lon[] = {
     		-180.0f, -90.0f, 0.0f, 90.0f,
     		-180.0f, -90.0f, 0.0f, 90.0f,
     		-180.0f, -90.0f, 0.0f, 90.0f,
     		-180.0f, -90.0f, 0.0f, 90.0f };
 
-    private float max_lat[] = {
+    private float max_lon[] = {
     		-90.0f, 0.0f, 90.0f, 180.0f,
     		-90.0f, 0.0f, 90.0f, 180.0f,
     		-90.0f, 0.0f, 90.0f, 180.0f,
@@ -147,13 +147,14 @@ public class GlobeElevationBuilder implements PreferencesObserver {
                 logger.info("Mapping byteBuffer " + globe_file[i]);
                 MappedByteBuffer byteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY,0,fileChannel.size());
                 logger.info("Creating area " + globe_file[i]);
-                ElevationArea area = new ElevationArea(byteBuffer, globe_columns, globe_rows[i], min_lon[i],  min_lat[i],  max_lon[i],  max_lat[i], globe_file[i]);
+                ElevationArea area = new ElevationArea(byteBuffer, globe_columns, globe_rows[i], min_lat[i],  max_lat[i],  min_lon[i],  max_lon[i], globe_file[i]);
                 logger.info("Add area " + globe_file[i]);
-                elevation_repository.AddElevationArea(area);
+                elevation_repository.addElevationArea(area);
             }           
             if (this.progressObserver != null) {
                 this.progressObserver.set_progress("Loading databases", "Done!", 100.0f);
             }
+            elevation_repository.dumpAreas();
         } else {
             logger.warning("GLOBE resources directory is wrong!");
         }

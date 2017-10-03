@@ -61,8 +61,8 @@ public class NDComponent extends Component implements Observer, PreferencesObser
 
 
     // subcomponents --------------------------------------------------------
-    ArrayList subcomponents = new ArrayList();
-    long[] subcomponent_paint_times = new long[20];
+    ArrayList<NDSubcomponent> subcomponents = new ArrayList<NDSubcomponent>();
+    long[] subcomponent_paint_times = new long[21];
     long total_paint_times = 0;
     long nb_of_paints = 0;
     Graphics2D g2;
@@ -85,6 +85,7 @@ public class NDComponent extends Component implements Observer, PreferencesObser
         nd_gc.reconfig = true;
 
         addComponentListener(nd_gc);
+        subcomponents.add(new Terrain(model_factory, nd_gc, this));
         subcomponents.add(new MovingMap(model_factory, nd_gc, this));
         subcomponents.add(new CDI(model_factory, nd_gc, this));
         subcomponents.add(new AltitudeRangeArc(model_factory, nd_gc, this));
