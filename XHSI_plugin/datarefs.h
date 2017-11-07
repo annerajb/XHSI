@@ -466,23 +466,38 @@ extern XPLMDataRef cdu_copilot_source;
 extern XPLMDataRef cdu_pilot_side;
 extern XPLMDataRef cdu_copilot_side;
 
+// custom datarefs - EGPWS
+extern XPLMDataRef egpws_flaps_mode;
+extern XPLMDataRef egpws_gs_mode;
+extern XPLMDataRef egpws_sys;
+
 // custom datarefs - pilot
 extern XPLMDataRef efis_pilot_shows_stas;
 extern XPLMDataRef efis_pilot_shows_data;
 extern XPLMDataRef efis_pilot_shows_pos;
 extern XPLMDataRef efis_pilot_shows_terrain;
+extern XPLMDataRef efis_pilot_shows_vp;
 extern XPLMDataRef efis_pilot_da_bug;
 extern XPLMDataRef efis_pilot_mins_mode;
 extern XPLMDataRef efis_pilot_map_zoomin;
 extern XPLMDataRef efis_pilot_chrono;
 extern XPLMDataRef efis_pilot_chrono_running;
-
+extern XPLMDataRef efis_pilot_wxr_gain;
+extern XPLMDataRef efis_pilot_wxr_tilt;
+extern XPLMDataRef efis_pilot_wxr_auto_tilt;
+extern XPLMDataRef efis_pilot_wxr_auto_gain;
+extern XPLMDataRef efis_pilot_wxr_test;
+extern XPLMDataRef efis_pilot_wxr_mode;
+extern XPLMDataRef efis_pilot_wxr_slave;
+extern XPLMDataRef efis_pilot_wxr_react;
+extern XPLMDataRef efis_pilot_wxr_narrow;
+extern XPLMDataRef efis_pilot_wxr_alert;
+extern XPLMDataRef efis_pilot_wxr_target;
 
 // custom datarefs - copilot
 extern XPLMDataRef efis_copilot_map_range_selector;
 extern XPLMDataRef efis_copilot_dme_1_selector;
 extern XPLMDataRef efis_copilot_dme_2_selector;
-//extern XPLMDataRef efis_copilot_shows_weather;
 extern XPLMDataRef efis_copilot_shows_tcas;
 extern XPLMDataRef efis_copilot_shows_airports;
 extern XPLMDataRef efis_copilot_shows_waypoints;
@@ -492,6 +507,7 @@ extern XPLMDataRef efis_copilot_shows_stas;
 extern XPLMDataRef efis_copilot_shows_data;
 extern XPLMDataRef efis_copilot_shows_pos;
 extern XPLMDataRef efis_copilot_shows_terrain;
+extern XPLMDataRef efis_copilot_shows_vp;
 extern XPLMDataRef efis_copilot_map_mode;
 extern XPLMDataRef efis_copilot_map_submode;
 extern XPLMDataRef copilot_hsi_selector;
@@ -500,6 +516,17 @@ extern XPLMDataRef efis_copilot_mins_mode;
 extern XPLMDataRef efis_copilot_map_zoomin;
 extern XPLMDataRef efis_copilot_chrono;
 extern XPLMDataRef efis_copilot_chrono_running;
+extern XPLMDataRef efis_copilot_wxr_gain;
+extern XPLMDataRef efis_copilot_wxr_tilt;
+extern XPLMDataRef efis_copilot_wxr_auto_tilt;
+extern XPLMDataRef efis_copilot_wxr_auto_gain;
+extern XPLMDataRef efis_copilot_wxr_test;
+extern XPLMDataRef efis_copilot_wxr_mode;
+extern XPLMDataRef efis_copilot_wxr_slave;
+extern XPLMDataRef efis_copilot_wxr_react;
+extern XPLMDataRef efis_copilot_wxr_narrow;
+extern XPLMDataRef efis_copilot_wxr_alert;
+extern XPLMDataRef efis_copilot_wxr_target;
 
 // Nose Wheel Steering
 extern XPLMDataRef nose_wheel_steer_on;
@@ -527,6 +554,8 @@ void	findDataRefs(void);
 void    registerPilotDataRefs(void);
 void    registerCopilotDataRefs(void);
 void    registerGeneralDataRefs(void);
+void    registerEGPWSDataRefs(void);
+void    registerWeatherRadarDataRefs(void);
 void    registerEICASDataRefs(void);
 void    registerMFDDataRefs(void);
 void    registerCDUDataRefs(void);
@@ -536,6 +565,8 @@ float   notifyDataRefEditorCallback(float, float, int, void *);
 float   initGeneralCallback(float, float, int, void *);
 float   initPilotCallback(float, float, int, void *);
 float   initCopilotCallback(float, float, int, void *);
+float   initEGPWSCallback(float, float, int, void *);
+float   initWeatherRadarCallback(float, float, int, void *);
 float   initEICASCallback(float, float, int, void *);
 float   initMFDCallback(float, float, int, void *);
 float   initCDUCallback(float, float, int, void *);
@@ -544,6 +575,8 @@ float	computeChronoCallback(float, float, int, void *);
 void    unregisterPilotDataRefs(void);
 void    unregisterCopilotDataRefs(void);
 void	unregisterGeneralDataRefs(void);
+void    unregisterEGPWSDataRefs(void);
+void    unregisterWeatherRadarDataRefs(void);
 void    unregisterEICASDataRefs(void);
 void    unregisterMFDDataRefs(void);
 void    unregisterCDUDataRefs(void);

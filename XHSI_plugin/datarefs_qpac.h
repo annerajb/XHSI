@@ -193,8 +193,11 @@
 #define QPAC_KEY_AP2_PUSH         178
 #define QPAC_KEY_FD1_PUSH         179
 #define QPAC_KEY_FD2_PUSH         180
+// GPWS commands
+#define QPAC_KEY_GPWS_MUTE        181
+#define QPAC_KEY_GPWS_SHUTOFF     182
 // END
-#define QPAC_KEY_MAX              181
+#define QPAC_KEY_MAX              183
 
 // global vars
 
@@ -238,7 +241,9 @@ extern XPLMDataRef qpac_fma_thr_warning;
 extern XPLMDataRef qpac_flex_temp;
 extern XPLMDataRef qpac_thr_rating_type;
 extern XPLMDataRef qpac_thr_rating_n1;
+extern XPLMDataRef qpac_thr_rating_epr;
 extern XPLMDataRef qpac_throttle_input;
+extern XPLMDataRef qpac_eng_epr_array;
 // ILS Sig and Deviation Capt. and FO
 extern XPLMDataRef qpac_loc_val_capt;
 extern XPLMDataRef qpac_loc_on_capt;
@@ -305,6 +310,8 @@ extern XPLMDataRef qpac_capt_efis_nd_mode;
 extern XPLMDataRef qpac_co_efis_nd_mode;
 extern XPLMDataRef qpac_capt_efis_nd_range;
 extern XPLMDataRef qpac_co_efis_nd_range;
+// GPWS
+extern XPLMDataRef qpac_gpws_switch_array;
 // Brakes
 // 0=OFF, 1=Engaged, 2=DECEL
 extern XPLMDataRef qpac_autobrake_low;
@@ -313,6 +320,10 @@ extern XPLMDataRef qpac_autobrake_max;
 extern XPLMDataRef qpac_left_brake_release;
 extern XPLMDataRef qpac_right_brake_release;
 extern XPLMDataRef qpac_nw_anti_skid;
+// Version 2.0.4
+extern XPLMDataRef qpac_brake_fan;
+extern XPLMDataRef qpac_brake_temp_array;
+extern XPLMDataRef qpac_tire_press_array;
 // Gears indicators
 extern XPLMDataRef qpac_left_gear_ind;
 extern XPLMDataRef qpac_nose_gear_ind;
@@ -360,6 +371,12 @@ extern XPLMDataRef qpac_cond_zone2_trim;
 extern XPLMDataRef qpac_cond_cockpit_temp;
 extern XPLMDataRef qpac_cond_aft_cabin_temp;
 extern XPLMDataRef qpac_cond_fwd_cabin_temp;
+// version 2.0.4
+extern XPLMDataRef qpac_cond_cargo_hot_air_valve;
+extern XPLMDataRef qpac_cond_aft_cargo_temp;
+extern XPLMDataRef qpac_cond_fwd_cargo_temp;
+extern XPLMDataRef qpac_cond_aft_cargo_isol_valve;
+extern XPLMDataRef qpac_cond_fwd_cargo_isol_valve;
 // Doors - Oxygen
 extern XPLMDataRef qpac_door_pax_array;
 extern XPLMDataRef qpac_door_cargo_array;

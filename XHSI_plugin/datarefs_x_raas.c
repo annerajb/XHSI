@@ -10,6 +10,7 @@
  *  http://forums.x-pilot.com/files/file/1047-x-raas-runway-awareness-and-advisory-system/
  *
  *  Starting X-RAAS support in XHSI since version 2.0.3 (10 april 2017)
+ *  Updated : Version 2.1 (2 nov 2017)
  *
  */
 #include <stdio.h>
@@ -21,6 +22,7 @@
 
 #include "XPLMDataAccess.h"
 #include "XPLMUtilities.h"
+#include "XPLMPlugin.h"
 #include "ids.h"
 #include "datarefs_x_raas.h"
 
@@ -47,13 +49,19 @@ XPLMDataRef x_raas_vref;
 XPLMDataRef x_raas_vref_act;
 // Exact flaps setting checks
 XPLMDataRef x_raas_to_flaps;
-XPLMDataRef x_raas_to_flaps_act;
+XPLMDataRef x_raas_to_flaps_act; // v2.0
+XPLMDataRef x_raas_to_flaps_min_act; // v2.1
+XPLMDataRef x_raas_to_flaps_max_act; // v2.1
 XPLMDataRef x_raas_ldg_flaps;
-XPLMDataRef x_raas_ldg_flaps_act;
+XPLMDataRef x_raas_ldg_flaps_act; // v2.0
+XPLMDataRef x_raas_ldg_flaps_min_act; // v2.1
+XPLMDataRef x_raas_ldg_flaps_max_act; // v2.1
 XPLMDataRef flaps_request;
 // ND Alert
 XPLMDataRef x_raas_nd_alert;
 XPLMDataRef x_raas_nd_alert_disabled;
+// Air data fault
+XPLMDataRef x_raas_input_faulted;
 
 
 void findXRaasDataRefs(void) {
@@ -95,6 +103,10 @@ void findXRaasDataRefs(void) {
             // ND Alert
             x_raas_nd_alert = XPLMFindDataRef("xraas/ND_alert");
             x_raas_nd_alert_disabled = XPLMFindDataRef("xraas/ND_alert_overlay_disabled");
+            // New dataref in version 2.1
+            x_raas_input_faulted = XPLMFindDataRef("xraas/state/input_faulted");
+            if (x_raas_input_faulted != NULL) x_raas_version = 201;
+
         }
     }
 }
