@@ -59,23 +59,38 @@ XPLMDataRef cdu_copilot_source;
 XPLMDataRef cdu_pilot_side;
 XPLMDataRef cdu_copilot_side;
 
+// custom datarefs - EGPWS
+XPLMDataRef egpws_flaps_mode;
+XPLMDataRef egpws_gs_mode;
+XPLMDataRef egpws_sys;
+
 // custom datarefs - pilot
 XPLMDataRef efis_pilot_shows_stas;
 XPLMDataRef efis_pilot_shows_data;
 XPLMDataRef efis_pilot_shows_pos;
 XPLMDataRef efis_pilot_shows_terrain;
+XPLMDataRef efis_pilot_shows_vp;
 XPLMDataRef efis_pilot_da_bug;
 XPLMDataRef efis_pilot_mins_mode;
 XPLMDataRef efis_pilot_map_zoomin;
 XPLMDataRef efis_pilot_chrono;
 XPLMDataRef efis_pilot_chrono_running;
-
+XPLMDataRef efis_pilot_wxr_gain;
+XPLMDataRef efis_pilot_wxr_tilt;
+XPLMDataRef efis_pilot_wxr_auto_tilt;
+XPLMDataRef efis_pilot_wxr_auto_gain;
+XPLMDataRef efis_pilot_wxr_test;
+XPLMDataRef efis_pilot_wxr_mode;    // 0=off, 1=weather, 2=weather+turbulence, 3=map
+XPLMDataRef efis_pilot_wxr_slave;
+XPLMDataRef efis_pilot_wxr_react;
+XPLMDataRef efis_pilot_wxr_narrow;
+XPLMDataRef efis_pilot_wxr_alert;
+XPLMDataRef efis_pilot_wxr_target;
 
 // custom datarefs - copilot
 XPLMDataRef efis_copilot_map_range_selector;
 XPLMDataRef efis_copilot_dme_1_selector;
 XPLMDataRef efis_copilot_dme_2_selector;
-//XPLMDataRef efis_copilot_shows_weather;
 XPLMDataRef efis_copilot_shows_tcas;
 XPLMDataRef efis_copilot_shows_airports;
 XPLMDataRef efis_copilot_shows_waypoints;
@@ -85,6 +100,7 @@ XPLMDataRef efis_copilot_shows_stas;
 XPLMDataRef efis_copilot_shows_data;
 XPLMDataRef efis_copilot_shows_pos;
 XPLMDataRef efis_copilot_shows_terrain;
+XPLMDataRef efis_copilot_shows_vp;
 XPLMDataRef efis_copilot_map_mode;
 XPLMDataRef efis_copilot_map_submode;
 XPLMDataRef copilot_hsi_selector;
@@ -93,6 +109,17 @@ XPLMDataRef efis_copilot_mins_mode;
 XPLMDataRef efis_copilot_map_zoomin;
 XPLMDataRef efis_copilot_chrono;
 XPLMDataRef efis_copilot_chrono_running;
+XPLMDataRef efis_copilot_wxr_gain;
+XPLMDataRef efis_copilot_wxr_tilt;
+XPLMDataRef efis_copilot_wxr_auto_tilt;
+XPLMDataRef efis_copilot_wxr_auto_gain;
+XPLMDataRef efis_copilot_wxr_test;
+XPLMDataRef efis_copilot_wxr_mode;
+XPLMDataRef efis_copilot_wxr_slave;
+XPLMDataRef efis_copilot_wxr_react;
+XPLMDataRef efis_copilot_wxr_narrow;
+XPLMDataRef efis_copilot_wxr_alert;
+XPLMDataRef efis_copilot_wxr_target;
 
 // standard datarefs
 XPLMDataRef groundspeed;
@@ -796,6 +823,17 @@ void	setPilotTerrain(void* inRefcon, int inValue)
       pilot_terrain = inValue;
 }
 
+// xhsi/nd_pilot/vp
+int pilot_vp;
+int getPilotVerticalPath(void* inRefcon)
+{
+     return pilot_vp;
+}
+void setPilotVerticalPath(void* inRefcon, int inValue)
+{
+	pilot_vp = inValue;
+}
+
 // xhsi/pfd_pilot/da_bug
 int pilot_da_bug;
 int     getPilotDAbug(void* inRefcon)
@@ -850,6 +888,128 @@ void	setPilotChronoRun(void* inRefcon, int inValue)
 {
 	pilot_chrono_run = inValue != 0 ? 1 : 0;
 }
+
+// xhsi/nd_pilot/wxr_gain
+float pilot_wxr_gain; // Boolean
+float getPilotWxrGain(void* inRefcon)
+{
+    return pilot_wxr_gain;
+}
+void setPilotWxrGain(void* inRefcon, float inValue)
+{
+	pilot_wxr_gain = inValue;
+}
+
+// xhsi/nd_pilot/wxr_tilt
+float pilot_wxr_tilt; // Boolean
+float getPilotWxrTilt(void* inRefcon)
+{
+    return pilot_wxr_tilt;
+}
+void setPilotWxrTilt(void* inRefcon, float inValue)
+{
+	pilot_wxr_tilt = inValue;
+}
+
+// xhsi/nd_pilot/wxr_auto_tilt
+int pilot_wxr_auto_tilt; // Boolean
+int    getPilotWxrAutoTilt(void* inRefcon)
+{
+    return pilot_wxr_auto_tilt;
+}
+void	setPilotWxrAutoTilt(void* inRefcon, int inValue)
+{
+	pilot_wxr_auto_tilt = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/nd_pilot/wxr_auto_gain
+int pilot_wxr_auto_gain; // Boolean
+int    getPilotWxrAutoGain(void* inRefcon)
+{
+    return pilot_wxr_auto_gain;
+}
+void	setPilotWxrAutoGain(void* inRefcon, int inValue)
+{
+	pilot_wxr_auto_gain = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/nd_pilot/wxr_test
+int pilot_wxr_test; // Boolean
+int    getPilotWxrTest(void* inRefcon)
+{
+    return pilot_wxr_test;
+}
+void	setPilotWxrTest(void* inRefcon, int inValue)
+{
+	pilot_wxr_test = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/nd_pilot/wxr_mode
+int pilot_wxr_mode; // Integer
+int    getPilotWxrMode(void* inRefcon)
+{
+    return pilot_wxr_mode;
+}
+void	setPilotWxrMode(void* inRefcon, int inValue)
+{
+	pilot_wxr_mode = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/nd_pilot/wxr_slave
+int pilot_wxr_slave; // Boolean
+int    getPilotWxrSlave(void* inRefcon)
+{
+    return pilot_wxr_slave;
+}
+void	setPilotWxrSlave(void* inRefcon, int inValue)
+{
+	pilot_wxr_slave = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/nd_pilot/wxr_react
+int pilot_wxr_react; // Boolean
+int    getPilotWxrReact(void* inRefcon)
+{
+    return pilot_wxr_react;
+}
+void	setPilotWxrReact(void* inRefcon, int inValue)
+{
+	pilot_wxr_react = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/nd_pilot/wxr_narrow
+int pilot_wxr_narrow; // Boolean
+int    getPilotWxrNarrow(void* inRefcon)
+{
+    return pilot_wxr_narrow;
+}
+void	setPilotWxrNarrow(void* inRefcon, int inValue)
+{
+	pilot_wxr_narrow = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/nd_pilot/wxr_alert
+int pilot_wxr_alert; // Boolean
+int    getPilotWxrAlert(void* inRefcon)
+{
+    return pilot_wxr_alert;
+}
+void	setPilotWxrAlert(void* inRefcon, int inValue)
+{
+	pilot_wxr_alert = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/nd_pilot/wxr_target
+int pilot_wxr_target; // Boolean
+int    getPilotWxrTarget(void* inRefcon)
+{
+    return pilot_wxr_target;
+}
+void	setPilotWxrTarget(void* inRefcon, int inValue)
+{
+	pilot_wxr_target = inValue != 0 ? 1 : 0;
+}
+
 
 // custom datarefs for copilot
 
@@ -985,6 +1145,17 @@ void	setCopilotTerrain(void* inRefcon, int inValue)
       copilot_terrain = inValue;
 }
 
+// xhsi/nd_copilot/vp
+int copilot_vp;
+int     getCopilotVerticalPath(void* inRefcon)
+{
+     return copilot_vp;
+}
+void	setCopilotVerticalPath(void* inRefcon, int inValue)
+{
+	copilot_vp = inValue;
+}
+
 // xhsi/nd_copilot/map_ctr
 int copilot_map_ctr;
 int     getCopilotMapCTR(void* inRefcon)
@@ -1074,6 +1245,129 @@ void	setCopilotChronoRun(void* inRefcon, int inValue)
 }
 
 
+// xhsi/nd_copilot/wxr_gain
+float copilot_wxr_gain; // Boolean
+float getCopilotWxrGain(void* inRefcon)
+{
+    return copilot_wxr_gain;
+}
+void setCopilotWxrGain(void* inRefcon, float inValue)
+{
+	copilot_wxr_gain = inValue;
+}
+
+// xhsi/nd_copilot/wxr_tilt
+float copilot_wxr_tilt; // Boolean
+float getCopilotWxrTilt(void* inRefcon)
+{
+    return copilot_wxr_tilt;
+}
+void setCopilotWxrTilt(void* inRefcon, float inValue)
+{
+	copilot_wxr_tilt = inValue;
+}
+
+// xhsi/nd_copilot/wxr_auto_tilt
+int copilot_wxr_auto_tilt; // Boolean
+int getCopilotWxrAutoTilt(void* inRefcon)
+{
+    return copilot_wxr_auto_tilt;
+}
+void setCopilotWxrAutoTilt(void* inRefcon, int inValue)
+{
+	copilot_wxr_auto_tilt = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/nd_copilot/wxr_auto_gain
+int copilot_wxr_auto_gain; // Boolean
+int getCopilotWxrAutoGain(void* inRefcon)
+{
+    return copilot_wxr_auto_gain;
+}
+void setCopilotWxrAutoGain(void* inRefcon, int inValue)
+{
+	copilot_wxr_auto_gain = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/nd_copilot/wxr_test
+int copilot_wxr_test; // Boolean
+int getCopilotWxrTest(void* inRefcon)
+{
+    return copilot_wxr_test;
+}
+void setCopilotWxrTest(void* inRefcon, int inValue)
+{
+	copilot_wxr_test = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/nd_copilot/wxr_mode
+int copilot_wxr_mode; // Integer
+int getCopilotWxrMode(void* inRefcon)
+{
+    return copilot_wxr_mode;
+}
+void setCopilotWxrMode(void* inRefcon, int inValue)
+{
+	copilot_wxr_mode = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/nd_copilot/wxr_slave
+int copilot_wxr_slave; // Boolean
+int getCopilotWxrSlave(void* inRefcon)
+{
+    return copilot_wxr_slave;
+}
+void setCopilotWxrSlave(void* inRefcon, int inValue)
+{
+	copilot_wxr_slave = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/nd_copilot/wxr_react
+int copilot_wxr_react; // Boolean
+int getCopilotWxrReact(void* inRefcon)
+{
+    return copilot_wxr_react;
+}
+void setCopilotWxrReact(void* inRefcon, int inValue)
+{
+	copilot_wxr_react = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/nd_copilot/wxr_narrow
+int copilot_wxr_narrow; // Boolean
+int getCopilotWxrNarrow(void* inRefcon)
+{
+    return copilot_wxr_narrow;
+}
+void setCopilotWxrNarrow(void* inRefcon, int inValue)
+{
+	copilot_wxr_narrow = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/nd_copilot/wxr_alert
+int copilot_wxr_alert; // Boolean
+int getCopilotWxrAlert(void* inRefcon)
+{
+    return copilot_wxr_alert;
+}
+void setCopilotWxrAlert(void* inRefcon, int inValue)
+{
+	copilot_wxr_alert = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/nd_copilot/wxr_target
+int copilot_wxr_target; // Boolean
+int getCopilotWxrTarget(void* inRefcon)
+{
+    return copilot_wxr_target;
+}
+void setCopilotWxrTarget(void* inRefcon, int inValue)
+{
+	copilot_wxr_target = inValue != 0 ? 1 : 0;
+}
+
+
+
 //// xhsi/rtu/contact_atc
 //int contact_atc;
 //int     getContactATC(void* inRefcon)
@@ -1096,7 +1390,40 @@ void	setSelectedRadio(void* inRefcon, int inValue)
       selected_radio = inValue;
 }
 
+// EGPWS datarefs
 
+// xhsi/egpws/flaps_mode
+int epgws_flaps; // Boolean
+int getEgpwsFlapsMode(void* inRefcon)
+{
+    return epgws_flaps;
+}
+void setEgpwsFlapsMode(void* inRefcon, int inValue)
+{
+	epgws_flaps = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/egpws/gs_mode
+int epgws_glide_slope; // Boolean
+int getEgpwsGsMode(void* inRefcon)
+{
+    return epgws_glide_slope;
+}
+void setEgpwsGsMode(void* inRefcon, int inValue)
+{
+	epgws_glide_slope = inValue != 0 ? 1 : 0;
+}
+
+// xhsi/egpws/system
+int epgws_system; // Boolean
+int getEgpwsSystem(void* inRefcon)
+{
+    return epgws_system;
+}
+void setEgpwsSystem(void* inRefcon, int inValue)
+{
+	epgws_system = inValue != 0 ? 1 : 0;
+}
 
 void registerPilotDataRefs(void) {
 
@@ -1130,6 +1457,13 @@ void registerPilotDataRefs(void) {
                                         xplmType_Int,                                  // The types we support
                                         1,                                                   // Writable
                                         getPilotTerrain, setPilotTerrain,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_pilot/vp
+    efis_pilot_shows_vp = XPLMRegisterDataAccessor("xhsi/nd_pilot/vp",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getPilotVerticalPath, setPilotVerticalPath,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
@@ -1169,6 +1503,113 @@ void registerPilotDataRefs(void) {
                                         xplmType_Int,                                    // The types we support
                                         1,                                               // Writable
                                         getPilotChronoRun, setPilotChronoRun,            // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_pilot/wxr_gain
+    // Weather radar gain
+    // float between 0 to 1, default 0
+    efis_pilot_wxr_gain = XPLMRegisterDataAccessor("xhsi/nd_pilot/wxr_gain",
+                                        xplmType_Float,                                  // The types we support
+                                        1,                                               // Writable
+                                        NULL, NULL,
+                                        getPilotWxrGain, setPilotWxrGain,                // Float accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_pilot/wxr_tilt
+    // Weather radar antena tilt in degrees (-15 to +15)
+    // float between -15 to 15, default 0
+    efis_pilot_wxr_tilt = XPLMRegisterDataAccessor("xhsi/nd_pilot/wxr_tilt",
+                                        xplmType_Float,                                  // The types we support
+                                        1,                                               // Writable
+                                        NULL, NULL,
+                                        getPilotWxrTilt, setPilotWxrTilt,                // Float accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_pilot/wxr_auto_tilt
+    // Weather radar antena auto tilt system (or stabilizer)
+    // boolean, default true (1)
+    efis_pilot_wxr_auto_tilt = XPLMRegisterDataAccessor("xhsi/nd_pilot/wxr_auto_tilt",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getPilotWxrAutoTilt, setPilotWxrAutoTilt,        // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_pilot/wxr_auto_gain
+    // Weather radar automatic calibrated gain
+    // boolean, default true (1)
+    efis_pilot_wxr_auto_gain = XPLMRegisterDataAccessor("xhsi/nd_pilot/wxr_auto_gain",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getPilotWxrAutoGain, setPilotWxrAutoGain,        // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_pilot/wxr_test
+    // Weather radar test mode
+    // boolean, default false (0)
+    efis_pilot_wxr_test = XPLMRegisterDataAccessor("xhsi/nd_pilot/wxr_test",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getPilotWxrTest, setPilotWxrTest,                // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_pilot/wxr_mode
+    // Weather radar mode
+    // 0=OFF, 1=Weather, 2=Weather+Turb, 3=Map
+    // default 1=Weather
+    efis_pilot_wxr_mode = XPLMRegisterDataAccessor("xhsi/nd_pilot/wxr_mode",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getPilotWxrMode, setPilotWxrMode,                // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_pilot/wxr_slave
+    // Weather radar slave :
+    // when true, get the settings from the opposite side
+    // default false (0)
+    efis_pilot_wxr_slave = XPLMRegisterDataAccessor("xhsi/nd_pilot/wxr_slave",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getPilotWxrSlave, setPilotWxrSlave,              // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_pilot/wxr_react
+    // Weather radar REACT
+    // when false, signal attenuation is simulated
+    // default true (1)
+    efis_pilot_wxr_react = XPLMRegisterDataAccessor("xhsi/nd_pilot/wxr_react",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getPilotWxrReact, setPilotWxrReact,              // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_pilot/wxr_narrow
+    // Weather radar narrow beam
+    // when false - beam is at standard sweep of 120° (depends on the sweep angle settings)
+    // when true - beam is at 60° and gives a faster sweep rate
+    // default false (0)
+    efis_pilot_wxr_narrow = XPLMRegisterDataAccessor("xhsi/nd_pilot/wxr_narrow",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getPilotWxrNarrow, setPilotWxrNarrow,              // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_pilot/wxr_alert
+    // Weather radar alert mode on
+    // when true, high turbulence areas flashes
+    // default false (0)
+    efis_pilot_wxr_alert = XPLMRegisterDataAccessor("xhsi/nd_pilot/wxr_alert",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getPilotWxrAlert, setPilotWxrAlert,              // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+    // xhsi/nd_pilot/wxr_target
+    // Weather radar target mode on
+    // when true, alarm visible when high turbulence within 25 nm range
+    // default false (0)
+    efis_pilot_wxr_target = XPLMRegisterDataAccessor("xhsi/nd_pilot/wxr_target",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getPilotWxrTarget, setPilotWxrTarget,              // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 
@@ -1273,10 +1714,17 @@ void registerCopilotDataRefs(void) {
                                         getCopilotTerrain, setCopilotTerrain,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
+    // xhsi/nd_copilot/vp
+    efis_copilot_shows_vp = XPLMRegisterDataAccessor("xhsi/nd_copilot/vp",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getCopilotVerticalPath, setCopilotVerticalPath,  // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
     // xhsi/nd_copilot/map_ctr
     efis_copilot_map_mode = XPLMRegisterDataAccessor("xhsi/nd_copilot/map_ctr",
                                         xplmType_Int,                                  // The types we support
-                                        1,                                                   // Writable
+                                        1,                                             // Writable
                                         getCopilotMapCTR, setCopilotMapCTR,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
@@ -1335,6 +1783,113 @@ void registerCopilotDataRefs(void) {
                                         getCopilotChronoRun, setCopilotChronoRun,        // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
+    // xhsi/nd_copilot/wxr_gain
+    // Weather radar gain
+    // float between 0 to 1, default 0
+    efis_copilot_wxr_gain = XPLMRegisterDataAccessor("xhsi/nd_copilot/wxr_gain",
+                                        xplmType_Float,                                  // The types we support
+                                        1,                                               // Writable
+                                        NULL, NULL,
+                                        getCopilotWxrGain, setCopilotWxrGain,            // Float accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_copilot/wxr_tilt
+    // Weather radar antena tilt in degrees (-15 to +15)
+    // float between -15 to 15, default 0
+    efis_copilot_wxr_tilt = XPLMRegisterDataAccessor("xhsi/nd_copilot/wxr_tilt",
+                                        xplmType_Float,                                  // The types we support
+                                        1,                                               // Writable
+                                        NULL, NULL,
+                                        getCopilotWxrTilt, setCopilotWxrTilt,            // Float accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_copilot/wxr_auto_tilt
+    // Weather radar antena auto tilt system (or stabilizer)
+    // boolean, default true (1)
+    efis_copilot_wxr_auto_tilt = XPLMRegisterDataAccessor("xhsi/nd_copilot/wxr_auto_tilt",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getCopilotWxrAutoTilt, setCopilotWxrAutoTilt,    // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_copilot/wxr_auto_gain
+    // Weather radar automatic calibrated gain
+    // boolean, default true (1)
+    efis_copilot_wxr_auto_gain = XPLMRegisterDataAccessor("xhsi/nd_copilot/wxr_auto_gain",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getCopilotWxrAutoGain, setCopilotWxrAutoGain,    // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_copilot/wxr_test
+    // Weather radar test mode
+    // boolean, default false (0)
+    efis_copilot_wxr_test = XPLMRegisterDataAccessor("xhsi/nd_copilot/wxr_test",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getCopilotWxrTest, setCopilotWxrTest,            // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_copilot/wxr_mode
+    // Weather radar mode
+    // 0=OFF, 1=Weather, 2=Weather+Turb, 3=Map
+    // default 1=Weather
+    efis_copilot_wxr_mode = XPLMRegisterDataAccessor("xhsi/nd_copilot/wxr_mode",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getCopilotWxrMode, setCopilotWxrMode,            // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_copilot/wxr_slave
+    // Weather radar slave :
+    // when true, get the settings from the opposite side
+    // default false (0)
+    efis_copilot_wxr_slave = XPLMRegisterDataAccessor("xhsi/nd_copilot/wxr_slave",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getCopilotWxrSlave, setCopilotWxrSlave,          // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_copilot/wxr_react
+    // Weather radar REACT
+    // when false, signal attenuation is simulated
+    // default true (1)
+    efis_copilot_wxr_react = XPLMRegisterDataAccessor("xhsi/nd_copilot/wxr_react",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getCopilotWxrReact, setCopilotWxrReact,          // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_copilot/wxr_narrow
+    // Weather radar narrow beam
+    // when false - beam is at standard sweep of 120° (depends on the sweep angle settings)
+    // when true - beam is at 60° and gives a faster sweep rate
+    // default false (0)
+    efis_copilot_wxr_narrow = XPLMRegisterDataAccessor("xhsi/nd_copilot/wxr_narrow",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getCopilotWxrNarrow, setCopilotWxrNarrow,        // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_copilot/wxr_alert
+    // Weather radar alert mode on
+    // when true, high turbulence areas flashes
+    // default false (0)
+    efis_copilot_wxr_alert = XPLMRegisterDataAccessor("xhsi/nd_copilot/wxr_alert",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getCopilotWxrAlert, setCopilotWxrAlert,          // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+    // xhsi/nd_copilot/wxr_target
+    // Weather radar target mode on
+    // when true, alarm visible when high turbulence within 25 nm range
+    // default false (0)
+    efis_copilot_wxr_target = XPLMRegisterDataAccessor("xhsi/nd_copilot/wxr_target",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getCopilotWxrTarget, setCopilotWxrTarget,        // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
 
     XPLMDebugString("XHSI: custom copilot DataRefs registered\n");
 
@@ -1384,6 +1939,52 @@ void registerGeneralDataRefs(void) {
 
 }
 
+void registerEGPWSDataRefs(void) {
+
+    XPLMDebugString("XHSI: registering custom EGPWS DataRefs\n");
+
+    // xhsi/egpws/flaps_mode
+    egpws_flaps_mode = XPLMRegisterDataAccessor("xhsi/egpws/flaps_mode",
+                                        xplmType_Int,                              // The types we support
+                                        1,                                         // Writable
+                                        getEgpwsFlapsMode, setEgpwsFlapsMode,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/egpws/gs_mode
+    egpws_gs_mode = XPLMRegisterDataAccessor("xhsi/egpws/gs_mode",
+                                        xplmType_Int,                              // The types we support
+                                        1,                                         // Writable
+                                        getEgpwsGsMode, setEgpwsGsMode,      // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+    // xhsi/egpws/system
+    egpws_sys = XPLMRegisterDataAccessor("xhsi/egpws/system",
+                                         xplmType_Int,                              // The types we support
+                                         1,                                         // Writable
+                                         getEgpwsSystem, setEgpwsSystem,      // Integer accessors
+                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+
+    // TODO:
+    /*
+     * egpws_flaps_mode
+     * egpws_gs_mode
+     * egpws_sys
+     *
+     */
+
+    XPLMDebugString("XHSI: custom EGPWS DataRefs registered\n");
+
+}
+
+void registerWeatherRadarDataRefs(void) {
+
+    XPLMDebugString("XHSI: registering custom Weather radar DataRefs\n");
+
+    // TODO:
+
+    XPLMDebugString("XHSI: custom Weather radar DataRefs registered\n");
+
+}
 
 void registerEICASDataRefs(void) {
 
@@ -1519,19 +2120,35 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu_pilot/source");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu_copilot/source");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu_side");
+        // TODO: EGPWS
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/engine_type");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_scale");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/fuel_units");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/temp_units");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_max_lbft");
+
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/sta");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/data");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/pos");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/terrain");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/vp");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/map_zoomin");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/chrono");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/chrono_run");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/wxr_gain");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/wxr_tilt");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/wxr_auto_gain");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/wxr_auto_tilt");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/wxr_test");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/wxr_mode");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/wxr_slave");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/wxr_react");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/wxr_narrow");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/wxr_alert");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/wxr_target");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_pilot/da_bug");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_pilot/mins_mode");
+
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/map_range");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/radio1");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/radio2");
@@ -1543,12 +2160,26 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/sta");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/data");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/pos");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/terrain");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/vp");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/map_ctr");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/map_mode");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/nav_source");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/map_zoomin");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/chrono");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/chrono_run");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/wxr_gain");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/wxr_tilt");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/wxr_auto_gain");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/wxr_auto_tilt");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/wxr_test");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/wxr_mode");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/wxr_slave");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/wxr_react");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/wxr_narrow");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/wxr_alert");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/wxr_target");
+
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/da_bug");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/mins_mode");
 //        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rtu/contact_atc");
@@ -1616,6 +2247,9 @@ float initPilotCallback(
     // TERRAIN on ND - EGPWS off
     XPLMSetDatai(efis_pilot_shows_terrain, 0);
 
+    // Vertical Path on ND
+    XPLMSetDatai(efis_pilot_shows_vp, 0);
+
     // just a default DA
     XPLMSetDatai(efis_pilot_da_bug, 0);
 
@@ -1630,6 +2264,39 @@ float initPilotCallback(
 
     // chrono stop
     XPLMSetDatai(efis_pilot_chrono_running, 0);
+
+    // Weather radar gain 0 dB
+    XPLMSetDataf(efis_pilot_wxr_gain, 0);
+
+    // Weather radar tilt 0 degrees
+    XPLMSetDataf(efis_pilot_wxr_tilt, 0);
+
+    // Weather radar auto tilt ON
+    XPLMSetDatai(efis_pilot_wxr_auto_tilt, 1);
+
+    // Weather radar auto gain ON
+    XPLMSetDatai(efis_pilot_wxr_auto_gain, 1);
+
+    // Weather radar auto test OFF
+    XPLMSetDatai(efis_pilot_wxr_test, 0);
+
+    // Weather radar mode OFF
+    XPLMSetDatai(efis_pilot_wxr_mode, 0);
+
+    // Weather radar slave OFF
+    XPLMSetDatai(efis_pilot_wxr_slave, 0);
+
+    // Weather radar REACT OFF (Rain Echo Attenuation Compensation Technique)
+    XPLMSetDatai(efis_pilot_wxr_slave, 0);
+
+    // Weather radar narrow scan OFF (60° fast scan mode)
+    XPLMSetDatai(efis_pilot_wxr_narrow, 0);
+
+    // Weather radar alert OFF
+    XPLMSetDatai(efis_pilot_wxr_alert, 0);
+
+    // Weather radar target OFF
+    XPLMSetDatai(efis_pilot_wxr_target, 0);
 
 
     XPLMDebugString("XHSI: custom pilot DataRefs initialized\n");
@@ -1685,6 +2352,9 @@ float initCopilotCallback(
     // TERRAIN on ND - EGPWS off
     XPLMSetDatai(efis_copilot_shows_terrain, 0);
 
+    // TERRAIN on ND - Vertical path
+    XPLMSetDatai(efis_copilot_shows_vp, 0);
+
     // CTR on ! (just to be a little different from the pilot's ND default)
     XPLMSetDatai(efis_copilot_map_mode, 0);
 
@@ -1709,11 +2379,85 @@ float initCopilotCallback(
     // chrono stop
     XPLMSetDatai(efis_copilot_chrono_running, 0);
 
+    // Weather radar gain 0 dB
+    XPLMSetDataf(efis_copilot_wxr_gain, 0);
+
+    // Weather radar tilt 0 degrees
+    XPLMSetDataf(efis_copilot_wxr_tilt, 0);
+
+    // Weather radar auto tilt ON
+    XPLMSetDatai(efis_copilot_wxr_auto_tilt, 1);
+
+    // Weather radar auto gain ON
+    XPLMSetDatai(efis_copilot_wxr_auto_gain, 1);
+
+    // Weather radar auto test OFF
+    XPLMSetDatai(efis_copilot_wxr_test, 0);
+
+    // Weather radar mode OFF
+    XPLMSetDatai(efis_copilot_wxr_mode, 0);
+
+    // Weather radar slave OFF
+    XPLMSetDatai(efis_copilot_wxr_slave, 0);
+
+    // Weather radar REACT OFF (Rain Echo Attenuation Compensation Technique)
+    XPLMSetDatai(efis_copilot_wxr_slave, 0);
+
+    // Weather radar narrow scan OFF (60° fast scan mode)
+    XPLMSetDatai(efis_copilot_wxr_narrow, 0);
+
+    // Weather radar alert OFF
+    XPLMSetDatai(efis_copilot_wxr_alert, 0);
+
+    // Weather radar target OFF
+    XPLMSetDatai(efis_copilot_wxr_target, 0);
+
     XPLMDebugString("XHSI: custom copilot DataRefs initialized\n");
 
     return 0.0f;
 }
 
+float initEGPWSCallback(
+									float	inElapsedSinceLastCall,
+									float	inElapsedTimeSinceLastFlightLoop,
+									int		inCounter,
+									void *	inRefcon) {
+
+    XPLMDebugString("XHSI: initializing custom EGPWS DataRefs\n");
+
+    // set some defaults...
+
+    // Flaps mode on
+    XPLMSetDatai(egpws_flaps_mode, 1);
+
+	// Glide Slope mode on
+    XPLMSetDatai(egpws_gs_mode, 1);
+
+	// EGPWS ON
+	XPLMSetDatai(egpws_sys, 1);
+
+    XPLMDebugString("XHSI: custom EPGWS DataRefs initialized\n");
+
+    return 0.0f;
+
+}
+
+float initWeatherRadarCallback(
+									float	inElapsedSinceLastCall,
+									float	inElapsedTimeSinceLastFlightLoop,
+									int		inCounter,
+									void *	inRefcon) {
+
+    XPLMDebugString("XHSI: initializing custom Weather radar DataRefs\n");
+
+    // set some defaults...
+    // TODO:
+
+    XPLMDebugString("XHSI: custom Weather radar DataRefs initialized\n");
+
+    return 0.0f;
+
+}
 
 float initEICASCallback(
 									float	inElapsedSinceLastCall,
@@ -1820,6 +2564,9 @@ void unregisterPilotDataRefs(void) {
     // xhsi/nd_pilot/terrain
     XPLMUnregisterDataAccessor(efis_pilot_shows_terrain);
 
+    // xhsi/nd_pilot/vp
+    XPLMUnregisterDataAccessor(efis_pilot_shows_vp);
+
     // xhsi/pfd_pilot/da_bug
     XPLMUnregisterDataAccessor(efis_pilot_da_bug);
 
@@ -1835,6 +2582,38 @@ void unregisterPilotDataRefs(void) {
     // xhsi/nd_pilot/chrono_run
     XPLMUnregisterDataAccessor(efis_pilot_chrono_running);
 
+    // xhsi/nd_pilot/wxr_gain
+    XPLMUnregisterDataAccessor(efis_pilot_wxr_gain);
+
+    // xhsi/nd_pilot/wxr_tilt
+    XPLMUnregisterDataAccessor(efis_pilot_wxr_tilt);
+
+    // xhsi/nd_pilot/wxr_auto_tilt
+    XPLMUnregisterDataAccessor(efis_pilot_wxr_auto_tilt);
+
+    // xhsi/nd_pilot/wxr_auto_gain
+    XPLMUnregisterDataAccessor(efis_pilot_wxr_auto_gain);
+
+    // xhsi/nd_pilot/wxr_test
+    XPLMUnregisterDataAccessor(efis_pilot_wxr_test);
+
+    // xhsi/nd_pilot/wxr_mode
+    XPLMUnregisterDataAccessor(efis_pilot_wxr_mode);
+
+    // xhsi/nd_pilot/wxr_slave
+    XPLMUnregisterDataAccessor(efis_pilot_wxr_slave);
+
+    // xhsi/nd_pilot/wxr_react
+    XPLMUnregisterDataAccessor(efis_pilot_wxr_react);
+
+    // xhsi/nd_pilot/wxr_narrow
+    XPLMUnregisterDataAccessor(efis_pilot_wxr_narrow);
+
+    // xhsi/nd_pilot/wxr_alert
+    XPLMUnregisterDataAccessor(efis_pilot_wxr_alert);
+
+    // xhsi/nd_pilot/wxr_target
+    XPLMUnregisterDataAccessor(efis_pilot_wxr_target);
 }
 
 
@@ -1876,6 +2655,9 @@ void unregisterCopilotDataRefs(void) {
     // xhsi/nd_copilot/terrain
     XPLMUnregisterDataAccessor(efis_copilot_shows_terrain);
 
+    // xhsi/nd_copilot/vp
+    XPLMUnregisterDataAccessor(efis_copilot_shows_vp);
+
     // xhsi/nd_copilot/map_ctr
     XPLMUnregisterDataAccessor(efis_copilot_map_mode);
 
@@ -1899,6 +2681,39 @@ void unregisterCopilotDataRefs(void) {
 
     // xhsi/nd_copilot/chrono_run
     XPLMUnregisterDataAccessor(efis_copilot_chrono_running);
+
+    // xhsi/nd_copilot/wxr_gain
+    XPLMUnregisterDataAccessor(efis_copilot_wxr_gain);
+
+    // xhsi/nd_copilot/wxr_tilt
+    XPLMUnregisterDataAccessor(efis_copilot_wxr_tilt);
+
+    // xhsi/nd_copilot/wxr_auto_tilt
+    XPLMUnregisterDataAccessor(efis_copilot_wxr_auto_tilt);
+
+    // xhsi/nd_copilot/wxr_auto_gain
+    XPLMUnregisterDataAccessor(efis_copilot_wxr_auto_gain);
+
+    // xhsi/nd_copilot/wxr_test
+    XPLMUnregisterDataAccessor(efis_copilot_wxr_test);
+
+    // xhsi/nd_copilot/wxr_mode
+    XPLMUnregisterDataAccessor(efis_copilot_wxr_mode);
+
+    // xhsi/nd_copilot/wxr_slave
+    XPLMUnregisterDataAccessor(efis_copilot_wxr_slave);
+
+    // xhsi/nd_copilot/wxr_react
+    XPLMUnregisterDataAccessor(efis_copilot_wxr_react);
+
+    // xhsi/nd_copilot/wxr_narrow
+    XPLMUnregisterDataAccessor(efis_copilot_wxr_narrow);
+
+    // xhsi/nd_copilot/wxr_alert
+    XPLMUnregisterDataAccessor(efis_copilot_wxr_alert);
+
+    // xhsi/nd_copilot/wxr_target
+    XPLMUnregisterDataAccessor(efis_copilot_wxr_target);
 }
 
 void unregisterGeneralDataRefs(void) {
@@ -1919,6 +2734,25 @@ void unregisterGeneralDataRefs(void) {
     XPLMUnregisterDataAccessor(xhsi_rtu_selected_radio);
     
 }
+
+void unregisterEGPWSDataRefs(void) {
+
+    // xhsi/egpws/flaps_mode
+	XPLMUnregisterDataAccessor(egpws_flaps_mode);
+
+    // xhsi/egpws/gs_mode
+	XPLMUnregisterDataAccessor(egpws_gs_mode);
+
+    // xhsi/egpws/system
+	XPLMUnregisterDataAccessor(egpws_sys);
+}
+
+
+void unregisterWeatherRadarDataRefs(void) {
+// TODO:
+
+}
+
 
 void unregisterEICASDataRefs(void) {
 
@@ -2552,6 +3386,33 @@ void writeDataRef(int id, float value) {
             XPLMSetDatai(efis_pilot_shows_terrain, (int)value);
             break;
 
+        case XHSI_EFIS_PILOT_VP :
+            XPLMSetDatai(efis_pilot_shows_vp, (int)value);
+            break;
+
+        case XHSI_EFIS_PILOT_WXR_TILT :
+            XPLMSetDataf(efis_pilot_wxr_tilt, value);
+            break;
+
+        case XHSI_EFIS_PILOT_WXR_GAIN :
+            XPLMSetDataf(efis_pilot_wxr_gain, value);
+            break;
+
+        case XHSI_EFIS_PILOT_WXR_MODE :
+            XPLMSetDatai(efis_pilot_wxr_mode, (int)value);
+            break;
+
+        case XHSI_EFIS_PILOT_WXR_OPT :
+        	XPLMSetDatai(efis_pilot_wxr_target,    ((int)value)>>7 & 0x01 );
+        	XPLMSetDatai(efis_pilot_wxr_alert,     ((int)value)>>6 & 0x01 );
+        	XPLMSetDatai(efis_pilot_wxr_narrow,    ((int)value)>>5 & 0x01 );
+        	XPLMSetDatai(efis_pilot_wxr_react,     ((int)value)>>4 & 0x01 );
+        	XPLMSetDatai(efis_pilot_wxr_slave,     ((int)value)>>3 & 0x01 );
+        	XPLMSetDatai(efis_pilot_wxr_auto_tilt, ((int)value)>>2 & 0x01 );
+        	XPLMSetDatai(efis_pilot_wxr_auto_gain, ((int)value)>>1 & 0x01 );
+        	XPLMSetDatai(efis_pilot_wxr_test,      ((int)value)    & 0x01 );
+            break;
+
         case SIM_COCKPIT_SWITCHES_EFIS_MAP_MODE :
             XPLMSetDatai(efis_map_mode, (int)value);
             break;
@@ -2617,6 +3478,33 @@ void writeDataRef(int id, float value) {
             XPLMSetDatai(efis_copilot_shows_terrain, (int)value);
             break;
 
+        case XHSI_EFIS_COPILOT_VP :
+            XPLMSetDatai(efis_copilot_shows_vp, (int)value);
+            break;
+
+        case XHSI_EFIS_COPILOT_WXR_TILT :
+            XPLMSetDataf(efis_copilot_wxr_tilt, value);
+            break;
+
+        case XHSI_EFIS_COPILOT_WXR_GAIN :
+            XPLMSetDataf(efis_copilot_wxr_gain, value);
+            break;
+
+        case XHSI_EFIS_COPILOT_WXR_MODE :
+            XPLMSetDatai(efis_copilot_wxr_mode, (int)value);
+            break;
+
+        case XHSI_EFIS_COPILOT_WXR_OPT :
+        	XPLMSetDatai(efis_copilot_wxr_target,    ((int)value)>>7 & 0x01 );
+        	XPLMSetDatai(efis_copilot_wxr_alert,     ((int)value)>>6 & 0x01 );
+        	XPLMSetDatai(efis_copilot_wxr_narrow,    ((int)value)>>5 & 0x01 );
+        	XPLMSetDatai(efis_copilot_wxr_react,     ((int)value)>>4 & 0x01 );
+        	XPLMSetDatai(efis_copilot_wxr_slave,     ((int)value)>>3 & 0x01 );
+        	XPLMSetDatai(efis_copilot_wxr_auto_tilt, ((int)value)>>2 & 0x01 );
+        	XPLMSetDatai(efis_copilot_wxr_auto_gain, ((int)value)>>1 & 0x01 );
+        	XPLMSetDatai(efis_copilot_wxr_test,      ((int)value)    & 0x01 );
+            break;
+
         case XHSI_EFIS_COPILOT_MAP_CTR :
             XPLMSetDatai(efis_copilot_map_mode , (int)value);
             break;
@@ -2630,6 +3518,12 @@ void writeDataRef(int id, float value) {
             XPLMSetDatai(efis_copilot_map_zoomin, (int)value);
             break;
 
+        // EGPWS
+        case XHSI_EPGWS_MODES :
+        	XPLMSetDatai(egpws_flaps_mode, ((int)value)>>2 & 0x01 );
+        	XPLMSetDatai(egpws_gs_mode,    ((int)value)>>1 & 0x01 );
+        	XPLMSetDatai(egpws_sys,        ((int)value)    & 0x01 );
+            break;
 
         // EICAS
 

@@ -80,6 +80,7 @@
 #include "datarefs_jar_a320neo.h"
 #include "datarefs_pilotedge.h"
 #include "datarefs_xjoymap.h"
+#include "datarefs_x_raas.h"
 #include "ui.h"
 #include "net.h"
 #include "packets.h"
@@ -212,6 +213,14 @@ PLUGIN_API int XPluginEnable(void) {
             -1.0f,
             NULL);
     XPLMRegisterFlightLoopCallback(
+            initEGPWSCallback,
+            -1.0f,
+            NULL);
+    XPLMRegisterFlightLoopCallback(
+            initWeatherRadarCallback,
+            -1.0f,
+            NULL);
+    XPLMRegisterFlightLoopCallback(
             initEICASCallback,
             -1.0f,
             NULL);
@@ -266,6 +275,11 @@ PLUGIN_API int XPluginEnable(void) {
     // xjoymap - Dual commands
     XPLMRegisterFlightLoopCallback(
             checkXjoymapCallback,
+            -1.0f,
+            NULL);
+    // xraas - Runway Awareness and Advisory System
+    XPLMRegisterFlightLoopCallback(
+            checkXRaasCallback,
             -1.0f,
             NULL);
 
@@ -331,6 +345,8 @@ PLUGIN_API void XPluginDisable(void) {
 
     XPLMUnregisterFlightLoopCallback(initPilotCallback, NULL);
     XPLMUnregisterFlightLoopCallback(initCopilotCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(initEGPWSCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(initWeatherRadarCallback, NULL);
     XPLMUnregisterFlightLoopCallback(initEICASCallback, NULL);
     XPLMUnregisterFlightLoopCallback(initMFDCallback, NULL);
     XPLMUnregisterFlightLoopCallback(initCDUCallback, NULL);
@@ -343,6 +359,7 @@ PLUGIN_API void XPluginDisable(void) {
     XPLMUnregisterFlightLoopCallback(checkPaA320Callback, NULL);
     XPLMUnregisterFlightLoopCallback(checkJarA320NeoCallback, NULL);
     XPLMUnregisterFlightLoopCallback(checkXjoymapCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(checkXRaasCallback, NULL);
 
     XPLMUnregisterFlightLoopCallback(sendXfmcCallback, NULL);
     XPLMUnregisterFlightLoopCallback(sendQpacMsgCallback, NULL);
@@ -371,6 +388,8 @@ PLUGIN_API void	XPluginStop(void) {
     unregisterPilotDataRefs();
     unregisterCopilotDataRefs();
     unregisterGeneralDataRefs();
+    unregisterEGPWSDataRefs();
+    unregisterWeatherRadarDataRefs();
     unregisterEICASDataRefs();
     unregisterMFDDataRefs();
     unregisterCDUDataRefs();

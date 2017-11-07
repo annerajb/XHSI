@@ -70,7 +70,9 @@ XPLMDataRef qpac_presel_clb;
 XPLMDataRef qpac_presel_mach;
 XPLMDataRef qpac_thr_rating_type;
 XPLMDataRef qpac_thr_rating_n1;
+XPLMDataRef qpac_thr_rating_epr;
 XPLMDataRef qpac_throttle_input;
+XPLMDataRef qpac_eng_epr_array;
 // ILS Sig and Deviation Capt. and FO
 XPLMDataRef qpac_loc_val_capt;
 XPLMDataRef qpac_loc_on_capt;
@@ -137,6 +139,8 @@ XPLMDataRef qpac_capt_efis_nd_mode;
 XPLMDataRef qpac_co_efis_nd_mode;
 XPLMDataRef qpac_capt_efis_nd_range;
 XPLMDataRef qpac_co_efis_nd_range;
+// GPWS
+XPLMDataRef qpac_gpws_switch_array;
 // Brakes
 // 0=OFF, 1=Engaged, 2=DECEL
 XPLMDataRef qpac_autobrake_low;
@@ -145,6 +149,10 @@ XPLMDataRef qpac_autobrake_max;
 XPLMDataRef qpac_left_brake_release;
 XPLMDataRef qpac_right_brake_release;
 XPLMDataRef qpac_nw_anti_skid;
+// Version 2.0.4
+XPLMDataRef qpac_brake_fan;
+XPLMDataRef qpac_brake_temp_array;
+XPLMDataRef qpac_tire_press_array;
 // Gears indicators
 XPLMDataRef qpac_left_gear_ind;
 XPLMDataRef qpac_nose_gear_ind;
@@ -192,6 +200,13 @@ XPLMDataRef qpac_cond_zone2_trim;
 XPLMDataRef qpac_cond_cockpit_temp;
 XPLMDataRef qpac_cond_aft_cabin_temp;
 XPLMDataRef qpac_cond_fwd_cabin_temp;
+// version 2.0.4
+XPLMDataRef qpac_cond_cargo_hot_air_valve;
+XPLMDataRef qpac_cond_aft_cargo_temp;
+XPLMDataRef qpac_cond_fwd_cargo_temp;
+XPLMDataRef qpac_cond_aft_cargo_isol_valve;
+XPLMDataRef qpac_cond_fwd_cargo_isol_valve;
+
 // Doors - OXY
 XPLMDataRef qpac_door_pax_array;
 XPLMDataRef qpac_door_cargo_array;
@@ -350,7 +365,9 @@ void findQpacDataRefs(void) {
             qpac_presel_mach = XPLMFindDataRef("AirbusFBW/PreselMach");
             qpac_thr_rating_type = XPLMFindDataRef("AirbusFBW/THRRatingType");
             qpac_thr_rating_n1 = XPLMFindDataRef("AirbusFBW/THRRatingN1");
+            qpac_thr_rating_epr = XPLMFindDataRef("AirbusFBW/THRRatingEPR");
             qpac_throttle_input = XPLMFindDataRef("AirbusFBW/throttle_input");
+            qpac_eng_epr_array = XPLMFindDataRef("AirbusFBW/ENGEPRArray");
             // ILS Sig and Deviation Capt. and FO
             qpac_loc_val_capt = XPLMFindDataRef("AirbusFBW/LOCvalCapt");
             qpac_loc_on_capt = XPLMFindDataRef("AirbusFBW/LOConCapt");
@@ -418,6 +435,10 @@ void findQpacDataRefs(void) {
             qpac_capt_efis_nd_range = XPLMFindDataRef("AirbusFBW/NDrangeCapt");
             qpac_co_efis_nd_range = XPLMFindDataRef("AirbusFBW/NDrangeFO");
             if (qpac_capt_efis_nd_range != NULL) qpac_version = 202;
+            // GPWS
+            qpac_gpws_switch_array = XPLMFindDataRef("AirbusFBW/GPWSSwitchArray");
+            if (qpac_gpws_switch_array != NULL) qpac_version = 204;
+
             // Brakes
             qpac_autobrake_low = XPLMFindDataRef("AirbusFBW/AutoBrkLo");
             qpac_autobrake_med = XPLMFindDataRef("AirbusFBW/AutoBrkMed");
@@ -425,7 +446,13 @@ void findQpacDataRefs(void) {
             qpac_left_brake_release = XPLMFindDataRef("AirbusFBW/LeftBrakeRelease");
             qpac_right_brake_release = XPLMFindDataRef("AirbusFBW/RightBrakeRelease");
             qpac_nw_anti_skid = XPLMFindDataRef("AirbusFBW/NWSnAntiSkid");
+            // version 2.0.4
+            qpac_brake_fan = XPLMFindDataRef("AirbusFBW/BrakeFan");
+            qpac_brake_temp_array = XPLMFindDataRef("AirbusFBW/BrakeTemperatureArray");
+            qpac_tire_press_array = XPLMFindDataRef("AirbusFBW/TirePressureArray");
+
             // Gears indicators
+
             qpac_left_gear_ind = XPLMFindDataRef("AirbusFBW/LeftGearInd");
             qpac_nose_gear_ind = XPLMFindDataRef("AirbusFBW/NoseGearInd");
             qpac_right_gear_ind = XPLMFindDataRef("AirbusFBW/RightGearInd");
@@ -472,6 +499,13 @@ void findQpacDataRefs(void) {
             qpac_cond_cockpit_temp = XPLMFindDataRef("AirbusFBW/CockpitTemp");
             qpac_cond_aft_cabin_temp = XPLMFindDataRef("AirbusFBW/AftCabinTemp");
             qpac_cond_fwd_cabin_temp = XPLMFindDataRef("AirbusFBW/FwdCabinTemp");
+            // version 2.0.4
+            qpac_cond_cargo_hot_air_valve = XPLMFindDataRef("AirbusFBW/CargoHotAir");
+            qpac_cond_aft_cargo_temp = XPLMFindDataRef("AirbusFBW/AftCargoTemp");
+            qpac_cond_fwd_cargo_temp = XPLMFindDataRef("AirbusFBW/FwdCargoTemp");
+            qpac_cond_aft_cargo_isol_valve = XPLMFindDataRef("AirbusFBW/AftIsolValve");
+            qpac_cond_fwd_cargo_isol_valve = XPLMFindDataRef("AirbusFBW/FwdIsolValve");
+
             // Doors - Oxygen
             qpac_door_pax_array = XPLMFindDataRef("AirbusFBW/PaxDoorArray");
             qpac_door_cargo_array = XPLMFindDataRef("AirbusFBW/CargoDoorArray");
@@ -744,6 +778,11 @@ void findQpacDataRefs(void) {
             qpac_command[QPAC_KEY_FD1_PUSH] = XPLMFindCommand("airbus_qpac/fd1_push");
             qpac_command[QPAC_KEY_FD2_PUSH] = XPLMFindCommand("airbus_qpac/fd2_push");
 
+            // GPWS
+            qpac_command[QPAC_KEY_GPWS_MUTE] = XPLMFindCommand("AirbusFBW/GPWSMute");
+            qpac_command[QPAC_KEY_GPWS_SHUTOFF] = XPLMFindCommand("AirbusFBW/GPWSShutoff");
+
+
             for (i=0; i<QPAC_SD_LINES; i++) {
                 sprintf(buf, "AirbusFBW/SDline%da", i+1);
                 qpac_sd_line_amber[i] = XPLMFindDataRef(buf);
@@ -756,6 +795,98 @@ void findQpacDataRefs(void) {
                 sprintf(buf, "AirbusFBW/SDline%dw", i+1);
                 qpac_sd_line_white[i] = XPLMFindDataRef(buf);
             }
+
+            /* new dataref & Commands in version 2.0.4
+             *
+             * [D] = dataref referenced in dataref_qpac.c
+             * [S] = dateref send by customAvionics in packet.c
+             * [E] = dateref have a function in XHSI Application
+             * [C] = command referenced
+             *
+            [D] AirbusFBW/AftCargoTemp
+            [D] AirbusFBW/AftIsolValve
+            AirbusFBW/AnnunMode
+            AirbusFBW/AuralVolume
+            AirbusFBW/AuralVolumeFO
+            [D] AirbusFBW/BrakeFan
+            [DS] AirbusFBW/BrakeTemperatureArray
+            [D] AirbusFBW/CargoHotAir
+            AirbusFBW/ClockETHours
+            AirbusFBW/ClockETMinutes
+            AirbusFBW/ClockETSwitch
+            AirbusFBW/CrewOxySwitch
+            AirbusFBW/DUSelfTestTimeLeft
+            AirbusFBW/EmerCallOHPButton
+            AirbusFBW/EmerPathLit
+            AirbusFBW/ENGFireSwitchArray
+            AirbusFBW/ENGTLASettingEPR
+            AirbusFBW/ENGTLASettingN1
+            AirbusFBW/EvacHornShutoff
+            AirbusFBW/ExitSignsLit
+            AirbusFBW/FireExOHPArray
+            AirbusFBW/FireTestAll
+            AirbusFBW/FireTestAPU
+            AirbusFBW/FireTestCargo
+            AirbusFBW/FireTestENG1
+            AirbusFBW/FireTestENG2
+            AirbusFBW/FireTestENG3
+            AirbusFBW/FireTestENG4
+            [D] AirbusFBW/FwdCargoTemp
+            [D] AirbusFBW/FwdIsolValve
+            [C] AirbusFBW/GPWSMute
+            [C] AirbusFBW/GPWSShutoff
+            [D] AirbusFBW/GPWSSwitchArray
+            AirbusFBW/HotAirSwitch2
+            AirbusFBW/ISIAltitude
+            AirbusFBW/ISIAvailable
+            AirbusFBW/ISIBaroSetting
+            AirbusFBW/ISIBaroStd
+            AirbusFBW/ISIBaroUnit
+            AirbusFBW/ISIBrightnessDown
+            AirbusFBW/ISIBrightnessUp
+            AirbusFBW/ISILSSelection
+            AirbusFBW/LeftWAIValvePos
+            AirbusFBW/MixerUnitFlow
+            AirbusFBW/NoSmokingSignsOn
+            AirbusFBW/OHPGuardsAllATA
+            AirbusFBW/OHPLightsATA21
+            AirbusFBW/OHPLightsATA24
+            AirbusFBW/OHPLightsATA26
+            AirbusFBW/OHPLightsATA27
+            AirbusFBW/OHPLightsATA28
+            AirbusFBW/OHPLightsATA29
+            AirbusFBW/OHPLightsATA30
+            AirbusFBW/OHPLightsATA31
+            AirbusFBW/OHPLightsATA32
+            AirbusFBW/OHPLightsATA34
+            AirbusFBW/OHPLightsATA35
+            AirbusFBW/OHPLightsATA49
+            AirbusFBW/OHPLightsATA70
+            AirbusFBW/PFDNDToggleCapt
+            AirbusFBW/PFDNDToggleCo
+            AirbusFBW/PopUpEWD
+            AirbusFBW/PopUpISI
+            AirbusFBW/PopUpSD
+            AirbusFBW/RightWAIValvePos
+            AirbusFBW/SeatBeltSignsOn
+            AirbusFBW/SlatPositionLWing
+            AirbusFBW/SlatPositionRWing
+            AirbusFBW/SpdBrakeDeployed
+            [DS] AirbusFBW/THRRatingEPR
+            [D] AirbusFBW/TirePressureArray
+            AirbusFBW/ValveSelectSwitch
+            AirbusFBW/VentExtractValve
+            AirbusFBW/VentInletValve
+            *
+            * Datarefs and commands present in 2.0.3 removed in 2.0.4
+            *   AirbusFBW/AnnunBrightSwitch [replaced by AnnunMode]
+            *   AirbusFBW/PopDownND1
+            *   AirbusFBW/PopDownND2
+            *   AirbusFBW/PopDownPFD1
+            *   AirbusFBW/PopDownPFD2
+            *   AirbusFBW/SwapECAMPopUp
+            *
+            */
 
             findQpacMsgDataRefs();
 
