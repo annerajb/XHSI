@@ -66,6 +66,7 @@ import net.sourceforge.xhsi.model.xplane.XPlaneNearestAirport;
 import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 import net.sourceforge.xhsi.model.xplane.XPlaneUDPReceiver;
 import net.sourceforge.xhsi.model.xplane.XPlaneUDPSender;
+import net.sourceforge.xhsi.model.xplane.XPlaneWeatherReceiver;
 
 import net.sourceforge.xhsi.flightdeck.UIHeartbeat;
 
@@ -263,6 +264,16 @@ public class XHSI implements ActionListener {
                 XPlaneNearestAirport find_nrst_arpt = new XPlaneNearestAirport( this.model_instance.get_aircraft_instance() );
                 this.running_threads.add(find_nrst_arpt);
                 find_nrst_arpt.start();
+                
+                // Receiving weather data
+                XPlaneWeatherReceiver weather_receiver = new XPlaneWeatherReceiver( 
+                		Integer.parseInt(preferences.get_preference(XHSIPreferences.PREF_WEATHER_PORT)),
+                		preferences.get_preference(XHSIPreferences.PREF_MULTICAST).equals("true"),
+                		preferences.get_preference(XHSIPreferences.PREF_GROUP) );
+                weather_receiver.add_reception_observer(decoder);
+                this.running_threads.add(weather_receiver);
+                XHSIStatus.weather_status = XHSIStatus.STATUS_RECEIVING;
+                weather_receiver.start();
 
 //            } else if ( this.preferences.get_preference(XHSIPreferences.PREF_SIMCOM).equals(XHSIPreferences.SCS) ) {
 //
@@ -441,7 +452,7 @@ public class XHSI implements ActionListener {
         // load EGPWS databases
         GlobeElevationBuilder geb = new GlobeElevationBuilder(this.preferences.get_preference(XHSIPreferences.PREF_EGPWS_DB_DIR));
         this.preferences.add_subsciption(geb, XHSIPreferences.PREF_EGPWS_DB_DIR);
-        geb.set_progress_observer((ProgressObserver) this.geb_progress_dialog);
+        geb.set_progress_observer((ProgressObserver) this.nob_progress_dialog);
         if ( ! XHSIStatus.egpws_db_status.equals(XHSIStatus.STATUS_EGPWS_DB_NOT_FOUND) ) {
             geb.map_database();
             XHSIStatus.egpws_db_status = XHSIStatus.STATUS_EGPWS_DB_LOADED;
@@ -453,6 +464,7 @@ public class XHSI implements ActionListener {
 //taxi.get_chart("YMML");
         
         // add components update watchdog
+        logger.info("Starting UI heartbeat");
         UIHeartbeat ui_heartbeat = new UIHeartbeat(this.xhsi_ui, pfd_ui, nd_ui, eicas_ui, mfd_ui, cdu_ui, 1000);
         ui_heartbeat.start();
         this.running_threads.add(ui_heartbeat);

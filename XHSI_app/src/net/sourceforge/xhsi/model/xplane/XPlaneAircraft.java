@@ -1009,6 +1009,14 @@ public class XPlaneAircraft implements Aircraft {
         return ref;
     }
 
+    public float get_ref_EPR(int engine) {
+    	float ref = 0.0f;
+    	if ( this.avionics.is_qpac() ) {                
+    		ref = sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_THR_RATING_EPR);            
+    	}
+    	return ref;
+    }
+    
     public String get_thrust_mode() {    	
         if ( this.avionics.is_x737() ) {
             return XPlaneAircraft.x737_thrust_modes[ (int) sim_data.get_sim_float(XPlaneSimDataRepository.X737_N1_PHASE) ];

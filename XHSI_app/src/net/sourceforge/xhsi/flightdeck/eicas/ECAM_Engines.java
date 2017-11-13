@@ -501,19 +501,32 @@ public class ECAM_Engines extends EICASSubcomponent {
             g2.drawString("REV", eicas_gc.prim_dial_x[pos]-eicas_gc.dial_font_w[num]*16/10, epr_y-eicas_gc.dial_font_h[num]*15/100-2);
         }
 
-        // target N1 bug not for reverse
+        // target EPR (or N1) bug not for reverse
         if ( (rev==0.0f) && engine_on) {
-            float ref_n1 = this.aircraft.get_ref_N1(pos);
-            if ( ref_n1 > 0.0f ) {
-            	if ( ref_n1 <= 1.0f ) {
-            		// logger.warning("UFMC N1 is probably ratio, not percent");
-            		ref_n1 *= 100.0f;
-            	}
-            	float ref_n1_dial = Math.min(ref_n1, 110.0f) / 100.0f;
-                g2.setColor(eicas_gc.ecam_caution_color);
-                g2.rotate(Math.toRadians(Math.round(ref_n1_dial*deg_dial_range)-deg_start), eicas_gc.prim_dial_x[pos], epr_y);
+            float ref_epr = this.aircraft.get_ref_EPR(pos);
+            if ( ref_epr > 0.0f ) {
+            	float ref_epr_dial = Math.min(ref_epr-1.0f, 0.65f) / 0.6f;
+                g2.setColor(Color.yellow);
+                g2.rotate(Math.toRadians(Math.round(ref_epr_dial*deg_dial_range)-deg_start), eicas_gc.prim_dial_x[pos], epr_y);
                 g2.drawLine(eicas_gc.prim_dial_x[pos]+epr_r-epr_r/10, epr_y, eicas_gc.prim_dial_x[pos]+epr_r+epr_r/10, epr_y);
+                
+                g2.fillRect(eicas_gc.prim_dial_x[pos]+epr_r, epr_y, epr_r/4, epr_r/7);
+                
                 g2.setTransform(original_at);
+            } else {
+            	// Display N1 instead of EPR bug
+                float ref_n1 = this.aircraft.get_ref_N1(pos);
+                if ( ref_n1 > 0.0f ) {
+                	if ( ref_n1 <= 1.0f ) {
+                		// logger.warning("UFMC N1 is probably ratio, not percent");
+                		ref_n1 *= 100.0f;
+                	}
+                	float ref_n1_dial = Math.min(ref_n1, 110.0f) / 100.0f;
+                    g2.setColor(eicas_gc.ecam_markings_color);
+                    g2.rotate(Math.toRadians(Math.round(ref_n1_dial*deg_dial_range)-deg_start), eicas_gc.prim_dial_x[pos], epr_y);
+                    g2.drawLine(eicas_gc.prim_dial_x[pos]+epr_r-epr_r/10, epr_y, eicas_gc.prim_dial_x[pos]+epr_r+epr_r/10, epr_y);
+                    g2.setTransform(original_at);
+                }
             }
         }
         resetPen(g2);
@@ -1698,7 +1711,8 @@ public class ECAM_Engines extends EICASSubcomponent {
 //    }
 
     private void drawRefN1(Graphics2D g2, int pos, boolean with_epr) {
-        int ref_n1_val = Math.round( this.aircraft.get_ref_N1(pos));        
+        int ref_n1_val = Math.round( this.aircraft.get_ref_N1(pos));
+        float ref_epr_val = this.aircraft.get_ref_EPR(pos);  
         int ref_x = eicas_gc.ref_n1_x + eicas_gc.digit_width_xl*9;
         int ref_y = with_epr ? eicas_gc.ref_n1_epr_y : eicas_gc.ref_n1_y;
         int ref_underline_y = with_epr ? eicas_gc.ref_n1_epr_y + eicas_gc.line_height_l * 2/10 : eicas_gc.ref_n1_y + eicas_gc.line_height_l * 2/10;
@@ -1710,9 +1724,8 @@ public class ECAM_Engines extends EICASSubcomponent {
         // N1 value
         if (ref_n1_val > 0.1f) {
         	g2.setColor(eicas_gc.ecam_normal_color);
-        	if (with_epr) {
-        		// drawStringSmallOneDecimal(g2, ref_x, ref_y, eicas_gc.font_xxl,eicas_gc.font_l, this.aircraft.get_ref_N1(pos));
-        		// No EPR limit dataref available, let it blank 
+        	if (with_epr) {        		
+        		if (ref_epr_val>1.0) drawStringSmallThreeDecimals(g2, ref_x, ref_y, eicas_gc.font_xxl, eicas_gc.font_l, ref_epr_val);
         	} else {
         		drawStringSmallOneDecimal(g2, ref_x, ref_y, eicas_gc.font_xxl,eicas_gc.font_l, this.aircraft.get_ref_N1(pos));
 

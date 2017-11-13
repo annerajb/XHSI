@@ -1297,6 +1297,7 @@ public class FlightControls extends MFDSubcomponent {
     	int elev_x2 = elev_m + elev_w/2;
     	
     	int elevator_range = Math.round(this.aircraft.get_elev_max_up() + this.aircraft.get_elev_max_down());
+    	// TODO: check elevator range != 0 / causes div by zere exceptions
     	int elevator_mark = elev_top + (elev_h)*Math.round(this.aircraft.get_elev_max_up())/elevator_range;
     	int left_elevator = elevator_mark + Math.round(this.aircraft.get_left_elev_pos()*(elev_h)/elevator_range);
     	int right_elevator = elevator_mark + Math.round(this.aircraft.get_right_elev_pos()*(elev_h)/elevator_range);

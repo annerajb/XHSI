@@ -112,6 +112,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_SYMBOLS_SHOW_POS = "POS";
     public static final String ACTION_SYMBOLS_SHOW_DATA = "DATA";
     public static final String ACTION_SYMBOLS_SHOW_TERRAIN = "TERRAIN";
+    public static final String ACTION_SYMBOLS_SHOW_WEATHER = "Weather Radar";
+    public static final String ACTION_SYMBOLS_SHOW_VP = "Vertical path";
 
     public static final String ACTION_XPDR_OFF = "OFF";
     public static final String ACTION_XPDR_STBY = "STBY";
@@ -249,8 +251,23 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public boolean show_tfc = true;
     public boolean show_data = true;
     public boolean show_pos = true;
-    public boolean show_terrain = true;
-
+    public boolean show_terrain = false;
+    public boolean show_weather = true;
+    public boolean show_vp = false;
+    
+    // Weather radar
+    public float wxr_gain = 1.0f;
+    public float wxr_tilt = 0.0f;
+    public boolean wxr_auto_gain = false;
+    public boolean wxr_auto_tilt = false;
+    public boolean wxr_test = false;
+    public int wxr_mode = 1;
+    public boolean wxr_slave = false;
+    public boolean wxr_react = false;
+    public boolean wxr_narrow = false;
+    public boolean wxr_alert = false;
+    public boolean wxr_target = false;
+    
     public boolean draw_holding = false;
     public String holding_fix = "";
     public int holding_track = 0;
@@ -323,6 +340,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JCheckBoxMenuItem checkbox_symbols_show_pos;
     private JCheckBoxMenuItem checkbox_symbols_show_data;
     private JCheckBoxMenuItem checkbox_symbols_show_terrain;
+    private JCheckBoxMenuItem checkbox_symbols_show_weather;
+    private JCheckBoxMenuItem checkbox_symbols_show_vp;
 
     public JRadioButtonMenuItem radiobutton_holding_hide;
     public JRadioButtonMenuItem radiobutton_holding_show;
@@ -991,6 +1010,22 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // keep a reference to the checkbox to set or clear it in a non-standard way
         this.checkbox_symbols_show_terrain = checkbox_menu_item;
         
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_SYMBOLS_SHOW_VP);
+        checkbox_menu_item.setToolTipText("Show vertical path");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(true);
+        nd_symbols_submenu.add(checkbox_menu_item);
+        // keep a reference to the checkbox to set or clear it in a non-standard way
+        this.checkbox_symbols_show_vp = checkbox_menu_item;
+        
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_SYMBOLS_SHOW_WEATHER);
+        checkbox_menu_item.setToolTipText("Show Weather Radar");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(true);
+        nd_symbols_submenu.add(checkbox_menu_item);
+        // keep a reference to the checkbox to set or clear it in a non-standard way
+        this.checkbox_symbols_show_weather = checkbox_menu_item;
+        
         // add the "Symbols" menu to the menubar
         nd_menu.add(nd_symbols_submenu);
 
@@ -1652,7 +1687,12 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         } else if (command.equals(XHSISettings.ACTION_SYMBOLS_SHOW_TERRAIN)) {
             show_terrain = this.checkbox_symbols_show_terrain.isSelected();
             this.avionics.set_show_terrain(show_terrain);
-            
+        } else if (command.equals(XHSISettings.ACTION_SYMBOLS_SHOW_WEATHER)) {
+            show_weather = this.checkbox_symbols_show_weather.isSelected();
+            this.avionics.set_show_wxr(show_weather);
+        } else if (command.equals(XHSISettings.ACTION_SYMBOLS_SHOW_VP)) {
+            show_vp = this.checkbox_symbols_show_vp.isSelected();
+            this.avionics.set_show_vp(show_vp);            
         } else if (command.equals(XHSISettings.ACTION_XPDR_OFF)) {
             xpdr = Avionics.XPDR_OFF;
             this.avionics.set_xpdr_mode(xpdr);

@@ -236,8 +236,12 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_EFIS_PILOT_MAP_ZOOMIN = 215;
     public static final int XHSI_EFIS_PILOT_ELAPSED_TIME_SEC = 216;
     public static final int XHSI_EFIS_PILOT_TERRAIN = 217;
-
-
+    public static final int XHSI_EFIS_PILOT_VP = 218;
+    public static final int XHSI_EFIS_PILOT_WXR_TILT = 219;
+    public static final int XHSI_EFIS_PILOT_WXR_GAIN = 220;
+    public static final int XHSI_EFIS_PILOT_WXR_MODE = 221;
+    public static final int XHSI_EFIS_PILOT_WXR_OPT = 222;
+    
     // Copilot EFIS
     public static final int XHSI_EFIS_COPILOT_HSI_SOURCE = 250;
     public static final int XHSI_EFIS_COPILOT_MAP_RANGE = 251;
@@ -257,7 +261,11 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_EFIS_COPILOT_MAP_ZOOMIN = 265;
     public static final int XHSI_EFIS_COPILOT_ELAPSED_TIME_SEC = 266;
     public static final int XHSI_EFIS_COPILOT_TERRAIN = 267;
-
+    public static final int XHSI_EFIS_COPILOT_VP = 268;
+    public static final int XHSI_EFIS_COPILOT_WXR_TILT = 269;
+    public static final int XHSI_EFIS_COPILOT_WXR_GAIN = 270;
+    public static final int XHSI_EFIS_COPILOT_WXR_MODE = 271;
+    public static final int XHSI_EFIS_COPILOT_WXR_OPT = 272;
 
     // EICAS
     public static final int XHSI_ENGINE_TYPE = 280;
@@ -270,6 +278,8 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_MFD_MODE = 290;
     public static final int XHSI_CREW_OXY_PSI = 291;
 
+    // EGPWS
+    public static final int XHSI_EPGWS_MODES = 295;
     
     // Environment
     public static final int SIM_WEATHER_WIND_SPEED_KT = 300;
@@ -441,9 +451,12 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int UFMC_N1_4 = 710;
 
 
-    //XFMC
+    // XFMC
     public static final int XFMC_KEYPATH = 750; // to send commands to the plugin
 
+    // X-RAAS Runway Awareness and Advisory System
+    public static final int X_RAAS_ND_ALERT = 760;
+    public static final int X_RAAS_RWY_LEN_AVAIL = 761;
     
     // X737
     public static final int X737_STATUS = 800;
@@ -621,6 +634,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_FLEX_TEMP=1024;
     public static final int QPAC_THR_RATING_TYPE=1025;
     public static final int QPAC_THR_RATING_N1=1026;
+    public static final int QPAC_THR_RATING_EPR=1121;
     public static final int QPAC_THROTTLE_INPUT=1027;
     // ILS Sig and Deviation Capt. and FO
     public static final int QPAC_ILS_FLAGS=1028;

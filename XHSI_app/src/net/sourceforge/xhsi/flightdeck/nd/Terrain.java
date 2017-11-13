@@ -2,6 +2,7 @@
 * Terrain.java
 * 
 * Display Enhanced Ground Proximity Warning System Terrain (EGPWS)
+* Airbus FCOM 1.31.45 and 1.34.70
 * 
 * Copyright (C) 2017 Nicolas Carel
 * 
@@ -22,12 +23,14 @@
 
 package net.sourceforge.xhsi.flightdeck.nd;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.model.CoordinateSystem;
 import net.sourceforge.xhsi.model.ElevationRepository;
@@ -37,6 +40,8 @@ import net.sourceforge.xhsi.model.ModelFactory;
 public class Terrain extends NDSubcomponent {
 
     private static final long serialVersionUID = 1L;
+    
+	private static final Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     private AffineTransform original_at;
     
@@ -46,7 +51,16 @@ public class Terrain extends NDSubcomponent {
     float pixels_per_deg_lon;
     float pixels_per_deg_lat;
     float pixels_per_nm;
+    
+	float peak_min;
+	float peak_max;
+	
+	boolean terr_img_1_valid;
+	boolean terr_img_2_valid;
+	int current_image;
       
+    private float sweep_angle;
+    
     ElevationRepository elevRepository;
     
     DecimalFormat coordinates_formatter;
@@ -128,20 +142,121 @@ public class Terrain extends NDSubcomponent {
         DecimalFormatSymbols symbols = coordinates_formatter.getDecimalFormatSymbols();
         symbols.setDecimalSeparator('.');
         coordinates_formatter.setDecimalFormatSymbols(symbols);
+    	terr_img_1_valid = false;
+    	terr_img_2_valid = false;
+    	current_image = 1;
+    	sweep_angle = 0.0f;
 	}
 
 	public void paint(Graphics2D g2) {
         if ( nd_gc.powered && (!( nd_gc.mode_app || nd_gc.mode_vor )) ) {
         	if ( avionics.efis_shows_terrain() && ( ! nd_gc.map_zoomin ) )
-            drawTerrain(g2,nd_gc.max_range);        	
+            paintTerrain(g2);   
+        	drawInfoBox(g2);
+        	// drawSweepBars(g2, sweep_angle);
+        
+        	// TODO: Adjust angle based on system.time
+        	sweep_angle += 0.7f;
+        	if (sweep_angle>=60.0f) {
+        		sweep_angle = 0.0f;
+        		current_image = (current_image == 1) ? 2 : 1;
+        		if (current_image==1) { 
+        			terr_img_1_valid = false; 
+        		} else { 
+        			terr_img_2_valid = false;
+        		}        	
+        	}
+        	if ( (! terr_img_1_valid) && (current_image==1) ) {
+        		// logger.info("Building terrain in buffer 1");
+        		Graphics2D g_terr = nd_gc.terr_img_1.createGraphics();
+        		g_terr.setRenderingHints(nd_gc.rendering_hints);
+        		g_terr.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+        		g_terr.setColor(nd_gc.background_color);
+        		drawTerrain(g_terr,nd_gc.max_range);  
+        		terr_img_1_valid=true;
+        	}
+        	if ( (! terr_img_2_valid) && (current_image==2) ) {
+        		// logger.info("Building terrain in buffer 2");
+        		Graphics2D g_terr = nd_gc.terr_img_2.createGraphics();
+        		g_terr.setRenderingHints(nd_gc.rendering_hints);
+        		g_terr.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+        		g_terr.setColor(nd_gc.background_color);
+        		drawTerrain(g_terr,nd_gc.max_range);  
+        		terr_img_2_valid=true;
+        	}
         }
-
 	}
 	
+	/* 
+	 * Terrain auto-display feature 
+	 *   A330 FCOM 1.31.45 p 24
+	 *   A320 FCOM 1.31.45 p 17
+	 * 
+	 * When an alert is generated (either caution or warning), and TERR ON ND is
+	 * not selected, the terrain is automatically displayed, and the TERR ON ND pushbutton ON
+	 * light comes on.
+	 * 
+	 * TERR : CHANGE MODE
+	 * Display in red (or amber), in case of a Terrain Awarness Display (TAD)
+	 * warning (or caution) alter, if PLAN is the selected display mode.
+	 */
+	
+	private void drawInfoBox(Graphics2D g2) {
+
+		if (nd_gc.airbus_style) {
+			String terr_str = "TERR";
+			g2.setColor(nd_gc.color_airbus_selected);
+			g2.setFont(nd_gc.font_xl);
+			g2.drawString(terr_str, nd_gc.terr_value_x, nd_gc.terr_label_y);
+		}
+		
+		float ref_alt = ref_altitude();
+		if (peak_max > ref_alt + 2000 ) { 
+			g2.setColor(Color.red);
+		} else if (peak_max > ref_alt - 500 ) {
+			g2.setColor(Color.yellow);
+		} else {
+			g2.setColor(Color.green);
+		}
+		g2.drawRect(nd_gc.terr_box_x, nd_gc.terr_max_box_y, nd_gc.terr_box_width, nd_gc.terr_box_height);
+		if (nd_gc.boeing_style) 
+			g2.setFont(nd_gc.font_xs); 
+		else 
+			g2.setFont(nd_gc.font_l);
+		String max_str = ""+Math.round(peak_max/100);
+		g2.drawString(max_str, nd_gc.terr_value_x, nd_gc.terr_max_value_y);
+	
+		if (peak_min > ref_alt + 2000 ) { 
+			g2.setColor(Color.red);
+		} else if (peak_min > ref_alt - 500 ) {
+			g2.setColor(Color.yellow);
+		} else {
+			g2.setColor(Color.green);
+		}
+		g2.drawRect(nd_gc.terr_box_x, nd_gc.terr_min_box_y, nd_gc.terr_box_width, nd_gc.terr_box_height);
+		g2.setFont(nd_gc.font_l);
+		String min_str = ""+Math.round(peak_min/100);
+		g2.drawString(min_str, nd_gc.terr_value_x, nd_gc.terr_min_value_y);
+	}
+	
+	
+	private void paintTerrain(Graphics2D g2) {
+		//if (terr_img_1_valid && current_image == 1) {
+	       g2.drawImage( nd_gc.terr_img_1, 0, 0, null);
+		//}
+	}
+	
+	/**
+	 * Draw the terrain buffer image based on reference altitude
+	 * Airbus documentation : FCOM 1.31.45 (Indications on ND)
+	 * 
+	 * @param g2
+	 * @param radius_scale
+	 */
 	private void drawTerrain(Graphics2D g2, float radius_scale) {
 		
-		float peak_min = 8500;
-		float peak_max = 0;
+		peak_min = 8500;
+		peak_max = 0;
 		
 		// TERRAIN indicator (debug)
 		int debug_y = nd_gc.frame_size.height*6/10;
@@ -213,6 +328,8 @@ public class Terrain extends NDSubcomponent {
         for (float lat=lat_min; lat<= lat_max; lat+=lat_step) {
             for (float lon=lon_min; lon<=lon_max; lon+=lon_step) {
             	float elevation = elevRepository.get_elevation(lat, lon)*3.2808f;
+            	peak_min = Math.min(peak_min, elevation);
+            	peak_max = Math.max(peak_max, elevation);
                 String area_name = elevRepository.get_area_name(lat, lon);            	
                 int area_offset = elevRepository.get_offset(lat, lon);
                 String deb_str= "e("+coordinates_formatter.format(lat)+","+coordinates_formatter.format(lon)+")="+(int)elevation;
@@ -259,13 +376,38 @@ public class Terrain extends NDSubcomponent {
 	/**
 	 * Result in feet
 	 * Predicted altitude after 1 mn
+	 * 
+	 * A330 FCOM 1.31.45 p23
+	 * The reference altitude is computed based on the current aircraft altitude or,
+	 * if descending more than 1000 fp/mn, the altitude expected in 30 seconds. 
+	 * 
 	 */
 	public float ref_altitude() {
 		float alt = this.aircraft.altitude_ind();
 		float vvi = this.aircraft.vvi();
-		float predicted_alt = alt + vvi;
-		return predicted_alt;
+		return (vvi < -1000 ? alt + vvi/2 : alt);
 	}
 
 
+	public void drawSweepBars(Graphics2D g2, float angle) {
+        double rotation_offset = angle;
+        
+        AffineTransform original_at = g2.getTransform();
+
+        AffineTransform rotate_to_heading = AffineTransform.getRotateInstance(
+                Math.toRadians(rotation_offset),
+                nd_gc.map_center_x,
+                nd_gc.map_center_y
+        );
+        g2.transform(rotate_to_heading);
+        
+        g2.setColor(nd_gc.markings_color);
+        g2.drawLine(
+                nd_gc.map_center_x ,
+                nd_gc.map_center_y ,
+                nd_gc.rose_radius + nd_gc.rose_radius,
+                nd_gc.map_center_y
+        );
+        g2.setTransform(original_at);
+	}
 }

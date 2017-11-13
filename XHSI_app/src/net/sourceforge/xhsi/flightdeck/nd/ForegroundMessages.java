@@ -36,6 +36,7 @@ import net.sourceforge.xhsi.model.NavigationRadio;
 import net.sourceforge.xhsi.model.RadioNavigationObject;
 import net.sourceforge.xhsi.model.RadioNavBeacon;
 //import net.sourceforge.xhsi.model.TCAS;
+import net.sourceforge.xhsi.model.Avionics.EPGWSAlertLevel;
 
 //import net.sourceforge.xhsi.panel.GraphicsConfig;
 //import net.sourceforge.xhsi.panel.Subcomponent;
@@ -64,9 +65,11 @@ public class ForegroundMessages extends NDSubcomponent {
                 if (nd_gc.display_mode_change_msg()) {
                 	displayGlobalMessage(g2,"MODE CHANGED");
                 } else if (nd_gc.display_range_change_msg()) {
-                    	displayGlobalMessage(g2,"RANGE CHANGED");
-                }       	
-            } 
+                    displayGlobalMessage(g2,"RANGE CHANGED");
+                } else 
+                	displayEGPWSMessage(g2);       	
+            } else 
+            	displayEGPWSMessage(g2);
         }
 
     }
@@ -161,6 +164,18 @@ public class ForegroundMessages extends NDSubcomponent {
             // TERRAIN
             if ( this.avionics.efis_shows_terrain() ) {
                 label_str = "TERRAIN";
+                g2.clearRect(nd_gc.left_label_x - nd_gc.digit_width_s/2, nd_gc.left_label_terrain_y - nd_gc.line_height_s, g2.getFontMetrics(nd_gc.font_s).stringWidth(label_str) + nd_gc.digit_width_s, nd_gc.line_height_s*10/8);
+                if ( ! nd_gc.map_zoomin ) {
+                	g2.setColor(nd_gc.terrain_label_color);
+                } else {
+                	g2.setColor(nd_gc.dim_label_color);
+                }
+                	
+                g2.drawString(label_str, nd_gc.left_label_x, nd_gc.left_label_terrain_y);
+            }
+            // WEATHER RADAR
+            if ( this.avionics.efis_shows_wxr() && (!this.avionics.efis_shows_terrain()) ) {
+                label_str = "WEATHER";
                 g2.clearRect(nd_gc.left_label_x - nd_gc.digit_width_s/2, nd_gc.left_label_terrain_y - nd_gc.line_height_s, g2.getFontMetrics(nd_gc.font_s).stringWidth(label_str) + nd_gc.digit_width_s, nd_gc.line_height_s*10/8);
                 if ( ! nd_gc.map_zoomin ) {
                 	g2.setColor(nd_gc.terrain_label_color);
@@ -293,6 +308,23 @@ public class ForegroundMessages extends NDSubcomponent {
         g2.drawString(message, message_x, message_y);
         // g2.setColor(nd_gc.markings_color);
         // g2.drawRect(box_x, box_y, box_width, box_height);    	
+    }
+    
+    private void displayEGPWSMessage(Graphics2D g2){
+    	if (avionics.egpws_alert_level()==EPGWSAlertLevel.NORMAL) {
+    		g2.setColor(nd_gc.color_lime);
+    	} else {
+    		g2.setColor(nd_gc.ecam_caution_color);
+    	}
+        g2.setFont(nd_gc.font_xxxl);
+        String message = avionics.egpws_alert_message();
+        int message_width = g2.getFontMetrics(nd_gc.font_xxxl).stringWidth(message);
+
+        int message_x = nd_gc.map_center_x - message_width / 2;
+        int message_y = nd_gc.range_mode_message_y + nd_gc.line_height_xxxl / 2;
+
+        g2.drawString(message, message_x, message_y);
+ 	
     }
     
 }

@@ -883,7 +883,11 @@ public interface Aircraft {
      */
     public float get_ref_N1(int engine);
     
-    
+    /**
+     * @return float - QPAC Reference EPR
+     */
+    public float get_ref_EPR(int engine);
+     
     /**
      * @return String Thrust Mode : 0: ---, 1: TO, 2: R-TO, 3: R- CLB, 4: CLB, 4: CRZ, 6: GA, 7:CON, 8: MAX.
      */

@@ -223,7 +223,24 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 
     public int range_mode_message_y;
     
+    // Terrain    
     public Color terrain_colors[];
+    public int terr_box_x;
+    public int terr_value_x;
+    public int terr_max_box_y;
+    public int terr_max_value_y;
+    public int terr_min_box_y;
+    public int terr_min_value_y;
+    public int terr_box_height;
+    public int terr_box_width;
+    public int terr_label_y;
+    public BufferedImage terr_img_1;
+    public BufferedImage terr_img_2;
+    
+    // Weather radar
+    public BufferedImage wxr_img_1;
+    public BufferedImage wxr_img_2;
+
 
     public NDGraphicsConfig(Component root_component, int du) {
         super(root_component);
@@ -588,6 +605,38 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             sl_box_h = sl_wind_y + sl_line_height*2/10;
             sl_img = new BufferedImage(sl_box_w,sl_box_h,BufferedImage.TYPE_INT_ARGB);
             
+            // Terrain
+            terr_img_1 = new BufferedImage(panel_rect.width,panel_rect.height,BufferedImage.TYPE_INT_ARGB);
+            terr_img_2 = new BufferedImage(panel_rect.width,panel_rect.height,BufferedImage.TYPE_INT_ARGB);
+
+            // min and max boxes, label, egpws message
+            
+            if (boeing_style) {
+            	terr_label_y = left_label_xpdr_y + line_height_xxs*10/8;
+            	terr_box_x = this.border_left + Math.round(8.0f * this.scaling_factor);
+            	terr_value_x = this.border_left + Math.round(10.0f * this.scaling_factor);
+            	terr_max_box_y = terr_label_y + line_height_xs*10/8;
+            	terr_max_value_y = terr_max_box_y + line_height_xs;
+            	terr_min_box_y = terr_max_box_y + line_height_xs*10/8;;
+            	terr_min_value_y = terr_min_box_y + line_height_xs;
+            	terr_box_height = line_height_xs * 12/10;
+            	terr_box_width = digit_width_xs * 11/3;
+            } else {
+            	terr_label_y = left_label_xpdr_y - line_height_l*2;
+            	terr_box_x = this.border_right - Math.round(8.0f * this.scaling_factor) - digit_width_l * 6;
+            	terr_value_x = this.border_right - Math.round(10.0f * this.scaling_factor) - digit_width_l * 6;;
+            	terr_max_box_y = terr_label_y + line_height_l*10/8;
+            	terr_max_value_y = terr_max_box_y + line_height_l;
+            	terr_min_box_y = terr_max_box_y + line_height_l*10/8;;
+            	terr_min_value_y = terr_min_box_y + line_height_l;
+            	terr_box_height = line_height_l * 12/10;
+            	terr_box_width = digit_width_l * 11/3;
+            }
+            
+            
+            // Weather radar
+            wxr_img_1 = new BufferedImage(panel_rect.width,panel_rect.height,BufferedImage.TYPE_INT_ARGB);
+            wxr_img_2 = new BufferedImage(panel_rect.width,panel_rect.height,BufferedImage.TYPE_INT_ARGB);
             
             // clear the flags
             this.resized = false;

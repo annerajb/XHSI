@@ -29,7 +29,6 @@
 package net.sourceforge.xhsi.conwin;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -44,8 +43,8 @@ import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.Observer;
+import net.sourceforge.xhsi.model.WeatherRepository;
 
-import net.sourceforge.xhsi.flightdeck.Subcomponent;
 
 
 public class ConWinComponent extends Component implements Observer, PreferencesObserver {
@@ -57,7 +56,7 @@ public class ConWinComponent extends Component implements Observer, PreferencesO
 
 
     // subcomponents --------------------------------------------------------
-    ArrayList subcomponents = new ArrayList();
+    ArrayList<ConWinSubcomponent> subcomponents = new ArrayList<ConWinSubcomponent>();
     long[] subcomponent_paint_times = new long[15];
     long total_paint_times = 0;
     long nb_of_paints = 0;
@@ -69,6 +68,7 @@ public class ConWinComponent extends Component implements Observer, PreferencesO
 
     Aircraft aircraft;
     Avionics avionics;
+    WeatherRepository weather_repository;
 
 
     public ConWinComponent(ModelFactory model_factory) {
@@ -77,6 +77,7 @@ public class ConWinComponent extends Component implements Observer, PreferencesO
         this.model_factory = model_factory;
         this.aircraft = this.model_factory.get_aircraft_instance();
         this.avionics = this.aircraft.get_avionics();
+        this.weather_repository = WeatherRepository.get_instance();
 
         addComponentListener(conwin_gc);
         subcomponents.add(new StatusBar(model_factory, conwin_gc, this));
@@ -146,6 +147,8 @@ public class ConWinComponent extends Component implements Observer, PreferencesO
 
 
     public void heartbeat() {
+    	XHSIStatus.weather_status = weather_repository.updated() ? XHSIStatus.STATUS_RECEIVING : XHSIStatus.STATUS_NO_RECEPTION;
+    	
         if (this.update_since_last_heartbeat == false) {
             XHSIStatus.status = XHSIStatus.STATUS_NO_RECEPTION;
             repaint();

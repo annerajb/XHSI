@@ -47,6 +47,7 @@ public class XHSIPreferences {
     public static final String PREF_EGPWS_DB_DIR = "egpws_database.dir";
     public static final String PREF_REPLAY_DELAY_PER_FRAME = "replay.steps.delay";
     public static final String PREF_PORT = "port";
+    public static final String PREF_WEATHER_PORT = "weather.port";
     public static final String PREF_GROUP = "multicast.group";
     public static final String PREF_MULTICAST = "multicast.enable";
     public static final String PREF_LOGLEVEL = "loglevel";
@@ -103,6 +104,11 @@ public class XHSIPreferences {
     public static final String PREF_ND_NAVAID_FREQ = "nd.navaid.frequencies";
     public static final String PREF_ND_WRITE_AP_HDG = "nd.write.ap.heading";
     public static final String PREF_ND_SHOW_CLOCK = "nd.show.clock";
+    public static final String PREF_TERRAIN_RESOLUTION = "nd.terrain.resolution";
+    public static final String PREF_ND_SHOW_VERTICAL_PATH = "nd.vertical_path";
+    public static final String PREF_TERRAIN_AUTO_DISPLAY = "nd.terrain.auto_display";
+    public static final String PREF_TERRAIN_PEAK_MODE = "nd.terrain.peak_mode";
+    public static final String PREF_EGPWS_INHIBIT = "nd.egpws.inhibit";
 
     // PFD options
     public static final String PREF_HORIZON_STYLE = "horizon.style";
@@ -162,6 +168,11 @@ public class XHSIPreferences {
     public static final String YOKE_INPUT_ALWAYS = "always";
     public static final String YOKE_INPUT_ALWAYS_RUDDER = "always+rudder";
     public enum DrawYokeInputMode { NONE, AUTO, AUTO_RUDDER, ALWAYS, ALWAYS_RUDDER };
+    
+    // for PREF_TERRAIN_RESOLUTION
+    public static final String TERRAIN_RES_FINE = "fine";
+    public static final String TERRAIN_RES_MEDIUM = "medium";
+    public static final String TERRAIN_RES_COARSE = "coarse";
     
     // for PREF_HSI_SOURCE
     public static final String USER = "user";
@@ -840,6 +851,24 @@ public class XHSIPreferences {
         else return DrawYokeInputMode.ALWAYS_RUDDER;
     }
 
+    // ND
+    
+    /**
+     * @return            - Terrain resolution : 0:fine, 1:medium, 2:coarse
+     *
+     */
+    public int get_terrain_resolution() {
+    	int resolution=0;
+    	if (get_preference(PREF_TERRAIN_RESOLUTION).equalsIgnoreCase(TERRAIN_RES_FINE)) {
+    		resolution=0;
+    	} else if (get_preference(PREF_TERRAIN_RESOLUTION).equalsIgnoreCase(TERRAIN_RES_FINE)) {
+    		resolution=1;
+    	} else {
+    		resolution=2;
+    	}
+        return resolution;
+    }
+
     
     // EICAS
 
@@ -981,6 +1010,11 @@ public class XHSIPreferences {
 
         if ( ! this.preferences.containsKey(PREF_PORT) ) {
             this.preferences.setProperty(PREF_PORT, "49020");
+            this.unsaved_changes = true;
+        }
+        
+        if ( ! this.preferences.containsKey(PREF_WEATHER_PORT) ) {
+            this.preferences.setProperty(PREF_WEATHER_PORT, "48003");
             this.unsaved_changes = true;
         }
         
@@ -1243,7 +1277,31 @@ public class XHSIPreferences {
             this.preferences.setProperty(PREF_ND_SHOW_CLOCK, "true");
             this.unsaved_changes = true;
         }
+        
+        if ( ! this.preferences.containsKey(PREF_TERRAIN_RESOLUTION) ) {
+            this.preferences.setProperty(PREF_TERRAIN_RESOLUTION, "coarse");
+            this.unsaved_changes = true;
+        }
 
+        if ( ! this.preferences.containsKey(PREF_ND_SHOW_VERTICAL_PATH) ) {
+            this.preferences.setProperty(PREF_ND_SHOW_VERTICAL_PATH, "true");
+            this.unsaved_changes = true;
+        }     
+        
+        if ( ! this.preferences.containsKey(PREF_TERRAIN_AUTO_DISPLAY) ) {
+            this.preferences.setProperty(PREF_TERRAIN_AUTO_DISPLAY, "true");
+            this.unsaved_changes = true;
+        }  
+        
+        if ( ! this.preferences.containsKey(PREF_TERRAIN_PEAK_MODE) ) {
+            this.preferences.setProperty(PREF_TERRAIN_PEAK_MODE, "true");
+            this.unsaved_changes = true;
+        }  
+        
+        if ( ! this.preferences.containsKey(PREF_EGPWS_INHIBIT) ) {
+            this.preferences.setProperty(PREF_EGPWS_INHIBIT, "toggle");
+            this.unsaved_changes = true;
+        }  
         
         // PFD
 

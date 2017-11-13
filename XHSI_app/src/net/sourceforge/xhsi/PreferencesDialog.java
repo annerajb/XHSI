@@ -56,7 +56,7 @@ import net.sourceforge.xhsi.flightdeck.annunciators.AnnunComponent;
 import net.sourceforge.xhsi.flightdeck.clock.ClockComponent;
 import net.sourceforge.xhsi.flightdeck.cdu.CDUComponent;
 
-
+@SuppressWarnings("rawtypes")
 public class PreferencesDialog extends JDialog implements ActionListener {
 
     private static final long serialVersionUID = 1L;
@@ -67,6 +67,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JTextField aptnav_dir_textfield;
     private JTextField egpws_db_dir_textfield;
     private JTextField port_textfield;
+    private JTextField weather_port_textfield;
     private JTextField group_textfield;
     private JCheckBox multicast_checkbox;
     private JComboBox loglevel_combobox;
@@ -129,6 +130,24 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox nd_navaid_frequencies;
     private JCheckBox nd_write_ap_hdg;
     private JCheckBox nd_show_clock;
+    // ND EGPWS TERRAIN OPTIONS
+    private JComboBox terrain_resolution_combobox;
+    private String terrain_resolutions[] = { XHSIPreferences.TERRAIN_RES_FINE, XHSIPreferences.TERRAIN_RES_MEDIUM, XHSIPreferences.TERRAIN_RES_COARSE };
+    private JCheckBox nd_show_vertical_path;
+    private JCheckBox nd_terrain_auto_display;
+    private JCheckBox nd_terrain_peak_mode;
+    // Sweep rate (2,3,4,5,6)
+    // Sweep mode (dual, single, none)
+    // Sweep line visible
+    
+    // Weather Radar options
+    // Sweep rate (2,3,4,5,6)
+    // Sweep mode (dual, single, none)
+    // Sweep line visible 
+    // copilot commands
+    // realistic attenuation
+    // 
+    
     private JCheckBox arpt_chart_nav_dest;
 
     private int du_pos_x[] = new int[MAX_WINS];
@@ -247,7 +266,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 //        }
 
         this.aptnav_dir_textfield.setText(preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR));
+        this.egpws_db_dir_textfield.setText(preferences.get_preference(XHSIPreferences.PREF_EGPWS_DB_DIR));
         this.port_textfield.setText(preferences.get_preference(XHSIPreferences.PREF_PORT));
+        this.weather_port_textfield.setText(preferences.get_preference(XHSIPreferences.PREF_WEATHER_PORT));
         this.group_textfield.setText(preferences.get_preference(XHSIPreferences.PREF_GROUP));
         this.multicast_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_MULTICAST).equalsIgnoreCase("true"));;
 
@@ -371,7 +392,20 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         this.nd_show_clock.setSelected(preferences.get_preference(XHSIPreferences.PREF_ND_SHOW_CLOCK).equalsIgnoreCase("true"));
 
-
+        // TODO: Terrain 
+        // this.terrain_resolution_combobox;
+        String terrain_resolution = preferences.get_preference(XHSIPreferences.PREF_TERRAIN_RESOLUTION);
+        for (int i=0; i<terrain_resolutions.length; i++) {
+            if ( terrain_resolution.equals( terrain_resolutions[i] ) ) {
+                this.terrain_resolution_combobox.setSelectedIndex(i);
+            }
+        }
+        // private String terrain_resolutions[] = { XHSIPreferences.TERRAIN_RES_FINE, XHSIPreferences.TERRAIN_RES_MEDIUM, XHSIPreferences.TERRAIN_RES_COARSE };
+        this.nd_show_vertical_path.setSelected(preferences.get_preference(XHSIPreferences.PREF_ND_SHOW_VERTICAL_PATH).equalsIgnoreCase("true"));
+        this.nd_terrain_auto_display.setSelected(preferences.get_preference(XHSIPreferences.PREF_TERRAIN_AUTO_DISPLAY).equalsIgnoreCase("true"));
+        this.nd_terrain_peak_mode.setSelected(preferences.get_preference(XHSIPreferences.PREF_TERRAIN_PEAK_MODE).equalsIgnoreCase("true"));
+        // PREF_EGPWS_INHIBIT
+        
         // PFD Options (3)
 
         String horizonstyle = preferences.get_preference(XHSIPreferences.PREF_HORIZON_STYLE);
@@ -508,7 +542,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     }
 
 
-    private JPanel create_system_tab() {
+    @SuppressWarnings("rawtypes")
+	private JPanel create_system_tab() {
 
         GridBagLayout layout = new GridBagLayout();
         GridBagConstraints cons = new GridBagConstraints();
@@ -639,6 +674,34 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         system_panel.add(new JLabel(" ", JLabel.TRAILING), cons);
         dialog_line++;
 
+        // incoming UDP port
+        cons.gridx = 0;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        system_panel.add(new JLabel("Incoming Weather UDP port (default 48003) (*)", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.weather_port_textfield = new JTextField(5);
+        system_panel.add(this.weather_port_textfield, cons);
+        dialog_line++;
+
+        // some info concerning Incoming Weather UDP port
+        dialog_line++;
+        cons.gridx = 2;
+        cons.gridy = dialog_line;
+        cons.gridwidth = 1;
+        cons.anchor = GridBagConstraints.WEST;
+        system_panel.add(new JLabel("(must match X-Plane control pad Destination UDP port)", JLabel.TRAILING), cons);
+        dialog_line++;
+
+        // Empty line for spacing
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        system_panel.add(new JLabel(" ", JLabel.TRAILING), cons);
+        dialog_line++;
+        
         // Multicast
         cons.gridx = 0;
         cons.gridy = dialog_line;
@@ -745,7 +808,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
     }
 
-
+    @SuppressWarnings("rawtypes")
     private JPanel create_windows_tab() {
 
         GridBagLayout layout = new GridBagLayout();
@@ -954,7 +1017,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
     }
 
-
+    @SuppressWarnings("rawtypes")
     private JPanel create_graphics_tab() {
 
         GridBagLayout layout = new GridBagLayout();
@@ -1084,7 +1147,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
     }
 
-
+    @SuppressWarnings("rawtypes")
     private JPanel create_avionics_options_tab() {
 
         GridBagLayout layout = new GridBagLayout();
@@ -1220,7 +1283,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
     }
 
-
+    @SuppressWarnings("rawtypes")
     private JPanel create_pfd_options_tab() {
 
         GridBagLayout layout = new GridBagLayout();
@@ -1417,7 +1480,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
     }
 
-
+    @SuppressWarnings("rawtypes")
     private JPanel create_nd_options_tab() {
 
         GridBagLayout layout = new GridBagLayout();
@@ -1626,6 +1689,68 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         nd_options_panel.add(this.nd_show_clock, cons);
         dialog_line++;
 
+        // TODO: Terrain options
+        // Terrain resolution
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        nd_options_panel.add(new JLabel("Terrain resolution", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;      
+        terrain_resolution_combobox = new JComboBox();
+        this.terrain_resolution_combobox.addItem("Fine");
+        this.terrain_resolution_combobox.addItem("Medium");
+        this.terrain_resolution_combobox.addItem("Coarse");
+        nd_options_panel.add(this.terrain_resolution_combobox, cons);
+        dialog_line++;
+        
+        // Terrain auto-display
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        nd_options_panel.add(new JLabel("EGPWS caution displays terrain", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.nd_terrain_auto_display = new JCheckBox();
+        nd_options_panel.add(this.nd_terrain_auto_display, cons);
+        dialog_line++;
+
+        // Terrain peak mode
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        nd_options_panel.add(new JLabel("Terrain peak mode", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.nd_terrain_peak_mode = new JCheckBox();
+        nd_options_panel.add(this.nd_terrain_peak_mode, cons);
+        dialog_line++;
+        
+        // Vertical path
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        nd_options_panel.add(new JLabel("Display vertical path bellow ND", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.nd_show_vertical_path = new JCheckBox();
+        nd_options_panel.add(this.nd_show_vertical_path, cons);
+        dialog_line++;
+
+
+        
 //        // A reminder
 //        cons.gridx = 2;
 //        cons.gridwidth = 1;
@@ -1638,7 +1763,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
     }
 
-
+    @SuppressWarnings("rawtypes")
     private JPanel create_eicas_options_tab() {
 
         GridBagLayout layout = new GridBagLayout();
@@ -1781,7 +1906,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
     }
 
-
+    @SuppressWarnings("rawtypes")
     private JPanel create_mfd_options_tab() {
 
         GridBagLayout layout = new GridBagLayout();
@@ -1864,7 +1989,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
     }
 
-
+    @SuppressWarnings("rawtypes")
     private JPanel create_cdu_options_tab() {
 
         GridBagLayout layout = new GridBagLayout();
@@ -2091,11 +2216,14 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             if ( this.aptnav_dir_textfield.getText().equals(this.preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR)) == false )
                 this.preferences.set_preference(XHSIPreferences.PREF_APTNAV_DIR, this.aptnav_dir_textfield.getText());
             
-            if ( this.aptnav_dir_textfield.getText().equals(this.preferences.get_preference(XHSIPreferences.PREF_EGPWS_DB_DIR)) == false )
+            if ( this.egpws_db_dir_textfield.getText().equals(this.preferences.get_preference(XHSIPreferences.PREF_EGPWS_DB_DIR)) == false )
                 this.preferences.set_preference(XHSIPreferences.PREF_EGPWS_DB_DIR, this.egpws_db_dir_textfield.getText());
             
             if ( this.port_textfield.getText().equals(this.preferences.get_preference(XHSIPreferences.PREF_PORT)) == false )
                 this.preferences.set_preference(XHSIPreferences.PREF_PORT, this.port_textfield.getText());
+
+            if ( this.weather_port_textfield.getText().equals(this.preferences.get_preference(XHSIPreferences.PREF_WEATHER_PORT)) == false )
+                this.preferences.set_preference(XHSIPreferences.PREF_WEATHER_PORT, this.weather_port_textfield.getText());
 
             if ( this.group_textfield.getText().equals(this.preferences.get_preference(XHSIPreferences.PREF_GROUP)) == false )
                 this.preferences.set_preference(XHSIPreferences.PREF_GROUP, this.group_textfield.getText());
@@ -2230,7 +2358,16 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             if ( this.nd_show_clock.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_ND_SHOW_CLOCK).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_ND_SHOW_CLOCK, this.nd_show_clock.isSelected()?"true":"false");
 
-
+            // TODO: ND TERRAIN 
+            if ( this.terrain_resolution_combobox.getSelectedIndex() != this.preferences.get_terrain_resolution() )
+                this.preferences.set_preference(XHSIPreferences.PREF_TERRAIN_RESOLUTION, hsi_sources[this.terrain_resolution_combobox.getSelectedIndex()]);
+            if ( this.nd_show_vertical_path.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_ND_SHOW_VERTICAL_PATH).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_ND_SHOW_VERTICAL_PATH, this.nd_show_vertical_path.isSelected()?"true":"false");
+            if ( this.nd_terrain_auto_display.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_TERRAIN_AUTO_DISPLAY).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_TERRAIN_AUTO_DISPLAY, this.nd_terrain_auto_display.isSelected()?"true":"false");
+            if ( this.nd_terrain_peak_mode.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_TERRAIN_PEAK_MODE).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_TERRAIN_PEAK_MODE, this.nd_terrain_peak_mode.isSelected()?"true":"false");
+                        
             // PFD options
 
             if ( ! horizons[this.horizon_style_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_HORIZON_STYLE)) )
@@ -2332,6 +2469,17 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             field_validation_errors += "Port contains non-numeric characters!\n";
         }
 
+        // Incoming weather port
+        try {
+            port = Integer.parseInt(this.weather_port_textfield.getText());
+            if ((port < 1024) || (port > 65535)) {
+                field_validation_errors += "Port out of range (1024-65535)!\n";
+            }
+        } catch (NumberFormatException nf) {
+            field_validation_errors += "Port contains non-numeric characters!\n";
+        }
+
+        
         // minimum runway length
         int min_rwy;
         try {

@@ -5,6 +5,7 @@
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * Copyright (C) 2010  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (c) 2016  Saso Kiselkov
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -900,6 +901,49 @@ public class XPlaneAvionics implements Avionics, Observer {
     	}
     }
     
+    public boolean efis_shows_vp() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_VP) == 1.0f);
+    	} else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_VP) == 1.0f);
+    	} else {
+    		return xhsi_settings.show_vp;
+    	}
+    }
+    
+    public boolean efis_shows_vp(InstrumentSide side) {
+    	if ( side == InstrumentSide.PILOT ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_VP) == 1.0f);
+    	} else if ( side == InstrumentSide.COPILOT ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_VP) == 1.0f);
+    	} else {
+    		return xhsi_settings.show_vp;
+    	}
+    }
+    
+    /**   
+    * @return boolean - true if EFIS displays Weather radar, false otherwise
+    */
+    public boolean efis_shows_wxr() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WEATHER) == 1.0f);
+    	} else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR) == 1.0f);
+    	} else {
+    		return xhsi_settings.show_weather;
+    	}
+    }
+    public boolean efis_shows_wxr(InstrumentSide side) {
+    	if ( side == InstrumentSide.PILOT ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WEATHER) == 1.0f);
+    	} else if ( side == InstrumentSide.COPILOT ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR) == 1.0f);
+    	} else {
+    		return xhsi_settings.show_weather;
+    	}	
+    }
+   
+    
     public float efis_chrono_elapsed_time() {
     	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) 
     		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_ELAPSED_TIME_SEC);
@@ -913,6 +957,176 @@ public class XPlaneAvionics implements Avionics, Observer {
     	else
     		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_ELAPSED_TIME_SEC);
     }
+    
+    
+    public float wxr_gain() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) 
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_GAIN);
+    	else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_GAIN);
+    	} else {
+    		return xhsi_settings.wxr_gain;
+    	}
+    }
+    public float wxr_gain(InstrumentSide side) {
+    	if ( side == InstrumentSide.PILOT ) {
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_GAIN);
+    	} else if ( side == InstrumentSide.COPILOT ) {
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_GAIN);
+    	} else {
+    		return xhsi_settings.wxr_gain;
+    	}	
+    }
+   
+
+    public float wxr_tilt() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) 
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_TILT);
+    	else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_TILT);
+    	} else {
+    		return xhsi_settings.wxr_tilt;
+    	}
+    }
+    public float wxr_tilt(InstrumentSide side) {
+    	if ( side == InstrumentSide.PILOT ) {
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_TILT);
+    	} else if ( side == InstrumentSide.COPILOT ) {
+    		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_TILT);
+    	} else {
+    		return xhsi_settings.wxr_tilt;
+    	}	
+    }
+    /*
+    wxr_opt [ XHSI_EFIS_PILOT_WXR_OPT }
+		 (XPLMGetDatai(efis_pilot_wxr_target) & 0x01) << 7 |
+		 (XPLMGetDatai(efis_pilot_wxr_alert) & 0x01) << 6 |
+		 (XPLMGetDatai(efis_pilot_wxr_narrow) & 0x01) << 5 |
+		 (XPLMGetDatai(efis_pilot_wxr_react) & 0x01) << 4 |
+		 (XPLMGetDatai(efis_pilot_wxr_slave) & 0x01) << 3 |
+		 (XPLMGetDatai(efis_pilot_wxr_auto_tilt) & 0x01) << 2 |
+		 (XPLMGetDatai(efis_pilot_wxr_auto_gain) & 0x01 ) << 1 |
+		 (XPLMGetDatai(efis_pilot_wxr_test) & 0x01 );
+		 */
+    
+    /**   
+     * @return boolean - weather radar automatic gain adjust
+     */     
+    public boolean wxr_auto_gain() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) 
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_OPT)) & 0x02) != 0;
+    	else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_OPT)) & 0x02) != 0;
+    	} else {
+    		return xhsi_settings.wxr_auto_gain;
+    	}
+    };
+    
+    /**   
+     * @return boolean - weather radar automatic tilt adjust
+     */     
+    public boolean wxr_auto_tilt() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) 
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_OPT)) & 0x04) != 0;
+    	else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_OPT)) & 0x04) != 0;
+    	} else {
+    		return xhsi_settings.wxr_auto_tilt;
+    	}
+    };;
+    
+    
+    /**   
+     * @return boolean - weather radar test
+     */     
+    public boolean wxr_test() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) 
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_OPT)) & 0x01) != 0;
+    	else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_OPT)) & 0x01) != 0;
+    	} else {
+    		return xhsi_settings.wxr_test;
+    	}
+    }
+
+    /**   
+     * @return int - weather radar mode
+     */     
+    public int wxr_mode() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) 
+    		return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_MODE);
+    	else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_MODE);
+    	} else {
+    		return xhsi_settings.wxr_mode;
+    	}
+    };;
+    
+    /**   
+     * @return boolean - weather radar slave settings
+     */     
+    public boolean wxr_slave() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) 
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_OPT)) & 0x08) != 0;
+    	else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_OPT)) & 0x08) != 0;
+    	} else {
+    		return xhsi_settings.wxr_slave;
+    	}
+    };
+    
+    /**   
+     * @return boolean - weather radar REACT
+     * Rain Echo Attenuation Compensation Technique
+     */        
+    public boolean wxr_react() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) 
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_OPT)) & 0x10) != 0;
+    	else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_OPT)) & 0x10) != 0;
+    	} else {
+    		return xhsi_settings.wxr_react;
+    	}
+    };
+    
+    /**   
+     * @return boolean - weather radar narrow mode (60° instead of 120° sweep range)
+     */        
+    public boolean wxr_narrow() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) 
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_OPT)) & 0x20) != 0;
+    	else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_OPT)) & 0x20) != 0;
+    	} else {
+    		return xhsi_settings.wxr_narrow;
+    	}
+    };
+    
+    /**   
+     * @return boolean - weather radar alert mode
+     */    
+    public boolean wxr_alert() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) 
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_OPT)) & 0x40) != 0;
+    	else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_OPT)) & 0x40) != 0;
+    	} else {
+    		return xhsi_settings.wxr_alert;
+    	}
+    };
+    
+    /**   
+     * @return boolean - weather radar target mode
+     */    
+    public boolean wxr_target() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) 
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_OPT)) & 0x80) != 0;
+    	else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		return (((int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_OPT)) & 0x80) != 0;
+    	} else {
+    		return xhsi_settings.wxr_target;
+    	}
+    };
     
     public int qpac_get_mfd_mode() {
     	int sd_page = (int) sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_SD_PAGE);
@@ -2102,6 +2316,93 @@ public class XPlaneAvionics implements Avionics, Observer {
         return Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.JAR_A320NEO_ALPHA_MAX));
     } 
     
+    /*
+     *  X-RAAS
+     *  Runway Awareness and Advisory System
+     */
+    public EPGWSAlertLevel egpws_alert_level() {
+    	int xraas_msg_code = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.X_RAAS_ND_ALERT));
+    	int color_code = (xraas_msg_code >> 6) & 0x3;
+    	return color_code == 0 ? EPGWSAlertLevel.NORMAL : EPGWSAlertLevel.CAUTION;
+    }
+
+    public String egpws_alert_message() {
+    	String message = "";
+
+    	int xraas_msg_code = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.X_RAAS_ND_ALERT));
+    	int msg_type = xraas_msg_code & 0x3f;
+
+    	int color_code = (xraas_msg_code >> 6) & 0x3;
+
+    	switch (msg_type) {
+    		case Avionics.EGPWS_ALERT_FLAPS:
+    			message = "FLAPS";
+    			break;
+    		case Avionics.EGPWS_ALERT_TOO_HIGH:
+    			message = "TOO HIGH";
+    			break;
+    		case Avionics.EGPWS_ALERT_TOO_FAST:
+    			message = "TOO FAST";
+    			break;
+    		case Avionics.EGPWS_ALERT_UNSTABLE:
+    			message = "UNSTABLE";
+    			break;
+    		case Avionics.EGPWS_ALERT_TWY:
+    			message = "TAXIWAY";
+    			break;
+    		case Avionics.EGPWS_ALERT_SHORT_RWY:
+    			message = "SHORT RUNWAY";
+    			break;
+    		case Avionics.EGPWS_ALERT_ALTM_SETTING:
+    			message = "ALTM SETTING";
+    			break;
+    		case Avionics.EGPWS_ALERT_APP:
+    			message = "APP";
+    			// don't break !
+    		case Avionics.EGPWS_ALERT_ON: 
+    			if (msg_type != Avionics.EGPWS_ALERT_APP) message = "ON";
+    			int rwy_ID = (xraas_msg_code >> 8) & 0x3f;
+    			int rwy_suffix = (xraas_msg_code >> 14) & 0x3;
+    			int rwy_len = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.X_RAAS_RWY_LEN_AVAIL));
+    			String str_rwy_suffix;
+    			switch (rwy_suffix) {
+    				case 1: str_rwy_suffix= "R"; break;
+    				case 2: str_rwy_suffix= "L"; break;
+    				case 3: str_rwy_suffix= "C"; break;
+    				default: str_rwy_suffix= "";
+    			}
+
+    			if (rwy_ID == 0) {
+    				message += " TAXIWAY";
+    			} else if (rwy_ID == 37) {
+    				message += " RWYS";
+    			} else {
+    				if (rwy_len == 0)
+    					message += " "+rwy_ID+str_rwy_suffix;
+    					// snprintf(decoded_msg, MSGLEN, "%s %02d%s", msg,
+    					//     rwy_ID, decode_rwy_suffix(rwy_suffix));
+    				else
+    					message += " "+rwy_ID+str_rwy_suffix + " "+rwy_len;
+    					// snprintf(decoded_msg, MSGLEN, "%s %02d%s %02d",
+    					//    msg, rwy_ID, decode_rwy_suffix(rwy_suffix),
+    					//    rwy_len);
+    			}
+    			break;
+    		
+    		case Avionics.EGPWS_ALERT_LONG_LAND:
+    			message = "LONG LANDING";
+    			break;
+    		case Avionics.EGPWS_ALERT_DEEP_LAND:
+    			message = "DEEP LANDING";
+    			break;
+    		default:
+    			message="";
+    	}
+
+    	return message;
+    	
+    }
+    
     // UMFC
     public boolean has_ufmc() {
         return ( sim_data.get_sim_float(XPlaneSimDataRepository.UFMC_STATUS) == 1.0f );
@@ -2319,25 +2620,37 @@ public class XPlaneAvionics implements Avionics, Observer {
 
 
     public void set_show_data(boolean new_data) {
-
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_DATA, new_data ? 1.0f : 0.0f );
         } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_DATA, new_data ? 1.0f : 0.0f );
         }
-
     }
 
     public void set_show_terrain(boolean new_data)  {
-
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_TERRAIN, new_data ? 1.0f : 0.0f );
         } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_TERRAIN, new_data ? 1.0f : 0.0f );
         }
-
     }
 
+    public void set_show_vp(boolean new_data)  {
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_VP, new_data ? 1.0f : 0.0f );
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_VP, new_data ? 1.0f : 0.0f );
+        }
+    }
+
+    public void set_show_wxr(boolean new_data) {
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WEATHER, new_data ? 1.0f : 0.0f );
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR, new_data ? 1.0f : 0.0f );
+        }
+    }
+    
     public void set_autopilot_altitude(float new_altitude){
     	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_ALTITUDE,new_altitude);
     }

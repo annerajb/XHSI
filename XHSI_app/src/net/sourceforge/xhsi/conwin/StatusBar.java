@@ -59,6 +59,8 @@ public class StatusBar extends ConWinSubcomponent {
 
     int src_x;
     int src_y;
+    
+    int w_radar_x;
 
     int nav_db_status_x;
     int nav_db_status_y;
@@ -133,13 +135,15 @@ public class StatusBar extends ConWinSubcomponent {
                 utc_text_width = this.gc.get_text_width(g2, this.gc.font_statusbar, "00:00:00");
             }
 
-            fps_x = gc.border_left + 120;
+            fps_x = gc.border_left + 180;
             fps_y = ConWinGraphicsConfig.STATUS_BAR_HEIGHT - 25;
             fps_pixels_per_frame = 2;
 
             src_x = gc.border_left;
             src_y = ConWinGraphicsConfig.STATUS_BAR_HEIGHT - 21;
 
+            w_radar_x = gc.border_left + 90;
+            
             nav_db_status_x = gc.panel_size.width - gc.border_right - nav_db_text_width;
             nav_db_status_y = ConWinGraphicsConfig.STATUS_BAR_HEIGHT - 25;
 
@@ -150,6 +154,7 @@ public class StatusBar extends ConWinSubcomponent {
             utc_y = ConWinGraphicsConfig.STATUS_BAR_HEIGHT - 25;
 
             draw_data_source(g2);
+            draw_weather_source(g2);
             draw_frame_rate(g2);
             draw_nav_db_status(g2);
             draw_egpws_db_status(g2);
@@ -191,6 +196,39 @@ public class StatusBar extends ConWinSubcomponent {
 
     }
 
+    public void draw_weather_source(Graphics2D g2) {
+
+        int x_offs = w_radar_x + 60;
+        int x_points_caret[] = { x_offs + 4, x_offs+10, x_offs+16, x_offs+10, x_offs+4 };
+        int y_points_caret[] = { src_y+6,    src_y,     src_y+6,   src_y+12,  src_y+6 };
+
+        int x_points_arrowhead[] = { x_offs + 8, x_offs+13, x_offs+8, x_offs+8 };
+        int y_points_arrowhead[] = { src_y+3,    src_y+6,   src_y+9,  src_y+3 };
+
+        int x_points_playtriangle[] = { src_x+18, src_x+10,  src_x+10 };
+        int y_points_playtriangle[] = { src_y+7,  src_y+7-5, src_y+7+5 };
+
+        g2.setColor(Color.BLACK);
+        g2.setFont(gc.font_statusbar);
+        g2.drawPolygon(x_points_caret, y_points_caret, 5);
+        g2.drawLine(x_offs, src_y+6, x_offs + 8, src_y+6);
+        g2.fillPolygon(x_points_arrowhead, y_points_arrowhead, 4);
+        if ( this.data_source.is_replaying() ) {
+            g2.drawString("PLAY", w_radar_x+25, src_y+11);
+            g2.setColor(Color.BLUE);
+            //g2.fillOval(src_x+10,src_y,11,11);
+            g2.fillPolygon(x_points_playtriangle, y_points_playtriangle, 3);
+        } else {
+            g2.drawString("W.Radar", w_radar_x, src_y+11);
+            if ( XHSIStatus.weather_status.equals(XHSIStatus.STATUS_NO_RECEPTION) ) {
+                g2.setColor(Color.RED);
+                // cross out text
+                g2.drawLine(w_radar_x+15, src_y+12, w_radar_x+30, src_y);
+                g2.drawLine(w_radar_x+15, src_y, w_radar_x+30, src_y+12);
+            }
+        }
+
+    }
 
     public void draw_nav_db_status(Graphics2D g2) {
 

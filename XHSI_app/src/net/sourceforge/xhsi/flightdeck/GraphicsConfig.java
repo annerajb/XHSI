@@ -183,6 +183,8 @@ public class GraphicsConfig implements ComponentListener {
     public Color color_airbus_managed = Color.magenta;
     public Color color_airbussky = new Color(0x10A0FF); 
  
+    // Weather Radar Colors
+    public Color wxr_colors[] = new Color[10];
      
     // variables
     public Color backpanel_color;
@@ -636,6 +638,18 @@ public class GraphicsConfig implements ComponentListener {
 
     public void set_colors(boolean custom_colors, String border_color) {
 
+        // Weather radar colors
+        wxr_colors[0] = new Color(0,0,0,255);
+        wxr_colors[1] = new Color(0,64,0,128);
+        wxr_colors[2] = new Color(0,128,0,128);
+        wxr_colors[3] = new Color(0,192,0,128);
+        wxr_colors[4] = new Color(64,64,0,128);
+        wxr_colors[5] = new Color(128,128,0,128);
+        wxr_colors[6] = new Color(192,192,0,128);
+        wxr_colors[7] = new Color(128,0,0,128);
+        wxr_colors[8] = new Color(192,0,0,128);
+        wxr_colors[9] = new Color(255,0,255,128);
+        
         if ( custom_colors ) {
             background_color = Color.BLACK;
                        
@@ -805,7 +819,7 @@ public class GraphicsConfig implements ComponentListener {
             cdu_title_color = Color.green;
             cdu_data_color = Color.white;
             cdu_scratch_pad_color = Color.white;
-            
+        
             
         } else { // STANDARD COLORS (i.e. not customed)
         	
@@ -927,8 +941,8 @@ public class GraphicsConfig implements ComponentListener {
             // CDU colors
             cdu_title_color = Color.white;
             cdu_data_color = Color.white;
-            cdu_scratch_pad_color = Color.white;
-            
+            cdu_scratch_pad_color = Color.white;         
+           
         }
 
         if ( border_color.equals(XHSIPreferences.BORDER_BROWN) ) {
