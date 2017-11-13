@@ -43,8 +43,9 @@ public class XPlaneFlightSessionRecorder implements XPlaneDataPacketObserver {
     }
 
 
-    public void new_sim_data(byte[] data) throws Exception {
+    public void new_sim_data(byte[] data, int length) throws Exception {
         if (recording) {
+        	// TODO: We could adjust length to reduce the file size
             this.data_frame_counter -= 1;
             if (this.data_frame_counter <= 0) {
                 System.out.print(".");

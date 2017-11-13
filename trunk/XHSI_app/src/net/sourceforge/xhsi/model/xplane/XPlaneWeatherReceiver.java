@@ -1,12 +1,11 @@
 /**
-* XPlaneUDPReceiver.java
+* XPlaneWeatherReceiver.java
 * 
 * Establishes a datagram socket and receives flight simulator data packages
-* send by the XHSI plugin for X-Plane. The received data is forwarded to 
-* XPlaneDataPacketDecoder. 
+* send X-Plane (pad controller). The received data is forwarded to 
+* XPlaneWeatherPacketDecoder. 
 * 
-* Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
-* Copyright (C) 2010  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2017  Nicolas Carel
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -34,27 +33,26 @@ import net.sourceforge.xhsi.StoppableThread;
 import net.sourceforge.xhsi.XHSIStatus;
 
 
-public class XPlaneUDPReceiver extends StoppableThread {
+public class XPlaneWeatherReceiver extends StoppableThread {
 
-    // DatagramSocket datagram_socket;
     MulticastSocket datagram_socket;
     byte[] receive_buffer;
-    ArrayList reception_observers;
+    ArrayList<XPlaneDataPacketObserver> reception_observers;
     boolean has_reception;
     boolean sender_known;
     boolean multicast_recv;
-    //XPlaneUDPSender udp_sender = null;
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
-
-    public XPlaneUDPReceiver(int listen_port, boolean multicast, String group_str) throws Exception {
+    
+    public XPlaneWeatherReceiver(int listen_port, boolean multicast, String group_str) throws Exception {
         super();
-        this.receive_buffer = new byte[5000];
-        // this.datagram_socket = new DatagramSocket(listen_port);
+        // Standard Ethernet MTU is 1524
+        this.receive_buffer = new byte[1600];
+
         this.datagram_socket = new MulticastSocket(listen_port);
         this.datagram_socket.setSoTimeout(1000);
-        this.reception_observers = new ArrayList();
+        this.reception_observers = new ArrayList<XPlaneDataPacketObserver>();
         this.keep_running = true;
         this.has_reception = true;
         this.sender_known = false;
@@ -66,16 +64,14 @@ public class XPlaneUDPReceiver extends StoppableThread {
         } 
     }
 
-
-    public void add_reception_observer(XPlaneDataPacketObserver observer) {
-        this.reception_observers.add(observer);
-    }
-
-
     public DatagramPacket receiveXPlanePacket() throws IOException {
         DatagramPacket packet = new DatagramPacket(receive_buffer, receive_buffer.length);
         datagram_socket.receive(packet);
-        logger.finest("Receiving from port " + packet.getAddress().getHostAddress() + ":" + packet.getPort());
+        logger.finest("Receiving weather from port " + packet.getAddress().getHostAddress() + ":" + packet.getPort());
+        /*
+         * Dont't notify XPlaneUDPSender, weather data can be send by a separate X-Plane instance
+         * 
+         
         if ( ! sender_known ) {
             // intercept the sender's (X-Plane's) address and port
             InetAddress orig_address = packet.getAddress();
@@ -83,43 +79,49 @@ public class XPlaneUDPReceiver extends StoppableThread {
             XPlaneUDPSender.get_instance().setDestination(datagram_socket, orig_address, orig_port);
             sender_known = true;
         }
+        */
         return packet;
     }
-
-
+    
     public void run() {
-        logger.fine("X-Plane receiver listening on port " + datagram_socket.getLocalPort());
+        logger.fine("X-Plane receiver listening weather on port " + datagram_socket.getLocalPort());
         DatagramPacket packet = null;
         while (this.keep_running) {
             try {
                 // wait for packet or time-out
                 packet = receiveXPlanePacket();
 
-                XHSIStatus.receiving = true;
+                XHSIStatus.weather_receiving = true;
                 
                 if  (this.has_reception == false) {
                     this.has_reception = true;
-                    logger.info("UDP reception re-established");
+                    logger.info("Weather UDP reception re-established");
                 }
 
                 // this must be some sort of subscription mechanism...
-                for (int i=0; i<this.reception_observers.size(); i++) {
+                // Todo: XPlaneWeatherPacketObserver ?? 
+                for (int i=0; i<this.reception_observers.size(); i++) {               	
                     ((XPlaneDataPacketObserver)this.reception_observers.get(i)).new_sim_data(packet.getData(), packet.getLength());
                 }
             } catch (SocketTimeoutException ste) {
-                XHSIStatus.receiving = false;
+                XHSIStatus.weather_receiving = false;
                 
                 if (this.has_reception == true) {
-                    logger.warning("No UDP reception");
+                    logger.warning("No weather UDP reception");
                     this.has_reception = false;
                 }
             } catch(IOException ioe) {
-                logger.warning("Caught I/O error while waiting for UDP packets! (" + ioe.toString() + ")");
+                logger.warning("Caught I/O error while waiting for weather UDP packets! (" + ioe.toString() + ")");
             } catch(Exception e) {
-                logger.warning("Caught error while waiting for UDP packets! (" + e.toString() + " / " + e.getMessage() + ")");
+                logger.warning("Caught error while waiting for weather UDP packets! (" + e.toString() + " / " + e.getMessage() + ")");
             }
         }
         logger.fine("X-Plane receiver stopped");
     }
+    
+    public void add_reception_observer(XPlaneDataPacketObserver observer) {
+        this.reception_observers.add(observer);
+    }
+
 
 }

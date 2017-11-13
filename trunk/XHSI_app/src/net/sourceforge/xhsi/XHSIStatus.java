@@ -42,7 +42,9 @@ public class XHSIStatus {
     public static String nav_db_cycle = "";
     
     public static String egpws_db_status = STATUS_EGPWS_DB_LOADED;
+    public static String weather_status = STATUS_STARTUP;
     
     public static boolean receiving = true;
+    public static boolean weather_receiving = true;
 
 }

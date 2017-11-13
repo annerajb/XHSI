@@ -142,13 +142,13 @@ public class GlobeElevationBuilder implements PreferencesObserver {
                 }
                 logger.info("Mapping GLOBE database files " + pathname_to_globe_db + globe_file[i]);
                 File file = new File(pathname_to_globe_db + globe_file[i]);
-                logger.info("Getting file channel " + globe_file[i]);
+                logger.fine("Getting file channel " + globe_file[i]);
                 FileChannel fileChannel = new RandomAccessFile(file, "r").getChannel();
-                logger.info("Mapping byteBuffer " + globe_file[i]);
+                logger.fine("Mapping byteBuffer " + globe_file[i]);
                 MappedByteBuffer byteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY,0,fileChannel.size());
-                logger.info("Creating area " + globe_file[i]);
+                logger.fine("Creating area " + globe_file[i]);
                 ElevationArea area = new ElevationArea(byteBuffer, globe_columns, globe_rows[i], min_lat[i],  max_lat[i],  min_lon[i],  max_lon[i], globe_file[i]);
-                logger.info("Add area " + globe_file[i]);
+                logger.fine("Add area " + globe_file[i]);
                 elevation_repository.addElevationArea(area);
             }           
             if (this.progressObserver != null) {

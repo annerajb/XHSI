@@ -119,6 +119,23 @@ public interface Avionics {
     public static final int CHR_ACT_FO_RESET = 8;
 
     /**
+     * EGPWS Alert messages from X-RAAS
+     */
+    public static final int EGPWS_ALERT_FLAPS = 1;
+    public static final int EGPWS_ALERT_TOO_HIGH = 2;
+    public static final int EGPWS_ALERT_TOO_FAST = 3;
+    public static final int EGPWS_ALERT_UNSTABLE = 4;
+    public static final int EGPWS_ALERT_TWY = 5;
+    public static final int EGPWS_ALERT_SHORT_RWY = 6;
+    public static final int EGPWS_ALERT_ALTM_SETTING = 7;
+    public static final int EGPWS_ALERT_APP = 8;
+    public static final int EGPWS_ALERT_ON = 9;
+    public static final int EGPWS_ALERT_LONG_LAND = 10;
+    public static final int EGPWS_ALERT_DEEP_LAND = 11;
+    
+    public enum EPGWSAlertLevel { NORMAL, CAUTION, WARNING, NONE };
+    
+    /**
      * @return int - general instrument style STYLE_BOEING, STYLE_AIRBUS
      */
     public int get_instrument_style();
@@ -242,12 +259,86 @@ public interface Avionics {
      */
     public boolean efis_shows_terrain();
     public boolean efis_shows_terrain(InstrumentSide side);
-    
+
+    /**   
+     * @return boolean - true if EFIS displays Vertical Path, false otherwise
+     */
+    public boolean efis_shows_vp();
+    public boolean efis_shows_vp(InstrumentSide side);
+   
+    /**   
+     * @return boolean - true if EFIS displays Weather radar, false otherwise
+     */
+    public boolean efis_shows_wxr();
+    public boolean efis_shows_wxr(InstrumentSide side);
+     
     /**
      * @return float - EFIS Chronometer elapsed time (used for the ND)
      */
     public float efis_chrono_elapsed_time();
     public float efis_chrono_elapsed_time(InstrumentSide side);
+      
+    /*
+     * Weather radar section
+     */
+    
+    /**   
+     * @return float - weather radar gain range [0.0f - 1.0f]
+     */
+    public float wxr_gain();
+    public float wxr_gain(InstrumentSide side);
+   
+    /**   
+     * @return float - weather radar tilt range [-15.0° - +15.0°]
+     */
+    public float wxr_tilt();
+    public float wxr_tilt(InstrumentSide side);
+    
+    /**   
+     * @return boolean - weather radar automatic gain adjust
+     */     
+    public boolean wxr_auto_gain();
+    
+    /**   
+     * @return boolean - weather radar automatic tilt adjust
+     */     
+    public boolean wxr_auto_tilt();
+    
+    /**   
+     * @return boolean - weather radar test
+     */     
+    public boolean wxr_test();
+
+    /**   
+     * @return int - weather radar mode [0=OFF ; 1=weather ; 2=weather+turbulence ; 3=map ]
+     */     
+    public int wxr_mode();
+    
+    /**   
+     * @return boolean - weather radar slave settings
+     */     
+    public boolean wxr_slave();
+    
+    /**   
+     * @return boolean - weather radar REACT
+     * Rain Echo Attenuation Compensation Technique
+     */        
+    public boolean wxr_react();
+    
+    /**   
+     * @return boolean - weather radar narrow mode (60° instead of 120° sweep range)
+     */        
+    public boolean wxr_narrow();
+    
+    /**   
+     * @return boolean - weather radar alert mode
+     */    
+    public boolean wxr_alert();
+    
+    /**   
+     * @return boolean - weather radar target mode
+     */    
+    public boolean wxr_target();
     
     /**
      * @return NavigationRadio - model class representing the currently selected radio or null, if none is selected
@@ -841,6 +932,15 @@ public interface Avionics {
     public int jar_a320neo_alpha_max();
     
         
+    /*
+     *  EGPWS functions
+     *  Runway Awareness and Advisory System
+     *  Runway Overrun Prevention System [TODO]
+     */
+    public EPGWSAlertLevel egpws_alert_level();
+    public String egpws_alert_message();
+    
+    
     // UFMC
     public boolean has_ufmc();
 
@@ -905,6 +1005,10 @@ public interface Avionics {
     public void set_show_data(boolean new_data);
     
     public void set_show_terrain(boolean new_data);
+    
+    public void set_show_vp(boolean new_data);
+    
+    public void set_show_wxr(boolean new_data);
     
     /*
      *  Autopilot 

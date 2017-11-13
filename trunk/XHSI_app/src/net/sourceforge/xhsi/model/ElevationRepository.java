@@ -48,7 +48,7 @@ public class ElevationRepository {
     
     public void addElevationArea(ElevationArea area) {
     	elevation_areas.add(area);
-    	logger.info(" First value: " + area.check_bof());
+    	logger.fine(" First value: " + area.check_bof());
     }
     
     public void init() { 
@@ -56,17 +56,17 @@ public class ElevationRepository {
     }
     
     public void dumpAreas() {
-    	logger.info("Dumping Elevation areas... ");
+    	logger.fine("Dumping Elevation areas... ");
     	for (ElevationArea area:elevation_areas ) {
-    		logger.info("Tile name: " + area.file_tile);
-    		logger.info(" min_lat: " + area.min_lat);
-    		logger.info(" max_lat: " + area.max_lat);
-    		logger.info(" min_lon: " + area.min_lon);
-    		logger.info(" max_lon: " + area.max_lon);
-    		logger.info(" number_of_rows: " + area.number_of_rows);
-    		logger.info(" number_of_columns: " + area.number_of_columns);
-    		logger.info(" grid_size_x: " + area.grid_size_x);
-    		logger.info(" grid_size_y: " + area.grid_size_y);
+    		logger.fine("Tile name: " + area.file_tile);
+    		logger.fine(" min_lat: " + area.min_lat);
+    		logger.fine(" max_lat: " + area.max_lat);
+    		logger.fine(" min_lon: " + area.min_lon);
+    		logger.fine(" max_lon: " + area.max_lon);
+    		logger.fine(" number_of_rows: " + area.number_of_rows);
+    		logger.fine(" number_of_columns: " + area.number_of_columns);
+    		logger.fine(" grid_size_x: " + area.grid_size_x);
+    		logger.fine(" grid_size_y: " + area.grid_size_y);
     	}
     }
     

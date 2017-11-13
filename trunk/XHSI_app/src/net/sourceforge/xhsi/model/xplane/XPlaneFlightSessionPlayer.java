@@ -57,7 +57,7 @@ public class XPlaneFlightSessionPlayer extends StoppableThread {
                     while (this.keep_running) {
                         byte[] sim_data = (byte[])ois.readObject();
                         for (int i=0;i<this.sim_data_observers.size();i++) {
-                            ((XPlaneDataPacketObserver)this.sim_data_observers.get(i)).new_sim_data(sim_data);
+                            ((XPlaneDataPacketObserver)this.sim_data_observers.get(i)).new_sim_data(sim_data, sim_data.length);
                         }
                         Thread.sleep(this.delay_between_packets);
                         //System.out.print(".");

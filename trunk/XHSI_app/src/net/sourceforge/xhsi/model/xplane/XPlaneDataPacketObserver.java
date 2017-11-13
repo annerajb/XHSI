@@ -24,6 +24,6 @@ package net.sourceforge.xhsi.model.xplane;
 
 public interface XPlaneDataPacketObserver {
 
-    public void new_sim_data(byte[] data) throws Exception;
+    public void new_sim_data(byte[] data, int length) throws Exception;
 
 }

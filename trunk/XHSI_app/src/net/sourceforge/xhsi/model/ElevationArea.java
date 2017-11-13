@@ -23,10 +23,10 @@
 
 package net.sourceforge.xhsi.model;
 
-import java.io.RandomAccessFile;
+
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
+
 
 public class ElevationArea {
 	
@@ -43,10 +43,10 @@ public class ElevationArea {
 	public float max_lat;
 	public float min_lon; 
 	public float max_lon;
-	public int number_of_rows = 4800;
-	public int number_of_columns = 10800;
-	public float grid_size_x = 0.00833333f; // (upper_map_y - lower_map_y) / number_of_rows
-	public float grid_size_y = 0.00833333f; // (right_map_x - left_map_x) / number_of_columns
+	public int number_of_rows;
+	public int number_of_columns;
+	public float grid_size_x; 
+	public float grid_size_y; 
 	public float grid_step_x;
 	public float grid_step_y;
 	// public grid_unit = degrees;
