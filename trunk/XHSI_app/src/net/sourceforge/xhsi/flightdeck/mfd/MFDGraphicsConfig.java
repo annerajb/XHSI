@@ -59,8 +59,6 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
-    public boolean airbus_style;
-    public boolean boeing_style;
     public int ecam_version = 1;
     public int num_eng = 0; 
     
@@ -755,11 +753,8 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
                 || (this.powered != power)
             ) {
             // one of the settings has been changed
-        	
-            //logger.warning("MFD update_config");
-            super.update_config(g2);
-            
-            // remember the instrument style
+
+        	// remember the instrument style
             this.style = instrument_style;
             
             // remember the avionics power settings
@@ -768,6 +763,8 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             // remember the number of engines
             this.num_eng = nb_engines;
           
+            super.update_config(g2);
+            
             // some subcomponents need to be reminded to redraw imediately
             this.reconfigured = true;
 

@@ -240,6 +240,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     // Weather radar
     public BufferedImage wxr_img_1;
     public BufferedImage wxr_img_2;
+    public float wxr_sweep_step;
 
 
     public NDGraphicsConfig(Component root_component, int du) {
@@ -637,7 +638,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             // Weather radar
             wxr_img_1 = new BufferedImage(panel_rect.width,panel_rect.height,BufferedImage.TYPE_INT_ARGB);
             wxr_img_2 = new BufferedImage(panel_rect.width,panel_rect.height,BufferedImage.TYPE_INT_ARGB);
-            
+            wxr_sweep_step = 120.0f/preferences.get_nd_wxr_sweep_duration(); 
+            		
             // clear the flags
             this.resized = false;
             this.reconfig = false;

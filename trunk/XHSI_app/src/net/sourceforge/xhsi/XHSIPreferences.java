@@ -6,6 +6,7 @@
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * Copyright (C) 2010-2014  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2015-2017  Nicolas Carel
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -103,12 +104,22 @@ public class XHSIPreferences {
     public static final String PREF_COLORED_HSI_COURSE = "pfd.colored.hsi.course";
     public static final String PREF_ND_NAVAID_FREQ = "nd.navaid.frequencies";
     public static final String PREF_ND_WRITE_AP_HDG = "nd.write.ap.heading";
-    public static final String PREF_ND_SHOW_CLOCK = "nd.show.clock";
+    public static final String PREF_ND_SHOW_CLOCK = "nd.show.clock";    
+    // ND - EGPWS options
+    public static final String PREF_TERRAIN_SWEEP = "nd.terrain.sweep";
+    public static final String PREF_TERRAIN_SWEEP_BAR = "nd.terrain.sweep_bar";
+    public static final String PREF_TERRAIN_SWEEP_DURATION = "nd.terrain.sweep_duration";
     public static final String PREF_TERRAIN_RESOLUTION = "nd.terrain.resolution";
     public static final String PREF_ND_SHOW_VERTICAL_PATH = "nd.vertical_path";
     public static final String PREF_TERRAIN_AUTO_DISPLAY = "nd.terrain.auto_display";
     public static final String PREF_TERRAIN_PEAK_MODE = "nd.terrain.peak_mode";
     public static final String PREF_EGPWS_INHIBIT = "nd.egpws.inhibit";
+    // ND - WEATHER options
+    public static final String PREF_WXR_SWEEP = "nd.wxr.sweep";
+    public static final String PREF_WXR_SWEEP_BAR = "nd.wxr.sweep_bar";
+    public static final String PREF_WXR_SWEEP_DURATION = "nd.wxr.sweep_duration";
+    public static final String PREF_WXR_RESOLUTION = "nd.wxr.resolution";
+    public static final String PREF_WXR_DUAL_SETTINGS = "nd.wxr.dual_settings";
 
     // PFD options
     public static final String PREF_HORIZON_STYLE = "horizon.style";
@@ -169,10 +180,10 @@ public class XHSIPreferences {
     public static final String YOKE_INPUT_ALWAYS_RUDDER = "always+rudder";
     public enum DrawYokeInputMode { NONE, AUTO, AUTO_RUDDER, ALWAYS, ALWAYS_RUDDER };
     
-    // for PREF_TERRAIN_RESOLUTION
-    public static final String TERRAIN_RES_FINE = "fine";
-    public static final String TERRAIN_RES_MEDIUM = "medium";
-    public static final String TERRAIN_RES_COARSE = "coarse";
+    // for PREF_TERRAIN_RESOLUTION & PREF_WXR_RESOLUTION
+    public static final String RES_FINE = "fine";
+    public static final String RES_MEDIUM = "medium";
+    public static final String RES_COARSE = "coarse";
     
     // for PREF_HSI_SOURCE
     public static final String USER = "user";
@@ -724,6 +735,74 @@ public class XHSIPreferences {
         return get_preference(PREF_ND_SHOW_CLOCK).equalsIgnoreCase("true");
     }
 
+    // EGPWS 
+
+    /**
+     * @return            - Terrain Sweep mode
+     *
+     */
+    public boolean get_nd_terrain_sweep() {
+        return get_preference(PREF_TERRAIN_SWEEP).equalsIgnoreCase("true");
+    }
+    
+    /**
+     * @return            - Display the Terrain Sweep Bar
+     *
+     */
+    public boolean get_nd_terrain_sweep_bar() {
+        return get_preference(PREF_TERRAIN_SWEEP_BAR).equalsIgnoreCase("true");
+    }
+
+    /**
+     * @return            - Terrain Sweep Duration (integer in seconds)
+     *
+     */
+    public int get_nd_terrain_sweep_duration() {
+        return Integer.parseInt(get_preference(PREF_TERRAIN_SWEEP_DURATION));
+    }
+    
+    // Weather Radar 
+
+    /**
+     * @return            - Weather Radar Sweep mode
+     *
+     */
+    public boolean get_nd_wxr_sweep() {
+        return get_preference(PREF_WXR_SWEEP).equalsIgnoreCase("true");
+    }
+    
+    /**
+     * @return            - Display the Weather radar Sweep Bar
+     *
+     */
+    public boolean get_nd_wxr_sweep_bar() {
+        return get_preference(PREF_WXR_SWEEP_BAR).equalsIgnoreCase("true");
+    }
+
+    /**
+     * @return            - Weather radar Sweep Duration (integer in seconds
+     *
+     */
+    public int get_nd_wxr_sweep_duration() {
+        return Integer.parseInt(get_preference(PREF_WXR_SWEEP_DURATION));
+    }
+    
+    /**
+     * @return            - Weather radar resolution : 0:fine, 1:medium, 2:coarse
+     *
+     */
+    public int get_nd_wxr_resolution() {
+    	int resolution=0;
+    	if (get_preference(PREF_WXR_RESOLUTION).equalsIgnoreCase(RES_FINE)) {
+    		resolution=0;
+    	} else if (get_preference(PREF_WXR_RESOLUTION).equalsIgnoreCase(RES_MEDIUM)) {
+    		resolution=1;
+    	} else {
+    		resolution=2;
+    	}
+    	return resolution;
+    }
+
     
     // PFD
 
@@ -859,9 +938,9 @@ public class XHSIPreferences {
      */
     public int get_terrain_resolution() {
     	int resolution=0;
-    	if (get_preference(PREF_TERRAIN_RESOLUTION).equalsIgnoreCase(TERRAIN_RES_FINE)) {
+    	if (get_preference(PREF_TERRAIN_RESOLUTION).equalsIgnoreCase(RES_FINE)) {
     		resolution=0;
-    	} else if (get_preference(PREF_TERRAIN_RESOLUTION).equalsIgnoreCase(TERRAIN_RES_FINE)) {
+    	} else if (get_preference(PREF_TERRAIN_RESOLUTION).equalsIgnoreCase(RES_MEDIUM)) {
     		resolution=1;
     	} else {
     		resolution=2;
@@ -1277,6 +1356,21 @@ public class XHSIPreferences {
             this.preferences.setProperty(PREF_ND_SHOW_CLOCK, "true");
             this.unsaved_changes = true;
         }
+        // ND - EGPWS options
+        if ( ! this.preferences.containsKey(PREF_TERRAIN_SWEEP) ) {
+            this.preferences.setProperty(PREF_TERRAIN_SWEEP, "false");
+            this.unsaved_changes = true;
+        }
+        
+        if ( ! this.preferences.containsKey(PREF_TERRAIN_SWEEP_BAR) ) {
+            this.preferences.setProperty(PREF_TERRAIN_SWEEP_BAR, "false");
+            this.unsaved_changes = true;
+        }
+        
+        if ( ! this.preferences.containsKey(PREF_TERRAIN_SWEEP_DURATION) ) {
+            this.preferences.setProperty(PREF_TERRAIN_SWEEP_DURATION, "5");
+            this.unsaved_changes = true;
+        }
         
         if ( ! this.preferences.containsKey(PREF_TERRAIN_RESOLUTION) ) {
             this.preferences.setProperty(PREF_TERRAIN_RESOLUTION, "coarse");
@@ -1302,6 +1396,31 @@ public class XHSIPreferences {
             this.preferences.setProperty(PREF_EGPWS_INHIBIT, "toggle");
             this.unsaved_changes = true;
         }  
+        // ND - WEATHER options
+        if ( ! this.preferences.containsKey(PREF_WXR_SWEEP) ) {
+            this.preferences.setProperty(PREF_WXR_SWEEP, "false");
+            this.unsaved_changes = true;
+        }
+        
+        if ( ! this.preferences.containsKey(PREF_WXR_SWEEP_BAR) ) {
+            this.preferences.setProperty(PREF_WXR_SWEEP_BAR, "false");
+            this.unsaved_changes = true;
+        }
+        
+        if ( ! this.preferences.containsKey(PREF_WXR_SWEEP_DURATION) ) {
+            this.preferences.setProperty(PREF_WXR_SWEEP_DURATION, "5");
+            this.unsaved_changes = true;
+        }
+
+        if ( ! this.preferences.containsKey(PREF_WXR_RESOLUTION) ) {
+            this.preferences.setProperty(PREF_WXR_RESOLUTION, "coarse");
+            this.unsaved_changes = true;
+        }
+        
+        if ( ! this.preferences.containsKey(PREF_WXR_DUAL_SETTINGS) ) {
+            this.preferences.setProperty(PREF_WXR_DUAL_SETTINGS, "false");
+            this.unsaved_changes = true;
+        }
         
         // PFD
 

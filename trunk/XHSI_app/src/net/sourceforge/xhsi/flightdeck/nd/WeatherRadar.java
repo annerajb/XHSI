@@ -64,6 +64,7 @@ public class WeatherRadar extends NDSubcomponent {
 	boolean wxr_img_1_valid;
 	boolean wxr_img_2_valid;
 	int current_image;
+	long sweep_timestamp;
 	
 	float peak_min;
 	float peak_max;     
@@ -161,6 +162,7 @@ public class WeatherRadar extends NDSubcomponent {
     	wxr_img_1_valid = false;
     	wxr_img_2_valid = false;
     	current_image = 1;
+    	sweep_timestamp = 0;
 	}
 
 	public void paint(Graphics2D g2) {
@@ -175,10 +177,13 @@ public class WeatherRadar extends NDSubcomponent {
         	if ( avionics.efis_shows_wxr() && (!avionics.efis_shows_terrain()) && ( ! nd_gc.map_zoomin ) ) {
         		paintWeather(g2);   
         		drawInfoBox(g2);
-            	drawSweepBars(g2, sweep_angle);
+            	if (preferences.get_nd_wxr_sweep_bar()) drawSweepBars(g2, sweep_angle);
 
             	// TODO: Adjust angle based on system.time
-            	sweep_angle += 0.7f * sweep_direction;
+            	float sweep_delta_t = System.currentTimeMillis() - sweep_timestamp; 
+            	sweep_timestamp = System.currentTimeMillis();
+            	// sweep_angle += 0.7f * sweep_direction;
+            	sweep_angle += (nd_gc.wxr_sweep_step/sweep_delta_t) * sweep_direction;
             	if (sweep_angle>=sweep_max) initSweep(true);    	            	
             	if (sweep_angle<=sweep_min) initSweep(false);   	
             	
@@ -213,22 +218,30 @@ public class WeatherRadar extends NDSubcomponent {
 	}
 	
 	private void paintWeather(Graphics2D g2) {
-		if (wxr_img_1_valid) {
-		   wxr_clip_1 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y - nd_gc.rose_radius,
-					nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90-sweep_min, sweep_min-sweep_angle, Arc2D.PIE));
-		   Shape original_clip = g2.getClip();
-		   g2.setClip(wxr_clip_1);
-	       g2.drawImage( nd_gc.wxr_img_1, 0, 0, null);
-	       g2.setClip(original_clip);
+		Shape original_clip = g2.getClip();
+		if (preferences.get_nd_wxr_sweep()) {
+			if (wxr_img_1_valid) {
+				wxr_clip_1 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y - nd_gc.rose_radius,
+						nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90-sweep_min, sweep_min-sweep_angle, Arc2D.PIE));
+
+				g2.setClip(wxr_clip_1);
+				g2.drawImage( nd_gc.wxr_img_1, 0, 0, null);
+			}
+			if (wxr_img_2_valid) {
+				wxr_clip_2 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y - nd_gc.rose_radius,
+						nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90-sweep_max, sweep_max-sweep_angle, Arc2D.PIE));
+				g2.setClip(wxr_clip_2);
+				g2.drawImage( nd_gc.wxr_img_2, 0, 0, null);
+			}
+		} else {
+			wxr_clip_1 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y - nd_gc.rose_radius,
+					nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90-sweep_min, sweep_min-sweep_max, Arc2D.PIE));
+			g2.setClip(wxr_clip_1);
+			if (wxr_img_1_valid && current_image==1) g2.drawImage( nd_gc.wxr_img_1, 0, 0, null);
+			if (wxr_img_2_valid && current_image==2) g2.drawImage( nd_gc.wxr_img_2, 0, 0, null);
 		}
-		if (wxr_img_2_valid) {
-			wxr_clip_2 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y - nd_gc.rose_radius,
-					nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90-sweep_max, sweep_max-sweep_angle, Arc2D.PIE));
-			Shape original_clip = g2.getClip();
-			g2.setClip(wxr_clip_2);
-			g2.drawImage( nd_gc.wxr_img_2, 0, 0, null);
-			g2.setClip(original_clip);
-		}
+		g2.setClip(original_clip);
+
 
 	}
 	
