@@ -5,6 +5,7 @@
  * 
  * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
  * Copyright (C) 2010-2015  Marc Rogiers (marrog.123@gmail.com)
+ * Copyright (C) 2015-2017  Nicolas Carel
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -132,19 +133,21 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox nd_show_clock;
     // ND EGPWS TERRAIN OPTIONS
     private JComboBox terrain_resolution_combobox;
-    private String terrain_resolutions[] = { XHSIPreferences.TERRAIN_RES_FINE, XHSIPreferences.TERRAIN_RES_MEDIUM, XHSIPreferences.TERRAIN_RES_COARSE };
+    private String terrain_resolutions[] = { XHSIPreferences.RES_FINE, XHSIPreferences.RES_MEDIUM, XHSIPreferences.RES_COARSE };
     private JCheckBox nd_show_vertical_path;
     private JCheckBox nd_terrain_auto_display;
     private JCheckBox nd_terrain_peak_mode;
-    // Sweep rate (2,3,4,5,6)
-    // Sweep mode (dual, single, none)
-    // Sweep line visible
-    
-    // Weather Radar options
-    // Sweep rate (2,3,4,5,6)
-    // Sweep mode (dual, single, none)
-    // Sweep line visible 
-    // copilot commands
+    private JCheckBox nd_terrain_sweep;
+    private JCheckBox nd_terrain_sweep_bar;
+    private JTextField nd_terrain_sweep_time;
+    // ND WEATHER RADAR OPTIONS
+    private JComboBox wxr_resolution_combobox;
+    private String wxr_resolutions[] = { XHSIPreferences.RES_FINE, XHSIPreferences.RES_MEDIUM, XHSIPreferences.RES_COARSE };
+    private JCheckBox nd_wxr_sweep;
+    private JCheckBox nd_wxr_sweep_bar;
+    private JTextField nd_wxr_sweep_time;
+    private JCheckBox nd_wxr_dual_settings;
+
     // realistic attenuation
     // 
     
@@ -392,19 +395,32 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         this.nd_show_clock.setSelected(preferences.get_preference(XHSIPreferences.PREF_ND_SHOW_CLOCK).equalsIgnoreCase("true"));
 
-        // TODO: Terrain 
-        // this.terrain_resolution_combobox;
+        // EGPWS Terrain options
+        this.nd_terrain_sweep.setSelected(preferences.get_preference(XHSIPreferences.PREF_TERRAIN_SWEEP).equalsIgnoreCase("true"));
+        this.nd_terrain_sweep_bar.setSelected(preferences.get_preference(XHSIPreferences.PREF_TERRAIN_SWEEP_BAR).equalsIgnoreCase("true"));
+        this.nd_terrain_sweep_time.setText(preferences.get_preference(XHSIPreferences.PREF_TERRAIN_SWEEP_DURATION));
         String terrain_resolution = preferences.get_preference(XHSIPreferences.PREF_TERRAIN_RESOLUTION);
         for (int i=0; i<terrain_resolutions.length; i++) {
             if ( terrain_resolution.equals( terrain_resolutions[i] ) ) {
                 this.terrain_resolution_combobox.setSelectedIndex(i);
             }
         }
-        // private String terrain_resolutions[] = { XHSIPreferences.TERRAIN_RES_FINE, XHSIPreferences.TERRAIN_RES_MEDIUM, XHSIPreferences.TERRAIN_RES_COARSE };
         this.nd_show_vertical_path.setSelected(preferences.get_preference(XHSIPreferences.PREF_ND_SHOW_VERTICAL_PATH).equalsIgnoreCase("true"));
         this.nd_terrain_auto_display.setSelected(preferences.get_preference(XHSIPreferences.PREF_TERRAIN_AUTO_DISPLAY).equalsIgnoreCase("true"));
         this.nd_terrain_peak_mode.setSelected(preferences.get_preference(XHSIPreferences.PREF_TERRAIN_PEAK_MODE).equalsIgnoreCase("true"));
-        // PREF_EGPWS_INHIBIT
+        // TODO: PREF_EGPWS_INHIBIT
+
+        // Weather radar options   
+        String wxr_resolution = preferences.get_preference(XHSIPreferences.PREF_WXR_RESOLUTION);
+        for (int i=0; i<wxr_resolutions.length; i++) {
+            if ( wxr_resolution.equals( wxr_resolutions[i] ) ) {
+                this.wxr_resolution_combobox.setSelectedIndex(i);
+            }
+        }
+        this.nd_wxr_sweep.setSelected(preferences.get_preference(XHSIPreferences.PREF_WXR_SWEEP).equalsIgnoreCase("true"));
+        this.nd_wxr_sweep_bar.setSelected(preferences.get_preference(XHSIPreferences.PREF_WXR_SWEEP_BAR).equalsIgnoreCase("true"));
+        this.nd_wxr_sweep_time.setText(preferences.get_preference(XHSIPreferences.PREF_WXR_SWEEP_DURATION));
+
         
         // PFD Options (3)
 
@@ -533,6 +549,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         tabs_panel.add( "Avionics", create_avionics_options_tab() );
         tabs_panel.add( "PFD", create_pfd_options_tab() );
         tabs_panel.add( "ND", create_nd_options_tab() );
+        tabs_panel.add( "EGPWS", create_egpws_options_tab() );
+        tabs_panel.add( "W.Radar", create_wxr_options_tab() );
         tabs_panel.add( "EICAS", create_eicas_options_tab() );
         tabs_panel.add( "MFD", create_mfd_options_tab() );
         tabs_panel.add( "CDU", create_cdu_options_tab() );
@@ -1689,67 +1707,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         nd_options_panel.add(this.nd_show_clock, cons);
         dialog_line++;
 
-        // TODO: Terrain options
-        // Terrain resolution
-        cons.gridx = 0;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.EAST;
-        nd_options_panel.add(new JLabel("Terrain resolution", JLabel.TRAILING), cons);
-        cons.gridx = 2;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.WEST;      
-        terrain_resolution_combobox = new JComboBox();
-        this.terrain_resolution_combobox.addItem("Fine");
-        this.terrain_resolution_combobox.addItem("Medium");
-        this.terrain_resolution_combobox.addItem("Coarse");
-        nd_options_panel.add(this.terrain_resolution_combobox, cons);
-        dialog_line++;
+
         
-        // Terrain auto-display
-        cons.gridx = 0;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.EAST;
-        nd_options_panel.add(new JLabel("EGPWS caution displays terrain", JLabel.TRAILING), cons);
-        cons.gridx = 2;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.WEST;
-        this.nd_terrain_auto_display = new JCheckBox();
-        nd_options_panel.add(this.nd_terrain_auto_display, cons);
-        dialog_line++;
-
-        // Terrain peak mode
-        cons.gridx = 0;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.EAST;
-        nd_options_panel.add(new JLabel("Terrain peak mode", JLabel.TRAILING), cons);
-        cons.gridx = 2;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.WEST;
-        this.nd_terrain_peak_mode = new JCheckBox();
-        nd_options_panel.add(this.nd_terrain_peak_mode, cons);
-        dialog_line++;
-        
-        // Vertical path
-        cons.gridx = 0;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.EAST;
-        nd_options_panel.add(new JLabel("Display vertical path bellow ND", JLabel.TRAILING), cons);
-        cons.gridx = 2;
-        cons.gridwidth = 1;
-        cons.gridy = dialog_line;
-        cons.anchor = GridBagConstraints.WEST;
-        this.nd_show_vertical_path = new JCheckBox();
-        nd_options_panel.add(this.nd_show_vertical_path, cons);
-        dialog_line++;
-
-
         
 //        // A reminder
 //        cons.gridx = 2;
@@ -1763,6 +1722,232 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
     }
 
+    @SuppressWarnings("rawtypes")
+    private JPanel create_egpws_options_tab() {
+
+        GridBagLayout layout = new GridBagLayout();
+        GridBagConstraints cons = new GridBagConstraints();
+        JPanel egpws_options_panel = new JPanel(layout);
+
+        cons.ipadx = 10;
+        cons.ipady = 0;
+        cons.insets = new Insets(2, 5, 0, 0);
+
+        int dialog_line = 0;
+        
+        // Terrain sweep
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        egpws_options_panel.add(new JLabel("Activate sweep", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.nd_terrain_sweep = new JCheckBox();
+        egpws_options_panel.add(this.nd_terrain_sweep, cons);
+        dialog_line++;
+        
+        // Terrain sweep bar
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        egpws_options_panel.add(new JLabel("Display sweep bar", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.nd_terrain_sweep_bar = new JCheckBox();
+        egpws_options_panel.add(this.nd_terrain_sweep_bar, cons);
+        dialog_line++;
+        
+        // Terrain sweep rate
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        egpws_options_panel.add(new JLabel("Sweep duration (seconds)", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.nd_terrain_sweep_time = new JTextField(2);
+        egpws_options_panel.add(this.nd_terrain_sweep_time, cons);
+        dialog_line++;
+        
+        // Terrain resolution
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        egpws_options_panel.add(new JLabel("Terrain resolution", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;      
+        terrain_resolution_combobox = new JComboBox();
+        this.terrain_resolution_combobox.addItem("Fine");
+        this.terrain_resolution_combobox.addItem("Medium");
+        this.terrain_resolution_combobox.addItem("Coarse");
+        egpws_options_panel.add(this.terrain_resolution_combobox, cons);
+        dialog_line++;
+        
+        // Terrain auto-display
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        egpws_options_panel.add(new JLabel("EGPWS caution displays terrain", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.nd_terrain_auto_display = new JCheckBox();
+        egpws_options_panel.add(this.nd_terrain_auto_display, cons);
+        dialog_line++;
+
+        // Terrain peak mode
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        egpws_options_panel.add(new JLabel("Terrain peak mode", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.nd_terrain_peak_mode = new JCheckBox();
+        egpws_options_panel.add(this.nd_terrain_peak_mode, cons);
+        dialog_line++;
+        
+        // Vertical path
+        
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        // egpws_options_panel.add(new JLabel("Display vertical path bellow ND", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.nd_show_vertical_path = new JCheckBox();
+        // egpws_options_panel.add(this.nd_show_vertical_path, cons);
+        dialog_line++;
+        
+        //      // A reminder
+        //      cons.gridx = 2;
+        //      cons.gridwidth = 1;
+        //      cons.gridy = dialog_line;
+        //      cons.anchor = GridBagConstraints.EAST;
+        //      nd_options_panel.add(new JLabel("(*) : requires a restart", JLabel.TRAILING), cons);
+        //      dialog_line++;
+
+      return egpws_options_panel;
+
+  }
+   
+    @SuppressWarnings("rawtypes")
+    private JPanel create_wxr_options_tab() {
+
+        GridBagLayout layout = new GridBagLayout();
+        GridBagConstraints cons = new GridBagConstraints();
+        JPanel wxr_options_panel = new JPanel(layout);
+
+        cons.ipadx = 10;
+        cons.ipady = 0;
+        cons.insets = new Insets(2, 5, 0, 0);
+
+        int dialog_line = 0;
+        
+        // Weather radar resolution
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        wxr_options_panel.add(new JLabel("Radar resolution", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;      
+        wxr_resolution_combobox = new JComboBox();
+        this.wxr_resolution_combobox.addItem("Fine");
+        this.wxr_resolution_combobox.addItem("Medium");
+        this.wxr_resolution_combobox.addItem("Coarse");
+        wxr_options_panel.add(this.wxr_resolution_combobox, cons);
+        dialog_line++;
+
+        // Weather radar sweep
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        wxr_options_panel.add(new JLabel("Activate sweep", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.nd_wxr_sweep = new JCheckBox();
+        wxr_options_panel.add(this.nd_wxr_sweep, cons);
+        dialog_line++;
+        
+        // Weather radar sweep bar
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        wxr_options_panel.add(new JLabel("Display sweep bar", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.nd_wxr_sweep_bar = new JCheckBox();
+        wxr_options_panel.add(this.nd_wxr_sweep_bar, cons);
+        dialog_line++;
+        
+        // Weather radar sweep duration
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        wxr_options_panel.add(new JLabel("Sweep duration (seconds)", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.nd_wxr_sweep_time = new JTextField(2);
+        wxr_options_panel.add(this.nd_wxr_sweep_time, cons);
+        dialog_line++;
+
+        // Weather radar dual settings
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        wxr_options_panel.add(new JLabel("Activate dual pilot and copilot settings", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.nd_wxr_dual_settings = new JCheckBox();
+        wxr_options_panel.add(this.nd_wxr_dual_settings, cons);
+        dialog_line++;
+        
+
+        //      // A reminder
+        //      cons.gridx = 2;
+        //      cons.gridwidth = 1;
+        //      cons.gridy = dialog_line;
+        //      cons.anchor = GridBagConstraints.EAST;
+        //      nd_options_panel.add(new JLabel("(*) : requires a restart", JLabel.TRAILING), cons);
+        //      dialog_line++;
+
+      return wxr_options_panel;
+
+  }    
+    
     @SuppressWarnings("rawtypes")
     private JPanel create_eicas_options_tab() {
 
@@ -2358,16 +2543,36 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             if ( this.nd_show_clock.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_ND_SHOW_CLOCK).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_ND_SHOW_CLOCK, this.nd_show_clock.isSelected()?"true":"false");
 
-            // TODO: ND TERRAIN 
+            // TODO: EGPWS options [ TERRAIN ]
+            if ( this.nd_terrain_sweep.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_TERRAIN_SWEEP).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_TERRAIN_SWEEP, this.nd_terrain_sweep.isSelected()?"true":"false");
+            if ( this.nd_terrain_sweep_bar.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_TERRAIN_SWEEP_BAR).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_TERRAIN_SWEEP_BAR, this.nd_terrain_sweep_bar.isSelected()?"true":"false");
+            // TODO: sweep duration
+            if ( ! this.nd_terrain_sweep_time.getText().equals(this.preferences.get_preference(XHSIPreferences.PREF_TERRAIN_SWEEP_DURATION)) )
+            	this.preferences.set_preference(XHSIPreferences.PREF_TERRAIN_SWEEP_DURATION, nd_terrain_sweep_time.getText() );
             if ( this.terrain_resolution_combobox.getSelectedIndex() != this.preferences.get_terrain_resolution() )
-                this.preferences.set_preference(XHSIPreferences.PREF_TERRAIN_RESOLUTION, hsi_sources[this.terrain_resolution_combobox.getSelectedIndex()]);
+                this.preferences.set_preference(XHSIPreferences.PREF_TERRAIN_RESOLUTION, terrain_resolutions[this.terrain_resolution_combobox.getSelectedIndex()]);
             if ( this.nd_show_vertical_path.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_ND_SHOW_VERTICAL_PATH).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_ND_SHOW_VERTICAL_PATH, this.nd_show_vertical_path.isSelected()?"true":"false");
             if ( this.nd_terrain_auto_display.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_TERRAIN_AUTO_DISPLAY).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_TERRAIN_AUTO_DISPLAY, this.nd_terrain_auto_display.isSelected()?"true":"false");
             if ( this.nd_terrain_peak_mode.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_TERRAIN_PEAK_MODE).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_TERRAIN_PEAK_MODE, this.nd_terrain_peak_mode.isSelected()?"true":"false");
-                        
+
+            // TODO: Weather Radar options
+            if ( this.wxr_resolution_combobox.getSelectedIndex() != this.preferences.get_nd_wxr_resolution() )
+                this.preferences.set_preference(XHSIPreferences.PREF_WXR_RESOLUTION, wxr_resolutions[this.wxr_resolution_combobox.getSelectedIndex()]);
+            if ( this.nd_wxr_sweep.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_WXR_SWEEP).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_WXR_SWEEP, this.nd_wxr_sweep.isSelected()?"true":"false");
+            if ( this.nd_wxr_sweep_bar.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_WXR_SWEEP_BAR).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_WXR_SWEEP_BAR, this.nd_wxr_sweep_bar.isSelected()?"true":"false");
+            if ( ! this.nd_wxr_sweep_time.getText().equals(this.preferences.get_preference(XHSIPreferences.PREF_WXR_SWEEP_DURATION)) )
+            	this.preferences.set_preference(XHSIPreferences.PREF_WXR_SWEEP_DURATION, nd_wxr_sweep_time.getText() );
+            if ( this.nd_wxr_dual_settings.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_WXR_DUAL_SETTINGS).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_WXR_DUAL_SETTINGS, this.nd_wxr_dual_settings.isSelected()?"true":"false");
+
+            
             // PFD options
 
             if ( ! horizons[this.horizon_style_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_HORIZON_STYLE)) )
@@ -2491,6 +2696,25 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             field_validation_errors += "Minimum Runway Length contains non-numeric characters!\n";
         }
 
+        // sweep rate (EGPWS and Weather Radar)
+        int rate;
+        try {
+        	rate = Integer.parseInt(this.nd_terrain_sweep_time.getText());
+            if ((rate < 1) || (rate > 30)) {
+                field_validation_errors += "Sweep rate out of range [1-30]!\n";
+            }
+        } catch (NumberFormatException nf) {
+            field_validation_errors += "Sweep rate contains non-numeric characters!\n";
+        }
+        try {
+        	rate = Integer.parseInt(this.nd_wxr_sweep_time.getText());
+            if ((rate < 1) || (rate > 30)) {
+                field_validation_errors += "Sweep rate out of range [1-30]!\n";
+            }
+        } catch (NumberFormatException nf) {
+            field_validation_errors += "Sweep rate contains non-numeric characters!\n";
+        }
+        
         for (int i=0; i<MAX_WINS; i++) {
 
             // Window horizontal position
