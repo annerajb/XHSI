@@ -27,6 +27,8 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.TexturePaint;
 import java.awt.geom.AffineTransform;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -45,6 +47,8 @@ public class Terrain extends NDSubcomponent {
 
     private AffineTransform original_at;
     
+    private Paint original_paint;
+    
     float map_up;
     float center_lon;
     float center_lat;
@@ -60,6 +64,9 @@ public class Terrain extends NDSubcomponent {
 	int current_image;
       
     private float sweep_angle;
+    private float sweep_max = 60.0f;
+    private float sweep_min = -60.0f;
+	private long  sweep_timestamp;
     
     ElevationRepository elevRepository;
     
@@ -146,6 +153,7 @@ public class Terrain extends NDSubcomponent {
     	terr_img_2_valid = false;
     	current_image = 1;
     	sweep_angle = 0.0f;
+    	sweep_timestamp = 0;
 	}
 
 	public void paint(Graphics2D g2) {
@@ -153,11 +161,12 @@ public class Terrain extends NDSubcomponent {
         	if ( avionics.efis_shows_terrain() && ( ! nd_gc.map_zoomin ) )
             paintTerrain(g2);   
         	drawInfoBox(g2);
-        	// drawSweepBars(g2, sweep_angle);
+        	// if (preferences.get_terrain_sweep_bar())  drawSweepBars(g2, sweep_angle);
         
-        	// TODO: Adjust angle based on system.time
-        	sweep_angle += 0.7f;
-        	if (sweep_angle>=60.0f) {
+        	float sweep_delta_t = System.currentTimeMillis() - sweep_timestamp; 
+        	sweep_timestamp = System.currentTimeMillis();
+        	sweep_angle += (nd_gc.wxr_sweep_step/sweep_delta_t);
+        	if (sweep_angle>=90.0f) {
         		sweep_angle = 0.0f;
         		current_image = (current_image == 1) ? 2 : 1;
         		if (current_image==1) { 
@@ -257,14 +266,7 @@ public class Terrain extends NDSubcomponent {
 		
 		peak_min = 8500;
 		peak_max = 0;
-		
-		// TERRAIN indicator (debug)
-		int debug_y = nd_gc.frame_size.height*6/10;
-		g2.setColor(nd_gc.terrain_label_color);
-		g2.drawString("TERRAIN ON", nd_gc.map_center_x, nd_gc.frame_size.height*6/10);
-		debug_y += nd_gc.line_height_l;
-		g2.setFont(nd_gc.font_s);
-		
+			
         this.center_lat = this.aircraft.lat();
         this.center_lon = this.aircraft.lon();
 
@@ -292,18 +294,14 @@ public class Terrain extends NDSubcomponent {
         // elements that can be displayed
         float delta_lat = radius_scale * CoordinateSystem.deg_lat_per_nm();
         float delta_lon = radius_scale * CoordinateSystem.deg_lon_per_nm(this.center_lat);
-        float range_multiply = this.preferences.get_draw_only_inside_rose() ? 1.0f : 1.5f;
-        // multiply by 1.5f to draw symbols outside the rose
-        float lat_max = this.center_lat + delta_lat * range_multiply;
-        float lat_min = this.center_lat - delta_lat * range_multiply;
-        float lon_max = this.center_lon + delta_lon * range_multiply;
-        float lon_min = this.center_lon - delta_lon * range_multiply;
-        int nb_tile_x = 150;
-        int nb_tile_y = 150;
-        int tile_width = (int)(nd_gc.frame_size.width*range_multiply*1.5f/nb_tile_x);
-        int tile_height = (int)(nd_gc.frame_size.height*range_multiply*1.5f/nb_tile_y);
-        float lat_step = (lat_max - lat_min) / nb_tile_y;
-        float lon_step = (lon_max - lon_min) / nb_tile_x;
+
+        float lat_max = this.center_lat + delta_lat * nd_gc.terr_range_multiply;
+        float lat_min = this.center_lat - delta_lat * nd_gc.terr_range_multiply;
+        float lon_max = this.center_lon + delta_lon * nd_gc.terr_range_multiply;
+        float lon_min = this.center_lon - delta_lon * nd_gc.terr_range_multiply;
+
+        float lat_step = (lat_max - lat_min) / nd_gc.terr_nb_tile_y;
+        float lon_step = (lon_max - lon_min) / nd_gc.terr_nb_tile_x;
         
         // rotate to TRUE! aircraft heading or track, or North
         AffineTransform original_at = g2.getTransform();
@@ -324,31 +322,22 @@ public class Terrain extends NDSubcomponent {
         );
         
         float ref_alt = ref_altitude();
-        
+        original_paint = g2.getPaint();
         for (float lat=lat_min; lat<= lat_max; lat+=lat_step) {
             for (float lon=lon_min; lon<=lon_max; lon+=lon_step) {
             	float elevation = elevRepository.get_elevation(lat, lon)*3.2808f;
             	peak_min = Math.min(peak_min, elevation);
             	peak_max = Math.max(peak_max, elevation);
-                String area_name = elevRepository.get_area_name(lat, lon);            	
-                int area_offset = elevRepository.get_offset(lat, lon);
-                String deb_str= "e("+coordinates_formatter.format(lat)+","+coordinates_formatter.format(lon)+")="+(int)elevation;
-            	int elev_index = Math.min(255, (int) Math.abs(elevation) / 20); 
 
-            	g2.setColor(terrain_color(ref_alt, elevation));
-  
+            	// g2.setColor(terrain_color(ref_alt, elevation));
+            	g2.setPaint(terrain_texture(ref_alt, elevation));
             	map_projection.setPoint(lat, lon);
             	int x = map_projection.getX();
             	int y = map_projection.getY();
-            	g2.fillRect(x, y, tile_width+1, tile_height+1);
-
-                // g2.setColor(Color.WHITE);
-                // g2.drawString(deb_str, x, y);
-                // g2.drawString(area_name, x, y+nd_gc.line_height_l);
-                // g2.drawString("o="+area_offset, x, y+2*nd_gc.line_height_l);
+            	g2.fillRect(x, y, nd_gc.terr_tile_width, nd_gc.terr_tile_height);
             }
         }
-        
+        g2.setPaint(original_paint);
         g2.setTransform(original_at);    
 
 	}
@@ -372,6 +361,27 @@ public class Terrain extends NDSubcomponent {
 			return Color.blue;
 		} else return Color.black;
 	}
+
+	/**
+	 * altitude and elevation in feet
+	 */
+	public TexturePaint terrain_texture(float ref_altitude, float elevation) {
+		// Peak mode
+		if (elevation > ref_altitude+2000) {
+			return nd_gc.terrain_tp_red;
+		} else if (elevation > ref_altitude+1000) {
+			return nd_gc.terrain_tp_yellow;
+		} else if (elevation > ref_altitude-500) {
+			return nd_gc.terrain_tp_yellow;
+		} else if (elevation > ref_altitude-1000) {
+			return nd_gc.terrain_tp_dark_green;
+		} else if (elevation > ref_altitude-2000) {
+			return nd_gc.terrain_tp_green;
+		} else if (elevation <= 0) {
+			return nd_gc.terrain_tp_blue;
+		} else return nd_gc.terrain_tp_black;
+	}
+
 	
 	/**
 	 * Result in feet

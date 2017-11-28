@@ -35,7 +35,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.TexturePaint;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.Area;
@@ -224,7 +226,13 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int range_mode_message_y;
     
     // Terrain    
-    public Color terrain_colors[];
+    public TexturePaint terrain_tp_red;
+    public TexturePaint terrain_tp_yellow;
+    public TexturePaint terrain_tp_green;
+    public TexturePaint terrain_tp_dark_green;
+    public TexturePaint terrain_tp_bright_green;
+    public TexturePaint terrain_tp_blue;
+    public TexturePaint terrain_tp_black;
     public int terr_box_x;
     public int terr_value_x;
     public int terr_max_box_y;
@@ -236,11 +244,22 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int terr_label_y;
     public BufferedImage terr_img_1;
     public BufferedImage terr_img_2;
+    public float terr_sweep_step;
+    public float terr_range_multiply;
+    public int terr_nb_tile_x;
+    public int terr_nb_tile_y;
+    public int terr_tile_width;
+    public int terr_tile_height;
     
     // Weather radar
     public BufferedImage wxr_img_1;
     public BufferedImage wxr_img_2;
     public float wxr_sweep_step;
+    public float wxr_range_multiply;
+    public int wxr_nb_tile_x;
+    public int wxr_nb_tile_y;
+    public int wxr_tile_width;
+    public int wxr_tile_height;
 
 
     public NDGraphicsConfig(Component root_component, int du) {
@@ -255,12 +274,6 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
         cardinal_tri_S=new Polygon();
         cardinal_tri_E=new Polygon();
         cardinal_tri_W=new Polygon();
-        
-        // Built a default gray scale color schema for terrain 
-        terrain_colors = new Color[256];
-        for (int i=0; i<255; i++) {
-        	terrain_colors[i] = new Color(i,i,i);
-        }
     }
 
 
@@ -609,6 +622,23 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             // Terrain
             terr_img_1 = new BufferedImage(panel_rect.width,panel_rect.height,BufferedImage.TYPE_INT_ARGB);
             terr_img_2 = new BufferedImage(panel_rect.width,panel_rect.height,BufferedImage.TYPE_INT_ARGB);
+            terr_sweep_step = 90.0f/preferences.get_nd_terrain_sweep_duration(); 
+            switch (preferences.get_terrain_resolution()) {
+            case 0: // Fine - up to pixel
+            	terr_nb_tile_x = Math.min(240, panel_rect.width);
+            	terr_nb_tile_y = Math.min(240, panel_rect.height);
+            case 1: // Medium
+            	terr_nb_tile_x = 150;
+            	terr_nb_tile_y = 150;           	
+            default: // Coarse - CPU saver
+            	terr_nb_tile_x = 80;
+            	terr_nb_tile_y = 80;
+            }
+        	terr_nb_tile_x = 80;
+        	terr_nb_tile_y = 80;
+            terr_range_multiply = this.preferences.get_draw_only_inside_rose() ? 1.0f : 1.5f;
+            terr_tile_width = 2+(int)(frame_size.width*terr_range_multiply*1.5f/terr_nb_tile_x);
+            terr_tile_height = 2+(int)(frame_size.height*terr_range_multiply*1.5f/terr_nb_tile_y);            		
 
             // min and max boxes, label, egpws message
             
@@ -633,13 +663,35 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             	terr_box_height = line_height_l * 12/10;
             	terr_box_width = digit_width_l * 11/3;
             }
-            
+            terrain_tp_red = create_terrain_texture(Color.red,16,16);
+            terrain_tp_yellow = create_terrain_texture(Color.yellow,16,16);
+            terrain_tp_green = create_terrain_texture(Color.green,16,16);
+            terrain_tp_dark_green = create_terrain_texture(Color.green.darker(),16,16);
+            terrain_tp_bright_green = create_terrain_texture(Color.green.brighter(),16,16);
+            terrain_tp_blue = create_terrain_texture(Color.blue.darker(),16,16);
+            terrain_tp_black = create_terrain_texture(Color.black,16,16);
             
             // Weather radar
             wxr_img_1 = new BufferedImage(panel_rect.width,panel_rect.height,BufferedImage.TYPE_INT_ARGB);
             wxr_img_2 = new BufferedImage(panel_rect.width,panel_rect.height,BufferedImage.TYPE_INT_ARGB);
             wxr_sweep_step = 120.0f/preferences.get_nd_wxr_sweep_duration(); 
-            		
+            switch (preferences.get_nd_wxr_resolution()) {
+            case 0: // Fine - up to pixel
+                wxr_nb_tile_x = Math.min(250, panel_rect.width);
+                wxr_nb_tile_y = Math.min(250, panel_rect.height);
+            case 1: // Medium
+                wxr_nb_tile_x = 150;
+                wxr_nb_tile_y = 150;           	
+            default: // Coarse - CPU saver
+                wxr_nb_tile_x = 80;
+                wxr_nb_tile_y = 80;
+            }            
+            wxr_nb_tile_x = Math.min(250, panel_rect.width);
+            wxr_nb_tile_y = Math.min(250, panel_rect.height);
+            wxr_range_multiply = this.preferences.get_draw_only_inside_rose() ? 1.0f : 1.5f;
+            wxr_tile_width = 2+(int)(frame_size.width*wxr_range_multiply*1.5f/wxr_nb_tile_x);
+            wxr_tile_height = 2+(int)(frame_size.height*wxr_range_multiply*1.5f/wxr_nb_tile_y);            		
+            
             // clear the flags
             this.resized = false;
             this.reconfig = false;
@@ -650,6 +702,19 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 
     }
 
+    private TexturePaint create_terrain_texture(Color texture_color, int width, int height) {
+       	BufferedImage texture_image = new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
+    	int rgb=texture_color.getRGB();
+    	// drop random points @ 30%
+    	for (int x=0; x<width; x+=2) {
+    		for (int y=0; y<height; y+=2) {    			
+    			if (Math.random()>0.50f) texture_image.setRGB(x,y,rgb);
+    		}
+    	}
+    	TexturePaint paint = new TexturePaint( texture_image, new Rectangle(0,0,width, height));
+    	return paint;
+    }
+    
     private BufferedImage create_fix_symbol(Color fix_color) {
     	
     	// fix_symbol_img.setBackground(new Color(255, 255, 255, 0));
