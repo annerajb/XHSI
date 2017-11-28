@@ -179,10 +179,8 @@ public class WeatherRadar extends NDSubcomponent {
         		drawInfoBox(g2);
             	if (preferences.get_nd_wxr_sweep_bar()) drawSweepBars(g2, sweep_angle);
 
-            	// TODO: Adjust angle based on system.time
             	float sweep_delta_t = System.currentTimeMillis() - sweep_timestamp; 
             	sweep_timestamp = System.currentTimeMillis();
-            	// sweep_angle += 0.7f * sweep_direction;
             	sweep_angle += (nd_gc.wxr_sweep_step/sweep_delta_t) * sweep_direction;
             	if (sweep_angle>=sweep_max) initSweep(true);    	            	
             	if (sweep_angle<=sweep_min) initSweep(false);   	
@@ -285,18 +283,12 @@ public class WeatherRadar extends NDSubcomponent {
         // elements that can be displayed
         float delta_lat = radius_scale * CoordinateSystem.deg_lat_per_nm();
         float delta_lon = radius_scale * CoordinateSystem.deg_lon_per_nm(this.center_lat);
-        float range_multiply = this.preferences.get_draw_only_inside_rose() ? 1.0f : 1.5f;
-        // multiply by 1.5f to draw symbols outside the rose
-        float lat_max = this.center_lat + delta_lat * range_multiply;
-        float lat_min = this.center_lat - delta_lat * range_multiply;
-        float lon_max = this.center_lon + delta_lon * range_multiply;
-        float lon_min = this.center_lon - delta_lon * range_multiply;
-        int nb_tile_x = 150;
-        int nb_tile_y = 150;
-        int tile_width = (int)(nd_gc.frame_size.width*range_multiply*1.5f/nb_tile_x);
-        int tile_height = (int)(nd_gc.frame_size.height*range_multiply*1.5f/nb_tile_y);
-        float lat_step = (lat_max - lat_min) / nb_tile_y;
-        float lon_step = (lon_max - lon_min) / nb_tile_x;
+        float lat_max = this.center_lat + delta_lat * nd_gc.wxr_range_multiply;
+        float lat_min = this.center_lat - delta_lat * nd_gc.wxr_range_multiply;
+        float lon_max = this.center_lon + delta_lon * nd_gc.wxr_range_multiply;
+        float lon_min = this.center_lon - delta_lon * nd_gc.wxr_range_multiply;
+        float lat_step = (lat_max - lat_min) / nd_gc.wxr_nb_tile_y;
+        float lon_step = (lon_max - lon_min) / nd_gc.wxr_nb_tile_x;
         
         // rotate to TRUE! aircraft heading or track, or North
         AffineTransform original_at = g2.getTransform();
@@ -318,37 +310,25 @@ public class WeatherRadar extends NDSubcomponent {
         
 		g2.setFont(nd_gc.font_xxxs);
 		
-		float gain = avionics.wxr_auto_gain() ? 0.7f : avionics.wxr_gain()*1.5f;
+		float gain = avionics.wxr_auto_gain() ? 0.78f : avionics.wxr_gain()*1.5f;
         
         for (float lat=lat_min; lat<= lat_max; lat+=lat_step) {
             for (float lon=lon_min; lon<=lon_max; lon+=lon_step) {
             	float storm_level = Math.min(9.0f, gain * weather_repository.get_storm_level(lat, lon));
-                //String area_name = weather_repository.get_area_name(lat, lon);            	
-                //int lat_offset = weather_repository.get_lat_offset(lat, lon);
-                //int lon_offset = weather_repository.get_lon_offset(lat, lon);
-                // String deb_str= coordinates_formatter.format(lat)+","+coordinates_formatter.format(lon)+"="+(int)storm_level;
-                // String deb_str= ""+(int)storm_level;
             	g2.setColor(weather_color(storm_level));
   
             	map_projection.setPoint(lat, lon);
             	int x = map_projection.getX();
             	int y = map_projection.getY();
-            	if (storm_level>0) g2.fillRect(x, y, tile_width+1, tile_height+1);
-                // g2.setColor(Color.WHITE);
-                // g2.drawString(deb_str, x, y+nd_gc.line_height_xxs);
-                // g2.drawString(area_name, x, y+2*nd_gc.line_height_xxs);
-                // g2.drawString("o="+lat_offset+","+lon_offset , x, y+3*nd_gc.line_height_xxs);
+            	// map_projection.setPoint(lat+lat_step, lon+lon_step);
+            	if (storm_level>0) g2.fillRect(x, y, nd_gc.wxr_tile_width, nd_gc.wxr_tile_height);
+            	//if (storm_level>0) g2.fillRect(x, y, Math.abs(map_projection.getX()-x), Math.abs(map_projection.getY()-y));
             }
         }
         
         g2.setTransform(original_at);    
-       		
-		// WEATHER indicator (debug)
-		g2.setColor(nd_gc.terrain_label_color);
-		g2.setFont(nd_gc.font_l);
-		g2.drawString("WEATHER ON", nd_gc.map_center_x, nd_gc.frame_size.height*9/10);
-
 	}
+
 	
 	/**
 	 * storm level from 0 to 9
