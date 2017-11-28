@@ -285,6 +285,16 @@ public class GraphicsConfig implements ComponentListener {
     public Color cdu_title_color;
     public Color cdu_data_color;
     public Color cdu_scratch_pad_color;
+    
+    // Terrain colors
+    public Color terrain_red_color;
+    public Color terrain_bright_yellow_color;
+    public Color terrain_yellow_color;
+    public Color terrain_green_color;
+    public Color terrain_dark_green_color;
+    public Color terrain_bright_green_color;
+    public Color terrain_blue_color;
+    public Color terrain_black_color;
 
     String font_name = "Verdana";   
     public Font font_statusbar;
@@ -663,6 +673,16 @@ public class GraphicsConfig implements ComponentListener {
         wxr_colors[8] = new Color(150,0,0);
         wxr_colors[9] = new Color(160,0,160);
         
+        // Terrain colors
+        terrain_red_color = new Color(110,0,0);
+        terrain_bright_yellow_color = new Color(105,105,0);
+        terrain_yellow_color = new Color(75,75,0);        
+        terrain_green_color = new Color(0,70,0);
+        terrain_dark_green_color = new Color(0,40,0);
+        terrain_bright_green_color = new Color(0,105,0);
+        terrain_blue_color = new Color(0,0,80);
+        terrain_black_color = Color.black;
+        
         if ( custom_colors ) {
             background_color = Color.BLACK;
                        
@@ -958,6 +978,7 @@ public class GraphicsConfig implements ComponentListener {
            
         }
 
+       
         if ( border_color.equals(XHSIPreferences.BORDER_BROWN) ) {
             backpanel_color = color_jumbobrown;
             frontpanel_color = color_jumbodarkbrown;
