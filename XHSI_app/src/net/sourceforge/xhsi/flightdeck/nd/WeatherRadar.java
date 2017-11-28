@@ -179,9 +179,10 @@ public class WeatherRadar extends NDSubcomponent {
         		drawInfoBox(g2);
             	if (preferences.get_nd_wxr_sweep_bar()) drawSweepBars(g2, sweep_angle);
 
-            	float sweep_delta_t = System.currentTimeMillis() - sweep_timestamp; 
-            	sweep_timestamp = System.currentTimeMillis();
-            	sweep_angle += (nd_gc.wxr_sweep_step/sweep_delta_t) * sweep_direction;
+            	long system_time = System.currentTimeMillis(); 
+            	long sweep_delta_t = system_time - sweep_timestamp; 
+            	sweep_timestamp = system_time;
+            	sweep_angle += (nd_gc.wxr_sweep_step*sweep_delta_t) * sweep_direction;
             	if (sweep_angle>=sweep_max) initSweep(true);    	            	
             	if (sweep_angle<=sweep_min) initSweep(false);   	
             	

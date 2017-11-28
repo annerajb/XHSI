@@ -28,8 +28,11 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Paint;
+import java.awt.Shape;
 import java.awt.TexturePaint;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Area;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.logging.Logger;
@@ -59,6 +62,9 @@ public class Terrain extends NDSubcomponent {
 	float peak_min;
 	float peak_max;
 	
+    Area terr_clip_1 = null;
+    Area terr_clip_2 = null;
+    
 	boolean terr_img_1_valid;
 	boolean terr_img_2_valid;
 	int current_image;
@@ -67,6 +73,8 @@ public class Terrain extends NDSubcomponent {
     private float sweep_max = 60.0f;
     private float sweep_min = -60.0f;
 	private long  sweep_timestamp;
+	
+	private float gear_altitude;
     
     ElevationRepository elevRepository;
     
@@ -151,6 +159,7 @@ public class Terrain extends NDSubcomponent {
         coordinates_formatter.setDecimalFormatSymbols(symbols);
     	terr_img_1_valid = false;
     	terr_img_2_valid = false;
+    	initSweep(false);
     	current_image = 1;
     	sweep_angle = 0.0f;
     	sweep_timestamp = 0;
@@ -158,40 +167,37 @@ public class Terrain extends NDSubcomponent {
 
 	public void paint(Graphics2D g2) {
         if ( nd_gc.powered && (!( nd_gc.mode_app || nd_gc.mode_vor )) ) {
-        	if ( avionics.efis_shows_terrain() && ( ! nd_gc.map_zoomin ) )
-            paintTerrain(g2);   
-        	drawInfoBox(g2);
-        	// if (preferences.get_terrain_sweep_bar())  drawSweepBars(g2, sweep_angle);
-        
-        	float sweep_delta_t = System.currentTimeMillis() - sweep_timestamp; 
-        	sweep_timestamp = System.currentTimeMillis();
-        	sweep_angle += (nd_gc.wxr_sweep_step/sweep_delta_t);
-        	if (sweep_angle>=90.0f) {
-        		sweep_angle = 0.0f;
-        		current_image = (current_image == 1) ? 2 : 1;
-        		if (current_image==1) { 
-        			terr_img_1_valid = false; 
-        		} else { 
-        			terr_img_2_valid = false;
-        		}        	
-        	}
-        	if ( (! terr_img_1_valid) && (current_image==1) ) {
-        		// logger.info("Building terrain in buffer 1");
-        		Graphics2D g_terr = nd_gc.terr_img_1.createGraphics();
-        		g_terr.setRenderingHints(nd_gc.rendering_hints);
-        		g_terr.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
-        		g_terr.setColor(nd_gc.background_color);
-        		drawTerrain(g_terr,nd_gc.max_range);  
-        		terr_img_1_valid=true;
-        	}
-        	if ( (! terr_img_2_valid) && (current_image==2) ) {
-        		// logger.info("Building terrain in buffer 2");
-        		Graphics2D g_terr = nd_gc.terr_img_2.createGraphics();
-        		g_terr.setRenderingHints(nd_gc.rendering_hints);
-        		g_terr.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
-        		g_terr.setColor(nd_gc.background_color);
-        		drawTerrain(g_terr,nd_gc.max_range);  
-        		terr_img_2_valid=true;
+        	if ( avionics.efis_shows_terrain() && ( ! nd_gc.map_zoomin ) ) {
+        		paintTerrain(g2);   
+        		drawInfoBox(g2);
+        		if (preferences.get_nd_terrain_sweep_bar()) drawSweepBars(g2, sweep_angle);
+
+        		long system_time = System.currentTimeMillis(); 
+        		long sweep_delta_t = system_time - sweep_timestamp; 
+        		sweep_timestamp = system_time;
+        		sweep_angle += nd_gc.terr_sweep_step*sweep_delta_t;
+        		if (sweep_angle>=sweep_max)	initSweep(current_image==1);     	
+
+        		if ( (! terr_img_1_valid) && (current_image==1) ) {
+        			// logger.info("Building terrain in buffer 1");
+        			Graphics2D g_terr = nd_gc.terr_img_1.createGraphics();
+        			g_terr.setRenderingHints(nd_gc.rendering_hints);
+        			g_terr.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+        			g_terr.setColor(nd_gc.background_color);
+        			g_terr.fillRect(0, 0, nd_gc.panel_rect.width,nd_gc.panel_rect.height);
+        			drawTerrain(g_terr,nd_gc.max_range);  
+        			terr_img_1_valid=true;
+        		}
+        		if ( (! terr_img_2_valid) && (current_image==2) ) {
+        			// logger.info("Building terrain in buffer 2");
+        			Graphics2D g_terr = nd_gc.terr_img_2.createGraphics();
+        			g_terr.setRenderingHints(nd_gc.rendering_hints);
+        			g_terr.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+        			g_terr.setColor(nd_gc.background_color);
+        			g_terr.fillRect(0, 0, nd_gc.panel_rect.width,nd_gc.panel_rect.height);
+        			drawTerrain(g_terr,nd_gc.max_range);  
+        			terr_img_2_valid=true;
+        		}
         	}
         }
 	}
@@ -250,9 +256,46 @@ public class Terrain extends NDSubcomponent {
 	
 	
 	private void paintTerrain(Graphics2D g2) {
-		//if (terr_img_1_valid && current_image == 1) {
-	       g2.drawImage( nd_gc.terr_img_1, 0, 0, null);
-		//}
+		Shape original_clip = g2.getClip();
+		if (preferences.get_nd_terrain_sweep()) {
+			if (terr_img_1_valid) {
+				if (current_image==1) {
+					terr_clip_1 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y - nd_gc.rose_radius,
+						nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90-sweep_angle, sweep_angle*2, Arc2D.PIE));
+				} else {
+					terr_clip_1 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y - nd_gc.rose_radius,
+						nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90-sweep_max, sweep_max-sweep_angle, Arc2D.PIE));
+					
+					terr_clip_1.add(new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y - nd_gc.rose_radius,
+							nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90+sweep_max, sweep_angle-sweep_max, Arc2D.PIE)));
+				}
+				g2.setClip(terr_clip_1);
+				g2.drawImage( nd_gc.terr_img_1, 0, 0, null);
+			}
+			
+			if (terr_img_2_valid) {
+				if (current_image==2) {
+					terr_clip_2 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y - nd_gc.rose_radius,
+						nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90-sweep_angle, sweep_angle*2, Arc2D.PIE));
+				} else {
+					terr_clip_2 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y - nd_gc.rose_radius,
+						nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90-sweep_max, sweep_max-sweep_angle, Arc2D.PIE));
+					
+					terr_clip_2.add(new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y - nd_gc.rose_radius,
+							nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90+sweep_max, sweep_angle-sweep_max, Arc2D.PIE)));
+				}		
+				g2.setClip(terr_clip_2);
+				g2.drawImage( nd_gc.terr_img_2, 0, 0, null);
+			}
+			
+		} else {
+			terr_clip_1 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y - nd_gc.rose_radius,
+					nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90-sweep_max, sweep_max*2, Arc2D.PIE));
+			g2.setClip(terr_clip_1);
+			if (terr_img_1_valid && current_image==1) g2.drawImage( nd_gc.terr_img_1, 0, 0, null);
+			if (terr_img_2_valid && current_image==2) g2.drawImage( nd_gc.terr_img_2, 0, 0, null);
+		}
+		g2.setClip(original_clip);
 	}
 	
 	/**
@@ -270,6 +313,9 @@ public class Terrain extends NDSubcomponent {
         this.center_lat = this.aircraft.lat();
         this.center_lon = this.aircraft.lon();
 
+        // Reference altitude differs on gear position
+        gear_altitude = this.aircraft.gear_is_down() ? 250 : 500;
+        
         // for the PLAN mode, the center of the map can be displayed or active FMS waypoint
         if ( nd_gc.mode_plan ) {
             if ( ( ! this.preferences.get_plan_aircraft_center() ) && this.fms.is_active() ) {
@@ -346,37 +392,37 @@ public class Terrain extends NDSubcomponent {
 	 * altitude and elevation in feet
 	 */
 	public Color terrain_color(float ref_altitude, float elevation) {
-		// Peak mode
+		// Peak mode off - Solid style
 		if (elevation > ref_altitude+2000) {
-			return Color.red;
+			return nd_gc.terrain_red_color;
 		} else if (elevation > ref_altitude+1000) {
-			return Color.yellow;
+			return nd_gc.terrain_bright_yellow_color;
 		} else if (elevation > ref_altitude-500) {
-			return Color.yellow.brighter();
+			return nd_gc.terrain_yellow_color;
 		} else if (elevation > ref_altitude-1000) {
-			return Color.green.darker();
+			return nd_gc.terrain_green_color;
 		} else if (elevation > ref_altitude-2000) {
-			return Color.green;
+			return nd_gc.terrain_dark_green_color;
 		} else if (elevation <= 0) {
-			return Color.blue;
-		} else return Color.black;
+			return nd_gc.terrain_blue_color;
+		} else return nd_gc.terrain_black_color;
 	}
 
 	/**
 	 * altitude and elevation in feet
 	 */
 	public TexturePaint terrain_texture(float ref_altitude, float elevation) {
-		// Peak mode
+		// Peak mode off - Textured style
 		if (elevation > ref_altitude+2000) {
-			return nd_gc.terrain_tp_red;
+			return nd_gc.terrain_tp_hd_red;
 		} else if (elevation > ref_altitude+1000) {
-			return nd_gc.terrain_tp_yellow;
-		} else if (elevation > ref_altitude-500) {
-			return nd_gc.terrain_tp_yellow;
+			return nd_gc.terrain_tp_hd_yellow;
+		} else if (elevation > ref_altitude-gear_altitude) {
+			return nd_gc.terrain_tp_md_yellow;
 		} else if (elevation > ref_altitude-1000) {
-			return nd_gc.terrain_tp_dark_green;
+			return nd_gc.terrain_tp_hd_green;
 		} else if (elevation > ref_altitude-2000) {
-			return nd_gc.terrain_tp_green;
+			return nd_gc.terrain_tp_ld_green;
 		} else if (elevation <= 0) {
 			return nd_gc.terrain_tp_blue;
 		} else return nd_gc.terrain_tp_black;
@@ -411,13 +457,42 @@ public class Terrain extends NDSubcomponent {
         );
         g2.transform(rotate_to_heading);
         
-        g2.setColor(nd_gc.markings_color);
+        g2.setColor(nd_gc.instrument_background_color);
+
         g2.drawLine(
                 nd_gc.map_center_x ,
                 nd_gc.map_center_y ,
-                nd_gc.rose_radius + nd_gc.rose_radius,
-                nd_gc.map_center_y
+                nd_gc.map_center_x ,
+                nd_gc.map_center_y - nd_gc.rose_radius
         );
         g2.setTransform(original_at);
+        
+        rotate_to_heading = AffineTransform.getRotateInstance(
+                Math.toRadians(-rotation_offset),
+                nd_gc.map_center_x,
+                nd_gc.map_center_y
+        );
+        g2.transform(rotate_to_heading);
+        g2.drawLine(
+                nd_gc.map_center_x ,
+                nd_gc.map_center_y ,
+                nd_gc.map_center_x ,
+                nd_gc.map_center_y - nd_gc.rose_radius
+        );
+      
+
+        g2.setTransform(original_at);
+	}
+	
+	private void initSweep(boolean current_is_one) {   	
+    	sweep_max = 75.0f;
+    	sweep_min = 0.0f;
+    	sweep_angle = sweep_min;
+		current_image = current_is_one ? 2 : 1;
+		if (current_is_one) { 
+			terr_img_2_valid = false; 
+		} else { 
+			terr_img_1_valid = false;
+		}   
 	}
 }
