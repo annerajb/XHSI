@@ -141,7 +141,8 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
         if ( packet_type.equals("ADCD")
                 || packet_type.equals("AVIO")
                 || packet_type.equals("ENGI")
-                || packet_type.equals("STAT") ) {
+                || packet_type.equals("STAT")
+                || packet_type.equals("AUXS") ) {
 
             // Air Data Computer or Avionics or Engines or Static data packet
 
