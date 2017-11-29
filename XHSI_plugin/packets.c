@@ -35,7 +35,8 @@
 
 
 // MTU Ethernet : 1500
-// UDP Payload : 1472
+// UDP Payload (ipV4) : 1472
+// UDP Payload (ipV6) : 1452 (because ipV6 header is 20 bytes more than ipV4 header)
 //
 // struct SimDataPoint {
 //    int    id;    // 4 bytes
@@ -66,6 +67,7 @@ struct IncomingPacket      efis_packet;
 struct RemoteCommandPacket rcmd_packet;
 
 int max_adcd_size = 0;
+int max_auxs_size = 0;
 int max_avio_size = 0;
 int max_custom_avio_size = 0;
 int max_engi_size = 0;
@@ -536,7 +538,120 @@ int createADCPacket(void) {
 
 }
 
+/**
+ * Concerns :
+ *  Auxiliary power plants: APU, GPU, RAT
+ *  Hydraulics, Bleed air, Hot air, Packs
+ */
+int createAuxiliarySystemsPacket(void) {
 
+    int i = 0;
+    int packet_size;
+    int apu_status;
+    int wheel_status;
+    int tire_status;
+
+    strncpy(sim_packet.packet_id, "AUXS", 4);
+
+    /*
+     *  Auxiliary power plants
+     *  APU, GPU, RAM AIR TURBIN (RAT)
+     */
+    sim_packet.sim_data_points[i].id = custom_htoni(APU_N1);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(apu_n1));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(APU_GEN_AMP);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(apu_gen_amp));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(GPU_GEN_AMP);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(elec_gpu_amps));
+    i++;
+    if (jar_a320_neo_ready) {
+    	// Jar A320 did not use default X-Plane APU and GPU datarefs
+    	apu_status =
+    			XPLMGetDatai(jar_a320_neo_elec_gpu_av) << 7 |
+    			XPLMGetDatai(jar_a320_neo_elec_gpu_on) << 6 |
+    			XPLMGetDatai(jar_a320_neo_elec_rat_on) << 5 |
+    			XPLMGetDatai(apu_running) << 4 |
+    			(XPLMGetDataf(jar_a320_neo_elec_apu_volt)>380.0f) << 2 |
+    			XPLMGetDatai(apu_starter); // Starter on 2 bits
+    } else {
+    	apu_status =
+    			(1 << 7) |  // GPU always avail
+    			XPLMGetDatai(elec_gpu_on) << 6 |
+    			XPLMGetDatai(ram_air_turbin) << 5 |
+    			XPLMGetDatai(apu_running) << 4 |
+    			XPLMGetDatai(apu_gen_on) << 2 |
+    			XPLMGetDatai(apu_starter); // Starter on 2 bits
+    }
+    sim_packet.sim_data_points[i].id = custom_htoni(AUX_GEN_STATUS);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) apu_status);
+    i++;
+
+    /*
+     *  Wheels, brakes, tires, steering, gears
+     */
+    if (qpac_ready) {
+        wheel_status = (XPLMGetDatai(qpac_right_brake_release) << 6) |
+        		(XPLMGetDatai(qpac_left_brake_release) << 5) |
+        		(XPLMGetDatai(sim_op_fail_rel_gear_act)==6) << 4 |
+        		(XPLMGetDatai(sim_op_fail_rel_gear_ind)==6) << 3 |
+        		(XPLMGetDatai(sim_op_fail_rel_rbrake)==6) << 2 |
+        		(XPLMGetDatai(sim_op_fail_rel_lbrake)==6) << 1 |
+        		XPLMGetDatai(qpac_nw_anti_skid); // Wheel steer on 1 bit
+    } else if (jar_a320_neo_ready) {
+    	wheel_status =
+    			(XPLMGetDatai(sim_op_fail_rel_gear_act)==6) << 4 |
+    			(XPLMGetDatai(sim_op_fail_rel_gear_ind)==6) << 3 |
+    			(XPLMGetDatai(sim_op_fail_rel_rbrake)==6) << 2 |
+    			(XPLMGetDatai(sim_op_fail_rel_lbrake)==6) << 1 |
+    			XPLMGetDatai(jar_a320_neo_wheels_anti_skid) ; // Wheel steer on 1 bit
+    } else
+    {
+    	wheel_status =
+    			(XPLMGetDatai(sim_op_fail_rel_gear_act)==6) << 4 |
+    			(XPLMGetDatai(sim_op_fail_rel_gear_ind)==6) << 3 |
+    			(XPLMGetDatai(sim_op_fail_rel_rbrake)==6) << 2 |
+    			(XPLMGetDatai(sim_op_fail_rel_lbrake)==6) << 1 |
+    			XPLMGetDatai(nose_wheel_steer_on); // Wheel steer on 1 bit
+    }
+    sim_packet.sim_data_points[i].id = custom_htoni(WHEEL_STATUS);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) wheel_status);
+    i++;
+    tire_status = (XPLMGetDatai(sim_op_fail_rel_tire5) == 6) << 4 |
+    		(XPLMGetDatai(sim_op_fail_rel_tire4) == 6) << 3 |
+    		(XPLMGetDatai(sim_op_fail_rel_tire3) == 6) << 2 |
+    		(XPLMGetDatai(sim_op_fail_rel_tire2) == 6) << 1 |
+    		(XPLMGetDatai(sim_op_fail_rel_tire1) == 6); // Wheel steer on 1 bit
+    sim_packet.sim_data_points[i].id = custom_htoni(TIRE_STATUS);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) tire_status);
+    i++;
+
+    // now we know the number of datapoints
+    sim_packet.nb_of_sim_data_points = custom_htoni( i );
+
+    // packet size : char[4] + int + ( # * ( int + float) )
+    packet_size = 8 + i * 8;
+    if ( packet_size > max_auxs_size) {
+    	max_auxs_size = packet_size;
+        sprintf(msg, "XHSI: max packet size so far for AUXS: %d\n", max_auxs_size);
+        XPLMDebugString(msg);
+        if ( i > MAX_DATAPOINTS ) {
+            sprintf(msg, "XHSI: max number of sim data points exceeded for AUXS: %d (max: %d)\n", i, MAX_DATAPOINTS);
+            XPLMDebugString(msg);
+        }
+    }
+
+    return packet_size;
+
+}
+
+/**
+ * Concerns Radio, Transponder, EFIS selectors and modes
+ * Main gauges
+ * System failures
+ * Electrics
+ */
 int createAvionicsPacket(void) {
 
     int i = 0;
@@ -547,11 +662,10 @@ int createAvionicsPacket(void) {
     int egpws_modes;
     int std_gauges_failures_pilot;
     int std_gauges_failures_copilot;
-    int apu_status;
+
     int xhsi_cdu_source;
     int xhsi_cdu_side;
-    int wheel_status;
-    int tire_status;
+
     int elec_status;
     int bat;
     float battery_volt[8];
@@ -682,37 +796,7 @@ int createAvionicsPacket(void) {
     sim_packet.sim_data_points[i].value = custom_htonf((float) generators_status);
     i++;
 
-    // APU, GPU, RAM AIR TURBIN
-    sim_packet.sim_data_points[i].id = custom_htoni(APU_N1);
-    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(apu_n1));
-    i++;
-    sim_packet.sim_data_points[i].id = custom_htoni(APU_GEN_AMP);
-    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(apu_gen_amp));
-    i++;
-    sim_packet.sim_data_points[i].id = custom_htoni(GPU_GEN_AMP);
-    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(elec_gpu_amps));
-    i++;
-    if (jar_a320_neo_ready) {
-    	// Jar A320 did not use default X-Plane APU and GPU datarefs
-    	apu_status =
-    			XPLMGetDatai(jar_a320_neo_elec_gpu_av) << 7 |
-    			XPLMGetDatai(jar_a320_neo_elec_gpu_on) << 6 |
-    			XPLMGetDatai(jar_a320_neo_elec_rat_on) << 5 |
-    			XPLMGetDatai(apu_running) << 4 |
-    			(XPLMGetDataf(jar_a320_neo_elec_apu_volt)>380.0f) << 2 |
-    			XPLMGetDatai(apu_starter); // Starter on 2 bits
-    } else {
-    	apu_status =
-    			(1 << 7) |  // GPU always avail
-    			XPLMGetDatai(elec_gpu_on) << 6 |
-    			XPLMGetDatai(ram_air_turbin) << 5 |
-    			XPLMGetDatai(apu_running) << 4 |
-    			XPLMGetDatai(apu_gen_on) << 2 |
-    			XPLMGetDatai(apu_starter); // Starter on 2 bits
-    }
-    sim_packet.sim_data_points[i].id = custom_htoni(AUX_GEN_STATUS);
-    sim_packet.sim_data_points[i].value = custom_htonf((float) apu_status);
-    i++;
+
 
     // Standard gauges failures
     // Each value is on 3 bits (enum failure integer 0 to 6)
@@ -1274,42 +1358,7 @@ int createAvionicsPacket(void) {
 
     }
 
-    // Wheels, brakes, tires, steering, gears
-    if (qpac_ready) {
-        wheel_status = (XPLMGetDatai(qpac_right_brake_release) << 6) |
-        		(XPLMGetDatai(qpac_left_brake_release) << 5) |
-        		(XPLMGetDatai(sim_op_fail_rel_gear_act)==6) << 4 |
-        		(XPLMGetDatai(sim_op_fail_rel_gear_ind)==6) << 3 |
-        		(XPLMGetDatai(sim_op_fail_rel_rbrake)==6) << 2 |
-        		(XPLMGetDatai(sim_op_fail_rel_lbrake)==6) << 1 |
-        		XPLMGetDatai(qpac_nw_anti_skid); // Wheel steer on 1 bit
-    } else if (jar_a320_neo_ready) {
-    	wheel_status =
-    			(XPLMGetDatai(sim_op_fail_rel_gear_act)==6) << 4 |
-    			(XPLMGetDatai(sim_op_fail_rel_gear_ind)==6) << 3 |
-    			(XPLMGetDatai(sim_op_fail_rel_rbrake)==6) << 2 |
-    			(XPLMGetDatai(sim_op_fail_rel_lbrake)==6) << 1 |
-    			XPLMGetDatai(jar_a320_neo_wheels_anti_skid) ; // Wheel steer on 1 bit
-    } else
-    {
-    	wheel_status =
-    			(XPLMGetDatai(sim_op_fail_rel_gear_act)==6) << 4 |
-    			(XPLMGetDatai(sim_op_fail_rel_gear_ind)==6) << 3 |
-    			(XPLMGetDatai(sim_op_fail_rel_rbrake)==6) << 2 |
-    			(XPLMGetDatai(sim_op_fail_rel_lbrake)==6) << 1 |
-    			XPLMGetDatai(nose_wheel_steer_on); // Wheel steer on 1 bit
-    }
-    sim_packet.sim_data_points[i].id = custom_htoni(WHEEL_STATUS);
-    sim_packet.sim_data_points[i].value = custom_htonf((float) wheel_status);
-    i++;
-    tire_status = (XPLMGetDatai(sim_op_fail_rel_tire5) == 6) << 4 |
-    		(XPLMGetDatai(sim_op_fail_rel_tire4) == 6) << 3 |
-    		(XPLMGetDatai(sim_op_fail_rel_tire3) == 6) << 2 |
-    		(XPLMGetDatai(sim_op_fail_rel_tire2) == 6) << 1 |
-    		(XPLMGetDatai(sim_op_fail_rel_tire1) == 6); // Wheel steer on 1 bit
-    sim_packet.sim_data_points[i].id = custom_htoni(TIRE_STATUS);
-    sim_packet.sim_data_points[i].value = custom_htonf((float) tire_status);
-    i++;
+
 
 
     // now we know the number of datapoints

@@ -1,6 +1,7 @@
 
 // packet creation functions
 int createADCPacket(void);
+int createAuxiliarySystemsPacket(void);
 int createAvionicsPacket(void);
 int createCustomAvionicsPacket(void);
 int createEnginesPacket(void);
