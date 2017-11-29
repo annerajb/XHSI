@@ -8,11 +8,18 @@ extern unsigned short int   recv_port;
 extern unsigned long int    recv_rate;
 extern float                recv_delay;
 
+extern unsigned long int    expert_settings;
+
 extern unsigned long int    adc_data_rate;
+extern unsigned long int    avionics_data_rate;
+extern unsigned long int    aux_sys_data_rate;
+extern unsigned long int    engines_data_rate;
+extern unsigned long int    static_data_rate;
 extern unsigned long int    fms_data_rate;
 extern unsigned long int    tcas_data_rate;
 extern float                adc_data_delay;
 extern float                avionics_data_delay;
+extern float                aux_sys_data_delay;
 extern float                engines_data_delay;
 extern float                static_data_delay;
 extern float                fms_data_delay;

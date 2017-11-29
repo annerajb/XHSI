@@ -170,6 +170,11 @@ PLUGIN_API int XPluginEnable(void) {
             NULL);
 
     XPLMRegisterFlightLoopCallback(
+    		sendAuxiliarySystemsCallback,
+            -1.0f,
+            NULL);
+
+    XPLMRegisterFlightLoopCallback(
             sendAvionicsCallback,
             -1.0f,
             NULL);
@@ -335,6 +340,7 @@ PLUGIN_API void XPluginDisable(void) {
     XPLMDebugString("XHSI: unregistering flightloop callbacks\n");
 
     XPLMUnregisterFlightLoopCallback(sendADCCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(sendAuxiliarySystemsCallback, NULL);
     XPLMUnregisterFlightLoopCallback(sendAvionicsCallback, NULL);
     XPLMUnregisterFlightLoopCallback(sendEnginesCallback, NULL);
     XPLMUnregisterFlightLoopCallback(sendStaticCallback, NULL);

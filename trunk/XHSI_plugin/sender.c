@@ -95,6 +95,58 @@ float sendADCCallback(
 }
 
 
+float sendAuxiliarySystemsCallback(
+                                   float	inElapsedSinceLastCall,
+                                   float	inElapsedTimeSinceLastFlightLoop,
+                                   int		inCounter,
+                                   void *	inRefcon) {
+
+	int i;
+	int packet_size;
+	int res;
+	int send_error = 0;
+#if IBM
+	char msg[80];
+#endif
+
+	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open) {
+
+		packet_size = createAuxiliarySystemsPacket();
+
+		for (i=0; i<NUM_DEST; i++) {
+			if (dest_enable[i]) {
+				res = sendto(sockfd, (const char*)&sim_packet, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr));
+#if IBM
+				if ( res == SOCKET_ERROR ) {
+					send_error = 1;
+					XPLMDebugString("XHSI: caught error while sending AUXS packet! (");
+                    sprintf(msg, "%d", WSAGetLastError());
+					XPLMDebugString(msg);
+					XPLMDebugString(")\n");
+				}
+#else
+				if ( res < 0 ) {
+					send_error = 1;
+					XPLMDebugString("XHSI: caught error while sending AUXS packet! (");
+					XPLMDebugString((char * const) strerror(GET_ERRNO));
+					XPLMDebugString(")\n");
+				}
+#endif
+			}
+		}
+
+		if ( send_error )
+			return 2.0f;
+		else
+			return aux_sys_data_delay;
+
+	} else {
+		return 1.0f;
+	}
+
+}
+
+
 float sendAvionicsCallback(
                                    float	inElapsedSinceLastCall,
                                    float	inElapsedTimeSinceLastFlightLoop,
