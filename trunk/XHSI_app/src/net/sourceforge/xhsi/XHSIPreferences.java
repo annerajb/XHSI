@@ -112,7 +112,7 @@ public class XHSIPreferences {
     public static final String PREF_TERRAIN_RESOLUTION = "nd.terrain.resolution";
     public static final String PREF_ND_SHOW_VERTICAL_PATH = "nd.vertical_path";
     public static final String PREF_TERRAIN_AUTO_DISPLAY = "nd.terrain.auto_display";
-    public static final String PREF_TERRAIN_PEAK_MODE = "nd.terrain.peak_mode";
+    public static final String PREF_TERRAIN_PEAKS_MODE = "nd.terrain.peaks_mode";
     public static final String PREF_EGPWS_INHIBIT = "nd.egpws.inhibit";
     // ND - WEATHER options
     public static final String PREF_WXR_SWEEP = "nd.wxr.sweep";
@@ -120,6 +120,7 @@ public class XHSIPreferences {
     public static final String PREF_WXR_SWEEP_DURATION = "nd.wxr.sweep_duration";
     public static final String PREF_WXR_RESOLUTION = "nd.wxr.resolution";
     public static final String PREF_WXR_DUAL_SETTINGS = "nd.wxr.dual_settings";
+    public static final String PREF_WXR_COLOR_GRADIENT = "nd.wxr.color_gradient";
 
     // PFD options
     public static final String PREF_HORIZON_STYLE = "horizon.style";
@@ -804,6 +805,15 @@ public class XHSIPreferences {
     }
 
     
+    /**
+     * @return            - Display the Weather radar with 8 color gradient instead of 4
+     *
+     */
+    public boolean get_nd_wxr_color_gradient() {
+        return get_preference(PREF_WXR_COLOR_GRADIENT).equalsIgnoreCase("true");
+    }
+
+    
     // PFD
 
     /**
@@ -1387,8 +1397,8 @@ public class XHSIPreferences {
             this.unsaved_changes = true;
         }  
         
-        if ( ! this.preferences.containsKey(PREF_TERRAIN_PEAK_MODE) ) {
-            this.preferences.setProperty(PREF_TERRAIN_PEAK_MODE, "true");
+        if ( ! this.preferences.containsKey(PREF_TERRAIN_PEAKS_MODE) ) {
+            this.preferences.setProperty(PREF_TERRAIN_PEAKS_MODE, "true");
             this.unsaved_changes = true;
         }  
         
@@ -1419,6 +1429,11 @@ public class XHSIPreferences {
         
         if ( ! this.preferences.containsKey(PREF_WXR_DUAL_SETTINGS) ) {
             this.preferences.setProperty(PREF_WXR_DUAL_SETTINGS, "false");
+            this.unsaved_changes = true;
+        }
+        
+        if ( ! this.preferences.containsKey(PREF_WXR_COLOR_GRADIENT) ) {
+            this.preferences.setProperty(PREF_WXR_COLOR_GRADIENT, "false");
             this.unsaved_changes = true;
         }
         

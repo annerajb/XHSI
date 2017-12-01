@@ -61,6 +61,11 @@ public class Terrain extends NDSubcomponent {
     
 	float peak_min;
 	float peak_max;
+	float terrain_max;
+	float high_band; 
+	float middle_band;
+	float low_band; 
+	boolean peaks_mode_on;
 	
     Area terr_clip_1 = null;
     Area terr_clip_2 = null;
@@ -163,6 +168,7 @@ public class Terrain extends NDSubcomponent {
     	current_image = 1;
     	sweep_angle = 0.0f;
     	sweep_timestamp = 0;
+    	peaks_mode_on = false;
 	}
 
 	public void paint(Graphics2D g2) {
@@ -314,6 +320,7 @@ public class Terrain extends NDSubcomponent {
         this.center_lon = this.aircraft.lon();
 
         // Reference altitude differs on gear position
+        // value in feet
         gear_altitude = this.aircraft.gear_is_down() ? 250 : 500;
         
         // for the PLAN mode, the center of the map can be displayed or active FMS waypoint
@@ -386,6 +393,16 @@ public class Terrain extends NDSubcomponent {
         g2.setPaint(original_paint);
         g2.setTransform(original_at);    
 
+        /*
+         * Peaks mode - value in feet
+         */
+        if (nd_gc.terr_peaks_mode) {
+        	peaks_mode_on = (peak_max < (ref_alt -500));
+        	terrain_max = peak_max;
+        	high_band = terrain_max - 500;
+        	middle_band = peak_min + (peak_max-peak_min)/2; 
+        	low_band = peak_min + (peak_max-peak_min)/4;
+        } else peaks_mode_on = false;
 	}
 	
 	/**
@@ -412,22 +429,40 @@ public class Terrain extends NDSubcomponent {
 	 * altitude and elevation in feet
 	 */
 	public TexturePaint terrain_texture(float ref_altitude, float elevation) {
-		// Peak mode off - Textured style
-		if (elevation > ref_altitude+2000) {
-			return nd_gc.terrain_tp_hd_red;
-		} else if (elevation > ref_altitude+1000) {
-			return nd_gc.terrain_tp_hd_yellow;
-		} else if (elevation > ref_altitude-gear_altitude) {
-			return nd_gc.terrain_tp_md_yellow;
-		} else if (elevation > ref_altitude-1000) {
-			return nd_gc.terrain_tp_hd_green;
-		} else if (elevation > ref_altitude-2000) {
-			return nd_gc.terrain_tp_ld_green;
-		} else if (elevation <= 0) {
-			return nd_gc.terrain_tp_blue;
-		} else return nd_gc.terrain_tp_black;
+		if (peaks_mode_on) {
+			// Peak mode on - Textured style
+			if (elevation > ref_altitude+2000) {
+				return nd_gc.terrain_tp_hd_red;
+			} else if (elevation > ref_altitude+1000) {
+				return nd_gc.terrain_tp_hd_yellow;
+			} else if (elevation > ref_altitude-gear_altitude) {
+				return nd_gc.terrain_tp_md_yellow;
+			} else if (elevation > ref_altitude-1000) {
+				return nd_gc.terrain_tp_hd_green;
+			} else if (elevation > ref_altitude-2000) {
+				return nd_gc.terrain_tp_ld_green;
+			} else if (elevation <= 0) {
+				return nd_gc.terrain_tp_blue;
+			} else return nd_gc.terrain_tp_black;			
+		} else {
+			// Peak mode off - Textured style
+			if (elevation > ref_altitude+2000) {
+				return nd_gc.terrain_tp_hd_red;
+			} else if (elevation > ref_altitude+1000) {
+				return nd_gc.terrain_tp_hd_yellow;
+			} else if (elevation > ref_altitude-gear_altitude) {
+				return nd_gc.terrain_tp_md_yellow;
+			} else if (elevation > ref_altitude-1000) {
+				return nd_gc.terrain_tp_hd_green;
+			} else if (elevation > ref_altitude-2000) {
+				return nd_gc.terrain_tp_ld_green;
+			} else if (elevation <= 0) {
+				return nd_gc.terrain_tp_blue;
+			} else return nd_gc.terrain_tp_black;
+		}
 	}
 
+	
 	
 	/**
 	 * Result in feet
