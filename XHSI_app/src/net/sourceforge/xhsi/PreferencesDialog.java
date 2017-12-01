@@ -136,7 +136,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private String terrain_resolutions[] = { XHSIPreferences.RES_FINE, XHSIPreferences.RES_MEDIUM, XHSIPreferences.RES_COARSE };
     private JCheckBox nd_show_vertical_path;
     private JCheckBox nd_terrain_auto_display;
-    private JCheckBox nd_terrain_peak_mode;
+    private JCheckBox nd_terrain_peaks_mode;
     private JCheckBox nd_terrain_sweep;
     private JCheckBox nd_terrain_sweep_bar;
     private JTextField nd_terrain_sweep_time;
@@ -147,6 +147,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox nd_wxr_sweep_bar;
     private JTextField nd_wxr_sweep_time;
     private JCheckBox nd_wxr_dual_settings;
+    private JCheckBox nd_wxr_color_gradient;
 
     // realistic attenuation
     // 
@@ -407,7 +408,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         }
         this.nd_show_vertical_path.setSelected(preferences.get_preference(XHSIPreferences.PREF_ND_SHOW_VERTICAL_PATH).equalsIgnoreCase("true"));
         this.nd_terrain_auto_display.setSelected(preferences.get_preference(XHSIPreferences.PREF_TERRAIN_AUTO_DISPLAY).equalsIgnoreCase("true"));
-        this.nd_terrain_peak_mode.setSelected(preferences.get_preference(XHSIPreferences.PREF_TERRAIN_PEAK_MODE).equalsIgnoreCase("true"));
+        this.nd_terrain_peaks_mode.setSelected(preferences.get_preference(XHSIPreferences.PREF_TERRAIN_PEAKS_MODE).equalsIgnoreCase("true"));
         // TODO: PREF_EGPWS_INHIBIT
 
         // Weather radar options   
@@ -1813,13 +1814,13 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
-        egpws_options_panel.add(new JLabel("Terrain peak mode", JLabel.TRAILING), cons);
+        egpws_options_panel.add(new JLabel("Terrain peaks mode", JLabel.TRAILING), cons);
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
-        this.nd_terrain_peak_mode = new JCheckBox();
-        egpws_options_panel.add(this.nd_terrain_peak_mode, cons);
+        this.nd_terrain_peaks_mode = new JCheckBox();
+        egpws_options_panel.add(this.nd_terrain_peaks_mode, cons);
         dialog_line++;
         
         // Vertical path
@@ -1935,7 +1936,20 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         wxr_options_panel.add(this.nd_wxr_dual_settings, cons);
         dialog_line++;
         
-
+        // Weather radar color gradiant
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        wxr_options_panel.add(new JLabel("More than 4 colors gradiant", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.nd_wxr_color_gradient = new JCheckBox();
+        wxr_options_panel.add(this.nd_wxr_color_gradient, cons);
+        dialog_line++;
+        
         //      // A reminder
         //      cons.gridx = 2;
         //      cons.gridwidth = 1;
@@ -2557,8 +2571,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
                 this.preferences.set_preference(XHSIPreferences.PREF_ND_SHOW_VERTICAL_PATH, this.nd_show_vertical_path.isSelected()?"true":"false");
             if ( this.nd_terrain_auto_display.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_TERRAIN_AUTO_DISPLAY).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_TERRAIN_AUTO_DISPLAY, this.nd_terrain_auto_display.isSelected()?"true":"false");
-            if ( this.nd_terrain_peak_mode.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_TERRAIN_PEAK_MODE).equals("true") )
-                this.preferences.set_preference(XHSIPreferences.PREF_TERRAIN_PEAK_MODE, this.nd_terrain_peak_mode.isSelected()?"true":"false");
+            if ( this.nd_terrain_peaks_mode.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_TERRAIN_PEAKS_MODE).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_TERRAIN_PEAKS_MODE, this.nd_terrain_peaks_mode.isSelected()?"true":"false");
 
             // TODO: Weather Radar options
             if ( this.wxr_resolution_combobox.getSelectedIndex() != this.preferences.get_nd_wxr_resolution() )
@@ -2571,6 +2585,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
             	this.preferences.set_preference(XHSIPreferences.PREF_WXR_SWEEP_DURATION, nd_wxr_sweep_time.getText() );
             if ( this.nd_wxr_dual_settings.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_WXR_DUAL_SETTINGS).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_WXR_DUAL_SETTINGS, this.nd_wxr_dual_settings.isSelected()?"true":"false");
+            if ( this.nd_wxr_color_gradient.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_WXR_COLOR_GRADIENT).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_WXR_COLOR_GRADIENT, this.nd_wxr_color_gradient.isSelected()?"true":"false");
 
             
             // PFD options

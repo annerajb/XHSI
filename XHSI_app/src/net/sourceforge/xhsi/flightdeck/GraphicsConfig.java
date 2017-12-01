@@ -649,29 +649,29 @@ public class GraphicsConfig implements ComponentListener {
     public void set_colors(boolean custom_colors, String border_color) {
 
         // Weather radar colors
-    	/*
-        wxr_colors[0] = new Color(0,0,0,255);
-        wxr_colors[1] = new Color(0,64,0,128);
-        wxr_colors[2] = new Color(0,128,0,128);
-        wxr_colors[3] = new Color(0,192,0,128);
-        wxr_colors[4] = new Color(64,64,0,128);
-        wxr_colors[5] = new Color(128,128,0,128);
-        wxr_colors[6] = new Color(192,192,0,128);
-        wxr_colors[7] = new Color(128,0,0,128);
-        wxr_colors[8] = new Color(192,0,0,128);
-        wxr_colors[9] = new Color(255,0,255,128);
-        */
-        
-        wxr_colors[0] = new Color(0,0,0);
-        wxr_colors[1] = new Color(0,0,0);
-        wxr_colors[2] = new Color(0,0,0);
-        wxr_colors[3] = new Color(0,110,0);
-        wxr_colors[4] = new Color(0,140,0);
-        wxr_colors[5] = new Color(140,140,0);
-        wxr_colors[6] = new Color(150,150,0);
-        wxr_colors[7] = new Color(150,0,0);
-        wxr_colors[8] = new Color(150,0,0);
-        wxr_colors[9] = new Color(160,0,160);
+        if ( preferences.get_nd_wxr_color_gradient() ) {
+        	wxr_colors[0] = new Color(0,0,0);
+        	wxr_colors[1] = new Color(0,5,0);
+        	wxr_colors[2] = new Color(0,40,0);
+        	wxr_colors[3] = new Color(0,100,0);
+        	wxr_colors[4] = new Color(0,120,0);
+        	wxr_colors[5] = new Color(120,120,0);
+        	wxr_colors[6] = new Color(140,140,0);
+        	wxr_colors[7] = new Color(140,0,0);
+        	wxr_colors[8] = new Color(160,0,0);
+        	wxr_colors[9] = new Color(160,0,160);       	
+        } else {
+        	wxr_colors[0] = new Color(0,0,0);
+        	wxr_colors[1] = new Color(0,0,0);
+        	wxr_colors[2] = new Color(0,0,0);
+        	wxr_colors[3] = new Color(0,110,0);
+        	wxr_colors[4] = new Color(0,140,0);
+        	wxr_colors[5] = new Color(140,140,0);
+        	wxr_colors[6] = new Color(150,150,0);
+        	wxr_colors[7] = new Color(150,0,0);
+        	wxr_colors[8] = new Color(150,0,0);
+        	wxr_colors[9] = new Color(160,0,160);
+        }
         
         // Terrain colors
         terrain_red_color = new Color(110,0,0);

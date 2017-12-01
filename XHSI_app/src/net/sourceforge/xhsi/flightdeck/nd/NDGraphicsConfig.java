@@ -230,6 +230,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public TexturePaint terrain_tp_hd_yellow;
     public TexturePaint terrain_tp_md_yellow;
     public TexturePaint terrain_tp_ld_yellow;
+    public TexturePaint terrain_tp_solid_green;
     public TexturePaint terrain_tp_hd_green;
     public TexturePaint terrain_tp_md_green;
     public TexturePaint terrain_tp_ld_green;
@@ -252,6 +253,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int terr_nb_tile_y;
     public int terr_tile_width;
     public int terr_tile_height;
+    public boolean terr_peaks_mode;
     
     // Weather radar
     public BufferedImage wxr_img_1;
@@ -302,6 +304,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             // remember the new settings
             this.powered = power;
             this.style = instrument_style;
+            
+            this.terr_peaks_mode = preferences.get_preference(XHSIPreferences.PREF_TERRAIN_PEAKS_MODE).equals("true");
             
             super.update_config(g2);
             
@@ -675,6 +679,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             terrain_tp_hd_yellow = create_regular_terrain_texture(terrain_bright_yellow_color,terr_text_size,0);
             terrain_tp_md_yellow = create_regular_terrain_texture(terrain_yellow_color,terr_text_size,1);
             terrain_tp_ld_yellow = create_regular_terrain_texture(terrain_yellow_color,terr_text_size,2);
+            terrain_tp_solid_green = create_solid_terrain_texture(terrain_green_color,terr_text_size);
             terrain_tp_hd_green = create_regular_terrain_texture(terrain_green_color,terr_text_size,0);
             terrain_tp_md_green = create_regular_terrain_texture(terrain_green_color,terr_text_size,1);
             terrain_tp_ld_green = create_regular_terrain_texture(terrain_dark_green_color,terr_text_size,2);
@@ -774,6 +779,24 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     	TexturePaint paint = new TexturePaint( texture_image, new Rectangle(0,0,size, size));
     	return paint;
     }
+        
+    /**
+     * Creates solid terrain textures for the EPGWS terrain map on ND
+     * @param solid_color : Color
+     * @param size : in pixel
+     * @return : TexturePaint
+     */
+    private TexturePaint create_solid_terrain_texture(Color solid_color, int size) {
+       	BufferedImage texture_image = new BufferedImage(size,size,BufferedImage.TYPE_INT_ARGB);
+    	Graphics2D g_fix = texture_image.createGraphics();
+    	g_fix.setRenderingHints(rendering_hints);
+    	g_fix.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+    	g_fix.setColor(solid_color);
+   		g_fix.fillRect(0,0,size,size);
+    	TexturePaint paint = new TexturePaint( texture_image, new Rectangle(0,0,size, size));
+    	return paint;
+    }
+    
     
     private BufferedImage create_fix_symbol(Color fix_color) {
     	
