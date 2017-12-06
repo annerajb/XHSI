@@ -178,9 +178,8 @@ public class Terrain extends NDSubcomponent {
         		drawInfoBox(g2);
         		if (preferences.get_nd_terrain_sweep_bar()) drawSweepBars(g2, sweep_angle);
 
-        		long system_time = System.currentTimeMillis(); 
-        		long sweep_delta_t = system_time - sweep_timestamp; 
-        		sweep_timestamp = system_time;
+        		long sweep_delta_t = nd_gc.current_time_millis - sweep_timestamp; 
+        		sweep_timestamp = nd_gc.current_time_millis;
         		sweep_angle += nd_gc.terr_sweep_step*sweep_delta_t;
         		if (sweep_angle>=sweep_max)	initSweep(current_image==1);     	
 

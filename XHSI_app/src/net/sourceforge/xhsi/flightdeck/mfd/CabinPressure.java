@@ -479,7 +479,7 @@ public class CabinPressure extends MFDSubcomponent {
     		g2.setColor(mfd_gc.ecam_normal_color);
     		break;
     	case PULSING : 
-    		if ((System.currentTimeMillis() % 1000) < 500) 
+    		if ((mfd_gc.current_time_millis % 1000) < 500) 
     			g2.setColor(mfd_gc.ecam_caution_color); 
     		else 
     			g2.setColor(mfd_gc.ecam_caution_color.darker());
@@ -491,7 +491,7 @@ public class CabinPressure extends MFDSubcomponent {
         } else {
         	g2.setColor(mfd_gc.ecam_caution_color);
         } 
-        if ( (vs_alert_status == PressAlert.PULSING) && ((System.currentTimeMillis() % 1000) < 500) ) 
+        if ( (vs_alert_status == PressAlert.PULSING) && ((mfd_gc.current_time_millis % 1000) < 500) ) 
            { g2.setColor(mfd_gc.ecam_markings_color); }
         */
         g2.setFont(mfd_gc.font_xl);

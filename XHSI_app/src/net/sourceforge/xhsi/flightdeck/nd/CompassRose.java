@@ -103,7 +103,7 @@ public class CompassRose extends NDSubcomponent {
         	
         	if (refresh_rose) {
 
-        		this.refreshed_timestamp =  System.currentTimeMillis();
+        		this.refreshed_timestamp =  nd_gc.current_time_millis;
         				
         		// draw the scale rings before drawing the map
         		if ( ( ! nd_gc.mode_plan ) && ( this.preferences.get_draw_range_arcs() ) && ! nd_gc.mode_classic_hsi )

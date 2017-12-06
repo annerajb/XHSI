@@ -102,9 +102,8 @@ public class AnnunComponent extends Component implements Observer, PreferencesOb
 
 
     public void paint(Graphics g) {
-
+    	annun_gc.current_time_millis=System.currentTimeMillis();
         drawAll(g);
-
     }
 
 

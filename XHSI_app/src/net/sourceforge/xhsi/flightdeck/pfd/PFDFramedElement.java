@@ -134,12 +134,12 @@ public class PFDFramedElement {
 		 if (pfd_gc.reconfigured_timestamp > this.reconfigured_timestamp ) update_config();
     	 
     	 if (framed) {
-    		 if (System.currentTimeMillis() > paint_start + framed_milli ) framed = false;
+    		 if (pfd_gc.current_time_millis > paint_start + framed_milli ) framed = false;
     	 }
     	 if (flash) {
-    		 if (System.currentTimeMillis() > paint_start + flashed_milli ) flash = false;    		 
+    		 if (pfd_gc.current_time_millis > paint_start + flashed_milli ) flash = false;    		 
     	 }
-    	 boolean display_text = (flash && flashing) ? ((System.currentTimeMillis() % 1000) < 500) : true;    		 
+    	 boolean display_text = (flash && flashing) ? ((pfd_gc.current_time_millis % 1000) < 500) : true;    		 
 
     	 if (!cleared) {
     		 if (display_text) {
@@ -162,7 +162,7 @@ public class PFDFramedElement {
     public void setText ( String text, PFE_Color color ) {    	
     	if ((! str_line1_left.equals(text)) || (color != text_color) ) {
     		if (text.equals("")) { framed=false; flash=false; } else { framed=true; flash=true;}
-    		paint_start = System.currentTimeMillis();    		
+    		paint_start = pfd_gc.current_time_millis;    		
     		str_line1_left = text;
     		text_color = color;
     		frame_color = PFE_Color.PFE_COLOR_MARK;
@@ -174,7 +174,7 @@ public class PFDFramedElement {
     public void setText ( String text1, String text2, PFE_Color color ) {    	
     	if ((! str_line1_left.equals(text1)) || (! str_line2_left.equals(text2)) || (color != text_color) ) {
     		if (text1.equals("")) { framed=false; flash=false; } else { framed=true; flash=true;}
-    		paint_start = System.currentTimeMillis(); 
+    		paint_start = pfd_gc.current_time_millis; 
     		str_line1_left = text1;
     		str_line2_left = text2;
     		text_color = color;
@@ -187,7 +187,7 @@ public class PFDFramedElement {
     public void setText ( String text1, String text2, String text3, PFE_Color color ) {    	
     	if ((! str_line1_left.equals(text1)) || (! str_line2_left.equals(text2)) || (color != text_color) ) {
     		if (text1.equals("")) { framed=false; flash=false; } else { framed=true; flash=true;}
-    		paint_start = System.currentTimeMillis(); 
+    		paint_start = pfd_gc.current_time_millis; 
     		str_line1_left = text1;
     		str_line2_left = text2;
     		str_line3_left = text3;
@@ -201,7 +201,7 @@ public class PFDFramedElement {
     public void setTextValue ( String text, String value, PFE_Color color ) {    	
     	if ((! str_line1_left.equals(text)) || (color != text_color) || (! str_line1_right.equals(value))) {
     		if (text.equals("")) { framed=false; flash=false; } else { framed=true; flash=true;}
-    		paint_start = System.currentTimeMillis(); 
+    		paint_start = pfd_gc.current_time_millis; 
     		str_line1_left = text;
     		str_line1_right = value;
     		text_color = color;
@@ -214,7 +214,7 @@ public class PFDFramedElement {
     public void setTextValue ( String text1, String text2, String value, PFE_Color color ) {    	
     	if ((! str_line1_left.equals(text1)) || (color != text_color) || (! str_line2_right.equals(value)) || (! str_line2_left.equals(text2))) {
     		if (text1.equals("")) { framed=false; flash=false; } else { framed=true; flash=true;}
-    		paint_start = System.currentTimeMillis(); 
+    		paint_start = pfd_gc.current_time_millis; 
     		str_line1_left = text1;
     		str_line2_left = text2;
     		str_line2_right = value;
@@ -235,17 +235,17 @@ public class PFDFramedElement {
     
     public void setFrame() {
     	framed = true;
-		paint_start = System.currentTimeMillis(); 
+		paint_start = pfd_gc.current_time_millis; 
     }
     
     public void setFrameFlash() {
     	frame_flash = true;
-		paint_start = System.currentTimeMillis(); 
+		paint_start = pfd_gc.current_time_millis; 
     }
     
     public void setFlash() {
     	flash = true;
-		paint_start = System.currentTimeMillis(); 
+		paint_start = pfd_gc.current_time_millis; 
     }
     
     public void clearFrame() {
@@ -382,7 +382,7 @@ public class PFDFramedElement {
     }
     
     private void update_config () {
-    	reconfigured_timestamp = System.currentTimeMillis();
+    	reconfigured_timestamp = pfd_gc.current_time_millis;
     	frame_x = pfd_gc.fma_left + pfd_gc.digit_width_xl / 4;
     	frame_y = pfd_gc.fma_top + pfd_gc.fma_height*raw/3 + pfd_gc.line_height_xl - 2 - pfd_gc.line_height_xl*15/16; 
     	frame_w = 0;

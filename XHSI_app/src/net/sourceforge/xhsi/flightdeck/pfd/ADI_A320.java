@@ -584,12 +584,12 @@ public class ADI_A320 extends PFDSubcomponent {
 		}
 		if ( (fd_engagement != FDEngagement.AP) && (fd_engagement != FDEngagement.FD_AP) && ap_on) {
 			// Autopilot was engaged
-			fd_flashing_start = System.currentTimeMillis();
+			fd_flashing_start = pfd_gc.current_time_millis;
 			fd_flashing = true;
 		}
 		if ( (fd_engagement != FDEngagement.FD) && (fd_engagement != FDEngagement.FD_AP) && fd_on ) {
 			// FD was engaged
-			fd_flashing_start = System.currentTimeMillis();
+			fd_flashing_start = pfd_gc.current_time_millis;
 			fd_flashing = true;
 		}
 		// Update AP FD engagement mode
@@ -603,7 +603,7 @@ public class ADI_A320 extends PFDSubcomponent {
 			int v_mode=this.avionics.qpac_ap_vertical_mode();		
 			if (v_mode==107 && fd_reversion == FDReversion.NORMAL) {
 				// This is a mode reversion to V/S
-				fd_flashing_start = System.currentTimeMillis();
+				fd_flashing_start = pfd_gc.current_time_millis;
 				fd_flashing = true;
 				fd_reversion = FDReversion.VS;				
 			}
@@ -613,7 +613,7 @@ public class ADI_A320 extends PFDSubcomponent {
 			int v_mode=this.avionics.jar_a320neo_ap_vertical_mode();
 			if ((v_mode == 13 || v_mode == 14) && fd_reversion == FDReversion.NORMAL) {
 				// This is a mode reversion to V/S
-				fd_flashing_start = System.currentTimeMillis();
+				fd_flashing_start = pfd_gc.current_time_millis;
 				fd_flashing = true;
 				fd_reversion = FDReversion.VS;				
 			}
@@ -622,8 +622,8 @@ public class ADI_A320 extends PFDSubcomponent {
 		// Flashing command
 		boolean fd_display_bars = true;
 		if (fd_flashing) {
-			if (System.currentTimeMillis() > fd_flashing_start + 10000) fd_flashing = false;
-			if (fd_flashing && (System.currentTimeMillis() % 1000 < 500)) fd_display_bars = false; 
+			if (pfd_gc.current_time_millis > fd_flashing_start + 10000) fd_flashing = false;
+			if (fd_flashing && (pfd_gc.current_time_millis % 1000 < 500)) fd_display_bars = false; 
 		}
 		
 

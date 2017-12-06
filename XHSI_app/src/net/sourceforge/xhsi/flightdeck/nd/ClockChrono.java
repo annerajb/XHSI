@@ -65,7 +65,7 @@ public class ClockChrono extends NDSubcomponent {
 
         if ( nd_gc.powered ) {
         	boolean refresh_all = (nd_gc.reconfigured_timestamp > this.refreshed_timestamp);
-        	this.refreshed_timestamp =  System.currentTimeMillis();
+        	this.refreshed_timestamp =  nd_gc.current_time_millis;
         	
         	// Navigation Display Chrono
         	float chrono_time = this.avionics.efis_chrono_elapsed_time();

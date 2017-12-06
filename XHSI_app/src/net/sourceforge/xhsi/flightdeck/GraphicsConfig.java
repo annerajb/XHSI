@@ -442,6 +442,13 @@ public class GraphicsConfig implements ComponentListener {
     public boolean boeing_style;
     public boolean unknown_style;
 
+    /*
+     *  Avoid calling System.currentTimeMillis() more than one time per DU refresh
+     *  This system call costs CPU / this variable acts as a cached value
+     *  This value is updated in the DU component paint() function
+     */
+    public long current_time_millis;
+    
 
 
     public GraphicsConfig(Component root_component) {
@@ -460,6 +467,9 @@ public class GraphicsConfig implements ComponentListener {
         airbus_style = ( style == Avionics.STYLE_AIRBUS );
         boeing_style = ( style == Avionics.STYLE_BOEING );
         unknown_style = ( !airbus_style & !boeing_style); // possible if dataref tool used to set an unknown value 
+        
+        // Reset system timer cache 
+        current_time_millis = 0;
         
         set_colors(false, XHSIPreferences.BORDER_GRAY);
 

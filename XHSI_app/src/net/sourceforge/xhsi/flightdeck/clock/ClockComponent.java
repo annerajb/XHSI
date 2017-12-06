@@ -96,9 +96,8 @@ public class ClockComponent extends Component implements Observer, PreferencesOb
 
 
     public void paint(Graphics g) {
-
+    	clock_gc.current_time_millis=System.currentTimeMillis();
         drawAll(g);
-
     }
 
 

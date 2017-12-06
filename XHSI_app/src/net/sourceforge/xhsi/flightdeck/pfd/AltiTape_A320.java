@@ -459,13 +459,13 @@ public class AltiTape_A320 extends PFDSubcomponent {
     		break;
     	case PULSING : 
     		g2.setColor(pfd_gc.pfd_reference_color);
-    		if ((System.currentTimeMillis() % 1000) < 500) g2.setStroke(new BasicStroke(4.0f));
+    		if ((pfd_gc.current_time_millis % 1000) < 500) g2.setStroke(new BasicStroke(4.0f));
     		g2.drawPolyline(box_x, box_y, 8);
     		g2.setStroke(original_stroke);
     		break;
     	case FLASHING : 
     		g2.setColor(pfd_gc.pfd_caution_color);
-    		if ((System.currentTimeMillis() % 1000) < 500) { g2.setStroke(new BasicStroke(4.0f)); g2.drawPolyline(box_x, box_y, 8); g2.setStroke(original_stroke); }
+    		if ((pfd_gc.current_time_millis % 1000) < 500) { g2.setStroke(new BasicStroke(4.0f)); g2.drawPolyline(box_x, box_y, 8); g2.setStroke(original_stroke); }
     		break;
     	}
 
