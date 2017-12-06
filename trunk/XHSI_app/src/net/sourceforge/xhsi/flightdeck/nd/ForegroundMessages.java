@@ -235,7 +235,7 @@ public class ForegroundMessages extends NDSubcomponent {
         if ( this.aircraft.agl_m() >= 1000.0f / 3.28084f ) {
             // inhibit below 1000ft AGL
 
-            boolean tcas_on = ( (this.avionics.transponder_mode() >= Avionics.XPDR_TA) || this.preferences.get_tcas_always_on() );
+            boolean tcas_on = ( (this.avionics.transponder_mode() >= Avionics.XPDR_TA) || nd_gc.tcas_always_on );
 
             if ( tcas_on && ( this.avionics.get_tcas().ra || this.avionics.get_tcas().ta ) ) {
                 g2.setFont(nd_gc.font_xl);
@@ -258,7 +258,7 @@ public class ForegroundMessages extends NDSubcomponent {
     private void drawDisagree(Graphics2D g2) {
 
         // EFIS MODE/NAV FREQ DISAGREE
-        if ( (this.preferences.get_mode_mismatch_caution()) && ( nd_gc.mode_app || nd_gc.mode_vor ) ) {
+        if ( nd_gc.mode_mismatch_caution && ( nd_gc.mode_app || nd_gc.mode_vor ) ) {
 
             int source = this.avionics.hsi_source();
             int refnavradio = 0;

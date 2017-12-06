@@ -335,10 +335,10 @@ public class BleedAir extends MFDSubcomponent {
 			
 	    	if (this.aircraft.on_ground()) {
 	    		 if (!a_ice_warning && !a_ice_count_on) { 
-	    			 a_ice_ground_start = System.currentTimeMillis();
+	    			 a_ice_ground_start = mfd_gc.current_time_millis;
 	    			 a_ice_count_on=true;
 	    		 }
-	    		 if (a_ice_count_on && (System.currentTimeMillis() >  a_ice_ground_start + 10000)) a_ice_warning = true;
+	    		 if (a_ice_count_on && (mfd_gc.current_time_millis >  a_ice_ground_start + 10000)) a_ice_warning = true;
 	    	} else {
 	    		 a_ice_warning = false;
 	    		 a_ice_count_on = false;

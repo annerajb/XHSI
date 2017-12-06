@@ -266,7 +266,7 @@ public class RadioLabel extends NDSubcomponent {
             		g2_left.setRenderingHints(nd_gc.rendering_hints);
             		g2_left.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
             		if (refresh_radio1) {
-            			left_refreshed_timestamp = System.currentTimeMillis();
+            			left_refreshed_timestamp = nd_gc.current_time_millis;
             			// Clear the buffered Image first
             			g2_left.setComposite(AlphaComposite.Clear);
             			g2_left.fillRect(0, 0, nd_gc.frame_size.width, nd_gc.frame_size.height);
@@ -293,7 +293,7 @@ public class RadioLabel extends NDSubcomponent {
             		g2_right.setRenderingHints(nd_gc.rendering_hints);
             		g2_right.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
             		if (refresh_radio2) {
-            			right_refreshed_timestamp = System.currentTimeMillis();
+            			right_refreshed_timestamp = nd_gc.current_time_millis;
             			// Clear the buffered Image first
             			g2_right.setComposite(AlphaComposite.Clear);
             			g2_right.fillRect(0, 0, nd_gc.frame_size.width, nd_gc.frame_size.height);

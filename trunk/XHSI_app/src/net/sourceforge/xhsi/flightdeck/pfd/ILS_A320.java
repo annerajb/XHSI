@@ -310,7 +310,7 @@ public class ILS_A320 extends PFDSubcomponent {
         	
         if ((Math.abs(cdi_value) > 2.0f || Math.abs(gs_value) > 2.0f) && (! two_dots_exceeded ) && on_gs && (ra>15)) {
         	two_dots_exceeded = true;
-        	two_dots_exceeded_start_time = System.currentTimeMillis();        	
+        	two_dots_exceeded_start_time = pfd_gc.current_time_millis;        	
         } 
         if ((Math.abs(cdi_value) < 2.0f && Math.abs(gs_value) < 2.0f) || (!on_gs) || (ra <= 15)) {
         	two_dots_exceeded = false;
@@ -319,29 +319,29 @@ public class ILS_A320 extends PFDSubcomponent {
         
         if ( (! loc_exceeded ) && on_loc && ((Math.abs(cdi_value) > 0.25f) && (ra > 15))) {
         	loc_exceeded = true;
-        	loc_exceeded_start_time = System.currentTimeMillis();
+        	loc_exceeded_start_time = pfd_gc.current_time_millis;
         } 
         if ((Math.abs(cdi_value) < 0.25f) || (!on_loc) || (ra <= 15)) {
         	loc_exceeded = false;
         	loc_scale_flashing = false; 
         }
-        if (loc_exceeded && (System.currentTimeMillis()  > loc_exceeded_start_time + 2000 ) ) {        	
+        if (loc_exceeded && (pfd_gc.current_time_millis  > loc_exceeded_start_time + 2000 ) ) {        	
             loc_scale_flashing = true;          
         }  
 
         if ((! gs_exceeded ) && on_gs && ((Math.abs(gs_value) > 1.0f) && (ra > 100)) ) {
         	gs_exceeded = true;
-        	gs_exceeded_start_time = System.currentTimeMillis();
+        	gs_exceeded_start_time = pfd_gc.current_time_millis;
         } 
         if ((Math.abs(gs_value) < 1.0f) || (!on_gs) || (ra <= 15)) {
         	gs_exceeded = false;
         	gs_scale_flashing = false;
         }
-        if (gs_exceeded && (System.currentTimeMillis()  > (gs_exceeded_start_time + 2000) )) {        	
+        if (gs_exceeded && (pfd_gc.current_time_millis  > (gs_exceeded_start_time + 2000) )) {        	
             gs_scale_flashing = true;          
         }  
         
-        if (two_dots_exceeded && (System.currentTimeMillis() > (two_dots_exceeded_start_time + 2000) )) {
+        if (two_dots_exceeded && (pfd_gc.current_time_millis > (two_dots_exceeded_start_time + 2000) )) {
         	symbols_flashing = true;
             loc_scale_flashing = true;
             gs_scale_flashing = true;
@@ -349,14 +349,14 @@ public class ILS_A320 extends PFDSubcomponent {
         
       
         
-        // boolean display_loc_scale = (!loc_scale_flashing) || ((System.currentTimeMillis() % 1000) > 500);
-        // boolean display_gs_scale = (!gs_scale_flashing) || ((System.currentTimeMillis() % 1000) > 500);
+        // boolean display_loc_scale = (!loc_scale_flashing) || ((pfd_gc.current_time_millis % 1000) > 500);
+        // boolean display_gs_scale = (!gs_scale_flashing) || ((pfd_gc.current_time_millis % 1000) > 500);
         boolean display_loc_scale = true;
-        if (loc_scale_flashing && ((System.currentTimeMillis() % 1000) < 500) ) display_loc_scale = false;
+        if (loc_scale_flashing && ((pfd_gc.current_time_millis % 1000) < 500) ) display_loc_scale = false;
         boolean display_gs_scale = true;
-        if (gs_scale_flashing && ((System.currentTimeMillis() % 1000) < 500) ) display_gs_scale = false;
+        if (gs_scale_flashing && ((pfd_gc.current_time_millis % 1000) < 500) ) display_gs_scale = false;
         boolean display_symbols = true;
-        if (symbols_flashing && ((System.currentTimeMillis() % 1000) < 500) ) display_symbols = false;
+        if (symbols_flashing && ((pfd_gc.current_time_millis % 1000) < 500) ) display_symbols = false;
         
         boolean display_vdev = false;
         boolean display_ldev = false;
@@ -596,7 +596,7 @@ public class ILS_A320 extends PFDSubcomponent {
         			 this.avionics.qpac_ap_vertical_armed() == 1 ||
         			 this.avionics.qpac_ap_vertical_mode() == 6  ||
         			 this.avionics.qpac_ap_vertical_mode() == 7     ) ) {
-        		if (System.currentTimeMillis() % 1000 < 500) {    			
+        		if (pfd_gc.current_time_millis % 1000 < 500) {    			
         		    int ils_wrn_x = pfd_gc.adi_cx + pfd_gc.cdi_width*9/22; ;
                 	int ils_wrn_y = pfd_gc.adi_cy + pfd_gc.adi_size_down + pfd_gc.cdi_height + pfd_gc.line_height_l*3/8;
         			g2.setColor(pfd_gc.pfd_caution_color);

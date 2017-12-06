@@ -119,9 +119,8 @@ public class PFDComponent extends Component implements Observer, PreferencesObse
 
 
     public void paint(Graphics g) {
-
+    	pfd_gc.current_time_millis=System.currentTimeMillis();
         drawAll(g);
-
     }
 
 

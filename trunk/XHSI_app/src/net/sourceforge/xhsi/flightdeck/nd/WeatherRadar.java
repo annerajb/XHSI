@@ -63,6 +63,7 @@ public class WeatherRadar extends NDSubcomponent {
     
 	boolean wxr_img_1_valid;
 	boolean wxr_img_2_valid;
+	boolean wxr_on;
 	int current_image;
 	long sweep_timestamp;
 	
@@ -163,56 +164,60 @@ public class WeatherRadar extends NDSubcomponent {
     	wxr_img_2_valid = false;
     	current_image = 1;
     	sweep_timestamp = 0;
+    	wxr_on=false;
 	}
 
 	public void paint(Graphics2D g2) {
- 
-		if (nd_gc.display_mode_change_msg() || nd_gc.display_range_change_msg()) {
-	        initSweep(false);
-			wxr_img_1_valid = false;
-			wxr_img_2_valid = false;
-		}
-		
-        if ( nd_gc.powered && (!( nd_gc.mode_app || nd_gc.mode_vor )) ) {
-        	if ( avionics.efis_shows_wxr() && (!avionics.efis_shows_terrain()) && ( ! nd_gc.map_zoomin ) ) {
-        		paintWeather(g2);   
-        		drawInfoBox(g2);
-            	if (preferences.get_nd_wxr_sweep_bar()) drawSweepBars(g2, sweep_angle);
-
-            	long system_time = System.currentTimeMillis(); 
-            	long sweep_delta_t = system_time - sweep_timestamp; 
-            	sweep_timestamp = system_time;
-            	sweep_angle += (nd_gc.wxr_sweep_step*sweep_delta_t) * sweep_direction;
-            	if (sweep_angle>=sweep_max) initSweep(true);    	            	
-            	if (sweep_angle<=sweep_min) initSweep(false);   	
-            	
-            	if ( (! wxr_img_1_valid) && (current_image==1) ) {
-            		// logger.info("Building weather radar in buffer 1");
-            		Graphics2D g_terr = nd_gc.wxr_img_1.createGraphics();
-        			// Clear the buffered Image first
-            		g_terr.setComposite(AlphaComposite.Clear);
-            		g_terr.fillRect(0, 0, nd_gc.frame_size.width, nd_gc.frame_size.height);
-            		g_terr.setComposite(AlphaComposite.SrcOver);
-            		g_terr.setRenderingHints(nd_gc.rendering_hints);
-            		g_terr.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
-            		g_terr.setColor(nd_gc.background_color);
-            		drawWeather(g_terr,nd_gc.max_range);  
-            		wxr_img_1_valid=true;
-            	}
-            	if ( (! wxr_img_2_valid) && (current_image==2) ) {
-            		// logger.info("Building weather radar in buffer 2");
-            		Graphics2D g_terr = nd_gc.wxr_img_2.createGraphics();
-        			// Clear the buffered Image first
-            		g_terr.setComposite(AlphaComposite.Clear);
-            		g_terr.fillRect(0, 0, nd_gc.frame_size.width, nd_gc.frame_size.height);
-            		g_terr.setComposite(AlphaComposite.SrcOver);
-            		g_terr.setRenderingHints(nd_gc.rendering_hints);
-            		g_terr.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
-            		g_terr.setColor(nd_gc.background_color);
-            		drawWeather(g_terr,nd_gc.max_range);  
-            		wxr_img_2_valid=true;
-            	}
+ 	
+        if ( nd_gc.powered && 
+        		(!( nd_gc.mode_app || nd_gc.mode_vor )) && 
+        		avionics.efis_shows_wxr() && 
+        		(!avionics.efis_shows_terrain()) && 
+        		(!nd_gc.display_inhibit()) &&
+        		(!nd_gc.map_zoomin) ) {
+        	if (!wxr_on) {
+        		// initSweep(false);
+        		wxr_img_1_valid = false;
+        		wxr_img_2_valid = false;
+        		wxr_on=true;
         	}
+        	paintWeather(g2);   
+        	drawInfoBox(g2);
+        	if (preferences.get_nd_wxr_sweep_bar()) drawSweepBars(g2, sweep_angle);
+
+        	long sweep_delta_t = nd_gc.current_time_millis - sweep_timestamp;
+        	sweep_timestamp = nd_gc.current_time_millis;
+        	sweep_angle += (nd_gc.wxr_sweep_step*sweep_delta_t) * sweep_direction;
+        	if (sweep_angle>=sweep_max) initSweep(true);    	            	
+        	if (sweep_angle<=sweep_min) initSweep(false);   	
+
+        	if ( (! wxr_img_1_valid) && (current_image==1) ) {
+        		Graphics2D g_terr = nd_gc.wxr_img_1.createGraphics();
+        		// Clear the buffered Image first
+        		g_terr.setComposite(AlphaComposite.Clear);
+        		g_terr.fillRect(0, 0, nd_gc.frame_size.width, nd_gc.frame_size.height);
+        		g_terr.setComposite(AlphaComposite.SrcOver);
+        		g_terr.setRenderingHints(nd_gc.rendering_hints);
+        		g_terr.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+        		g_terr.setColor(nd_gc.background_color);
+        		drawWeather(g_terr,nd_gc.max_range);  
+        		wxr_img_1_valid=true;
+        	}
+        	if ( (! wxr_img_2_valid) && (current_image==2) ) {
+        		Graphics2D g_terr = nd_gc.wxr_img_2.createGraphics();
+        		// Clear the buffered Image first
+        		g_terr.setComposite(AlphaComposite.Clear);
+        		g_terr.fillRect(0, 0, nd_gc.frame_size.width, nd_gc.frame_size.height);
+        		g_terr.setComposite(AlphaComposite.SrcOver);
+        		g_terr.setRenderingHints(nd_gc.rendering_hints);
+        		g_terr.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+        		g_terr.setColor(nd_gc.background_color);
+        		drawWeather(g_terr,nd_gc.max_range);  
+        		wxr_img_2_valid=true;
+        	}
+
+        } else {
+        	wxr_on = false;
         }
 	}
 	
@@ -220,21 +225,21 @@ public class WeatherRadar extends NDSubcomponent {
 		Shape original_clip = g2.getClip();
 		if (preferences.get_nd_wxr_sweep()) {
 			if (wxr_img_1_valid) {
-				wxr_clip_1 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y - nd_gc.rose_radius,
-						nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90-sweep_min, sweep_min-sweep_angle, Arc2D.PIE));
+				wxr_clip_1 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.wxr_radius, nd_gc.map_center_y - nd_gc.wxr_radius,
+						nd_gc.wxr_radius*2, nd_gc.wxr_radius*2, 90-sweep_min, sweep_min-sweep_angle, Arc2D.PIE));
 
 				g2.setClip(wxr_clip_1);
 				g2.drawImage( nd_gc.wxr_img_1, 0, 0, null);
 			}
 			if (wxr_img_2_valid) {
-				wxr_clip_2 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y - nd_gc.rose_radius,
-						nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90-sweep_max, sweep_max-sweep_angle, Arc2D.PIE));
+				wxr_clip_2 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.wxr_radius, nd_gc.map_center_y - nd_gc.wxr_radius,
+						nd_gc.wxr_radius*2, nd_gc.wxr_radius*2, 90-sweep_max, sweep_max-sweep_angle, Arc2D.PIE));
 				g2.setClip(wxr_clip_2);
 				g2.drawImage( nd_gc.wxr_img_2, 0, 0, null);
 			}
 		} else {
-			wxr_clip_1 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y - nd_gc.rose_radius,
-					nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90-sweep_min, sweep_min-sweep_max, Arc2D.PIE));
+			wxr_clip_1 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.wxr_radius, nd_gc.map_center_y - nd_gc.wxr_radius,
+					nd_gc.wxr_radius*2, nd_gc.wxr_radius*2, 90-sweep_min, sweep_min-sweep_max, Arc2D.PIE));
 			g2.setClip(wxr_clip_1);
 			if (wxr_img_1_valid && current_image==1) g2.drawImage( nd_gc.wxr_img_1, 0, 0, null);
 			if (wxr_img_2_valid && current_image==2) g2.drawImage( nd_gc.wxr_img_2, 0, 0, null);
@@ -368,7 +373,7 @@ public class WeatherRadar extends NDSubcomponent {
                 nd_gc.map_center_x ,
                 nd_gc.map_center_y ,
                 nd_gc.map_center_x ,
-                nd_gc.map_center_y - nd_gc.rose_radius
+                nd_gc.map_center_y - nd_gc.wxr_radius
         );
         g2.setTransform(original_at);
 	}

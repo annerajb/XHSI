@@ -117,9 +117,8 @@ public class MFDComponent extends Component implements Observer, PreferencesObse
 
 
     public void paint(Graphics g) {
-
+    	mfd_gc.current_time_millis=System.currentTimeMillis();
         drawAll(g);
-
     }
 
 

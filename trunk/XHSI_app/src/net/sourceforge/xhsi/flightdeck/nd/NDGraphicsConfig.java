@@ -120,6 +120,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public boolean trk_up;
     public int map_range;
     public boolean map_zoomin;
+    public boolean mode_mismatch_caution;
+    public boolean tcas_always_on;
     
     // Compass Rose 
     public BufferedImage compass_rose_img;
@@ -264,6 +266,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int wxr_nb_tile_y;
     public int wxr_tile_width;
     public int wxr_tile_height;
+    public int wxr_radius;
 
 
     public NDGraphicsConfig(Component root_component, int du) {
@@ -278,6 +281,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
         cardinal_tri_S=new Polygon();
         cardinal_tri_E=new Polygon();
         cardinal_tri_W=new Polygon();
+        mode_mismatch_caution=false;
     }
 
 
@@ -310,16 +314,21 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             super.update_config(g2);
             
             // Timestamp mode/submode/range settings
-            if (this.map_mode != mode) map_mode_timestamp = System.currentTimeMillis();            	
-            if (this.map_submode != submode) map_submode_timestamp = System.currentTimeMillis();
-            if (this.map_range != range) map_range_timestamp = System.currentTimeMillis();
-            if (this.map_zoomin != zoomin) map_zoomin_timestamp = System.currentTimeMillis();
+            if (this.map_mode != mode) map_mode_timestamp = current_time_millis;            	
+            if (this.map_submode != submode) map_submode_timestamp = current_time_millis;
+            if (this.map_range != range) map_range_timestamp = current_time_millis;
+            if (this.map_zoomin != zoomin) map_zoomin_timestamp = current_time_millis;
 
             // remember the mode/submode/range settings
             this.map_mode = mode;
             this.map_submode = submode;
             this.map_range = range;
             this.map_zoomin = zoomin;
+            
+            // remember preferences
+            // avoid CPU expensive string.equal function
+            this.mode_mismatch_caution = this.preferences.get_mode_mismatch_caution();
+            this.tcas_always_on = this.preferences.get_tcas_always_on();
 
             // compute radio info box 
             rib_line_1 = line_height_l + line_height_l/5;
@@ -687,6 +696,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             terrain_tp_black = create_regular_terrain_texture(terrain_black_color,terr_text_size,2);
             
             // Weather radar
+            // wxr_radius limits the weather radar range to 100nm
+            wxr_radius = Math.min(rose_radius, (int)(pixels_per_nm*100));
             wxr_img_1 = new BufferedImage(panel_rect.width,panel_rect.height,BufferedImage.TYPE_INT_ARGB);
             wxr_img_2 = new BufferedImage(panel_rect.width,panel_rect.height,BufferedImage.TYPE_INT_ARGB);
             wxr_sweep_step = 120.0f/(preferences.get_nd_wxr_sweep_duration()*1000); 
@@ -827,17 +838,24 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     	return fix_image;
     }
     
-    
+    public boolean display_inhibit() {
+    	long current_time=current_time_millis-change_msg_duration;
+    	boolean range_msg = map_range_timestamp > current_time;
+    	boolean zoomin_msg = map_zoomin_timestamp > current_time; 
+    	boolean mode_msg = map_mode_timestamp > current_time;
+    	boolean submode_msg = map_submode_timestamp > current_time;
+    	return range_msg || zoomin_msg || mode_msg || submode_msg;
+    }
     
     public boolean display_range_change_msg() {
-    	boolean range_msg = (map_range_timestamp+change_msg_duration) > System.currentTimeMillis();
-    	boolean zoomin_msg = (map_zoomin_timestamp+change_msg_duration) > System.currentTimeMillis();
+    	boolean range_msg = (map_range_timestamp+change_msg_duration) > current_time_millis;
+    	boolean zoomin_msg = (map_zoomin_timestamp+change_msg_duration) > current_time_millis;
     	return range_msg || zoomin_msg;
     }
     
     public boolean display_mode_change_msg() {
-    	boolean mode_msg = (map_mode_timestamp+change_msg_duration) > System.currentTimeMillis();
-    	boolean submode_msg = (map_submode_timestamp+change_msg_duration) > System.currentTimeMillis();
+    	boolean mode_msg = (map_mode_timestamp+change_msg_duration) > current_time_millis;
+    	boolean submode_msg = (map_submode_timestamp+change_msg_duration) > current_time_millis;
     	return mode_msg || submode_msg;
     }
     

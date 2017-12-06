@@ -115,9 +115,8 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
 
 
     public void paint(Graphics g) {
-
+    	cdu_gc.current_time_millis=System.currentTimeMillis();
         drawAll(g);
-
     }
 
 
