@@ -50,7 +50,7 @@ import net.sourceforge.xhsi.model.Observer;
 public class NDComponent extends Component implements Observer, PreferencesObserver {
 
     private static final long serialVersionUID = 1L;
-    public static boolean COLLECT_PROFILING_INFORMATION = true;
+    public static boolean COLLECT_PROFILING_INFORMATION = false;
     public static long NB_OF_PAINTS_BETWEEN_PROFILING_INFO_OUTPUT = 100;
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
@@ -176,14 +176,14 @@ public class NDComponent extends Component implements Observer, PreferencesObser
                 logger.info("=[ Paint profile info begin ]=================================");
                 for (int i=0;i<this.subcomponents.size();i++) {
                     logger.info(this.subcomponents.get(i).toString() + ": " +
-                            ((1000*this.subcomponent_paint_times[i])/this.nb_of_paints) + "µs " +
+                            ((1000*this.subcomponent_paint_times[i])/this.nb_of_paints) + "us " +
                             "(" + ((this.subcomponent_paint_times[i] * 100) / this.total_paint_times) + "%)");
-                //    this.subcomponent_paint_times[i] = 0;
+                    this.subcomponent_paint_times[i] = 0;
                 }
-                logger.info("Total                    " + (1000*this.total_paint_times/this.nb_of_paints) + "µs \n");
+                logger.info("Total                    " + (1000*this.total_paint_times/this.nb_of_paints) + "us \n");
                 logger.info("=[ Paint profile info end ]===================================");
-                //this.total_paint_times = 0;
-                //this.nb_of_paints = 0;
+                this.total_paint_times = 0;
+                this.nb_of_paints = 0;
             }
         }
     }
