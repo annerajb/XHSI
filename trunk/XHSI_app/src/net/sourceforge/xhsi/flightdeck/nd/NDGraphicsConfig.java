@@ -99,6 +99,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int small_tick_length;
     public int tick_text_y_offset;
     public Area inner_rose_area;
+    public Area clip_rose_area;
     public int sixty_deg_hlimit;
 
     private int map_mode;
@@ -120,8 +121,12 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public boolean trk_up;
     public int map_range;
     public boolean map_zoomin;
+    
+    // Preferences
     public boolean mode_mismatch_caution;
     public boolean tcas_always_on;
+    public boolean draw_only_inside_rose;
+    public boolean limit_arcs_at_60;
     
     // Compass Rose 
     public BufferedImage compass_rose_img;
@@ -329,6 +334,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             // avoid CPU expensive string.equal function
             this.mode_mismatch_caution = this.preferences.get_mode_mismatch_caution();
             this.tcas_always_on = this.preferences.get_tcas_always_on();
+            this.draw_only_inside_rose = this.preferences.get_draw_only_inside_rose();
+            this.limit_arcs_at_60 = this.preferences.get_limit_arcs_at_60();
 
             // compute radio info box 
             rib_line_1 = line_height_l + line_height_l/5;
@@ -485,6 +492,9 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
                     (rose_radius * 2) - (rose_thickness * 2),
                     (rose_radius * 2) - (rose_thickness * 2)));
             this.sixty_deg_hlimit = (int)(Math.sin(Math.PI/3.0) * rose_radius);
+            
+            clip_rose_area = new Area(new Rectangle2D.Float(0,0, frame_size.width, frame_size.height));
+            clip_rose_area.subtract(inner_rose_area);
 
             // Range and Mode change message
             range_mode_message_y = this.frame_size.height*38/100;
@@ -554,7 +564,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             compass_hdg_text_height = (int) (this.get_text_height(g2, this.compass_text_font)*0.8f);
             compass_hdg_small_text_height = (int) (this.get_text_height(g2, this.compass_small_text_font)*0.8f);
             
-            // BufferedImage to cache CompassRose SubComponenet
+            // BufferedImage to cache CompassRose SubComponent
             compass_rose_img = new BufferedImage(this.frame_size.width,this.frame_size.height,BufferedImage.TYPE_INT_ARGB);
             
             

@@ -5,6 +5,7 @@
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2017  Nicolas Carel
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -22,27 +23,17 @@
 */
 package net.sourceforge.xhsi.flightdeck.nd;
 
-//import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
 
 import net.sourceforge.xhsi.model.ModelFactory;
-
-//import net.sourceforge.xhsi.panel.GraphicsConfig;
-//import net.sourceforge.xhsi.panel.Subcomponent;
-
 
 
 public class ClipRoseArea extends NDSubcomponent {
 
-//    private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
+    // private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     private static final long serialVersionUID = 1L;
-
-    Area panel = null;
-
 
     public ClipRoseArea(ModelFactory model_factory, NDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
@@ -52,26 +43,21 @@ public class ClipRoseArea extends NDSubcomponent {
     public void paint(Graphics2D g2) {
 
         if ( nd_gc.powered ) {
-
-            if ( this.preferences.get_draw_only_inside_rose() ) {
-                // blank out outer rose area
-                panel = new Area(new Rectangle2D.Float(0,0, nd_gc.frame_size.width, nd_gc.frame_size.height));
-                panel.subtract(nd_gc.inner_rose_area);
+            if ( nd_gc.draw_only_inside_rose ) {
                 g2.setColor(nd_gc.background_color);
-                g2.fill(panel);
-                if ( this.preferences.get_limit_arcs_at_60() && ! nd_gc.mode_plan && ! nd_gc.mode_centered ) {
-                    g2.clearRect(0, 0, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, nd_gc.frame_size.height);
-                    g2.clearRect(nd_gc.map_center_x + nd_gc.sixty_deg_hlimit, 0, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, nd_gc.frame_size.height);
+                g2.fill(nd_gc.clip_rose_area);
+                if ( nd_gc.limit_arcs_at_60 && ! nd_gc.mode_plan && ! nd_gc.mode_centered ) {
+                    g2.fillRect(0, 0, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, nd_gc.frame_size.height);
+                    g2.fillRect(nd_gc.map_center_x + nd_gc.sixty_deg_hlimit, 0, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, nd_gc.frame_size.height);
                 }
             } else {
                 // leave at least the top of the window uncluttered
-                g2.clearRect(0,0, nd_gc.frame_size.width, nd_gc.rose_y_offset);
+            	g2.setColor(nd_gc.background_color);
+                g2.fillRect(0,0, nd_gc.frame_size.width, nd_gc.rose_y_offset);
             }
-
         }
 
     }
-
 
 }
 
