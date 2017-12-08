@@ -40,6 +40,7 @@ import java.awt.RenderingHints;
 import java.awt.TexturePaint;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
@@ -261,6 +262,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int terr_tile_width;
     public int terr_tile_height;
     public boolean terr_peaks_mode;
+	public Area terr_clip; 
     
     // Weather radar
     public BufferedImage wxr_img_1;
@@ -272,6 +274,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int wxr_tile_width;
     public int wxr_tile_height;
     public int wxr_radius;
+	public Area wxr_clip; 
+
 
 
     public NDGraphicsConfig(Component root_component, int du) {
@@ -298,6 +302,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 
 
     public void update_config(Graphics2D g2, int mode, int submode, int range, boolean zoomin, boolean power, int instrument_style) {
+    	// TODO: add boolean narrow_mode
 
         if (this.resized
                 || this.reconfig
@@ -705,6 +710,10 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             terrain_tp_blue = create_regular_terrain_texture(terrain_blue_color,terr_text_size,1);
             terrain_tp_black = create_regular_terrain_texture(terrain_black_color,terr_text_size,2);
             
+        	float terr_sweep_max = 75.0f;
+        	terr_clip = new Area(new Arc2D.Float(map_center_x - rose_radius, map_center_y - rose_radius,
+					rose_radius*2, rose_radius*2, 90-terr_sweep_max, terr_sweep_max*2, Arc2D.PIE));
+            
             // Weather radar
             // wxr_radius limits the weather radar range to 100nm
             wxr_radius = Math.min(rose_radius, (int)(pixels_per_nm*100));
@@ -727,7 +736,12 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             }            
             wxr_range_multiply = this.preferences.get_draw_only_inside_rose() ? 1.0f : 1.5f;
             wxr_tile_width = 2+(int)(frame_size.width*wxr_range_multiply*1.5f/wxr_nb_tile_x);
-            wxr_tile_height = 2+(int)(frame_size.height*wxr_range_multiply*1.5f/wxr_nb_tile_y);            		
+            wxr_tile_height = 2+(int)(frame_size.height*wxr_range_multiply*1.5f/wxr_nb_tile_y);  
+            // TODO: should depends on narrow mode - fix constructor
+        	float wxr_sweep_max = 60.0f;
+        	float wxr_sweep_min = -60.0f;
+        	wxr_clip = new Area(new Arc2D.Float(map_center_x - wxr_radius, map_center_y - wxr_radius,
+        			wxr_radius*2, wxr_radius*2, 90-wxr_sweep_min, wxr_sweep_min-wxr_sweep_max, Arc2D.PIE));
             
             // clear the flags
             this.resized = false;

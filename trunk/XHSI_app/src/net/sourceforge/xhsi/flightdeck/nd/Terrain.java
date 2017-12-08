@@ -294,9 +294,7 @@ public class Terrain extends NDSubcomponent {
 			}
 			
 		} else {
-			terr_clip_1 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y - nd_gc.rose_radius,
-					nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90-sweep_max, sweep_max*2, Arc2D.PIE));
-			g2.setClip(terr_clip_1);
+			g2.setClip(nd_gc.terr_clip);
 			if (terr_img_1_valid && current_image==1) g2.drawImage( nd_gc.terr_img_1, 0, 0, null);
 			if (terr_img_2_valid && current_image==2) g2.drawImage( nd_gc.terr_img_2, 0, 0, null);
 		}
