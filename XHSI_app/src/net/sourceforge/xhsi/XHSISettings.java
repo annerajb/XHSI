@@ -1014,7 +1014,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         checkbox_menu_item.setToolTipText("Show vertical path");
         checkbox_menu_item.addActionListener(this);
         checkbox_menu_item.setSelected(true);
-        nd_symbols_submenu.add(checkbox_menu_item);
+        // TODO: Feature to implement - menu entry disabled.
+        // nd_symbols_submenu.add(checkbox_menu_item);
         // keep a reference to the checkbox to set or clear it in a non-standard way
         this.checkbox_symbols_show_vp = checkbox_menu_item;
         
@@ -2052,6 +2053,11 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.checkbox_symbols_show_tfc.setSelected( avionics.efis_shows_tfc() );
         this.checkbox_symbols_show_pos.setSelected( avionics.efis_shows_pos() );
         this.checkbox_symbols_show_data.setSelected( avionics.efis_shows_data() );
+        
+        // Weather Radar & EGPWS
+        this.checkbox_symbols_show_terrain.setSelected( avionics.efis_shows_terrain() );
+        this.checkbox_symbols_show_weather.setSelected( avionics.efis_shows_wxr() );
+        this.checkbox_symbols_show_vp.setSelected( avionics.efis_shows_vp() );
 
         int new_xpdr = avionics.transponder_mode();
         this.radio_button_xpdr_off.setSelected( new_xpdr == Avionics.XPDR_OFF );

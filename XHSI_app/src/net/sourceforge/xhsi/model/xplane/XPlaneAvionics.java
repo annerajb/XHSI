@@ -1050,6 +1050,21 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
 
     /**   
+     * @return boolean - weather active 
+     * Active when on and not on ground, or when forced on (mode=4)
+     */  
+    public boolean wxr_active() {
+    	int mode = wxr_mode();
+    	boolean shows= efis_shows_wxr();
+    	if ( (mode==0) || !shows) 
+    		return false;
+    	else if ((mode==4) && shows) 
+    		return true;
+    	else 
+    		return shows && !aircraft.on_ground();
+    }
+    
+    /**   
      * @return int - weather radar mode
      */     
     public int wxr_mode() {
@@ -1060,7 +1075,7 @@ public class XPlaneAvionics implements Avionics, Observer {
     	} else {
     		return xhsi_settings.wxr_mode;
     	}
-    };;
+    }
     
     /**   
      * @return boolean - weather radar slave settings
@@ -1073,7 +1088,7 @@ public class XPlaneAvionics implements Avionics, Observer {
     	} else {
     		return xhsi_settings.wxr_slave;
     	}
-    };
+    }
     
     /**   
      * @return boolean - weather radar REACT
@@ -2648,6 +2663,30 @@ public class XPlaneAvionics implements Avionics, Observer {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WEATHER, new_data ? 1.0f : 0.0f );
         } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR, new_data ? 1.0f : 0.0f );
+        }
+    }
+    
+    public void set_wxr_mode(int new_data) {
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_MODE, (float) new_data);
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_MODE, (float) new_data);
+        }
+    }
+    
+    public void set_wxr_tilt(float new_data) {
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_TILT, (float) new_data);
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_TILT, (float) new_data);
+        }
+    }
+ 
+    public void set_wxr_gain(float new_data) {
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_GAIN, (float) new_data);
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_GAIN, (float) new_data);
         }
     }
     

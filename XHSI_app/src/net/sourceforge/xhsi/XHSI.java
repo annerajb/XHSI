@@ -86,7 +86,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    public static final String RELEASE = "2.0 Beta 10 Alpha 6";
+    public static final String RELEASE = "2.0 Beta 10 Alpha 7";
     public static final int EXPECTED_PLUGIN = 20009;
 
 
@@ -439,7 +439,16 @@ public class XHSI implements ActionListener {
 
         // XHSISettings in ConWin
         this.preferences.add_subsciption(XHSISettings.get_instance(), XHSIPreferences.PREF_AIRBUS_MODES);
-
+        
+        // load EGPWS databases
+        GlobeElevationBuilder geb = new GlobeElevationBuilder(this.preferences.get_preference(XHSIPreferences.PREF_EGPWS_DB_DIR));
+        this.preferences.add_subsciption(geb, XHSIPreferences.PREF_EGPWS_DB_DIR);
+        // geb.set_progress_observer((ProgressObserver) this.nob_progress_dialog);
+        if ( ! XHSIStatus.egpws_db_status.equals(XHSIStatus.STATUS_EGPWS_DB_NOT_FOUND) ) {
+            geb.map_database();
+            XHSIStatus.egpws_db_status = XHSIStatus.STATUS_EGPWS_DB_LOADED;
+        } 
+        
         // load AptNav databases
         AptNavXP900DatNavigationObjectBuilder nob = new AptNavXP900DatNavigationObjectBuilder(this.preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR));
         this.preferences.add_subsciption(nob, XHSIPreferences.PREF_APTNAV_DIR);
@@ -448,16 +457,6 @@ public class XHSI implements ActionListener {
             nob.read_all_tables();
             XHSIStatus.nav_db_status = XHSIStatus.STATUS_NAV_DB_LOADED;
         }
-
-        // load EGPWS databases
-        GlobeElevationBuilder geb = new GlobeElevationBuilder(this.preferences.get_preference(XHSIPreferences.PREF_EGPWS_DB_DIR));
-        this.preferences.add_subsciption(geb, XHSIPreferences.PREF_EGPWS_DB_DIR);
-        geb.set_progress_observer((ProgressObserver) this.nob_progress_dialog);
-        if ( ! XHSIStatus.egpws_db_status.equals(XHSIStatus.STATUS_EGPWS_DB_NOT_FOUND) ) {
-            geb.map_database();
-            XHSIStatus.egpws_db_status = XHSIStatus.STATUS_EGPWS_DB_LOADED;
-        }      
-        
         
 //// test load TaxiChart
 //AptNavXP900DatTaxiChartBuilder taxi = new AptNavXP900DatTaxiChartBuilder(this.preferences.get_preference(XHSIPreferences.PREF_APTNAV_DIR));

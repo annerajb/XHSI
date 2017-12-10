@@ -59,6 +59,7 @@ public class ForegroundMessages extends NDSubcomponent {
             if (nd_gc.boeing_style) {
             	drawSymbolLabels(g2);
             }
+            drawTerrainInfoBox(g2);
             drawTrafficMessage(g2);
             drawDisagree(g2);
             if (nd_gc.airbus_style) {
@@ -163,21 +164,24 @@ public class ForegroundMessages extends NDSubcomponent {
             }
             // TERRAIN
             if ( this.avionics.efis_shows_terrain() ) {
-                label_str = "TERRAIN";
+                label_str = "TERR";
                 g2.clearRect(nd_gc.left_label_x - nd_gc.digit_width_s/2, nd_gc.left_label_terrain_y - nd_gc.line_height_s, g2.getFontMetrics(nd_gc.font_s).stringWidth(label_str) + nd_gc.digit_width_s, nd_gc.line_height_s*10/8);
-                if ( ! nd_gc.map_zoomin ) {
-                	g2.setColor(nd_gc.terrain_label_color);
-                } else {
-                	g2.setColor(nd_gc.dim_label_color);
-                }
-                	
+               	g2.setColor(nd_gc.terrain_label_color);
                 g2.drawString(label_str, nd_gc.left_label_x, nd_gc.left_label_terrain_y);
             }
             // WEATHER RADAR
-            if ( this.avionics.efis_shows_wxr() && (!this.avionics.efis_shows_terrain()) ) {
-                label_str = "WEATHER";
+            int wxr_mode = this.avionics.wxr_mode();
+            boolean on_ground = this.aircraft.on_ground();
+            if ( (wxr_mode>0) && this.avionics.efis_shows_wxr() && (!this.avionics.efis_shows_terrain()) ) {
+                label_str = "WX";
+                if (wxr_mode==2) label_str="WX+T";
+                if (wxr_mode==3) label_str="MAP";
+                
                 g2.clearRect(nd_gc.left_label_x - nd_gc.digit_width_s/2, nd_gc.left_label_terrain_y - nd_gc.line_height_s, g2.getFontMetrics(nd_gc.font_s).stringWidth(label_str) + nd_gc.digit_width_s, nd_gc.line_height_s*10/8);
-                if ( ! nd_gc.map_zoomin ) {
+                if (wxr_mode<4 && on_ground) {
+                	g2.setColor(nd_gc.caution_color);
+                	label_str = "WX STBY";
+                } else if ( ! nd_gc.map_zoomin ) {
                 	g2.setColor(nd_gc.terrain_label_color);
                 } else {
                 	g2.setColor(nd_gc.dim_label_color);
@@ -326,5 +330,8 @@ public class ForegroundMessages extends NDSubcomponent {
         g2.drawString(message, message_x, message_y);
  	
     }
-    
+ 
+    private void drawTerrainInfoBox(Graphics2D g2){
+    	
+    }
 }

@@ -36,6 +36,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.logging.Logger;
 
+import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.CoordinateSystem;
 import net.sourceforge.xhsi.model.FMSEntry;
 import net.sourceforge.xhsi.model.ModelFactory;
@@ -171,7 +172,7 @@ public class WeatherRadar extends NDSubcomponent {
  	
         if ( nd_gc.powered && 
         		(!( nd_gc.mode_app || nd_gc.mode_vor )) && 
-        		avionics.efis_shows_wxr() && 
+        		avionics.wxr_active() && 
         		(!avionics.efis_shows_terrain()) && 
         		(!nd_gc.display_inhibit()) &&
         		(!nd_gc.map_zoomin) ) {
@@ -262,6 +263,8 @@ public class WeatherRadar extends NDSubcomponent {
 	
 	private void drawWeather(Graphics2D g2, float radius_scale) {
 		
+		// Turbulence zones are displayed in magenta.
+		boolean turbulence_mode = this.avionics.wxr_mode()==Avionics.WXR_MODE_TURB;
 		
         this.center_lat = this.aircraft.lat();
         this.center_lon = this.aircraft.lon();
@@ -317,19 +320,22 @@ public class WeatherRadar extends NDSubcomponent {
         
 		g2.setFont(nd_gc.font_xxxs);
 		
-		float gain = avionics.wxr_auto_gain() ? 0.78f : avionics.wxr_gain()*1.5f;
+		float gain = avionics.wxr_auto_gain() ? (avionics.wxr_mode()==2 ? 1.16f : 0.82f) : avionics.wxr_gain()*1.5f;
+		boolean fine = preferences.get_nd_wxr_resolution() == 0;
+		float storm_level;
         
         for (float lat=lat_min; lat<= lat_max; lat+=lat_step) {
             for (float lon=lon_min; lon<=lon_max; lon+=lon_step) {
-            	float storm_level = Math.min(9.0f, gain * weather_repository.get_storm_level(lat, lon));
+            	if (fine)
+            		storm_level = Math.min(9.0f, gain * weather_repository.get_interpolated_storm_level(lat, lon));
+            	else
+            		storm_level = Math.min(9.0f, gain * weather_repository.get_storm_level(lat, lon));
             	g2.setColor(weather_color(storm_level));
   
             	map_projection.setPoint(lat, lon);
             	int x = map_projection.getX();
             	int y = map_projection.getY();
-            	// map_projection.setPoint(lat+lat_step, lon+lon_step);
             	if (storm_level>0) g2.fillRect(x, y, nd_gc.wxr_tile_width, nd_gc.wxr_tile_height);
-            	//if (storm_level>0) g2.fillRect(x, y, Math.abs(map_projection.getX()-x), Math.abs(map_projection.getY()-y));
             }
         }
         

@@ -252,7 +252,9 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int terr_min_value_y;
     public int terr_box_height;
     public int terr_box_width;
+    public int terr_label_x;
     public int terr_label_y;
+    public int terr_label_rect_y;
     public BufferedImage terr_img_1;
     public BufferedImage terr_img_2;
     public float terr_sweep_step;
@@ -263,6 +265,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int terr_tile_height;
     public boolean terr_peaks_mode;
 	public Area terr_clip; 
+	public Color terr_label_color;
+	public Font terr_label_font;
     
     // Weather radar
     public BufferedImage wxr_img_1;
@@ -437,7 +441,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             this.left_label_tfc_y = this.left_label_data_y + this.line_height_xs*10/8;
             this.left_label_taonly_y = this.left_label_tfc_y + this.line_height_xxs*10/8;
             this.left_label_xpdr_y = this.left_label_taonly_y + this.line_height_xxs*10/8;
-            this.left_label_terrain_y = this.left_label_xpdr_y + this.line_height_xxs*10/8;
+            this.left_label_terrain_y = this.left_label_xpdr_y + this.line_height_xs*10/8;
 
             // labels at the right
             this.right_label_x = this.frame_size.width - this.border_right - Math.round(20.0f * this.scaling_factor);
@@ -674,25 +678,35 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             // min and max boxes, label, egpws message
             
             if (boeing_style) {
-            	terr_label_y = left_label_xpdr_y + line_height_xxs*10/8;
-            	terr_box_x = this.border_left + Math.round(8.0f * this.scaling_factor);
-            	terr_value_x = this.border_left + Math.round(10.0f * this.scaling_factor);
-            	terr_max_box_y = terr_label_y + line_height_xs*10/8;
-            	terr_max_value_y = terr_max_box_y + line_height_xs;
-            	terr_min_box_y = terr_max_box_y + line_height_xs*10/8;;
+            	terr_label_rect_y = left_label_xpdr_y + line_height_xs*3/8;
+            	terr_label_y = left_label_xpdr_y + line_height_xs*11/8;
+            	terr_label_x = left_label_x;
+            	terr_box_x = left_label_x + this.digit_width_xs*11/2;
+            	terr_value_x = left_label_x + this.digit_width_xs*6;
+            	terr_max_box_y = terr_label_rect_y;
+            	terr_max_value_y = terr_max_box_y + line_height_xs*11/10;
+            	terr_min_box_y = terr_label_y + line_height_xs/2;
             	terr_min_value_y = terr_min_box_y + line_height_xs;
             	terr_box_height = line_height_xs * 12/10;
-            	terr_box_width = digit_width_xs * 11/3;
+            	terr_box_width = digit_width_xs * 12/3;
+            	terr_label_color = map_zoomin ? dim_label_color : terrain_label_color;
+            	terr_label_font = font_s;
             } else {
-            	terr_label_y = left_label_xpdr_y - line_height_l*2;
-            	terr_box_x = this.border_right - Math.round(8.0f * this.scaling_factor) - digit_width_l * 6;
-            	terr_value_x = this.border_right - Math.round(10.0f * this.scaling_factor) - digit_width_l * 6;;
-            	terr_max_box_y = terr_label_y + line_height_l*10/8;
-            	terr_max_value_y = terr_max_box_y + line_height_l;
-            	terr_min_box_y = terr_max_box_y + line_height_l*10/8;;
-            	terr_min_value_y = terr_min_box_y + line_height_l;
+            	terr_label_rect_y = left_label_xpdr_y + line_height_xs*1/8;
+            	terr_label_y = this.frame_size.height*765/1000;
+            	terr_label_x = panel_rect.x + panel_rect.width * 860/1000;
+            	
+            	terr_box_x = panel_rect.x + panel_rect.width * 855/1000;
+            	terr_value_x = panel_rect.x + panel_rect.width * 860/1000;
+            	terr_max_box_y = terr_label_y + line_height_l*2/8;
+            	terr_max_value_y = terr_max_box_y + line_height_l*9/8;
+            	
+            	terr_min_box_y = terr_max_box_y + line_height_l*11/8;
+            	terr_min_value_y = terr_min_box_y + line_height_l*9/8;
             	terr_box_height = line_height_l * 12/10;
             	terr_box_width = digit_width_l * 11/3;
+            	terr_label_color = map_zoomin ? ecam_caution_color : color_airbus_selected; 
+            	terr_label_font = font_xl;
             }
 
             /*
@@ -721,13 +735,13 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             wxr_img_2 = new BufferedImage(panel_rect.width,panel_rect.height,BufferedImage.TYPE_INT_ARGB);
             wxr_sweep_step = 120.0f/(preferences.get_nd_wxr_sweep_duration()*1000); 
             switch (preferences.get_nd_wxr_resolution()) {
-            case 0: // Fine - up to pixel
-                wxr_nb_tile_x = Math.min(250, panel_rect.width);
-                wxr_nb_tile_y = Math.min(250, panel_rect.height);
+            case 0: // Fine - up to pixel with interpolation - CPU expensive
+                wxr_nb_tile_x = Math.min(320, panel_rect.width);
+                wxr_nb_tile_y = Math.min(320, panel_rect.height);
                 break;
             case 1: // Medium
-                wxr_nb_tile_x = 150;
-                wxr_nb_tile_y = 150;   
+                wxr_nb_tile_x = 160;
+                wxr_nb_tile_y = 160;   
                 break;
             default: // Coarse - CPU saver
                 wxr_nb_tile_x = 80;
