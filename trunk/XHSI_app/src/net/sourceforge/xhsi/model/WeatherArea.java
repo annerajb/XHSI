@@ -87,6 +87,43 @@ public class WeatherArea {
 		}	
 	}
 	
+	/**
+	 * 
+	 * @param lat : latitude
+	 * @param lon : longitude
+	 * @return : float - 0=Calm to 9=huricane
+	 * 
+	 */
+	public float get_interpolated_storm_level(float lat, float lon) {
+		if (lat >= min_lat && lat <= max_lat && lon >= min_lon && lon <= max_lon) {
+			int lat_index = (int)((lat-min_lat) * grid_step_y) % number_of_rows; 				
+			int lon_index = (int)((lon-min_lon) * grid_step_x) % number_of_columns;
+			if (slice_valid[lat_index]) 
+				if ((lon_index+1)<number_of_columns) {
+					// we can interpolate longitude
+					int data_left = data[lat_index][lon_index];
+					int data_right = data[lat_index][lon_index+1];
+					float lon_shift = ((lon-min_lon) * grid_step_x) - lon_index; // this should be a float between 0 and 1
+					if ((lat_index+1)<number_of_rows) {
+						int data_bottom_left = data[lat_index+1][lon_index];
+						int data_bottom_right = data[lat_index+1][lon_index];
+						float lat_shift = ((lat-min_lat) * grid_step_y) - lat_index; // this should be a float between 0 and 1
+						float data_top = data_left*(1-lon_shift)+data_right*lon_shift;
+						float data_bottom = data_bottom_left*(1-lon_shift)+data_bottom_right*lon_shift;
+						return data_top*(1-lat_shift)+data_bottom*lat_shift;
+					} else 
+						return data_left*(1-lon_shift)+data_right*lon_shift;
+				} else {
+					return data[lat_index][lon_index];	
+				}
+				 
+			else
+				return -1;
+		} else {
+			return -1;
+		}	
+	}
+	
 	public int get_lat_offset( float lat, float lon ) {
 		if (lat >= min_lat && lat <= max_lat && lon >= min_lon && lon <= max_lon) {
 			int offset = Math.round((lat-min_lat) * grid_step_y); 

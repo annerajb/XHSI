@@ -136,6 +136,16 @@ public interface Avionics {
     public enum EPGWSAlertLevel { NORMAL, CAUTION, WARNING, NONE };
     
     /**
+     * Weather radar mode selector 
+     */
+    public static final int WXR_MODE_OFF = 0;
+    public static final int WXR_MODE_WXR = 1;
+    public static final int WXR_MODE_TURB = 2;
+    public static final int WXR_MODE_MAP = 3;
+    public static final int WXR_MODE_FORCE_ON = 4;
+    
+    
+    /**
      * @return int - general instrument style STYLE_BOEING, STYLE_AIRBUS
      */
     public int get_instrument_style();
@@ -310,7 +320,13 @@ public interface Avionics {
     public boolean wxr_test();
 
     /**   
-     * @return int - weather radar mode [0=OFF ; 1=weather ; 2=weather+turbulence ; 3=map ]
+     * @return boolean - weather active 
+     * Active when on and not on ground, or when forced on (mode=4)
+     */  
+    public boolean wxr_active();
+    
+    /**   
+     * @return int - weather radar mode [0=OFF ; 1=weather ; 2=weather+turbulence ; 3=map ; 4=weather(no Standby) ]
      */     
     public int wxr_mode();
     
@@ -1009,6 +1025,12 @@ public interface Avionics {
     public void set_show_vp(boolean new_data);
     
     public void set_show_wxr(boolean new_data);
+    
+    public void set_wxr_mode(int new_data);
+    
+    public void set_wxr_tilt(float new_data);
+    
+    public void set_wxr_gain(float new_data); 
     
     /*
      *  Autopilot 

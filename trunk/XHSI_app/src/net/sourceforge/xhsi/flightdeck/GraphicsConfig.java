@@ -718,7 +718,7 @@ public class GraphicsConfig implements ComponentListener {
                 pos_label_color = color_boeingcyan.darker();
                 tcas_label_color = color_lightsteelblue;
                 data_label_color = color_pastelhotpink;
-                terrain_label_color = Color.blue;
+                terrain_label_color = Color.cyan;
                 fmc_active_color = Color.GREEN;
                 fmc_disp_color = Color.WHITE;
                 fmc_other_color = Color.LIGHT_GRAY;
@@ -757,7 +757,7 @@ public class GraphicsConfig implements ComponentListener {
                 pos_label_color = color_boeingcyan.darker();
                 tcas_label_color = color_lightsteelblue;
                 data_label_color = color_pastelhotpink;
-                terrain_label_color = Color.blue;
+                terrain_label_color = color_dodgerblue;
                 fmc_active_color = color_hotpink;
                 fmc_disp_color = Color.WHITE;
                 fmc_other_color = Color.LIGHT_GRAY;
@@ -887,7 +887,7 @@ public class GraphicsConfig implements ComponentListener {
             pos_label_color = color_boeingcyan;
             tcas_label_color = color_boeingcyan;
             data_label_color = color_boeingcyan;
-            terrain_label_color = Color.blue;
+            terrain_label_color = Color.cyan;
             fmc_active_color = color_magenta;
             fmc_disp_color = Color.WHITE;
             fmc_other_color = Color.LIGHT_GRAY;

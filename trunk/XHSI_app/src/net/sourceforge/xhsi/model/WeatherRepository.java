@@ -129,7 +129,11 @@ public class WeatherRepository {
 		float level = -2.0f; // area not found value
 		WeatherArea area = findWeatherArea( lat, lon );
 		if (area != null) level = area.get_storm_level(lat, lon);
-		// if (area != null) level = area.min_lon % 9;
 		return level;
+	}
+	
+	public float get_interpolated_storm_level( float lat, float lon ) {
+		WeatherArea area = findWeatherArea( lat, lon );
+		return (area != null) ? area.get_interpolated_storm_level(lat, lon) : -2.0f;
 	}
 }

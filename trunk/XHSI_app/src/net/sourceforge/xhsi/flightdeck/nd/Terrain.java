@@ -172,10 +172,11 @@ public class Terrain extends NDSubcomponent {
 	}
 
 	public void paint(Graphics2D g2) {
-        if ( nd_gc.powered && (!( nd_gc.mode_app || nd_gc.mode_vor )) ) {
-        	if ( avionics.efis_shows_terrain() && ( ! nd_gc.map_zoomin ) ) {
+        if ( nd_gc.powered && (!( nd_gc.mode_app || nd_gc.mode_vor )) && avionics.efis_shows_terrain()) {
+        	drawInfoBox(g2);
+        	if ( ! nd_gc.map_zoomin ) {
         		paintTerrain(g2);   
-        		drawInfoBox(g2);
+        		
         		if (preferences.get_nd_terrain_sweep_bar()) drawSweepBars(g2, sweep_angle);
 
         		long sweep_delta_t = nd_gc.current_time_millis - sweep_timestamp; 
@@ -223,14 +224,19 @@ public class Terrain extends NDSubcomponent {
 	
 	private void drawInfoBox(Graphics2D g2) {
 
+		// TERR indicator
+		g2.setFont(nd_gc.terr_label_font);
 		if (nd_gc.airbus_style) {
 			String terr_str = "TERR";
-			g2.setColor(nd_gc.color_airbus_selected);
-			g2.setFont(nd_gc.font_xl);
-			g2.drawString(terr_str, nd_gc.terr_value_x, nd_gc.terr_label_y);
+			g2.clearRect(nd_gc.terr_value_x- nd_gc.digit_width_s/2, nd_gc.terr_label_rect_y, nd_gc.terr_box_width, nd_gc.terr_min_box_y +nd_gc.terr_box_height);
+			g2.setColor(nd_gc.terrain_label_color);
+			g2.drawString(terr_str, nd_gc.terr_label_x, nd_gc.terr_label_y);
 		}
-		
+
+        
 		float ref_alt = ref_altitude();
+		
+		// Max terrain altitude box (unit = Flight Level)
 		if (peak_max > ref_alt + 2000 ) { 
 			g2.setColor(Color.red);
 		} else if (peak_max > ref_alt - 500 ) {
@@ -239,13 +245,10 @@ public class Terrain extends NDSubcomponent {
 			g2.setColor(Color.green);
 		}
 		g2.drawRect(nd_gc.terr_box_x, nd_gc.terr_max_box_y, nd_gc.terr_box_width, nd_gc.terr_box_height);
-		if (nd_gc.boeing_style) 
-			g2.setFont(nd_gc.font_xs); 
-		else 
-			g2.setFont(nd_gc.font_l);
 		String max_str = ""+Math.round(peak_max/100);
 		g2.drawString(max_str, nd_gc.terr_value_x, nd_gc.terr_max_value_y);
-	
+
+		// Min terrain altitude box (unit = Flight Level)
 		if (peak_min > ref_alt + 2000 ) { 
 			g2.setColor(Color.red);
 		} else if (peak_min > ref_alt - 500 ) {
@@ -254,7 +257,6 @@ public class Terrain extends NDSubcomponent {
 			g2.setColor(Color.green);
 		}
 		g2.drawRect(nd_gc.terr_box_x, nd_gc.terr_min_box_y, nd_gc.terr_box_width, nd_gc.terr_box_height);
-		g2.setFont(nd_gc.font_l);
 		String min_str = ""+Math.round(peak_min/100);
 		g2.drawString(min_str, nd_gc.terr_value_x, nd_gc.terr_min_value_y);
 	}
@@ -388,7 +390,9 @@ public class Terrain extends NDSubcomponent {
             }
         }
         g2.setPaint(original_paint);
-        g2.setTransform(original_at);    
+        g2.setTransform(original_at);
+        
+        if (peak_min<0) peak_min=0; 
 
         /*
          * Peaks mode - value in feet
