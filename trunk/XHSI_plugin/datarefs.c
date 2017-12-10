@@ -945,14 +945,14 @@ void	setPilotWxrTest(void* inRefcon, int inValue)
 }
 
 // xhsi/nd_pilot/wxr_mode
-int pilot_wxr_mode; // Integer
+int pilot_wxr_mode; // Integer 0 to 4
 int    getPilotWxrMode(void* inRefcon)
 {
     return pilot_wxr_mode;
 }
 void	setPilotWxrMode(void* inRefcon, int inValue)
 {
-	pilot_wxr_mode = inValue != 0 ? 1 : 0;
+	pilot_wxr_mode = (inValue < 0 || inValue > 4) ? 0 : inValue;
 }
 
 // xhsi/nd_pilot/wxr_slave
@@ -1301,14 +1301,14 @@ void setCopilotWxrTest(void* inRefcon, int inValue)
 }
 
 // xhsi/nd_copilot/wxr_mode
-int copilot_wxr_mode; // Integer
+int copilot_wxr_mode; // Integer 0 to 4
 int getCopilotWxrMode(void* inRefcon)
 {
     return copilot_wxr_mode;
 }
 void setCopilotWxrMode(void* inRefcon, int inValue)
 {
-	copilot_wxr_mode = inValue != 0 ? 1 : 0;
+	copilot_wxr_mode = (inValue < 0 || inValue > 4) ? 0 : inValue;
 }
 
 // xhsi/nd_copilot/wxr_slave
@@ -1832,7 +1832,7 @@ void registerCopilotDataRefs(void) {
 
     // xhsi/nd_copilot/wxr_mode
     // Weather radar mode
-    // 0=OFF, 1=Weather, 2=Weather+Turb, 3=Map
+    // 0=OFF, 1=Weather, 2=Weather+Turb, 3=Map 4=Forced on (ignore standby on ground)
     // default 1=Weather
     efis_copilot_wxr_mode = XPLMRegisterDataAccessor("xhsi/nd_copilot/wxr_mode",
                                         xplmType_Int,                                    // The types we support
@@ -2266,7 +2266,7 @@ float initPilotCallback(
     XPLMSetDatai(efis_pilot_chrono_running, 0);
 
     // Weather radar gain 0 dB
-    XPLMSetDataf(efis_pilot_wxr_gain, 0);
+    XPLMSetDataf(efis_pilot_wxr_gain, 0.5);
 
     // Weather radar tilt 0 degrees
     XPLMSetDataf(efis_pilot_wxr_tilt, 0);
@@ -2280,8 +2280,8 @@ float initPilotCallback(
     // Weather radar auto test OFF
     XPLMSetDatai(efis_pilot_wxr_test, 0);
 
-    // Weather radar mode OFF
-    XPLMSetDatai(efis_pilot_wxr_mode, 0);
+    // Weather radar mode : Weather (ON with standby on ground)
+    XPLMSetDatai(efis_pilot_wxr_mode, 1);
 
     // Weather radar slave OFF
     XPLMSetDatai(efis_pilot_wxr_slave, 0);
@@ -2371,7 +2371,7 @@ float initCopilotCallback(
     XPLMSetDatai(efis_copilot_mins_mode, 1);
 
     // scale * 100
-    XPLMSetDatai(efis_copilot_map_zoomin, 1);
+    XPLMSetDatai(efis_copilot_map_zoomin, 0);
 
     // chrono at 00:00
     XPLMSetDataf(efis_copilot_chrono, 0);
@@ -2380,7 +2380,7 @@ float initCopilotCallback(
     XPLMSetDatai(efis_copilot_chrono_running, 0);
 
     // Weather radar gain 0 dB
-    XPLMSetDataf(efis_copilot_wxr_gain, 0);
+    XPLMSetDataf(efis_copilot_wxr_gain, 0.5);
 
     // Weather radar tilt 0 degrees
     XPLMSetDataf(efis_copilot_wxr_tilt, 0);
@@ -2394,8 +2394,8 @@ float initCopilotCallback(
     // Weather radar auto test OFF
     XPLMSetDatai(efis_copilot_wxr_test, 0);
 
-    // Weather radar mode OFF
-    XPLMSetDatai(efis_copilot_wxr_mode, 0);
+    // Weather radar mode:  Weather (ON with standby on ground)
+    XPLMSetDatai(efis_copilot_wxr_mode, 1);
 
     // Weather radar slave OFF
     XPLMSetDatai(efis_copilot_wxr_slave, 0);
@@ -3030,7 +3030,7 @@ void findDataRefs(void) {
     efis_map_range_selector = XPLMFindDataRef("sim/cockpit/switches/EFIS_map_range_selector");	// int
     efis_dme_1_selector = XPLMFindDataRef("sim/cockpit/switches/EFIS_dme_1_selector");		// int
     efis_dme_2_selector = XPLMFindDataRef("sim/cockpit/switches/EFIS_dme_2_selector");		// int
-    efis_shows_weather = XPLMFindDataRef("sim/cockpit/switches/EFIFS_shows_weather");		// int
+    efis_shows_weather = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_weather");		// int
     efis_shows_tcas = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_tcas");				// int
     efis_shows_airports = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_airports");		// int
     efis_shows_waypoints = XPLMFindDataRef("sim/cockpit/switches/EFIS_shows_waypoints");	// int
