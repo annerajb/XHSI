@@ -1633,21 +1633,10 @@ public class MovingMap extends NDSubcomponent {
 
 
     private void drawFix(Graphics2D g2, int x, int y, Fix fix) {
-
-        // int x5 = Math.round(5.0f*nd_gc.scaling_factor);
-        // int name_x = x + Math.round((nd_gc.boeing_style ? 12.0f : 10.5f)*nd_gc.scaling_factor);
-        // int y3 = Math.round(3.0f*nd_gc.scaling_factor);
-        // int y6 = Math.round(6.0f*nd_gc.scaling_factor);
-        // int name_y = y + (nd_gc.boeing_style ? Math.round(12.0f*nd_gc.scaling_factor) : 0);
-        // int x_points_triangle[] = { x-x5, x+x5, x };
-        // int y_points_triangle[] = { y+y3, y+y3, y-y6  };
-
         AffineTransform original_at = g2.getTransform();
         g2.rotate(Math.toRadians(this.map_up), x, y);
 
         g2.drawImage((fix.on_awy)? nd_gc.fix_awy_symbol_img : nd_gc.fix_term_symbol_img, x-nd_gc.fix_shift_x,y-nd_gc.fix_shift_y, null); 
-
-        // g2.drawPolygon(x_points_triangle, y_points_triangle, 3);
 
         if ( (fix.on_awy) || (nd_gc.map_range <= 20) || nd_gc.map_zoomin ) {
             g2.setColor(fix.on_awy ? nd_gc.awy_wpt_color : nd_gc.term_wpt_color );
@@ -1655,7 +1644,6 @@ public class MovingMap extends NDSubcomponent {
             g2.drawString(fix.name, x+nd_gc.fix_name_x, y+nd_gc.fix_name_y);
         }
         g2.setTransform(original_at);
-
     }
 
 
@@ -1760,23 +1748,23 @@ public class MovingMap extends NDSubcomponent {
 
 
     private void drawAirport(Graphics2D g2, int x, int y, Airport airport, String elev) {
-            int c9 = Math.round(9.0f*nd_gc.scaling_factor);
-            int x12 = Math.round(12.0f*nd_gc.scaling_factor);
-            int y12 = Math.round(12.0f*nd_gc.scaling_factor);
-            AffineTransform original_at = g2.getTransform();
-            Stroke original_stroke = g2.getStroke();
-            g2.rotate(Math.toRadians(this.map_up), x, y);
-            g2.setStroke(new BasicStroke(3.0f));
-            g2.setColor(nd_gc.arpt_color);
-            g2.drawOval(x-c9, y-c9, 2*c9, 2*c9); // with a thicker line and somewhat bigger symbol than the navaids...
-            g2.setStroke(original_stroke);
-            g2.setFont(nd_gc.font_s);
-            g2.drawString(airport.icao_code, x + x12, y + y12);
-            if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
-                g2.setFont(nd_gc.font_xs);
-                g2.drawString(elev, x + x12, y + y12 + nd_gc.line_height_xs);
-            }
-            g2.setTransform(original_at);
+    	AffineTransform original_at = g2.getTransform();
+    	g2.rotate(Math.toRadians(this.map_up), x, y);
+    	g2.setColor(nd_gc.arpt_color);
+    	if (nd_gc.airbus_style) {
+    		g2.drawImage( nd_gc.airport_symbol_img , x-nd_gc.airport_shift_x,y-nd_gc.airport_shift_y, null);
+    		// g2.setStroke(new BasicStroke(1.0f));
+    		// g2.drawOval(x-c9, y-c9, 2*c9, 2*c9);
+    	} else {
+    		g2.drawImage( nd_gc.airport_symbol_img , x-nd_gc.airport_shift_x,y-nd_gc.airport_shift_y, null);
+    	}
+    	g2.setFont(nd_gc.navaid_font);
+    	g2.drawString(airport.icao_code, x + nd_gc.airport_name_x, y + nd_gc.airport_name_y );
+    	if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
+    		g2.setFont(nd_gc.data_font);
+    		g2.drawString(elev, x + nd_gc.airport_name_x, y + nd_gc.airport_data_y);
+    	}
+    	g2.setTransform(original_at);
     }
 
 

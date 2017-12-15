@@ -37,9 +37,11 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.TexturePaint;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
@@ -160,18 +162,25 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     
     // Moving Map Symbols
     public Font navaid_font;
+    public Font data_font;
     public BufferedImage fix_awy_symbol_img;
     public BufferedImage fix_term_symbol_img;
     public int fix_shift_x;
     public int fix_shift_y;
     public int fix_name_x;
     public int fix_name_y;
+    public BufferedImage airport_symbol_img;
+    public int airport_shift_x;
+    public int airport_shift_y;
+    public int airport_name_x;
+    public int airport_name_y;
+    public int airport_data_y;
     public BufferedImage ndb_symbol_img;
     public BufferedImage dme_symbol_img;
     public BufferedImage vor_symbol_img;
     public BufferedImage vordme_symbol_img;
     public BufferedImage loc_symbol_img;
-    public BufferedImage airport_symbol_img;
+    
     
     // RadioLabel & Radio info box -> rib prefix
     public int rib_width;
@@ -578,21 +587,31 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             
             
             // Moving Map Symbols
-            navaid_font = (boeing_style ? font_s : font_l);
+            // Font selection sounds stupid, but may differ in future 
+            navaid_font = (boeing_style ? font_s : font_s);
+            data_font = (boeing_style ? font_xs : font_xs);
+            // Fix symbol - Shift = 2 pixels
             fix_awy_symbol_img = create_fix_symbol(awy_wpt_color);
             fix_term_symbol_img = create_fix_symbol(term_wpt_color);
-            // Shift = 2 pixels
             fix_shift_x = Math.round(5.0f*scaling_factor) - 2;
             fix_shift_y = Math.round(6.0f*scaling_factor) - 2;
             fix_name_x = Math.round((boeing_style ? 12.0f : 10.5f)*scaling_factor);
             fix_name_y = (boeing_style ? Math.round(12.0f*scaling_factor) : 0);
+            
+            // Airport symbol - Shift = 2 pixels
+            airport_shift_x = Math.round(9.0f*scaling_factor) + 3;
+            airport_shift_y = Math.round(9.0f*scaling_factor) + 3;
+            airport_name_x = Math.round((boeing_style ? 12.0f : 11.0f)*scaling_factor);
+            airport_name_y = (boeing_style ? Math.round(12.0f*scaling_factor) : -Math.round(1.0f*scaling_factor) );
+            airport_data_y = (boeing_style ? -Math.round(2.0f*scaling_factor) : Math.round(12.0f*scaling_factor) );
+            airport_symbol_img = create_airport_symbol(arpt_color);
             
             ndb_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
             dme_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
             vor_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
             vordme_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
             loc_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
-            airport_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
+            
             
             
             // Clock - Time - Chrono
@@ -850,10 +869,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     private BufferedImage create_fix_symbol(Color fix_color) {
     	
     	// fix_symbol_img.setBackground(new Color(255, 255, 255, 0));
-    	int x4 = Math.round(4.0f*scaling_factor);
     	int x5 = Math.round(5.0f*scaling_factor);
     	int y3 = Math.round(3.0f*scaling_factor);
-    	int y4 = Math.round(4.0f*scaling_factor);
     	int y5 = Math.round(5.0f*scaling_factor);
     	int y6 = Math.round(6.0f*scaling_factor);
         int shift=2; // Shift to avoid rendering being clipped 
@@ -867,13 +884,47 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     	BufferedImage fix_image = new BufferedImage(x5*2+shift*2,y5*2+shift*2,BufferedImage.TYPE_INT_ARGB);
     	Graphics2D g_fix = fix_image.createGraphics();
     	g_fix.setRenderingHints(rendering_hints);
-    	g_fix.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
     	g_fix.setColor(fix_color);
-    	if (boeing_style) 
+    	if (boeing_style) {
+    		g_fix.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
     		g_fix.drawPolygon(x_points_triangle, y_points_triangle, 3);
-    	else 
+    	} else { 
+    		g_fix.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
     		g_fix.drawPolygon(x_points_diamond, y_points_diamond, 4);
+    	}
     	return fix_image;
+    }
+    
+    
+    private BufferedImage create_airport_symbol(Color airport_color) {
+    
+    	// Boeing Airport symbol (circle)
+        int c9 = Math.round(9.0f*scaling_factor);
+
+        int c2 = Math.round(2.0f*scaling_factor);
+        int c16 = Math.round(16.0f*scaling_factor);
+        int c18 = Math.round(18.0f*scaling_factor);
+
+        int shift=2; // Shift to avoid rendering being clipped 
+    	
+    	BufferedImage arpt_image = new BufferedImage(c18+shift*2+1,c18*2+shift*2+1,BufferedImage.TYPE_INT_ARGB);
+    	Graphics2D g_arpt = arpt_image.createGraphics();
+    	g_arpt.setRenderingHints(rendering_hints);
+    	g_arpt.setColor(airport_color);
+    	
+    	if (boeing_style) { 
+    		// Boeing Airport symbol (circle)
+            g_arpt.setStroke(new BasicStroke(2.5f));
+            g_arpt.drawOval(shift,shift, 2*c9, 2*c9); // with a thicker line and somewhat bigger symbol than the navaids...
+    	} else {
+    		// Airbus Airport symbol (star)
+    		g_arpt.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+    		g_arpt.drawLine(shift, shift+c9, shift+c18,shift+c9);
+    		g_arpt.drawLine(shift+c9, shift, shift+c9,shift+c18);
+    		g_arpt.drawLine(shift+c2, shift+c2, shift+c16,shift+c16);
+    		g_arpt.drawLine(shift+c16, shift+c2, shift+c2,shift+c16);
+    	}
+    	return arpt_image;
     }
     
     public boolean display_inhibit() {

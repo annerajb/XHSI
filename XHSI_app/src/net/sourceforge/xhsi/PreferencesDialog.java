@@ -1800,13 +1800,14 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
-        egpws_options_panel.add(new JLabel("EGPWS caution displays terrain", JLabel.TRAILING), cons);
+        // egpws_options_panel.add(new JLabel("EGPWS caution displays terrain", JLabel.TRAILING), cons);
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
         this.nd_terrain_auto_display = new JCheckBox();
-        egpws_options_panel.add(this.nd_terrain_auto_display, cons);
+        // TODO: feature to be implemented in the next version
+        // egpws_options_panel.add(this.nd_terrain_auto_display, cons);
         dialog_line++;
 
         // Terrain peak mode
@@ -1814,13 +1815,14 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
-        egpws_options_panel.add(new JLabel("Terrain peaks mode", JLabel.TRAILING), cons);
+        // egpws_options_panel.add(new JLabel("Terrain peaks mode", JLabel.TRAILING), cons);
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
         this.nd_terrain_peaks_mode = new JCheckBox();
-        egpws_options_panel.add(this.nd_terrain_peaks_mode, cons);
+        // TODO: feature to be implemented in the next version
+        // egpws_options_panel.add(this.nd_terrain_peaks_mode, cons);
         dialog_line++;
         
         // Vertical path
@@ -1927,13 +1929,14 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
-        wxr_options_panel.add(new JLabel("Activate dual pilot and copilot settings", JLabel.TRAILING), cons);
+        // wxr_options_panel.add(new JLabel("Activate dual pilot and copilot settings", JLabel.TRAILING), cons);
         cons.gridx = 2;
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.WEST;
         this.nd_wxr_dual_settings = new JCheckBox();
-        wxr_options_panel.add(this.nd_wxr_dual_settings, cons);
+        // TODO: feature to implement in the next version
+        // wxr_options_panel.add(this.nd_wxr_dual_settings, cons);
         dialog_line++;
         
         // Weather radar color gradiant

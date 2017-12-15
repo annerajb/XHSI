@@ -702,7 +702,7 @@ public class GraphicsConfig implements ComponentListener {
                 term_wpt_color = Color.magenta;
                 wpt_color = color_cornflowerblue;
                 awy_wpt_color = Color.magenta.brighter();
-                arpt_color = color_mediumaquamarine;
+                arpt_color = Color.magenta;
                 tuned_localizer_color = color_aquamarine;
                 silent_localizer_color = color_mediumaquamarine.darker().darker();
                 reference_localizer_color = color_lightaquamarine;

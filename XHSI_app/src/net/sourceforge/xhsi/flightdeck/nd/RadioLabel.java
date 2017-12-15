@@ -99,6 +99,8 @@ public class RadioLabel extends NDSubcomponent {
         public String radial_text;
         public String obs_text;
         public Color color;
+        public Color unit_color;
+        public Color value_color;
         public boolean draw_arrow;
         public float frequency;
         public RadioNavigationObject rnav_object;
@@ -121,6 +123,7 @@ public class RadioLabel extends NDSubcomponent {
                 this.receiving = radio.receiving();
                 this.radial_text = "";
                 this.obs = Math.round( (radio.get_bank()==1) ? radio.avionics.nav1_obs() : radio.avionics.nav2_obs() );
+                
                 this.obs_text = "CRS " + degrees_formatter.format( this.obs );
 
                 // defaults, display the labels dimmed
@@ -210,6 +213,8 @@ public class RadioLabel extends NDSubcomponent {
                     }
                     
                 }
+                this.value_color = nd_gc.boeing_style ? this.color : nd_gc.ecam_normal_color;
+                this.unit_color = nd_gc.boeing_style ? this.color : nd_gc.ecam_action_color;
                 
             } else {
                 
@@ -325,8 +330,10 @@ public class RadioLabel extends NDSubcomponent {
         g2.drawString(radio_box_info.type, text_x, nd_gc.rib_line_1);
         g2.drawString(radio_box_info.id, text_x, nd_gc.rib_line_2);
         if ( ! radio_box_info.dme.equals("") ) {
+        	g2.setColor(radio_box_info.value_color);
             g2.setFont(nd_gc.font_s);
             g2.drawString(radio_box_info.dme, dme_text_width + text_x, nd_gc.rib_line_3);
+            g2.setColor(radio_box_info.color);
             g2.setFont(nd_gc.font_xs);
             g2.drawString("DME", text_x, nd_gc.rib_line_3);
         }
