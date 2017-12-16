@@ -3372,6 +3372,7 @@ void writeDataRef(int id, float value) {
 
         case SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WEATHER :
             XPLMSetDatai(efis_shows_weather, (int)value);
+            if (qpac_ready) XPLMSetDatai(qpac_wx_power_switch, (int)value);
             break;
 
 		case XHSI_EFIS_PILOT_DATA :
@@ -3384,6 +3385,7 @@ void writeDataRef(int id, float value) {
 
         case XHSI_EFIS_PILOT_TERRAIN :
             XPLMSetDatai(efis_pilot_shows_terrain, (int)value);
+            if (qpac_ready) XPLMSetDatai(qpac_terrain_nd1, (int)value);
             break;
 
         case XHSI_EFIS_PILOT_VP :
@@ -3476,6 +3478,7 @@ void writeDataRef(int id, float value) {
 
         case XHSI_EFIS_COPILOT_TERRAIN :
             XPLMSetDatai(efis_copilot_shows_terrain, (int)value);
+            if (qpac_ready) XPLMSetDatai(qpac_terrain_nd2, (int)value);
             break;
 
         case XHSI_EFIS_COPILOT_VP :
