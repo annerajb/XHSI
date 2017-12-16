@@ -290,6 +290,13 @@ XPLMDataRef qpac_eng2_anti_ice_lights;
 XPLMDataRef qpac_chrono_nd1;
 XPLMDataRef qpac_chrono_nd2;
 
+// Terrain
+XPLMDataRef qpac_terrain_nd1;
+XPLMDataRef qpac_terrain_nd2;
+
+// Weather radar
+XPLMDataRef qpac_wx_power_switch;
+
 //qpac FCU toggles, push/pull commands, RMP, MCDU
 XPLMCommandRef qpac_command[QPAC_KEY_MAX];
 
@@ -587,6 +594,13 @@ void findQpacDataRefs(void) {
             // Chrono (starting v2.0.3)
             qpac_chrono_nd1   = XPLMFindDataRef("AirbusFBW/ChronoTimeND1");
             qpac_chrono_nd2   = XPLMFindDataRef("AirbusFBW/ChronoTimeND2");
+
+            // Terrain
+            qpac_terrain_nd1  = XPLMFindDataRef("AirbusFBW/TerrainSelectedND1");
+            qpac_terrain_nd2  = XPLMFindDataRef("AirbusFBW/TerrainSelectedND2");
+
+            // Weather radar
+            qpac_wx_power_switch  = XPLMFindDataRef("AirbusFBW/WXPowerSwitch");
 
             //qpac fcu toggles and push/pull commands
             qpac_command[QPAC_KEY_TO_CONFIG] = XPLMFindCommand("AirbusFBW/TOConfigPress");

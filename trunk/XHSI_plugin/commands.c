@@ -136,7 +136,11 @@
 #define ADF_UNITS_UP 1
 #define ADF_UNITS_DOWN 9
 
-
+#define WXR_MODE_OFF 0
+#define WXR_MODE_ON 1
+#define WXR_MODE_TURB 2
+#define WXR_MODE_MAP 3
+#define WXR_MODE_FORCE_ON 4
 
 XPLMCommandRef mode_app;
 XPLMCommandRef mode_vor;
@@ -254,6 +258,58 @@ XPLMCommandRef pos_off;
 XPLMCommandRef terrain_toggle;
 XPLMCommandRef terrain_on;
 XPLMCommandRef terrain_off;
+
+XPLMCommandRef wxr_toggle;
+XPLMCommandRef wxr_on;
+XPLMCommandRef wxr_off;
+
+XPLMCommandRef wxr_gain_up;
+XPLMCommandRef wxr_gain_down;
+XPLMCommandRef wxr_gain_middle;
+
+XPLMCommandRef wxr_tilt_up;
+XPLMCommandRef wxr_tilt_down;
+XPLMCommandRef wxr_tilt_zero;
+
+XPLMCommandRef wxr_auto_gain_toggle;
+XPLMCommandRef wxr_auto_gain_on;
+XPLMCommandRef wxr_auto_gain_off;
+
+XPLMCommandRef wxr_auto_tilt_toggle;
+XPLMCommandRef wxr_auto_tilt_on;
+XPLMCommandRef wxr_auto_tilt_off;
+
+XPLMCommandRef wxr_test_toggle;
+XPLMCommandRef wxr_test_on;
+XPLMCommandRef wxr_test_off;
+
+XPLMCommandRef wxr_mode_up;
+XPLMCommandRef wxr_mode_down;
+XPLMCommandRef wxr_mode_off;
+XPLMCommandRef wxr_mode_on;
+XPLMCommandRef wxr_mode_turb;
+XPLMCommandRef wxr_mode_map;
+XPLMCommandRef wxr_mode_force_on;
+
+XPLMCommandRef wxr_slave_toggle;
+XPLMCommandRef wxr_slave_on;
+XPLMCommandRef wxr_slave_off;
+
+XPLMCommandRef wxr_react_toggle;
+XPLMCommandRef wxr_react_on;
+XPLMCommandRef wxr_react_off;
+
+XPLMCommandRef wxr_narrow_toggle;
+XPLMCommandRef wxr_narrow_on;
+XPLMCommandRef wxr_narrow_off;
+
+XPLMCommandRef wxr_alert_toggle;
+XPLMCommandRef wxr_alert_on;
+XPLMCommandRef wxr_alert_off;
+
+XPLMCommandRef wxr_target_toggle;
+XPLMCommandRef wxr_target_on;
+XPLMCommandRef wxr_target_off;
 
 XPLMCommandRef mins_toggle;
 XPLMCommandRef mins_radio;
@@ -380,6 +436,58 @@ XPLMCommandRef copilot_pos_off;
 XPLMCommandRef copilot_terrain_toggle;
 XPLMCommandRef copilot_terrain_on;
 XPLMCommandRef copilot_terrain_off;
+
+XPLMCommandRef copilot_wxr_toggle;
+XPLMCommandRef copilot_wxr_on;
+XPLMCommandRef copilot_wxr_off;
+
+XPLMCommandRef copilot_wxr_gain_up;
+XPLMCommandRef copilot_wxr_gain_down;
+XPLMCommandRef copilot_wxr_gain_middle;
+
+XPLMCommandRef copilot_wxr_tilt_up;
+XPLMCommandRef copilot_wxr_tilt_down;
+XPLMCommandRef copilot_wxr_tilt_zero;
+
+XPLMCommandRef copilot_wxr_auto_gain_toggle;
+XPLMCommandRef copilot_wxr_auto_gain_on;
+XPLMCommandRef copilot_wxr_auto_gain_off;
+
+XPLMCommandRef copilot_wxr_auto_tilt_toggle;
+XPLMCommandRef copilot_wxr_auto_tilt_on;
+XPLMCommandRef copilot_wxr_auto_tilt_off;
+
+XPLMCommandRef copilot_wxr_test_toggle;
+XPLMCommandRef copilot_wxr_test_on;
+XPLMCommandRef copilot_wxr_test_off;
+
+XPLMCommandRef copilot_wxr_mode_up;
+XPLMCommandRef copilot_wxr_mode_down;
+XPLMCommandRef copilot_wxr_mode_off;
+XPLMCommandRef copilot_wxr_mode_on;
+XPLMCommandRef copilot_wxr_mode_turb;
+XPLMCommandRef copilot_wxr_mode_map;
+XPLMCommandRef copilot_wxr_mode_force_on;
+
+XPLMCommandRef copilot_wxr_slave_toggle;
+XPLMCommandRef copilot_wxr_slave_on;
+XPLMCommandRef copilot_wxr_slave_off;
+
+XPLMCommandRef copilot_wxr_react_toggle;
+XPLMCommandRef copilot_wxr_react_on;
+XPLMCommandRef copilot_wxr_react_off;
+
+XPLMCommandRef copilot_wxr_narrow_toggle;
+XPLMCommandRef copilot_wxr_narrow_on;
+XPLMCommandRef copilot_wxr_narrow_off;
+
+XPLMCommandRef copilot_wxr_alert_toggle;
+XPLMCommandRef copilot_wxr_alert_on;
+XPLMCommandRef copilot_wxr_alert_off;
+
+XPLMCommandRef copilot_wxr_target_toggle;
+XPLMCommandRef copilot_wxr_target_on;
+XPLMCommandRef copilot_wxr_target_off;
 
 XPLMCommandRef copilot_mins_toggle;
 XPLMCommandRef copilot_mins_radio;
@@ -1069,6 +1177,199 @@ XPLMCommandCallback_f terrain_handler(XPLMCommandRef inCommand, XPLMCommandPhase
     return (XPLMCommandCallback_f)1;
 }
 
+// weather radar on ND
+XPLMCommandCallback_f wxr_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_shows_weather);
+        XPLMSetDatai(efis_shows_weather, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f wxr_gain_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        float v = XPLMGetDataf(efis_pilot_wxr_gain);
+        if ( i == DOWN )
+        {
+            v -= 0.05f;
+            if (v<0) v = 0;
+        }
+        else if ( i == UP )
+        {
+        	v += 0.05f;
+            if (v>1) v = 1;
+        }
+        else if ( i == MODE_CENTERED )
+        {
+        	v = 0.50f;
+        }
+        XPLMSetDataf(efis_pilot_wxr_gain,v);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f wxr_tilt_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        float v = XPLMGetDataf(efis_pilot_wxr_tilt);
+        if ( i == DOWN )
+        {
+            v -= 0.5f;
+            if (v<-15.0) v = -15.0;
+        }
+        else if ( i == UP )
+        {
+        	v += 0.5f;
+            if (v>15.0) v = 15.0;
+        }
+        else if ( i == MODE_CENTERED )
+        {
+        	v = 0.0f;
+        }
+        XPLMSetDataf(efis_pilot_wxr_tilt,v);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f wxr_auto_gain_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_pilot_wxr_auto_gain);
+        XPLMSetDatai(efis_pilot_wxr_auto_gain, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f wxr_auto_tilt_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_pilot_wxr_auto_tilt);
+        XPLMSetDatai(efis_pilot_wxr_auto_tilt, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f wxr_test_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_pilot_wxr_test);
+        XPLMSetDatai(efis_pilot_wxr_test, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f wxr_mode_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    static int shuttle_up = 1;
+
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == DOWN )
+        {
+            i = XPLMGetDatai(efis_pilot_wxr_mode) - 1;
+            if (i<0) i = 0;
+        }
+        else if ( i == UP )
+        {
+            i = XPLMGetDatai(efis_pilot_wxr_mode) + 1;
+            if (i>4) i = 4;
+        }
+        else if ( i == CYCLE )
+        {
+            i = XPLMGetDatai(efis_pilot_wxr_mode) + 1;
+            if (i>4) i = 0;
+        }
+        else if ( i == SHUTTLE )
+        {
+            i = XPLMGetDatai(efis_pilot_wxr_mode) + (shuttle_up ? +1 : -1);
+            if (i>4)
+            {
+                i = 3;
+                shuttle_up = 0;
+            }
+            else if (i<0)
+            {
+                i = 1;
+                shuttle_up = 1;
+            }
+        }
+        XPLMSetDatai(efis_pilot_wxr_mode, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f wxr_slave_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_pilot_wxr_slave);
+        XPLMSetDatai(efis_pilot_wxr_slave, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f wxr_react_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_pilot_wxr_react);
+        XPLMSetDatai(efis_pilot_wxr_react, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f wxr_narrow_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_pilot_wxr_narrow);
+        XPLMSetDatai(efis_pilot_wxr_narrow, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f wxr_alert_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_pilot_wxr_alert);
+        XPLMSetDatai(efis_pilot_wxr_alert, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f wxr_target_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_pilot_wxr_target);
+        XPLMSetDatai(efis_pilot_wxr_target, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+
+
 // mins mode
 XPLMCommandCallback_f mins_mode_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
 {
@@ -1637,6 +1938,198 @@ XPLMCommandCallback_f copilot_terrain_handler(XPLMCommandRef inCommand, XPLMComm
     }
     return (XPLMCommandCallback_f)1;
 }
+
+// copilot weather radar on ND
+XPLMCommandCallback_f copilot_wxr_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_shows_weather);
+        XPLMSetDatai(efis_shows_weather, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f copilot_wxr_gain_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        float v = XPLMGetDataf(efis_copilot_wxr_gain);
+        if ( i == DOWN )
+        {
+            v -= 0.05f;
+            if (v<0) v = 0;
+        }
+        else if ( i == UP )
+        {
+        	v += 0.05f;
+            if (v>1) v = 1;
+        }
+        else if ( i == MODE_CENTERED )
+        {
+        	v = 0.50f;
+        }
+        XPLMSetDataf(efis_copilot_wxr_gain,v);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f copilot_wxr_tilt_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        float v = XPLMGetDataf(efis_copilot_wxr_tilt);
+        if ( i == DOWN )
+        {
+            v -= 0.5f;
+            if (v<-15.0) v = -15.0;
+        }
+        else if ( i == UP )
+        {
+        	v += 0.5f;
+            if (v>15.0) v = 15.0;
+        }
+        else if ( i == MODE_CENTERED )
+        {
+        	v = 0.0f;
+        }
+        XPLMSetDataf(efis_copilot_wxr_tilt,v);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f copilot_wxr_auto_gain_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_copilot_wxr_auto_gain);
+        XPLMSetDatai(efis_copilot_wxr_auto_gain, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f copilot_wxr_auto_tilt_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_copilot_wxr_auto_tilt);
+        XPLMSetDatai(efis_copilot_wxr_auto_tilt, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f copilot_wxr_test_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_copilot_wxr_test);
+        XPLMSetDatai(efis_copilot_wxr_test, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f copilot_wxr_mode_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    static int shuttle_up = 1;
+
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == DOWN )
+        {
+            i = XPLMGetDatai(efis_copilot_wxr_mode) - 1;
+            if (i<0) i = 0;
+        }
+        else if ( i == UP )
+        {
+            i = XPLMGetDatai(efis_copilot_wxr_mode) + 1;
+            if (i>4) i = 4;
+        }
+        else if ( i == CYCLE )
+        {
+            i = XPLMGetDatai(efis_copilot_wxr_mode) + 1;
+            if (i>4) i = 0;
+        }
+        else if ( i == SHUTTLE )
+        {
+            i = XPLMGetDatai(efis_copilot_wxr_mode) + (shuttle_up ? +1 : -1);
+            if (i>4)
+            {
+                i = 3;
+                shuttle_up = 0;
+            }
+            else if (i<0)
+            {
+                i = 1;
+                shuttle_up = 1;
+            }
+        }
+        XPLMSetDatai(efis_copilot_wxr_mode, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f copilot_wxr_slave_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_copilot_wxr_slave);
+        XPLMSetDatai(efis_copilot_wxr_slave, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f copilot_wxr_react_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_copilot_wxr_react);
+        XPLMSetDatai(efis_copilot_wxr_react, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f copilot_wxr_narrow_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_copilot_wxr_narrow);
+        XPLMSetDatai(efis_copilot_wxr_narrow, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f copilot_wxr_alert_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_copilot_wxr_alert);
+        XPLMSetDatai(efis_copilot_wxr_alert, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+XPLMCommandCallback_f copilot_wxr_target_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_copilot_wxr_target);
+        XPLMSetDatai(efis_copilot_wxr_target, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
 
 // copilot mins mode
 XPLMCommandCallback_f copilot_mins_mode_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
@@ -2633,6 +3126,98 @@ void registerCommands(void) {
     terrain_off = XPLMCreateCommand("xhsi/nd_pilot/terrain_off", "Terrain on ND off");
     XPLMRegisterCommandHandler(terrain_off, (XPLMCommandCallback_f)terrain_handler, 1, (void *)OFF);
 
+    // Weather Radar
+    wxr_toggle = XPLMCreateCommand("xhsi/nd_pilot/wxr_toggle", "Toggle weather radar on ND");
+    XPLMRegisterCommandHandler(wxr_toggle, (XPLMCommandCallback_f)wxr_handler, 1, (void *)TOGGLE);
+    wxr_on = XPLMCreateCommand("xhsi/nd_pilot/wxr_on", "Weather radar on ND");
+    XPLMRegisterCommandHandler(wxr_on, (XPLMCommandCallback_f)wxr_handler, 1, (void *)ON);
+    wxr_off = XPLMCreateCommand("xhsi/nd_pilot/wxr_off", "Weather radar off ND");
+    XPLMRegisterCommandHandler(wxr_off, (XPLMCommandCallback_f)wxr_handler, 1, (void *)OFF);
+
+    wxr_gain_up = XPLMCreateCommand("xhsi/nd_pilot/wxr_gain_up", "Weather radar gain up +0.05");
+    XPLMRegisterCommandHandler(wxr_gain_up, (XPLMCommandCallback_f)wxr_gain_handler, 1, (void *)UP);
+    wxr_gain_down = XPLMCreateCommand("xhsi/nd_pilot/wxr_gain_down", "Weather radar gain down -0.05");
+    XPLMRegisterCommandHandler(wxr_gain_down, (XPLMCommandCallback_f)wxr_gain_handler, 1, (void *)DOWN);
+    wxr_gain_middle = XPLMCreateCommand("xhsi/nd_pilot/wxr_gain_middle", "Set weather radar gain to 0.50");
+    XPLMRegisterCommandHandler(wxr_gain_middle, (XPLMCommandCallback_f)wxr_gain_handler, 1, (void *)MODE_CENTERED);
+
+    wxr_tilt_up = XPLMCreateCommand("xhsi/nd_pilot/wxr_tilt_up", "Weather radar tilt up 1 degree");
+    XPLMRegisterCommandHandler(wxr_tilt_up, (XPLMCommandCallback_f)wxr_tilt_handler, 1, (void *)UP);
+    wxr_tilt_down = XPLMCreateCommand("xhsi/nd_pilot/wxr_tilt_down", "Weather radar tilt down 1 degree");
+    XPLMRegisterCommandHandler(wxr_tilt_down, (XPLMCommandCallback_f)wxr_tilt_handler, 1, (void *)DOWN);
+    wxr_tilt_zero = XPLMCreateCommand("xhsi/nd_pilot/wxr_tilt_zero", "Set weather radar tilt to 0");
+    XPLMRegisterCommandHandler(wxr_tilt_zero, (XPLMCommandCallback_f)wxr_tilt_handler, 1, (void *)MODE_CENTERED);
+
+    wxr_auto_gain_toggle = XPLMCreateCommand("xhsi/nd_pilot/wxr_auto_gain_toggle", "Toggle weather radar auto gain");
+    XPLMRegisterCommandHandler(wxr_auto_gain_toggle, (XPLMCommandCallback_f)wxr_auto_gain_handler, 1, (void *)TOGGLE);
+    wxr_auto_gain_on = XPLMCreateCommand("xhsi/nd_pilot/wxr_auto_gain_on", "Weather radar auto gain on");
+    XPLMRegisterCommandHandler(wxr_auto_gain_on, (XPLMCommandCallback_f)wxr_auto_gain_handler, 1, (void *)ON);
+    wxr_auto_gain_off = XPLMCreateCommand("xhsi/nd_pilot/wxr_auto_gain_off", "Weather radar auto gain off");
+    XPLMRegisterCommandHandler(wxr_auto_gain_off, (XPLMCommandCallback_f)wxr_auto_gain_handler, 1, (void *)OFF);
+
+    wxr_auto_tilt_toggle = XPLMCreateCommand("xhsi/nd_pilot/wxr_auto_tilt_toggle", "Toggle weather radar auto tilt");
+    XPLMRegisterCommandHandler(wxr_auto_tilt_toggle, (XPLMCommandCallback_f)wxr_auto_tilt_handler, 1, (void *)TOGGLE);
+    wxr_auto_tilt_on = XPLMCreateCommand("xhsi/nd_pilot/wxr_auto_tilt_on", "Weather radar auto tilt on");
+    XPLMRegisterCommandHandler(wxr_auto_tilt_on, (XPLMCommandCallback_f)wxr_auto_tilt_handler, 1, (void *)ON);
+    wxr_auto_tilt_off = XPLMCreateCommand("xhsi/nd_pilot/wxr_auto_tilt_off", "Weather radar auto tilt off");
+    XPLMRegisterCommandHandler(wxr_auto_tilt_off, (XPLMCommandCallback_f)wxr_auto_tilt_handler, 1, (void *)OFF);
+
+    wxr_test_toggle = XPLMCreateCommand("xhsi/nd_pilot/wxr_test_toggle", "Toggle weather radar test");
+    XPLMRegisterCommandHandler(wxr_test_toggle, (XPLMCommandCallback_f)wxr_test_handler, 1, (void *)TOGGLE);
+    wxr_test_on = XPLMCreateCommand("xhsi/nd_pilot/wxr_test_on", "Weather radar auto tilt on");
+    XPLMRegisterCommandHandler(wxr_test_on, (XPLMCommandCallback_f)wxr_test_handler, 1, (void *)ON);
+    wxr_test_off = XPLMCreateCommand("xhsi/nd_pilot/wxr_test_off", "Weather radar auto tilt off");
+    XPLMRegisterCommandHandler(wxr_test_off, (XPLMCommandCallback_f)wxr_test_handler, 1, (void *)OFF);
+
+    wxr_mode_up = XPLMCreateCommand("xhsi/nd_pilot/wxr_mode_up", "Weather radar mode up");
+    XPLMRegisterCommandHandler(wxr_mode_up, (XPLMCommandCallback_f)wxr_mode_handler, 1, (void *)UP);
+    wxr_mode_down = XPLMCreateCommand("xhsi/nd_pilot/wxr_mode_down", "Weather radar mode down");
+    XPLMRegisterCommandHandler(wxr_mode_down, (XPLMCommandCallback_f)wxr_mode_handler, 1, (void *)DOWN);
+    wxr_mode_off = XPLMCreateCommand("xhsi/nd_pilot/wxr_mode_off", "Weather radar mode OFF");
+    XPLMRegisterCommandHandler(wxr_mode_off, (XPLMCommandCallback_f)wxr_mode_handler, 1, (void *)WXR_MODE_OFF);
+    wxr_mode_on = XPLMCreateCommand("xhsi/nd_pilot/wxr_mode_on", "Weather radar mode ON");
+    XPLMRegisterCommandHandler(wxr_mode_on, (XPLMCommandCallback_f)wxr_mode_handler, 1, (void *)WXR_MODE_ON);
+    wxr_mode_turb = XPLMCreateCommand("xhsi/nd_pilot/wxr_mode_turb", "Weather radar mode TURB");
+    XPLMRegisterCommandHandler(wxr_mode_turb, (XPLMCommandCallback_f)wxr_mode_handler, 1, (void *)WXR_MODE_TURB);
+    wxr_mode_map = XPLMCreateCommand("xhsi/nd_pilot/wxr_mode_map", "Weather radar mode MAP");
+    XPLMRegisterCommandHandler(wxr_mode_map, (XPLMCommandCallback_f)wxr_mode_handler, 1, (void *)WXR_MODE_MAP);
+    wxr_mode_force_on = XPLMCreateCommand("xhsi/nd_pilot/wxr_mode_force_on", "Weather radar mode FORCE ON");
+    XPLMRegisterCommandHandler(wxr_mode_force_on, (XPLMCommandCallback_f)wxr_mode_handler, 1, (void *)WXR_MODE_FORCE_ON);
+
+    wxr_slave_toggle = XPLMCreateCommand("xhsi/nd_pilot/wxr_slave_toggle", "Toggle weather salve mode");
+    XPLMRegisterCommandHandler(wxr_slave_toggle, (XPLMCommandCallback_f)wxr_slave_handler, 1, (void *)TOGGLE);
+    wxr_slave_on = XPLMCreateCommand("xhsi/nd_pilot/wxr_slave_on", "Weather radar slave on [F/O side]");
+    XPLMRegisterCommandHandler(wxr_slave_on, (XPLMCommandCallback_f)wxr_slave_handler, 1, (void *)ON);
+    wxr_slave_off = XPLMCreateCommand("xhsi/nd_pilot/wxr_slave_off", "Weather radar slave off");
+    XPLMRegisterCommandHandler(wxr_slave_off, (XPLMCommandCallback_f)wxr_slave_handler, 1, (void *)OFF);
+
+    wxr_react_toggle = XPLMCreateCommand("xhsi/nd_pilot/wxr_react_toggle", "Toggle weather REACT mode");
+    XPLMRegisterCommandHandler(wxr_react_toggle, (XPLMCommandCallback_f)wxr_react_handler, 1, (void *)TOGGLE);
+    wxr_react_on = XPLMCreateCommand("xhsi/nd_pilot/wxr_react_on", "Weather radar REACT on");
+    XPLMRegisterCommandHandler(wxr_react_on, (XPLMCommandCallback_f)wxr_react_handler, 1, (void *)ON);
+    wxr_react_off = XPLMCreateCommand("xhsi/nd_pilot/wxr_react_off", "Weather radar REACT off");
+    XPLMRegisterCommandHandler(wxr_react_off, (XPLMCommandCallback_f)wxr_react_handler, 1, (void *)OFF);
+
+    wxr_narrow_toggle = XPLMCreateCommand("xhsi/nd_pilot/wxr_narrow_toggle", "Toggle weather narrow mode");
+    XPLMRegisterCommandHandler(wxr_narrow_toggle, (XPLMCommandCallback_f)wxr_narrow_handler, 1, (void *)TOGGLE);
+    wxr_narrow_on = XPLMCreateCommand("xhsi/nd_pilot/wxr_narrow_on", "Weather radar narrow mode on");
+    XPLMRegisterCommandHandler(wxr_narrow_on, (XPLMCommandCallback_f)wxr_narrow_handler, 1, (void *)ON);
+    wxr_narrow_off = XPLMCreateCommand("xhsi/nd_pilot/wxr_narrow_off", "Weather radar narrow mode off");
+    XPLMRegisterCommandHandler(wxr_narrow_off, (XPLMCommandCallback_f)wxr_narrow_handler, 1, (void *)OFF);
+
+    wxr_alert_toggle = XPLMCreateCommand("xhsi/nd_pilot/wxr_alert_toggle", "Toggle weather alert mode");
+    XPLMRegisterCommandHandler(wxr_alert_toggle, (XPLMCommandCallback_f)wxr_alert_handler, 1, (void *)TOGGLE);
+    wxr_alert_on = XPLMCreateCommand("xhsi/nd_pilot/wxr_alert_on", "Weather radar narrow alert mode on");
+    XPLMRegisterCommandHandler(wxr_alert_on, (XPLMCommandCallback_f)wxr_alert_handler, 1, (void *)ON);
+    wxr_alert_off = XPLMCreateCommand("xhsi/nd_pilot/wxr_alert_off", "Weather radar alert mode off");
+    XPLMRegisterCommandHandler(wxr_alert_off, (XPLMCommandCallback_f)wxr_alert_handler, 1, (void *)OFF);
+
+    wxr_target_toggle = XPLMCreateCommand("xhsi/nd_pilot/wxr_target_toggle", "Toggle weather target mode");
+    XPLMRegisterCommandHandler(wxr_target_toggle, (XPLMCommandCallback_f)wxr_target_handler, 1, (void *)TOGGLE);
+    wxr_target_on = XPLMCreateCommand("xhsi/nd_pilot/wxr_target_on", "Weather radar narrow target mode on");
+    XPLMRegisterCommandHandler(wxr_target_on, (XPLMCommandCallback_f)wxr_target_handler, 1, (void *)ON);
+    wxr_target_off = XPLMCreateCommand("xhsi/nd_pilot/wxr_target_off", "Weather radar target mode off");
+    XPLMRegisterCommandHandler(wxr_target_off, (XPLMCommandCallback_f)wxr_target_handler, 1, (void *)OFF);
 
     // xhsi/nd_ext_range_pilot/...
 
@@ -2899,6 +3484,100 @@ void registerCommands(void) {
     XPLMRegisterCommandHandler(copilot_terrain_on, (XPLMCommandCallback_f)copilot_terrain_handler, 1, (void *)ON);
     copilot_terrain_off = XPLMCreateCommand("xhsi/nd_copilot/terrain_off", "Terrain on ND off - copilot");
     XPLMRegisterCommandHandler(copilot_terrain_off, (XPLMCommandCallback_f)copilot_terrain_handler, 1, (void *)OFF);
+
+
+    // Weather Radar
+    copilot_wxr_toggle = XPLMCreateCommand("xhsi/nd_copilot/wxr_toggle", "Toggle weather radar on ND");
+    XPLMRegisterCommandHandler(copilot_wxr_toggle, (XPLMCommandCallback_f)copilot_wxr_handler, 1, (void *)TOGGLE);
+    copilot_wxr_on = XPLMCreateCommand("xhsi/nd_copilot/wxr_on", "Weather radar on ND");
+    XPLMRegisterCommandHandler(copilot_wxr_on, (XPLMCommandCallback_f)copilot_wxr_handler, 1, (void *)ON);
+    copilot_wxr_off = XPLMCreateCommand("xhsi/nd_copilot/wxr_off", "Weather radar off ND");
+    XPLMRegisterCommandHandler(copilot_wxr_off, (XPLMCommandCallback_f)copilot_wxr_handler, 1, (void *)OFF);
+
+    copilot_wxr_gain_up = XPLMCreateCommand("xhsi/nd_copilot/wxr_gain_up", "Weather radar gain up +0.05");
+    XPLMRegisterCommandHandler(copilot_wxr_gain_up, (XPLMCommandCallback_f)copilot_wxr_gain_handler, 1, (void *)UP);
+    copilot_wxr_gain_down = XPLMCreateCommand("xhsi/nd_copilot/wxr_gain_down", "Weather radar gain down -0.05");
+    XPLMRegisterCommandHandler(copilot_wxr_gain_down, (XPLMCommandCallback_f)copilot_wxr_gain_handler, 1, (void *)DOWN);
+    copilot_wxr_gain_middle = XPLMCreateCommand("xhsi/nd_copilot/wxr_gain_middle", "Set weather radar gain to 0.50");
+    XPLMRegisterCommandHandler(copilot_wxr_gain_middle, (XPLMCommandCallback_f)copilot_wxr_gain_handler, 1, (void *)MODE_CENTERED);
+
+    copilot_wxr_tilt_up = XPLMCreateCommand("xhsi/nd_copilot/wxr_tilt_up", "Weather radar tilt up 1 degree");
+    XPLMRegisterCommandHandler(copilot_wxr_tilt_up, (XPLMCommandCallback_f)copilot_wxr_tilt_handler, 1, (void *)UP);
+    copilot_wxr_tilt_down = XPLMCreateCommand("xhsi/nd_copilot/wxr_tilt_down", "Weather radar tilt down 1 degree");
+    XPLMRegisterCommandHandler(copilot_wxr_tilt_down, (XPLMCommandCallback_f)copilot_wxr_tilt_handler, 1, (void *)DOWN);
+    copilot_wxr_tilt_zero = XPLMCreateCommand("xhsi/nd_copilot/wxr_tilt_zero", "Set weather radar tilt to 0");
+    XPLMRegisterCommandHandler(copilot_wxr_tilt_zero, (XPLMCommandCallback_f)copilot_wxr_tilt_handler, 1, (void *)MODE_CENTERED);
+
+    copilot_wxr_auto_gain_toggle = XPLMCreateCommand("xhsi/nd_copilot/wxr_auto_gain_toggle", "Toggle weather radar auto gain");
+    XPLMRegisterCommandHandler(copilot_wxr_auto_gain_toggle, (XPLMCommandCallback_f)copilot_wxr_auto_gain_handler, 1, (void *)TOGGLE);
+    copilot_wxr_auto_gain_on = XPLMCreateCommand("xhsi/nd_copilot/wxr_auto_gain_on", "Weather radar auto gain on");
+    XPLMRegisterCommandHandler(copilot_wxr_auto_gain_on, (XPLMCommandCallback_f)copilot_wxr_auto_gain_handler, 1, (void *)ON);
+    copilot_wxr_auto_gain_off = XPLMCreateCommand("xhsi/nd_copilot/wxr_auto_gain_off", "Weather radar auto gain off");
+    XPLMRegisterCommandHandler(copilot_wxr_auto_gain_off, (XPLMCommandCallback_f)copilot_wxr_auto_gain_handler, 1, (void *)OFF);
+
+    copilot_wxr_auto_tilt_toggle = XPLMCreateCommand("xhsi/nd_copilot/wxr_auto_tilt_toggle", "Toggle weather radar auto tilt");
+    XPLMRegisterCommandHandler(copilot_wxr_auto_tilt_toggle, (XPLMCommandCallback_f)copilot_wxr_auto_tilt_handler, 1, (void *)TOGGLE);
+    copilot_wxr_auto_tilt_on = XPLMCreateCommand("xhsi/nd_copilot/wxr_auto_tilt_on", "Weather radar auto tilt on");
+    XPLMRegisterCommandHandler(copilot_wxr_auto_tilt_on, (XPLMCommandCallback_f)copilot_wxr_auto_tilt_handler, 1, (void *)ON);
+    copilot_wxr_auto_tilt_off = XPLMCreateCommand("xhsi/nd_copilot/wxr_auto_tilt_off", "Weather radar auto tilt off");
+    XPLMRegisterCommandHandler(copilot_wxr_auto_tilt_off, (XPLMCommandCallback_f)copilot_wxr_auto_tilt_handler, 1, (void *)OFF);
+
+    copilot_wxr_test_toggle = XPLMCreateCommand("xhsi/nd_copilot/wxr_test_toggle", "Toggle weather radar test");
+    XPLMRegisterCommandHandler(copilot_wxr_test_toggle, (XPLMCommandCallback_f)copilot_wxr_test_handler, 1, (void *)TOGGLE);
+    copilot_wxr_test_on = XPLMCreateCommand("xhsi/nd_copilot/wxr_test_on", "Weather radar auto tilt on");
+    XPLMRegisterCommandHandler(copilot_wxr_test_on, (XPLMCommandCallback_f)copilot_wxr_test_handler, 1, (void *)ON);
+    copilot_wxr_test_off = XPLMCreateCommand("xhsi/nd_copilot/wxr_test_off", "Weather radar auto tilt off");
+    XPLMRegisterCommandHandler(copilot_wxr_test_off, (XPLMCommandCallback_f)copilot_wxr_test_handler, 1, (void *)OFF);
+
+    copilot_wxr_mode_up = XPLMCreateCommand("xhsi/nd_copilot/wxr_mode_up", "Weather radar mode up");
+    XPLMRegisterCommandHandler(copilot_wxr_mode_up, (XPLMCommandCallback_f)copilot_wxr_mode_handler, 1, (void *)UP);
+    copilot_wxr_mode_down = XPLMCreateCommand("xhsi/nd_copilot/wxr_mode_down", "Weather radar mode down");
+    XPLMRegisterCommandHandler(copilot_wxr_mode_down, (XPLMCommandCallback_f)copilot_wxr_mode_handler, 1, (void *)DOWN);
+    copilot_wxr_mode_off = XPLMCreateCommand("xhsi/nd_copilot/wxr_mode_off", "Weather radar mode OFF");
+    XPLMRegisterCommandHandler(copilot_wxr_mode_off, (XPLMCommandCallback_f)copilot_wxr_mode_handler, 1, (void *)WXR_MODE_OFF);
+    copilot_wxr_mode_on = XPLMCreateCommand("xhsi/nd_copilot/wxr_mode_on", "Weather radar mode ON");
+    XPLMRegisterCommandHandler(copilot_wxr_mode_on, (XPLMCommandCallback_f)copilot_wxr_mode_handler, 1, (void *)WXR_MODE_ON);
+    copilot_wxr_mode_turb = XPLMCreateCommand("xhsi/nd_copilot/wxr_mode_turb", "Weather radar mode TURB");
+    XPLMRegisterCommandHandler(copilot_wxr_mode_turb, (XPLMCommandCallback_f)copilot_wxr_mode_handler, 1, (void *)WXR_MODE_TURB);
+    copilot_wxr_mode_map = XPLMCreateCommand("xhsi/nd_copilot/wxr_mode_map", "Weather radar mode MAP");
+    XPLMRegisterCommandHandler(copilot_wxr_mode_map, (XPLMCommandCallback_f)copilot_wxr_mode_handler, 1, (void *)WXR_MODE_MAP);
+    copilot_wxr_mode_force_on = XPLMCreateCommand("xhsi/nd_copilot/wxr_mode_force_on", "Weather radar mode FORCE ON");
+    XPLMRegisterCommandHandler(copilot_wxr_mode_force_on, (XPLMCommandCallback_f)copilot_wxr_mode_handler, 1, (void *)WXR_MODE_FORCE_ON);
+
+    copilot_wxr_slave_toggle = XPLMCreateCommand("xhsi/nd_copilot/wxr_slave_toggle", "Toggle weather salve mode");
+    XPLMRegisterCommandHandler(copilot_wxr_slave_toggle, (XPLMCommandCallback_f)copilot_wxr_slave_handler, 1, (void *)TOGGLE);
+    copilot_wxr_slave_on = XPLMCreateCommand("xhsi/nd_copilot/wxr_slave_on", "Weather radar slave on [F/O side]");
+    XPLMRegisterCommandHandler(copilot_wxr_slave_on, (XPLMCommandCallback_f)copilot_wxr_slave_handler, 1, (void *)ON);
+    copilot_wxr_slave_off = XPLMCreateCommand("xhsi/nd_copilot/wxr_slave_off", "Weather radar slave off");
+    XPLMRegisterCommandHandler(copilot_wxr_slave_off, (XPLMCommandCallback_f)copilot_wxr_slave_handler, 1, (void *)OFF);
+
+    copilot_wxr_react_toggle = XPLMCreateCommand("xhsi/nd_copilot/wxr_react_toggle", "Toggle weather REACT mode");
+    XPLMRegisterCommandHandler(copilot_wxr_react_toggle, (XPLMCommandCallback_f)copilot_wxr_react_handler, 1, (void *)TOGGLE);
+    copilot_wxr_react_on = XPLMCreateCommand("xhsi/nd_copilot/wxr_react_on", "Weather radar REACT on");
+    XPLMRegisterCommandHandler(copilot_wxr_react_on, (XPLMCommandCallback_f)copilot_wxr_react_handler, 1, (void *)ON);
+    copilot_wxr_react_off = XPLMCreateCommand("xhsi/nd_copilot/wxr_react_off", "Weather radar REACT off");
+    XPLMRegisterCommandHandler(copilot_wxr_react_off, (XPLMCommandCallback_f)copilot_wxr_react_handler, 1, (void *)OFF);
+
+    copilot_wxr_narrow_toggle = XPLMCreateCommand("xhsi/nd_copilot/wxr_narrow_toggle", "Toggle weather narrow mode");
+    XPLMRegisterCommandHandler(copilot_wxr_narrow_toggle, (XPLMCommandCallback_f)copilot_wxr_narrow_handler, 1, (void *)TOGGLE);
+    copilot_wxr_narrow_on = XPLMCreateCommand("xhsi/nd_copilot/wxr_narrow_on", "Weather radar narrow mode on");
+    XPLMRegisterCommandHandler(copilot_wxr_narrow_on, (XPLMCommandCallback_f)copilot_wxr_narrow_handler, 1, (void *)ON);
+    copilot_wxr_narrow_off = XPLMCreateCommand("xhsi/nd_copilot/wxr_narrow_off", "Weather radar narrow mode off");
+    XPLMRegisterCommandHandler(copilot_wxr_narrow_off, (XPLMCommandCallback_f)copilot_wxr_narrow_handler, 1, (void *)OFF);
+
+    copilot_wxr_alert_toggle = XPLMCreateCommand("xhsi/nd_copilot/wxr_alert_toggle", "Toggle weather alert mode");
+    XPLMRegisterCommandHandler(copilot_wxr_alert_toggle, (XPLMCommandCallback_f)copilot_wxr_alert_handler, 1, (void *)TOGGLE);
+    copilot_wxr_alert_on = XPLMCreateCommand("xhsi/nd_copilot/wxr_alert_on", "Weather radar narrow alert mode on");
+    XPLMRegisterCommandHandler(copilot_wxr_alert_on, (XPLMCommandCallback_f)copilot_wxr_alert_handler, 1, (void *)ON);
+    copilot_wxr_alert_off = XPLMCreateCommand("xhsi/nd_copilot/wxr_alert_off", "Weather radar alert mode off");
+    XPLMRegisterCommandHandler(copilot_wxr_alert_off, (XPLMCommandCallback_f)copilot_wxr_alert_handler, 1, (void *)OFF);
+
+    copilot_wxr_target_toggle = XPLMCreateCommand("xhsi/nd_copilot/wxr_target_toggle", "Toggle weather target mode");
+    XPLMRegisterCommandHandler(copilot_wxr_target_toggle, (XPLMCommandCallback_f)copilot_wxr_target_handler, 1, (void *)TOGGLE);
+    copilot_wxr_target_on = XPLMCreateCommand("xhsi/nd_copilot/wxr_target_on", "Weather radar narrow target mode on");
+    XPLMRegisterCommandHandler(copilot_wxr_target_on, (XPLMCommandCallback_f)copilot_wxr_target_handler, 1, (void *)ON);
+    copilot_wxr_target_off = XPLMCreateCommand("xhsi/nd_copilot/wxr_target_off", "Weather radar target mode off");
+    XPLMRegisterCommandHandler(copilot_wxr_target_off, (XPLMCommandCallback_f)copilot_wxr_target_handler, 1, (void *)OFF);
 
 
     // xhsi/nd_ext_range_copilot/...
@@ -3439,6 +4118,65 @@ void unregisterCommands(void) {
     XPLMUnregisterCommandHandler(pos_on, (XPLMCommandCallback_f)pos_handler, 1, (void *)ON);
     XPLMUnregisterCommandHandler(pos_off, (XPLMCommandCallback_f)pos_handler, 1, (void *)OFF);
 
+    // terrain on ND
+    XPLMUnregisterCommandHandler(terrain_toggle, (XPLMCommandCallback_f)terrain_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(terrain_on, (XPLMCommandCallback_f)terrain_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(terrain_off, (XPLMCommandCallback_f)terrain_handler, 1, (void *)OFF);
+
+    // Weather Radar
+    XPLMUnregisterCommandHandler(wxr_toggle, (XPLMCommandCallback_f)wxr_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(wxr_on, (XPLMCommandCallback_f)wxr_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(wxr_off, (XPLMCommandCallback_f)wxr_handler, 1, (void *)OFF);
+
+    XPLMUnregisterCommandHandler(wxr_gain_up, (XPLMCommandCallback_f)wxr_gain_handler, 1, (void *)UP);
+    XPLMUnregisterCommandHandler(wxr_gain_down, (XPLMCommandCallback_f)wxr_gain_handler, 1, (void *)DOWN);
+    XPLMUnregisterCommandHandler(wxr_gain_middle, (XPLMCommandCallback_f)wxr_gain_handler, 1, (void *)MODE_CENTERED);
+
+    XPLMUnregisterCommandHandler(wxr_tilt_up, (XPLMCommandCallback_f)wxr_tilt_handler, 1, (void *)UP);
+    XPLMUnregisterCommandHandler(wxr_tilt_down, (XPLMCommandCallback_f)wxr_tilt_handler, 1, (void *)DOWN);
+    XPLMUnregisterCommandHandler(wxr_tilt_zero, (XPLMCommandCallback_f)wxr_tilt_handler, 1, (void *)MODE_CENTERED);
+
+    XPLMUnregisterCommandHandler(wxr_auto_gain_toggle, (XPLMCommandCallback_f)wxr_auto_gain_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(wxr_auto_gain_on, (XPLMCommandCallback_f)wxr_auto_gain_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(wxr_auto_gain_off, (XPLMCommandCallback_f)wxr_auto_gain_handler, 1, (void *)OFF);
+
+    XPLMUnregisterCommandHandler(wxr_auto_gain_toggle, (XPLMCommandCallback_f)wxr_auto_tilt_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(wxr_auto_gain_on, (XPLMCommandCallback_f)wxr_auto_tilt_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(wxr_auto_gain_off, (XPLMCommandCallback_f)wxr_auto_tilt_handler, 1, (void *)OFF);
+
+    XPLMUnregisterCommandHandler(wxr_test_toggle, (XPLMCommandCallback_f)wxr_test_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(wxr_test_on, (XPLMCommandCallback_f)wxr_test_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(wxr_test_off, (XPLMCommandCallback_f)wxr_test_handler, 1, (void *)OFF);
+
+    XPLMUnregisterCommandHandler(wxr_mode_up, (XPLMCommandCallback_f)wxr_mode_handler, 1, (void *)UP);
+    XPLMUnregisterCommandHandler(wxr_mode_down, (XPLMCommandCallback_f)wxr_mode_handler, 1, (void *)DOWN);
+    XPLMUnregisterCommandHandler(wxr_mode_off, (XPLMCommandCallback_f)wxr_mode_handler, 1, (void *)WXR_MODE_OFF);
+    XPLMUnregisterCommandHandler(wxr_mode_on, (XPLMCommandCallback_f)wxr_mode_handler, 1, (void *)WXR_MODE_ON);
+    XPLMUnregisterCommandHandler(wxr_mode_turb, (XPLMCommandCallback_f)wxr_mode_handler, 1, (void *)WXR_MODE_TURB);
+    XPLMUnregisterCommandHandler(wxr_mode_map, (XPLMCommandCallback_f)wxr_mode_handler, 1, (void *)WXR_MODE_MAP);
+    XPLMUnregisterCommandHandler(wxr_mode_force_on, (XPLMCommandCallback_f)wxr_mode_handler, 1, (void *)WXR_MODE_FORCE_ON);
+
+    XPLMUnregisterCommandHandler(wxr_slave_toggle, (XPLMCommandCallback_f)wxr_slave_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(wxr_slave_on, (XPLMCommandCallback_f)wxr_slave_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(wxr_slave_off, (XPLMCommandCallback_f)wxr_slave_handler, 1, (void *)OFF);
+
+    XPLMUnregisterCommandHandler(wxr_react_toggle, (XPLMCommandCallback_f)wxr_react_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(wxr_react_on, (XPLMCommandCallback_f)wxr_react_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(wxr_react_off, (XPLMCommandCallback_f)wxr_react_handler, 1, (void *)OFF);
+
+    XPLMUnregisterCommandHandler(wxr_narrow_toggle, (XPLMCommandCallback_f)wxr_narrow_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(wxr_narrow_on, (XPLMCommandCallback_f)wxr_narrow_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(wxr_narrow_off, (XPLMCommandCallback_f)wxr_narrow_handler, 1, (void *)OFF);
+
+    XPLMUnregisterCommandHandler(wxr_alert_toggle, (XPLMCommandCallback_f)wxr_alert_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(wxr_alert_on, (XPLMCommandCallback_f)wxr_alert_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(wxr_alert_off, (XPLMCommandCallback_f)wxr_alert_handler, 1, (void *)OFF);
+
+    XPLMUnregisterCommandHandler(wxr_target_toggle, (XPLMCommandCallback_f)wxr_target_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(wxr_target_on, (XPLMCommandCallback_f)wxr_target_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(wxr_target_off, (XPLMCommandCallback_f)wxr_target_handler, 1, (void *)OFF);
+
+
     // xhsi/pfd_pilot/...
     // mins mode
     XPLMUnregisterCommandHandler(mins_toggle, (XPLMCommandCallback_f)mins_mode_handler, 1, (void *)TOGGLE);
@@ -3581,6 +4319,65 @@ void unregisterCommands(void) {
     XPLMUnregisterCommandHandler(copilot_pos_toggle, (XPLMCommandCallback_f)copilot_pos_handler, 1, (void *)TOGGLE);
     XPLMUnregisterCommandHandler(copilot_pos_on, (XPLMCommandCallback_f)copilot_pos_handler, 1, (void *)ON);
     XPLMUnregisterCommandHandler(copilot_pos_off, (XPLMCommandCallback_f)copilot_pos_handler, 1, (void *)OFF);
+
+    // copilot terrain
+    XPLMUnregisterCommandHandler(copilot_terrain_toggle, (XPLMCommandCallback_f)copilot_terrain_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(copilot_terrain_on, (XPLMCommandCallback_f)copilot_terrain_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(copilot_terrain_off, (XPLMCommandCallback_f)copilot_terrain_handler, 1, (void *)OFF);
+
+
+    // Weather Radar
+    XPLMUnregisterCommandHandler(copilot_wxr_toggle, (XPLMCommandCallback_f)copilot_wxr_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(copilot_wxr_on, (XPLMCommandCallback_f)copilot_wxr_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(copilot_wxr_off, (XPLMCommandCallback_f)copilot_wxr_handler, 1, (void *)OFF);
+
+    XPLMUnregisterCommandHandler(copilot_wxr_gain_up, (XPLMCommandCallback_f)copilot_wxr_gain_handler, 1, (void *)UP);
+    XPLMUnregisterCommandHandler(copilot_wxr_gain_down, (XPLMCommandCallback_f)copilot_wxr_gain_handler, 1, (void *)DOWN);
+    XPLMUnregisterCommandHandler(copilot_wxr_gain_middle, (XPLMCommandCallback_f)copilot_wxr_gain_handler, 1, (void *)MODE_CENTERED);
+
+    XPLMUnregisterCommandHandler(copilot_wxr_tilt_up, (XPLMCommandCallback_f)copilot_wxr_tilt_handler, 1, (void *)UP);
+    XPLMUnregisterCommandHandler(copilot_wxr_tilt_down, (XPLMCommandCallback_f)copilot_wxr_tilt_handler, 1, (void *)DOWN);
+    XPLMUnregisterCommandHandler(copilot_wxr_tilt_zero, (XPLMCommandCallback_f)copilot_wxr_tilt_handler, 1, (void *)MODE_CENTERED);
+
+    XPLMUnregisterCommandHandler(copilot_wxr_auto_gain_toggle, (XPLMCommandCallback_f)copilot_wxr_auto_gain_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(copilot_wxr_auto_gain_on, (XPLMCommandCallback_f)copilot_wxr_auto_gain_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(copilot_wxr_auto_gain_off, (XPLMCommandCallback_f)copilot_wxr_auto_gain_handler, 1, (void *)OFF);
+
+    XPLMUnregisterCommandHandler(copilot_wxr_auto_tilt_toggle, (XPLMCommandCallback_f)copilot_wxr_auto_tilt_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(copilot_wxr_auto_tilt_on, (XPLMCommandCallback_f)copilot_wxr_auto_tilt_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(copilot_wxr_auto_tilt_off, (XPLMCommandCallback_f)copilot_wxr_auto_tilt_handler, 1, (void *)OFF);
+
+    XPLMUnregisterCommandHandler(copilot_wxr_test_toggle, (XPLMCommandCallback_f)copilot_wxr_test_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(copilot_wxr_test_on, (XPLMCommandCallback_f)copilot_wxr_test_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(copilot_wxr_test_off, (XPLMCommandCallback_f)copilot_wxr_test_handler, 1, (void *)OFF);
+
+    XPLMUnregisterCommandHandler(copilot_wxr_mode_up, (XPLMCommandCallback_f)copilot_wxr_mode_handler, 1, (void *)UP);
+    XPLMUnregisterCommandHandler(copilot_wxr_mode_down, (XPLMCommandCallback_f)copilot_wxr_mode_handler, 1, (void *)DOWN);
+    XPLMUnregisterCommandHandler(copilot_wxr_mode_off, (XPLMCommandCallback_f)copilot_wxr_mode_handler, 1, (void *)WXR_MODE_OFF);
+    XPLMUnregisterCommandHandler(copilot_wxr_mode_on, (XPLMCommandCallback_f)copilot_wxr_mode_handler, 1, (void *)WXR_MODE_ON);
+    XPLMUnregisterCommandHandler(copilot_wxr_mode_turb, (XPLMCommandCallback_f)copilot_wxr_mode_handler, 1, (void *)WXR_MODE_TURB);
+    XPLMUnregisterCommandHandler(copilot_wxr_mode_map, (XPLMCommandCallback_f)copilot_wxr_mode_handler, 1, (void *)WXR_MODE_MAP);
+    XPLMUnregisterCommandHandler(copilot_wxr_mode_force_on, (XPLMCommandCallback_f)copilot_wxr_mode_handler, 1, (void *)WXR_MODE_FORCE_ON);
+
+    XPLMUnregisterCommandHandler(copilot_wxr_slave_toggle, (XPLMCommandCallback_f)copilot_wxr_slave_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(copilot_wxr_slave_on, (XPLMCommandCallback_f)copilot_wxr_slave_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(copilot_wxr_slave_off, (XPLMCommandCallback_f)copilot_wxr_slave_handler, 1, (void *)OFF);
+
+    XPLMUnregisterCommandHandler(copilot_wxr_react_toggle, (XPLMCommandCallback_f)copilot_wxr_react_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(copilot_wxr_react_on, (XPLMCommandCallback_f)copilot_wxr_react_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(copilot_wxr_react_off, (XPLMCommandCallback_f)copilot_wxr_react_handler, 1, (void *)OFF);
+
+    XPLMUnregisterCommandHandler(copilot_wxr_narrow_toggle, (XPLMCommandCallback_f)copilot_wxr_narrow_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(copilot_wxr_narrow_on, (XPLMCommandCallback_f)copilot_wxr_narrow_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(copilot_wxr_narrow_off, (XPLMCommandCallback_f)copilot_wxr_narrow_handler, 1, (void *)OFF);
+
+    XPLMUnregisterCommandHandler(copilot_wxr_alert_toggle, (XPLMCommandCallback_f)copilot_wxr_alert_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(copilot_wxr_alert_on, (XPLMCommandCallback_f)copilot_wxr_alert_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(copilot_wxr_alert_off, (XPLMCommandCallback_f)copilot_wxr_alert_handler, 1, (void *)OFF);
+
+    XPLMUnregisterCommandHandler(copilot_wxr_target_toggle, (XPLMCommandCallback_f)copilot_wxr_target_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(copilot_wxr_target_on, (XPLMCommandCallback_f)copilot_wxr_target_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(copilot_wxr_target_off, (XPLMCommandCallback_f)copilot_wxr_target_handler, 1, (void *)OFF);
 
 
     // xhsi/pfd_copilot/...
