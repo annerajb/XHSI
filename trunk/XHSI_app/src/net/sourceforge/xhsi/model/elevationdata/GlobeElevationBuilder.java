@@ -114,12 +114,8 @@ public class GlobeElevationBuilder implements PreferencesObserver {
             // reload navigation databases
             this.pathname_to_globe_db = XHSIPreferences.get_instance().get_preference(XHSIPreferences.PREF_EGPWS_DB_DIR);
             if (XHSIStatus.egpws_db_status.equals(XHSIStatus.STATUS_EGPWS_DB_NOT_FOUND) == false) {
-                try {
-                    logger.config("Reload GLOBE database");
-                    map_database();
-                } catch (Exception e) {
-                    logger.warning("Could not read GLOBE files! (" + e.toString() + ")");
-                }
+            	logger.config("Reload GLOBE database");
+            	map_database();
             } else {
                 logger.warning("Could not find GLOBE Resources! (Status:" + XHSIStatus.egpws_db_status + ")");
             }
@@ -127,7 +123,7 @@ public class GlobeElevationBuilder implements PreferencesObserver {
 
     }
     
-    public void map_database() throws Exception {
+    public void map_database() {
     	
 
         if (new File(this.pathname_to_globe_db).exists()) {
@@ -141,15 +137,19 @@ public class GlobeElevationBuilder implements PreferencesObserver {
                     this.progressObserver.set_progress("Loading databases", "Mapping set #"+i, (i+1)*100.0f/18.0f);
                 }
                 logger.info("Mapping GLOBE database files " + pathname_to_globe_db + globe_file[i]);
-                File file = new File(pathname_to_globe_db + globe_file[i]);
-                logger.fine("Getting file channel " + globe_file[i]);
-                FileChannel fileChannel = new RandomAccessFile(file, "r").getChannel();
-                logger.fine("Mapping byteBuffer " + globe_file[i]);
-                MappedByteBuffer byteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY,0,fileChannel.size());
-                logger.fine("Creating area " + globe_file[i]);
-                ElevationArea area = new ElevationArea(byteBuffer, globe_columns, globe_rows[i], min_lat[i],  max_lat[i],  min_lon[i],  max_lon[i], globe_file[i]);
-                logger.fine("Add area " + globe_file[i]);
-                elevation_repository.addElevationArea(area);
+                try {
+                	File file = new File(pathname_to_globe_db + globe_file[i]);
+                	logger.fine("Getting file channel " + globe_file[i]);
+                	FileChannel fileChannel = new RandomAccessFile(file, "r").getChannel();
+                	logger.fine("Mapping byteBuffer " + globe_file[i]);
+                	MappedByteBuffer byteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY,0,fileChannel.size());
+                	logger.fine("Creating area " + globe_file[i]);
+                    ElevationArea area = new ElevationArea(byteBuffer, globe_columns, globe_rows[i], min_lat[i],  max_lat[i],  min_lon[i],  max_lon[i], globe_file[i]);
+                    logger.fine("Add area " + globe_file[i]);
+                    elevation_repository.addElevationArea(area);
+                } catch (Exception e) {
+                    logger.warning("Could not map GLOBE file (" + e.toString() + ")");
+                }
             }           
             if (this.progressObserver != null) {
                 this.progressObserver.set_progress("Loading databases", "Done!", 100.0f);
