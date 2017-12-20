@@ -91,8 +91,8 @@ public class ElevationArea {
 	
 	public int get_offset( float lat, float lon ) {
 		if (lat >= min_lat && lat <= max_lat && lon >= min_lon && lon <= max_lon) {
-			int offset = Math.round((max_lat-lat) * grid_step_y)*number_of_columns 
-					+ Math.round((lon-min_lon) * grid_step_x); 
+			int offset = (int)((max_lat-lat) * grid_step_y)*number_of_columns 
+					+ (int)((lon-min_lon) * grid_step_x); 
 			return offset;
 		} else {
 			return -1;
