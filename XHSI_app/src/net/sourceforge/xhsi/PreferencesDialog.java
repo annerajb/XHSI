@@ -551,7 +551,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         tabs_panel.add( "PFD", create_pfd_options_tab() );
         tabs_panel.add( "ND", create_nd_options_tab() );
         tabs_panel.add( "EGPWS", create_egpws_options_tab() );
-        tabs_panel.add( "W.Radar", create_wxr_options_tab() );
+        tabs_panel.add( "WX Radar", create_wxr_options_tab() );
         tabs_panel.add( "EICAS", create_eicas_options_tab() );
         tabs_panel.add( "MFD", create_mfd_options_tab() );
         tabs_panel.add( "CDU", create_cdu_options_tab() );

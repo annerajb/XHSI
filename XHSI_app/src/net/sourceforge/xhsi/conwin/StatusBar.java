@@ -219,7 +219,7 @@ public class StatusBar extends ConWinSubcomponent {
             //g2.fillOval(src_x+10,src_y,11,11);
             g2.fillPolygon(x_points_playtriangle, y_points_playtriangle, 3);
         } else {
-            g2.drawString("W.Radar", w_radar_x, src_y+11);
+            g2.drawString("WX Radar", w_radar_x, src_y+11);
             if ( XHSIStatus.weather_status.equals(XHSIStatus.STATUS_NO_RECEPTION) ) {
                 g2.setColor(Color.RED);
                 // cross out text
