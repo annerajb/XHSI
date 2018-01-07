@@ -442,6 +442,8 @@ public class GraphicsConfig implements ComponentListener {
     public boolean boeing_style;
     public boolean unknown_style;
 
+    public boolean symbols_multiselection;
+    
     /*
      *  Avoid calling System.currentTimeMillis() more than one time per DU refresh
      *  This system call costs CPU / this variable acts as a cached value
@@ -467,6 +469,9 @@ public class GraphicsConfig implements ComponentListener {
         airbus_style = ( style == Avionics.STYLE_AIRBUS );
         boeing_style = ( style == Avionics.STYLE_BOEING );
         unknown_style = ( !airbus_style & !boeing_style); // possible if dataref tool used to set an unknown value 
+        
+        // Symbols color schema
+        symbols_multiselection = preferences.get_symbols_multiselection();
         
         // Reset system timer cache 
         current_time_millis = 0;
@@ -703,6 +708,7 @@ public class GraphicsConfig implements ComponentListener {
                 wpt_color = color_cornflowerblue;
                 awy_wpt_color = Color.magenta.brighter();
                 arpt_color = Color.magenta;
+                
                 tuned_localizer_color = color_aquamarine;
                 silent_localizer_color = color_mediumaquamarine.darker().darker();
                 reference_localizer_color = color_lightaquamarine;
@@ -1021,6 +1027,9 @@ public class GraphicsConfig implements ComponentListener {
         // Setup instrument style
         airbus_style = ( style == Avionics.STYLE_AIRBUS );
         boeing_style = ! ( style == Avionics.STYLE_AIRBUS );
+        
+        // Symbols color schema
+        symbols_multiselection = preferences.get_symbols_multiselection();
         
         // anti-aliasing
         this.rendering_hints.put(RenderingHints.KEY_ANTIALIASING, preferences.get_anti_alias() ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);

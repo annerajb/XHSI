@@ -7,6 +7,7 @@
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * Copyright (C) 2009-2014  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2017-2018  Nicolas Carel
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -24,32 +25,23 @@
 */
 package net.sourceforge.xhsi.flightdeck.nd;
 
-//import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
-//import java.awt.Color;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-//import java.awt.GraphicsConfiguration;
 import java.awt.Point;
-//import java.awt.RenderingHints;
 import java.awt.Stroke;
-//import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Arc2D;
+
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
-//import java.awt.geom.Rectangle2D;
-//import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.logging.Logger;
-//import java.util.HashMap;
 
 import net.sourceforge.xhsi.XHSISettings;
-//import net.sourceforge.xhsi.XHSIPreferences;
 
 import net.sourceforge.xhsi.model.Airport;
 import net.sourceforge.xhsi.model.Avionics;
@@ -61,16 +53,14 @@ import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.NavigationObject;
 import net.sourceforge.xhsi.model.NavigationObjectRepository;
 import net.sourceforge.xhsi.model.NavigationRadio;
-//import net.sourceforge.xhsi.model.RadioNavigationObject;
 import net.sourceforge.xhsi.model.RadioNavBeacon;
 import net.sourceforge.xhsi.model.Runway;
 import net.sourceforge.xhsi.model.TaxiChart;
 import net.sourceforge.xhsi.model.TCAS;
 
 import net.sourceforge.xhsi.model.aptnavdata.AptNavXP900DatTaxiChartBuilder;
-
-//import net.sourceforge.xhsi.panel.GraphicsConfig;
-//import net.sourceforge.xhsi.panel.Subcomponent;
+import net.sourceforge.xhsi.util.AzimuthalEquidistantProjection;
+import net.sourceforge.xhsi.util.Projection;
 
 
 
@@ -99,7 +89,7 @@ public class MovingMap extends NDSubcomponent {
     float center_lat;
     float pixels_per_deg_lon;
     float pixels_per_deg_lat;
-    float pixels_per_nm;
+    // float pixels_per_nm;
     
     float range_dashes[] = { 10.0f, 10.0f };
     
@@ -117,126 +107,7 @@ public class MovingMap extends NDSubcomponent {
 
     private static TaxiChart taxi = new TaxiChart();
 
-    
-    private interface Projection {
-//        public void setScale(float ppnm);
-        public void setAcf(float acf_lat, float acf_lon);
-        public void setPoint(float lat, float lon);
-        public int getX();
-        public int getY();
-    }
-    
-// If we need to go back from the Azimuthal Equidistant projection to the Cylindrical projection, we can just use this class
-//    private class CylindricalProjection implements Projection {
-//        
-//        private float c_lat;
-//        private float c_lon;
-//
-//        private int map_x;
-//        private int map_y;
-//        
-//    
-//        public CylindricalProjection() {
-//            
-//        }
-//        
-////        public void setScale(float ppnm) {
-////            nmpix = ppnm;
-////        }
-//
-//        public void setAcf(float acf_lat, float acf_lon) {
-//            // interesting, but not used...
-//            c_lat = acf_lat;
-//            c_lon = acf_lon;
-//        }
-//        
-//        public void setPoint(float lat, float lon) {
-//            map_x = cylindrical_lon_to_x(lon);
-//            map_y = cylindrical_lat_to_y(lat);
-//        }
-//        
-//        public int getX() {
-//            return map_x;
-//        }
-//        
-//        public int getY() {
-//            return map_y;
-//        }
-//        
-//    }
-    
-    private class AzimuthalEquidistantProjection implements Projection {
-        
-//        private float nm_pix;
-        private double phi1;
-        private double sin_phi1;
-        private double cos_phi1;
-        private double lambda0;
-        
-        private double phi;
-        private double sin_phi;
-        private double cos_phi;
-        private double lambda;
-        private double d_lambda;
-        private double sin_d_lambda;
-        private double cos_d_lambda;
-        
-        // private double cos_rho;
-        // private double tan_theta;
-        private double rho;
-        private double theta;
-        
-        private float x;
-        private float y;
-        
-    
-        public AzimuthalEquidistantProjection() {
-            
-        }
-        
-//        public void setScale(float ppnm) {
-//            nm_pix = ppnm;
-//        }
-
-        public void setAcf(float acf_lat, float acf_lon) {
-            phi1 = Math.toRadians(acf_lat);
-            lambda0 = Math.toRadians(acf_lon);
-            sin_phi1 = Math.sin(phi1);
-            cos_phi1 = Math.cos(phi1);
-        }
-        
-        public void setPoint(float lat, float lon) {
-            phi = Math.toRadians(lat);
-            lambda = Math.toRadians(lon);
-            sin_phi = Math.sin(phi);
-            cos_phi = Math.cos(phi);
-            d_lambda = lambda - lambda0;
-            sin_d_lambda = Math.sin(d_lambda);
-            cos_d_lambda = Math.cos(d_lambda);
-            // cos_rho = sin_phi1 * sin_phi + cos_phi1 * cos_phi * cos_d_lambda;
-            // tan_theta = cos_phi * sin_d_lambda / ( cos_phi1 * sin_phi - sin_phi1 * cos_phi * cos_d_lambda );
-            rho = Math.acos(sin_phi1 * sin_phi + cos_phi1 * cos_phi * cos_d_lambda);
-            theta = Math.atan2(cos_phi1 * sin_phi - sin_phi1 * cos_phi * cos_d_lambda, cos_phi * sin_d_lambda);
-            x = (float)(rho * Math.sin(theta));
-            y = - (float)(rho * Math.cos(theta));
-        }
-        
-        public int getX() {
-            
-            return Math.round(nd_gc.map_center_x - y * 180.0f / (float)Math.PI * 60.0f * pixels_per_nm);
-        
-        }
-        
-        public int getY() {
-            
-            return Math.round(nd_gc.map_center_y - x * 180.0f / (float)Math.PI * 60.0f * pixels_per_nm);
-        
-        }
-        
-    }
-    
-    private Projection map_projection = new AzimuthalEquidistantProjection();
-    
+    private Projection map_projection = new AzimuthalEquidistantProjection();    
     
     public MovingMap(ModelFactory model_factory, NDGraphicsConfig hsi_gc, Component parent_component) {
         
@@ -876,10 +747,9 @@ public class MovingMap extends NDSubcomponent {
             }
         }
         
-        this.pixels_per_nm = (float)nd_gc.rose_radius / radius_scale; // float for better precision
-        if ( nd_gc.map_zoomin ) this.pixels_per_nm *= 100.0f;
 
-//        this.map_projection.setScale(this.pixels_per_nm);
+        this.map_projection.setScale(nd_gc.pixels_per_nm);
+        this.map_projection.setCenter(nd_gc.map_center_x,nd_gc.map_center_y);
         this.map_projection.setAcf(this.center_lat, this.center_lon);
         
         // determine max and min lat/lon in viewport to only draw those
@@ -1438,7 +1308,7 @@ public class MovingMap extends NDSubcomponent {
 
     private void drawVOR(Graphics2D g2, int x, int y, RadioNavBeacon vor, int bank, float course) {
 
-        int course_line = (int) (vor.range * this.pixels_per_nm);
+        int course_line = (int) (vor.range * nd_gc.pixels_per_nm);
 
         // just a big hexagon for VOR without DME
 //        int x_points_hexagon[] = { x-4, x+4, x+8, x+4, x-4, x-8 };
@@ -1485,7 +1355,7 @@ public class MovingMap extends NDSubcomponent {
 
     private void drawVORDME(Graphics2D g2, int x, int y, RadioNavBeacon vordme, int bank, float course, float dme_radius) {
 
-        int course_line = (int) (vordme.range * this.pixels_per_nm);
+        int course_line = (int) (vordme.range * nd_gc.pixels_per_nm);
 
         // a somewhat smaller hexagon with 3 leaves for VOR with DME
         int x3 = Math.round(3.0f*nd_gc.scaling_factor);
@@ -1539,7 +1409,7 @@ public class MovingMap extends NDSubcomponent {
             }
             if ( dme_radius > 0 ) {
                 g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
-                g2.drawOval(x-(int)(dme_radius*this.pixels_per_nm), y-(int)(dme_radius*this.pixels_per_nm), (int)(2*dme_radius*this.pixels_per_nm), (int)(2*dme_radius*this.pixels_per_nm));
+                g2.drawOval(x-(int)(dme_radius*nd_gc.pixels_per_nm), y-(int)(dme_radius*nd_gc.pixels_per_nm), (int)(2*dme_radius*nd_gc.pixels_per_nm), (int)(2*dme_radius*nd_gc.pixels_per_nm));
             }
             g2.setStroke(original_stroke);
         }
@@ -1584,7 +1454,7 @@ public class MovingMap extends NDSubcomponent {
             g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
             if ( dme_radius > 0 ) {
                 // g2.rotate(Math.toRadians(-this.map_up), x, y);
-                g2.drawOval(x-(int)(dme_radius*this.pixels_per_nm), y-(int)(dme_radius*this.pixels_per_nm), (int)(2*dme_radius*this.pixels_per_nm), (int)(2*dme_radius*this.pixels_per_nm));
+                g2.drawOval(x-(int)(dme_radius*nd_gc.pixels_per_nm), y-(int)(dme_radius*nd_gc.pixels_per_nm), (int)(2*dme_radius*nd_gc.pixels_per_nm), (int)(2*dme_radius*nd_gc.pixels_per_nm));
             }
             g2.setStroke(original_stroke);
         }
@@ -1651,12 +1521,12 @@ public class MovingMap extends NDSubcomponent {
 
         float stroke_width = 2.0f;
 
-        int rwy_frontcourse = (int) (2.0f*this.pixels_per_nm);
-        int rwy_backcourse = (int) (0.2f*this.pixels_per_nm);
-        int rwy_halfwidth = (int) (0.2f*this.pixels_per_nm);
+        int rwy_frontcourse = (int) (2.0f*nd_gc.pixels_per_nm);
+        int rwy_backcourse = (int) (0.2f*nd_gc.pixels_per_nm);
+        int rwy_halfwidth = (int) (0.2f*nd_gc.pixels_per_nm);
         // SmartCockpit.com says the line extends to 14.2NM,
         // but we use the map_range that we got from NavigationObjectRepository find_tuned_nav_object
-        int localizer_extension = (int) (localizer.range * this.pixels_per_nm);
+        int localizer_extension = (int) (localizer.range * nd_gc.pixels_per_nm);
 
         int dme_x = 0;
         int dme_y = 0;
@@ -1737,8 +1607,8 @@ public class MovingMap extends NDSubcomponent {
         if ( localizer.has_dme && (dme_radius > 0) ) {
             g2.setStroke(new BasicStroke(stroke_width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
             //g2.rotate(Math.toRadians(localizer.bearing - this.map_up), x, y);
-            g2.drawOval(dme_x-(int)(dme_radius*this.pixels_per_nm), dme_y-(int)(dme_radius*this.pixels_per_nm),
-                    (int)(2*dme_radius*this.pixels_per_nm), (int)(2*dme_radius*this.pixels_per_nm));
+            g2.drawOval(dme_x-(int)(dme_radius*nd_gc.pixels_per_nm), dme_y-(int)(dme_radius*nd_gc.pixels_per_nm),
+                    (int)(2*dme_radius*nd_gc.pixels_per_nm), (int)(2*dme_radius*nd_gc.pixels_per_nm));
         }
 
         g2.setStroke(original_stroke);
@@ -1851,7 +1721,7 @@ public class MovingMap extends NDSubcomponent {
             }
             g2.rotate( Math.toRadians( this.avionics.gps_course() - this.aircraft.magnetic_variation() ), x, y );
             // draw the line from the point that the aircraft is supposed to be if it were right on track
-            g2.drawLine(x,y, x, y + (int)(this.avionics.get_gps_radio().get_distance() * this.pixels_per_nm) );
+            g2.drawLine(x,y, x, y + (int)(this.avionics.get_gps_radio().get_distance() * nd_gc.pixels_per_nm) );
             
             g2.setStroke(original_stroke);
             g2.setTransform(original_at);

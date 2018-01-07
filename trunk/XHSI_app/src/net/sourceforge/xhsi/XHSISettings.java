@@ -111,8 +111,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_SYMBOLS_SHOW_TFC = "TFC";
     public static final String ACTION_SYMBOLS_SHOW_POS = "POS";
     public static final String ACTION_SYMBOLS_SHOW_DATA = "DATA";
-    public static final String ACTION_SYMBOLS_SHOW_TERRAIN = "TERRAIN";
-    public static final String ACTION_SYMBOLS_SHOW_WEATHER = "Weather Radar";
+    public static final String ACTION_SYMBOLS_SHOW_TERRAIN = "TERRAIN";   
     public static final String ACTION_SYMBOLS_SHOW_VP = "Vertical path";
 
     public static final String ACTION_XPDR_OFF = "OFF";
@@ -127,6 +126,29 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_FIX_HIDE = "Hide CDU fix";
     public static final String ACTION_FIX_SHOW = "Define CDU fix ...";
 
+    public static final String ACTION_WXR_SHOW_WEATHER = "Show Radar";
+    public static final String ACTION_WXR_MODE_OFF = "WXR OFF";
+    public static final String ACTION_WXR_MODE_ON = "WXR ON";
+    public static final String ACTION_WXR_MODE_TURB = "WXR TURB";
+    public static final String ACTION_WXR_MODE_MAP = "WXR MAP";
+    public static final String ACTION_WXR_MODE_FORCE_ON = "WXR FORCE ON";
+    public static final String ACTION_WXR_AUTO_GAIN = "Automatic gain";
+    public static final String ACTION_WXR_AUTO_TILT = "Automatic tilt";
+    public static final String ACTION_WXR_SET_GAIN_TILT = "Set gain & tilt ...";
+    public static final String ACTION_WXR_TEST = "System Test";
+    public static final String ACTION_WXR_REACT = "REACT";
+    public static final String ACTION_WXR_SLAVE = "Slave";
+    public static final String ACTION_WXR_TARGET = "Target";
+    public static final String ACTION_WXR_ALERT = "Alert";
+    public static final String ACTION_WXR_NARROW = "Narrow";
+
+    public static final String LABEL_WXR_MODE_OFF = "OFF";
+    public static final String LABEL_WXR_MODE_ON = "ON";
+    public static final String LABEL_WXR_MODE_TURB = "Turbulence";
+    public static final String LABEL_WXR_MODE_MAP = "MAP";
+    public static final String LABEL_WXR_MODE_FORCE_ON = "ON without Standby";
+
+    
     public static final String ACTION_AP_SET_ALTITUDE = "Set Altitude ...";
     
     public static final String ACTION_AP_LEVEL_CHG = "Level Change";
@@ -340,7 +362,6 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private JCheckBoxMenuItem checkbox_symbols_show_pos;
     private JCheckBoxMenuItem checkbox_symbols_show_data;
     private JCheckBoxMenuItem checkbox_symbols_show_terrain;
-    private JCheckBoxMenuItem checkbox_symbols_show_weather;
     private JCheckBoxMenuItem checkbox_symbols_show_vp;
 
     public JRadioButtonMenuItem radiobutton_holding_hide;
@@ -363,6 +384,24 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     private SpeedDialog speed_dialog;
     //private FuelDialog fuel_dialog;
 
+    // Weather radar
+    private JCheckBoxMenuItem checkbox_wxr_show_weather;
+    private JCheckBoxMenuItem checkbox_wxr_auto_gain;
+    private JCheckBoxMenuItem checkbox_wxr_auto_tilt;
+    private RadarGainTiltDialog wxr_gain_tilt_dialog;
+    private JCheckBoxMenuItem checkbox_wxr_test;
+    private JCheckBoxMenuItem checkbox_wxr_react;
+    private JCheckBoxMenuItem checkbox_wxr_narrow;
+    private JCheckBoxMenuItem checkbox_wxr_target;
+    private JCheckBoxMenuItem checkbox_wxr_alert;
+    private JCheckBoxMenuItem checkbox_wxr_slave;
+    // Mode submenu
+    private JRadioButtonMenuItem radio_button_wxr_mode_off;
+    private JRadioButtonMenuItem radio_button_wxr_mode_on;
+    private JRadioButtonMenuItem radio_button_wxr_mode_turb;
+    private JRadioButtonMenuItem radio_button_wxr_mode_map;
+    private JRadioButtonMenuItem radio_button_wxr_mode_force_on;
+    
     // ------ MCP Sub Menu ------
     /*
      *  private AltitudeDialog altitude_dialog;
@@ -448,6 +487,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.heading_dialog = new HeadingDialog(xhsi_main_frame, avionics);
         this.v_speed_dialog = new VerticalSpeedDialog(xhsi_main_frame, avionics);
         this.speed_dialog = new SpeedDialog(xhsi_main_frame, avionics);
+        this.wxr_gain_tilt_dialog = new RadarGainTiltDialog(xhsi_main_frame, avionics);
         // this.fuel_dialog = new FuelDialog(xhsi_main_frame);
 
     }
@@ -1019,13 +1059,7 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // keep a reference to the checkbox to set or clear it in a non-standard way
         this.checkbox_symbols_show_vp = checkbox_menu_item;
         
-        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_SYMBOLS_SHOW_WEATHER);
-        checkbox_menu_item.setToolTipText("Show Weather Radar");
-        checkbox_menu_item.addActionListener(this);
-        checkbox_menu_item.setSelected(true);
-        nd_symbols_submenu.add(checkbox_menu_item);
-        // keep a reference to the checkbox to set or clear it in a non-standard way
-        this.checkbox_symbols_show_weather = checkbox_menu_item;
+
         
         // add the "Symbols" menu to the menubar
         nd_menu.add(nd_symbols_submenu);
@@ -1089,6 +1123,154 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         menu_bar.add(nd_menu);
 
         
+        
+        /*
+         *  define the "WX" menu
+         */
+        JMenu wx_menu = new JMenu("WX");
+        
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_WXR_SHOW_WEATHER);
+        checkbox_menu_item.setToolTipText("Show Weather Radar");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(true);
+        wx_menu.add(checkbox_menu_item);
+        // keep a reference to the checkbox to set or clear it in a non-standard way
+        this.checkbox_wxr_show_weather = checkbox_menu_item;
+        
+        // define the "Mode" submenu
+        JMenu wxr_mode_submenu = new JMenu("Mode");
+
+        ButtonGroup wxr_submode_group = new ButtonGroup();
+
+       
+        // define the menu items, and add them to the "Mode" submenu
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.LABEL_WXR_MODE_OFF);
+        radio_button_menu_item.setToolTipText("System OFF");
+        radio_button_menu_item.setActionCommand(XHSISettings.ACTION_WXR_MODE_OFF);
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
+        wxr_submode_group.add(radio_button_menu_item);
+        wxr_mode_submenu.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_wxr_mode_off = radio_button_menu_item;
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.LABEL_WXR_MODE_ON);
+        radio_button_menu_item.setToolTipText(XHSISettings.ACTION_WXR_MODE_ON);
+        radio_button_menu_item.setActionCommand(XHSISettings.ACTION_WXR_MODE_ON);
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(true);
+        wxr_submode_group.add(radio_button_menu_item);
+        wxr_mode_submenu.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_wxr_mode_on = radio_button_menu_item;
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.LABEL_WXR_MODE_TURB);
+        radio_button_menu_item.setToolTipText("Weather + Turbulence");
+        radio_button_menu_item.setActionCommand(XHSISettings.ACTION_WXR_MODE_TURB);
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
+        wxr_submode_group.add(radio_button_menu_item);
+        wxr_mode_submenu.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_wxr_mode_turb = radio_button_menu_item;
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.LABEL_WXR_MODE_MAP);
+        radio_button_menu_item.setToolTipText("MAP mode not available");
+        radio_button_menu_item.setActionCommand(ACTION_WXR_MODE_MAP);
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
+        wxr_submode_group.add(radio_button_menu_item);
+        wxr_mode_submenu.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_wxr_mode_map = radio_button_menu_item;
+
+        radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.LABEL_WXR_MODE_FORCE_ON);
+        radio_button_menu_item.setToolTipText(XHSISettings.ACTION_WXR_MODE_FORCE_ON);
+        radio_button_menu_item.setActionCommand(XHSISettings.ACTION_WXR_MODE_FORCE_ON);
+        radio_button_menu_item.addActionListener(this);
+        radio_button_menu_item.setSelected(false);
+        wxr_submode_group.add(radio_button_menu_item);
+        wxr_mode_submenu.add(radio_button_menu_item);
+        // keep a reference
+        this.radio_button_wxr_mode_force_on = radio_button_menu_item;
+
+        // add the "Mode" submenu to the "ND" menu
+        wx_menu.add(wxr_mode_submenu);
+        
+        
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_WXR_AUTO_GAIN);
+        checkbox_menu_item.setToolTipText("Automatic tain");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(true);
+        wx_menu.add(checkbox_menu_item);
+        // keep a reference to the checkbox to set or clear it in a non-standard way
+        this.checkbox_wxr_auto_gain = checkbox_menu_item;
+        
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_WXR_AUTO_TILT);
+        checkbox_menu_item.setToolTipText("Automatic tilt");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(true);
+        wx_menu.add(checkbox_menu_item);
+        // keep a reference to the checkbox to set or clear it in a non-standard way
+        this.checkbox_wxr_auto_tilt = checkbox_menu_item;
+
+        menu_item = new JMenuItem(XHSISettings.ACTION_WXR_SET_GAIN_TILT);
+        menu_item.setToolTipText("Set the radar gain and tilt");
+        menu_item.addActionListener(this);
+        wx_menu.add(menu_item);
+        
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_WXR_TEST);
+        checkbox_menu_item.setToolTipText("Test mode");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(true);
+        wx_menu.add(checkbox_menu_item);
+        // keep a reference to the checkbox to set or clear it in a non-standard way
+        this.checkbox_wxr_test = checkbox_menu_item;
+
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_WXR_REACT);
+        checkbox_menu_item.setToolTipText("Rain Echo Attenuation Compensation Technique");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(true);
+        wx_menu.add(checkbox_menu_item);
+        // keep a reference to the checkbox to set or clear it in a non-standard way
+        this.checkbox_wxr_react = checkbox_menu_item;
+        
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_WXR_NARROW);
+        checkbox_menu_item.setToolTipText("Narrow");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(true);
+        wx_menu.add(checkbox_menu_item);
+        // keep a reference to the checkbox to set or clear it in a non-standard way
+        this.checkbox_wxr_narrow = checkbox_menu_item;
+        
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_WXR_TARGET);
+        checkbox_menu_item.setToolTipText("Target");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(true);
+        wx_menu.add(checkbox_menu_item);
+        // keep a reference to the checkbox to set or clear it in a non-standard way
+        this.checkbox_wxr_target = checkbox_menu_item;
+        
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_WXR_ALERT);
+        checkbox_menu_item.setToolTipText("Alert");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(true);
+        wx_menu.add(checkbox_menu_item);
+        // keep a reference to the checkbox to set or clear it in a non-standard way
+        this.checkbox_wxr_alert = checkbox_menu_item;
+        
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_WXR_SLAVE);
+        checkbox_menu_item.setToolTipText("Slave");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(true);
+        wx_menu.add(checkbox_menu_item);
+        // keep a reference to the checkbox to set or clear it in a non-standard way
+        this.checkbox_wxr_slave = checkbox_menu_item;
+
+       
+        
+        // add the "WX" menu to the menubar
+        menu_bar.add(wx_menu);        
         
         
         /*
@@ -1688,9 +1870,59 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         } else if (command.equals(XHSISettings.ACTION_SYMBOLS_SHOW_TERRAIN)) {
             show_terrain = this.checkbox_symbols_show_terrain.isSelected();
             this.avionics.set_show_terrain(show_terrain);
-        } else if (command.equals(XHSISettings.ACTION_SYMBOLS_SHOW_WEATHER)) {
-            show_weather = this.checkbox_symbols_show_weather.isSelected();
+            
+        } else if (command.equals(XHSISettings.ACTION_WXR_SHOW_WEATHER)) {
+            show_weather = this.checkbox_wxr_show_weather.isSelected();
             this.avionics.set_show_wxr(show_weather);
+        } else if (command.equals(XHSISettings.ACTION_WXR_MODE_OFF)) {
+            wxr_mode = Avionics.WXR_MODE_OFF;
+            this.avionics.set_wxr_mode(Avionics.WXR_MODE_OFF);
+        } else if (command.equals(XHSISettings.ACTION_WXR_MODE_ON)) {
+            wxr_mode = Avionics.WXR_MODE_WXR;
+            this.avionics.set_wxr_mode(Avionics.WXR_MODE_WXR);
+        } else if (command.equals(XHSISettings.ACTION_WXR_MODE_TURB)) {
+            wxr_mode = Avionics.WXR_MODE_TURB;
+            this.avionics.set_wxr_mode(Avionics.WXR_MODE_TURB);
+        } else if (command.equals(XHSISettings.ACTION_WXR_MODE_MAP)) {
+            wxr_mode = Avionics.WXR_MODE_MAP;
+            this.avionics.set_wxr_mode(Avionics.WXR_MODE_MAP);
+        } else if (command.equals(XHSISettings.ACTION_WXR_MODE_FORCE_ON)) {
+            wxr_mode = Avionics.WXR_MODE_FORCE_ON;
+            this.avionics.set_wxr_mode(Avionics.WXR_MODE_FORCE_ON);
+        } else if (command.equals(XHSISettings.ACTION_WXR_AUTO_GAIN)) {
+            wxr_auto_gain = this.checkbox_wxr_auto_gain.isSelected();
+            this.avionics.set_wxr_auto_gain(wxr_auto_gain);
+        } else if (command.equals(XHSISettings.ACTION_WXR_AUTO_TILT)) {
+        	wxr_auto_tilt = this.checkbox_wxr_auto_tilt.isSelected();
+            this.avionics.set_wxr_auto_tilt(wxr_auto_tilt);
+        } else if (command.equals(XHSISettings.ACTION_WXR_SET_GAIN_TILT)) {            
+            // Set & show gain and tilt dialog
+            this.wxr_gain_tilt_dialog.setLocation(this.main_frame.getX()+this.main_frame.getWidth()/2-this.wxr_gain_tilt_dialog.getWidth()/2, this.main_frame.getY()+120);
+            this.wxr_gain_tilt_dialog.init();
+            this.wxr_gain_tilt_dialog.setVisible(true);
+            this.wxr_gain_tilt_dialog.pack();
+            
+        } else if (command.equals(XHSISettings.ACTION_WXR_TEST)) {
+        	wxr_test = this.checkbox_wxr_test.isSelected();
+            this.avionics.set_wxr_test(wxr_test);
+        } else if (command.equals(XHSISettings.ACTION_WXR_SLAVE)) {
+        	wxr_slave = this.checkbox_wxr_slave.isSelected();
+            this.avionics.set_wxr_slave(wxr_slave);
+        } else if (command.equals(XHSISettings.ACTION_WXR_REACT)) {
+        	wxr_react = this.checkbox_wxr_react.isSelected();
+            this.avionics.set_wxr_react(wxr_react);           
+        } else if (command.equals(XHSISettings.ACTION_WXR_NARROW)) {
+        	wxr_narrow = this.checkbox_wxr_narrow.isSelected();
+            this.avionics.set_wxr_narrow(wxr_narrow);
+        } else if (command.equals(XHSISettings.ACTION_WXR_ALERT)) {
+        	wxr_alert = this.checkbox_wxr_alert.isSelected();
+            this.avionics.set_wxr_alert(wxr_alert);  
+        } else if (command.equals(XHSISettings.ACTION_WXR_ALERT)) {
+        	wxr_alert = this.checkbox_wxr_alert.isSelected();
+            this.avionics.set_wxr_alert(wxr_alert);  
+        } else if (command.equals(XHSISettings.ACTION_WXR_TARGET)) {
+        	wxr_target = this.checkbox_wxr_target.isSelected();
+            this.avionics.set_wxr_target(wxr_target);  
         } else if (command.equals(XHSISettings.ACTION_SYMBOLS_SHOW_VP)) {
             show_vp = this.checkbox_symbols_show_vp.isSelected();
             this.avionics.set_show_vp(show_vp);            
@@ -2054,11 +2286,26 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.checkbox_symbols_show_pos.setSelected( avionics.efis_shows_pos() );
         this.checkbox_symbols_show_data.setSelected( avionics.efis_shows_data() );
         
+       
         // Weather Radar & EGPWS
-        this.checkbox_symbols_show_terrain.setSelected( avionics.efis_shows_terrain() );
-        this.checkbox_symbols_show_weather.setSelected( avionics.efis_shows_wxr() );
+        this.checkbox_symbols_show_terrain.setSelected( avionics.efis_shows_terrain() );        
         this.checkbox_symbols_show_vp.setSelected( avionics.efis_shows_vp() );
-
+        this.checkbox_wxr_show_weather.setSelected( avionics.efis_shows_wxr() );
+        int new_wxr_mode = avionics.wxr_mode();
+        this.radio_button_wxr_mode_off.setSelected( new_wxr_mode == Avionics.WXR_MODE_OFF );
+        this.radio_button_wxr_mode_on.setSelected( new_wxr_mode == Avionics.WXR_MODE_WXR );
+        this.radio_button_wxr_mode_turb.setSelected( new_wxr_mode == Avionics.WXR_MODE_TURB );
+        this.radio_button_wxr_mode_map.setSelected( new_wxr_mode == Avionics.WXR_MODE_MAP );
+        this.radio_button_wxr_mode_force_on.setSelected( new_wxr_mode == Avionics.WXR_MODE_FORCE_ON );
+        this.checkbox_wxr_auto_gain.setSelected( avionics.wxr_auto_gain() );
+        this.checkbox_wxr_auto_tilt.setSelected( avionics.wxr_auto_tilt() );
+        this.checkbox_wxr_test.setSelected( avionics.wxr_test() );
+        this.checkbox_wxr_slave.setSelected( avionics.wxr_slave() );
+        this.checkbox_wxr_react.setSelected( avionics.wxr_react() );
+        this.checkbox_wxr_narrow.setSelected( avionics.wxr_narrow() );
+        this.checkbox_wxr_alert.setSelected( avionics.wxr_alert() );
+        this.checkbox_wxr_target.setSelected( avionics.wxr_target() );
+        
         int new_xpdr = avionics.transponder_mode();
         this.radio_button_xpdr_off.setSelected( new_xpdr == Avionics.XPDR_OFF );
         this.radio_button_xpdr_stby.setSelected( new_xpdr == Avionics.XPDR_STBY );

@@ -41,6 +41,8 @@ import net.sourceforge.xhsi.model.CoordinateSystem;
 import net.sourceforge.xhsi.model.ElevationRepository;
 import net.sourceforge.xhsi.model.FMSEntry;
 import net.sourceforge.xhsi.model.ModelFactory;
+import net.sourceforge.xhsi.util.AzimuthalEquidistantProjection;
+import net.sourceforge.xhsi.util.Projection;
 
 public class Terrain extends NDSubcomponent {
 
@@ -52,27 +54,27 @@ public class Terrain extends NDSubcomponent {
     
     private Paint original_paint;
     
-    float map_up;
-    float center_lon;
-    float center_lat;
-    float pixels_per_deg_lon;
-    float pixels_per_deg_lat;
-    float pixels_per_nm;
+    private float map_up;
+    private float center_lon;
+    private float center_lat;
+    // private float pixels_per_deg_lon;
+    // private float pixels_per_deg_lat;
     
-	float peak_min;
-	float peak_max;
-	float terrain_max;
-	float high_band; 
-	float middle_band;
-	float low_band; 
+    private float peak_min;
+    private float peak_max;
+    private float terrain_max;
+    private float high_band; 
+    private float middle_band;
+    private float low_band; 
 	boolean peaks_mode_on;
+	boolean terrain_on;
 	
-    Area terr_clip_1 = null;
-    Area terr_clip_2 = null;
+	private Area terr_clip_1 = null;
+	private Area terr_clip_2 = null;
     
-	boolean terr_img_1_valid;
-	boolean terr_img_2_valid;
-	int current_image;
+	private boolean terr_img_1_valid;
+	private boolean terr_img_2_valid;
+	private int current_image;
       
     private float sweep_angle;
     private float sweep_max = 60.0f;
@@ -81,84 +83,21 @@ public class Terrain extends NDSubcomponent {
 	
 	private float gear_altitude;
     
-    ElevationRepository elevRepository;
+	private ElevationRepository elevRepository;
     
-    DecimalFormat coordinates_formatter;
-    
-    private interface Projection {
-      public void setAcf(float acf_lat, float acf_lon);
-      public void setPoint(float lat, float lon);
-      public int getX();
-      public int getY();
-    }
-    
-    private class AzimuthalEquidistantProjection implements Projection {
-        
-      private double phi1;
-      private double sin_phi1;
-      private double cos_phi1;
-      private double lambda0;
-      
-      private double phi;
-      private double sin_phi;
-      private double cos_phi;
-      private double lambda;
-      private double d_lambda;
-      private double sin_d_lambda;
-      private double cos_d_lambda;    
-      private double rho;
-      private double theta;
-      
-      private float x;
-      private float y;      
+	private DecimalFormat coordinates_formatter;
+	private DecimalFormat fl_formatter;
   
-      public AzimuthalEquidistantProjection() {
-          
-      }
-      
-      public void setAcf(float acf_lat, float acf_lon) {
-          phi1 = Math.toRadians(acf_lat);
-          lambda0 = Math.toRadians(acf_lon);
-          sin_phi1 = Math.sin(phi1);
-          cos_phi1 = Math.cos(phi1);
-      }
-      
-      public void setPoint(float lat, float lon) {
-          phi = Math.toRadians(lat);
-          lambda = Math.toRadians(lon);
-          sin_phi = Math.sin(phi);
-          cos_phi = Math.cos(phi);
-          d_lambda = lambda - lambda0;
-          sin_d_lambda = Math.sin(d_lambda);
-          cos_d_lambda = Math.cos(d_lambda);
-          rho = Math.acos(sin_phi1 * sin_phi + cos_phi1 * cos_phi * cos_d_lambda);
-          theta = Math.atan2(cos_phi1 * sin_phi - sin_phi1 * cos_phi * cos_d_lambda, cos_phi * sin_d_lambda);
-          x = (float)(rho * Math.sin(theta));
-          y = - (float)(rho * Math.cos(theta));
-      }
-      
-      public int getX() {
-          
-          return Math.round(nd_gc.map_center_x - y * 180.0f / (float)Math.PI * 60.0f * pixels_per_nm);
-      
-      }
-      
-      public int getY() {
-          
-          return Math.round(nd_gc.map_center_y - x * 180.0f / (float)Math.PI * 60.0f * pixels_per_nm);
-      
-      }
-      
-  }
-  
-  private Projection map_projection = new AzimuthalEquidistantProjection();
+    private Projection map_projection;
  
     
 	public Terrain(ModelFactory model_factory, NDGraphicsConfig nd_gc,
 			Component parent_component) {
 		super(model_factory, nd_gc, parent_component);
+		map_projection = new AzimuthalEquidistantProjection();
         this.elevRepository = ElevationRepository.get_instance();
         this.coordinates_formatter = new DecimalFormat("00.0");
+        this.fl_formatter = new DecimalFormat("000");
         DecimalFormatSymbols symbols = coordinates_formatter.getDecimalFormatSymbols();
         symbols.setDecimalSeparator('.');
         coordinates_formatter.setDecimalFormatSymbols(symbols);
@@ -169,11 +108,18 @@ public class Terrain extends NDSubcomponent {
     	sweep_angle = 0.0f;
     	sweep_timestamp = 0;
     	peaks_mode_on = false;
+    	terrain_on = false;
 	}
 
 	public void paint(Graphics2D g2) {
         if ( nd_gc.powered && (!( nd_gc.mode_app || nd_gc.mode_vor )) && avionics.efis_shows_terrain()) {
-        	drawInfoBox(g2);
+    		if (!terrain_on) {
+    			prepareInfoBox();
+    			terrain_on=true;
+    			terr_img_1_valid=false;
+    			terr_img_2_valid=false;
+    			initSweep(false);
+    		}
         	if ( ! nd_gc.map_zoomin ) {
         		paintTerrain(g2);   
         		
@@ -193,6 +139,7 @@ public class Terrain extends NDSubcomponent {
         			g_terr.fillRect(0, 0, nd_gc.panel_rect.width,nd_gc.panel_rect.height);
         			drawTerrain(g_terr,nd_gc.max_range);  
         			terr_img_1_valid=true;
+        			prepareInfoBox();
         		}
         		if ( (! terr_img_2_valid) && (current_image==2) ) {
         			// logger.info("Building terrain in buffer 2");
@@ -203,10 +150,26 @@ public class Terrain extends NDSubcomponent {
         			g_terr.fillRect(0, 0, nd_gc.panel_rect.width,nd_gc.panel_rect.height);
         			drawTerrain(g_terr,nd_gc.max_range);  
         			terr_img_2_valid=true;
+        			prepareInfoBox();
         		}
         	}
+        } else {
+        	terrain_on=false;
         }
+        
 	}
+	
+	
+	private void prepareInfoBox() {
+		// logger.info("Building terrain info buffer");
+		Graphics2D g_tinfo = nd_gc.terr_info_img.createGraphics();
+		g_tinfo.setRenderingHints(nd_gc.rendering_hints);
+		g_tinfo.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+		g_tinfo.setColor(nd_gc.background_color);		
+		g_tinfo.fillRect(0, 0, nd_gc.terr_info_width, nd_gc.terr_info_height);
+		drawInfoBox(g_tinfo);  
+	}
+	
 	
 	/* 
 	 * Terrain auto-display feature 
@@ -223,16 +186,16 @@ public class Terrain extends NDSubcomponent {
 	 */
 	
 	private void drawInfoBox(Graphics2D g2) {
+		// g2.setColor(nd_gc.terrain_label_color);
+		// g2.drawRect(1,1,nd_gc.terr_info_width-2,nd_gc.terr_info_height-2);
 
 		// TERR indicator
 		g2.setFont(nd_gc.terr_label_font);
-		if (nd_gc.airbus_style) {
-			String terr_str = "TERR";
-			g2.clearRect(nd_gc.terr_value_x- nd_gc.digit_width_s/2, nd_gc.terr_label_rect_y, nd_gc.terr_box_width, nd_gc.terr_min_box_y +nd_gc.terr_box_height);
-			g2.setColor(nd_gc.terrain_label_color);
-			g2.drawString(terr_str, nd_gc.terr_label_x, nd_gc.terr_label_y);
-		}
-
+		String terr_str = "TERR";
+		// g2.clearRect(nd_gc.terr_value_x- nd_gc.digit_width_s/2, nd_gc.terr_label_rect_y, nd_gc.terr_box_width, nd_gc.terr_min_box_y +nd_gc.terr_box_height);
+		g2.setColor(nd_gc.terrain_label_color);
+		g2.drawString(terr_str, nd_gc.terr_label_x, nd_gc.terr_label_y);
+		
         
 		float ref_alt = ref_altitude();
 		
@@ -245,7 +208,7 @@ public class Terrain extends NDSubcomponent {
 			g2.setColor(Color.green);
 		}
 		g2.drawRect(nd_gc.terr_box_x, nd_gc.terr_max_box_y, nd_gc.terr_box_width, nd_gc.terr_box_height);
-		String max_str = ""+Math.round(peak_max/100);
+		String max_str = fl_formatter.format(Math.round(peak_max/100));
 		g2.drawString(max_str, nd_gc.terr_value_x, nd_gc.terr_max_value_y);
 
 		// Min terrain altitude box (unit = Flight Level)
@@ -256,9 +219,11 @@ public class Terrain extends NDSubcomponent {
 		} else {
 			g2.setColor(Color.green);
 		}
-		g2.drawRect(nd_gc.terr_box_x, nd_gc.terr_min_box_y, nd_gc.terr_box_width, nd_gc.terr_box_height);
-		String min_str = ""+Math.round(peak_min/100);
-		g2.drawString(min_str, nd_gc.terr_value_x, nd_gc.terr_min_value_y);
+		if (peak_min >= 100) {
+			g2.drawRect(nd_gc.terr_box_x, nd_gc.terr_min_box_y, nd_gc.terr_box_width, nd_gc.terr_box_height);
+			String min_str = fl_formatter.format(Math.round(peak_min/100));
+			g2.drawString(min_str, nd_gc.terr_value_x, nd_gc.terr_min_value_y);
+		}
 	}
 	
 	
@@ -337,9 +302,13 @@ public class Terrain extends NDSubcomponent {
             }
         }
         
+        /*
         this.pixels_per_nm = (float)nd_gc.rose_radius / radius_scale; // float for better precision
         if ( nd_gc.map_zoomin ) this.pixels_per_nm *= 100.0f;
+        */
 
+        this.map_projection.setScale(nd_gc.pixels_per_nm);
+        this.map_projection.setCenter(nd_gc.map_center_x,nd_gc.map_center_y);
         this.map_projection.setAcf(this.center_lat, this.center_lon);
         
         // determine max and min lat/lon in viewport to only draw those

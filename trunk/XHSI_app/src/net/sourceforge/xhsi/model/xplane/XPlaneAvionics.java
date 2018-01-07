@@ -155,6 +155,15 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     }
 
+    /*
+     * Function to send only one bit 
+     */
+    private void sendBitPoint(int id, int bit, boolean value) {
+    	int id_value = (int)sim_data.get_sim_float(id);
+    	int bit_mask = 1 << bit;
+    	int complement = 0xFFFF ^ bit_mask;
+        udp_sender.sendDataPoint( id, value ? id_value | bit_mask : id_value & complement );
+    }
 
     public NavigationRadio get_selected_radio(int bank) {
 
@@ -2568,14 +2577,32 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
 
 
+    public void set_show_cstr(boolean new_cstr) {
+    	// TODO: Implement show constraints EFIS button
+    }
+
+    
     public void set_show_arpt(boolean new_arpt) {
 
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_AIRPORTS, new_arpt ? 1.0f : 0.0f );
+            if ( !xhsi_preferences.get_symbols_multiselection() && new_arpt) {
+            	// deselect WPT, VOR, NDB, CSTR
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WAYPOINTS, 0.0f );
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_VORS, 0.0f );
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_NDBS, 0.0f );
+            	// udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_CSTR, 0.0f );
+            }
         } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_ARPT, new_arpt ? 1.0f : 0.0f );
+            if ( !xhsi_preferences.get_symbols_multiselection() && new_arpt) {
+            	// deselect WPT, VOR, NDB, CSTR
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WPT, 0.0f );
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_VOR, 0.0f );
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_NDB, 0.0f );
+            	// udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_CSTR, 0.0f );
+            }
         }
-
     }
 
 
@@ -2583,10 +2610,23 @@ public class XPlaneAvionics implements Avionics, Observer {
 
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WAYPOINTS, new_wpt ? 1.0f : 0.0f );
+            if ( !xhsi_preferences.get_symbols_multiselection() && new_wpt) {
+            	// deselect ARPT, VOR, NDB, DATA
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_AIRPORTS, 0.0f );
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_VORS, 0.0f );
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_NDBS, 0.0f );
+            	// udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_CSTR, 0.0f );
+            }
         } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WPT, new_wpt ? 1.0f : 0.0f );
+            if ( !xhsi_preferences.get_symbols_multiselection() && new_wpt) {
+            	// deselect ARPT, VOR, NDB, DATA
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_ARPT, 0.0f );
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_VOR, 0.0f );
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_NDB, 0.0f );
+            	// udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_CSTR, 0.0f );
+            }
         }
-
     }
 
 
@@ -2594,10 +2634,23 @@ public class XPlaneAvionics implements Avionics, Observer {
 
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_VORS, new_vor ? 1.0f : 0.0f );
+            if ( !xhsi_preferences.get_symbols_multiselection() && new_vor) {
+            	// deselect ARPT, WPT, NDB, DATA
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_AIRPORTS, 0.0f );
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WAYPOINTS, 0.0f );
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_NDBS, 0.0f );
+            	// udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_CSTR, 0.0f );
+            }
         } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_VOR, new_vor ? 1.0f : 0.0f );
+            if ( !xhsi_preferences.get_symbols_multiselection() && new_vor) {
+            	// deselect ARPT, VOR, NDB, DATA
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_ARPT, 0.0f );
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WPT, 0.0f );
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_NDB, 0.0f );
+            	// udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_CSTR, 0.0f );
+            }
         }
-
     }
 
 
@@ -2605,10 +2658,23 @@ public class XPlaneAvionics implements Avionics, Observer {
 
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_NDBS, new_ndb ? 1.0f : 0.0f );
+            if ( !xhsi_preferences.get_symbols_multiselection() && new_ndb) {
+            	// deselect ARPT, WPT, VOR, DATA
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_AIRPORTS, 0.0f );
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WAYPOINTS, 0.0f );
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_VORS, 0.0f );
+            	// udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_CSTR, 0.0f );
+            }
         } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_NDB, new_ndb ? 1.0f : 0.0f );
+            if ( !xhsi_preferences.get_symbols_multiselection() && new_ndb) {
+            	// deselect ARPT, VOR, VOR, DATA
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_ARPT, 0.0f );
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WPT, 0.0f );
+            	udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_VOR, 0.0f );
+            	// udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_CSTR, 0.0f );
+            }
         }
-
     }
 
 
@@ -2658,6 +2724,25 @@ public class XPlaneAvionics implements Avionics, Observer {
         }
     }
 
+    /*
+     * Weather radar
+     * Options bit mask 
+     * pilot:   XHSI_EFIS_PILOT_WXR_OPT
+     * copilot: XHSI_EFIS_COPILOT_WXR_OPT
+     * ----------------
+     * 
+     * dataref                     bit   mask   complement
+     * 
+     * xhsi/nd_pilot/wxr_target     7    0x0080 0xFF7F
+     * xhsi/nd_pilot/wxr_alert      6    0x0040 0xFFBF
+     * xhsi/nd_pilot/wxr_narrow     5    0x0020 0xFFDF
+     * xhsi/nd_pilot/wxr_react      4    0x0010 0xFFEF
+     * xhsi/nd_pilot/wxr_slave      3    0x0008 0xFFF7
+     * xhsi/nd_pilot/wxr_auto_tilt  2    0x0004 0xFFFB
+     * xhsi/nd_pilot/wxr_auto_gain  1    0x0002 0xFFFD
+     * xhsi/nd_pilot/wxr_test       0    0x0001 0xFFFE
+     */
+    
     public void set_show_wxr(boolean new_data) {
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_SWITCHES_EFIS_SHOWS_WEATHER, new_data ? 1.0f : 0.0f );
@@ -2666,11 +2751,11 @@ public class XPlaneAvionics implements Avionics, Observer {
         }
     }
     
-    public void set_wxr_mode(int new_data) {
+    public void set_wxr_gain(float new_data) {
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
-            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_MODE, (float) new_data);
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_GAIN, (float) new_data);
         } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
-            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_MODE, (float) new_data);
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_GAIN, (float) new_data);
         }
     }
     
@@ -2681,14 +2766,84 @@ public class XPlaneAvionics implements Avionics, Observer {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_TILT, (float) new_data);
         }
     }
- 
-    public void set_wxr_gain(float new_data) {
+
+    public void set_wxr_auto_tilt(boolean new_auto_tilt) {
         if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
-            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_GAIN, (float) new_data);
+            sendBitPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_OPT, 2, new_auto_tilt);
         } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
-            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_GAIN, (float) new_data);
+        	sendBitPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_OPT, 2, new_auto_tilt);
+        }    	
+    }
+    
+    public void set_wxr_auto_gain(boolean new_auto_gain) {
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+        	sendBitPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_OPT, 1, new_auto_gain);
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+        	sendBitPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_OPT, 1, new_auto_gain);
+        }       	
+    }
+
+    public void set_wxr_test(boolean new_test) {
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+        	sendBitPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_OPT, 0, new_test);
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+        	sendBitPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_OPT, 0, new_test);
+        }     	
+    }
+
+    
+    public void set_wxr_mode(int new_data) {
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_MODE, (float) new_data);
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_MODE, (float) new_data);
         }
     }
+    
+
+    public void set_wxr_slave(boolean new_slave) {
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+        	sendBitPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_OPT, 3, new_slave);
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+        	sendBitPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_OPT, 3, new_slave);
+        }        	
+    }
+    
+    public void set_wxr_react(boolean new_react) {
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+        	sendBitPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_OPT, 4, new_react);
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+        	sendBitPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_OPT, 4, new_react);
+        }       	
+    }
+    
+    public void set_wxr_narrow(boolean new_narrow) {
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+        	sendBitPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_OPT, 5, new_narrow);
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+        	sendBitPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_OPT, 5, new_narrow);
+        }     	
+    }
+    
+    public void set_wxr_alert(boolean new_alert) {
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+        	sendBitPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_OPT, 6, new_alert);
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+        	sendBitPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_OPT, 6, new_alert);
+        }     	
+    }
+    
+    public void set_wxr_target(boolean new_target) {
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+        	sendBitPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_WXR_OPT, 7, new_target);
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+        	sendBitPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_WXR_OPT, 7, new_target);
+        }      	
+    }
+    
+    /*
+     *  Autopilot 
+     */
     
     public void set_autopilot_altitude(float new_altitude){
     	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_ALTITUDE,new_altitude);

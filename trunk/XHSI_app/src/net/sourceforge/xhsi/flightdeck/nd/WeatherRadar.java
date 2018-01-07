@@ -31,7 +31,6 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.logging.Logger;
@@ -41,6 +40,8 @@ import net.sourceforge.xhsi.model.CoordinateSystem;
 import net.sourceforge.xhsi.model.FMSEntry;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.WeatherRepository;
+import net.sourceforge.xhsi.util.AzimuthalEquidistantProjection;
+import net.sourceforge.xhsi.util.Projection;
 
 public class WeatherRadar extends NDSubcomponent {
 
@@ -81,75 +82,8 @@ public class WeatherRadar extends NDSubcomponent {
     private float sweep_direction = 1.0f;
     private float sweep_max = 60.0f;
     private float sweep_min = -60.0f;
-
-    private interface Projection {
-    	public void setAcf(float acf_lat, float acf_lon);
-    	public void setPoint(float lat, float lon);
-    	public int getX();
-    	public int getY();
-    }
-    
-    private class AzimuthalEquidistantProjection implements Projection {
-        
-        private double phi1;
-        private double sin_phi1;
-        private double cos_phi1;
-        private double lambda0;
-        
-        private double phi;
-        private double sin_phi;
-        private double cos_phi;
-        private double lambda;
-        private double d_lambda;
-        private double sin_d_lambda;
-        private double cos_d_lambda;    
-        private double rho;
-        private double theta;
-        
-        private float x;
-        private float y;      
-    
-        public AzimuthalEquidistantProjection() {
-            
-        }
-        
-        public void setAcf(float acf_lat, float acf_lon) {
-            phi1 = Math.toRadians(acf_lat);
-            lambda0 = Math.toRadians(acf_lon);
-            sin_phi1 = Math.sin(phi1);
-            cos_phi1 = Math.cos(phi1);
-        }
-        
-        public void setPoint(float lat, float lon) {
-            phi = Math.toRadians(lat);
-            lambda = Math.toRadians(lon);
-            sin_phi = Math.sin(phi);
-            cos_phi = Math.cos(phi);
-            d_lambda = lambda - lambda0;
-            sin_d_lambda = Math.sin(d_lambda);
-            cos_d_lambda = Math.cos(d_lambda);
-            rho = Math.acos(sin_phi1 * sin_phi + cos_phi1 * cos_phi * cos_d_lambda);
-            theta = Math.atan2(cos_phi1 * sin_phi - sin_phi1 * cos_phi * cos_d_lambda, cos_phi * sin_d_lambda);
-            x = (float)(rho * Math.sin(theta));
-            y = - (float)(rho * Math.cos(theta));
-        }
-        
-        public int getX() {
-            
-            return Math.round(nd_gc.map_center_x - y * 180.0f / (float)Math.PI * 60.0f * pixels_per_nm);
-        
-        }
-        
-        public int getY() {
-            
-            return Math.round(nd_gc.map_center_y - x * 180.0f / (float)Math.PI * 60.0f * pixels_per_nm);
-        
-        }
-        
-    }
     
     private Projection map_projection = new AzimuthalEquidistantProjection();
-   
    
     
 	public WeatherRadar(ModelFactory model_factory, NDGraphicsConfig nd_gc,
@@ -287,6 +221,8 @@ public class WeatherRadar extends NDSubcomponent {
         this.pixels_per_nm = (float)nd_gc.rose_radius / radius_scale; // float for better precision
         if ( nd_gc.map_zoomin ) this.pixels_per_nm *= 100.0f;
 
+        this.map_projection.setScale(nd_gc.pixels_per_nm);
+        this.map_projection.setCenter(nd_gc.map_center_x,nd_gc.map_center_y);
         this.map_projection.setAcf(this.center_lat, this.center_lon);
         
         // determine max and min lat/lon in viewport to only draw those
