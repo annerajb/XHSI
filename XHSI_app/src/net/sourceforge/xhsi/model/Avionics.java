@@ -1005,6 +1005,8 @@ public interface Avionics {
     public void set_clock_mode(int new_clock_mode);
 
     public void chr_control(int chr_action);
+    
+    public void set_show_cstr(boolean new_cstr);
 
     public void set_show_arpt(boolean new_arpt);
 
@@ -1020,17 +1022,37 @@ public interface Avionics {
 
     public void set_show_data(boolean new_data);
     
-    public void set_show_terrain(boolean new_data);
+    public void set_show_terrain(boolean new_terrain);
     
-    public void set_show_vp(boolean new_data);
+    public void set_show_vp(boolean new_vp);
     
-    public void set_show_wxr(boolean new_data);
+    /*
+     * Weather radar
+     */
     
-    public void set_wxr_mode(int new_data);
+    public void set_show_wxr(boolean new_wxr);
+     
+    public void set_wxr_gain(float new_gain);
     
-    public void set_wxr_tilt(float new_data);
+    public void set_wxr_tilt(float new_tilt);
+       
+    public void set_wxr_auto_tilt(boolean new_auto_tilt);
     
-    public void set_wxr_gain(float new_data); 
+    public void set_wxr_auto_gain(boolean new_auto_gain);
+
+    public void set_wxr_test(boolean new_test);
+    
+    public void set_wxr_mode(int new_mode);
+
+    public void set_wxr_slave(boolean new_slave);
+    
+    public void set_wxr_react(boolean new_react);
+    
+    public void set_wxr_narrow(boolean new_narrow);
+    
+    public void set_wxr_alert(boolean new_alert);
+    
+    public void set_wxr_target(boolean new_target);
     
     /*
      *  Autopilot 

@@ -118,6 +118,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox draw_rwy_checkbox;
     private JCheckBox draw_bezier_pavements_checkbox;
     private JCheckBox airbus_modes_checkbox;
+    private JCheckBox symbols_multiselection_checkbox;
     private JCheckBox draw_range_arcs_checkbox;
     private JCheckBox limit_arcs_60deg_checkbox;
     private JCheckBox use_more_color_checkbox;
@@ -369,6 +370,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         }
 
         this.airbus_modes_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_AIRBUS_MODES).equalsIgnoreCase("true"));
+        
+        this.symbols_multiselection_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_SYMBOLS_MULTISELECTION).equalsIgnoreCase("true"));
 
         this.draw_rwy_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_DRAW_RUNWAYS).equalsIgnoreCase("true"));
 
@@ -1526,6 +1529,20 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         nd_options_panel.add(this.airbus_modes_checkbox, cons);
         dialog_line++;
 
+        // Symbols multiselection
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        nd_options_panel.add(new JLabel("Symbols Multiselection", JLabel.TRAILING), cons);
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.symbols_multiselection_checkbox = new JCheckBox("  ( unchecked: Airbus radio buttons, checked Boeing push buttons )");
+        nd_options_panel.add(this.symbols_multiselection_checkbox, cons);
+        dialog_line++;
+
         // Display Centered APP and VOR as a classic HSI without moving map
         cons.gridx = 0;
         cons.gridwidth = 1;
@@ -2523,6 +2540,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
             if ( this.airbus_modes_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_AIRBUS_MODES).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_AIRBUS_MODES, this.airbus_modes_checkbox.isSelected()?"true":"false");
+            
+            if ( this.symbols_multiselection_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_SYMBOLS_MULTISELECTION).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_SYMBOLS_MULTISELECTION, this.symbols_multiselection_checkbox.isSelected()?"true":"false");
 
             if ( this.draw_range_arcs_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_DRAW_RANGE_ARCS).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_DRAW_RANGE_ARCS, this.draw_range_arcs_checkbox.isSelected()?"true":"false");

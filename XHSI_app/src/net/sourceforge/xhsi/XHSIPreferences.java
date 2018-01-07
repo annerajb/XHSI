@@ -93,6 +93,7 @@ public class XHSIPreferences {
     public static final String PREF_RWY_LEN_UNITS = "runway.length.units";
     public static final String PREF_DRAW_RUNWAYS = "draw.runways";
     public static final String PREF_AIRBUS_MODES = "airbus.modes";
+    public static final String PREF_SYMBOLS_MULTISELECTION = "symbols.multiselection";
     public static final String PREF_DRAW_RANGE_ARCS = "draw.range.arcs";
     public static final String PREF_LIMIT_ARCS_60DEG = "nd.limit.arcs.60deg";
     public static final String PREF_MODE_MISMATCH_CAUTION = "mode.mismatch.caution";
@@ -655,6 +656,15 @@ public class XHSIPreferences {
         return get_preference(PREF_AIRBUS_MODES).equalsIgnoreCase("true");
     }
 
+    /**
+     * @return            - limit selected symbols to the 
+     *
+     */
+    public boolean get_symbols_multiselection() {
+        return get_preference(PREF_SYMBOLS_MULTISELECTION).equalsIgnoreCase("true");
+    }
+
+    
     /**
      * @return            - display EFIS MODE/NAV FREQ DISAGREE warnings
      *
@@ -1314,6 +1324,11 @@ public class XHSIPreferences {
 
         if ( ! this.preferences.containsKey(PREF_AIRBUS_MODES) ) {
             this.preferences.setProperty(PREF_AIRBUS_MODES, "false");
+            this.unsaved_changes = true;
+        }
+        
+        if ( ! this.preferences.containsKey(PREF_SYMBOLS_MULTISELECTION) ) {
+            this.preferences.setProperty(PREF_SYMBOLS_MULTISELECTION, "true");
             this.unsaved_changes = true;
         }
 

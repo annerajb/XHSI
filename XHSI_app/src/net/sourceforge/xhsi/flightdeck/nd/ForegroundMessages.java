@@ -58,8 +58,9 @@ public class ForegroundMessages extends NDSubcomponent {
         if ( nd_gc.powered ) {
             if (nd_gc.boeing_style) {
             	drawSymbolLabels(g2);
+                drawTerrainInfoBox(g2);
+                drawWeatherInfoBox(g2);
             }
-            drawTerrainInfoBox(g2);
             drawTrafficMessage(g2);
             drawDisagree(g2);
             if (nd_gc.airbus_style) {
@@ -67,8 +68,11 @@ public class ForegroundMessages extends NDSubcomponent {
                 	displayGlobalMessage(g2,"MODE CHANGED");
                 } else if (nd_gc.display_range_change_msg()) {
                     displayGlobalMessage(g2,"RANGE CHANGED");
-                } else 
-                	displayEGPWSMessage(g2);       	
+                } else {
+                	displayEGPWSMessage(g2);   
+                	drawTerrainInfoBox(g2);
+                	drawWeatherInfoBox(g2);
+                }
             } else 
             	displayEGPWSMessage(g2);
         }
@@ -163,12 +167,14 @@ public class ForegroundMessages extends NDSubcomponent {
                 g2.drawString(label_str, nd_gc.left_label_x, nd_gc.left_label_tfc_y);
             }
             // TERRAIN
+            /*
             if ( this.avionics.efis_shows_terrain() ) {
                 label_str = "TERR";
                 g2.clearRect(nd_gc.left_label_x - nd_gc.digit_width_s/2, nd_gc.left_label_terrain_y - nd_gc.line_height_s, g2.getFontMetrics(nd_gc.font_s).stringWidth(label_str) + nd_gc.digit_width_s, nd_gc.line_height_s*10/8);
                	g2.setColor(nd_gc.terrain_label_color);
                 g2.drawString(label_str, nd_gc.left_label_x, nd_gc.left_label_terrain_y);
             }
+            */
             // WEATHER RADAR
             int wxr_mode = this.avionics.wxr_mode();
             boolean on_ground = this.aircraft.on_ground();
@@ -332,6 +338,20 @@ public class ForegroundMessages extends NDSubcomponent {
     }
  
     private void drawTerrainInfoBox(Graphics2D g2){
+    	if (  (!( nd_gc.mode_app || nd_gc.mode_vor )) && avionics.efis_shows_terrain()) {
+    		g2.drawImage(nd_gc.terr_info_img, nd_gc.terr_info_x, nd_gc.terr_info_y, null);
+    	}	
+    }
+    
+    private void drawWeatherInfoBox(Graphics2D g2){
+    	if (    ( !( nd_gc.mode_app || nd_gc.mode_vor )) && 
+        		avionics.wxr_active() && 
+        		(!avionics.efis_shows_terrain()) && 
+        		(!nd_gc.display_inhibit()) &&
+        		(!nd_gc.map_zoomin) ) {
+    	
+    		// g2.drawImage(nd_gc.wxr_info_img, nd_gc.wxr_info_x, nd_gc.wxr_info_y, null);
+    	}
     	
     }
 }

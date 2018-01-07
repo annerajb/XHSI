@@ -264,8 +264,13 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int terr_label_x;
     public int terr_label_y;
     public int terr_label_rect_y;
+    public int terr_info_width;
+    public int terr_info_height;
+    public int terr_info_x;
+    public int terr_info_y;
+    public BufferedImage terr_info_img;
     public BufferedImage terr_img_1;
-    public BufferedImage terr_img_2;
+    public BufferedImage terr_img_2;   
     public float terr_sweep_step;
     public float terr_range_multiply;
     public int terr_nb_tile_x;
@@ -278,6 +283,11 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 	public Font terr_label_font;
     
     // Weather radar
+    public int wxr_info_width;
+    public int wxr_info_height;
+    public int wxr_info_x;
+    public int wxr_info_y;
+	public BufferedImage wxr_info_img;
     public BufferedImage wxr_img_1;
     public BufferedImage wxr_img_2;
     public float wxr_sweep_step;
@@ -697,11 +707,11 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             // min and max boxes, label, egpws message
             
             if (boeing_style) {
-            	terr_label_rect_y = left_label_xpdr_y + line_height_xs*3/8;
-            	terr_label_y = left_label_xpdr_y + line_height_xs*11/8;
-            	terr_label_x = left_label_x;
-            	terr_box_x = left_label_x + this.digit_width_xs*11/2;
-            	terr_value_x = left_label_x + this.digit_width_xs*6;
+            	terr_label_rect_y = line_height_xs*1/8;
+            	terr_label_y = line_height_xs*9/8;
+            	terr_label_x = 0;
+            	terr_box_x = this.digit_width_xs*5;
+            	terr_value_x = this.digit_width_xs*11/2;
             	terr_max_box_y = terr_label_rect_y;
             	terr_max_value_y = terr_max_box_y + line_height_xs*11/10;
             	terr_min_box_y = terr_label_y + line_height_xs/2;
@@ -710,13 +720,18 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             	terr_box_width = digit_width_xs * 12/3;
             	terr_label_color = map_zoomin ? dim_label_color : terrain_label_color;
             	terr_label_font = font_s;
+            	
+            	terr_info_width = this.digit_width_xs*5 + terr_box_width+2;
+            	terr_info_height = terr_min_box_y + terr_box_height + line_height_xs/5+1;
+            	terr_info_x = left_label_x;
+            	terr_info_y = left_label_xpdr_y + line_height_xs*1/8;
             } else {
             	terr_label_rect_y = left_label_xpdr_y + line_height_xs*1/8;
-            	terr_label_y = this.frame_size.height*765/1000;
-            	terr_label_x = panel_rect.x + panel_rect.width * 860/1000;
+            	terr_label_y = line_height_l*9/8;
+            	terr_label_x = panel_rect.width * 6/1000;
             	
-            	terr_box_x = panel_rect.x + panel_rect.width * 855/1000;
-            	terr_value_x = panel_rect.x + panel_rect.width * 860/1000;
+            	terr_box_x = 1;
+            	terr_value_x = panel_rect.width * 6/1000;
             	terr_max_box_y = terr_label_y + line_height_l*2/8;
             	terr_max_value_y = terr_max_box_y + line_height_l*9/8;
             	
@@ -726,7 +741,13 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             	terr_box_width = digit_width_l * 11/3;
             	terr_label_color = map_zoomin ? ecam_caution_color : color_airbus_selected; 
             	terr_label_font = font_xl;
+            	
+            	terr_info_width = this.digit_width_l*11/2;
+            	terr_info_height = terr_min_box_y + terr_box_height + line_height_l/5+1;
+            	terr_info_x = panel_rect.x + panel_rect.width * 855/1000;
+            	terr_info_y = this.frame_size.height*745/1000;
             }
+            terr_info_img = new BufferedImage(terr_info_width,terr_info_height,BufferedImage.TYPE_INT_ARGB);
 
             /*
              * Terrain textures hd = high density, md = medium density, ld = low density
@@ -775,7 +796,20 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
         	float wxr_sweep_min = -60.0f;
         	wxr_clip = new Area(new Arc2D.Float(map_center_x - wxr_radius, map_center_y - wxr_radius,
         			wxr_radius*2, wxr_radius*2, 90-wxr_sweep_min, wxr_sweep_min-wxr_sweep_max, Arc2D.PIE));
-            
+        	if (boeing_style) {
+        		wxr_info_width = this.digit_width_xs*11/2 + terr_box_width;
+        		wxr_info_height = terr_box_height *3;
+            	wxr_info_x = terr_label_x;
+            	wxr_info_y = left_label_xpdr_y + line_height_xs*1/8;
+        	} else {
+            	wxr_info_width = this.digit_width_xs*11/2 + terr_box_width;
+            	wxr_info_height = terr_box_height *3;
+            	wxr_info_x = panel_rect.x + panel_rect.width * 860/1000;
+            	wxr_info_y = this.frame_size.height*765/1000;
+        	}
+	
+        	wxr_info_img = new BufferedImage(wxr_info_width,wxr_info_height,BufferedImage.TYPE_INT_ARGB);
+        	
             // clear the flags
             this.resized = false;
             this.reconfig = false;
