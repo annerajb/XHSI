@@ -467,6 +467,18 @@ extern XPLMDataRef qpac_terrain_nd2;
 // Weather radar
 extern XPLMDataRef qpac_wx_power_switch;
 
+// Navigation display - TO Waypoint
+extern XPLMDataRef qpac_wpt_crs_capt;
+extern XPLMDataRef qpac_wpt_crs_fo;
+extern XPLMDataRef qpac_wpt_dist_capt;
+extern XPLMDataRef qpac_wpt_dist_fo;
+extern XPLMDataRef qpac_wpt_hours_capt;
+extern XPLMDataRef qpac_wpt_hours_fo;
+extern XPLMDataRef qpac_wpt_minutes_capt;
+extern XPLMDataRef qpac_wpt_minutes_fo;
+extern XPLMDataRef qpac_wpt_id_capt;
+extern XPLMDataRef qpac_wpt_id_fo;
+
 //qpac FCU toggles, push/pull commands, RMP, MCDU
 extern XPLMCommandRef qpac_command[QPAC_KEY_MAX];
 

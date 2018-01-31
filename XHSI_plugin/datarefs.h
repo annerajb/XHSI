@@ -276,6 +276,7 @@ extern XPLMDataRef acf_tailnum;
 
 extern XPLMDataRef master_caution;
 extern XPLMDataRef master_warning;
+extern XPLMDataRef master_accept;
 extern XPLMDataRef gear_handle;
 extern XPLMDataRef gear_unsafe;
 extern XPLMDataRef gear_unsafe;

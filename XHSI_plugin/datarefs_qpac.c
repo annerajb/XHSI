@@ -297,6 +297,19 @@ XPLMDataRef qpac_terrain_nd2;
 // Weather radar
 XPLMDataRef qpac_wx_power_switch;
 
+// Navigation display - TO Waypoint
+XPLMDataRef qpac_wpt_crs_capt;
+XPLMDataRef qpac_wpt_crs_fo;
+XPLMDataRef qpac_wpt_dist_capt;
+XPLMDataRef qpac_wpt_dist_fo;
+XPLMDataRef qpac_wpt_hours_capt;
+XPLMDataRef qpac_wpt_hours_fo;
+XPLMDataRef qpac_wpt_minutes_capt;
+XPLMDataRef qpac_wpt_minutes_fo;
+XPLMDataRef qpac_wpt_id_capt;
+XPLMDataRef qpac_wpt_id_fo;
+
+
 //qpac FCU toggles, push/pull commands, RMP, MCDU
 XPLMCommandRef qpac_command[QPAC_KEY_MAX];
 
@@ -601,6 +614,18 @@ void findQpacDataRefs(void) {
 
             // Weather radar
             qpac_wx_power_switch  = XPLMFindDataRef("AirbusFBW/WXPowerSwitch");
+
+            // Navigation display - TO Waypoint
+            qpac_wpt_crs_capt = XPLMFindDataRef("AirbusFBW/WPT_Crs");
+            qpac_wpt_crs_fo = XPLMFindDataRef("AirbusFBW/WPT_Crs_FO");
+            qpac_wpt_dist_capt = XPLMFindDataRef("AirbusFBW/WPT_Dist");
+            qpac_wpt_dist_fo = XPLMFindDataRef("AirbusFBW/WPT_Dist_FO");
+            qpac_wpt_hours_capt = XPLMFindDataRef("AirbusFBW/WPT_Hours");
+            qpac_wpt_hours_fo = XPLMFindDataRef("AirbusFBW/WPT_Hours_FO");
+            qpac_wpt_minutes_capt = XPLMFindDataRef("AirbusFBW/WPT_Minutes");
+            qpac_wpt_minutes_fo = XPLMFindDataRef("AirbusFBW/WPT_Minutes_FO");
+            qpac_wpt_id_capt = XPLMFindDataRef("AirbusFBW/WPT_ID");
+            qpac_wpt_id_fo = XPLMFindDataRef("AirbusFBW/WPT_ID_FO");
 
             //qpac fcu toggles and push/pull commands
             qpac_command[QPAC_KEY_TO_CONFIG] = XPLMFindCommand("AirbusFBW/TOConfigPress");

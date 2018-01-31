@@ -352,6 +352,7 @@ XPLMDataRef acf_tailnum;
 
 XPLMDataRef master_caution;
 XPLMDataRef master_warning;
+XPLMDataRef master_accept;
 XPLMDataRef gear_handle;
 XPLMDataRef gear_unsafe;
 XPLMDataRef gear_types;
@@ -3080,6 +3081,7 @@ void findDataRefs(void) {
     // Controls & annunciators
     master_caution = XPLMFindDataRef("sim/cockpit/warnings/annunciators/master_caution");
     master_warning = XPLMFindDataRef("sim/cockpit/warnings/annunciators/master_warning");
+    master_accept = XPLMFindDataRef("sim/cockpit/warnings/annunciators/master_accept");
     gear_handle = XPLMFindDataRef("sim/cockpit2/controls/gear_handle_down");
     gear_unsafe = XPLMFindDataRef("sim/cockpit2/annunciators/gear_unsafe");
     gear_types = XPLMFindDataRef("sim/aircraft/parts/acf_gear_type");
