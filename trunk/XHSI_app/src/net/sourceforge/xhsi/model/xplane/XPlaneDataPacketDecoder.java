@@ -90,6 +90,7 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
     public boolean prev_level;
     public boolean prev_climbing;
     public boolean prev_descending;
+    public boolean prev_discontinuity;
     
 
     public XPlaneDataPacketDecoder(ModelFactory sim_model) {
@@ -174,16 +175,7 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
                     logger.finest("ID:"+data_point_id+"="+float_data);
                 }
             }
-//this.xplane_data_repository.store_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_OVERFLOW_ACF_NUM_TANKS, 3.0f);
-//this.xplane_data_repository.store_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_FUEL_QUANTITY_ + 0, 2000.0f);
-//this.xplane_data_repository.store_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_FUEL_QUANTITY_ + 1, 1000.0f);
-//this.xplane_data_repository.store_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_FUEL_QUANTITY_ + 2, 3000.0f);
-//this.xplane_data_repository.store_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_OVERFLOW_ACF_TANK_RATIO_ + 0, 0.45f);
-//this.xplane_data_repository.store_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_OVERFLOW_ACF_TANK_RATIO_ + 1, 0.10f);
-//this.xplane_data_repository.store_sim_float(XPlaneSimDataRepository.SIM_AIRCRAFT_OVERFLOW_ACF_TANK_RATIO_ + 2, 0.45f);
-//this.xplane_data_repository.store_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_WEIGHT_M_FUEL_TOTAL, 6000.0f);
 
-            // logger.warning("" + this.xplane_data_repository.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_LATITUDE) + ";" + this.xplane_data_repository.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_LONGITUDE));
 
             if ( (this.received_adc_packet == false) && packet_type.equals("ADCD") ) {
                 logger.warning("Receiving from XHSI_plugin version " + decode_plugin_version(this.xplane_data_repository.get_sim_float(XPlaneSimDataRepository.PLUGIN_VERSION_ID)));
@@ -223,6 +215,7 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
                 prev_level = false;
                 prev_climbing = false;
                 prev_descending = false;
+                prev_discontinuity = false;
             }
             
             float ete_for_active = data_stream.readFloat(); // min
@@ -251,6 +244,7 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
             boolean level = false;
             boolean climbing = false;
             boolean descending = false;
+            boolean discontinuity = false;
 
             int packet_entries = ( nb_of_entries - offset > 50 ) ? 50 : nb_of_entries - offset;
             logger.finest("... we will read " + packet_entries + " FMS entries");
@@ -264,103 +258,105 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
                 altitude = data_stream.readInt();
                 lat = data_stream.readFloat();
                 lon = data_stream.readFloat();
-                
-//                // do not append empty entries (should not happen anyway)
-//                if ((lat != 0.0f) || (lon != 0.0f)) {
+                discontinuity = (lat==0.0f) && (lon==0.0f);
+                // NEW: Empty entries are discontinuities (lat & lon == 0.0)
 
-                    is_displayed = ( offset+i == displayed_entry_index );
-                    is_active = ( offset+i == active_entry_index );
 
-                    // leg distance
-                    if ( ( offset+i == 0 ) && ( ! is_active ) ) {
-                        // this is only for the legacy default FMS, where the entry with index zero was never an actual waypoint
-                        leg_dist = 0;
-                    } else {
-                        leg_dist = CoordinateSystem.rough_distance(lat, lon, last_lat, last_lon);
-                        last_lat = lat;
-                        last_lon = lon;
-                    }
-                    
-                    // estimate ete only when we have some speed
-                    if ( groundspeed > 33.33f ) {
-                        if ( is_active ) {
-                            total_ete = ete_for_active;
-                        } else if ( beyond_active ) {
-                            total_ete += leg_dist / groundspeed * 60.0f;
-                        } else {
-                            total_ete = 0.0f;
-                        }
-                    } else {
-                        total_ete = 0.0f;
-                    }
+                is_displayed = ( offset+i == displayed_entry_index );
+                is_active = ( offset+i == active_entry_index );
 
-                    logger.finest("FMC [" + (offset+i) + "] : " + id + " leg=" + leg_dist);
+                // leg distance
+                if ( ( offset+i == 0 ) && ( ! is_active ) ) {
+                	// this is only for the legacy default FMS, where the entry with index zero was never an actual waypoint
+                	leg_dist = 0;
+                } else {
+                	leg_dist = CoordinateSystem.rough_distance(lat, lon, last_lat, last_lon);
+                	last_lat = lat;
+                	last_lon = lon;
+                }
 
-                    //new_fms_entry = new FMSEntry(offset + i, id, type, lat, lon, altitude, leg_dist, total_ete, is_active, is_displayed);
-                    // No, we will re-use the existing FMSEntry[offset + i]
-                    new_fms_entry = this.fms.get_entry(offset + i);
+                // estimate ete only when we have some speed
+                if ( groundspeed > 33.33f ) {
+                	if ( is_active ) {
+                		total_ete = ete_for_active;
+                	} else if ( beyond_active ) {
+                		total_ete += leg_dist / groundspeed * 60.0f;
+                	} else {
+                		total_ete = 0.0f;
+                	}
+                } else {
+                	total_ete = 0.0f;
+                }
 
-                    new_fms_entry.index = offset + i;
-                    new_fms_entry.name = id;
-                    new_fms_entry.type = type;
-                    new_fms_entry.lat = lat;
-                    new_fms_entry.lon = lon;
-                    new_fms_entry.altitude = altitude;
-                    new_fms_entry.leg_dist = leg_dist;
-                    new_fms_entry.total_ete = total_ete;
-                    new_fms_entry.active = is_active;
-                    new_fms_entry.displayed = is_displayed;
-                    this.fms.update_entry( offset + i );
+                logger.finest("FMC [" + (offset+i) + "] : " + id + " leg=" + leg_dist);
 
-                    //this.fms.add_entry(new_fms_entry, offset + i);
+                //new_fms_entry = new FMSEntry(offset + i, id, type, lat, lon, altitude, leg_dist, total_ete, is_active, is_displayed);
+                // No, we will re-use the existing FMSEntry[offset + i]
+                new_fms_entry = this.fms.get_entry(offset + i);
 
-                    // was this the active waypoint?
-                    if ( is_active ) {
-                        beyond_active = true;
-                    }
-                    
-                    // climbing, descending or level flight?
-                    climbing = false;
-                    descending = false;
-                    level = false;
-                    if ( prev_fms_entry != null ) {
-                        if ( ( new_fms_entry.altitude > prev_fms_entry.altitude ) && ( prev_fms_entry.altitude != 0 ) ) {
-                            climbing = true;
-                        } else if ( ( new_fms_entry.altitude < prev_fms_entry.altitude ) && ( new_fms_entry.altitude != 0 ) ) {
-                            descending = true;
-                        } else {
-                            level = true;
-                        }
-                    }
+                new_fms_entry.index = offset + i;
+                new_fms_entry.name = id;
+                new_fms_entry.type = type;
+                new_fms_entry.lat = lat;
+                new_fms_entry.lon = lon;
+                new_fms_entry.altitude = altitude;
+                new_fms_entry.leg_dist = leg_dist;
+                new_fms_entry.total_ete = total_ete;
+                new_fms_entry.active = is_active;
+                new_fms_entry.displayed = is_displayed;
+                new_fms_entry.discontinuity = discontinuity;
+                this.fms.update_entry( offset + i );
 
-                    // a Lat/Lon waypoint climbing or descending through 10000ft?
-                    if ( ( new_fms_entry.type == 2048 ) && ( new_fms_entry.altitude == 10000 ) ) {
-                        if ( climbing ) {
-                            new_fms_entry.name = "ACCEL";
-                        } else if ( descending ) {
-                            new_fms_entry.name = "DECEL";
-                        }
-                    }
+                //this.fms.add_entry(new_fms_entry, offset + i);
 
-                    // now can we know if the previous Lat/Lon waypoint was a T/C, T/D, E/D or S/C
-                    if ( ( prev_fms_entry != null ) && ( prev_fms_entry.type == 2048 ) ) {
-                        if ( prev_climbing && level ) {
-                            prev_fms_entry.name = "T/C";
-                        } else if ( prev_level && descending ) {
-                            prev_fms_entry.name = "T/D";
-                        } else if ( prev_descending && level ) {
-                            prev_fms_entry.name = "E/D";
-                        } else if ( prev_level && climbing ) {
-                            prev_fms_entry.name = "S/C";
-                        }
-                    }
+                // was this the active waypoint?
+                if ( is_active ) {
+                	beyond_active = true;
+                }
 
-                    prev_fms_entry = new_fms_entry;
-                    prev_level = level;
-                    prev_descending = descending;
-                    prev_climbing = climbing;
+                // climbing, descending or level flight?
+                climbing = false;
+                descending = false;
+                level = false;
+                if ( prev_fms_entry != null ) {
+                	if ( ( new_fms_entry.altitude > prev_fms_entry.altitude ) && ( prev_fms_entry.altitude != 0 ) ) {
+                		climbing = true;
+                	} else if ( ( new_fms_entry.altitude < prev_fms_entry.altitude ) && ( new_fms_entry.altitude != 0 ) ) {
+                		descending = true;
+                	} else {
+                		level = true;
+                	}
+                }
 
-//                }
+                // a Lat/Lon waypoint climbing or descending through 10000ft?
+                if ( ( new_fms_entry.type == 2048 ) && ( new_fms_entry.altitude == 10000 ) ) {
+                	if ( climbing ) {
+                		new_fms_entry.name = "ACCEL";
+                	} else if ( descending ) {
+                		new_fms_entry.name = "DECEL";
+                	}
+                }
+
+                // now can we know if the previous Lat/Lon waypoint was a T/C, T/D, E/D or S/C
+                if ( ( prev_fms_entry != null ) && ( prev_fms_entry.type == 2048 ) ) {
+                	if ( prev_climbing && level ) {
+                		prev_fms_entry.name = "T/C";
+                	} else if ( prev_level && descending ) {
+                		prev_fms_entry.name = "T/D";
+                	} else if ( prev_descending && level ) {
+                		prev_fms_entry.name = "E/D";
+                	} else if ( prev_level && climbing ) {
+                		prev_fms_entry.name = "S/C";
+                	}
+                }
+
+                prev_fms_entry = new_fms_entry;
+                prev_level = level;
+                prev_descending = descending;
+                prev_climbing = climbing;
+                prev_discontinuity = discontinuity;
+
+
 
             }
             

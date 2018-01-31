@@ -176,6 +176,7 @@ public class ForegroundMessages extends NDSubcomponent {
             }
             */
             // WEATHER RADAR
+            /*
             int wxr_mode = this.avionics.wxr_mode();
             boolean on_ground = this.aircraft.on_ground();
             if ( (wxr_mode>0) && this.avionics.efis_shows_wxr() && (!this.avionics.efis_shows_terrain()) ) {
@@ -195,6 +196,7 @@ public class ForegroundMessages extends NDSubcomponent {
                 	
                 g2.drawString(label_str, nd_gc.left_label_x, nd_gc.left_label_terrain_y);
             }
+            */
 
         }
 
@@ -344,13 +346,12 @@ public class ForegroundMessages extends NDSubcomponent {
     }
     
     private void drawWeatherInfoBox(Graphics2D g2){
-    	if (    ( !( nd_gc.mode_app || nd_gc.mode_vor )) && 
-        		avionics.wxr_active() && 
+    	if (    ( !( nd_gc.mode_app || nd_gc.mode_vor )) &&         		
         		(!avionics.efis_shows_terrain()) && 
         		(!nd_gc.display_inhibit()) &&
         		(!nd_gc.map_zoomin) ) {
     	
-    		// g2.drawImage(nd_gc.wxr_info_img, nd_gc.wxr_info_x, nd_gc.wxr_info_y, null);
+    		g2.drawImage(nd_gc.wxr_info_img, nd_gc.wxr_info_x, nd_gc.wxr_info_y, null);
     	}
     	
     }

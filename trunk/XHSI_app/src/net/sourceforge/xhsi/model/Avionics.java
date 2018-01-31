@@ -315,6 +315,13 @@ public interface Avionics {
     public boolean wxr_auto_tilt();
     
     /**   
+     * @return float - weather radar automatic tilt value [-15.0° - +15.0°]
+     * Altitude in feet
+     * Range in nm
+     */     
+    public float wxr_auto_tilt_value(float altitude, float range);   
+    
+    /**   
      * @return boolean - weather radar test
      */     
     public boolean wxr_test();
@@ -1023,6 +1030,7 @@ public interface Avionics {
     public void set_show_data(boolean new_data);
     
     public void set_show_terrain(boolean new_terrain);
+    public void set_show_terrain(boolean new_data, InstrumentSide side);
     
     public void set_show_vp(boolean new_vp);
     

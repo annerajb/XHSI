@@ -66,13 +66,17 @@ public class FMSRoute extends MFDSubcomponent {
     private int rte_x3;
     private int rte_x4;
     private int rte_x5;
+    private int rte_x6;
+    private boolean show_index;
     
     private float total_dist;
+    boolean from_discontinuity;
 
     private DecimalFormat one_decimal_formatter;
     private DecimalFormatSymbols format_symbols;
     private DecimalFormat eta_hours_formatter;
     private DecimalFormat eta_minutes_formatter;
+    private DecimalFormat index_formatter;
      
     
     public FMSRoute(ModelFactory model_factory, MFDGraphicsConfig hsi_gc, Component parent_component) {
@@ -84,6 +88,8 @@ public class FMSRoute extends MFDSubcomponent {
         one_decimal_formatter.setDecimalFormatSymbols(format_symbols);
         eta_hours_formatter = new DecimalFormat("00");
         eta_minutes_formatter = new DecimalFormat("00");
+        index_formatter = new DecimalFormat("00");
+        show_index=true;
 
     }
 
@@ -95,12 +101,17 @@ public class FMSRoute extends MFDSubcomponent {
     }
 
 
-    private void drawFMSEntry(Graphics2D g2, FMSEntry fms_entry) {
+    private void drawFMSEntry(Graphics2D g2, FMSEntry fms_entry, int index) {
 
         float leg;
         
-//        // an extra precaution
-//        if ( fms_entry != null ) {
+        
+        if ( fms_entry.discontinuity ) {
+        	g2.setColor(mfd_gc.fmc_other_color);
+        	String disc_str = "--- F-PLN DISCONTINUITY ---";
+        	g2.drawString(disc_str, rte_x1, rte_y);
+        	from_discontinuity=true;
+        } else {
             
             if ( fms_entry == fms.get_active_waypoint() ) {
                 g2.setColor(mfd_gc.fmc_active_color);
@@ -119,13 +130,18 @@ public class FMSRoute extends MFDSubcomponent {
             }
             
             // leg and total distance
-            if ( fms_entry.active ) {
-                leg = this.avionics.get_gps_radio().get_distance();
-                total_dist = leg;
+            if (from_discontinuity) {            	
+            	leg = 0;
             } else {
-                leg = fms_entry.leg_dist;
-                total_dist += leg;
+            	if ( fms_entry.active ) {
+            		leg = this.avionics.get_gps_radio().get_distance();
+            		total_dist = leg;
+            	} else {
+            		leg = fms_entry.leg_dist;
+            		total_dist += leg;
+            	}
             }
+            
             String dist_str = one_decimal_formatter.format(leg);
             g2.drawString(dist_str, rte_x2 + mfd_gc.digit_width_xl*4 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, dist_str), rte_y);
             dist_str = Integer.toString(Math.round(total_dist));
@@ -142,13 +158,19 @@ public class FMSRoute extends MFDSubcomponent {
                 String eta_str = eta_hours_formatter.format(hours_at_arrival) + eta_minutes_formatter.format(minutes_at_arrival) + "z";
                 g2.drawString(eta_str, rte_x5, rte_y);
             }
+            from_discontinuity=false;
             
-//        }
+        }
+        if (show_index ) {       	
+        	g2.drawString(index_formatter.format(index), rte_x6, rte_y);
+        }
 
     }
     
     
     private void drawFMSRoute(Graphics2D g2) {
+    	boolean discontinuity = false;
+    	from_discontinuity = false;
 
         g2.setColor(mfd_gc.efb_color);
 
@@ -170,6 +192,7 @@ public class FMSRoute extends MFDSubcomponent {
         rte_x3 = rte_x2 + mfd_gc.digit_width_xl*5; // total dist
         rte_x4 = rte_x3 + mfd_gc.digit_width_xl*6; // ttg
         rte_x5 = rte_x4 + mfd_gc.digit_width_xl*5; // eta
+        rte_x6 = rte_x5 + mfd_gc.digit_width_xl*5; // index
 
         g2.drawString("TO", rte_x0, rte_y);
         g2.drawString("ALT", rte_x1, rte_y);
@@ -177,6 +200,7 @@ public class FMSRoute extends MFDSubcomponent {
         g2.drawString("DST", rte_x3, rte_y);
         g2.drawString("ETE", rte_x4, rte_y);
         g2.drawString("ETA", rte_x5, rte_y);
+        if (show_index) g2.drawString("NDX", rte_x6, rte_y);
         rte_y += mfd_gc.line_height_xl*150/100;
         
         fms = this.avionics.get_fms();
@@ -187,8 +211,15 @@ public class FMSRoute extends MFDSubcomponent {
             total_dist = 0.0f;
             
             FMSEntry fms_entry = fms.get_active_waypoint();
+            
+            // QPAC Flight plan always start at index 0
+            if (this.avionics.is_qpac()) {
+            	fms_entry=fms.get_entry(0);
+            	i=0;
+            }
+            
             if ( fms_entry != null ) {
-                drawFMSEntry(g2, fms_entry);
+                drawFMSEntry(g2, fms_entry, i);
                 i = fms_entry.index;
             }
         
@@ -199,7 +230,7 @@ public class FMSRoute extends MFDSubcomponent {
                 fms_entry = fms.get_entry(i);
                 if ( fms_entry != null ) {
                     rte_y += mfd_gc.line_height_xl*125/100;
-                    drawFMSEntry(g2, fms_entry);
+                    drawFMSEntry(g2, fms_entry, i);
                 }
                 n += 1;
             }

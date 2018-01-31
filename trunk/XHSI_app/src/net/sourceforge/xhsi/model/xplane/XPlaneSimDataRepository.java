@@ -326,6 +326,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_AIRCRAFT_MAIN_TIRE_REF_PRESSURE = 346;
     
     // Controls & annunciators
+    public static final int SIM_COCKPIT2_ANNUNCIATORS_MASTER_ACCEPT = 349;
     public static final int SIM_COCKPIT2_ANNUNCIATORS_MASTER_CAUTION = 350;
     public static final int SIM_COCKPIT2_ANNUNCIATORS_MASTER_WARNING = 351;
     public static final int SIM_COCKPIT2_CONTROLS_GEAR_HANDLE_DOWN = 352;

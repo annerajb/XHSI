@@ -85,6 +85,8 @@ public class WeatherRadar extends NDSubcomponent {
     
     private Projection map_projection = new AzimuthalEquidistantProjection();
    
+    private static DecimalFormat gain_formatter;
+    private static DecimalFormat tilt_formatter;
     
 	public WeatherRadar(ModelFactory model_factory, NDGraphicsConfig nd_gc,
 			Component parent_component) {
@@ -100,6 +102,18 @@ public class WeatherRadar extends NDSubcomponent {
     	current_image = 1;
     	sweep_timestamp = 0;
     	wxr_on=false;
+    	
+        gain_formatter = new DecimalFormat("-#0.0");
+        DecimalFormatSymbols gain_symbols = gain_formatter.getDecimalFormatSymbols();
+        gain_symbols.setDecimalSeparator('.');
+        gain_formatter.setDecimalFormatSymbols(gain_symbols);
+
+        tilt_formatter = new DecimalFormat("##0.0");
+        DecimalFormatSymbols tilt_symbols = tilt_formatter.getDecimalFormatSymbols();
+        tilt_symbols.setDecimalSeparator('.');
+        tilt_formatter.setPositivePrefix("+");
+        tilt_formatter.setDecimalFormatSymbols(tilt_symbols);
+
 	}
 
 	public void paint(Graphics2D g2) {
@@ -111,13 +125,14 @@ public class WeatherRadar extends NDSubcomponent {
         		(!nd_gc.display_inhibit()) &&
         		(!nd_gc.map_zoomin) ) {
         	if (!wxr_on) {
+        		prepareInfoBox();
         		// initSweep(false);
         		wxr_img_1_valid = false;
         		wxr_img_2_valid = false;
         		wxr_on=true;
         	}
         	paintWeather(g2);   
-        	drawInfoBox(g2);
+        	
         	if (preferences.get_nd_wxr_sweep_bar()) drawSweepBars(g2, sweep_angle);
 
         	long sweep_delta_t = nd_gc.current_time_millis - sweep_timestamp;
@@ -139,6 +154,7 @@ public class WeatherRadar extends NDSubcomponent {
         		// too slow - better to clip out after drawWeather
         		drawWeather(g_terr,nd_gc.max_range);  
         		wxr_img_1_valid=true;
+        		prepareInfoBox();
         	}
         	if ( (! wxr_img_2_valid) && (current_image==2) ) {
         		Graphics2D g_terr = nd_gc.wxr_img_2.createGraphics();
@@ -152,11 +168,24 @@ public class WeatherRadar extends NDSubcomponent {
         		// g_terr.setClip(nd_gc.wxr_clip);
         		drawWeather(g_terr,nd_gc.max_range);  
         		wxr_img_2_valid=true;
+        		prepareInfoBox();
         	}
 
         } else {
+        	if (wxr_on) prepareInfoBox();
         	wxr_on = false;
         }
+	}
+	
+	private void prepareInfoBox() {
+		// logger.info("Building weather info buffer");
+		Graphics2D g_winfo = nd_gc.wxr_info_img.createGraphics();
+		g_winfo.setRenderingHints(nd_gc.rendering_hints);
+		g_winfo.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+		g_winfo.setColor(nd_gc.background_color);
+		// g_winfo.setColor(nd_gc.instrument_background_color);
+		g_winfo.fillRect(0, 0, nd_gc.wxr_info_width, nd_gc.wxr_info_height);
+		drawInfoBox(g_winfo);  
 	}
 	
 	private void paintWeather(Graphics2D g2) {
@@ -186,12 +215,59 @@ public class WeatherRadar extends NDSubcomponent {
 	}
 	
 	private void drawInfoBox(Graphics2D g2) {
+		String label_str;
+		g2.setFont(nd_gc.terr_label_font);
+        int wxr_mode = this.avionics.wxr_mode();
+        boolean on_ground = this.aircraft.on_ground();
 
 		if (nd_gc.airbus_style) {
-			String tilt_str = "TILT";
-			g2.setColor(nd_gc.color_airbus_selected);
-			g2.setFont(nd_gc.font_xl);
-			g2.drawString(tilt_str, nd_gc.terr_value_x, nd_gc.terr_label_y);
+			if ((wxr_mode>0) && this.avionics.efis_shows_wxr()) {
+				if (avionics.wxr_auto_tilt()) {
+					g2.setColor(nd_gc.color_airbus_selected);	
+					float tilt_value = avionics.wxr_auto_tilt_value(this.aircraft.altitude_ind(),100);				
+					String tilt_str = tilt_formatter.format(tilt_value)+"°";
+					int tilt_str_width=1+nd_gc.get_text_width(g2, nd_gc.terr_label_font, tilt_str);
+					g2.drawString(tilt_str, nd_gc.wxr_info_width-tilt_str_width, nd_gc.wxr_label2_y);
+				} else {
+					String tilt_str = "MAN " + tilt_formatter.format(avionics.wxr_tilt())+"°";
+					g2.setColor(nd_gc.color_airbus_selected);	
+					int tilt_str_width=1+nd_gc.get_text_width(g2, nd_gc.terr_label_font, tilt_str);
+					g2.drawString(tilt_str, nd_gc.wxr_info_width-tilt_str_width, nd_gc.wxr_label2_y);
+				}
+				if (!avionics.wxr_auto_gain()) {
+					String gain_str = "MAN GAIN";
+					int gain_str_width=1+nd_gc.get_text_width(g2, nd_gc.terr_label_font, gain_str);
+					g2.setColor(nd_gc.pfd_markings_color);				
+					g2.drawString(gain_str,  nd_gc.wxr_info_width-gain_str_width, nd_gc.wxr_label1_y);
+				} else {
+					g2.setColor(nd_gc.color_airbus_selected);	
+					String tilt_str = "TILT";
+					int tilt_str_width=1+nd_gc.get_text_width(g2, nd_gc.terr_label_font, tilt_str);
+					g2.drawString(tilt_str, nd_gc.wxr_info_width-tilt_str_width, nd_gc.wxr_label1_y);
+				}
+			}
+		} else {
+			/*
+			 * Boeing 737
+			 */
+
+            if ( (wxr_mode>0) && this.avionics.efis_shows_wxr() && (!this.avionics.efis_shows_terrain()) ) {
+                label_str = "WX";
+                if (wxr_mode==2) label_str="WX+T";
+                if (wxr_mode==3) label_str="MAP";
+                
+                // g2.clearRect(nd_gc.left_label_x - nd_gc.digit_width_s/2, nd_gc.left_label_terrain_y - nd_gc.line_height_s, g2.getFontMetrics(nd_gc.font_s).stringWidth(label_str) + nd_gc.digit_width_s, nd_gc.line_height_s*10/8);
+                if (wxr_mode<4 && on_ground) {
+                	g2.setColor(nd_gc.caution_color);
+                	label_str = "WX STBY";
+                } else if ( ! nd_gc.map_zoomin ) {
+                	g2.setColor(nd_gc.terrain_label_color);
+                } else {
+                	g2.setColor(nd_gc.dim_label_color);
+                }
+                	
+                g2.drawString(label_str, 0, nd_gc.wxr_label1_y);
+            }
 		}
 	}
 	

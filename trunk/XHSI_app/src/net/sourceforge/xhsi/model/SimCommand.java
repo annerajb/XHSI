@@ -149,8 +149,9 @@ public interface SimCommand {
     public static final int CMD_FCU_VS_DOWN = 354;
     public static final int CMD_FCU_VS_SEL = 355;
     public static final int CMD_FCU_VS_LVLOFF = 356;
-    public static final int CMD_MASTER_WRN = 357;
-    public static final int CMD_MASTER_CTN = 358;
+    public static final int CMD_MASTER_WRN = 357; // Master Warning
+    public static final int CMD_MASTER_CTN = 358; // Master Caution
+    public static final int CMD_MASTER_ACC = 359; // Master Accept
     public static final int CMD_A_SKID_OFF = 360;
     public static final int CMD_A_SKID_ON = 361;
     public static final int CMD_ABRK_LOW = 362;

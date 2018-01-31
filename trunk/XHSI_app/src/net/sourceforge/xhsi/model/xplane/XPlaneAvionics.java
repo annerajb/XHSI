@@ -23,6 +23,7 @@
 */
 package net.sourceforge.xhsi.model.xplane;
 
+import java.text.DecimalFormat;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSIPreferences;
@@ -62,6 +63,8 @@ public class XPlaneAvionics implements Avionics, Observer {
     private NavigationRadio adf1_radio;
     private NavigationRadio adf2_radio;
     private NavigationRadio gps_radio;
+    
+    private DecimalFormat runway_formatter;
 
     /* Internal X-Plane failure values
      * always working = 0
@@ -152,6 +155,9 @@ public class XPlaneAvionics implements Avionics, Observer {
                 XPlaneSimDataRepository.SIM_COCKPIT_RADIOS_ADF2_DME_DIST_M, // wtf?
                 sim_model,
                 this);
+        
+        this.runway_formatter = new DecimalFormat("00");
+        
 
     }
 
@@ -1044,6 +1050,34 @@ public class XPlaneAvionics implements Avionics, Observer {
     	}
     };;
     
+    
+    /**   
+     * @return float - weather radar automatic tilt value [-15.0° - +15.0°]
+     */     
+    public float wxr_auto_tilt_value(float altitude, float range) {
+    	/* 
+    	 * on ground : +5.0
+    	 * at 10000 ft : +2.0
+    	 * Recommended Over Water Tilt Settings (Collins WXR-2100)
+    	 * Altitude
+    	 * (feet) 40 NM 80 NM 160 NM
+    	 * 40,000 -7° -3° -2°
+    	 * 35.000 -6° -2° -1°
+    	 * 30,000 -4° -1° 0°
+    	 * 25,000 -3° -1° 0°
+    	 * 20,000 -2° 0° +1°
+    	 */
+    	float tilt = 5.0f; // Default value on ground
+    	if (altitude < 10000.0f) { 
+    		tilt = 5.0f - altitude/3333.0f;
+    	} else {
+    		tilt = 2.0f - (altitude - 10000.0f)/6666.0f;
+    	}
+    	
+    	// Round to 0.25° step	    	
+    	// return Math.round(tilt*10)/10;
+    	return tilt;
+    }
     
     /**   
      * @return boolean - weather radar test
@@ -2402,11 +2436,11 @@ public class XPlaneAvionics implements Avionics, Observer {
     				message += " RWYS";
     			} else {
     				if (rwy_len == 0)
-    					message += " "+rwy_ID+str_rwy_suffix;
+    					message += " "+runway_formatter.format(rwy_ID)+str_rwy_suffix;
     					// snprintf(decoded_msg, MSGLEN, "%s %02d%s", msg,
     					//     rwy_ID, decode_rwy_suffix(rwy_suffix));
     				else
-    					message += " "+rwy_ID+str_rwy_suffix + " "+rwy_len;
+    					message += " "+runway_formatter.format(rwy_ID)+str_rwy_suffix + " "+rwy_len;
     					// snprintf(decoded_msg, MSGLEN, "%s %02d%s %02d",
     					//    msg, rwy_ID, decode_rwy_suffix(rwy_suffix),
     					//    rwy_len);
@@ -2713,6 +2747,16 @@ public class XPlaneAvionics implements Avionics, Observer {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_TERRAIN, new_data ? 1.0f : 0.0f );
         } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
             udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_TERRAIN, new_data ? 1.0f : 0.0f );
+        }
+    }
+    
+    public void set_show_terrain(boolean new_data, InstrumentSide side) {
+    	if ( side == InstrumentSide.PILOT ) {
+    		udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_TERRAIN, new_data ? 1.0f : 0.0f );
+    	} else if ( side == InstrumentSide.COPILOT ) {
+    		udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_TERRAIN, new_data ? 1.0f : 0.0f );
+    	} else {
+    		xhsi_settings.show_terrain=new_data;
         }
     }
 
