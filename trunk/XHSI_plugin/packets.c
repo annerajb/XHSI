@@ -309,6 +309,13 @@ int createADCPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_ANNUNCIATORS_MASTER_WARNING );
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(master_warning));
     i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_ANNUNCIATORS_MASTER_ACCEPT );
+    if (qpac_ready) {
+    	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_clear_illuminated));
+    } else {
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(master_accept));
+    }
+    i++;
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_GEAR_HANDLE_DOWN );
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(gear_handle));
     i++;

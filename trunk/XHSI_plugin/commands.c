@@ -702,6 +702,7 @@ XPLMCommandCallback_f zoom_x100_handler(XPLMCommandRef inCommand, XPLMCommandPha
 XPLMCommandCallback_f range_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
 {
     static int shuttle_up = 1;
+    int range_max = qpac_ready ? 5 : 6;
 
     if (inPhase == xplm_CommandBegin)
     {
@@ -714,19 +715,19 @@ XPLMCommandCallback_f range_handler(XPLMCommandRef inCommand, XPLMCommandPhase i
         else if ( i == UP )
         {
             i = XPLMGetDatai(efis_map_range_selector) + 1;
-            if (i>6) i = 6;
+            if (i>range_max) i = range_max;
         }
         else if ( i == CYCLE )
         {
             i = XPLMGetDatai(efis_map_range_selector) + 1;
-            if (i>6) i = 0;
+            if (i>range_max) i = 0;
         }
         else if ( i == SHUTTLE )
         {
             i = XPLMGetDatai(efis_map_range_selector) + (shuttle_up ? +1 : -1);
-            if (i>6)
+            if (i>range_max)
             {
-                i = 5;
+                i = range_max-1;
                 shuttle_up = 0;
             }
             else if (i<0)
@@ -736,6 +737,7 @@ XPLMCommandCallback_f range_handler(XPLMCommandRef inCommand, XPLMCommandPhase i
             }
         }
         XPLMSetDatai(efis_map_range_selector, i);
+        if (qpac_ready) XPLMSetDatai(qpac_capt_efis_nd_range,i);
     }
     return (XPLMCommandCallback_f)1;
 }
@@ -744,6 +746,7 @@ XPLMCommandCallback_f range_handler(XPLMCommandRef inCommand, XPLMCommandPhase i
 XPLMCommandCallback_f ext_range_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
 {
     static int shuttle_up = 1;
+    int range_max = qpac_ready ? 5 : 6;
 
     if (inPhase == xplm_CommandBegin)
     {
@@ -760,7 +763,7 @@ XPLMCommandCallback_f ext_range_handler(XPLMCommandRef inCommand, XPLMCommandPha
                 }
                 else
                 {
-                    i = 6;
+                    i = range_max;
                     z = 1;
                 }
             }
@@ -768,11 +771,11 @@ XPLMCommandCallback_f ext_range_handler(XPLMCommandRef inCommand, XPLMCommandPha
         else if ( i == UP )
         {
             i = XPLMGetDatai(efis_map_range_selector) + 1;
-            if (i>6)
+            if (i>range_max)
             {
                 if ( ! z )
                 {
-                    i = 6;
+                    i = range_max;
                 }
                 else
                 {
@@ -784,7 +787,7 @@ XPLMCommandCallback_f ext_range_handler(XPLMCommandRef inCommand, XPLMCommandPha
         else if ( i == CYCLE )
         {
             i = XPLMGetDatai(efis_map_range_selector) + 1;
-            if (i>6)
+            if (i>range_max)
             {
                 i = 0;
                 z = !z;
@@ -793,7 +796,7 @@ XPLMCommandCallback_f ext_range_handler(XPLMCommandRef inCommand, XPLMCommandPha
         else if ( i == SHUTTLE )
         {
             i = XPLMGetDatai(efis_map_range_selector) + (shuttle_up ? +1 : -1);
-            if (i>6)
+            if (i>range_max)
             {
                 if ( z )
                 {
@@ -802,7 +805,7 @@ XPLMCommandCallback_f ext_range_handler(XPLMCommandRef inCommand, XPLMCommandPha
                 }
                 else
                 {
-                    i = 5;
+                    i = range_max-1;
                     shuttle_up = 0;
                 }
             }
@@ -815,7 +818,7 @@ XPLMCommandCallback_f ext_range_handler(XPLMCommandRef inCommand, XPLMCommandPha
                 }
                 else
                 {
-                    i = 6;
+                    i = range_max;
                     z = ! z;;
                 }
             }
@@ -830,6 +833,7 @@ XPLMCommandCallback_f ext_range_handler(XPLMCommandRef inCommand, XPLMCommandPha
         }
         XPLMSetDatai(efis_map_range_selector, i % 10);
         XPLMSetDatai(efis_pilot_map_zoomin, z);
+        if (qpac_ready) XPLMSetDatai(qpac_capt_efis_nd_range,i % 10);
     }
     return (XPLMCommandCallback_f)1;
 }
@@ -838,28 +842,30 @@ XPLMCommandCallback_f ext_range_handler(XPLMCommandRef inCommand, XPLMCommandPha
 XPLMCommandCallback_f mode_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
 {
     static int shuttle_up = 1;
+    // Qpac override efis_map_submode with forced value = 2
+    int nd_mode = qpac_ready ? XPLMGetDatai(qpac_capt_efis_nd_mode) : XPLMGetDatai(efis_map_submode);
 
     if (inPhase == xplm_CommandBegin)
     {
         int i = (int)((intptr_t)inRefcon);
         if ( i == DOWN )
         {
-            i = XPLMGetDatai(efis_map_submode) - 1;
+            i = nd_mode - 1;
             if (i<0) i = 0;
         }
         else if ( i == UP )
         {
-            i = XPLMGetDatai(efis_map_submode) + 1;
+            i = nd_mode + 1;
             if (i>4) i = 4;
         }
         else if ( i == CYCLE )
         {
-            i = XPLMGetDatai(efis_map_submode) + 1;
+            i = nd_mode + 1;
             if (i>4) i = 0;
         }
         else if ( i == SHUTTLE )
         {
-            i = XPLMGetDatai(efis_map_submode) + (shuttle_up ? +1 : -1);
+            i = nd_mode + (shuttle_up ? +1 : -1);
             if (i>4)
             {
                 i = 3;
@@ -871,7 +877,12 @@ XPLMCommandCallback_f mode_handler(XPLMCommandRef inCommand, XPLMCommandPhase in
                 shuttle_up = 1;
             }
         }
-        XPLMSetDatai(efis_map_submode, i);
+
+        if (qpac_ready) {
+        	XPLMSetDatai(qpac_capt_efis_nd_mode,i);
+        } else {
+        	XPLMSetDatai(efis_map_submode, i);
+        }
     }
     return (XPLMCommandCallback_f)1;
 }
@@ -1460,6 +1471,7 @@ XPLMCommandCallback_f copilot_zoom_x100_handler(XPLMCommandRef inCommand, XPLMCo
 XPLMCommandCallback_f copilot_range_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
 {
     static int shuttle_up = 1;
+    int range_max = qpac_ready ? 5 : 6;
 
     if (inPhase == xplm_CommandBegin)
     {
@@ -1472,19 +1484,19 @@ XPLMCommandCallback_f copilot_range_handler(XPLMCommandRef inCommand, XPLMComman
         else if ( i == UP )
         {
             i = XPLMGetDatai(efis_copilot_map_range_selector) + 1;
-            if (i>6) i = 6;
+            if (i>range_max) i = range_max;
         }
         else if ( i == CYCLE )
         {
             i = XPLMGetDatai(efis_copilot_map_range_selector) + 1;
-            if (i>6) i = 0;
+            if (i>range_max) i = 0;
         }
         else if ( i == SHUTTLE )
         {
             i = XPLMGetDatai(efis_copilot_map_range_selector) + (shuttle_up ? +1 : -1);
-            if (i>6)
+            if (i>range_max)
             {
-                i = 5;
+                i = range_max-1;
                 shuttle_up = 0;
             }
             else if (i<0)
@@ -1494,6 +1506,7 @@ XPLMCommandCallback_f copilot_range_handler(XPLMCommandRef inCommand, XPLMComman
             }
         }
         XPLMSetDatai(efis_copilot_map_range_selector, i);
+        if (qpac_ready) XPLMSetDatai(qpac_co_efis_nd_range,i);
     }
     return (XPLMCommandCallback_f)1;
 }
@@ -1502,6 +1515,7 @@ XPLMCommandCallback_f copilot_range_handler(XPLMCommandRef inCommand, XPLMComman
 XPLMCommandCallback_f copilot_ext_range_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
 {
     static int shuttle_up = 1;
+    int range_max = qpac_ready ? 5 : 6;
 
     if (inPhase == xplm_CommandBegin)
     {
@@ -1518,7 +1532,7 @@ XPLMCommandCallback_f copilot_ext_range_handler(XPLMCommandRef inCommand, XPLMCo
                 }
                 else
                 {
-                    i = 6;
+                    i = range_max;
                     z = 1;
                 }
             }
@@ -1526,11 +1540,11 @@ XPLMCommandCallback_f copilot_ext_range_handler(XPLMCommandRef inCommand, XPLMCo
         else if ( i == UP )
         {
             i = XPLMGetDatai(efis_copilot_map_range_selector) + 1;
-            if (i>6)
+            if (i>range_max)
             {
                 if ( ! z )
                 {
-                    i = 6;
+                    i = range_max;
                 }
                 else
                 {
@@ -1542,7 +1556,7 @@ XPLMCommandCallback_f copilot_ext_range_handler(XPLMCommandRef inCommand, XPLMCo
         else if ( i == CYCLE )
         {
             i = XPLMGetDatai(efis_copilot_map_range_selector) + 1;
-            if (i>6)
+            if (i>range_max)
             {
                 i = 0;
                 z = !z;
@@ -1551,7 +1565,7 @@ XPLMCommandCallback_f copilot_ext_range_handler(XPLMCommandRef inCommand, XPLMCo
         else if ( i == SHUTTLE )
         {
             i = XPLMGetDatai(efis_copilot_map_range_selector) + (shuttle_up ? +1 : -1);
-            if (i>6)
+            if (i>range_max)
             {
                 if ( z )
                 {
@@ -1560,7 +1574,7 @@ XPLMCommandCallback_f copilot_ext_range_handler(XPLMCommandRef inCommand, XPLMCo
                 }
                 else
                 {
-                    i = 5;
+                    i = range_max-1;
                     shuttle_up = 0;
                 }
             }
@@ -1573,7 +1587,7 @@ XPLMCommandCallback_f copilot_ext_range_handler(XPLMCommandRef inCommand, XPLMCo
                 }
                 else
                 {
-                    i = 6;
+                    i = range_max;
                     z = ! z;;
                 }
             }
@@ -1588,6 +1602,7 @@ XPLMCommandCallback_f copilot_ext_range_handler(XPLMCommandRef inCommand, XPLMCo
         }
         XPLMSetDatai(efis_copilot_map_range_selector, i % 10);
         XPLMSetDatai(efis_copilot_map_zoomin, z);
+        if (qpac_ready) XPLMSetDatai(qpac_co_efis_nd_range,i % 10);
     }
     return (XPLMCommandCallback_f)1;
 }
@@ -1630,6 +1645,7 @@ XPLMCommandCallback_f copilot_mode_handler(XPLMCommandRef inCommand, XPLMCommand
             }
         }
         XPLMSetDatai(efis_copilot_map_submode, i);
+        if (qpac_ready) XPLMSetDatai(qpac_co_efis_nd_mode,i);
     }
     return (XPLMCommandCallback_f)1;
 }
