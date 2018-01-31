@@ -526,7 +526,12 @@ public interface Aircraft {
      */
     public boolean master_caution();
 
+    /**
+     * @return boolean - master accept lit?
+     */
+    public boolean master_accept();
 
+    
     /**
      * @return float - pitch trim
      */

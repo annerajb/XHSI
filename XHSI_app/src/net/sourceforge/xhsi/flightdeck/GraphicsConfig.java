@@ -727,7 +727,7 @@ public class GraphicsConfig implements ComponentListener {
                 terrain_label_color = Color.cyan;
                 fmc_active_color = Color.GREEN;
                 fmc_disp_color = Color.WHITE;
-                fmc_other_color = Color.LIGHT_GRAY;
+                fmc_other_color = Color.GREEN; // Color.LIGHT_GRAY;
                 altitude_arc_color = color_yellowgreen;
                 fmc_ll_active_color = color_yellowgreen.brighter();
                 fmc_ll_disp_color = color_yellowgreen;

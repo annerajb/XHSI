@@ -987,15 +987,21 @@ public class MovingMap extends NDSubcomponent {
         }
 
         // draw FMS route
+        boolean fms_nav=this.avionics.ap_lnav_arm() || this.avionics.ap_lnav_on();
+        if (this.avionics.is_qpac()) 
+        	fms_nav = this.avionics.qpac_ap_lateral_armed() == 2 || 
+        		this.avionics.qpac_ap_lateral_mode()== 2 || 
+        		this.avionics.qpac_ap_lateral_mode()== 9;
+        // TODO x737 & JarDesign
         if ( this.fms.is_active() && ( nd_gc.mode_fullmap || ( this.avionics.hsi_source() == Avionics.HSI_SOURCE_GPS ) ) ) {
             int nb_of_entries = this.fms.get_nb_of_entries();
             FMSEntry entry;
             FMSEntry next_entry = null;
-            boolean inactive = true;
+            boolean inactive = true;            
             for (int i=0; i<nb_of_entries; i++) {
-                entry = (FMSEntry) this.fms.get_entry(i);
+                entry = (FMSEntry) this.fms.get_entry(i);                
                 if ( i < (nb_of_entries-1) ) {
-                    next_entry = (FMSEntry) this.fms.get_entry(i+1);
+                    next_entry = (FMSEntry) this.fms.get_entry(i+1);                    
                     if ( entry.active || ( ( next_entry != null ) && next_entry.active ) ) {
                         inactive = false;
                     }
@@ -1003,7 +1009,7 @@ public class MovingMap extends NDSubcomponent {
                     next_entry = null;
                 }
                 
-                draw_FMS_entry(g2, entry, next_entry, inactive);
+                if (!entry.discontinuity) draw_FMS_entry(g2, entry, next_entry, inactive, fms_nav);
             }
         }
 
@@ -1695,7 +1701,7 @@ public class MovingMap extends NDSubcomponent {
     }
 
 
-    private void draw_FMS_entry(Graphics2D g2, FMSEntry entry, FMSEntry next_entry, boolean inactive) {
+    private void draw_FMS_entry(Graphics2D g2, FMSEntry entry, FMSEntry next_entry, boolean inactive, boolean fms_nav) {
 
 //        DecimalFormat eta_hours_formatter = new DecimalFormat("00");
 //        DecimalFormat eta_minutes_formatter = new DecimalFormat("00");
@@ -1712,7 +1718,7 @@ public class MovingMap extends NDSubcomponent {
             AffineTransform original_at = g2.getTransform();
             Stroke original_stroke = g2.getStroke();
 
-            g2.setStroke(new BasicStroke(1.5f));
+            g2.setStroke(fms_nav ? nd_gc.fmc_stroke_active : nd_gc.fmc_stroke_inactive);
             if ( ! entry.name.equals(this.avionics.gps_nav_id()) ) {
                 // it seems to be active, but the GPS datarefs is targetting another waypoint
                 g2.setColor(nd_gc.fmc_other_color);
@@ -1732,7 +1738,7 @@ public class MovingMap extends NDSubcomponent {
         if ( entry.active && ! entry.name.equals(this.avionics.gps_nav_id()) ) override_active = true;
         
         
-        if ( (next_entry != null) && ( ! next_entry.name.equals("NTFND") ) ) {
+        if ( (next_entry != null) && ( ! next_entry.name.equals("NTFND") ) && (! next_entry.discontinuity) ) {
             // draw a line to the next waypoint
             if ( inactive /* || ! next_entry.name.equals(this.avionics.gps_nav_id()) */ ) {
                 // the next FMS waypoint is not active, or it seems to be active, but the GPS datarefs is targetting another waypoint
@@ -1741,8 +1747,8 @@ public class MovingMap extends NDSubcomponent {
                 g2.setColor(nd_gc.fmc_active_color);
             }
             Stroke original_stroke = g2.getStroke();
-            //g2.setStroke(new BasicStroke(1.0f*nd_gc.scaling_factor));
-            g2.setStroke(new BasicStroke(1.5f));
+
+            g2.setStroke(fms_nav ? nd_gc.fmc_stroke_active : nd_gc.fmc_stroke_inactive);
             map_projection.setPoint(next_entry.lat, next_entry.lon);
             g2.drawLine(x,y, map_projection.getX(), map_projection.getY());
             g2.setStroke(original_stroke);

@@ -180,7 +180,9 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public BufferedImage vor_symbol_img;
     public BufferedImage vordme_symbol_img;
     public BufferedImage loc_symbol_img;
-    
+    // Moving Map FMS
+    public Stroke fmc_stroke_active;
+    public Stroke fmc_stroke_inactive;
     
     // RadioLabel & Radio info box -> rib prefix
     public int rib_width;
@@ -287,6 +289,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int wxr_info_height;
     public int wxr_info_x;
     public int wxr_info_y;
+    public int wxr_label1_y;
+    public int wxr_label2_y;
 	public BufferedImage wxr_info_img;
     public BufferedImage wxr_img_1;
     public BufferedImage wxr_img_2;
@@ -622,7 +626,9 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             vordme_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
             loc_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
             
-            
+            fmc_stroke_active = new BasicStroke(boeing_style ? 1.5f : 2.5f);
+            float range_dashes[] = { 8.0f, 8.0f };
+            fmc_stroke_inactive =  new BasicStroke(boeing_style ? 1.5f : 2.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 8.0f, range_dashes, 0.0f);
             
             // Clock - Time - Chrono
             if (boeing_style) {
@@ -730,15 +736,15 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             	terr_label_y = line_height_l*9/8;
             	terr_label_x = panel_rect.width * 6/1000;
             	
-            	terr_box_x = 1;
-            	terr_value_x = panel_rect.width * 6/1000;
+            	terr_box_x = panel_rect.width * 7/1000;
+            	terr_value_x = panel_rect.width * 14/1000;
             	terr_max_box_y = terr_label_y + line_height_l*2/8;
             	terr_max_value_y = terr_max_box_y + line_height_l*9/8;
             	
             	terr_min_box_y = terr_max_box_y + line_height_l*11/8;
             	terr_min_value_y = terr_min_box_y + line_height_l*9/8;
             	terr_box_height = line_height_l * 12/10;
-            	terr_box_width = digit_width_l * 11/3;
+            	terr_box_width = digit_width_l * 41/10;
             	terr_label_color = map_zoomin ? ecam_caution_color : color_airbus_selected; 
             	terr_label_font = font_xl;
             	
@@ -799,13 +805,18 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
         	if (boeing_style) {
         		wxr_info_width = this.digit_width_xs*11/2 + terr_box_width;
         		wxr_info_height = terr_box_height *3;
-            	wxr_info_x = terr_label_x;
+            	wxr_info_x = left_label_x;
             	wxr_info_y = left_label_xpdr_y + line_height_xs*1/8;
+            	wxr_label1_y = line_height_xs*9/8;
+            	wxr_label2_y = line_height_xs*20/8;
         	} else {
-            	wxr_info_width = this.digit_width_xs*11/2 + terr_box_width;
-            	wxr_info_height = terr_box_height *3;
-            	wxr_info_x = panel_rect.x + panel_rect.width * 860/1000;
+            	wxr_info_width = this.digit_width_xl*21/2;
+            	wxr_info_height = line_height_xl * 5/2;
+            	wxr_info_x = panel_rect.x + panel_rect.width *990/1000 - wxr_info_width;
             	wxr_info_y = this.frame_size.height*765/1000;
+            	wxr_label1_y = line_height_l*9/8;
+            	wxr_label2_y = line_height_l*20/8;
+
         	}
 	
         	wxr_info_img = new BufferedImage(wxr_info_width,wxr_info_height,BufferedImage.TYPE_INT_ARGB);

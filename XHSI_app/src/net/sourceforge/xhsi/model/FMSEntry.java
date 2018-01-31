@@ -33,10 +33,20 @@ public class FMSEntry extends NavigationObject {
     public int index;
     public int type;
     public int altitude;
+    public int speed;
+    public int wind_heading;
+    public int wind_speed;
     public float leg_dist;
     public float total_ete;
     public boolean active;
     public boolean displayed;
+    public boolean discontinuity;
+    // Holding pattern
+    public boolean holding;
+    public int hold_track;
+    public boolean hold_left; // True for non standard (left) turn
+    public int hold_dist; // holding distance in Nm
+    
 
 
     public FMSEntry() {
@@ -44,10 +54,18 @@ public class FMSEntry extends NavigationObject {
         this.index = 0;
         this.type = 0;
         this.altitude = 0;
+        this.speed = 0;
+        this.wind_heading = 0;
+        this.wind_speed = 0;
         this.leg_dist = 0.0f;
         this.total_ete = 0.0f;
         this.active = false;
         this.displayed = false;
+        this.discontinuity = false;
+        this.holding = false;
+        this.hold_track = 0;
+        this.hold_left = false;
+        this.hold_dist = 1;
     }
 
 
@@ -56,10 +74,18 @@ public class FMSEntry extends NavigationObject {
         this.index = index;
         this.type = type;
         this.altitude = altitude;
+        this.speed = 0;
+        this.wind_heading = 0;
+        this.wind_speed = 0;
         this.leg_dist = leg_dist;
         this.total_ete = total_ete;
         this.active = active;
         this.displayed = displayed;
+        this.discontinuity = (lat==0.0) && (lon == 0.0);
+        this.holding = false;
+        this.hold_track = 0;
+        this.hold_left = false;
+        this.hold_dist = 1;
 // "L/L" is already set by the plugin
 //        if (type == 2048) {
 //            this.name = "L/L";

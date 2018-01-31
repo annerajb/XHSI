@@ -260,6 +260,7 @@ public class XPlaneCommand implements SimCommand {
                 break;
             
             case CMD_EFIS_CAPT_TERRAIN_ND: 
+            	this.avionics.set_show_terrain(!this.avionics.efis_shows_terrain(InstrumentSide.PILOT),InstrumentSide.PILOT);
                 break;
             
             case CMD_EFIS_FO_CSTR:
@@ -326,7 +327,10 @@ public class XPlaneCommand implements SimCommand {
             	this.avionics.chr_control(Avionics.CHR_ACT_FO_START_RESET);
             	break;
             case CMD_EFIS_FO_STICK: break;
-            case CMD_EFIS_FO_TERRAIN_ND: break;
+            
+            case CMD_EFIS_FO_TERRAIN_ND:
+            	this.avionics.set_show_terrain(!this.avionics.efis_shows_terrain(InstrumentSide.COPILOT),InstrumentSide.COPILOT);
+            	break;
           
             
             case CMD_ECAM_TO_CFG: 
@@ -538,8 +542,12 @@ public class XPlaneCommand implements SimCommand {
             
             case CMD_MASTER_CTN: 
                 this.udp_sender.sendDataPoint(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_KEY_PRESS, AP_KEY_CLR_MASTER_CAUTION);
-                break;            
-            
+                break;     
+                
+            case CMD_MASTER_ACC:
+                this.udp_sender.sendDataPoint(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_KEY_PRESS, AP_KEY_CLR_MASTER_ACCEPT);
+                break;  
+                
             case CMD_A_SKID_OFF: 
                 break;
             
