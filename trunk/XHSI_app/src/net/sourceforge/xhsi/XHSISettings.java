@@ -1673,12 +1673,11 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_cdu_xfmc = radio_button_menu_item;
 
         radio_button_menu_item = new JRadioButtonMenuItem(XHSISettings.ACTION_CDU_UFMC);
-        radio_button_menu_item.setToolTipText("UFMC or X737FMC");
+        radio_button_menu_item.setToolTipText("UFMC / x737FMC");
         radio_button_menu_item.addActionListener(this);
         radio_button_menu_item.setSelected(false);
-        // TODO : for beta 9 version
-        // cdu_group.add(radio_button_menu_item);
-        // xhsi_cdu_menu.add(radio_button_menu_item);
+        cdu_group.add(radio_button_menu_item);
+        xhsi_cdu_menu.add(radio_button_menu_item);
         // keep a reference
         this.radio_button_cdu_ufmc = radio_button_menu_item;
 

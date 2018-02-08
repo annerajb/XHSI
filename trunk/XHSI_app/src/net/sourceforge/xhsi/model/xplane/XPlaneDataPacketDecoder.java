@@ -43,6 +43,7 @@ import net.sourceforge.xhsi.model.QpacEwdData;
 import net.sourceforge.xhsi.model.QpacMcduData;
 import net.sourceforge.xhsi.model.SimDataRepository;
 import net.sourceforge.xhsi.model.TCAS;
+import net.sourceforge.xhsi.model.UfmcData;
 import net.sourceforge.xhsi.model.WeatherRepository;
 import net.sourceforge.xhsi.model.XfmcData;
 
@@ -57,8 +58,10 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
     
     private boolean received_adc_packet = false;
     private boolean received_fms_packet = false;
+    private boolean received_efms_packet = false;
     private boolean received_tcas_packet = false;
     private boolean received_xfmc_packet = false;
+    private boolean received_ufmc_packet = false;
     private boolean received_ewd_packet = false;
     private boolean received_cdu_packet = false;
     private boolean received_weather_packet = false;
@@ -78,6 +81,7 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
     FMS fms = FMS.get_instance();
     TCAS tcas = TCAS.get_instance();
     XfmcData xfmc = XfmcData.getInstance();
+    UfmcData ufmc = UfmcData.getInstance();
     QpacEwdData qpac_ewd = QpacEwdData.getInstance();
     QpacMcduData qpac_mcdu = QpacMcduData.getInstance();
     
@@ -367,6 +371,21 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
 
             this.received_fms_packet = true;
             
+        } else if ( packet_type.startsWith("FMS") ) {
+        	// Extended FMC packet
+
+            // 1 out of 10 FMSx route data packets (extended)
+            
+            int offset = Character.digit( packet_type.charAt(3), 10 ) * 50;
+
+            if (this.received_efms_packet == false)
+                logger.fine("Received first Extended FMC packet [FMSx]");
+            logger.finest("Receiving " + packet_type);
+
+            DataInputStream data_stream = new DataInputStream(new ByteArrayInputStream(sim_data));
+            data_stream.skipBytes(4);    // skip the bytes containing the packet type id
+            
+            this.received_efms_packet = true;
         } else if (packet_type.equals("MPAC")) {
 
             // multi-player aircraft data packet
@@ -437,7 +456,39 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
             
             this.received_xfmc_packet = true;
             
-        } else if (packet_type.equals("QPAE")) {
+        } else if (packet_type.equals("UFMC")) {
+        	
+        	int buff_max = 80;
+            if (this.received_ufmc_packet == false)
+                logger.fine("Received first UFMC packet");
+            
+            logger.fine("Receiving UFMC packet");
+        	
+            DataInputStream data_stream = new DataInputStream(new ByteArrayInputStream(sim_data));
+            data_stream.skipBytes(4);    // skip the bytes containing the packet type id
+
+            int nb_of_lines = data_stream.readInt();
+            int status = data_stream.readInt();
+            byte[] buff = new byte[buff_max];
+            
+            if (nb_of_lines > 0 ) {
+                for (int i = 0; i < nb_of_lines; i++) {
+
+                	int line_no = data_stream.readInt();
+                	int line_length = data_stream.readInt();
+                	data_stream.read(buff, 0, buff_max);
+                	boolean sm = convertCodedStrings(buff);
+                	String s = new String(buff, 0, line_length, charset);
+                	
+                	ufmc.setLine(line_no, s);
+                }
+            }
+            
+            ufmc.setLine(14, Integer.toString(status));
+            
+            this.received_ufmc_packet = true;
+            
+        }else if (packet_type.equals("QPAE")) {
         	int buff_max = 80;
             if (this.received_ewd_packet == false)
                 logger.fine("Received first E/WD packet");

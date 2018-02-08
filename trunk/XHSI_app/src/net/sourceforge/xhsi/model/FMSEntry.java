@@ -46,6 +46,7 @@ public class FMSEntry extends NavigationObject {
     public int hold_track;
     public boolean hold_left; // True for non standard (left) turn
     public int hold_dist; // holding distance in Nm
+    // DME ARC
     
 
 

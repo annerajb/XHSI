@@ -450,6 +450,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int UFMC_N1_2 = 708;
     public static final int UFMC_N1_3 = 709;
     public static final int UFMC_N1_4 = 710;
+    public static final int UFMC_KEY_PRESS = 711;
 
 
     // XFMC
