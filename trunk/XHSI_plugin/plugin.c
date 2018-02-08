@@ -88,6 +88,7 @@
 #include "receiver.h"
 #include "commands.h"
 #include "xfmc.h"
+#include "ufmc.h"
 #include "qpac_msg.h"
 #include "jar_a320neo_msg.h"
 
@@ -291,6 +292,12 @@ PLUGIN_API int XPluginEnable(void) {
     // X-FMC
     XPLMRegisterFlightLoopCallback(
             sendXfmcCallback,
+            -1.0f,
+            NULL);
+
+    // U-FMC
+    XPLMRegisterFlightLoopCallback(
+            sendUfmcCallback,
             -1.0f,
             NULL);
 

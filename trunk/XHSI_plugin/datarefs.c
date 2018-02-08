@@ -3814,7 +3814,6 @@ void writeDataRef(int id, float value) {
             XPLMSetDatai(xfmc_keypath_ref, (int)value);
             break;
 
-
         // radio freqs
         // COM
         case SIM_COCKPIT_RADIOS_COM1_FREQ_HZ :

@@ -417,6 +417,10 @@
 #define UFMC_N1_3 709
 #define UFMC_N1_4 710
 
+#define UFMC_KEY_PRESS 711
+
+#define UFMC_ID_END 729
+
 
 // XFMC
 #define XFMC_KEYPATH 750
@@ -710,6 +714,7 @@
 #define QPAC_DOOR_STATUS 1105
 // Next is 1122
 // IDs reserved for QPAC up to 1199
+#define QPAC_ID_END 1199
 
 
 // JarDesign Airbus A320neo (1200 - 1299)
@@ -822,7 +827,7 @@
 #define JAR_A320NEO_AC_STATUS 1334
 #define JAR_A320NEO_GEN_STATUS 1335
 
-#define JAR_A320NEO_END 1350
+#define JAR_A320NEO_ID_END 1350
 
 // Plugin Version
 #define PLUGIN_VERSION_ID 999

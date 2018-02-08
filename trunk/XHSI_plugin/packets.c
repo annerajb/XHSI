@@ -125,15 +125,16 @@ void decodeIncomingPacket(void) {
     for (i=0; i<nb; i++) {
         id = custom_ntohi(efis_packet.data_points[i].id);
         float_value = custom_ntohf(efis_packet.data_points[i].value);
-        if ((id > QPAC_STATUS) && (id < JAR_A320NEO_STATUS)) {
+        if ((id > QPAC_STATUS) && (id <=QPAC_ID_END)) {
             writeQpacDataRef(id, float_value);
-        } else 	if ((id >= JAR_A320NEO_STATUS) && (id <= JAR_A320NEO_END)) {
+        } else 	if ((id >= JAR_A320NEO_STATUS) && (id <= JAR_A320NEO_ID_END)) {
         	writeJarA320neoDataRef(id, float_value);
+        } else 	if ((id >= UFMC_STATUS) && (id <= UFMC_ID_END)) {
+        	writeUFmcDataRef(id, float_value);
         } else {
         	writeDataRef(id, float_value);
         }
     }
-
 }
 
 
@@ -3643,16 +3644,16 @@ int createEnginesPacket(void) {
     if ( ufmc_ready ) {
 
         sim_packet.sim_data_points[i].id = custom_htoni(UFMC_N1_1);
-        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(ufmc_n1_1));
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(ufmc_eng_n1_1));
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(UFMC_N1_2);
-        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(ufmc_n1_2));
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(ufmc_eng_n1_2));
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(UFMC_N1_3);
-        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(ufmc_n1_3));
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(ufmc_eng_n1_3));
         i++;
         sim_packet.sim_data_points[i].id = custom_htoni(UFMC_N1_4);
-        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(ufmc_n1_4));
+        sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(ufmc_eng_n1_4));
         i++;
 
     }
