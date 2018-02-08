@@ -3,6 +3,7 @@
 // This will cause the fms_packet size to be larger than can be sent using sendto().
 // So force the old X-Plane V8 limit
 #define MAX_FMS_ENTRIES_ALLOWED 50
+#define MAX_EXTENDED_FMS_ENTRIES_ALLOWED 25
 #define MAX_FMS_ENTRIES_POSSIBLE 500
 
 // number of TCAS entries
@@ -37,6 +38,29 @@ struct FmsDataPacket {
 	int 				displayed_entry_index;
 	int 				active_entry_index;
 	struct FmsEntry     entries[MAX_FMS_ENTRIES_ALLOWED];
+};
+
+struct ExtendedFmsEntry {
+	int     type;  // new types : HOLD, ARC DME
+	char	id[8];
+	int 	altitude;
+	int     speed;
+	int     wind_mag;
+	int     wind_speed;
+	float   hold_track;  // may be DME ARC track also
+	float   hold_dist;   // may de DME ARC dist also
+	float	lat;
+	float	lon;
+};
+
+struct ExtendedFmsDataPacket {
+	char				packet_id[4];
+	float               ete_for_active;
+	float               groundspeed;
+	int 				nb_of_entries;
+	int 				displayed_entry_index;
+	int 				active_entry_index;
+	struct ExtendedFmsEntry     entries[MAX_EXTENDED_FMS_ENTRIES_ALLOWED];
 };
 
 struct TcasDataPoint {

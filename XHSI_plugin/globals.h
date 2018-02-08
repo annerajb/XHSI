@@ -1,8 +1,10 @@
+#ifndef GLOBALS_H_
+#define GLOBALS_H_
 
 // Global constants ============================
 
 // version info
-#define PLUGIN_VERSION_TEXT "XHSI Plugin 2.0 Beta 11 alpha 1"
+#define PLUGIN_VERSION_TEXT "XHSI Plugin 2.0 Beta 11 alpha 2"
 #define PLUGIN_VERSION_NUMBER 20011
 
 
@@ -23,3 +25,5 @@
 // #else
 #define CFG_FILE "Resources/plugins/XHSI_plugin.cfg"
 // #endif
+
+#endif /* GLOBALS_H_ */
