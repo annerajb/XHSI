@@ -34,7 +34,7 @@ public class FMSEntry extends NavigationObject {
     public int type;
     public int altitude;
     public int speed;
-    public int wind_heading;
+    public int wind_mag;
     public int wind_speed;
     public float leg_dist;
     public float total_ete;
@@ -45,7 +45,7 @@ public class FMSEntry extends NavigationObject {
     public boolean holding;
     public int hold_track;
     public boolean hold_left; // True for non standard (left) turn
-    public int hold_dist; // holding distance in Nm
+    public float hold_dist;   // holding distance in Nm
     // DME ARC
     
 
@@ -56,7 +56,7 @@ public class FMSEntry extends NavigationObject {
         this.type = 0;
         this.altitude = 0;
         this.speed = 0;
-        this.wind_heading = 0;
+        this.wind_mag = 0;
         this.wind_speed = 0;
         this.leg_dist = 0.0f;
         this.total_ete = 0.0f;
@@ -76,7 +76,7 @@ public class FMSEntry extends NavigationObject {
         this.type = type;
         this.altitude = altitude;
         this.speed = 0;
-        this.wind_heading = 0;
+        this.wind_mag = 0;
         this.wind_speed = 0;
         this.leg_dist = leg_dist;
         this.total_ete = total_ete;
