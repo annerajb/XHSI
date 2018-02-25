@@ -35,4 +35,10 @@ float sendUfmcCallback(
 									int		inCounter,
 									void *	inRefcon);
 
+float sendUfmcExtendedFmsCallback(
+									float	inElapsedSinceLastCall,
+									float	inElapsedTimeSinceLastFlightLoop,
+									int		inCounter,
+									void *	inRefcon);
+
 #endif /* UFMC_H_ */

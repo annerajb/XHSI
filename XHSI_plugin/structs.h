@@ -40,6 +40,9 @@ struct FmsDataPacket {
 	struct FmsEntry     entries[MAX_FMS_ENTRIES_ALLOWED];
 };
 
+/*
+ * ExtendedFmsEntry length : 44 bytes
+ */
 struct ExtendedFmsEntry {
 	int     type;  // new types : HOLD, ARC DME
 	char	id[8];
@@ -47,8 +50,8 @@ struct ExtendedFmsEntry {
 	int     speed;
 	int     wind_mag;
 	int     wind_speed;
-	float   hold_track;  // may be DME ARC track also
-	float   hold_dist;   // may de DME ARC dist also
+	int     hold_track;  // may be DME ARC track also ?
+	float   hold_dist;   // may de DME ARC dist also ?
 	float	lat;
 	float	lon;
 };

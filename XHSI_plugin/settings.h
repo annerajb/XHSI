@@ -1,3 +1,12 @@
+/*
+ * settings.h
+ *
+ *  Created on:
+ *      Author:
+ */
+
+#ifndef SETTINGS_H_
+#define SETTINGS_H_
 
 // settings variables
 extern int					dest_enable[];
@@ -25,6 +34,17 @@ extern float                static_data_delay;
 extern float                fms_data_delay;
 extern float                tcas_data_delay;
 
+extern unsigned long int   fms_source;
+
+#define FMS_SOURCE_AUTO   0
+#define FMS_SOURCE_LEGACY 1
+#define FMS_SOURCE_UFMC   2
+
+
+
 // settings public functions
 void	initSettings();
 void	writeSettings();
+
+
+#endif /* UFMC_H_ */

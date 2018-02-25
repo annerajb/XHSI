@@ -1,3 +1,10 @@
+/*
+ * settings.c
+ *
+ *  Created on:
+ *      Author:
+ */
+
 
 #include <stdio.h>
 #include <string.h>
@@ -15,6 +22,7 @@
 
 
 #include "globals.h"
+#include "settings.h"
 
 
 // config variables
@@ -43,6 +51,7 @@ float               static_data_delay;
 float               fms_data_delay;
 float               tcas_data_delay;
 
+unsigned long int  fms_source;
 
 
 // Config settings ---------------------------------------------------------------------------
@@ -87,6 +96,8 @@ void defaultSettings() {
 	aux_sys_data_rate = 5;
 	static_data_rate = 1;
 	expert_settings = 0;
+
+	fms_source = FMS_SOURCE_LEGACY;
 
     XPLMDebugString("XHSI: default settings defined\n");
 
@@ -170,6 +181,10 @@ void readConfig() {
 				expert_settings = d_value;
 			}
 
+			if (strcmp(param, "fms_source")==0) {
+				fms_source = d_value;
+			}
+
 			for (i=0; i<NUM_DEST; i++) {
 
 				sprintf(dest_param, "dest_enable[%d]", i);
@@ -231,6 +246,7 @@ void writeSettings() {
 		fprintf(cfg_file, "aux_sys_data_rate %ld\n", aux_sys_data_rate);
 		fprintf(cfg_file, "static_data_rate %ld\n", static_data_rate);
 		fprintf(cfg_file, "expert_settings %ld\n", expert_settings);
+		fprintf(cfg_file, "fms_source %ld\n", fms_source);
 
 		for (i=0; i<NUM_DEST; i++) {
 			fprintf(cfg_file, "dest_enable[%d] %d\n", i, dest_enable[i]);

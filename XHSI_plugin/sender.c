@@ -404,7 +404,7 @@ float sendFmsCallback(
 #endif
 
 
-	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open)  {
+	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open && fms_source==FMS_SOURCE_LEGACY)  {
 
 		waypoint_count = createFmsPackets();
         last_pack = ( waypoint_count - 1 ) / MAX_FMS_ENTRIES_ALLOWED;
@@ -427,7 +427,7 @@ float sendFmsCallback(
 #if IBM
                     if ( res == SOCKET_ERROR ) {
 						send_error = 1;
-                        XPLMDebugString("XHSI: caught error while sending FMCx packet! (");
+                        XPLMDebugString("XHSI: caught error while sending FMSx packet! (");
                         sprintf(msg, "%d", WSAGetLastError());
                         XPLMDebugString(msg);
                         XPLMDebugString(")\n");
@@ -435,7 +435,7 @@ float sendFmsCallback(
 #else
                     if ( res < 0 ) {
 						send_error = 1;
-                        XPLMDebugString("XHSI: caught error while sending FMCx packet! (");
+                        XPLMDebugString("XHSI: caught error while sending FMSx packet! (");
                         XPLMDebugString((char * const) strerror(GET_ERRNO));
                         XPLMDebugString(")\n");
                     }
