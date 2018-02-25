@@ -48,7 +48,7 @@ XPLMMenuID	menu_id;
 int			menu_item;
 
 // Settings box widgets
-XPWidgetID	settings_dialog, settings_receiver_subwindow, settings_sender_subwindow, settings_dest_subwindow;
+XPWidgetID	settings_dialog, settings_receiver_subwindow, settings_sender_subwindow, settings_dest_subwindow, settings_fms_subwindow;
 XPWidgetID	dest_ip_textbox[NUM_DEST], dest_port_textbox[NUM_DEST];
 XPWidgetID  src_port_textbox, nav_rate_textbox, fms_rate_textbox, tcas_rate_textbox;
 XPWidgetID	version_label, receiver_label, sender_label, dest_label, dest_label1, dest_label2, dest_label3, dest_enable_label, dest_ip_label, dest_port_label, dest_default_label;
@@ -56,6 +56,9 @@ XPWidgetID  src_port_label, data_rate_label, nav_data_label, fms_data_label, tca
 XPWidgetID	src_port_default_label, nav_data_default_label, fms_data_default_label, tcas_data_default_label;
 XPWidgetID  dest_enable_checkbox[NUM_DEST];
 XPWidgetID  default_local_button, default_multicast_button, cancel_button, set_button;
+XPWidgetID  fms_label, fms_desc1_label, fms_desc2_label;
+XPWidgetID  fms_auto_radiobutton, fms_legacy_radiobutton, fms_ufmc_radiobutton;
+XPWidgetID  fms_auto_rb_label, fms_legacy_rb_label, fms_ufmc_rb_label;
 
 // Remote box widgets
 XPWidgetID  remote_dialog;
@@ -116,6 +119,10 @@ void setWidgetValues() {
 		sprintf(val_buf, "%d", dest_port[i]);
 		XPSetWidgetDescriptor(dest_port_textbox[i], val_buf);
 	}
+
+	XPSetWidgetProperty(fms_auto_radiobutton, xpProperty_ButtonState, (fms_source==FMS_SOURCE_AUTO) ? 1 : 0);
+	XPSetWidgetProperty(fms_legacy_radiobutton, xpProperty_ButtonState, (fms_source==FMS_SOURCE_LEGACY) ? 1: 0);
+	XPSetWidgetProperty(fms_ufmc_radiobutton, xpProperty_ButtonState, (fms_source==FMS_SOURCE_UFMC) ? 1 : 0);
 
 }
 
@@ -191,6 +198,18 @@ XPWidgetFunc_t settingsDialogHandler(
 			tcas_data_rate = strtol(buffer, NULL, 10);
 			tcas_data_delay = 1.0f / (float)tcas_data_rate;
 
+
+			if ((int)XPGetWidgetProperty(fms_auto_radiobutton, xpProperty_ButtonState, NULL) ) {
+				fms_source = FMS_SOURCE_AUTO;
+			} else if ((int)XPGetWidgetProperty(fms_legacy_radiobutton, xpProperty_ButtonState, NULL) ) {
+				fms_source = FMS_SOURCE_LEGACY;
+			} else if ((int)XPGetWidgetProperty(fms_ufmc_radiobutton, xpProperty_ButtonState, NULL) ) {
+				fms_source = FMS_SOURCE_UFMC;
+			} else {
+				// Unknown ? -> Auto
+				fms_source = FMS_SOURCE_AUTO;
+			}
+
 			// write the new config to file
 			writeSettings();
 
@@ -207,6 +226,25 @@ XPWidgetFunc_t settingsDialogHandler(
 
 	}
 
+	// Radio Buttons
+    if (inMessage == xpMsg_ButtonStateChanged) {
+    	if(inParam1 == (intptr_t)fms_auto_radiobutton) {
+            XPSetWidgetProperty(fms_legacy_radiobutton, xpProperty_ButtonState, 0);
+            XPSetWidgetProperty(fms_ufmc_radiobutton, xpProperty_ButtonState, 0);
+            XPSetWidgetProperty((XPWidgetID)inParam1, xpProperty_ButtonState, 1);
+    	}
+    	if(inParam1 == (intptr_t)fms_legacy_radiobutton) {
+            XPSetWidgetProperty(fms_auto_radiobutton, xpProperty_ButtonState, 0);
+            XPSetWidgetProperty(fms_ufmc_radiobutton, xpProperty_ButtonState, 0);
+            XPSetWidgetProperty((XPWidgetID)inParam1, xpProperty_ButtonState, 1);
+    	}
+    	if(inParam1 == (intptr_t)fms_ufmc_radiobutton) {
+            XPSetWidgetProperty(fms_legacy_radiobutton, xpProperty_ButtonState, 0);
+            XPSetWidgetProperty(fms_auto_radiobutton, xpProperty_ButtonState, 0);
+            XPSetWidgetProperty((XPWidgetID)inParam1, xpProperty_ButtonState, 1);
+    	}
+    }
+
 	return 0;
 
 }
@@ -219,7 +257,7 @@ void createSettingsDialog(int x, int y) {
 
 	// x, y : lower left
 	int w = 400 + 30;
-	int h = 460 + 20+2*15 + 20; // was: 385 ; now : 460
+	int h = 460 + 20+2*15 + 20 + 140; // was: 385 ; now : 460
 	// x0, y0 : top left
 	int x0 = x;
 	int y0 = y + h;
@@ -232,6 +270,8 @@ void createSettingsDialog(int x, int y) {
 	int h2 = 120;
 	// h3 : height of third subwindow
 	int h3 = 140 + 20+2*15;
+	// h4 : height of fouth subwindow
+	int h4 = 140;
 	// y1 : current line
 	int y1;
 
@@ -423,6 +463,65 @@ void createSettingsDialog(int x, int y) {
 										   1, "", 0, settings_dialog,
 										   xpWidgetClass_TextField);
 	}
+
+
+	// FMS subwindow
+	y1 = y0-45-20-h1-15-h2-15-h3-15;
+	settings_fms_subwindow = XPCreateWidget(x0+20, y1, x2-20, y1-h4,
+											   1,							// visible
+											   "FMS",					    // window title
+											   0,							// not root
+											   settings_dialog,				// in container
+											   xpWidgetClass_SubWindow);
+	XPSetWidgetProperty(settings_fms_subwindow, xpProperty_SubWindowType, xpSubWindowStyle_SubWindow);
+
+	// destination title and entries
+	y1 -= 5;
+	fms_label = XPCreateWidget(x0+50, y1, x2-50, y1-15,
+							  1, "FMS Source Selection", 0, settings_dialog,
+							  xpWidgetClass_Caption);
+
+	y1 -= 20;
+	fms_desc1_label = XPCreateWidget(x0+50, y1, x2-50, y1-15,
+							  1, "X-Plane legacy FMS is not feed by enhanced Aircraft", 0, settings_dialog,
+							  xpWidgetClass_Caption);
+	y1 -= 20;
+	fms_desc2_label = XPCreateWidget(x0+50, y1, x2-50, y1-15,
+							  1, "Auto send the first non empty FMS data, in the order bellow", 0, settings_dialog,
+							  xpWidgetClass_Caption);
+
+	y1 -= 20;
+	fms_auto_radiobutton = XPCreateWidget(x0+30, y1, x0+30+30, y1-15,
+									  1, "", 0, settings_dialog,
+									  xpWidgetClass_Button);
+	XPSetWidgetProperty(fms_auto_radiobutton, xpProperty_ButtonType, xpRadioButton);
+	XPSetWidgetProperty(fms_auto_radiobutton, xpProperty_ButtonBehavior, xpButtonBehaviorRadioButton);
+	XPSetWidgetProperty(fms_auto_radiobutton, xpProperty_ButtonState, 0);
+	fms_auto_rb_label = XPCreateWidget(x0+75, y1, x0+75+100+10+55, y1-15,
+									   1, "Automatic", 0, settings_dialog,
+									   xpWidgetClass_Caption);
+
+	y1 -= 20;
+	fms_legacy_radiobutton = XPCreateWidget(x0+30, y1, x0+30+30, y1-15,
+									  1, "", 0, settings_dialog,
+									  xpWidgetClass_Button);
+	XPSetWidgetProperty(fms_legacy_radiobutton, xpProperty_ButtonType, xpRadioButton);
+	XPSetWidgetProperty(fms_legacy_radiobutton, xpProperty_ButtonBehavior, xpButtonBehaviorRadioButton);
+	XPSetWidgetProperty(fms_legacy_radiobutton, xpProperty_ButtonState, 0);
+	fms_legacy_rb_label = XPCreateWidget(x0+75, y1, x0+75+100+10+55, y1-15,
+									   1, "X-Plane legacy", 0, settings_dialog,
+									   xpWidgetClass_Caption);
+
+	y1 -= 20;
+	fms_ufmc_radiobutton = XPCreateWidget(x0+30, y1, x0+30+30, y1-15,
+									  1, "", 0, settings_dialog,
+									  xpWidgetClass_Button);
+	XPSetWidgetProperty(fms_ufmc_radiobutton, xpProperty_ButtonType, xpRadioButton);
+	XPSetWidgetProperty(fms_ufmc_radiobutton, xpProperty_ButtonBehavior, xpButtonBehaviorRadioButton);
+	XPSetWidgetProperty(fms_ufmc_radiobutton, xpProperty_ButtonState, 0);
+	fms_ufmc_rb_label = XPCreateWidget(x0+75, y1, x0+75+100+10+55, y1-15,
+									   1, "UMFC x737FMC by Javier Cortes", 0, settings_dialog,
+									   xpWidgetClass_Caption);
 
 	// Cancel and Set buttons
 	cancel_button = XPCreateWidget(x0+(w/4), y2+30, x0+(w/2)-10, y2+20,

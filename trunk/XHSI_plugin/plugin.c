@@ -96,8 +96,12 @@
 
 // Define global vars
 // plugin status
-int     	xhsi_plugin_enabled;
-int		    xhsi_send_enabled;
+int xhsi_plugin_enabled;
+int	xhsi_send_enabled;
+
+
+// Source FMS
+int xhsi_fms;
 
 
 
@@ -245,6 +249,11 @@ PLUGIN_API int XPluginEnable(void) {
             -1.0f,
             NULL);
 
+    XPLMRegisterFlightLoopCallback(
+    		sendUfmcExtendedFmsCallback,
+            -1.0f,
+            NULL);
+
     // X737
     XPLMRegisterFlightLoopCallback(
             checkX737Callback,
@@ -364,7 +373,10 @@ PLUGIN_API void XPluginDisable(void) {
     XPLMUnregisterFlightLoopCallback(initMFDCallback, NULL);
     XPLMUnregisterFlightLoopCallback(initCDUCallback, NULL);
 
+    // UFMC
     XPLMUnregisterFlightLoopCallback(checkUFMCCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(sendUfmcExtendedFmsCallback, NULL);
+
     XPLMUnregisterFlightLoopCallback(checkX737Callback, NULL);
     XPLMUnregisterFlightLoopCallback(checkCL30Callback, NULL);
     XPLMUnregisterFlightLoopCallback(checkPilotEdgeCallback, NULL);

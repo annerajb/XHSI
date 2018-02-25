@@ -103,7 +103,9 @@ float sendUfmcCallback(
 int createUfmcExtendedFmsPackets(void) {
 
     char nav_id[256];
+    char msg[80];
     int altitude;
+    int speed;
     float lat;
     float lon;
 
@@ -126,36 +128,44 @@ int createUfmcExtendedFmsPackets(void) {
     // the entry number in the packet that we send
     int cur_packpoint = 0;
 
-    XPLMNavType type;
-    XPLMNavRef outRef;
+    int type;
+
 
     int i;
 
     int cur_pack = 0;
 
     // the actual number of waypoints, not counting zero'd waypoints
-    total_waypoints = XPLMCountFMSEntries();
+    total_waypoints = (int) XPLMGetDatai(ufmc_waypt_number);
 
     if (total_waypoints > 0) {
 
-        //sprintf(msg, "XHSI: FMC: nb=%d\n", total_waypoints);
-        //XPLMDebugString(msg);
+        sprintf(msg, "XHSI: UFMC: waypt_number=%d\n", total_waypoints);
+        XPLMDebugString(msg);
 
-        displayed_entry = XPLMGetDisplayedFMSEntry();
-        active_entry = XPLMGetDestinationFMSEntry();
+        displayed_entry = (int) XPLMGetDatai(ufmc_waypt_pln_index);
+        active_entry = (int) XPLMGetDatai(ufmc_waypt_pln_index);
 
         cur_entry = 0;
-        //XPLMDebugString("XHSI: FMC: cur_entry=");
+        //XPLMDebugString("XHSI: UFMC: cur_entry=");
 
         while ( total_waypoints > 0
                 && cur_waypoint < total_waypoints
                 && cur_entry < MAX_EXTENDED_FMS_ENTRIES_ALLOWED ) {
 
-            //sprintf(msg, " %d ", cur_entry);
-            //XPLMDebugString(msg);
+            sprintf(msg, " %d ", cur_entry);
+            XPLMDebugString(msg);
 
             cur_pack = (int)cur_waypoint / 50;
+            XPLMSetDatai(ufmc_waypt_index, cur_waypoint);
 
+            altitude = XPLMGetDatai(ufmc_waypt_altitude);
+            lat = XPLMGetDataf(ufmc_waypt_lat);
+            lon = XPLMGetDataf(ufmc_waypt_lon);
+            speed = (int) XPLMGetDataf(ufmc_waypt_speed);
+            XPLMGetDatab(ufmc_waypt_name,nav_id,0,sizeof(ufmc_efms_packet[cur_pack].entries[cur_packpoint].id));
+            type = XPLMGetDatai(ufmc_waypt_type_altitude);
+/*
             XPLMGetFMSEntryInfo(
                     cur_entry,
                     &type,
@@ -164,9 +174,9 @@ int createUfmcExtendedFmsPackets(void) {
                     &altitude,
                     &lat,
                     &lon);
-
+*/
             // only send non-zero entries
-            if ( type != xplm_Nav_Unknown ) {
+            if ( type != 255 ) {
                 // if ( lat != 0.0f || lon != 0.0f ) {
 
                 if (cur_entry == displayed_entry) {
@@ -189,6 +199,7 @@ int createUfmcExtendedFmsPackets(void) {
                 ufmc_efms_packet[cur_pack].entries[cur_packpoint].altitude = custom_htoni(altitude);
                 ufmc_efms_packet[cur_pack].entries[cur_packpoint].lat = custom_htonf(lat);
                 ufmc_efms_packet[cur_pack].entries[cur_packpoint].lon = custom_htonf(lon);
+                ufmc_efms_packet[cur_pack].entries[cur_packpoint].speed = custom_htoni(speed);
 
                 // get ready for the next waypoint
                 cur_waypoint++;
@@ -196,11 +207,11 @@ int createUfmcExtendedFmsPackets(void) {
             }
         cur_entry++;
         }
-        //XPLMDebugString("\n");
-        //sprintf(msg, "XHSI: UFMC: last=%d\n", cur_entry);
-        //XPLMDebugString(msg);
-        //sprintf(msg, "XHSI: UFMC: count=%d\n", cur_waypoint);
-        //XPLMDebugString(msg);
+        XPLMDebugString("\n");
+        sprintf(msg, "XHSI: UFMC: last=%d\n", cur_entry);
+        XPLMDebugString(msg);
+        sprintf(msg, "XHSI: UFMC: count=%d\n", cur_waypoint);
+        XPLMDebugString(msg);
 
         //    if ( ( total_waypoints > 1 ) && ( cur_waypoint != total_waypoints ) ) {
         //        sprintf(msg, "XHSI: UFMC: error count: %d %d\n", cur_waypoint, total_waypoints);
@@ -214,7 +225,7 @@ int createUfmcExtendedFmsPackets(void) {
 
     //    for (i = 0; i <= ((total_waypoints-1)/MAX_FMS_ENTRIES_POSSIBLE); i++) {
     for (i = 0; i <= cur_pack; i++) {
-        strncpy(ufmc_efms_packet[i].packet_id, "FMC", 3);
+        strncpy(ufmc_efms_packet[i].packet_id, "FMS", 3);
         ufmc_efms_packet[i].packet_id[3] = '0' + (unsigned char)i;
         //sprintf(msg, "XHSI: UFMC filling %c%c%c%c \n",fms_packet[i].packet_id[0],fms_packet[i].packet_id[1],fms_packet[i].packet_id[2],fms_packet[i].packet_id[3]);
         //XPLMDebugString(msg);
@@ -232,4 +243,71 @@ int createUfmcExtendedFmsPackets(void) {
 
 }
 
+float sendUfmcExtendedFmsCallback(
+									float	inElapsedSinceLastCall,
+									float	inElapsedTimeSinceLastFlightLoop,
+									int		inCounter,
+									void *	inRefcon) {
+
+	int i;
+	int j;
+	int waypoint_count;
+	int packet_size;
+	int last_pack;
+	int res;
+	int send_error = 0;
+#if IBM
+	char msg[80];
+#endif
+
+
+	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open && fms_source==FMS_SOURCE_UFMC)  {
+
+		waypoint_count = createUfmcExtendedFmsPackets();
+        last_pack = ( waypoint_count - 1 ) / MAX_FMS_ENTRIES_ALLOWED;
+
+        for (j=0; j<=last_pack; j++) {
+
+            if ( j == last_pack ) {
+                packet_size = 24 + ( waypoint_count % MAX_FMS_ENTRIES_ALLOWED ) * 44;
+            } else {
+                packet_size = 24 + ( MAX_FMS_ENTRIES_ALLOWED ) * 44;
+            }
+//sprintf(pack_msg, "XHSI: sending %c%c%c%c \n",fms_packet[j].packet_id[0],fms_packet[j].packet_id[1],fms_packet[j].packet_id[2],fms_packet[j].packet_id[3]);
+//XPLMDebugString(pack_msg);
+
+            for (i=0; i<NUM_DEST; i++) {
+                if (dest_enable[i]) {
+                    res = sendto(sockfd, (const char*)&ufmc_efms_packet[j], packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr));
+#if IBM
+                    if ( res == SOCKET_ERROR ) {
+						send_error = 1;
+                        XPLMDebugString("XHSI: caught error while sending UFMC FMCx packet! (");
+                        sprintf(msg, "%d", WSAGetLastError());
+                        XPLMDebugString(msg);
+                        XPLMDebugString(")\n");
+                    }
+#else
+                    if ( res < 0 ) {
+						send_error = 1;
+                        XPLMDebugString("XHSI: caught error while sending UFMC FMCx packet! (");
+                        XPLMDebugString((char * const) strerror(GET_ERRNO));
+                        XPLMDebugString(")\n");
+                    }
+#endif
+                }
+            }
+
+        }
+
+		if ( send_error )
+			return 5.0f;
+		else
+			return fms_data_delay;
+
+	} else {
+		return 1.0f;
+	}
+
+}
 
