@@ -241,6 +241,10 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_EFIS_PILOT_WXR_GAIN = 220;
     public static final int XHSI_EFIS_PILOT_WXR_MODE = 221;
     public static final int XHSI_EFIS_PILOT_WXR_OPT = 222;
+    public static final int XHSI_EFIS_PILOT_ILS = 223;
+    public static final int XHSI_EFIS_PILOT_TRK_FPA = 224;
+    public static final int XHSI_EFIS_PILOT_METRIC_ALT = 225;
+    
     
     // Copilot EFIS
     public static final int XHSI_EFIS_COPILOT_HSI_SOURCE = 250;
@@ -266,7 +270,10 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_EFIS_COPILOT_WXR_GAIN = 270;
     public static final int XHSI_EFIS_COPILOT_WXR_MODE = 271;
     public static final int XHSI_EFIS_COPILOT_WXR_OPT = 272;
-
+    public static final int XHSI_EFIS_COPILOT_ILS = 273;
+    public static final int XHSI_EFIS_COPILOT_TRK_FPA = 274;
+    public static final int XHSI_EFIS_COPILOT_METRIC_ALT = 275;
+    
     // EICAS
     public static final int XHSI_ENGINE_TYPE = 280;
     public static final int XHSI_EICAS_TRQ_SCALE = 281;
@@ -415,9 +422,9 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_FLIGHTMODEL_CONTROLS_RIGHT_AIL = 654;
     
     // Cabin Pressure
-    public static final int SIM_COCKPIT2_PRESSURIZATION_CABIN_DELTA_P=655;
-    public static final int SIM_COCKPIT2_PRESSURIZATION_CABIN_ALT=656;
-    public static final int SIM_COCKPIT2_PRESSURIZATION_CABIN_VVI=657;
+    public static final int SIM_COCKPIT2_PRESSURIZATION_CABIN_DELTA_P = 655;
+    public static final int SIM_COCKPIT2_PRESSURIZATION_CABIN_ALT = 656;
+    public static final int SIM_COCKPIT2_PRESSURIZATION_CABIN_VVI = 657;
     
     // Brakes, wheels, steering
     public static final int WHEEL_STATUS = 658;
@@ -558,6 +565,29 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_RWY_LENGTH_MIN = 901; // Override with this value if it is > 0
     public static final int XHSI_RWY_UNITS = 902; // 0:Meters 1:Feet
     
+    // Display Unit Brightness
+    // Panel & Instruments
+
+    public static final int SIM_COCKPIT_ELECTRICAL_INSTRUMENT_BRIGHTNESS = 910;
+    public static final int SIM_COCKPIT_ELECTRICAL_COCKPIT_LIGHT = 911;
+    public static final int SIM_COCKPIT_ELECTRICAL_HUD_BRIGHTNESS = 912;
+    public static final int XHSI_DU_BRIGHT_PFD_CPT = 913;
+    public static final int XHSI_DU_BRIGHT_ND_CPT = 914;
+    public static final int XHSI_DU_BRIGHT_PFD_FO = 915;
+    public static final int XHSI_DU_BRIGHT_ND_FO = 916;
+    public static final int XHSI_DU_BRIGHT_EICAS = 917;
+    public static final int XHSI_DU_BRIGHT_MFD = 918;
+    public static final int XHSI_DU_BRIGHT_CLOCK = 919;
+    public static final int XHSI_DU_BRIGHT_CDU_CPT = 920;
+    public static final int XHSI_DU_BRIGHT_CDU_FO = 921;
+    public static final int XHSI_DU_BRIGHT_CDU_OBS = 922;
+    public static final int XHSI_DU_BRIGHT_FCU = 923;
+    public static final int XHSI_DU_BRIGHT_OHP = 924;
+    public static final int XHSI_DU_BRIGHT_PEDESTAL = 925;
+    public static final int XHSI_DU_BRIGHT_DOME = 926;
+    public static final int XHSI_DU_BRIGHT_TABLET = 927;
+    // Reserved to Lights and Brightness 910 - 929
+    
     // Side stick priority - xjoymap dual commands
     public static final int XJOYMAP_STICK_PRIORITY = 940; // mask 0x03 0=dual, 1=Capt, 2=F/O ; mask 0x40 : dual_input boolean
     
@@ -606,134 +636,134 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_COND_PACK2_TEMP = 989;
     
     // QPAC AirbusFBW
-    public static final int QPAC_STATUS=1000;
+    public static final int QPAC_STATUS = 1000;
     // Autopilot  
-    public static final int QPAC_AP_FD=1001;
-    public static final int QPAC_AP_PHASE=1002;
-    public static final int QPAC_PRESEL_CRZ=1003;
-    public static final int QPAC_PRESEL_CLB=1004;
-    public static final int QPAC_PRESEL_MACH=1005;
-    public static final int QPAC_AP_VERTICAL_MODE=1006;
-    public static final int QPAC_AP_VERTICAL_ARMED=1007;
-    public static final int QPAC_AP_LATERAL_MODE=1008;
-    public static final int QPAC_AP_LATERAL_ARMED=1009;
-    public static final int QPAC_NPA_VALID=1010;
-    public static final int QPAC_NPA_NO_POINTS=1011;
-    public static final int QPAC_AP_APPR=1012;
-    public static final int QPAC_APPR_TYPE=1013;
-    public static final int QPAC_APPR_MDA=1014;
-    public static final int QPAC_ALT_IS_CSTR=1015;
-    public static final int QPAC_CONSTRAINT_ALT=1016;
+    public static final int QPAC_AP_FD = 1001;
+    public static final int QPAC_AP_PHASE = 1002;
+    public static final int QPAC_PRESEL_CRZ = 1003;
+    public static final int QPAC_PRESEL_CLB = 1004;
+    public static final int QPAC_PRESEL_MACH = 1005;
+    public static final int QPAC_AP_VERTICAL_MODE = 1006;
+    public static final int QPAC_AP_VERTICAL_ARMED = 1007;
+    public static final int QPAC_AP_LATERAL_MODE = 1008;
+    public static final int QPAC_AP_LATERAL_ARMED = 1009;
+    public static final int QPAC_NPA_VALID = 1010;
+    public static final int QPAC_NPA_NO_POINTS = 1011;
+    public static final int QPAC_AP_APPR = 1012;
+    public static final int QPAC_APPR_TYPE = 1013;
+    public static final int QPAC_APPR_MDA = 1014;
+    public static final int QPAC_ALT_IS_CSTR = 1015;
+    public static final int QPAC_CONSTRAINT_ALT = 1016;
     // FCU
-    public static final int QPAC_FCU=1017;
-    public static final int QPAC_FCU_BARO=1018;
+    public static final int QPAC_FCU = 1017;
+    public static final int QPAC_FCU_BARO = 1018;
     // Auto-Thrust
-    public static final int QPAC_ATHR_MODE=1019;
-    public static final int QPAC_ATHR_MODE2=1020;
-    public static final int QPAC_ATHR_LIMITED=1021;
-    public static final int QPAC_THR_LEVER_MODE=1022;
-    public static final int QPAC_FMA_THR_WARNING=1023;
-    public static final int QPAC_FLEX_TEMP=1024;
-    public static final int QPAC_THR_RATING_TYPE=1025;
-    public static final int QPAC_THR_RATING_N1=1026;
-    public static final int QPAC_THR_RATING_EPR=1121;
-    public static final int QPAC_THROTTLE_INPUT=1027;
+    public static final int QPAC_ATHR_MODE = 1019;
+    public static final int QPAC_ATHR_MODE2 = 1020;
+    public static final int QPAC_ATHR_LIMITED = 1021;
+    public static final int QPAC_THR_LEVER_MODE = 1022;
+    public static final int QPAC_FMA_THR_WARNING = 1023;
+    public static final int QPAC_FLEX_TEMP = 1024;
+    public static final int QPAC_THR_RATING_TYPE = 1025;
+    public static final int QPAC_THR_RATING_N1 = 1026;
+    public static final int QPAC_THR_RATING_EPR = 1121;
+    public static final int QPAC_THROTTLE_INPUT = 1027;
     // ILS Sig and Deviation Capt. and FO
-    public static final int QPAC_ILS_FLAGS=1028;
-    public static final int QPAC_LOC_VAL_CAPT=1029;
-    public static final int QPAC_GS_VAL_CAPT=1030;
-    public static final int QPAC_LOC_VAL_FO=1031;
-    public static final int QPAC_GS_VAL_FO=1032;
-    public static final int QPAC_ILS_CRS=1033;
-    public static final int QPAC_ILS_FREQ=1034;
-    public static final int QPAC_ILS_ID=11035;
-    public static final int QPAC_ILS_DME=1036;    
+    public static final int QPAC_ILS_FLAGS = 1028;
+    public static final int QPAC_LOC_VAL_CAPT = 1029;
+    public static final int QPAC_GS_VAL_CAPT = 1030;
+    public static final int QPAC_LOC_VAL_FO = 1031;
+    public static final int QPAC_GS_VAL_FO = 1032;
+    public static final int QPAC_ILS_CRS = 1033;
+    public static final int QPAC_ILS_FREQ = 1034;
+    public static final int QPAC_ILS_ID = 11035;
+    public static final int QPAC_ILS_DME = 1036;    
     // FD
-    public static final int QPAC_FD1_VER_BAR=1037;
-    public static final int QPAC_FD1_HOR_BAR=1038;
-    public static final int QPAC_FD1_YAW_BAR=1039;
-    public static final int QPAC_FD2_VER_BAR=1040;
-    public static final int QPAC_FD2_HOR_BAR=1041;
-    public static final int QPAC_FD2_YAW_BAR=1042;
+    public static final int QPAC_FD1_VER_BAR = 1037;
+    public static final int QPAC_FD1_HOR_BAR = 1038;
+    public static final int QPAC_FD1_YAW_BAR = 1039;
+    public static final int QPAC_FD2_VER_BAR = 1040;
+    public static final int QPAC_FD2_HOR_BAR = 1041;
+    public static final int QPAC_FD2_YAW_BAR = 1042;
     // V Speeds
-    public static final int QPAC_V1_VALUE=1043;
-    public static final int QPAC_V1=1044;
-    public static final int QPAC_VR=1045;
-    public static final int QPAC_VMO=1046;
-    public static final int QPAC_VLS=1047;
-    public static final int QPAC_VF=1048;
-    public static final int QPAC_VS=1049;
-    public static final int QPAC_V_GREEN_DOT=1050;
-    public static final int QPAC_ALPHA_PROT=1051;
-    public static final int QPAC_ALPHA_MAX=1052;
-    public static final int QPAC_VFE_NEXT=1106;
+    public static final int QPAC_V1_VALUE = 1043;
+    public static final int QPAC_V1 = 1044;
+    public static final int QPAC_VR = 1045;
+    public static final int QPAC_VMO = 1046;
+    public static final int QPAC_VLS = 1047;
+    public static final int QPAC_VF = 1048;
+    public static final int QPAC_VS = 1049;
+    public static final int QPAC_V_GREEN_DOT = 1050;
+    public static final int QPAC_ALPHA_PROT = 1051;
+    public static final int QPAC_ALPHA_MAX = 1052;
+    public static final int QPAC_VFE_NEXT = 1106;
     // EFIS
-    public static final int QPAC_EFIS_ND_MODE_CAPT=1053;
-    public static final int QPAC_EFIS_ND_RANGE_CAPT=1054;
-    public static final int QPAC_EFIS_ND_MODE_FO=1055;
-    public static final int QPAC_EFIS_ND_RANGE_FO=1056;  
-    public static final int QPAC_EFIS_ND_SYMBOLS=1057;
+    public static final int QPAC_EFIS_ND_MODE_CAPT = 1053;
+    public static final int QPAC_EFIS_ND_RANGE_CAPT = 1054;
+    public static final int QPAC_EFIS_ND_MODE_FO = 1055;
+    public static final int QPAC_EFIS_ND_RANGE_FO = 1056;  
+    public static final int QPAC_EFIS_ND_SYMBOLS = 1057;
     // Failures flags
-    public static final int QPAC_FAILURES=1060;
+    public static final int QPAC_FAILURES = 1060;
     // Brakes & Tyres
-    public static final int QPAC_AUTO_BRAKE_LEVEL=1061;
-    public static final int QPAC_BRAKE_ACCU_PSI=1106;
-    public static final int QPAC_BRAKE_LEFT_PSI=1107;
-    public static final int QPAC_BRAKE_RIGHT_PSI=1108;
-    public static final int QPAC_BRAKE_TEMP_=1110; // Array[5]
-    public static final int QPAC_TYRE_PSI_=1115; // Array[5]
-    public static final int QPAC_BRAKE_STATUS=1120;
+    public static final int QPAC_AUTO_BRAKE_LEVEL = 1061;
+    public static final int QPAC_BRAKE_ACCU_PSI = 1106;
+    public static final int QPAC_BRAKE_LEFT_PSI = 1107;
+    public static final int QPAC_BRAKE_RIGHT_PSI = 1108;
+    public static final int QPAC_BRAKE_TEMP_ = 1110; // Array[5]
+    public static final int QPAC_TYRE_PSI_ = 1115; // Array[5]
+    public static final int QPAC_BRAKE_STATUS = 1120;
     // FLAPS and SLATS
-    public static final int QPAC_FLAPS_REQ_POS=1062;
-    public static final int QPAC_SLATS_REQ_POS=1063;
+    public static final int QPAC_FLAPS_REQ_POS = 1062;
+    public static final int QPAC_SLATS_REQ_POS = 1063;
     // SPOILERS
-    public static final int QPAC_SPOILERS_LEFT=1064;
-    public static final int QPAC_SPOILERS_RIGHT=1065;
+    public static final int QPAC_SPOILERS_LEFT = 1064;
+    public static final int QPAC_SPOILERS_RIGHT = 1065;
     // ELAC and SEC FCC
-    public static final int QPAC_FCC=1066;
+    public static final int QPAC_FCC = 1066;
     // Rudder limit
-    public static final int QPAC_RUDDER_LIMIT=1067;
+    public static final int QPAC_RUDDER_LIMIT = 1067;
     // Hydraulic
-    public static final int QPAC_HYD_B_PRESS=1068;
-    public static final int QPAC_HYD_G_PRESS=1069;
-    public static final int QPAC_HYD_Y_PRESS=1070;
-    public static final int QPAC_HYD_B_QTY=1071;
-    public static final int QPAC_HYD_G_QTY=1072;
-    public static final int QPAC_HYD_Y_QTY=1073;
-    public static final int QPAC_HYD_PUMPS=1074;
+    public static final int QPAC_HYD_B_PRESS = 1068;
+    public static final int QPAC_HYD_G_PRESS = 1069;
+    public static final int QPAC_HYD_Y_PRESS = 1070;
+    public static final int QPAC_HYD_B_QTY = 1071;
+    public static final int QPAC_HYD_G_QTY = 1072;
+    public static final int QPAC_HYD_Y_QTY = 1073;
+    public static final int QPAC_HYD_PUMPS = 1074;
     // Cabin Pressure
-    public static final int QPAC_CABIN_DELTA_P=1075;
-    public static final int QPAC_CABIN_ALT=1076;
-    public static final int QPAC_CABIN_VS=1077;
-    public static final int QPAC_AIR_VALVES=1078;
-    public static final int QPAC_OUTFLOW_VALVE=1079;
+    public static final int QPAC_CABIN_DELTA_P = 1075;
+    public static final int QPAC_CABIN_ALT = 1076;
+    public static final int QPAC_CABIN_VS = 1077;
+    public static final int QPAC_AIR_VALVES = 1078;
+    public static final int QPAC_OUTFLOW_VALVE = 1079;
     // ECAM System Display page
-    public static final int QPAC_SD_PAGE=1080;
+    public static final int QPAC_SD_PAGE = 1080;
     // BLEED AIR
-    public static final int QPAC_BLEED_VALVES=1081;
-    public static final int QPAC_BLEED_LEFT_PRESS=1082;
-    public static final int QPAC_BLEED_RIGHT_PRESS=1083;
-    public static final int QPAC_BLEED_LEFT_PRESS_TEMP=1084;
-    public static final int QPAC_BLEED_RIGHT_PRESS_TEMP=1085;
+    public static final int QPAC_BLEED_VALVES = 1081;
+    public static final int QPAC_BLEED_LEFT_PRESS = 1082;
+    public static final int QPAC_BLEED_RIGHT_PRESS = 1083;
+    public static final int QPAC_BLEED_LEFT_PRESS_TEMP = 1084;
+    public static final int QPAC_BLEED_RIGHT_PRESS_TEMP = 1085;
     // Anti-Ice
-    public static final int QPAC_ANTI_ICE_STATUS=1086;
+    public static final int QPAC_ANTI_ICE_STATUS = 1086;
     // APU
-    public static final int QPAC_APU_EGT=1087;
+    public static final int QPAC_APU_EGT = 1087;
     // FUEL
-    public static final int QPAC_FUEL_PUMPS=1088;
-    public static final int QPAC_FUEL_VALVES=1089;
+    public static final int QPAC_FUEL_PUMPS = 1088;
+    public static final int QPAC_FUEL_VALVES = 1089;
     // ELEC
-    public static final int QPAC_ELEC_AC_CROSS=1090;
-    public static final int QPAC_ELEC_CX_LEFT=1091;
-    public static final int QPAC_ELEC_CX_CENTER=1092;
-    public static final int QPAC_ELEC_CX_RIGHT=1093;
-    public static final int QPAC_ELEC_BUTTONS=1094;
+    public static final int QPAC_ELEC_AC_CROSS = 1090;
+    public static final int QPAC_ELEC_CX_LEFT = 1091;
+    public static final int QPAC_ELEC_CX_CENTER = 1092;
+    public static final int QPAC_ELEC_CX_RIGHT = 1093;
+    public static final int QPAC_ELEC_BUTTONS = 1094;
     // Key press to commands
-    public static final int QPAC_KEY_PRESS=1095;
+    public static final int QPAC_KEY_PRESS = 1095;
     // Triple pressure indicator
-    public static final int QPAC_TPI_LEFT=1096;
-    public static final int QPAC_TPI_RIGHT=1097;
-    public static final int QPAC_TPI_ACCU=1098;
+    public static final int QPAC_TPI_LEFT = 1096;
+    public static final int QPAC_TPI_RIGHT = 1097;
+    public static final int QPAC_TPI_ACCU = 1098;
     // Nacelle temperature [array 4]
     public static final int QPAC_NACELLE_TEMP_ = 1100; // Array [4]
     // Doors
@@ -743,75 +773,75 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     // IDs reserved for QPAC up to 1199
     
     // JarDesign Airbus A320neo
-    public static final int JAR_A320NEO_STATUS=1200;
+    public static final int JAR_A320NEO_STATUS = 1200;
     
     // FMS
-    public static final int JAR_A320NEO_PRESEL_CRZ=1201;
-    public static final int JAR_A320NEO_PRESEL_CLB=1202;
-    public static final int JAR_A320NEO_PRESEL_MACH=1203;
-    public static final int JAR_A320NEO_TRANS_ALT=1204;
+    public static final int JAR_A320NEO_PRESEL_CRZ = 1201;
+    public static final int JAR_A320NEO_PRESEL_CLB = 1202;
+    public static final int JAR_A320NEO_PRESEL_MACH = 1203;
+    public static final int JAR_A320NEO_TRANS_ALT = 1204;
     // Approach
-    public static final int JAR_A320NEO_APPR=1205;
-    public static final int JAR_A320NEO_APPR_TYPE=1206;
-    public static final int JAR_A320NEO_APPR_DH=1207;
-    public static final int JAR_A320NEO_APPR_MDA=1208;
-    public static final int JAR_A320NEO_FMA_CAT=1209;
-    public static final int JAR_A320NEO_FMA_DUAL=1210;
-    public static final int JAR_A320NEO_FMA_DH=1211;
+    public static final int JAR_A320NEO_APPR = 1205;
+    public static final int JAR_A320NEO_APPR_TYPE = 1206;
+    public static final int JAR_A320NEO_APPR_DH = 1207;
+    public static final int JAR_A320NEO_APPR_MDA = 1208;
+    public static final int JAR_A320NEO_FMA_CAT = 1209;
+    public static final int JAR_A320NEO_FMA_DUAL = 1210;
+    public static final int JAR_A320NEO_FMA_DH = 1211;
     // FCU
-    public static final int JAR_A320NEO_FCU=1212;
-    public static final int JAR_A320NEO_FCU_BARO=1213;
+    public static final int JAR_A320NEO_FCU = 1212;
+    public static final int JAR_A320NEO_FCU_BARO = 1213;
     // Auto-pilot
-    public static final int JAR_A320NEO_AP_PHASE=1214;
-    public static final int JAR_A320NEO_AP_VERTICAL_MODE=1215;
-    public static final int JAR_A320NEO_AP_VERTICAL_ARMED=1216;
-    public static final int JAR_A320NEO_AP_LATERAL_MODE=1217;
-    public static final int JAR_A320NEO_AP_LATERAL_ARMED=1218;
-    public static final int JAR_A320NEO_AP_COMMON_MODE=1219;
-    public static final int JAR_A320NEO_ALT_IS_CSTR=1220;
-    public static final int JAR_A320NEO_CONSTRAINT_ALT=1221;
+    public static final int JAR_A320NEO_AP_PHASE = 1214;
+    public static final int JAR_A320NEO_AP_VERTICAL_MODE = 1215;
+    public static final int JAR_A320NEO_AP_VERTICAL_ARMED = 1216;
+    public static final int JAR_A320NEO_AP_LATERAL_MODE = 1217;
+    public static final int JAR_A320NEO_AP_LATERAL_ARMED = 1218;
+    public static final int JAR_A320NEO_AP_COMMON_MODE = 1219;
+    public static final int JAR_A320NEO_ALT_IS_CSTR = 1220;
+    public static final int JAR_A320NEO_CONSTRAINT_ALT = 1221;
     // Auto-Thrust
-    public static final int JAR_A320NEO_ATHR_MODE=1222;
-    public static final int JAR_A320NEO_THR_MODE=1223;
-    public static final int JAR_A320NEO_ATHR_LIMITED=1224;
-    public static final int JAR_A320NEO_THR_LEVER_MODE=1225;
-    public static final int JAR_A320NEO_FMA_THR_WARNING=1226;
-    public static final int JAR_A320NEO_FLEX_TEMP=1227;
+    public static final int JAR_A320NEO_ATHR_MODE = 1222;
+    public static final int JAR_A320NEO_THR_MODE = 1223;
+    public static final int JAR_A320NEO_ATHR_LIMITED = 1224;
+    public static final int JAR_A320NEO_THR_LEVER_MODE = 1225;
+    public static final int JAR_A320NEO_FMA_THR_WARNING = 1226;
+    public static final int JAR_A320NEO_FLEX_TEMP = 1227;
     // ILS (1230 - 1239)
     // V Speeds
-    public static final int JAR_A320NEO_V1=1240;
-    public static final int JAR_A320NEO_VR=1241;
-    public static final int JAR_A320NEO_VMO=1242;
-    public static final int JAR_A320NEO_VLS=1243;
-    public static final int JAR_A320NEO_VF=1244;
-    public static final int JAR_A320NEO_VS=1245;
-    public static final int JAR_A320NEO_V_GREEN_DOT=1246;
-    public static final int JAR_A320NEO_ALPHA_PROT=1247;
-    public static final int JAR_A320NEO_ALPHA_MAX=1248;
+    public static final int JAR_A320NEO_V1 = 1240;
+    public static final int JAR_A320NEO_VR = 1241;
+    public static final int JAR_A320NEO_VMO = 1242;
+    public static final int JAR_A320NEO_VLS = 1243;
+    public static final int JAR_A320NEO_VF = 1244;
+    public static final int JAR_A320NEO_VS = 1245;
+    public static final int JAR_A320NEO_V_GREEN_DOT = 1246;
+    public static final int JAR_A320NEO_ALPHA_PROT = 1247;
+    public static final int JAR_A320NEO_ALPHA_MAX = 1248;
     // EFIS (1250-1254)
-    public static final int JAR_A320NEO_ND_MODE=1250;
+    public static final int JAR_A320NEO_ND_MODE = 1250;
     // FAILURES
-    public static final int JAR_A320NEO_FAILURES=1255;
+    public static final int JAR_A320NEO_FAILURES = 1255;
     // BRAKES
-    public static final int JAR_A320NEO_AUTO_BRAKE_LEVEL=1256;
-    public static final int JAR_A320NEO_BRAKE_ACCU_PSI=1257;
-    public static final int JAR_A320NEO_BRAKE_LEFT_PSI=1258;
-    public static final int JAR_A320NEO_BRAKE_RIGHT_PSI=1259;
+    public static final int JAR_A320NEO_AUTO_BRAKE_LEVEL = 1256;
+    public static final int JAR_A320NEO_BRAKE_ACCU_PSI = 1257;
+    public static final int JAR_A320NEO_BRAKE_LEFT_PSI = 1258;
+    public static final int JAR_A320NEO_BRAKE_RIGHT_PSI = 1259;
     public static final int JAR_A320NEO_BRAKE_TEMP_ = 1260; // Array [4]
     public static final int JAR_A320NEO_BRAKE_STATUS = 1265;
     // MCDU Clics
-    public static final int JAR_A320NEO_MCDU_CLICK=1270;
+    public static final int JAR_A320NEO_MCDU_CLICK = 1270;
     // Hydraulic
-    public static final int JAR_A320NEO_HYD_B_PRESS=1271;
-    public static final int JAR_A320NEO_HYD_G_PRESS=1272;
-    public static final int JAR_A320NEO_HYD_Y_PRESS=1273;
-    public static final int JAR_A320NEO_HYD_B_QTY=1274;
-    public static final int JAR_A320NEO_HYD_G_QTY=1275;
-    public static final int JAR_A320NEO_HYD_Y_QTY=1276;
-    public static final int JAR_A320NEO_HYD_PUMPS=1277;
-    public static final int JAR_A320NEO_HYD_PTU=1278;
+    public static final int JAR_A320NEO_HYD_B_PRESS = 1271;
+    public static final int JAR_A320NEO_HYD_G_PRESS = 1272;
+    public static final int JAR_A320NEO_HYD_Y_PRESS = 1273;
+    public static final int JAR_A320NEO_HYD_B_QTY = 1274;
+    public static final int JAR_A320NEO_HYD_G_QTY = 1275;
+    public static final int JAR_A320NEO_HYD_Y_QTY = 1276;
+    public static final int JAR_A320NEO_HYD_PUMPS = 1277;
+    public static final int JAR_A320NEO_HYD_PTU = 1278;
     // Doors
-    public static final int JAR_A320NEO_DOOR_STATUS=1279;
+    public static final int JAR_A320NEO_DOOR_STATUS = 1279;
     // BLEED AIR
     public static final int JAR_A320NEO_BLEED_VALVES = 1280;
     public static final int JAR_A320NEO_BLEED_LEFT_PRESS = 1281;

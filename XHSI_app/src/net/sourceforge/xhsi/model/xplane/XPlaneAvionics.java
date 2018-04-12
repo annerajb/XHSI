@@ -343,6 +343,14 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     }
 
+    public InstrumentSide get_instrument_side() {
+    	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT )) {
+    		return InstrumentSide.PILOT;
+    	} else if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT )) {
+    		return InstrumentSide.COPILOT;
+    	} else 
+    		return InstrumentSide.INSTRUCTOR;
+    }
 
     public boolean power() {
 
@@ -1834,15 +1842,47 @@ public class XPlaneAvionics implements Avionics, Observer {
     
 
     // PFD Display options
-    public boolean pfd_show_metric_alt () {
-    	if (this.is_qpac()) 
-    		return qpac_fcu_metric_alt(); 
-    	else if (this.is_jar_a320neo() ) 
-    		return jar_a320neo_fcu_metric_alt(); 
-    	else return false;
+    public boolean pfd_shows_metric_alt() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_METRIC_ALT) == 1.0f);
+    	} else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_METRIC_ALT) == 1.0f);
+    	} else {
+    		return xhsi_settings.metric_alt;
+    	}
     }
-
-    public boolean pfd_show_baro_hpa () {
+    
+    public boolean pfd_shows_metric_alt(InstrumentSide side) {
+    	if ( side == InstrumentSide.PILOT ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_METRIC_ALT) == 1.0f);
+    	} else if ( side == InstrumentSide.COPILOT ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_METRIC_ALT) == 1.0f);
+    	} else {
+    		return xhsi_settings.metric_alt;
+    	}
+    }
+  
+    public boolean pfd_shows_ils() {
+    	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_ILS) == 1.0f);
+    	} else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_ILS) == 1.0f);
+    	} else {
+    		return xhsi_settings.show_ils;
+    	}
+    }
+    
+    public boolean pfd_shows_ils(InstrumentSide side) {
+    	if ( side == InstrumentSide.PILOT ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_ILS) == 1.0f);
+    	} else if ( side == InstrumentSide.COPILOT ) {
+    		return (sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_ILS) == 1.0f);
+    	} else {
+    		return xhsi_settings.show_ils;
+    	}
+    }
+    
+    public boolean pfd_shows_baro_hpa () {
     	if (this.is_qpac()) 
     		return qpac_baro_unit(); 
     	else if (this.is_jar_a320neo() ) 
@@ -1850,7 +1890,7 @@ public class XPlaneAvionics implements Avionics, Observer {
     	else return false;
     }
 
-    public boolean pfd_show_baro_hpa (InstrumentSide side) {
+    public boolean pfd_shows_baro_hpa (InstrumentSide side) {
     	if (this.is_qpac()) 
     		return qpac_baro_unit(side); 
     	else if (this.is_jar_a320neo() ) 
@@ -2768,6 +2808,40 @@ public class XPlaneAvionics implements Avionics, Observer {
         }
     }
 
+    public void set_metric_alt(boolean new_metric_alt)  {
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_METRIC_ALT, new_metric_alt ? 1.0f : 0.0f );
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_METRIC_ALT, new_metric_alt ? 1.0f : 0.0f );
+        }
+    }
+    
+    public void set_ils(boolean new_ils)  {
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_ILS, new_ils ? 1.0f : 0.0f );
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_ILS, new_ils ? 1.0f : 0.0f );
+        }
+    }
+    
+    public void set_ils(boolean new_ils, InstrumentSide side) {
+    	if ( side == InstrumentSide.PILOT ) {
+    		udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_ILS, new_ils ? 1.0f : 0.0f );
+    	} else if ( side == InstrumentSide.COPILOT ) {
+    		udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_ILS, new_ils ? 1.0f : 0.0f );
+    	} else {
+    		xhsi_settings.show_ils=new_ils;
+        }
+    }
+    
+    public void set_track_fpa(boolean new_track_fpa)  {
+        if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_PILOT_TRK_FPA, new_track_fpa ? 1.0f : 0.0f );
+        } else if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
+            udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_EFIS_COPILOT_TRK_FPA, new_track_fpa ? 1.0f : 0.0f );
+        }
+    }
+    
     /*
      * Weather radar
      * Options bit mask 

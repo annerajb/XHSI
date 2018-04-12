@@ -38,6 +38,7 @@ import javax.swing.JRadioButtonMenuItem;
 
 import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
+import net.sourceforge.xhsi.model.Avionics.InstrumentSide;
 import net.sourceforge.xhsi.model.NavigationRadio;
 import net.sourceforge.xhsi.model.SimCommand;
 
@@ -167,13 +168,15 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_AP_LEVEL_OFF = "Level Off";
     public static final String ACTION_AP_VS_MODE = "V/S Mode";
     public static final String ACTION_AP_FD_SWITCH = "Flight director";
+    public static final String ACTION_AP_ILS_SWITCH = "ILS";
     public static final String ACTION_AP_AP_SWITCH = "Autopilot";    
     public static final String ACTION_AP_ILS_ON = "ILS on";
-    public static final String ACTION_AP_ILS_OFF = "ILS on";
+    public static final String ACTION_AP_ILS_OFF = "ILS off";   
     public static final String ACTION_AP_LOC = "LOC capture";
     public static final String ACTION_AP_GS = "Glide slope capture";
     public static final String ACTION_AP_ATHR_ON = "A/THR on";
     public static final String ACTION_AP_ATHR_OFF = "A/THR off";
+    public static final String ACTION_AP_METRIC_SWITCH = "Metric altitude";
     public static final String ACTION_AP_METRIC_ON = "Display metric alt on";
     public static final String ACTION_AP_METRIC_OFF = "Display metric alt off";
     public static final String ACTION_AP_TRK_FPA_ON = "Bird on";
@@ -276,6 +279,9 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public boolean show_terrain = false;
     public boolean show_weather = true;
     public boolean show_vp = false;
+    public boolean show_ils = false;
+    public boolean metric_alt = false;
+    public boolean track_fpa = false;
     
     // Weather radar
     public float wxr_gain = 1.0f;
@@ -411,6 +417,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
      */
     private JCheckBoxMenuItem checkbox_autopilot;
     private JCheckBoxMenuItem checkbox_flight_director;
+    private JCheckBoxMenuItem checkbox_ils;
+    private JCheckBoxMenuItem checkbox_metric_alt;
 
     // ------ EICAS Sub Menu ------
     private JRadioButtonMenuItem radio_button_engine_n1;
@@ -700,6 +708,21 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         // keep a reference
         this.checkbox_flight_director = checkbox_menu_item;
 
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_AP_ILS_SWITCH);
+        checkbox_menu_item.setToolTipText("Set ILS on/off");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(false);
+        ap_menu.add(checkbox_menu_item);
+        // keep a reference
+        this.checkbox_ils = checkbox_menu_item;
+        
+        checkbox_menu_item = new JCheckBoxMenuItem(XHSISettings.ACTION_AP_METRIC_SWITCH);
+        checkbox_menu_item.setToolTipText("Metric Altitude on/off");
+        checkbox_menu_item.addActionListener(this);
+        checkbox_menu_item.setSelected(false);
+        ap_menu.add(checkbox_menu_item);
+        // keep a reference
+        this.checkbox_metric_alt = checkbox_menu_item;
         
         // add the "AP" menu to the menubar
         menu_bar.add(ap_menu);
@@ -2006,7 +2029,11 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     		boolean fd_on = this.avionics.autopilot_mode() >= 1;	    		
     		if ( this.avionics.is_qpac()) { 
     			fd_on = this.avionics.qpac_fd_on();
-    			this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_EFIS_CAPT_FD);
+    			if ( this.avionics.get_instrument_side() == InstrumentSide.COPILOT ) {
+    				this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_EFIS_FO_FD);
+    			} else {
+    				this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_EFIS_CAPT_FD);
+    			}
     		} else {
     			if (fd_on) {
     				// This will set both autopilot and FD to OFF
@@ -2019,9 +2046,12 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         	// TODO: Autopilot switch for all aircrafts
     		boolean ap_on;
     		if (this.avionics.is_qpac()) {
-    			// TODO: Set AP1 only
     			ap_on = this.avionics.qpac_ap1() || this.avionics.qpac_ap2();
-    			this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_FCU_AP1);
+    			if ( this.avionics.get_instrument_side() == InstrumentSide.COPILOT ) {
+    				this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_FCU_AP2);
+    			} else {
+    				this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_FCU_AP1);
+    			}
     		} else if (this.avionics.is_jar_a320neo()) {
     			ap_on = this.avionics.jar_a320neo_ap1() || this.avionics.jar_a320neo_ap2();
     		} else {
@@ -2032,21 +2062,47 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     				// This will set both autopilot and FD to ON
     				this.avionics.set_autopilot_mode(2);;
     			}    			
-    		}        
+    		}    
+        } else if (command.equals(XHSISettings.ACTION_AP_ILS_SWITCH)) { 
+    		boolean ils_on = this.avionics.pfd_shows_ils();	    		
+    		if ( this.avionics.is_qpac()) { 
+    			ils_on = this.avionics.qpac_ils_on();
+    			this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_EFIS_CAPT_ILS);
+    		} else {
+   				this.avionics.set_ils(!ils_on);
+    		}    
         } else if (command.equals(XHSISettings.ACTION_AP_ILS_ON)) {
+        	show_ils = true;
+        	this.avionics.set_ils(true);
         } else if (command.equals(XHSISettings.ACTION_AP_ILS_OFF)) {
+        	show_ils = false;
+        	this.avionics.set_ils(false);
         } else if (command.equals(XHSISettings.ACTION_AP_LOC)) {
         } else if (command.equals(XHSISettings.ACTION_AP_GS)) {
         } else if (command.equals(XHSISettings.ACTION_AP_ATHR_ON)) {
         } else if (command.equals(XHSISettings.ACTION_AP_ATHR_OFF)) {
+        } else if (command.equals(XHSISettings.ACTION_AP_METRIC_SWITCH)) { 
+    		boolean metric_alt_on = this.avionics.pfd_shows_metric_alt();	    		
+    		if ( this.avionics.is_qpac()) { 
+    			metric_alt_on = this.avionics.qpac_fcu_metric_alt();
+    			this.avionics.get_aircraft().get_sim_command().send(SimCommand.CMD_FCU_METRIC);
+    		} else {
+   				this.avionics.set_metric_alt(!metric_alt_on);
+    		} 
         } else if (command.equals(XHSISettings.ACTION_AP_METRIC_ON)) {
+        	metric_alt = true;
+        	this.avionics.set_metric_alt(true);
         } else if (command.equals(XHSISettings.ACTION_AP_METRIC_OFF)) {
+        	metric_alt = false;
+        	this.avionics.set_metric_alt(false);
         } else if (command.equals(XHSISettings.ACTION_AP_TRK_FPA_ON)) {
+        	track_fpa = true;
+        	this.avionics.set_track_fpa(true);
         } else if (command.equals(XHSISettings.ACTION_AP_TRK_FPA_OFF)) {
+        	track_fpa = false;
+        	this.avionics.set_track_fpa(false);
         } else if (command.equals(XHSISettings.ACTION_AP_TRK_MACH_ON)) {
         } else if (command.equals(XHSISettings.ACTION_AP_TRK_MACH_OFF)) {
-        	
-        	
         } else if (command.equals(XHSISettings.ACTION_ENGINE_TYPE_N1)) {
             engine_type = XHSISettings.ENGINE_TYPE_N1;
             this.avionics.set_engine_type(engine_type);
@@ -2312,12 +2368,24 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         this.radio_button_xpdr_ta.setSelected( new_xpdr == Avionics.XPDR_TA );
         this.radio_button_xpdr_tara.setSelected( new_xpdr == Avionics.XPDR_TARA );
         
-        // Autopilot
-        // TODO: A320/B737 modes
-        int new_ap = avionics.autopilot_mode();
-        this.checkbox_autopilot.setSelected(new_ap>1);
-        this.checkbox_flight_director.setSelected(new_ap>0);
-
+        // Autopilot / FD
+        // TODO: B737 modes / JarDesign
+		if (this.avionics.is_qpac()) {
+			if ( this.avionics.get_instrument_side() == InstrumentSide.COPILOT ) {
+				this.checkbox_autopilot.setSelected(this.avionics.qpac_ap2());
+				this.checkbox_flight_director.setSelected(this.avionics.qpac_fd2());
+			} else {
+				this.checkbox_autopilot.setSelected(this.avionics.qpac_ap1());
+				this.checkbox_flight_director.setSelected(this.avionics.qpac_fd1());
+			}
+		} else {
+			int new_ap = avionics.autopilot_mode();
+			this.checkbox_autopilot.setSelected(new_ap>1);
+			this.checkbox_flight_director.setSelected(new_ap>0);
+		}
+        this.checkbox_ils.setSelected(this.avionics.pfd_shows_ils());
+        this.checkbox_metric_alt.setSelected(this.avionics.pfd_shows_metric_alt());
+        
         int new_mfd_mode = avionics.get_mfd_mode();
         this.radio_button_mfd_arpt.setSelected( new_mfd_mode == Avionics.MFD_MODE_ARPT );
         this.radio_button_mfd_fpln.setSelected( new_mfd_mode == Avionics.MFD_MODE_FPLN );

@@ -256,8 +256,8 @@ public class CDUDefault extends CDUSubcomponent {
         if (XHSIStatus.nav_db_status.equals(XHSIStatus.STATUS_NAV_DB_NOT_FOUND)) {
         	return "la00NO NAV DB";	
         } else {
-        	if (XHSIStatus.nav_db_cycle.length()>=6) {
-        		return "lb00AIRAC XP : CYCLE " + XHSIStatus.nav_db_cycle.substring(2, 6);
+        	if (XHSIStatus.nav_db_cycle.length()>=4) {
+        		return "lb00AIRAC XP : CYCLE " + XHSIStatus.nav_db_cycle.substring(0, 4);
         	} else {
         		return "ly00LOADING";
         	}
