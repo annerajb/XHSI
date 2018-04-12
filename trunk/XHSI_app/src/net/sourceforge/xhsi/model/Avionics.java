@@ -22,6 +22,7 @@
 */
 package net.sourceforge.xhsi.model;
 
+import net.sourceforge.xhsi.XHSIPreferences;
 import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 
 public interface Avionics {
@@ -149,6 +150,11 @@ public interface Avionics {
      * @return int - general instrument style STYLE_BOEING, STYLE_AIRBUS
      */
     public int get_instrument_style();
+
+    /**
+     * @return int - general instrument side : PILOT, COPILOT, INSTRUCTOR
+     */
+    public InstrumentSide get_instrument_side();
 
     /**
      * @return boolean - do we have avionics power?
@@ -772,14 +778,21 @@ public interface Avionics {
     
     
     /**
-     * @return boolean - true is show metric altitude on PFD
+     * @return boolean - true if metric altitude is shown on PFD
      */
-    public boolean pfd_show_metric_alt();
+    public boolean pfd_shows_metric_alt();
+    
+    /**
+     * @return boolean - true if ILS is displayed on PFD (but may not receiving any signal)
+     */
+    public boolean pfd_shows_ils();
+    public boolean pfd_shows_ils(InstrumentSide side);
+    
     /**
      * @return boolean - true if baro is in HPa, false if baro is in Hg
      */
-    public boolean pfd_show_baro_hpa();
-    public boolean pfd_show_baro_hpa(InstrumentSide side);
+    public boolean pfd_shows_baro_hpa();
+    public boolean pfd_shows_baro_hpa(InstrumentSide side);
     	   
     
     /**
@@ -1033,6 +1046,13 @@ public interface Avionics {
     public void set_show_terrain(boolean new_data, InstrumentSide side);
     
     public void set_show_vp(boolean new_vp);
+    
+    public void set_metric_alt(boolean new_metric_alt);
+    
+    public void set_ils(boolean new_ils);
+    public void set_ils(boolean new_ils, InstrumentSide side);
+    
+    public void set_track_fpa(boolean new_track_fpa);
     
     /*
      * Weather radar

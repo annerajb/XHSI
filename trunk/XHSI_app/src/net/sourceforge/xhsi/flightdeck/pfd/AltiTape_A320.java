@@ -108,12 +108,12 @@ public class AltiTape_A320 extends PFDSubcomponent {
     
     private void drawTape(Graphics2D g2) {
         boolean display_metric = false;
-        if (this.avionics.pfd_show_metric_alt() ) { display_metric = true; }
+        if (this.avionics.pfd_shows_metric_alt() ) { display_metric = true; }
         
         // Set variables for QNH
         int qnh = this.aircraft.qnh();
         boolean qnh_display = true;
-        boolean qnh_is_hpa = this.avionics.pfd_show_baro_hpa();
+        boolean qnh_is_hpa = this.avionics.pfd_shows_baro_hpa();
         float alt_inhg = this.aircraft.altimeter_in_hg();
         boolean std = ( Math.round(alt_inhg * 100.0f) == 2992 );
         if (this.avionics.is_qpac()) { 

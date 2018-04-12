@@ -1766,7 +1766,7 @@ public class ECAM_Engines extends EICASSubcomponent {
         String osp_str;
         String unit_str;
 
-    	if ( this.avionics.pfd_show_baro_hpa() ) {
+    	if ( this.avionics.pfd_shows_baro_hpa() ) {
     		osp_str = ""+ Math.round(osp_hpa);
     		unit_str="HPa";
     	} else {

@@ -437,9 +437,11 @@ public class XPlaneCommand implements SimCommand {
                 break;
             
             case CMD_FCU_METRIC: 
+            	this.udp_sender.sendDataPoint(XPlaneSimDataRepository.XHSI_EFIS_PILOT_METRIC_ALT, this.avionics.pfd_shows_metric_alt() ? 0.0f : 1.0f );
                 break;
             
             case CMD_FCU_TRK_FPA: 
+            	// this.udp_sender.sendDataPoint(XPlaneSimDataRepository.XHSI_EFIS_PILOT_TRK_FPA, this.avionics.??? );            	
                 break;
             
             case CMD_FCU_MACH: 
