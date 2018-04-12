@@ -259,6 +259,22 @@ XPLMCommandRef terrain_toggle;
 XPLMCommandRef terrain_on;
 XPLMCommandRef terrain_off;
 
+XPLMCommandRef vp_toggle;
+XPLMCommandRef vp_on;
+XPLMCommandRef vp_off;
+
+XPLMCommandRef ils_toggle;
+XPLMCommandRef ils_on;
+XPLMCommandRef ils_off;
+
+XPLMCommandRef metric_alt_toggle;
+XPLMCommandRef metric_alt_on;
+XPLMCommandRef metric_alt_off;
+
+XPLMCommandRef track_fpa_toggle;
+XPLMCommandRef track_fpa_on;
+XPLMCommandRef track_fpa_off;
+
 XPLMCommandRef wxr_toggle;
 XPLMCommandRef wxr_on;
 XPLMCommandRef wxr_off;
@@ -436,6 +452,22 @@ XPLMCommandRef copilot_pos_off;
 XPLMCommandRef copilot_terrain_toggle;
 XPLMCommandRef copilot_terrain_on;
 XPLMCommandRef copilot_terrain_off;
+
+XPLMCommandRef copilot_vp_toggle;
+XPLMCommandRef copilot_vp_on;
+XPLMCommandRef copilot_vp_off;
+
+XPLMCommandRef copilot_ils_toggle;
+XPLMCommandRef copilot_ils_on;
+XPLMCommandRef copilot_ils_off;
+
+XPLMCommandRef copilot_metric_alt_toggle;
+XPLMCommandRef copilot_metric_alt_on;
+XPLMCommandRef copilot_metric_alt_off;
+
+XPLMCommandRef copilot_track_fpa_toggle;
+XPLMCommandRef copilot_track_fpa_on;
+XPLMCommandRef copilot_track_fpa_off;
 
 XPLMCommandRef copilot_wxr_toggle;
 XPLMCommandRef copilot_wxr_on;
@@ -1184,6 +1216,57 @@ XPLMCommandCallback_f terrain_handler(XPLMCommandRef inCommand, XPLMCommandPhase
         int i = (int)((intptr_t)inRefcon);
         if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_pilot_shows_terrain);
         XPLMSetDatai(efis_pilot_shows_terrain, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+// pilot Vertical Path
+XPLMCommandCallback_f vertical_path_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_pilot_shows_vp);
+        XPLMSetDatai(efis_pilot_shows_vp, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+// pilot ILS
+XPLMCommandCallback_f ils_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_pilot_shows_ils);
+        XPLMSetDatai(efis_pilot_shows_ils, i);
+        if (qpac_ready) XPLMSetDatai(qpac_ils_on_capt, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+// pilot metric alt
+XPLMCommandCallback_f metric_alt_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_pilot_metric_alt);
+        XPLMSetDatai(efis_pilot_metric_alt, i);
+        if (qpac_ready) XPLMSetDatai(qpac_fcu_metric_alt, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+// pilot track FPA / FPV / Bird
+XPLMCommandCallback_f track_fpa_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_pilot_track_fpa);
+        XPLMSetDatai(efis_pilot_track_fpa, i);
+        if (qpac_ready) XPLMSetDatai(qpac_fcu_hdg_trk, i);
     }
     return (XPLMCommandCallback_f)1;
 }
@@ -1951,6 +2034,55 @@ XPLMCommandCallback_f copilot_terrain_handler(XPLMCommandRef inCommand, XPLMComm
         int i = (int)((intptr_t)inRefcon);
         if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_copilot_shows_terrain);
         XPLMSetDatai(efis_copilot_shows_terrain, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+// copilot Vertical Path
+XPLMCommandCallback_f copilot_vertical_path_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_copilot_shows_vp);
+        XPLMSetDatai(efis_copilot_shows_vp, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+// copilot ILS
+XPLMCommandCallback_f copilot_ils_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_copilot_shows_ils);
+        XPLMSetDatai(efis_copilot_shows_ils, i);
+        if (qpac_ready) XPLMSetDatai(qpac_ils_on_fo, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+// copilot metric alt
+XPLMCommandCallback_f copilot_metric_alt_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_copilot_metric_alt);
+        XPLMSetDatai(efis_copilot_metric_alt, i);
+    }
+    return (XPLMCommandCallback_f)1;
+}
+
+// copilot track FPA / FPV / Bird
+XPLMCommandCallback_f copilot_track_fpa_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
+{
+    if (inPhase == xplm_CommandBegin)
+    {
+        int i = (int)((intptr_t)inRefcon);
+        if ( i == TOGGLE ) i = ! XPLMGetDatai(efis_copilot_track_fpa);
+        XPLMSetDatai(efis_copilot_track_fpa, i);
     }
     return (XPLMCommandCallback_f)1;
 }
@@ -3142,6 +3274,14 @@ void registerCommands(void) {
     terrain_off = XPLMCreateCommand("xhsi/nd_pilot/terrain_off", "Terrain on ND off");
     XPLMRegisterCommandHandler(terrain_off, (XPLMCommandCallback_f)terrain_handler, 1, (void *)OFF);
 
+    // Vertical Path on ND
+    vp_toggle = XPLMCreateCommand("xhsi/nd_pilot/vertical_path_toggle", "Toggle Vertical Path on ND");
+    XPLMRegisterCommandHandler(vp_toggle, (XPLMCommandCallback_f)vertical_path_handler, 1, (void *)TOGGLE);
+    vp_on = XPLMCreateCommand("xhsi/nd_pilot/vertical_path_on", "Vertical Path on ND on");
+    XPLMRegisterCommandHandler(vp_on, (XPLMCommandCallback_f)vertical_path_handler, 1, (void *)ON);
+    vp_off = XPLMCreateCommand("xhsi/nd_pilot/vertical_path_off", "Vertical Path on ND off");
+    XPLMRegisterCommandHandler(vp_off, (XPLMCommandCallback_f)vertical_path_handler, 1, (void *)OFF);
+
     // Weather Radar
     wxr_toggle = XPLMCreateCommand("xhsi/nd_pilot/wxr_toggle", "Toggle weather radar on ND");
     XPLMRegisterCommandHandler(wxr_toggle, (XPLMCommandCallback_f)wxr_handler, 1, (void *)TOGGLE);
@@ -3319,6 +3459,29 @@ void registerCommands(void) {
     mins_up = XPLMCreateCommand("xhsi/pfd_pilot/mins_up", "Increase MINS value");
     XPLMRegisterCommandHandler(mins_up, (XPLMCommandCallback_f)mins_value_handler, 1, (void *)UP);
 
+    // Instrument Landing System (PFD & ND)
+    ils_toggle = XPLMCreateCommand("xhsi/pfd_pilot/ils_toggle", "Toggle ILS on PFD/ND");
+    XPLMRegisterCommandHandler(ils_toggle, (XPLMCommandCallback_f)ils_handler, 1, (void *)TOGGLE);
+    ils_on = XPLMCreateCommand("xhsi/pfd_pilot/ils_on", "ILS on PFD/ND on");
+    XPLMRegisterCommandHandler(ils_on, (XPLMCommandCallback_f)ils_handler, 1, (void *)ON);
+    ils_off = XPLMCreateCommand("xhsi/pfd_pilot/ils_off", "ILS on PFD/ND off");
+    XPLMRegisterCommandHandler(ils_off, (XPLMCommandCallback_f)ils_handler, 1, (void *)OFF);
+
+    // Metric altitude on PFD/ND
+    metric_alt_toggle = XPLMCreateCommand("xhsi/pfd_pilot/metric_alt_toggle", "Toggle metric altitude on PFD/ND");
+    XPLMRegisterCommandHandler(metric_alt_toggle, (XPLMCommandCallback_f)metric_alt_handler, 1, (void *)TOGGLE);
+    metric_alt_on = XPLMCreateCommand("xhsi/pfd_pilot/metric_alt_on", "metric altitude on PFD/ND on");
+    XPLMRegisterCommandHandler(metric_alt_on, (XPLMCommandCallback_f)metric_alt_handler, 1, (void *)ON);
+    metric_alt_off = XPLMCreateCommand("xhsi/pfd_pilot/metric_alt_off", "metric altitude on PFD/ND off");
+    XPLMRegisterCommandHandler(metric_alt_off, (XPLMCommandCallback_f)metric_alt_handler, 1, (void *)OFF);
+
+    // Track FPA / FPV / Bird : on display FPA/FPV/Bird , off display flight director
+    track_fpa_toggle = XPLMCreateCommand("xhsi/pfd_pilot/track_fpa_toggle", "Toggle Track FPA on PFD");
+    XPLMRegisterCommandHandler(track_fpa_toggle, (XPLMCommandCallback_f)track_fpa_handler, 1, (void *)TOGGLE);
+    track_fpa_on = XPLMCreateCommand("xhsi/pfd_pilot/track_fpa_on", "Track FPA on PFD on");
+    XPLMRegisterCommandHandler(track_fpa_on, (XPLMCommandCallback_f)track_fpa_handler, 1, (void *)ON);
+    track_fpa_off = XPLMCreateCommand("xhsi/pfd_pilot/track_fpa_off", "Track FPA on PFD off");
+    XPLMRegisterCommandHandler(track_fpa_off, (XPLMCommandCallback_f)track_fpa_handler, 1, (void *)OFF);
 
 
     // copilot commands
@@ -3501,6 +3664,13 @@ void registerCommands(void) {
     copilot_terrain_off = XPLMCreateCommand("xhsi/nd_copilot/terrain_off", "Terrain on ND off - copilot");
     XPLMRegisterCommandHandler(copilot_terrain_off, (XPLMCommandCallback_f)copilot_terrain_handler, 1, (void *)OFF);
 
+    // copilot Vertical Path on ND
+    copilot_vp_toggle = XPLMCreateCommand("xhsi/nd_copilot/vertical_path_toggle", "Toggle Vertical Path on ND");
+    XPLMRegisterCommandHandler(copilot_vp_toggle, (XPLMCommandCallback_f)copilot_vertical_path_handler, 1, (void *)TOGGLE);
+    copilot_vp_on = XPLMCreateCommand("xhsi/nd_copilot/vertical_path_on", "Vertical Path on ND on");
+    XPLMRegisterCommandHandler(copilot_vp_on, (XPLMCommandCallback_f)copilot_vertical_path_handler, 1, (void *)ON);
+    copilot_vp_off = XPLMCreateCommand("xhsi/nd_copilot/vertical_path_off", "Vertical Path on ND off");
+    XPLMRegisterCommandHandler(copilot_vp_off, (XPLMCommandCallback_f)copilot_vertical_path_handler, 1, (void *)OFF);
 
     // Weather Radar
     copilot_wxr_toggle = XPLMCreateCommand("xhsi/nd_copilot/wxr_toggle", "Toggle weather radar on ND");
@@ -3678,7 +3848,29 @@ void registerCommands(void) {
     copilot_mins_up = XPLMCreateCommand("xhsi/pfd_copilot/mins_up", "Increase MINS value - copilot");
     XPLMRegisterCommandHandler(copilot_mins_up, (XPLMCommandCallback_f)copilot_mins_value_handler, 1, (void *)UP);
 
+    // copilot Instrument Landing System (PFD & ND)
+    copilot_ils_toggle = XPLMCreateCommand("xhsi/pfd_copilot/ils_toggle", "Toggle ILS on PFD/ND");
+    XPLMRegisterCommandHandler(copilot_ils_toggle, (XPLMCommandCallback_f)copilot_ils_handler, 1, (void *)TOGGLE);
+    copilot_ils_on = XPLMCreateCommand("xhsi/pfd_copilot/ils_on", "ILS on PFD/ND on");
+    XPLMRegisterCommandHandler(copilot_ils_on, (XPLMCommandCallback_f)copilot_ils_handler, 1, (void *)ON);
+    copilot_ils_off = XPLMCreateCommand("xhsi/pfd_copilot/ils_off", "ILS on PFD/ND off");
+    XPLMRegisterCommandHandler(copilot_ils_off, (XPLMCommandCallback_f)copilot_ils_handler, 1, (void *)OFF);
 
+    // copilot Metric altitude on PFD/ND
+    copilot_metric_alt_toggle = XPLMCreateCommand("xhsi/pfd_copilot/metric_alt_toggle", "Toggle metric altitude on PFD/ND");
+    XPLMRegisterCommandHandler(copilot_metric_alt_toggle, (XPLMCommandCallback_f)copilot_metric_alt_handler, 1, (void *)TOGGLE);
+    copilot_metric_alt_on = XPLMCreateCommand("xhsi/pfd_copilot/metric_alt_on", "metric altitude on PFD/ND on");
+    XPLMRegisterCommandHandler(copilot_metric_alt_on, (XPLMCommandCallback_f)copilot_metric_alt_handler, 1, (void *)ON);
+    copilot_metric_alt_off = XPLMCreateCommand("xhsi/pfd_copilot/metric_alt_off", "metric altitude on PFD/ND off");
+    XPLMRegisterCommandHandler(copilot_metric_alt_off, (XPLMCommandCallback_f)copilot_metric_alt_handler, 1, (void *)OFF);
+
+    // copilot Track FPA / FPV / Bird : on display FPA/FPV/Bird , off display flight director
+    copilot_track_fpa_toggle = XPLMCreateCommand("xhsi/pfd_copilot/track_fpa_toggle", "Toggle Track FPA on PFD");
+    XPLMRegisterCommandHandler(track_fpa_toggle, (XPLMCommandCallback_f)copilot_track_fpa_handler, 1, (void *)TOGGLE);
+    copilot_track_fpa_on = XPLMCreateCommand("xhsi/pfd_copilot/track_fpa_on", "Track FPA on PFD on");
+    XPLMRegisterCommandHandler(track_fpa_on, (XPLMCommandCallback_f)copilot_track_fpa_handler, 1, (void *)ON);
+    copilot_track_fpa_off = XPLMCreateCommand("xhsi/pfd_copilot/track_fpa_off", "Track FPA on PFD off");
+    XPLMRegisterCommandHandler(track_fpa_off, (XPLMCommandCallback_f)copilot_track_fpa_handler, 1, (void *)OFF);
 
     // xhsi/mfd/...
 
@@ -4139,6 +4331,11 @@ void unregisterCommands(void) {
     XPLMUnregisterCommandHandler(terrain_on, (XPLMCommandCallback_f)terrain_handler, 1, (void *)ON);
     XPLMUnregisterCommandHandler(terrain_off, (XPLMCommandCallback_f)terrain_handler, 1, (void *)OFF);
 
+    // Vertical Path on ND
+    XPLMUnregisterCommandHandler(vp_toggle, (XPLMCommandCallback_f)vertical_path_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(vp_on, (XPLMCommandCallback_f)vertical_path_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(vp_off, (XPLMCommandCallback_f)vertical_path_handler, 1, (void *)OFF);
+
     // Weather Radar
     XPLMUnregisterCommandHandler(wxr_toggle, (XPLMCommandCallback_f)wxr_handler, 1, (void *)TOGGLE);
     XPLMUnregisterCommandHandler(wxr_on, (XPLMCommandCallback_f)wxr_handler, 1, (void *)ON);
@@ -4203,6 +4400,20 @@ void unregisterCommands(void) {
     XPLMUnregisterCommandHandler(mins_down, (XPLMCommandCallback_f)mins_value_handler, 1, (void *)DOWN);
     XPLMUnregisterCommandHandler(mins_up, (XPLMCommandCallback_f)mins_value_handler, 1, (void *)UP);
 
+    // Instrument Landing System (PFD & ND)
+    XPLMUnregisterCommandHandler(ils_toggle, (XPLMCommandCallback_f)ils_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(ils_on, (XPLMCommandCallback_f)ils_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(ils_off, (XPLMCommandCallback_f)ils_handler, 1, (void *)OFF);
+
+    // Metric altitude on PFD/ND
+    XPLMUnregisterCommandHandler(metric_alt_toggle, (XPLMCommandCallback_f)metric_alt_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(metric_alt_on, (XPLMCommandCallback_f)metric_alt_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(metric_alt_off, (XPLMCommandCallback_f)metric_alt_handler, 1, (void *)OFF);
+
+    // Track FPA / FPV / Bird : on display FPA/FPV/Bird , off display flight director
+    XPLMUnregisterCommandHandler(track_fpa_toggle, (XPLMCommandCallback_f)track_fpa_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(track_fpa_on, (XPLMCommandCallback_f)track_fpa_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(track_fpa_off, (XPLMCommandCallback_f)track_fpa_handler, 1, (void *)OFF);
 
     // copilot commands
     // copilot ctr
@@ -4341,6 +4552,10 @@ void unregisterCommands(void) {
     XPLMUnregisterCommandHandler(copilot_terrain_on, (XPLMCommandCallback_f)copilot_terrain_handler, 1, (void *)ON);
     XPLMUnregisterCommandHandler(copilot_terrain_off, (XPLMCommandCallback_f)copilot_terrain_handler, 1, (void *)OFF);
 
+    // copilot Vertical Path on ND
+    XPLMUnregisterCommandHandler(copilot_vp_toggle, (XPLMCommandCallback_f)copilot_vertical_path_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(copilot_vp_on, (XPLMCommandCallback_f)copilot_vertical_path_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(copilot_vp_off, (XPLMCommandCallback_f)copilot_vertical_path_handler, 1, (void *)OFF);
 
     // Weather Radar
     XPLMUnregisterCommandHandler(copilot_wxr_toggle, (XPLMCommandCallback_f)copilot_wxr_handler, 1, (void *)TOGGLE);
@@ -4406,6 +4621,20 @@ void unregisterCommands(void) {
     XPLMUnregisterCommandHandler(copilot_mins_down, (XPLMCommandCallback_f)copilot_mins_value_handler, 1, (void *)DOWN);
     XPLMUnregisterCommandHandler(copilot_mins_up, (XPLMCommandCallback_f)copilot_mins_value_handler, 1, (void *)UP);
 
+    // copilot Instrument Landing System (PFD & ND)
+    XPLMUnregisterCommandHandler(copilot_ils_toggle, (XPLMCommandCallback_f)copilot_ils_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(copilot_ils_on, (XPLMCommandCallback_f)copilot_ils_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(copilot_ils_off, (XPLMCommandCallback_f)copilot_ils_handler, 1, (void *)OFF);
+
+    // copilot Metric altitude on PFD/ND
+    XPLMUnregisterCommandHandler(copilot_metric_alt_toggle, (XPLMCommandCallback_f)copilot_metric_alt_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(copilot_metric_alt_on, (XPLMCommandCallback_f)copilot_metric_alt_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(copilot_metric_alt_off, (XPLMCommandCallback_f)copilot_metric_alt_handler, 1, (void *)OFF);
+
+    // copilot Track FPA / FPV / Bird : on display FPA/FPV/Bird , off display flight director
+    XPLMUnregisterCommandHandler(track_fpa_toggle, (XPLMCommandCallback_f)copilot_track_fpa_handler, 1, (void *)TOGGLE);
+    XPLMUnregisterCommandHandler(track_fpa_on, (XPLMCommandCallback_f)copilot_track_fpa_handler, 1, (void *)ON);
+    XPLMUnregisterCommandHandler(track_fpa_off, (XPLMCommandCallback_f)copilot_track_fpa_handler, 1, (void *)OFF);
 
     // MFD mode
     XPLMUnregisterCommandHandler(mfd_mode_arpt, (XPLMCommandCallback_f)mfd_handler, 1, (void *)MFD_ARPT);

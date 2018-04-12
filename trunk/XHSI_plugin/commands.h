@@ -1,3 +1,5 @@
+#ifndef COMMANDS_H_
+#define COMMANDS_H_
 
 // commands that will be used by the writeDataRef
 extern XPLMCommandRef nav1_standy_flip;
@@ -79,3 +81,5 @@ extern XPLMCommandRef sim_annunciator_clear_master_accept;
 
 void registerCommands(void);
 void unregisterCommands(void);
+
+#endif /* COMMANDS_H_ */

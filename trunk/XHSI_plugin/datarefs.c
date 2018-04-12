@@ -27,6 +27,7 @@
 #include "datarefs.h"
 #include "datarefs_x737.h"
 #include "datarefs_qpac.h"
+#include "datarefs_jar_a320neo.h"
 #include "datarefs_xjoymap.h"
 
 #define MSG_ADD_DATAREF 0x01000000           //  Add dataref to DRE message
@@ -70,6 +71,9 @@ XPLMDataRef efis_pilot_shows_data;
 XPLMDataRef efis_pilot_shows_pos;
 XPLMDataRef efis_pilot_shows_terrain;
 XPLMDataRef efis_pilot_shows_vp;
+XPLMDataRef efis_pilot_shows_ils;
+XPLMDataRef efis_pilot_metric_alt;
+XPLMDataRef efis_pilot_track_fpa;
 XPLMDataRef efis_pilot_da_bug;
 XPLMDataRef efis_pilot_mins_mode;
 XPLMDataRef efis_pilot_map_zoomin;
@@ -101,6 +105,9 @@ XPLMDataRef efis_copilot_shows_data;
 XPLMDataRef efis_copilot_shows_pos;
 XPLMDataRef efis_copilot_shows_terrain;
 XPLMDataRef efis_copilot_shows_vp;
+XPLMDataRef efis_copilot_shows_ils;
+XPLMDataRef efis_copilot_metric_alt;
+XPLMDataRef efis_copilot_track_fpa;
 XPLMDataRef efis_copilot_map_mode;
 XPLMDataRef efis_copilot_map_submode;
 XPLMDataRef copilot_hsi_selector;
@@ -835,6 +842,47 @@ void setPilotVerticalPath(void* inRefcon, int inValue)
 	pilot_vp = inValue;
 }
 
+// xhsi/nd_pilot/ils
+int pilot_ils;
+int getPilotILS(void* inRefcon)
+{
+     return pilot_ils;
+}
+void setPilotILS(void* inRefcon, int inValue)
+{
+	pilot_ils = inValue;
+}
+
+// xhsi/nd_pilot/metric_alt
+int pilot_metric_alt;
+int getPilotMetricAlt(void* inRefcon)
+{
+     return pilot_metric_alt;
+}
+void setPilotMetricAlt(void* inRefcon, int inValue)
+{
+	pilot_metric_alt = inValue;
+	/* may be a very bad idea - prefer writedataref
+	if (qpac_ready) XPLMSetDatai(qpac_fcu_metric_alt, inValue);
+	if (jar_a320_neo_ready) XPLMSetDatai(jar_a320_neo_fcu_metric_alt, inValue);
+	*/
+}
+
+// xhsi/nd_pilot/track_fpa
+int pilot_track_fpa;
+int getPilotTrackFPA(void* inRefcon)
+{
+     return pilot_track_fpa;
+}
+void setPilotTrackFPA(void* inRefcon, int inValue)
+{
+	pilot_track_fpa = inValue;
+	/* may be a very bad idea - prefer writeDataRef XHSI_EFIS_PILOT_TRK_FPA
+	if (qpac_ready) XPLMSetDatai(qpac_fcu_hdg_trk, inValue);
+	if (jar_a320_neo_ready) XPLMSetDatai(jar_a320_neo_fcu_hdg_trk, inValue);
+	*/
+}
+
 // xhsi/pfd_pilot/da_bug
 int pilot_da_bug;
 int     getPilotDAbug(void* inRefcon)
@@ -1157,6 +1205,39 @@ void	setCopilotVerticalPath(void* inRefcon, int inValue)
 	copilot_vp = inValue;
 }
 
+// xhsi/nd_copilot/ils
+int copilot_ils;
+int getCopilotILS(void* inRefcon)
+{
+     return copilot_ils;
+}
+void setCopilotILS(void* inRefcon, int inValue)
+{
+	copilot_ils = inValue;
+}
+
+// xhsi/nd_copilot/metric_alt
+int copilot_metric_alt;
+int getCopilotMetricAlt(void* inRefcon)
+{
+     return copilot_metric_alt;
+}
+void setCopilotMetricAlt(void* inRefcon, int inValue)
+{
+	copilot_metric_alt = inValue;
+}
+
+// xhsi/nd_copilot/track_fpa
+int copilot_track_fpa;
+int getCopilotTrackFPA(void* inRefcon)
+{
+     return copilot_track_fpa;
+}
+void setCopilotTrackFPA(void* inRefcon, int inValue)
+{
+	copilot_track_fpa = inValue;
+}
+
 // xhsi/nd_copilot/map_ctr
 int copilot_map_ctr;
 int     getCopilotMapCTR(void* inRefcon)
@@ -1467,6 +1548,26 @@ void registerPilotDataRefs(void) {
                                         getPilotVerticalPath, setPilotVerticalPath,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
+    // xhsi/nd_pilot/ils
+    efis_pilot_shows_ils = XPLMRegisterDataAccessor("xhsi/nd_pilot/ils",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getPilotILS, setPilotILS,                        // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_pilot/vp
+    efis_pilot_metric_alt = XPLMRegisterDataAccessor("xhsi/nd_pilot/metric_alt",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getPilotMetricAlt, setPilotMetricAlt,           // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_pilot/track_fpa
+    efis_pilot_track_fpa = XPLMRegisterDataAccessor("xhsi/nd_pilot/track_fpa",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getPilotTrackFPA, setPilotTrackFPA,              // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
     // xhsi/pfd_pilot/da_bug
     efis_pilot_da_bug = XPLMRegisterDataAccessor("xhsi/pfd_pilot/da_bug",
@@ -1720,6 +1821,27 @@ void registerCopilotDataRefs(void) {
                                         xplmType_Int,                                    // The types we support
                                         1,                                               // Writable
                                         getCopilotVerticalPath, setCopilotVerticalPath,  // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_copilot/ils
+    efis_copilot_shows_ils = XPLMRegisterDataAccessor("xhsi/nd_copilot/ils",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getCopilotILS, setCopilotILS,                        // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_copilot/vp
+    efis_copilot_metric_alt = XPLMRegisterDataAccessor("xhsi/nd_copilot/metric_alt",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getCopilotMetricAlt, setCopilotMetricAlt,           // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/nd_pilot/track_fpa
+    efis_copilot_track_fpa = XPLMRegisterDataAccessor("xhsi/nd_copilot/track_fpa",
+                                        xplmType_Int,                                    // The types we support
+                                        1,                                               // Writable
+                                        getCopilotTrackFPA, setCopilotTrackFPA,              // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
     // xhsi/nd_copilot/map_ctr
@@ -2251,6 +2373,15 @@ float initPilotCallback(
     // Vertical Path on ND
     XPLMSetDatai(efis_pilot_shows_vp, 0);
 
+    // Instrument Landing System
+    XPLMSetDatai(efis_pilot_shows_ils, 0);
+
+    // Metric Altitude
+    XPLMSetDatai(efis_pilot_metric_alt, 0);
+
+    // Track FPA (Flight Path Angle / Flight Path Vector / Bird)
+    XPLMSetDatai(efis_pilot_track_fpa, 0);
+
     // just a default DA
     XPLMSetDatai(efis_pilot_da_bug, 0);
 
@@ -2355,6 +2486,15 @@ float initCopilotCallback(
 
     // TERRAIN on ND - Vertical path
     XPLMSetDatai(efis_copilot_shows_vp, 0);
+
+    // Instrument Landing System
+    XPLMSetDatai(efis_copilot_shows_ils, 0);
+
+    // Metric Altitude
+    XPLMSetDatai(efis_copilot_metric_alt, 0);
+
+    // Track FPA (Flight Path Angle / Flight Path Vector / Bird)
+    XPLMSetDatai(efis_copilot_track_fpa, 0);
 
     // CTR on ! (just to be a little different from the pilot's ND default)
     XPLMSetDatai(efis_copilot_map_mode, 0);
@@ -2568,6 +2708,15 @@ void unregisterPilotDataRefs(void) {
     // xhsi/nd_pilot/vp
     XPLMUnregisterDataAccessor(efis_pilot_shows_vp);
 
+    // xhsi/nd_pilot/ils
+    XPLMUnregisterDataAccessor(efis_pilot_shows_ils);
+
+    // xhsi/nd_pilot/metric_alt
+    XPLMUnregisterDataAccessor(efis_pilot_metric_alt);
+
+    // xhsi/nd_pilot/track_fpa
+    XPLMUnregisterDataAccessor(efis_pilot_track_fpa);
+
     // xhsi/pfd_pilot/da_bug
     XPLMUnregisterDataAccessor(efis_pilot_da_bug);
 
@@ -2658,6 +2807,15 @@ void unregisterCopilotDataRefs(void) {
 
     // xhsi/nd_copilot/vp
     XPLMUnregisterDataAccessor(efis_copilot_shows_vp);
+
+    // xhsi/nd_copilot/ils
+    XPLMUnregisterDataAccessor(efis_copilot_shows_ils);
+
+    // xhsi/nd_copilot/metric_alt
+    XPLMUnregisterDataAccessor(efis_copilot_metric_alt);
+
+    // xhsi/nd_copilot/track_fpa
+    XPLMUnregisterDataAccessor(efis_copilot_track_fpa);
 
     // xhsi/nd_copilot/map_ctr
     XPLMUnregisterDataAccessor(efis_copilot_map_mode);
@@ -3394,6 +3552,24 @@ void writeDataRef(int id, float value) {
             XPLMSetDatai(efis_pilot_shows_vp, (int)value);
             break;
 
+        case XHSI_EFIS_PILOT_ILS :
+            XPLMSetDatai(efis_pilot_shows_ils, (int)value);
+            if (qpac_ready) XPLMSetDatai(qpac_ils_on_capt, (int)value);
+            if (qpac_ready) XPLMSetDatai(jar_a320_neo_ils, (int)value);
+            break;
+
+        case XHSI_EFIS_PILOT_TRK_FPA :
+            XPLMSetDatai(efis_pilot_track_fpa, (int)value);
+            if (qpac_ready) XPLMSetDatai(qpac_fcu_hdg_trk, (int)value);
+            if (jar_a320_neo_ready) XPLMSetDatai(jar_a320_neo_fcu_hdg_trk, (int)value);
+            break;
+
+        case XHSI_EFIS_PILOT_METRIC_ALT :
+            XPLMSetDatai(efis_pilot_metric_alt, (int)value);
+            if (qpac_ready) XPLMSetDatai(qpac_fcu_metric_alt, (int)value);
+            if (jar_a320_neo_ready) XPLMSetDatai(jar_a320_neo_fcu_metric_alt, (int)value);
+            break;
+
         case XHSI_EFIS_PILOT_WXR_TILT :
             XPLMSetDataf(efis_pilot_wxr_tilt, value);
             break;
@@ -3485,6 +3661,19 @@ void writeDataRef(int id, float value) {
 
         case XHSI_EFIS_COPILOT_VP :
             XPLMSetDatai(efis_copilot_shows_vp, (int)value);
+            break;
+
+        case XHSI_EFIS_COPILOT_ILS :
+            XPLMSetDatai(efis_copilot_shows_ils, (int)value);
+            if (qpac_ready) XPLMSetDatai(qpac_ils_on_fo, (int)value);
+            break;
+
+        case XHSI_EFIS_COPILOT_TRK_FPA :
+            XPLMSetDatai(efis_copilot_track_fpa, (int)value);
+            break;
+
+        case XHSI_EFIS_COPILOT_METRIC_ALT :
+            XPLMSetDatai(efis_copilot_metric_alt, (int)value);
             break;
 
         case XHSI_EFIS_COPILOT_WXR_TILT :
@@ -3702,11 +3891,13 @@ void writeDataRef(int id, float value) {
                     }
                     break;
                 case AP_KEY_ILS_CAPT_TOGGLE :
+                	XPLMSetDatai(efis_pilot_shows_ils, !XPLMGetDatai(efis_pilot_shows_ils));
                 	if (qpac_ready) {
                 		XPLMSetDatai(qpac_ils_on_capt, !XPLMGetDatai(qpac_ils_on_capt));
                 	}
                 	break;
                 case AP_KEY_ILS_FO_TOGGLE :
+                	XPLMSetDatai(efis_copilot_shows_ils, !XPLMGetDatai(efis_copilot_shows_ils));
                 	if (qpac_ready) {
                 		XPLMSetDatai(qpac_ils_on_fo, !XPLMGetDatai(qpac_ils_on_fo));
                 	}
