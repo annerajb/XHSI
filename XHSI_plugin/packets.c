@@ -29,6 +29,7 @@
 #include "datarefs_qpac.h"
 #include "datarefs_pa_a320.h"
 #include "datarefs_jar_a320neo.h"
+#include "datarefs_ff_a320.h"
 #include "datarefs_xjoymap.h"
 #include "datarefs_x_raas.h"
 #include "endianess.h"
@@ -131,6 +132,8 @@ void decodeIncomingPacket(void) {
         	writeJarA320neoDataRef(id, float_value);
         } else 	if ((id >= UFMC_STATUS) && (id <= UFMC_ID_END)) {
         	writeUFmcDataRef(id, float_value);
+        } else 	if ((id >= FF_A320_STATUS) && (id <= FF_A320_ID_END)) {
+        	writeFlightFactorA320Data(id, float_value);
         } else {
         	writeDataRef(id, float_value);
         }
@@ -1076,6 +1079,41 @@ int createAvionicsPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_PILOT_TERRAIN);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_pilot_shows_terrain));
     i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_PILOT_VP);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_pilot_shows_vp));
+    i++;
+
+    // ILS Sig and Deviation Capt. and FO
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_PILOT_ILS);
+    if (qpac_ready) {
+    	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_ils_on_capt));
+    } else if (jar_a320_neo_ready) {
+    	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_ils));
+    } else {
+    	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_pilot_shows_ils));
+    }
+    i++;
+
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_PILOT_TRK_FPA);
+    if (qpac_ready) {
+    	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_fcu_hdg_trk));
+    } else if (jar_a320_neo_ready) {
+    	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_fcu_hdg_trk));
+    } else {
+    	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_pilot_track_fpa));
+    }
+    i++;
+
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_PILOT_METRIC_ALT);
+    if (qpac_ready) {
+    	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_fcu_metric_alt));
+    } else if (jar_a320_neo_ready) {
+    	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(jar_a320_neo_fcu_metric_alt));
+    } else {
+    	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_pilot_metric_alt));
+    }
+    i++;
+
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_PILOT_DA_BUG);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_pilot_da_bug));
     i++;
@@ -1109,6 +1147,8 @@ int createAvionicsPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_PILOT_WXR_OPT);
     sim_packet.sim_data_points[i].value = custom_htonf((float)wxr_opt);
     i++;
+
+
 
 // copilot
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_COPILOT_HSI_SOURCE);
@@ -1158,6 +1198,22 @@ int createAvionicsPacket(void) {
     i++;
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_COPILOT_TERRAIN);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_copilot_shows_terrain));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_COPILOT_VP);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_copilot_shows_vp));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_COPILOT_ILS);
+    if (qpac_ready) {
+        sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(qpac_ils_on_fo));
+    } else {
+    	sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_copilot_shows_ils));
+    }
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_COPILOT_TRK_FPA);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_copilot_track_fpa));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_COPILOT_METRIC_ALT);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_copilot_metric_alt));
     i++;
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_EFIS_COPILOT_DA_BUG);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(efis_copilot_da_bug));

@@ -1,3 +1,13 @@
+/*
+ * ids.h
+ *
+ *  Created on:
+ *      Author:
+ */
+
+#ifndef IDS_H_
+#define IDS_H_
+
 
 // Sim value ids ===============================================================
 
@@ -44,6 +54,7 @@
 #define XHSI_EFIS_COPILOT_MINS_MODE 67
 #define SIM_GAUGES_FAILURES_PILOT 68
 #define SIM_GAUGES_FAILURES_COPILOT 69
+
 
 // Electrical
 #define SIM_COCKPIT_ELECTRICAL_AVIONICS_ON 80
@@ -207,6 +218,9 @@
 #define XHSI_EFIS_PILOT_WXR_GAIN 220
 #define XHSI_EFIS_PILOT_WXR_MODE 221
 #define XHSI_EFIS_PILOT_WXR_OPT 222
+#define XHSI_EFIS_PILOT_ILS 223
+#define XHSI_EFIS_PILOT_TRK_FPA 224
+#define XHSI_EFIS_PILOT_METRIC_ALT 225
 
 // Copilot EFIS
 #define XHSI_EFIS_COPILOT_HSI_SOURCE 250
@@ -232,6 +246,9 @@
 #define XHSI_EFIS_COPILOT_WXR_GAIN 270
 #define XHSI_EFIS_COPILOT_WXR_MODE 271
 #define XHSI_EFIS_COPILOT_WXR_OPT 272
+#define XHSI_EFIS_COPILOT_ILS 273
+#define XHSI_EFIS_COPILOT_TRK_FPA 274
+#define XHSI_EFIS_COPILOT_METRIC_ALT 275
 
 // EICAS
 #define XHSI_ENGINE_TYPE 280
@@ -526,6 +543,30 @@
 #define XHSI_RWY_LENGTH_MIN 901 // Override with this value if it is > 0
 #define XHSI_RWY_UNITS 902 // 0:Meters 1:Feet
 
+// Display Unit Brightness
+// Panel & Instruments
+
+#define SIM_COCKPIT_ELECTRICAL_INSTRUMENT_BRIGHTNESS 910
+#define SIM_COCKPIT_ELECTRICAL_COCKPIT_LIGHT 911
+#define SIM_COCKPIT_ELECTRICAL_HUD_BRIGHTNESS 912
+#define XHSI_DU_BRIGHT_PFD_CPT 913
+#define XHSI_DU_BRIGHT_ND_CPT 914
+#define XHSI_DU_BRIGHT_PFD_FO 915
+#define XHSI_DU_BRIGHT_ND_FO 916
+#define XHSI_DU_BRIGHT_EICAS 917
+#define XHSI_DU_BRIGHT_MFD 918
+#define XHSI_DU_BRIGHT_CLOCK 919
+#define XHSI_DU_BRIGHT_CDU_CPT 920
+#define XHSI_DU_BRIGHT_CDU_FO 921
+#define XHSI_DU_BRIGHT_CDU_OBS 922
+#define XHSI_DU_BRIGHT_FCU 923
+#define XHSI_DU_BRIGHT_OHP 924
+#define XHSI_DU_BRIGHT_PEDESTAL 925
+#define XHSI_DU_BRIGHT_DOME 926
+#define XHSI_DU_BRIGHT_TABLET 927
+// Reserved to Lights and Brightness u 910 - 929
+
+
 // Side stick priority - xjoymap dual commands
 #define XJOYMAP_STICK_PRIORITY 940 // mask 0x03 0=dual, 1=Capt, 2=F/O ; mask 0x40 : dual_input boolean
 
@@ -717,7 +758,7 @@
 #define QPAC_ID_END 1199
 
 
-// JarDesign Airbus A320neo (1200 - 1299)
+// JarDesign Airbus A320neo (1200 - 1399)
 #define JAR_A320NEO_STATUS 1200
 // FMS
 #define JAR_A320NEO_PRESEL_CRZ 1201
@@ -827,8 +868,21 @@
 #define JAR_A320NEO_AC_STATUS 1334
 #define JAR_A320NEO_GEN_STATUS 1335
 
-#define JAR_A320NEO_ID_END 1350
+#define JAR_A320NEO_ID_END 1399
+
+// IDs from 1400 - 1499 reserved
+
+// Flight Factor A320  Ultimate (1500 - 1699)
+#define FF_A320_STATUS 1500
+#define FF_A320_APU_MASTER 1501
+#define FF_A320_APU_STARTER 1502
+#define FF_A320_APU_BLEED 1503
+#define FF_A320_APU_GEN 1504
+
+#define FF_A320_ID_END 1699
+
 
 // Plugin Version
 #define PLUGIN_VERSION_ID 999
 
+#endif /* IDS_H_ */

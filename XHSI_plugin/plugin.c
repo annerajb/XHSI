@@ -6,7 +6,8 @@
 *
 * Copyright (C) 2007-2009  Georg Gruetter (gruetter@gmail.com)
 * Copyright (C) 2009-2015  Marc Rogiers (marrog.123@gmail.com)
-* Copyright (C) 2014-2015  Nicolas Carel
+* Copyright (C) 2014-2018  Nicolas Carel
+* Copyright (C) 2017-2018  Technische Hochschule Ingolstadt (https://www.thi.de/en/)
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -78,6 +79,7 @@
 #include "datarefs_qpac.h"
 #include "datarefs_pa_a320.h"
 #include "datarefs_jar_a320neo.h"
+#include "datarefs_ff_a320.h"
 #include "datarefs_pilotedge.h"
 #include "datarefs_xjoymap.h"
 #include "datarefs_x_raas.h"
@@ -287,6 +289,11 @@ PLUGIN_API int XPluginEnable(void) {
             checkJarA320NeoCallback,
             -1.0f,
             NULL);
+    // FlightFactor Airbus A320 ultimate Aircraft
+    XPLMRegisterFlightLoopCallback(
+    		checkFlightFactorA320Callback,
+            -1.0f,
+            NULL);
     // xjoymap - Dual commands
     XPLMRegisterFlightLoopCallback(
             checkXjoymapCallback,
@@ -383,6 +390,7 @@ PLUGIN_API void XPluginDisable(void) {
     XPLMUnregisterFlightLoopCallback(checkQpacCallback, NULL);
     XPLMUnregisterFlightLoopCallback(checkPaA320Callback, NULL);
     XPLMUnregisterFlightLoopCallback(checkJarA320NeoCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(checkFlightFactorA320Callback, NULL);
     XPLMUnregisterFlightLoopCallback(checkXjoymapCallback, NULL);
     XPLMUnregisterFlightLoopCallback(checkXRaasCallback, NULL);
 
