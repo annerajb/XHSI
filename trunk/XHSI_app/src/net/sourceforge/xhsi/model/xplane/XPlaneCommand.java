@@ -578,6 +578,19 @@ public class XPlaneCommand implements SimCommand {
             case CMD_GEAR_DOWN: 
             	this.udp_sender.sendDataPoint(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_KEY_PRESS, AP_KEY_LDG_GEAR_DOWN);
             	break;
+            	
+            case CMD_CHRONO_START_STOP_RESET:
+            	this.avionics.chr_control(Avionics.CHR_CONTROL_START_STOP_RESET);
+            	break;
+
+            case CMD_CHRONO_START_STOP:
+            	this.avionics.chr_control(Avionics.CHR_CONTROL_START_STOP);
+            	break;
+
+            case CMD_CHRONO_RESET:
+            	this.avionics.chr_control(Avionics.CHR_CONTROL_RESET);
+            	break;
+
         }
     }
 }

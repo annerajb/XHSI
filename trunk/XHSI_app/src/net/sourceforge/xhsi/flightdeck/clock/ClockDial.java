@@ -25,6 +25,7 @@ import java.awt.BasicStroke;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 
 import java.text.DecimalFormat;
@@ -53,17 +54,20 @@ public class ClockDial extends ClockSubcomponent {
 
 
     public void paint(Graphics2D g2) {
+    	if ( ! clock_gc.digital_clock_style ) {
+    		
+      		// TODO: Should be computed in ClockGraphicsConfig
+    		clock_x = clock_gc.clock_square.x + clock_gc.clock_square.width/2;
+    		clock_y = clock_gc.clock_square.y + clock_gc.clock_square.height/2;
+    		clock_r = clock_gc.clock_square.width/2*7/8;
 
-        clock_x = clock_gc.clock_square.x + clock_gc.clock_square.width/2;
-        clock_y = clock_gc.clock_square.y + clock_gc.clock_square.height/2;
-        clock_r = clock_gc.clock_square.width/2*7/8;
-        
-        drawDial(g2);
-        if ( this.aircraft.battery() ) {
-            draw_time(g2);
-            draw_timer(g2);
-        }
-        
+    		drawDial(g2);
+    		// TODO: link with DU configured ELEC bus
+    		if ( this.aircraft.battery() ) {
+    			draw_time(g2);
+    			draw_timer(g2);
+    		}
+    	}
     }
 
 
@@ -85,7 +89,7 @@ public class ClockDial extends ClockSubcomponent {
         g2.drawString(current_time_str, current_time_x, current_time_y);
 
         g2.setFont(clock_gc.font_xxl);
-//        utc_x = clock_x - clock_gc.get_text_width(g2, clock_gc.font_xxl, "UTC")/2;
+
         current_time_y -= clock_gc.line_height_zl*8/10 + clock_gc.line_height_xxl/2;
         if ( this.avionics.clock_shows_utc() ) {
             current_time_x = clock_x - clock_gc.get_text_width(g2, clock_gc.font_xxl, "UTC") - clock_gc.digit_width_xxl;
@@ -94,15 +98,6 @@ public class ClockDial extends ClockSubcomponent {
             current_time_x = clock_x + clock_gc.digit_width_xxl;
             g2.drawString("LT", current_time_x, current_time_y);
         }
-
-//// test
-//AffineTransform original_at = g2.getTransform();
-//g2.rotate(Math.toRadians(ss*6), clock_x, clock_y);
-//Stroke original_stroke = g2.getStroke();
-//g2.setStroke(new BasicStroke(8.0f * clock_gc.scaling_factor));
-//g2.drawLine(clock_x, clock_y - clock_gc.clock_square.width*14/64, clock_x, clock_y - clock_gc.clock_square.width*25/64);
-//g2.setStroke(original_stroke);
-//g2.setTransform(original_at);
 
     }
 
@@ -113,7 +108,6 @@ public class ClockDial extends ClockSubcomponent {
         g2.setColor(clock_gc.clock_color);
 
         float chr_time = this.aircraft.timer_elapsed_time();
-//chr_time = 3599.0f;
 
         if ( chr_time == 0.0f ) {
             
@@ -126,7 +120,6 @@ public class ClockDial extends ClockSubcomponent {
             g2.setFont(clock_gc.font_zl);
             g2.drawString(timer_str, timer_x, timer_y);
             
-            //timer_x = clock_x - clock_gc.get_text_width(g2, clock_gc.font_xxl, "ET")/2;
             timer_x = clock_x - clock_gc.get_text_width(g2, clock_gc.font_xxl, "ET") - clock_gc.digit_width_xxl;
             timer_y += clock_gc.line_height_xxl*5/4 + clock_gc.line_height_zl*1/10;
             g2.setFont(clock_gc.font_xxl);
@@ -213,6 +206,30 @@ public class ClockDial extends ClockSubcomponent {
         g2.drawString("50", clock_x - d_rx - d_w, clock_y - d_ry + d_h - d_f);
         
 
+    }
+
+    /**
+     * No Mouse click action for the Clock Frame
+     */
+    public void mouseClicked(Graphics2D g2, MouseEvent e) {
+    }
+
+    /**
+     * No Mouse drag action for the Clock Frame
+     */
+    public void mouseDragged(Graphics2D g2, MouseEvent e) {
+    }
+    
+    /**
+     * No Mouse released action for the Clock Frame
+     */
+    public void mouseReleased(Graphics2D g2, MouseEvent e) {
+    }
+
+    /**
+     * No Mouse pressed action for the Clock Frame
+     */
+    public void mousePressed(Graphics2D g2, MouseEvent e) {
     }
 
 

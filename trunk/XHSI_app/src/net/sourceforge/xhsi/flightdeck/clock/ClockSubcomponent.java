@@ -5,6 +5,9 @@
 * ClockComponent.
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
+* Copyright (C) 2018  the Technische Hochschule Ingolstadt 
+*                     - Patrick Burkart
+*                     - Tim Drouven
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -24,6 +27,7 @@ package net.sourceforge.xhsi.flightdeck.clock;
 
 import java.awt.Component;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
 
 import net.sourceforge.xhsi.XHSIPreferences;
 import net.sourceforge.xhsi.model.ModelFactory;
@@ -64,7 +68,13 @@ public abstract class ClockSubcomponent extends Subcomponent {
 
     public abstract void paint(Graphics2D g2);
 
+    public abstract void mouseClicked(Graphics2D g2, MouseEvent e);
 
+    public abstract void mouseDragged(Graphics2D g2, MouseEvent e);
+
+    public abstract void mouseReleased(Graphics2D g2, MouseEvent e);
+
+    public abstract void mousePressed(Graphics2D g2, MouseEvent e);
 
 //    protected BufferedImage create_buffered_image(int width, int height) {
 //

@@ -4,6 +4,9 @@
 * ...
 * 
 * Copyright (C) 2010  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2018  the Technische Hochschule Ingolstadt 
+*                     - Patrick Burkart
+*                     - Tim Drouven
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -25,6 +28,7 @@ import java.awt.BasicStroke;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import java.awt.event.MouseEvent;
 
 import java.util.logging.Logger;
 
@@ -65,6 +69,30 @@ public class ClockFrame extends ClockSubcomponent {
 
         g2.setStroke(original_stroke);
 
+    }
+
+    /**
+     * No Mouse click action for the Clock Frame
+     */
+    public void mouseClicked(Graphics2D g2, MouseEvent e) {
+    }
+
+    /**
+     * No Mouse drag action for the Clock Frame
+     */
+    public void mouseDragged(Graphics2D g2, MouseEvent e) {
+    }
+    
+    /**
+     * No Mouse released action for the Clock Frame
+     */
+    public void mouseReleased(Graphics2D g2, MouseEvent e) {
+    }
+
+    /**
+     * No Mouse pressed action for the Clock Frame
+     */
+    public void mousePressed(Graphics2D g2, MouseEvent e) {
     }
 
 

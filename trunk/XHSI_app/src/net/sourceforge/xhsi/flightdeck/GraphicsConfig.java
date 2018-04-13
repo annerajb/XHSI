@@ -249,7 +249,6 @@ public class GraphicsConfig implements ComponentListener {
     public Color brightground_color;
     public Color instrument_background_color;
     public Color fpv_color;
-    public Color clock_color;   
     public Color chrono_background_color;
     public Color chrono_color;
     
@@ -272,7 +271,7 @@ public class GraphicsConfig implements ComponentListener {
     public Color pfd_instrument_background_color;
     public Color pfd_markings_color;
     public Color pfd_sky_color;
-    public Color pfd_ground_color;
+    public Color pfd_ground_color;// import net.sourceforge.xhsi.util.ColorUtilities;
     public Color pfd_radio_alti_color;
     public Color pfd_reference_color;
     public Color pfd_mach_color;
@@ -295,6 +294,14 @@ public class GraphicsConfig implements ComponentListener {
     public Color terrain_bright_green_color;
     public Color terrain_blue_color;
     public Color terrain_black_color;
+    
+    // Clock colors
+    public Color clock_color;
+    public Color clock_markings_color;
+    public Color clock_digital_54616E_color;
+    public Color clock_digital_54616E_dark_color;
+    public Color clock_digital_dark_gray_color;
+
 
     String font_name = "Verdana";   
     public Font font_statusbar;
@@ -994,6 +1001,10 @@ public class GraphicsConfig implements ComponentListener {
            
         }
 
+        clock_markings_color = Color.white;
+        clock_digital_54616E_color = Color.decode("#54616E");
+        clock_digital_54616E_dark_color = Color.decode("#54616E").darker().darker();
+        clock_digital_dark_gray_color = Color.decode("#080808");
        
         if ( border_color.equals(XHSIPreferences.BORDER_BROWN) ) {
             backpanel_color = color_jumbobrown;

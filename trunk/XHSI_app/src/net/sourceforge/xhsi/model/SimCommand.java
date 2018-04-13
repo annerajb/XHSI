@@ -160,6 +160,10 @@ public interface SimCommand {
     public static final int CMD_BRK_FAN = 365;
     public static final int CMD_GEAR_UP = 366;
     public static final int CMD_GEAR_DOWN = 367;
-    // Next is 369
+    public static final int CMD_CHRONO_START_STOP_RESET = 369;
+    public static final int CMD_CHRONO_START_STOP = 370;
+    public static final int CMD_CHRONO_RESET = 371;
+    // Next is 372
+    
     public void send(int var1);
 }
