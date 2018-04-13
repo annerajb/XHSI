@@ -11,6 +11,9 @@
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2018  the Technische Hochschule Ingolstadt 
+*                     - Patrick Burkart
+*                     - Tim Drouven
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -34,8 +37,11 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.logging.Logger;
+
+import javax.swing.event.MouseInputListener;
 
 
 import net.sourceforge.xhsi.PreferencesObserver;
@@ -49,7 +55,7 @@ import net.sourceforge.xhsi.model.Observer;
 //import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
 
 
-public class ClockComponent extends Component implements Observer, PreferencesObserver {
+public class ClockComponent extends Component implements Observer, PreferencesObserver, MouseInputListener {
 
     private static final long serialVersionUID = 1L;
     public static boolean COLLECT_PROFILING_INFORMATION = false;
@@ -80,10 +86,15 @@ public class ClockComponent extends Component implements Observer, PreferencesOb
         this.avionics = this.aircraft.get_avionics();
 
         clock_gc.reconfig = true;
+        
+        addMouseListener(this);
+        addMouseMotionListener(this);
+        // addKeyListener(this);
 
         addComponentListener(clock_gc);
         subcomponents.add(new ClockFrame(model_factory, clock_gc, this));
         subcomponents.add(new ClockDial(model_factory, clock_gc, this));
+        subcomponents.add(new ClockDigital(model_factory, clock_gc, this));
 
         this.repaint();
 
@@ -117,7 +128,8 @@ public class ClockComponent extends Component implements Observer, PreferencesOb
         }
 
         // send Graphics object to annun_gc to recompute positions, if necessary because the panel has been resized or a mode setting has been changed
-        clock_gc.update_config( g2, this.aircraft.battery() );
+        // TODO: this.avionics.get_clock_style()
+        clock_gc.update_config( g2, this.aircraft.battery(), this.avionics.get_instrument_style() );
 
         // rotate the display
         XHSIPreferences.Orientation orientation = XHSIPreferences.get_instance().get_panel_orientation( this.clock_gc.display_unit );
@@ -216,5 +228,46 @@ public class ClockComponent extends Component implements Observer, PreferencesOb
         this.clock_gc.reconfig = true;
         repaint();
         
+    }
+    
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        for (int i = 0; i < subcomponents.size(); i++) {
+            ((ClockSubcomponent) subcomponents.get(i)).mouseClicked(g2, e);
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        for (int i = 0; i < subcomponents.size(); i++) {
+            ((ClockSubcomponent) subcomponents.get(i)).mousePressed(g2, e);
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        for (int i = 0; i < subcomponents.size(); i++) {
+            ((ClockSubcomponent) subcomponents.get(i)).mouseReleased(g2, e);
+        }
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        for (int i = 0; i < subcomponents.size(); i++) {
+            ((ClockSubcomponent) subcomponents.get(i)).mouseDragged(g2, e);
+        }
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
     }
 }

@@ -5,6 +5,7 @@
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2018  Nicolas Carel
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -22,8 +23,6 @@
 */
 package net.sourceforge.xhsi.model;
 
-import net.sourceforge.xhsi.XHSIPreferences;
-import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 
 public interface Avionics {
 	
@@ -32,6 +31,9 @@ public interface Avionics {
     public static final int STYLE_BOEING = 0;
     public static final int STYLE_AIRBUS = 1;
 
+    public static final int STYLE_CLOCK_ANALOG = 0;
+    public static final int STYLE_CLOCK_DIGITAL = 1;
+    
     public static final int HSI_SOURCE_NAV1 = 0;
     public static final int HSI_SOURCE_NAV2 = 1;
     public static final int HSI_SOURCE_GPS = 2;
