@@ -142,6 +142,16 @@
 #define WXR_MODE_MAP 3
 #define WXR_MODE_FORCE_ON 4
 
+#define CLK_START_STOP_RESET 0
+#define CLK_START_STOP 1
+#define CLK_RESET 2
+#define CLK_ET_STOP 3
+#define CLK_ET_RUN 4
+#define CLK_ET_RESET 5
+#define CLK_UTC_GPS 6
+#define CLK_UTC_INT 7
+#define CLK_UTC_SET 8
+
 XPLMCommandRef mode_app;
 XPLMCommandRef mode_vor;
 XPLMCommandRef mode_map;
@@ -546,6 +556,14 @@ XPLMCommandRef chr_reset;
 XPLMCommandRef timer_start_stop;
 XPLMCommandRef timer_reset;
 
+XPLMCommandRef et_reset;
+XPLMCommandRef et_stop;
+XPLMCommandRef et_run;
+
+XPLMCommandRef clock_utc_gps;
+XPLMCommandRef clock_utc_int;
+XPLMCommandRef clock_utc_set;
+
 XPLMCommandRef pilot_chrono_stop_reset;
 XPLMCommandRef pilot_chrono_start_stop;
 XPLMCommandRef pilot_chrono_reset;
@@ -670,6 +688,9 @@ XPLMCommandRef sim_autopilot_glide_slope;
 XPLMCommandRef sim_autopilot_back_course;
 XPLMCommandRef sim_autopilot_altitude_hold;
 XPLMCommandRef sim_autopilot_wing_leveler;
+
+// for Clock
+XPLMCommandRef sim_instruments_timer_show_date;
 
 // lights
 XPLMCommandRef sim_lights_nav_lights_toggle;
@@ -2597,23 +2618,55 @@ XPLMCommandCallback_f auto_ext_range_handler(XPLMCommandRef inCommand, XPLMComma
 }
 
 
-// clock
+/** clock_handler
+ * 0 CLK_START_STOP_RESET Legacy X-Plane Chrono Start / Stop / Reset
+ * 1 CLK_START_STOP Legacy X-Plane Chrono Start / Stop
+ * 2 CLK_RESET Legacy X-Plane Chrono Reset
+ * 3 CLK_ET_STOP Elapsed Flight Timer : Stop
+ * 4 CLK_ET_RUN Elapsed Flight Timer : Run
+ * 5 CLK_ET_RESET Elapsed Flight Timer : Rest
+ * 6 CLK_UTC_GPS Clock reference set to GPS (X-Plane Clock)
+ * 7 CLK_UTC_INT Clock reference set to GPS (XHSI Clock)
+ * 8 CLK_UTC_SET Clock set mode (XHSI Clock)
+ */
 XPLMCommandCallback_f clock_handler(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void * inRefcon)
 {
     if (inPhase == xplm_CommandBegin)
     {
-        int i = (int)((intptr_t)inRefcon);
-        if ( i == 0 )
-        {
-            if ( ( XPLMGetDataf(elapsed_time_sec) == 0.0f ) || XPLMGetDatai(timer_is_running) )
-                XPLMCommandOnce(timer_start_stop);
-            else
-                XPLMCommandOnce(timer_reset);
-        }
-        else if ( i == 1 )
-            XPLMCommandOnce(timer_start_stop);
-        else if ( i == 2 )
-            XPLMCommandOnce(timer_reset);
+    	int i = (int)((intptr_t)inRefcon);
+    	switch ( i ) {
+    	case CLK_START_STOP_RESET:
+    		if ( ( XPLMGetDataf(elapsed_time_sec) == 0.0f ) || XPLMGetDatai(timer_is_running) )
+    			XPLMCommandOnce(timer_start_stop);
+    		else
+    			XPLMCommandOnce(timer_reset);
+    		break;
+    	case CLK_START_STOP:
+    		XPLMCommandOnce(timer_start_stop);
+    		break;
+    	case CLK_RESET:
+    		XPLMCommandOnce(timer_reset);
+    		break;
+    	case CLK_ET_STOP:
+    		XPLMSetDatai(xhsi_et_running,0);
+    		break;
+    	case CLK_ET_RUN:
+    		XPLMSetDatai(xhsi_et_running,1);
+    		break;
+    	case CLK_ET_RESET:
+    		XPLMSetDataf(flight_time_sec,0.0);
+    		XPLMSetDatai(xhsi_et_running,0);
+    		break;
+    	case CLK_UTC_GPS:
+    		XPLMSetDatai(xhsi_utc_selector,0);
+    		break;
+    	case CLK_UTC_INT:
+    		XPLMSetDatai(xhsi_utc_selector,1);
+    		break;
+    	case CLK_UTC_SET:
+    		XPLMSetDatai(xhsi_utc_selector,2);
+    		break;
+    	}
     }
     return (XPLMCommandCallback_f)1;
 }
@@ -3984,6 +4037,21 @@ void registerCommands(void) {
     chr_reset = XPLMCreateCommand("xhsi/clock/chr_reset", "Chronograph reset");
     XPLMRegisterCommandHandler(chr_reset, (XPLMCommandCallback_f)clock_handler, 1, (void *)2);
 
+    // Elapsed Flight Time
+    et_reset = XPLMCreateCommand("xhsi/clock/et_reset", "Elapsed flight time reset");
+    XPLMRegisterCommandHandler(et_reset, (XPLMCommandCallback_f)clock_handler, 1, (void *)CLK_ET_RESET);
+    et_stop = XPLMCreateCommand("xhsi/clock/et_stop", "Elapsed flight time stop");
+    XPLMRegisterCommandHandler(et_stop, (XPLMCommandCallback_f)clock_handler, 1, (void *)CLK_ET_STOP);
+    et_run = XPLMCreateCommand("xhsi/clock/et_run", "Elapsed flight time run");
+    XPLMRegisterCommandHandler(et_run, (XPLMCommandCallback_f)clock_handler, 1, (void *)CLK_ET_RUN);
+
+    // Clock Source
+    clock_utc_gps = XPLMCreateCommand("xhsi/clock/utc_gps", "Set clock reference to GPS");
+    XPLMRegisterCommandHandler(clock_utc_gps, (XPLMCommandCallback_f)clock_handler, 1, (void *)CLK_UTC_GPS);
+    clock_utc_int = XPLMCreateCommand("xhsi/clock/utc_int", "Set clock reference to Internal");
+    XPLMRegisterCommandHandler(clock_utc_int, (XPLMCommandCallback_f)clock_handler, 1, (void *)CLK_UTC_INT);
+    clock_utc_set = XPLMCreateCommand("xhsi/clock/utc_set", "Set internal clock mode");
+    XPLMRegisterCommandHandler(clock_utc_set, (XPLMCommandCallback_f)clock_handler, 1, (void *)CLK_UTC_SET);
     
     // special case: use these existing commands to control the chronometer
     timer_start_stop = XPLMFindCommand("sim/instruments/timer_start_stop");
@@ -4163,6 +4231,8 @@ void registerCommands(void) {
     sim_autopilot_altitude_hold = XPLMFindCommand("sim/autopilot/altitude_hold");
     sim_autopilot_wing_leveler = XPLMFindCommand("sim/autopilot/wing_leveler");
 
+    // clock
+    sim_instruments_timer_show_date = XPLMFindCommand("sim/instruments/timer_show_date");
 
     // special case: use these existing commands for lights
     sim_lights_nav_lights_toggle = XPLMFindCommand("sim/lights/nav_lights_toggle");

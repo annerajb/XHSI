@@ -247,18 +247,22 @@ extern XPLMDataRef hsi_selector;
 
 extern XPLMDataRef wind_speed_kt;
 extern XPLMDataRef wind_direction_degt;
-extern XPLMDataRef zulu_time_sec;
-extern XPLMDataRef local_time_sec;
 extern XPLMDataRef sim_paused;
 extern XPLMDataRef oat;
 extern XPLMDataRef tat;
 extern XPLMDataRef isa;
 extern XPLMDataRef sound_speed;
+
+// Clock and timers
+extern XPLMDataRef zulu_time_sec;
+extern XPLMDataRef local_time_sec;
 extern XPLMDataRef timer_is_running;
 extern XPLMDataRef elapsed_time_sec;
 extern XPLMDataRef flight_time_sec;
 extern XPLMDataRef clock_timer_mode;
-
+extern XPLMDataRef clock_show_date;
+extern XPLMDataRef clock_time_day;
+extern XPLMDataRef clock_time_month;
 
 extern XPLMDataRef acf_vso;
 extern XPLMDataRef acf_vs;
@@ -446,7 +450,11 @@ extern XPLMDataRef xhsi_rwy_length_min;
 extern XPLMDataRef xhsi_rwy_units;
 //extern XPLMDataRef xhsi_rtu_contact_atc;
 extern XPLMDataRef xhsi_rtu_selected_radio;
-
+// custom datarefs - common clock and timer
+extern XPLMDataRef xhsi_utc_selector;
+extern XPLMDataRef xhsi_et_running;
+extern XPLMDataRef xhsi_et_frozen_time;
+extern XPLMDataRef xhsi_show_date;
 
 // custom datarefs - EICAS
 extern XPLMDataRef engine_type;

@@ -276,7 +276,10 @@
 #define SIM_TIME_TIMER_IS_RUNNING_SEC 306
 #define SIM_TIME_TIMER_ELAPSED_TIME_SEC 307
 #define SIM_TIME_TOTAL_FLIGHT_TIME_SEC 308
-
+#define SIM_TIME_SHOW_DATE 311
+#define SIM_TIME_DATE 312
+#define XHSI_TIME_UTC_SOURCE 313
+#define XHSI_TIME_ET_RUNNING 314
 
 
 // Aircraft constants
@@ -300,6 +303,7 @@
 #define SIM_AIRCRAFT_CONTROLS_ACL_AIL_DN 336
 #define SIM_AIRCRAFT_CONTROLS_ACL_RUDDER_LR 337
 
+// ATA 24 ELECTRICAL
 #define SIM_AIRCRAFT_ELECTRICAL_NUM_BATTERIES 338
 #define SIM_AIRCRAFT_ELECTRICAL_NUM_BUSES 339
 #define SIM_AIRCRAFT_ELECTRICAL_NUM_GENERATORS 340
@@ -538,7 +542,7 @@
 
 // Settings & Preferences
 // General instrument style
-#define XHSI_STYLE 900 // 0:Boeing 1:Airbus
+#define XHSI_STYLE 900 // 0:Boeing 1:Airbus 2:Local 3:Embraer 4:Canadair 5:ATR
 // Minimum runway length
 #define XHSI_RWY_LENGTH_MIN 901 // Override with this value if it is > 0
 #define XHSI_RWY_UNITS 902 // 0:Meters 1:Feet
@@ -737,7 +741,7 @@
 // FUEL
 #define QPAC_FUEL_PUMPS 1088
 #define QPAC_FUEL_VALVES 1089
-// ELEC
+// ATA 24 ELEC
 #define QPAC_ELEC_AC_CROSS 1090
 #define QPAC_ELEC_CX_LEFT 1091
 #define QPAC_ELEC_CX_CENTER 1092

@@ -44,6 +44,8 @@ extern XPLMCommandRef sim_lights_taxi_lights_toggle;
 extern XPLMCommandRef sim_lights_strobe_lights_toggle;
 extern XPLMCommandRef sim_lights_landing_lights_toggle;
 
+extern XPLMCommandRef sim_instruments_timer_show_date;
+
 extern XPLMCommandRef sim_flight_controls_flaps_down;
 extern XPLMCommandRef sim_flight_controls_flaps_up;
 extern XPLMCommandRef sim_flight_controls_landing_gear_toggle;
@@ -65,6 +67,14 @@ extern XPLMCommandRef x737_vs_toggle;
 extern XPLMCommandRef chr_start_stop_reset;
 extern XPLMCommandRef chr_start_stop;
 extern XPLMCommandRef chr_reset;
+
+extern XPLMCommandRef et_reset;
+extern XPLMCommandRef et_stop;
+extern XPLMCommandRef et_run;
+
+extern XPLMCommandRef clock_utc_gps;
+extern XPLMCommandRef clock_utc_int;
+extern XPLMCommandRef clock_utc_set;
 
 extern XPLMCommandRef pilot_chrono_stop_reset;
 extern XPLMCommandRef pilot_chrono_start_stop;
