@@ -24,6 +24,8 @@
 package net.sourceforge.xhsi.model.xplane;
 
 import java.text.DecimalFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSIPreferences;
@@ -38,12 +40,8 @@ import net.sourceforge.xhsi.model.Observer;
 import net.sourceforge.xhsi.model.RadioNavigationObject;
 import net.sourceforge.xhsi.model.RadioNavBeacon;
 import net.sourceforge.xhsi.model.ModelFactory;
-import net.sourceforge.xhsi.model.SimCommand;
 import net.sourceforge.xhsi.model.SimDataRepository;
 import net.sourceforge.xhsi.model.TCAS;
-import net.sourceforge.xhsi.model.Avionics.FailedElement;
-import net.sourceforge.xhsi.model.Avionics.FailureMode;
-import net.sourceforge.xhsi.model.Avionics.InstrumentSide;
 
 
 public class XPlaneAvionics implements Avionics, Observer {
@@ -65,6 +63,9 @@ public class XPlaneAvionics implements Avionics, Observer {
     private NavigationRadio gps_radio;
     
     private DecimalFormat runway_formatter;
+    
+    // Retain system year
+    private int year; 
 
     /* Internal X-Plane failure values
      * always working = 0
@@ -77,7 +78,8 @@ public class XPlaneAvionics implements Avionics, Observer {
      */
 
     
-    public XPlaneAvionics(Aircraft aircraft, ModelFactory sim_model) {
+    @SuppressWarnings("deprecation")
+	public XPlaneAvionics(Aircraft aircraft, ModelFactory sim_model) {
 
         this.sim_data = sim_model.get_repository_instance();
         this.sim_data.add_observer((Observer) this);
@@ -158,6 +160,12 @@ public class XPlaneAvionics implements Avionics, Observer {
         
         this.runway_formatter = new DecimalFormat("00");
         
+        /*
+         * This code maintains java 1.6 compatibility
+         */
+        Calendar cal = Calendar.getInstance();
+        Date current_date = cal.getTime();
+        this.year = current_date.getYear();
 
     }
 
@@ -966,6 +974,9 @@ public class XPlaneAvionics implements Avionics, Observer {
     	}	
     }
    
+    /*
+     * Chrono and timers
+     */
     
     public float efis_chrono_elapsed_time() {
     	if ( xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) 
@@ -979,6 +990,30 @@ public class XPlaneAvionics implements Avionics, Observer {
     		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_PILOT_ELAPSED_TIME_SEC);
     	else
     		return sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_EFIS_COPILOT_ELAPSED_TIME_SEC);
+    }
+    
+    public int clock_date_day() {
+    	return ((int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_TIME_DATE)) & 0x1F ;
+    }
+    
+    public int clock_date_month() {
+    	return ((int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_TIME_DATE)) >> 6;
+    };
+
+    public int clock_date_year() {
+    	return this.year;
+    }
+      
+    public boolean clock_date_show() {
+    	return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_TIME_SHOW_DATE) != 0.0f;
+    }
+
+    public int clock_utc_source() {
+    	return (int) sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_TIME_UTC_SOURCE);
+    }
+    
+    public int clock_et_selector() {
+    	return (int) sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_TIME_ET_RUNNING);
     }
     
     
@@ -2650,6 +2685,20 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     }
 
+    public void set_clock_show_date(boolean show_date) {
+    	// TODO : xhsi_preferences.get_clock_date_mode()
+    	udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_TIME_SHOW_DATE, show_date ? 1.0f : 0.0f );
+    }
+
+    public void set_clock_utc_source(int utc_source) {
+
+    	udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_TIME_UTC_SOURCE, (float) utc_source );
+    }   
+
+    public void set_clock_et_selector(int et_selector) {
+
+    	udp_sender.sendDataPoint( XPlaneSimDataRepository.XHSI_TIME_ET_RUNNING, (float) et_selector  );
+    }
 
     public void set_show_cstr(boolean new_cstr) {
     	// TODO: Implement show constraints EFIS button

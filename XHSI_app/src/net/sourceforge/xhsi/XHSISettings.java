@@ -246,6 +246,8 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
     public static final String ACTION_CLOCK_UTC = "UTC";
     public static final String ACTION_CLOCK_LT = "Local Time";
     public static final String ACTION_CHR_START_STOP_RESET = "CHR Start/Stop/Reset";
+    public static final String ACTION_ET_RUN_STOP = "ET Run/Stop";
+    public static final String ACTION_ET_RESET = "ET Reset";
 
     public static final int ENGINE_TYPE_N1 = 0;
     public static final int ENGINE_TYPE_EPR = 1;
@@ -1767,7 +1769,17 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
         menu_item.setToolTipText("Start/Stop/Reset the chronograph");
         menu_item.addActionListener(this);
         xhsi_clock_menu.add(menu_item);
+        
+        menu_item = new JMenuItem(XHSISettings.ACTION_ET_RUN_STOP);
+        menu_item.setToolTipText("Run/Stop the ET Timer");
+        menu_item.addActionListener(this);
+        xhsi_clock_menu.add(menu_item);
 
+        menu_item = new JMenuItem(XHSISettings.ACTION_ET_RESET);
+        menu_item.setToolTipText("Reset the ET Timer");
+        menu_item.addActionListener(this);
+        xhsi_clock_menu.add(menu_item);
+        
         // add the "Clock" menu to the menubar
         menu_bar.add(xhsi_clock_menu);
 
@@ -2245,7 +2257,16 @@ public class XHSISettings implements ActionListener, PreferencesObserver {
             this.avionics.set_clock_mode(clock_mode);
         } else if (command.equals(XHSISettings.ACTION_CHR_START_STOP_RESET)) {
             this.avionics.chr_control(Avionics.CHR_CONTROL_START_STOP_RESET);
-
+        } else if (command.equals(XHSISettings.ACTION_ET_RUN_STOP)) {
+        	if (this.avionics.clock_et_selector()==Avionics.CLOCK_ET_STOP) {
+        		this.avionics.set_clock_et_selector(Avionics.CLOCK_ET_RUN);
+        	} else {
+        		this.avionics.set_clock_et_selector(Avionics.CLOCK_ET_STOP);
+        	}
+        } else if (command.equals(XHSISettings.ACTION_ET_RESET)) {
+            
+            this.avionics.set_clock_et_selector(Avionics.CLOCK_ET_RESET);
+            
         } else {
             for (int i=0; i<this.range_list.length; i++) {
                 if (command.equals(this.range_list[i])) {
