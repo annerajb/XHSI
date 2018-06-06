@@ -76,26 +76,4 @@ public abstract class ClockSubcomponent extends Subcomponent {
 
     public abstract void mousePressed(Graphics2D g2, MouseEvent e);
 
-//    protected BufferedImage create_buffered_image(int width, int height) {
-//
-//        GraphicsConfiguration gc = this.parent_component.getGraphicsConfiguration();
-//        BufferedImage buf_img = gc.createCompatibleImage(width, height, Transparency.BITMASK);
-//        return buf_img;
-//
-//    }
-
-
-//    protected Graphics2D get_graphics(BufferedImage buf_img) {
-//
-//        Graphics2D gImg = (Graphics2D)buf_img.getGraphics();
-//        gImg.setComposite(AlphaComposite.Src);
-//        gImg.setColor(new Color(0, 0, 0, 0));
-//        gImg.fillRect(0, 0, buf_img.getWidth(), buf_img.getHeight());
-//        gImg.setRenderingHints(annun_gc.rendering_hints);
-//        gImg.setStroke(new BasicStroke(2.0f));
-//        return gImg;
-//
-//    }
-
-
 }

@@ -66,6 +66,14 @@ public interface Avionics {
     public static final int CHR_CONTROL_START_STOP = 1;
     public static final int CHR_CONTROL_RESET = 2;
 
+    public static final int CLOCK_ET_STOP = 0;
+    public static final int CLOCK_ET_RUN = 1;
+    public static final int CLOCK_ET_RESET = 2;
+    
+    public static final int CLOCK_SRC_GPS = 0;
+    public static final int CLOCK_SRC_INT = 1;
+    public static final int CLOCK_SRC_SET = 2;
+   
     public static final int MFD_MODE_ARPT = 0;
     public static final int MFD_MODE_FPLN = 1;
     public static final int MFD_MODE_RTU = 2;
@@ -296,6 +304,37 @@ public interface Avionics {
     public float efis_chrono_elapsed_time();
     public float efis_chrono_elapsed_time(InstrumentSide side);
       
+    
+    /**
+     * @return int - Clock date day
+     */
+    public int clock_date_day();
+    
+    /**
+     * @return int - Clock date month
+     */
+    public int clock_date_month();
+
+    /**
+     * @return int - Clock date year
+     */
+    public int clock_date_year();
+    
+    /**
+     * @return boolean - True is clock shows date
+     */
+    public boolean clock_date_show();
+
+    /**
+     * @return int - utc source (0=GPS, 1=INT, 2=SET)
+     */
+    public int clock_utc_source();
+    
+    /**
+     * @return int - Clock elapsed time selector
+     */
+    public int clock_et_selector();
+    
     /*
      * Weather radar section
      */
@@ -1027,6 +1066,22 @@ public interface Avionics {
     public void set_clock_mode(int new_clock_mode);
 
     public void chr_control(int chr_action);
+    
+    /**
+     * Send show date command
+     */
+    public void set_clock_show_date(boolean show_date);
+
+    /**
+     * utc_source: int (0=GPS, 1=INT, 2=SET)
+     */
+    public void set_clock_utc_source(int utc_source);
+    
+    /**
+     * elapsed time selector : 0=STOP, 1=RUNNING, 2=RESET
+     */
+    public void set_clock_et_selector(int et_selector);
+    
     
     public void set_show_cstr(boolean new_cstr);
 

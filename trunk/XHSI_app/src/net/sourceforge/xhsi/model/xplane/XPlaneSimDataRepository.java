@@ -297,11 +297,15 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_WEATHER_SPEED_SOUND_MS = 305;
     public static final int SIM_WEATHER_TEMPERATURE_SEALEVEL_C = 309;
     public static final int SIM_WEATHER_TEMPERATURE_LE_C = 310;
-    // Timers
+    
+    // Clock and Timers
     public static final int SIM_TIME_TIMER_IS_RUNNING_SEC = 306;
     public static final int SIM_TIME_TIMER_ELAPSED_TIME_SEC = 307;
     public static final int SIM_TIME_TOTAL_FLIGHT_TIME_SEC = 308;
-
+    public static final int SIM_TIME_SHOW_DATE = 311;
+    public static final int SIM_TIME_DATE = 312;
+    public static final int XHSI_TIME_UTC_SOURCE = 313;
+    public static final int XHSI_TIME_ET_RUNNING = 314;
 
     // Aircraft constants
     public static final int SIM_AIRCRAFT_VIEW_ACF_VSO = 320;

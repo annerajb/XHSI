@@ -1,16 +1,17 @@
 /**
-* AnnunComponent.java
+* ClockComponent.java
 * 
-* The root awt component. NDComponent creates and manages painting all
-* elements of the HSI. NDComponent also creates and updates NDGraphicsConfig
-* which is used by all HSI elements to determine positions and sizes.
+* The root awt component. ClockComponent creates and manages painting all
+* elements of the HSI. ClockComponent also creates and updates ClockGraphicsConfig
+* which is used by all Clokc elements to determine positions and sizes.
 * 
-* This component is notified when new data packets from the flightsimulator
+* This component is notified when new data packets from the flight simulator
 * have been received and performs a repaint. This component is also triggered
 * by UIHeartbeat to detect situations without reception.
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2018  Nicolas Carel
 * Copyright (C) 2018  the Technische Hochschule Ingolstadt 
 *                     - Patrick Burkart
 *                     - Tim Drouven
@@ -51,8 +52,6 @@ import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.Observer;
-
-//import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
 
 
 public class ClockComponent extends Component implements Observer, PreferencesObserver, MouseInputListener {
@@ -178,12 +177,12 @@ public class ClockComponent extends Component implements Observer, PreferencesOb
                     logger.info(this.subcomponents.get(i).toString() + ": " +
                             ((1.0f*this.subcomponent_paint_times[i])/(this.nb_of_paints*1.0f)) + "ms " +
                             "(" + ((this.subcomponent_paint_times[i] * 100) / this.total_paint_times) + "%)");
-                //    this.subcomponent_paint_times[i] = 0;
+                    this.subcomponent_paint_times[i] = 0;
                 }
-                logger.info("Total                    " + (this.total_paint_times/this.nb_of_paints) + "ms \n");
+                logger.info("Total                    " + (1.0f*this.total_paint_times/this.nb_of_paints*1.0f) + "ms \n");
                 logger.info("=[ Paint profile info end ]===================================");
-                //this.total_paint_times = 0;
-                //this.nb_of_paints = 0;
+                this.total_paint_times = 0;
+                this.nb_of_paints = 0;
             }
         }
     }
@@ -195,39 +194,20 @@ public class ClockComponent extends Component implements Observer, PreferencesOb
     }
 
 
-//    public void heartbeat() {
-//        if (this.update_since_last_heartbeat == false) {
-//            XHSIStatus.status = XHSIStatus.STATUS_NO_RECEPTION;
-//            repaint();
-//        } else {
-//            XHSIStatus.status = XHSIStatus.STATUS_RECEIVING;
-//            this.update_since_last_heartbeat = false;
-//            repaint();
-//        }
-//    }
-
-
     public void componentResized() {
     }
 
 
     public void preference_changed(String key) {
-
-        logger.finest("Preference changed");
-        // if (key.equals(XHSIPreferences.PREF_USE_MORE_COLOR)) {
-        // Don't bother checking the preference key that was changed, just reconfig...
         this.clock_gc.reconfig = true;
         repaint();
-
     }
 
 
     public void forceReconfig() {
-
         componentResized();
         this.clock_gc.reconfig = true;
-        repaint();
-        
+        repaint();      
     }
     
 

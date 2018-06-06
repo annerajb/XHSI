@@ -56,6 +56,7 @@ public class XHSIPreferences {
     public static final String PREF_DISPLAY_STATUSBAR = "display.statusbar";
     public static final String PREF_SIMCOM = "simulator.communication";
     public static final String PREF_ALLOW_SHUTDOWN = "simulator.allow_shutdown";
+    public static final String PREF_DRAW_MOUSE_AREAS = "draw_mouse_areas";
 
     // WINDOWS
     public static final String PREF_START_ONTOP = "windows.start.ontop";
@@ -154,6 +155,9 @@ public class XHSIPreferences {
     public static final String PREF_CDU_SOURCE = "cdu.source";
     public static final String PREF_CDU_SIDE = "cdu.side";
 
+    // Clock options
+    public static final String PREF_CLOCK_DISPLAY_DIGITAL = "clock.display.digital";
+    public static final String PREF_CLOCK_DATE_LEGACY = "clock.date.legacy";
 
     /*
      * ----- Preference value section ----- 
@@ -387,6 +391,15 @@ public class XHSIPreferences {
         return get_preference(PREF_INSTRUMENT_POSITION);
     }
 
+    /**
+     * Authorize system shutdown.
+     * It helps to shutdown quickly all the XHSI computers around X-Plane
+     * Designed for home cockpits or for class rooms
+     * @return : if true, X-Plane is allowed to send a remote order 
+     * to shutdown XHSI application host computer. If false, a remote shutdown
+     * order will terminate XHSI application.
+     * This function is in the X-Plane system XHSI plugin menu -> REMOTE 
+     */
     public boolean get_shutdown_allowed() {
     	return get_preference(PREF_ALLOW_SHUTDOWN).equalsIgnoreCase("true");
     }
@@ -407,7 +420,14 @@ public class XHSIPreferences {
         return get_preference(PREF_PANELS_LOCKED).equalsIgnoreCase("true");
     }
 
-
+    /**
+     * This function is for debugging touch screen or learning XHSI mouse behavior
+     * @return boolean : if true, DU will display mouse areas in yellow
+     */
+    public boolean get_draw_mouse_areas() {
+    	return get_preference(PREF_DRAW_MOUSE_AREAS).equalsIgnoreCase("true");
+    }
+    
     // one window
 
     /**
@@ -1167,6 +1187,11 @@ public class XHSIPreferences {
             this.unsaved_changes = true;
         }
 
+        if ( ! this.preferences.containsKey(PREF_DRAW_MOUSE_AREAS) ) {
+            this.preferences.setProperty(PREF_DRAW_MOUSE_AREAS, "false");
+            this.unsaved_changes = true;
+        }
+        
         // WINDOWS
 
         if ( ! this.preferences.containsKey(PREF_START_ONTOP) ) {
@@ -1575,6 +1600,20 @@ public class XHSIPreferences {
             this.preferences.setProperty(PREF_CDU_SIDE, CDU_SIDE_SWITCHABLE);
             this.unsaved_changes = true;
         }
+        
+        
+        // Clock
+        
+        if ( ! this.preferences.containsKey(PREF_CLOCK_DISPLAY_DIGITAL) ) {
+            this.preferences.setProperty(PREF_CLOCK_DISPLAY_DIGITAL, "false");
+            this.unsaved_changes = true;
+        }
+     
+        if ( ! this.preferences.containsKey(PREF_CLOCK_DATE_LEGACY) ) {
+            this.preferences.setProperty(PREF_CLOCK_DATE_LEGACY, "true");
+            this.unsaved_changes = true;
+        }
+
         
         if (this.unsaved_changes) {
             store_preferences();
