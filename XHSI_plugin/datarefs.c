@@ -42,6 +42,12 @@ XPLMDataRef xhsi_rwy_units;
 //XPLMDataRef xhsi_rtu_contact_atc;
 XPLMDataRef xhsi_rtu_selected_radio;
 
+// custom datarefs - common clock and timer
+XPLMDataRef xhsi_utc_selector;
+XPLMDataRef xhsi_et_running;
+XPLMDataRef xhsi_et_frozen_time;
+XPLMDataRef xhsi_show_date;
+
 // custom datarefs - EICAS
 XPLMDataRef engine_type;
 XPLMDataRef trq_scale;
@@ -331,17 +337,22 @@ XPLMDataRef hsi_selector;
 
 XPLMDataRef wind_speed_kt;
 XPLMDataRef wind_direction_degt;
-XPLMDataRef zulu_time_sec;
-XPLMDataRef local_time_sec;
 XPLMDataRef sim_paused;
 XPLMDataRef oat;
 XPLMDataRef isa;
 XPLMDataRef tat;
 XPLMDataRef sound_speed;
+
+// Clock and timers
+XPLMDataRef zulu_time_sec;
+XPLMDataRef local_time_sec;
 XPLMDataRef timer_is_running;
 XPLMDataRef elapsed_time_sec;
 XPLMDataRef flight_time_sec;
 XPLMDataRef clock_timer_mode;
+XPLMDataRef clock_show_date;
+XPLMDataRef clock_time_day;
+XPLMDataRef clock_time_month;
 
 XPLMDataRef acf_vso;
 XPLMDataRef acf_vs;
@@ -1472,6 +1483,64 @@ void	setSelectedRadio(void* inRefcon, int inValue)
       selected_radio = inValue;
 }
 
+
+
+// xhsi/clock/utc_selector (0=GPS, 1=INT, 2=SET)
+int utc_selector;
+int     getClockUTCSource(void* inRefcon)
+{
+    return utc_selector;
+}
+void	setClockUTCSource(void* inRefcon, int inValue)
+{
+	utc_selector = inValue;
+}
+
+// xhsi/clock/et_running (1=Running, 0=STOP, 2=RESET)
+int et_running;
+float et_frozen_time=0.0;
+int     getClockETRunning(void* inRefcon)
+{
+    return et_running;
+}
+void	setClockETRunning(void* inRefcon, int inValue)
+{
+	if (inValue!=0 && inValue!=1) {
+		// Reset Elapsed Flight Time and back to STOP
+		XPLMSetDataf(flight_time_sec,0.0);
+		et_running = 0;
+		et_frozen_time = 0.0;
+	} else {
+		if (et_running==0 && inValue==1) {
+			// Running position from stop or reset position
+			// Restore frozen ET time
+			XPLMSetDataf(flight_time_sec,et_frozen_time);
+		}
+		if (et_running==1 && inValue==0) {
+			// Freeze time
+			et_frozen_time = XPLMGetDataf(flight_time_sec);
+		}
+		et_running = inValue;
+	}
+}
+// xhsi/clock/et_frozen_time
+float   getClockETFrozenTime(void* inRefcon)
+{
+    return et_frozen_time;
+}
+
+// xhsi/clock/show_date
+int show_date;
+int     getClockShowDate(void* inRefcon)
+{
+	return show_date;
+}
+void	setClockShowDate(void* inRefcon, int inValue)
+{
+	show_date = inValue;
+}
+
+
 // EGPWS datarefs
 
 // xhsi/egpws/flaps_mode
@@ -2054,9 +2123,38 @@ void registerGeneralDataRefs(void) {
     // xhsi/rtu/selected_radio
     xhsi_rtu_selected_radio = XPLMRegisterDataAccessor("xhsi/rtu/selected_radio",
                                         xplmType_Int,                                  // The types we support
-                                        1,                                                   // Writable
-                                        getSelectedRadio, setSelectedRadio,      // Integer accessors
+                                        1,                                             // Writable
+                                        getSelectedRadio, setSelectedRadio,            // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+
+    // xhsi/clock/utc_selector
+    xhsi_utc_selector = XPLMRegisterDataAccessor("xhsi/clock/utc_selector",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                             // Writable
+                                        getClockUTCSource, setClockUTCSource,                // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);      // Refcons not used
+
+    // xhsi/clock/et_running
+    xhsi_et_running = XPLMRegisterDataAccessor("xhsi/clock/et_running",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                             // Writable
+                                        getClockETRunning, setClockETRunning,          // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);      // Refcons not used
+
+    // xhsi/clock/et_frozen_time
+    xhsi_et_frozen_time = XPLMRegisterDataAccessor("xhsi/clock/et_frozen_time",
+                                        xplmType_Float,                                // The types we support
+                                        0,                                             // Read-only
+                                        NULL, NULL,                                    // Integer accessors
+                                        getClockETFrozenTime, NULL,                    // Float accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);      // Refcons not used
+
+    // xhsi/clock/show_date
+    xhsi_show_date = XPLMRegisterDataAccessor("xhsi/clock/show_date",
+                                        xplmType_Int,                                  // The types we support
+                                        1,                                             // Writable
+                                        getClockShowDate, setClockShowDate,            // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);      // Refcons not used
 
     XPLMDebugString("XHSI: custom General DataRefs registered\n");
 
@@ -2307,6 +2405,10 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/mins_mode");
 //        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rtu/contact_atc");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rtu/selected_radio");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/clock/utc_selector");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/clock/et_running");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/clock/et_frozen_time");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/clock/show_date");
     }
 
     return 0.0f;
@@ -2340,6 +2442,13 @@ float initGeneralCallback(
     // No radio selected in the RTU
     XPLMSetDatai(xhsi_rtu_selected_radio, 0);
 
+    // UTC Selector is in GPS position (0=GPS, 1=INT, 2=SET)
+    XPLMSetDatai(xhsi_utc_selector,0);
+
+    // ET Switch is in running position (1=Running, 0=STOP, 2=RESET)
+    // This ensure ET frozen time is set
+    XPLMSetDatai(xhsi_et_running,0);
+    XPLMSetDatai(xhsi_et_running,1);
 
     XPLMDebugString("XHSI: custom general DataRefs initialized\n");
 
@@ -2892,6 +3001,18 @@ void unregisterGeneralDataRefs(void) {
     // xhsi/rtu/selected_radio
     XPLMUnregisterDataAccessor(xhsi_rtu_selected_radio);
     
+    // xhsi/clock/utc_selector
+    XPLMUnregisterDataAccessor(xhsi_utc_selector);
+
+    // xhsi/clock/et_running
+    XPLMUnregisterDataAccessor(xhsi_et_running);
+
+    // xhsi/clock/et_frozen_time
+    XPLMUnregisterDataAccessor(xhsi_et_frozen_time);
+
+    // xhsi/clock/show_date
+    XPLMUnregisterDataAccessor(xhsi_show_date);
+
 }
 
 void unregisterEGPWSDataRefs(void) {
@@ -3202,18 +3323,22 @@ void findDataRefs(void) {
 	// Environment
 	wind_speed_kt = XPLMFindDataRef("sim/weather/wind_speed_kt");
 	wind_direction_degt = XPLMFindDataRef("sim/weather/wind_direction_degt");
-	zulu_time_sec = XPLMFindDataRef("sim/time/zulu_time_sec");
-	local_time_sec = XPLMFindDataRef("sim/time/local_time_sec");
 	sim_paused = XPLMFindDataRef("sim/time/paused");
 	oat = XPLMFindDataRef("sim/weather/temperature_ambient_c");
 	isa = XPLMFindDataRef("sim/weather/temperature_sealevel_c");
 	tat = XPLMFindDataRef("sim/weather/temperature_le_c");
 	sound_speed = XPLMFindDataRef("sim/weather/speed_sound_ms");
+
+	// Clock and timers
+	zulu_time_sec = XPLMFindDataRef("sim/time/zulu_time_sec");
+	local_time_sec = XPLMFindDataRef("sim/time/local_time_sec");
     timer_is_running = XPLMFindDataRef("sim/time/timer_is_running_sec");
     elapsed_time_sec = XPLMFindDataRef("sim/time/timer_elapsed_time_sec");
     flight_time_sec = XPLMFindDataRef("sim/time/total_flight_time_sec");
     clock_timer_mode = XPLMFindDataRef("sim/cockpit2/clock_timer/timer_mode");
-
+    clock_show_date = XPLMFindDataRef("sim/cockpit2/clock_timer/date_is_showing");
+    clock_time_day = XPLMFindDataRef("sim/cockpit2/clock_timer/current_day");
+    clock_time_month = XPLMFindDataRef("sim/cockpit2/clock_timer/current_month");
 
     // Aircraft constants
     acf_vso = XPLMFindDataRef("sim/aircraft/view/acf_Vso");
@@ -3468,6 +3593,22 @@ void writeDataRef(int id, float value) {
 			XPLMSetDatai(clock_timer_mode, (int)value);
             break;
 
+		case XHSI_TIME_UTC_SOURCE :
+			XPLMSetDatai(xhsi_utc_selector, (int)value);
+            break;
+
+		case XHSI_TIME_ET_RUNNING :
+			XPLMSetDatai(xhsi_et_running, (int)value);
+            break;
+
+		case SIM_TIME_TOTAL_FLIGHT_TIME_SEC :
+			XPLMSetDataf(flight_time_sec,value);
+            break;
+
+		case SIM_TIME_SHOW_DATE :
+			if (value==1.0f) { XPLMCommandOnce(sim_instruments_timer_show_date); }
+			XPLMSetDatai(xhsi_show_date, (int)value);
+            break;
 
         // transponder
 

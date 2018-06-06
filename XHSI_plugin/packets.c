@@ -147,7 +147,6 @@ int createADCPacket(void) {
 	int packet_size;
 	int g;
 	int gears;
-	int lights_signs;
 	int gear_type[10];
 	float gear_ratio[10];
 	int gear_doors;
@@ -267,19 +266,11 @@ int createADCPacket(void) {
     i++;
 
 
-
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_WEATHER_WIND_SPEED_KT);
     sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(wind_speed_kt));
     i++;
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_WEATHER_WIND_DIRECTION_DEGT);
     sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(wind_direction_degt));
-    i++;
-
-    sim_packet.sim_data_points[i].id = custom_htoni(SIM_TIME_ZULU_TIME_SEC);
-    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(zulu_time_sec));
-    i++;
-    sim_packet.sim_data_points[i].id = custom_htoni(SIM_TIME_LOCAL_TIME_SEC);
-    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(local_time_sec));
     i++;
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_WEATHER_TEMPERATURE_AMBIENT_C);
     sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(oat));
@@ -293,6 +284,14 @@ int createADCPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_WEATHER_SPEED_SOUND_MS);
     sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(sound_speed));
     i++;
+
+    // Clocks and Timers - fast refresh rate
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_TIME_ZULU_TIME_SEC);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(zulu_time_sec));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_TIME_LOCAL_TIME_SEC);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(local_time_sec));
+    i++;
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_TIME_TIMER_IS_RUNNING_SEC);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(timer_is_running));
     i++;
@@ -300,13 +299,14 @@ int createADCPacket(void) {
     sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(elapsed_time_sec));
     i++;
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_TIME_TOTAL_FLIGHT_TIME_SEC);
-    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(flight_time_sec));
-    i++;
-    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CLOCK_TIMER_MODE);
-    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(clock_timer_mode));
+    if (XPLMGetDatai(xhsi_et_running)==0) {
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(xhsi_et_frozen_time));
+    } else {
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(flight_time_sec));
+    }
     i++;
 
-
+    // Master caution, warning, accept
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_ANNUNCIATORS_MASTER_CAUTION );
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(master_caution));
     i++;
@@ -320,6 +320,8 @@ int createADCPacket(void) {
         sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(master_accept));
     }
     i++;
+
+    // Gears
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_GEAR_HANDLE_DOWN );
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(gear_handle));
     i++;
@@ -370,31 +372,7 @@ int createADCPacket(void) {
     sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(parkbrake_ratio));
     i++;
 
-    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_LIGHTS);
-    /* lights and signs based on switches positions
-    lights_signs = XPLMGetDatai(landing_light) << 4 | XPLMGetDatai(navigation_light) << 3 |
-    		XPLMGetDatai(no_smoking) << 2 | XPLMGetDatai(fasten_seat_belts) << 1 |
-    		XPLMGetDatai(strobe_lights) << 1 | XPLMGetDatai(taxi_lights) | XPLMGetDatai(beacon) ;
-    */
-    if (x737_ready) {
-    	lights_signs =
-            (XPLMGetDatai(x737_beacon_light_switch) +
-            XPLMGetDatai(x737_left_fixed_land_light_switch) * 2 +
-            (XPLMGetDatai(x737_position_light_switch) != 0 ? 4 : 0) +
-            (XPLMGetDatai(x737_position_light_switch) == -1 ? 8 : 0) +
-            XPLMGetDatai(x737_taxi_light_switch) * 16);
-    } else {
-    	lights_signs =
-            XPLMGetDatai(beacon_lights_on) |
-            XPLMGetDatai(landing_lights_on)   << 1 |
-            XPLMGetDatai(nav_lights_on)       << 2 |
-            XPLMGetDatai(strobe_lights_on)    << 3 |
-            XPLMGetDatai(taxi_light_on)       << 4 |
-            XPLMGetDatai(no_smoking)          << 6 |
-            XPLMGetDatai(fasten_seat_belts)   << 8;
-    }
-    sim_packet.sim_data_points[i].value = custom_htonf((float) lights_signs);
-    i++;
+
 
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CONTROLS_FLAP_RATIO);
     sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(flap_deploy));
@@ -553,6 +531,9 @@ int createADCPacket(void) {
  * Concerns :
  *  Auxiliary power plants: APU, GPU, RAT
  *  Hydraulics, Bleed air, Hot air, Packs
+ *  Cabin Pressure
+ *  ELEC: Light and signs
+ *  Clock: Button position and low refresh rate data
  */
 int createAuxiliarySystemsPacket(void) {
 
@@ -561,6 +542,9 @@ int createAuxiliarySystemsPacket(void) {
     int apu_status;
     int wheel_status;
     int tire_status;
+	int lights_signs;
+	int sim_date;
+	int clock_date;
 
     strncpy(sim_packet.packet_id, "AUXS", 4);
 
@@ -636,6 +620,110 @@ int createAuxiliarySystemsPacket(void) {
     		(XPLMGetDatai(sim_op_fail_rel_tire1) == 6); // Wheel steer on 1 bit
     sim_packet.sim_data_points[i].id = custom_htoni(TIRE_STATUS);
     sim_packet.sim_data_points[i].value = custom_htonf((float) tire_status);
+    i++;
+
+
+    /*
+     * Cabin Pressure
+     */
+    if (qpac_ready) {
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_DELTA_P);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cabin_delta_p));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_ALT);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cabin_alt));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_VVI);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cabin_vs));
+    	i++;
+
+    } else {
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_DELTA_P);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(cabin_delta_p));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_ALT);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(cabin_altitude));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_VVI);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(cabin_vvi));
+    	i++;
+    	// Cabin Pressure actuators
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_ACT_ALT);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(pressurization_alt_target));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_ACT_VVI);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(pressurization_vvi_target));
+    	i++;
+    	// TODO: bit array
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_MODES);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDatai(pressurization_mode));
+    	i++;
+    	/*
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_MODES);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDatai(pressurization_dump_to_alt));
+    	i++;
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_MODES);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDatai(pressurization_dump_all));
+    	i++;
+    	*/
+    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_MAX_ALT);
+    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(pressurization_max_alt));
+    	i++;
+
+    }
+
+
+
+    /*
+     * Lights and signs
+     */
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_LIGHTS);
+    /* lights and signs based on switches positions
+    lights_signs = XPLMGetDatai(landing_light) << 4 | XPLMGetDatai(navigation_light) << 3 |
+    		XPLMGetDatai(no_smoking) << 2 | XPLMGetDatai(fasten_seat_belts) << 1 |
+    		XPLMGetDatai(strobe_lights) << 1 | XPLMGetDatai(taxi_lights) | XPLMGetDatai(beacon) ;
+    */
+    if (x737_ready) {
+    	lights_signs =
+            (XPLMGetDatai(x737_beacon_light_switch) +
+            XPLMGetDatai(x737_left_fixed_land_light_switch) * 2 +
+            (XPLMGetDatai(x737_position_light_switch) != 0 ? 4 : 0) +
+            (XPLMGetDatai(x737_position_light_switch) == -1 ? 8 : 0) +
+            XPLMGetDatai(x737_taxi_light_switch) * 16);
+    } else {
+    	lights_signs =
+            XPLMGetDatai(beacon_lights_on) |
+            XPLMGetDatai(landing_lights_on)   << 1 |
+            XPLMGetDatai(nav_lights_on)       << 2 |
+            XPLMGetDatai(strobe_lights_on)    << 3 |
+            XPLMGetDatai(taxi_light_on)       << 4 |
+            XPLMGetDatai(no_smoking)          << 6 |
+            XPLMGetDatai(fasten_seat_belts)   << 8;
+    }
+    sim_packet.sim_data_points[i].value = custom_htonf((float) lights_signs);
+    i++;
+
+    /*
+     * Timer and clock - low refresh rate
+     */
+
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_CLOCK_TIMER_MODE);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(clock_timer_mode));
+    i++;
+    clock_date = ((XPLMGetDatai(clock_show_date) & 0x01) << 1) | (XPLMGetDatai(xhsi_show_date) & 0x01);
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_TIME_SHOW_DATE);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) clock_date);
+    i++;
+    sim_date = (XPLMGetDatai(clock_time_day) & 0x1F)
+    		| ((XPLMGetDatai(clock_time_month) & 0x1F) << 6);
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_TIME_DATE);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) sim_date);
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_TIME_UTC_SOURCE);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(xhsi_utc_selector));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_TIME_ET_RUNNING);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(xhsi_et_running));
     i++;
 
     // now we know the number of datapoints
@@ -1374,54 +1462,6 @@ int createAvionicsPacket(void) {
     sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_AUTOPILOT_HEADING_ROLL_MODE);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(autopilot_heading_roll_mode));
     i++;
-
-    // Cabin Pressure
-    if (qpac_ready) {
-    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_DELTA_P);
-    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cabin_delta_p));
-    	i++;
-    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_ALT);
-    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cabin_alt));
-    	i++;
-    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_VVI);
-    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(qpac_cabin_vs));
-    	i++;
-
-    } else {
-    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_DELTA_P);
-    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(cabin_delta_p));
-    	i++;
-    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_ALT);
-    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(cabin_altitude));
-    	i++;
-    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_CABIN_VVI);
-    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(cabin_vvi));
-    	i++;
-    	// Cabin Pressure actuators
-    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_ACT_ALT);
-    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(pressurization_alt_target));
-    	i++;
-    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_ACT_VVI);
-    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(pressurization_vvi_target));
-    	i++;
-    	// TODO: bit array
-    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_MODES);
-    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDatai(pressurization_mode));
-    	i++;
-    	/*
-    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_MODES);
-    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDatai(pressurization_dump_to_alt));
-    	i++;
-    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_MODES);
-    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDatai(pressurization_dump_all));
-    	i++;
-    	*/
-    	sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT2_PRESSURIZATION_MAX_ALT);
-    	sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(pressurization_max_alt));
-    	i++;
-
-    }
-
 
 
 
