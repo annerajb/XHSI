@@ -506,7 +506,7 @@ public class ECAM_Engines extends EICASSubcomponent {
             float ref_epr = this.aircraft.get_ref_EPR(pos);
             if ( ref_epr > 0.0f ) {
             	float ref_epr_dial = Math.min(ref_epr-1.0f, 0.65f) / 0.6f;
-                g2.setColor(Color.yellow);
+                g2.setColor(eicas_gc.ecam_reference_color);
                 g2.rotate(Math.toRadians(Math.round(ref_epr_dial*deg_dial_range)-deg_start), eicas_gc.prim_dial_x[pos], epr_y);
                 g2.drawLine(eicas_gc.prim_dial_x[pos]+epr_r-epr_r/10, epr_y, eicas_gc.prim_dial_x[pos]+epr_r+epr_r/10, epr_y);
                 
@@ -709,7 +709,7 @@ public class ECAM_Engines extends EICASSubcomponent {
             	}
             	float ref_n1_dial = Math.min(ref_n1, 110.0f) / 100.0f;
             	ref_n1_dial = Math.max(0.2f, ref_n1_dial);
-                g2.setColor(Color.yellow);
+                g2.setColor(eicas_gc.ecam_reference_color);
                 g2.rotate(Math.toRadians(Math.round(ref_n1_dial*deg_dial_range)-deg_start), eicas_gc.prim_dial_x[pos], n1_y);
                 g2.drawLine(eicas_gc.prim_dial_x[pos]+n1_r-n1_r/7, n1_y, eicas_gc.prim_dial_x[pos]+n1_r+n1_r*22/100, n1_y);
                 g2.fillRect(eicas_gc.prim_dial_x[pos]+n1_r, n1_y, n1_r/4, n1_r/7);
@@ -878,7 +878,7 @@ public class ECAM_Engines extends EICASSubcomponent {
 
         // target MAP bug not for reverse
         if ( rev==0.0f && mpr_alive) {
-        	g2.setColor(Color.yellow);
+        	g2.setColor(eicas_gc.ecam_reference_color);
         	g2.rotate(Math.toRadians(Math.round(ref_map_dial*deg_norm_range)-deg_start), eicas_gc.prim_dial_x[pos], n1_y);
         	g2.drawLine(eicas_gc.prim_dial_x[pos]+n1_r-n1_r/7, n1_y, eicas_gc.prim_dial_x[pos]+n1_r+n1_r*22/100, n1_y);
         	g2.fillRect(eicas_gc.prim_dial_x[pos]+n1_r, n1_y, n1_r/4, n1_r/7);
@@ -1124,7 +1124,7 @@ public class ECAM_Engines extends EICASSubcomponent {
              
         // EGT MAX
         if (engine_on) {
-        	g2.setColor(Color.yellow);
+        	g2.setColor(eicas_gc.ecam_reference_color);
         	g2.rotate(Math.toRadians(Math.round(max_egt_dial*deg_full_range)-deg_start), eicas_gc.prim_dial_x[pos], egt_y);
         	g2.fillRect(eicas_gc.prim_dial_x[pos]+egt_r, egt_y, egt_r/4, egt_r/7);
         	/* Draw Max EGT Value (debug)

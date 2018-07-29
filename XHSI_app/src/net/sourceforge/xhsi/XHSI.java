@@ -75,6 +75,7 @@ import net.sourceforge.xhsi.flightdeck.annunciators.AnnunComponent;
 import net.sourceforge.xhsi.flightdeck.cdu.CDUComponent;
 import net.sourceforge.xhsi.flightdeck.clock.ClockComponent;
 import net.sourceforge.xhsi.flightdeck.mfd.MFDComponent;
+import net.sourceforge.xhsi.flightdeck.mfdcp.MFDCPComponent;
 import net.sourceforge.xhsi.flightdeck.eicas.EICASComponent;
 import net.sourceforge.xhsi.flightdeck.empty.EmptyComponent;
 import net.sourceforge.xhsi.flightdeck.nd.NDComponent;
@@ -86,7 +87,7 @@ import net.sourceforge.xhsi.util.XHSILogFormatter;
 public class XHSI implements ActionListener {
 
 
-    public static final String RELEASE = "2.0 Beta 11 alpha 5";
+    public static final String RELEASE = "2.0 Beta 11 alpha 6";
     public static final int EXPECTED_PLUGIN = 20010;
 
 
@@ -333,6 +334,7 @@ public class XHSI implements ActionListener {
         NDComponent nd_ui = null;
         EICASComponent eicas_ui = null;
         MFDComponent mfd_ui = null;
+        MFDCPComponent mfdcp_ui = null;
         CDUComponent cdu_ui = null;
 
         // some preferences require a reconfiguration
@@ -387,7 +389,7 @@ public class XHSI implements ActionListener {
                     this.preferences.add_subsciption(eicas_ui, XHSIPreferences.PREF_INSTRUMENT_STYLE);
                     break;
                 case XHSIInstrument.MFD_ID :
-                    // EFB
+                    // EFB or Lower ECAM
                     mfd_ui = (MFDComponent)instruments.get(i).components;
                     this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_BORDER_STYLE);
                     this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_BORDER_COLOR);
@@ -397,6 +399,18 @@ public class XHSI implements ActionListener {
                     this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_DU_PREPEND);
                     this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_USE_POWER);
                     this.preferences.add_subsciption(mfd_ui, XHSIPreferences.PREF_INSTRUMENT_STYLE);
+                    break;
+                case XHSIInstrument.MFDCP_ID :
+                    // Multifunction Display or ECAM control Panel
+                    mfdcp_ui = (MFDCPComponent)instruments.get(i).components;
+                    this.preferences.add_subsciption(mfdcp_ui, XHSIPreferences.PREF_BORDER_STYLE);
+                    this.preferences.add_subsciption(mfdcp_ui, XHSIPreferences.PREF_BORDER_COLOR);
+                    this.preferences.add_subsciption(mfdcp_ui, XHSIPreferences.PREF_BOLD_FONTS);
+                    this.preferences.add_subsciption(mfdcp_ui, XHSIPreferences.PREF_USE_MORE_COLOR);
+                    this.preferences.add_subsciption(mfdcp_ui, XHSIPreferences.PREF_ANTI_ALIAS);
+                    this.preferences.add_subsciption(mfdcp_ui, XHSIPreferences.PREF_DU_PREPEND);
+                    this.preferences.add_subsciption(mfdcp_ui, XHSIPreferences.PREF_USE_POWER);
+                    this.preferences.add_subsciption(mfdcp_ui, XHSIPreferences.PREF_INSTRUMENT_STYLE);
                     break;
                 case XHSIInstrument.ANNUN_ID :
                     // Annunciators
@@ -631,42 +645,48 @@ public class XHSI implements ActionListener {
 //logger.warning("Adding component "+instrument_window.get_index());
             switch (instrument_window.get_index()) {
                 case XHSIInstrument.EMPTY_ID :
-                    instrument_window.components = new EmptyComponent(model_instance, du_num);
+                    instrument_window.components = new EmptyComponent(model_instance, instrument_window.du);
                     model_instance.get_repository_instance().add_observer( (EmptyComponent)instrument_window.components );
                     min_size = true;
                     break;
                 case XHSIInstrument.PFD_ID :
-                    instrument_window.components = new PFDComponent(model_instance, du_num);
+                    instrument_window.components = new PFDComponent(model_instance, instrument_window.du);
                     model_instance.get_repository_instance().add_observer( (PFDComponent)instrument_window.components );
                     min_size = true;
                     break;
                 case XHSIInstrument.ND_ID :
-                    instrument_window.components = new NDComponent(model_instance, du_num);
+                    instrument_window.components = new NDComponent(model_instance, instrument_window.du);
                     model_instance.get_repository_instance().add_observer( (NDComponent)instrument_window.components );
                     min_size = true;
                     break;
                 case XHSIInstrument.EICAS_ID :
-                    instrument_window.components = new EICASComponent(model_instance, du_num);
+                    instrument_window.components = new EICASComponent(model_instance, instrument_window.du);
                     model_instance.get_repository_instance().add_observer( (EICASComponent)instrument_window.components );
                     min_size = true;
                     break;
                 case XHSIInstrument.MFD_ID :
-                    instrument_window.components = new MFDComponent(model_instance, du_num);
+                    // instrument_window.components = new MFDComponent(model_instance, du_num);
+                	instrument_window.components = new MFDComponent(model_instance, instrument_window.du);
                     model_instance.get_repository_instance().add_observer( (MFDComponent)instrument_window.components );
                     min_size = true;
                     break;
+                case XHSIInstrument.MFDCP_ID :
+                    instrument_window.components = new MFDCPComponent(model_instance, instrument_window.du);
+                    model_instance.get_repository_instance().add_observer( (MFDCPComponent)instrument_window.components );
+                    min_size = true;
+                    break;
                 case XHSIInstrument.ANNUN_ID :
-                    instrument_window.components = new AnnunComponent(model_instance, du_num);
+                    instrument_window.components = new AnnunComponent(model_instance, instrument_window.du);
                     model_instance.get_repository_instance().add_observer( (AnnunComponent)instrument_window.components );
                     min_size = true;
                     break;
                 case XHSIInstrument.CLOCK_ID :
-                    instrument_window.components = new ClockComponent(model_instance, du_num);
+                    instrument_window.components = new ClockComponent(model_instance, instrument_window.du);
                     model_instance.get_repository_instance().add_observer( (ClockComponent)instrument_window.components );
                     min_size = true;
                     break;
                 case XHSIInstrument.CDU_ID :
-                    instrument_window.components = new CDUComponent(model_instance, du_num);
+                    instrument_window.components = new CDUComponent(model_instance, instrument_window.du);
                     model_instance.get_repository_instance().add_observer( (CDUComponent)instrument_window.components );
                     min_size = true;
                     break;
@@ -740,6 +760,9 @@ public class XHSI implements ActionListener {
                     break;
                 case XHSIInstrument.MFD_ID :
                     ((MFDComponent)window.components).forceReconfig();
+                    break;
+                case XHSIInstrument.MFDCP_ID :
+                    ((MFDCPComponent)window.components).forceReconfig();
                     break;
                 case XHSIInstrument.ANNUN_ID :
                     ((AnnunComponent)window.components).forceReconfig();
@@ -851,7 +874,7 @@ public class XHSI implements ActionListener {
                     "2007-2009 Georg Gruetter\n" +
                     "2009 Sandy Barbour\n" +
                     "2009-2017 Marc Rogiers\n" +
-                    "2014-2017 Nicolas Carel\n" +
+                    "2014-2018 Nicolas Carel\n" +
                     "2017-2018 the Technische Hochschule Ingolstadt: \n" +
                     "          Patrick Burkart\n" +
                     "          Tim Drouven\n" +

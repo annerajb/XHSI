@@ -533,7 +533,7 @@ public class Wheels extends MFDSubcomponent {
     	// Text in green is circuit ok, amber when low pressure (<2000 psi)
     	if (airbus_controls) {
 
-    		g2.setColor(mfd_gc.color_airbusgray.darker());
+    		g2.setColor(mfd_gc.ecam_box_bg_color);
 
     		g2.fillRect(mfd_gc.wheel_nw_steering_hydr_x , mfd_gc.wheel_nw_steering_msg_y - mfd_gc.fctl_box_height*7/8,
     				mfd_gc.fctl_dx_box_width/2, mfd_gc.fctl_box_height);

@@ -278,7 +278,7 @@ public class Fuel extends MFDSubcomponent {
             drawGauge(g2, 0, "ALL", this.aircraft.get_total_fuel(), this.aircraft.get_fuel_capacity());
         }
         if ( tanks > 1 ) {
-            g2.setColor(mfd_gc.color_boeingcyan);
+            g2.setColor(mfd_gc.label_color);
             g2.setFont(mfd_gc.font_m);
 //            String units_str = XHSISettings.get_instance().fuel_units.get_units();
 //            String units_str = this.preferences.get_preference(XHSIPreferences.PREF_FUEL_UNITS);
@@ -361,7 +361,7 @@ public class Fuel extends MFDSubcomponent {
         g2.setFont(mfd_gc.font_xl);
         g2.drawString(qty_str, fuel_x - mfd_gc.get_text_width(g2, mfd_gc.font_xl, qty_str)/2, fuel_y + mfd_gc.line_height_xl/2 - 2);
 
-        g2.setColor(mfd_gc.color_boeingcyan);
+        g2.setColor(mfd_gc.label_color);
         g2.setFont(mfd_gc.font_m);
         g2.drawString(tank_str, fuel_x - mfd_gc.get_text_width(g2, mfd_gc.font_m, tank_str)/2, fuel_y - mfd_gc.fuel_r*3/8 - 2);
 
@@ -675,7 +675,7 @@ public class Fuel extends MFDSubcomponent {
     
     
     private void drawFuelUnits(Graphics2D g2, int x, int y) {
-        g2.setColor(mfd_gc.color_boeingcyan);
+        g2.setColor(mfd_gc.label_color);
         g2.setFont(mfd_gc.font_m);
         String units_str;
         if ( this.avionics.get_fuel_units() == XHSISettings.FUEL_UNITS_KG ) units_str = XHSIPreferences.FUEL_UNITS_KG;

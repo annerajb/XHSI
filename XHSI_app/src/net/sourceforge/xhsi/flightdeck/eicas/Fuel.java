@@ -79,7 +79,7 @@ public class Fuel extends EICASSubcomponent {
             drawGauge(g2, 0, "ALL", this.aircraft.get_total_fuel(), this.aircraft.get_fuel_capacity(), primaries);
         }
         if ( tanks > 1 ) {
-            g2.setColor(eicas_gc.color_boeingcyan);
+            g2.setColor(eicas_gc.label_color);
             g2.setFont(eicas_gc.font_m);
 //            String units_str = XHSISettings.get_instance().fuel_units.get_units();
 //            String units_str = this.preferences.get_preference(XHSIPreferences.PREF_FUEL_UNITS);
@@ -132,7 +132,7 @@ public class Fuel extends EICASSubcomponent {
         g2.setFont(eicas_gc.font_xl);
         g2.drawString(qty_str, fuel_x - eicas_gc.get_text_width(g2, eicas_gc.font_xl, qty_str)/2, fuel_y + eicas_gc.line_height_xl/2 - 2);
 
-        g2.setColor(eicas_gc.color_boeingcyan);
+        g2.setColor(eicas_gc.label_color);
         g2.setFont(eicas_gc.font_m);
         g2.drawString(tank_str, fuel_x - eicas_gc.get_text_width(g2, eicas_gc.font_m, tank_str)/2, fuel_y - eicas_gc.fuel_r*3/8 - 2);
 

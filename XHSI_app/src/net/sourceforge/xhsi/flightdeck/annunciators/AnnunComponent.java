@@ -28,22 +28,23 @@
 */
 package net.sourceforge.xhsi.flightdeck.annunciators;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
+
+import javax.swing.event.MouseInputListener;
 
 import net.sourceforge.xhsi.PreferencesObserver;
 import net.sourceforge.xhsi.XHSIPreferences;
-import net.sourceforge.xhsi.XHSISettings;
-import net.sourceforge.xhsi.XHSIStatus;
 
+import net.sourceforge.xhsi.XHSIInstrument.DU;
+import net.sourceforge.xhsi.flightdeck.mfdcp.MFDCPSubcomponent;
 import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
@@ -52,7 +53,7 @@ import net.sourceforge.xhsi.model.Observer;
 //import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
 
 
-public class AnnunComponent extends Component implements Observer, PreferencesObserver {
+public class AnnunComponent extends Component implements Observer, PreferencesObserver, MouseInputListener {
 
     private static final long serialVersionUID = 1L;
     public static boolean COLLECT_PROFILING_INFORMATION = false;
@@ -61,7 +62,7 @@ public class AnnunComponent extends Component implements Observer, PreferencesOb
 
 
     // subcomponents --------------------------------------------------------
-    ArrayList subcomponents = new ArrayList();
+    ArrayList<AnnunSubcomponent> subcomponents = new ArrayList<AnnunSubcomponent>();
     long[] subcomponent_paint_times = new long[15];
     long total_paint_times = 0;
     long nb_of_paints = 0;
@@ -73,14 +74,16 @@ public class AnnunComponent extends Component implements Observer, PreferencesOb
 
     Aircraft aircraft;
     Avionics avionics;
+    DU display_unit;
 
 
-    public AnnunComponent(ModelFactory model_factory, int du) {
+    public AnnunComponent(ModelFactory model_factory, DU du) {
 
-        this.annun_gc = new AnnunGraphicsConfig(this, du);
+        this.annun_gc = new AnnunGraphicsConfig(this, du.ordinal());
         this.model_factory = model_factory;
         this.aircraft = this.model_factory.get_aircraft_instance();
         this.avionics = this.aircraft.get_avionics();
+        this.display_unit = du;
 
         annun_gc.reconfig = true;
 
@@ -135,11 +138,6 @@ public class AnnunComponent extends Component implements Observer, PreferencesOb
             g2.rotate(Math.PI, annun_gc.frame_size.width/2, annun_gc.frame_size.height/2);
         }
 
-// adjustable brightness is too slow
-//        float alpha = 0.9f;
-//        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, alpha);
-//        g2.setComposite(ac);
-
         g2.clearRect(0, 0, annun_gc.frame_size.width, annun_gc.frame_size.height);
 
         long time = 0;
@@ -151,7 +149,7 @@ public class AnnunComponent extends Component implements Observer, PreferencesOb
             }
 
             // paint each of the subcomponents
-            ((AnnunSubcomponent) this.subcomponents.get(i)).paint(g2);
+            this.subcomponents.get(i).paint(g2);
 
             if (AnnunComponent.COLLECT_PROFILING_INFORMATION) {
                 paint_time = System.currentTimeMillis() - time;
@@ -223,4 +221,42 @@ public class AnnunComponent extends Component implements Observer, PreferencesOb
         repaint();
         
     }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        for (int i = 0; i < subcomponents.size(); i++) {
+            subcomponents.get(i).mouseClicked(g2, e);
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        //nothing needs to be done here
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        //nothing needs to be done here
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        //nothing needs to be done here
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        //nothing needs to be done here
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        //nothing needs to be done here
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        //nothing needs to be done here
+    }
+
 }

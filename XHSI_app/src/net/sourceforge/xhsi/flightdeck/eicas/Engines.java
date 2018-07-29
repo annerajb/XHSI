@@ -159,7 +159,7 @@ public class Engines extends EICASSubcomponent {
 
             String ind_str;
             int ind_x;
-            g2.setColor(eicas_gc.color_boeingcyan);
+            g2.setColor(eicas_gc.label_color);
             g2.setFont(eicas_gc.font_m);
             
             // main1
@@ -350,7 +350,7 @@ public class Engines extends EICASSubcomponent {
 //rev=1.0f;
         if ( rev > 0.0f ) {
             if ( rev == 1.0f ) {
-                g2.setColor(eicas_gc.color_lime);
+                g2.setColor(eicas_gc.normal_color);
             } else {
                 g2.setColor(eicas_gc.caution_color);
             }
@@ -368,7 +368,7 @@ if ( ref_n1 <= 1.0f ) {
     logger.warning("UFMC N1 is probably ratio, not percent");
     ref_n1 *= 100.0f;
 }
-                g2.setColor(eicas_gc.color_lime);
+                g2.setColor(eicas_gc.normal_color);
                 g2.rotate(Math.toRadians(ref_n1*2.0f), prim_dial_x[pos], n1_y);
                 g2.drawLine(prim_dial_x[pos]+n1_r+1, n1_y, prim_dial_x[pos]+n1_r+n1_r/10, n1_y);
                 g2.drawLine(prim_dial_x[pos]+n1_r+n1_r/10, n1_y, prim_dial_x[pos]+n1_r+n1_r/10+n1_r/8, n1_y+n1_r/10);
@@ -452,7 +452,7 @@ if ( ref_n1 <= 1.0f ) {
 //rev=1.0f;
         if ( rev > 0.0f ) {
             if ( rev == 1.0f ) {
-                g2.setColor(eicas_gc.color_lime);
+                g2.setColor(eicas_gc.normal_color);
             } else {
                 g2.setColor(eicas_gc.caution_color);
             }
@@ -470,7 +470,7 @@ if ( ref_n1 <= 1.0f ) {
     logger.warning("UFMC N1 is probably ratio, not percent");
     ref_n1 *= 100.0f;
 }
-                g2.setColor(eicas_gc.color_lime);
+                g2.setColor(eicas_gc.normal_color);
                 g2.rotate(Math.toRadians(ref_n1*2.0f), prim_dial_x[pos], n1_y);
                 g2.drawLine(prim_dial_x[pos]+n1_r+1, n1_y, prim_dial_x[pos]+n1_r+n1_r/10, n1_y);
                 g2.drawLine(prim_dial_x[pos]+n1_r+n1_r/10, n1_y, prim_dial_x[pos]+n1_r+n1_r/10+n1_r/8, n1_y+n1_r/10);
@@ -589,7 +589,7 @@ if ( ref_n1 <= 1.0f ) {
                 g2.setColor(eicas_gc.unusual_color);
                 prop_mode_str = "BETA";
             } else if ( prop_mode == 3 ) {
-                g2.setColor(eicas_gc.color_lime);
+                g2.setColor(eicas_gc.normal_color);
                 prop_mode_str = "REV";
             }
             g2.drawString(prop_mode_str, prim_dial_x[pos]+eicas_gc.dial_font_w[num], trq_y-eicas_gc.dial_font_h[num]*165/100-2);

@@ -331,14 +331,15 @@ public class XPlaneCommand implements SimCommand {
             case CMD_EFIS_FO_TERRAIN_ND:
             	this.avionics.set_show_terrain(!this.avionics.efis_shows_terrain(InstrumentSide.COPILOT),InstrumentSide.COPILOT);
             	break;
-          
             
             case CMD_ECAM_TO_CFG: 
                 this.udp_sender.sendDataPoint(XPlaneSimDataRepository.QPAC_KEY_PRESS, QPAC_KEY_TO_CONFIG);
                 break;
-            
-            
-            case CMD_ECAM_EMER_CANC: 
+                      
+            case CMD_ECAM_EMER_CANC:
+                if (this.avionics.is_ff_a320()) {
+                    this.udp_sender.sendDataPoint(XPlaneSimDataRepository.XFF_MFD_BUTTONS, (float) 0x02);
+                }
                 break;
             
             case CMD_ECAM_ENG:  
@@ -397,6 +398,9 @@ public class XPlaneCommand implements SimCommand {
                 break;
             
             case CMD_ECAM_RCL: 
+                if (this.avionics.is_ff_a320()) {
+                    udp_sender.sendDataPoint(XPlaneSimDataRepository.XFF_MFD_BUTTONS, (float) 0x10000);
+                }
                 break;
             
             case CMD_ECAM_APT_CHART: 

@@ -75,7 +75,7 @@ public class Hydraulics extends EICASSubcomponent {
 
             String ind_str;
             int ind_x;
-            g2.setColor(eicas_gc.color_boeingcyan);
+            g2.setColor(eicas_gc.label_color);
             g2.setFont(eicas_gc.font_xs);
 
             // HYD P

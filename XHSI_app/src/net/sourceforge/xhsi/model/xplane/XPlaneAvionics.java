@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import net.sourceforge.xhsi.XHSIPreferences;
 import net.sourceforge.xhsi.XHSISettings;
 
+import net.sourceforge.xhsi.XHSIInstrument.DU;
 import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.FMS;
@@ -42,6 +43,8 @@ import net.sourceforge.xhsi.model.RadioNavBeacon;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.SimDataRepository;
 import net.sourceforge.xhsi.model.TCAS;
+import net.sourceforge.xhsi.model.Avionics.FCC;
+import net.sourceforge.xhsi.model.Avionics.InstrumentSide;
 
 
 public class XPlaneAvionics implements Avionics, Observer {
@@ -375,6 +378,53 @@ public class XPlaneAvionics implements Avionics, Observer {
     }
 
 
+    /**
+     * @return boolean - Display Unit Power
+     * TODO : tie with electric buses
+     */
+    public boolean du_power(DU display_unit) {
+    	return du_power(display_unit, get_instrument_side());
+    }
+    
+    public boolean du_power(DU display_unit, InstrumentSide side) {
+    	return power();
+    }
+  
+    /**
+     * @return float - Display Unit Brightness
+     */
+    public float du_brightness(DU display_unit) {
+    	return du_brightness(display_unit, get_instrument_side());
+    }
+    
+    public float du_brightness(DU display_unit, InstrumentSide side) {
+    	switch (display_unit) {
+    	case Empty : return 0.0f;
+    	case PFD : if (side == InstrumentSide.COPILOT) {
+    		return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_DU_BRIGHT_PFD_FO));
+    	} else {
+    		return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_DU_BRIGHT_PFD_CPT));
+    	}
+    	case ND : if (side == InstrumentSide.COPILOT) {
+    		return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_DU_BRIGHT_ND_FO));
+    	} else {
+    		return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_DU_BRIGHT_ND_CPT));
+    	}
+    	case EICAS : return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_DU_BRIGHT_EICAS));
+    	case MFD : return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_DU_BRIGHT_MFD));
+    	case CDU : if (side == InstrumentSide.COPILOT) {
+    		return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_DU_BRIGHT_CDU_FO));
+    	} else if (side == InstrumentSide.PILOT) {
+    		return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_DU_BRIGHT_CDU_CPT));
+    	} else {
+    		return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_DU_BRIGHT_CDU_OBS));
+    	}
+    	case Annunciators : return ( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_ELECTRICAL_INSTRUMENT_BRIGHTNESS));
+    	case Clock : return ( sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_DU_BRIGHT_CLOCK));
+    	default: return 1.0f;
+    	} 
+    }
+    
     public boolean outer_marker() {
         return ( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT2_RADIOS_INDICATORS_OUTER_MARKER_LIT) == 1.0f );
     }
@@ -1268,6 +1318,41 @@ public class XPlaneAvionics implements Avionics, Observer {
     	return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_MFD_MODE);
     }
     
+    public int ff_a320_get_mfd_mode() {
+        if (is_ff_a320()) {
+            int ffValue = (int) sim_data.get_sim_float(XPlaneSimDataRepository.XFF_MFD_BUTTONS) & 0x1FFF;
+            switch (ffValue) {
+                case 0x01:
+                    return Avionics.MFD_MODE_EICAS;
+                case 0x02:
+                    return Avionics.MFD_MODE_BLEED;
+                case 0x04:
+                    return Avionics.MFD_MODE_CAB_PRESS;
+                case 0x08:
+                    return Avionics.MFD_MODE_ELEC;
+                case 0x10:
+                    return Avionics.MFD_MODE_HYDR;
+                case 0x20:
+                    return Avionics.MFD_MODE_FUEL;
+                case 0x40:
+                    return Avionics.MFD_MODE_APU;
+                case 0x80:
+                    return Avionics.MFD_MODE_COND;
+                case 0x100:
+                    return Avionics.MFD_MODE_DOOR_OXY;
+                case 0x200:
+                    return Avionics.MFD_MODE_WHEELS;
+                case 0x400:
+                    return Avionics.MFD_MODE_FCTL;
+                case 0x800:
+                    return Avionics.MFD_MODE_SYS;
+                case 0x1000:
+                    return Avionics.MFD_MODE_STATUS;
+            }
+        }
+        return (int) sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_MFD_MODE);
+    }
+    
     public int get_mfd_mode() {
     	int xhsi_mfd_mode = (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_MFD_MODE);
 
@@ -1281,6 +1366,8 @@ public class XPlaneAvionics implements Avionics, Observer {
             		return qpac_get_mfd_mode();
             	} else if (is_jar_a320neo() && (xhsi_mfd_mode != Avionics.MFD_MODE_FPLN) && (xhsi_mfd_mode != Avionics.MFD_MODE_ARPT) && (xhsi_mfd_mode != Avionics.MFD_MODE_RTU)) {
             		return jar_a320neo_get_mfd_mode();
+                } else if (is_ff_a320() && (xhsi_mfd_mode != Avionics.MFD_MODE_FPLN) && (xhsi_mfd_mode != Avionics.MFD_MODE_ARPT) && (xhsi_mfd_mode != Avionics.MFD_MODE_RTU)) {
+                    return ff_a320_get_mfd_mode();
             	} else {
             		// like mode_switchable
             		return xhsi_mfd_mode;
@@ -1968,6 +2055,11 @@ public class XPlaneAvionics implements Avionics, Observer {
         return sim_data.get_sim_float(XPlaneSimDataRepository.CL30_MAST_CAUT);
     }
 
+    // General Airbus presence flag
+    public boolean is_airbus() {
+        return is_qpac() || is_ff_a320() || is_jar_a320neo();
+    }
+    
     // QPAC Airbus FBW
     public boolean is_qpac() {
     	return ( sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_STATUS) > 0.0f );
@@ -2310,7 +2402,36 @@ public class XPlaneAvionics implements Avionics, Observer {
     	int fcc_status = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FCC));
         return ((fcc_status >> pos) & 0x01) != 0;
     }
+    public boolean qpac_fcc(FCC pos) {
+        int fcc_status = Math.round(sim_data.get_sim_float(XPlaneSimDataRepository.QPAC_FCC));
+        return ((fcc_status >> pos.ordinal()) & 0x01) != 0;
+    }
 
+    public boolean fcc(FCC pos) {
+        if (is_qpac()) {
+            return qpac_fcc(pos);
+        } else if (is_ff_a320()) {
+            return !ff_a320_fcc_off(pos);
+        } else {
+            return false;
+        }
+    }
+    
+    // Flight Factor Airbus 320 Ultimate
+    public boolean is_ff_a320() {
+        return (sim_data.get_sim_float(XPlaneSimDataRepository.XFF_STATUS) > 0.0f);
+    }
+
+    public boolean ff_a320_fcc_off(FCC flightComputer) {
+        int bit = (int) Math.pow(2, flightComputer.ordinal());
+        return ((int) sim_data.get_sim_float(XPlaneSimDataRepository.XFF_FCC) & bit) > 0;
+    }
+
+    public boolean ff_a320_fcc_fault(FCC flightComputer) {
+        int bit = (int) Math.pow(2, flightComputer.ordinal() + 7);
+        return ((int) sim_data.get_sim_float(XPlaneSimDataRepository.XFF_FCC) & bit) > 0;
+    }
+    
     
     // JAR Design A320 neo
     public boolean is_jar_a320neo() {
@@ -3061,6 +3182,58 @@ public class XPlaneAvionics implements Avionics, Observer {
             	if (sd_page != -1) {
             		udp_sender.sendDataPoint( XPlaneSimDataRepository.QPAC_SD_PAGE, (float) sd_page );
             	}
+            }
+            if (this.is_ff_a320()) {
+                int mfd_page = -1;
+                switch (new_mode) {
+                    case Avionics.MFD_MODE_ARPT:
+                    case Avionics.MFD_MODE_FPLN:
+                    case Avionics.MFD_MODE_RTU:
+                        mfd_page = -1;
+                        break;
+                    case Avionics.MFD_MODE_ENGINE:
+                        mfd_page = 0x04;
+                        break;
+                    case Avionics.MFD_MODE_BLEED:
+                        mfd_page = 0x08;
+                        break;
+                    case Avionics.MFD_MODE_CAB_PRESS:
+                        mfd_page = 0x10;
+                        break;
+                    case Avionics.MFD_MODE_ELEC:
+                        mfd_page = 0x20;
+                        break;
+                    case Avionics.MFD_MODE_HYDR:
+                        mfd_page = 0x40;
+                        break;
+                    case Avionics.MFD_MODE_FUEL:
+                        mfd_page = 0x80;
+                        break;
+                    case Avionics.MFD_MODE_APU:
+                        mfd_page = 0x100;
+                        break;
+                    case Avionics.MFD_MODE_COND:
+                        mfd_page = 0x200;
+                        break;
+                    case Avionics.MFD_MODE_DOOR_OXY:
+                        mfd_page = 0x400;
+                        break;
+                    case Avionics.MFD_MODE_WHEELS:
+                        mfd_page = 0x800;
+                        break;
+                    case Avionics.MFD_MODE_FCTL:
+                        mfd_page = 0x1000;
+                        break;
+                    case Avionics.MFD_MODE_SYS:
+                        mfd_page = 0x2000;
+                        break;
+                    case Avionics.MFD_MODE_STATUS:
+                        mfd_page = 0x8000;
+                        break;
+                }
+                if (mfd_page != -1) {
+                    udp_sender.sendDataPoint(XPlaneSimDataRepository.XFF_MFD_BUTTONS, (float) mfd_page);
+                }
             }
             if (this.is_jar_a320neo()) {
             	int sd_page = -1;

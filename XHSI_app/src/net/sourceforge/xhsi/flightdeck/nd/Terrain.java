@@ -201,11 +201,11 @@ public class Terrain extends NDSubcomponent {
 		
 		// Max terrain altitude box (unit = Flight Level)
 		if (peak_max > ref_alt + 2000 ) { 
-			g2.setColor(Color.red);
+			g2.setColor(nd_gc.warning_color);
 		} else if (peak_max > ref_alt - 500 ) {
-			g2.setColor(Color.yellow);
+			g2.setColor(nd_gc.caution_color);
 		} else {
-			g2.setColor(Color.green);
+			g2.setColor(nd_gc.normal_color);
 		}
 		g2.drawRect(nd_gc.terr_box_x, nd_gc.terr_max_box_y, nd_gc.terr_box_width, nd_gc.terr_box_height);
 		String max_str = fl_formatter.format(Math.round(peak_max/100));
@@ -213,11 +213,11 @@ public class Terrain extends NDSubcomponent {
 
 		// Min terrain altitude box (unit = Flight Level)
 		if (peak_min > ref_alt + 2000 ) { 
-			g2.setColor(Color.red);
+			g2.setColor(nd_gc.warning_color);
 		} else if (peak_min > ref_alt - 500 ) {
-			g2.setColor(Color.yellow);
+			g2.setColor(nd_gc.caution_color);
 		} else {
-			g2.setColor(Color.green);
+			g2.setColor(nd_gc.normal_color);
 		}
 		if (peak_min >= 100) {
 			g2.drawRect(nd_gc.terr_box_x, nd_gc.terr_min_box_y, nd_gc.terr_box_width, nd_gc.terr_box_height);
@@ -242,7 +242,7 @@ public class Terrain extends NDSubcomponent {
 							nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90+sweep_max, sweep_angle-sweep_max, Arc2D.PIE)));
 				}
 				g2.setClip(terr_clip_1);
-				g2.drawImage( nd_gc.terr_img_1, 0, 0, null);
+				g2.drawImage(nd_gc.terr_img_1, 0, 0, null);
 			}
 			
 			if (terr_img_2_valid) {

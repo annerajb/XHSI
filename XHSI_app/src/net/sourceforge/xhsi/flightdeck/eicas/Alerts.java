@@ -150,7 +150,7 @@ public class Alerts extends EICASSubcomponent {
 
     private void drawEngNum(Graphics2D g2, int eng, String prefix_str) {
 
-        g2.setColor(eicas_gc.color_boeingcyan);
+        g2.setColor(eicas_gc.label_color);
         g2.setFont(eicas_gc.font_s);
         String eng_str = prefix_str + (eng + 1);
         g2.drawString(eng_str, alert_x[eng] + alert_w/2 - eicas_gc.get_text_width(g2, eicas_gc.font_s, eng_str)/2, eicas_gc.alert_y[0] - eicas_gc.line_height_s*3/8 - 2);

@@ -65,7 +65,7 @@ public class SubPanelLines extends EICASSubcomponent {
 
         if ( eicas_gc.powered && !primaries && eicas_gc.boeing_style ) {
 
-            g2.setColor(eicas_gc.color_boeingcyan);
+            g2.setColor(eicas_gc.label_color);
             g2.drawLine(eicas_gc.panel_rect.x + eicas_gc.panel_rect.width - eicas_gc.alerts_w*33/32, eicas_gc.panel_rect.y + eicas_gc.panel_rect.height/100, eicas_gc.panel_rect.x + eicas_gc.panel_rect.width - eicas_gc.alerts_w*33/32, eicas_gc.panel_rect.y + eicas_gc.panel_rect.height*99/100);
             g2.drawLine(eicas_gc.panel_rect.x + eicas_gc.panel_rect.width/100, eicas_gc.panel_rect.y + eicas_gc.prim_dials_height, eicas_gc.panel_rect.x + eicas_gc.panel_rect.width - eicas_gc.alerts_w*33/32 - eicas_gc.panel_rect.width/100, eicas_gc.panel_rect.y + eicas_gc.prim_dials_height);
             g2.drawLine(eicas_gc.panel_rect.x + eicas_gc.panel_rect.width - eicas_gc.alerts_w*33/32 + eicas_gc.panel_rect.width/100, eicas_gc.panel_rect.y + eicas_gc.panel_rect.height - eicas_gc.hyd_dials_height, eicas_gc.panel_rect.x + eicas_gc.panel_rect.width*99/100, eicas_gc.panel_rect.y + eicas_gc.panel_rect.height - eicas_gc.hyd_dials_height);

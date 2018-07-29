@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.PreferencesObserver;
 import net.sourceforge.xhsi.XHSIPreferences;
+import net.sourceforge.xhsi.XHSIInstrument.DU;
 import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
@@ -68,14 +69,16 @@ public class NDComponent extends Component implements Observer, PreferencesObser
 
     Aircraft aircraft;
     Avionics avionics;
+    DU display_unit;
 
 
-    public NDComponent(ModelFactory model_factory, int du) {
+    public NDComponent(ModelFactory model_factory, DU du) {
 
-        this.nd_gc = new NDGraphicsConfig(this, du);
+        this.nd_gc = new NDGraphicsConfig(this, du.ordinal());
         this.model_factory = model_factory;
         this.aircraft = this.model_factory.get_aircraft_instance();
         this.avionics = this.aircraft.get_avionics();
+        this.display_unit = du;
 
         nd_gc.reconfig = true;
 
@@ -129,7 +132,8 @@ public class NDComponent extends Component implements Observer, PreferencesObser
         g2.setBackground(nd_gc.background_color);
 
         // send Graphics object to nd_gc to recompute positions, if necessary because the panel has been resized or a mode setting has been changed
-        nd_gc.update_config( g2, this.avionics.map_mode(), this.avionics.map_submode(), this.avionics.map_range(), this.avionics.map_zoomin(), this.avionics.power(), this.avionics.get_instrument_style() );
+        nd_gc.update_config( g2, this.avionics.map_mode(), this.avionics.map_submode(), this.avionics.map_range(),
+        		this.avionics.map_zoomin(), this.avionics.power(), this.avionics.get_instrument_style(), this.avionics.du_brightness(display_unit) );
 
         // rotate the display
         XHSIPreferences.Orientation orientation = XHSIPreferences.get_instance().get_panel_orientation( this.nd_gc.display_unit );
@@ -140,11 +144,6 @@ public class NDComponent extends Component implements Observer, PreferencesObser
         } else if ( orientation == XHSIPreferences.Orientation.DOWN ) {
             g2.rotate(Math.PI, nd_gc.frame_size.width/2, nd_gc.frame_size.height/2);
         }
-
-//// adjustable brightness has some undesired side-effects
-//float alpha = 0.5f;
-//AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
-//g2.setComposite(ac);
 
         g2.clearRect(0, 0, nd_gc.frame_size.width, nd_gc.frame_size.height);
 
@@ -157,7 +156,7 @@ public class NDComponent extends Component implements Observer, PreferencesObser
             }
 
             // paint each of the subcomponents
-            ((NDSubcomponent) this.subcomponents.get(i)).paint(g2);
+            this.subcomponents.get(i).paint(g2);
 
             if (NDComponent.COLLECT_PROFILING_INFORMATION) {
                 paint_time = System.currentTimeMillis() - time;

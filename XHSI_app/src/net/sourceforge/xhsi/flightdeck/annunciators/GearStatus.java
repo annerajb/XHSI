@@ -29,6 +29,7 @@ import java.awt.Component;
 import java.awt.Graphics2D;
 //import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.event.MouseEvent;
 //import java.awt.geom.AffineTransform;
 //import java.awt.geom.Area;
 //import java.awt.geom.Rectangle2D;
@@ -218,5 +219,7 @@ public class GearStatus extends AnnunSubcomponent {
 
     }
 
+    public void mouseClicked(Graphics2D g2, MouseEvent e) {    	
+    }
 
 }

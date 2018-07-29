@@ -115,8 +115,11 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     }
 
     
-    public void update_config(Graphics2D g2, boolean power, int instrument_style) {
+    public void update_config(Graphics2D g2, boolean power, int instrument_style, float du_brightness) {
 
+     	// Update colors if du_brightness changed
+     	update_colors(du_brightness);
+     	
         if (this.resized
                 || this.reconfig
                 || (this.powered != power)

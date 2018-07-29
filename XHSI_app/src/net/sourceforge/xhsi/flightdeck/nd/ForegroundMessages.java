@@ -308,7 +308,7 @@ public class ForegroundMessages extends NDSubcomponent {
 
 
     private void displayGlobalMessage(Graphics2D g2, String message){
-        g2.setColor(nd_gc.color_lime);
+        g2.setColor(nd_gc.normal_color);
         g2.setFont(nd_gc.font_xxxl);
         int message_width = g2.getFontMetrics(nd_gc.font_xxxl).stringWidth(message);
         // int box_width = message_width + 2*nd_gc.digit_width_xxxl;
@@ -324,7 +324,7 @@ public class ForegroundMessages extends NDSubcomponent {
     
     private void displayEGPWSMessage(Graphics2D g2){
     	if (avionics.egpws_alert_level()==EPGWSAlertLevel.NORMAL) {
-    		g2.setColor(nd_gc.color_lime);
+    		g2.setColor(nd_gc.normal_color);
     	} else {
     		g2.setColor(nd_gc.ecam_caution_color);
     	}

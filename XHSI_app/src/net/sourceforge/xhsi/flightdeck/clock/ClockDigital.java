@@ -107,7 +107,7 @@ public class ClockDigital extends ClockSubcomponent {
         }
         String current_time_lcl_str = hms_formatter.format(hh_et) + ":" + hms_formatter.format(mm_et); // + ":" + hms_formatter.format(ss);
 
-        g2.setColor(Color.WHITE);
+        g2.setColor(clock_gc.clock_color);
         g2.setFont(clock_gc.font_seven_seg_large);
         g2.drawString(current_time_utc_str, clock_gc.utc_time_string_x, clock_gc.utc_time_string_y);
         g2.drawString(current_time_lcl_str, clock_gc.elapsed_time_string_x, clock_gc.elapsed_time_string_y);
@@ -122,7 +122,7 @@ public class ClockDigital extends ClockSubcomponent {
         int mins = timer / 60;
         int secs = timer % 60;
         
-        g2.setColor(Color.WHITE);
+        g2.setColor(clock_gc.clock_color);
         String timer_str = hms_formatter.format(mins) + ":" + hms_formatter.format(secs);
 
         g2.setFont(clock_gc.font_seven_seg_large);

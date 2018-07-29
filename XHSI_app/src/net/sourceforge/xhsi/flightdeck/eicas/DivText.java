@@ -79,7 +79,7 @@ public class DivText extends EICASSubcomponent {
         int y1 = eicas_gc.divtext_y;
         int x1 = eicas_gc.tat_x;
 
-        g2.setColor(eicas_gc.color_boeingcyan);
+        g2.setColor(eicas_gc.label_color);
         g2.setFont(eicas_gc.font_m);
         String str1 = "TAT ";
         g2.drawString(str1, x1, y1);
@@ -106,7 +106,7 @@ public class DivText extends EICASSubcomponent {
         int y1 = eicas_gc.divtext_y;
         int x1 = eicas_gc.thrustmode_x;
 
-        g2.setColor(eicas_gc.color_lime);
+        g2.setColor(eicas_gc.normal_color);
         g2.setFont(eicas_gc.font_xl);
         g2.drawString(this.aircraft.get_thrust_mode(), x1, y1);
 

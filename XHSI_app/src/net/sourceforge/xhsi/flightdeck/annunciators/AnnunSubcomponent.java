@@ -22,39 +22,27 @@
 */
 package net.sourceforge.xhsi.flightdeck.annunciators;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
+
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.Transparency;
-import java.awt.image.BufferedImage;
+
+import java.awt.event.MouseEvent;
+
 
 import net.sourceforge.xhsi.XHSIPreferences;
 
-import net.sourceforge.xhsi.model.Aircraft;
-import net.sourceforge.xhsi.model.AircraftEnvironment;
-import net.sourceforge.xhsi.model.Avionics;
-import net.sourceforge.xhsi.model.FMS;
+
 import net.sourceforge.xhsi.model.ModelFactory;
-import net.sourceforge.xhsi.model.TCAS;
+
 
 import net.sourceforge.xhsi.flightdeck.Subcomponent;
 
 
 public abstract class AnnunSubcomponent extends Subcomponent {
+	
+	private static final long serialVersionUID = 1L;
 
     AnnunGraphicsConfig annun_gc;
-//    ModelFactory model_factory;
-//    Aircraft aircraft;
-//    Avionics avionics;
-//    AircraftEnvironment aircraft_environment;
-//    Component parent_component;
-//    FMS fms;
-//    TCAS tcas;
-//    XHSIPreferences preferences;
-
 
     public AnnunSubcomponent(ModelFactory model_factory, AnnunGraphicsConfig annun_gc) {
         super(model_factory, annun_gc);
@@ -82,32 +70,6 @@ public abstract class AnnunSubcomponent extends Subcomponent {
 
     public abstract void paint(Graphics2D g2);
 
-
-//    public String toString() {
-//        return this.getClass().getName();
-//    }
-
-
-//    protected BufferedImage create_buffered_image(int width, int height) {
-//
-//        GraphicsConfiguration gc = this.parent_component.getGraphicsConfiguration();
-//        BufferedImage buf_img = gc.createCompatibleImage(width, height, Transparency.BITMASK);
-//        return buf_img;
-//
-//    }
-
-
-//    protected Graphics2D get_graphics(BufferedImage buf_img) {
-//
-//        Graphics2D gImg = (Graphics2D)buf_img.getGraphics();
-//        gImg.setComposite(AlphaComposite.Src);
-//        gImg.setColor(new Color(0, 0, 0, 0));
-//        gImg.fillRect(0, 0, buf_img.getWidth(), buf_img.getHeight());
-//        gImg.setRenderingHints(annun_gc.rendering_hints);
-//        gImg.setStroke(new BasicStroke(2.0f));
-//        return gImg;
-//
-//    }
-
+    public abstract void mouseClicked(Graphics2D g2, MouseEvent e);
 
 }

@@ -836,15 +836,13 @@ public class FlightControls extends MFDSubcomponent {
         
         AffineTransform original_at = g2.getTransform();
         
-        g2.setColor(mfd_gc.color_boeingcyan);
+        g2.setColor(mfd_gc.label_color);
         g2.setFont(mfd_gc.font_s);
         g2.drawString("T", mfd_gc.trim_txt_x - mfd_gc.get_text_width(g2, mfd_gc.font_s, "T")/2, mfd_gc.trim_txt_y + mfd_gc.line_height_s*0);
         g2.drawString("R", mfd_gc.trim_txt_x - mfd_gc.get_text_width(g2, mfd_gc.font_s, "R")/2, mfd_gc.trim_txt_y + mfd_gc.line_height_s*1);
         g2.drawString("I", mfd_gc.trim_txt_x - mfd_gc.get_text_width(g2, mfd_gc.font_s, "I")/2, mfd_gc.trim_txt_y + mfd_gc.line_height_s*2);
         g2.drawString("M", mfd_gc.trim_txt_x - mfd_gc.get_text_width(g2, mfd_gc.font_s, "M")/2, mfd_gc.trim_txt_y + mfd_gc.line_height_s*3);
 
-        //g2.setColor(mfd_gc.color_boeingcyan);
-        //g2.setFont(mfd_gc.font_s);
         g2.drawString("ROLL", mfd_gc.lat_trim_x + mfd_gc.lat_trim_w/2 - mfd_gc.get_text_width(g2, mfd_gc.font_s, "ROLL")/2, mfd_gc.lat_trim_y - mfd_gc.line_height_s);
 
         g2.setColor(mfd_gc.dim_markings_color);
@@ -877,7 +875,7 @@ public class FlightControls extends MFDSubcomponent {
         g2.setTransform(original_at);
         
         
-        g2.setColor(mfd_gc.color_boeingcyan);
+        g2.setColor(mfd_gc.label_color);
         g2.setFont(mfd_gc.font_s);
         g2.drawString("YAW", mfd_gc.lat_trim_x + mfd_gc.lat_trim_w/2 - mfd_gc.get_text_width(g2, mfd_gc.font_s, "YAW")/2, mfd_gc.yaw_trim_y - mfd_gc.lat_trim_h*8/100 - mfd_gc.line_height_s);
 
@@ -903,7 +901,7 @@ public class FlightControls extends MFDSubcomponent {
         g2.drawPolygon(yaw_triangle_x, yaw_triangle_y, 3);
 
         
-        g2.setColor(mfd_gc.color_boeingcyan);
+        g2.setColor(mfd_gc.label_color);
         g2.setFont(mfd_gc.font_s);
         g2.drawString("PITCH", mfd_gc.pitch_trim_x, mfd_gc.pitch_trim_y - mfd_gc.line_height_s);
 
@@ -1013,7 +1011,7 @@ public class FlightControls extends MFDSubcomponent {
         g2.fillPolygon(flaps_triangle_x, flaps_triangle_y, 3);
         g2.setTransform(original_at);
         
-        g2.setColor(mfd_gc.color_boeingcyan);
+        g2.setColor(mfd_gc.label_color);
         g2.setFont(mfd_gc.font_s);
         g2.drawString("FLAPS", mfd_gc.wing_x, mfd_gc.wing_y + mfd_gc.line_height_s*10/4);
 
@@ -1063,7 +1061,7 @@ public class FlightControls extends MFDSubcomponent {
             g2.fillPolygon(spdbrk_triangle_x, spdbrk_triangle_y, 3);
             g2.setTransform(original_at);
 
-            g2.setColor(mfd_gc.color_boeingcyan);
+            g2.setColor(mfd_gc.label_color);
             g2.setFont(mfd_gc.font_s);
             g2.drawString("SPEEDBRK", mfd_gc.wing_x, mfd_gc.wing_y - mfd_gc.line_height_s*12/4);
         
@@ -1099,7 +1097,7 @@ public class FlightControls extends MFDSubcomponent {
         if ( this.aircraft.has_retractable_gear() ) {
             
             g2.setFont(mfd_gc.font_s);
-            g2.setColor(mfd_gc.color_boeingcyan);
+            g2.setColor(mfd_gc.label_color);
             g2.drawString("GEAR", mfd_gc.gear_x - mfd_gc.get_text_width(g2, mfd_gc.font_s, "GEAR")/2, mfd_gc.gear_y);
 
             draw_1_gear(g2, 0, "N", mfd_gc.gear_x, mfd_gc.gear_y + mfd_gc.line_height_s*13/8);
@@ -1168,7 +1166,7 @@ public class FlightControls extends MFDSubcomponent {
         }
 
         g2.setFont(mfd_gc.font_s);
-        g2.setColor(mfd_gc.color_boeingcyan);
+        g2.setColor(mfd_gc.label_color);
         g2.drawString("AUTOBRK", mfd_gc.autbrk_x - mfd_gc.get_text_width(g2, mfd_gc.font_s, "AUTOBRK")/2, mfd_gc.autbrk_y);
  
         if ( ( ! on_ground && ( autobrake == -1 ) ) || ( on_ground && ( autobrake > 0 ) ) ) {
@@ -1185,7 +1183,7 @@ public class FlightControls extends MFDSubcomponent {
     }
     
     private void draw_hydraulic(Graphics2D g2) {
-        g2.setColor(mfd_gc.color_boeingcyan);
+        g2.setColor(mfd_gc.label_color);
         g2.setFont(mfd_gc.font_l);
         
         int x_m = mfd_gc.panel_rect.x + mfd_gc.panel_rect.width /2;

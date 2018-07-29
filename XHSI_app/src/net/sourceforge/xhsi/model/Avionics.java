@@ -6,6 +6,7 @@
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
 * Copyright (C) 2018  Nicolas Carel
+* Copyright (C) 2018  Patrick Burkart (pburkartpublic@gmail.com) (Technische Hochschule Ingolstadt)
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -22,6 +23,8 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package net.sourceforge.xhsi.model;
+
+import net.sourceforge.xhsi.XHSIInstrument.DU;
 
 
 public interface Avionics {
@@ -155,6 +158,43 @@ public interface Avionics {
     public static final int WXR_MODE_MAP = 3;
     public static final int WXR_MODE_FORCE_ON = 4;
     
+    /**
+     * Fire Agents
+     * TODO: do not limit to twin engine A/C
+     */
+    public static final int FIRE_AGENT_ENG1_1 = 1;
+    public static final int FIRE_AGENT_ENG1_2 = 2;
+    public static final int FIRE_AGENT_ENG2_1 = 3;
+    public static final int FIRE_AGENT_ENG2_2 = 4;
+    public static final int FIRE_AGENT_APU = 5;
+
+    /**
+     * Fire Status
+     * TODO: do not limit to twin engine A/C
+     */
+    public static final int FIRE_STATUS_ENG_1 = 1;
+    public static final int FIRE_STATUS_ENG_2 = 2;
+    public static final int FIRE_STATUS_APU = 3;
+    
+    /**
+     * Flight control computers (Airbus A320)
+     * - ELAC: Elevator Aileron Computers
+     * - SEC: Spoiler Elevator Computers
+     * - FAC: Flight Augmentation Computers
+     * Flight control computers (Airbus A330/340)
+     * - FCPC: flight control primary computers
+     * - FCSC: flight control secondary computers
+     * Flight control computers (Airbus A350/380)
+     * - PRIM: Primary Flight Control and Guidance Computers
+     * - SEC: Secondary Flight Control Computers
+     * - SFCC: Slats & Flaps Control Computers
+     * Flight control computers (Boeing 777)
+     * - ACE: Actuator Control Electronics
+     * - PFC: Primary Flight Computers
+     */
+    public enum FCC {
+        ELAC1, ELAC2, SEC1, SEC2, SEC3, FAC1, FAC2
+    }
     
     /**
      * @return int - general instrument style STYLE_BOEING, STYLE_AIRBUS
@@ -171,6 +211,18 @@ public interface Avionics {
      */
     public boolean power();
 
+    /**
+     * @return boolean - Display Unit Power
+     */
+    public boolean du_power(DU display_unit);
+    public boolean du_power(DU display_unit, InstrumentSide side);      
+  
+    /**
+     * @return float - Display Unit Brightness [range from 0.0f to 1.0f]
+     */
+    public float du_brightness(DU display_unit);
+    public float du_brightness(DU display_unit, InstrumentSide side);      
+    
     /**
      * @return boolean - is OM lit?
      */
@@ -855,6 +907,7 @@ public interface Avionics {
     public float cl30_mast_warn();
     public float cl30_mast_caut();
 
+    // QPAC Airbus Logic
     public boolean is_qpac();
     public int qpac_version();
     
@@ -961,6 +1014,36 @@ public interface Avionics {
      * @return boolean - True is FFC #pos is active ; False if failed
      */    
     public boolean qpac_fcc(int pos);
+    
+    /**
+     * @return boolean - True is FFC #pos is active ; False if failed
+     */
+    public boolean qpac_fcc(FCC pos);
+
+    /**
+     * Returns true if the specified FCC is on, false if it is off, false if no
+     * airbus is active.
+     *
+     * @param pos The FCC the information is requested for
+     * @return true if the specified FCC is on, false if it is off, false if no
+     * airbus is active.
+     */
+    public boolean fcc(FCC pos);
+
+    /**
+     * Returns true if the currently selected aircraft is either the QPAC A320,
+     * the FF A320 or the JAR A320 Neo.
+     *
+     * @return
+     */
+    public boolean is_airbus();
+
+    // Flight Factor A320
+    public boolean is_ff_a320();
+
+    public boolean ff_a320_fcc_off(FCC flightComputer);
+
+    public boolean ff_a320_fcc_fault(FCC flightComputer);
     
     // JARDesign A320 Neo
     public boolean is_jar_a320neo();

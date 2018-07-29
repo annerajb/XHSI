@@ -22,6 +22,8 @@
 */
 package net.sourceforge.xhsi.model;
 
+import java.awt.Color;
+
 
 public interface Aircraft {
 	
@@ -80,6 +82,58 @@ public interface Aircraft {
      */
     public boolean cockpit_lights();
 
+    /**
+     * Gives the light of the inside of the cockpit as color. The RGB values are
+     * returned by the simulator, complete darkness would be RGB(0,0,0). At
+     * night, depending on the aircraft weather conditions, these values are
+     * relatively low. The returned color can be multiplied with the background
+     * color of the panel to achieve a nice dimming effect. Multiplying can be
+     * achieved using the
+     * {@link net.sourceforge.xhsi.util.ColorUtilities#multiply(java.awt.Color, java.awt.Color)}
+     * method.
+     *
+     * @return The color of the cockpit light.
+     */
+    public Color cockpit_light_color();
+
+    /**
+     * Gives the light level of the inside of the cockpit in percent. Whenever
+     * one needs to know how much light comes into the cockpit, this is probably
+     * the value you're looking for. 100% corresponds to a value of 0.798026 for
+     * the dataref 'sim/graphics/misc/cockpit_light_level_r', which is achieved
+     * at best weather and noon. 0% is at midnight and worst weather conditions
+     * imaginable and corresponds to the same dataref with the value 0.089363.
+     *
+     * @return The level of the cockpit light.
+     */
+    public double cockpit_light_level();
+
+    /**
+     * Gives the light outside the aircraft as color. The RGB values are
+     * returned by the simulator, complete darkness would be RGB(0,0,0). At
+     * night, depending on the aircraft and weather conditions, these values are
+     * relatively low. The returned color can be multiplied with the background
+     * color of the panel to achieve a nice dimming effect. Multiplying can be
+     * achieved using the
+     * {@link net.sourceforge.xhsi.util.ColorUtilities#multiply(java.awt.Color, java.awt.Color)}
+     * method.
+     *
+     * @return The color of the cockpit light.
+     */
+    public Color outside_light_color();
+
+    /**
+     * Gives the light level outside the aircraft in percent. Whenever one needs
+     * to know how much light is on your exterior, this is probably the value
+     * you're looking for. 100% corresponds to a value of 0.798026 for the
+     * dataref 'sim/graphics/misc/outside_light_level_r', which is achieved at
+     * best weather and noon. 0% is at midnight and worst weather conditions
+     * imaginable and corresponds to the same dataref with the value 0.0.
+     *
+     * @return The level of the cockpit light.
+     */
+    public double outside_light_level();
+    
     /**
      * @return float - latitude in degrees
      */
