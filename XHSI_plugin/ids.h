@@ -280,7 +280,9 @@
 #define SIM_TIME_DATE 312
 #define XHSI_TIME_UTC_SOURCE 313
 #define XHSI_TIME_ET_RUNNING 314
-
+// Ambient Light
+#define SIM_GRAPHICS_MISC_COCKPIT_LIGHT_LEVEL_RGB 315
+#define SIM_GRAPHICS_MISC_OUTSIDE_LIGHT_LEVEL_RGB 316
 
 // Aircraft constants
 #define SIM_AIRCRAFT_VIEW_ACF_VSO 320
@@ -563,12 +565,14 @@
 #define XHSI_DU_BRIGHT_CDU_CPT 920
 #define XHSI_DU_BRIGHT_CDU_FO 921
 #define XHSI_DU_BRIGHT_CDU_OBS 922
+// This 3 values are for future DU and Raspberry Pi SPI/i2C displays
 #define XHSI_DU_BRIGHT_FCU 923
 #define XHSI_DU_BRIGHT_OHP 924
 #define XHSI_DU_BRIGHT_PEDESTAL 925
+// The dome is defined by SIM_COCKPIT_ELECTRICAL_COCKPIT_LIGHT - will be renamed
 #define XHSI_DU_BRIGHT_DOME 926
 #define XHSI_DU_BRIGHT_TABLET 927
-// Reserved to Lights and Brightness u 910 - 929
+// Reserved to Lights and Brightness u 910 - 939
 
 
 // Side stick priority - xjoymap dual commands

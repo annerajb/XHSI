@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <math.h>
 
 #define XPLM200 1
 
@@ -545,6 +546,7 @@ int createAuxiliarySystemsPacket(void) {
 	int lights_signs;
 	int sim_date;
 	int clock_date;
+	int rgb_light;
 
     strncpy(sim_packet.packet_id, "AUXS", 4);
 
@@ -724,6 +726,64 @@ int createAuxiliarySystemsPacket(void) {
     i++;
     sim_packet.sim_data_points[i].id = custom_htoni(XHSI_TIME_ET_RUNNING);
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(xhsi_et_running));
+    i++;
+
+    /*
+     * Instruments brightness
+     * Precision is limited to 2 digits to prevents DU brightness oscillations.
+     */
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_ELECTRICAL_INSTRUMENT_BRIGHTNESS);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(cockpit_instrument_brightness));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_ELECTRICAL_COCKPIT_LIGHT);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(cockpit_lights));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_COCKPIT_ELECTRICAL_HUD_BRIGHTNESS);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(cockpit_hud_brightness));
+    i++;
+
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_DU_BRIGHT_PFD_CPT);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(efis_pilot_pfd_brightness));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_DU_BRIGHT_ND_CPT);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(efis_pilot_nd_brightness));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_DU_BRIGHT_PFD_FO);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(efis_copilot_pfd_brightness));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_DU_BRIGHT_ND_FO);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(efis_copilot_nd_brightness));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_DU_BRIGHT_EICAS);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(eicas_brightness));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_DU_BRIGHT_MFD);
+    sim_packet.sim_data_points[i].value = custom_htonf(round(XPLMGetDataf(mfd_brightness)*100)/100);
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_DU_BRIGHT_CLOCK);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(xhsi_clock_brightness));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_DU_BRIGHT_CDU_CPT);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(cdu_pilot_brightness));
+    i++;
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_DU_BRIGHT_CDU_FO);
+    sim_packet.sim_data_points[i].value = custom_htonf(XPLMGetDataf(cdu_copilot_brightness));
+    i++;
+
+    /*
+     * Ambient light
+     */
+    rgb_light = (((int)(XPLMGetDataf(sim_graphics_misc_cockpit_light_level_r)*255)) & 0xFF) << 16 |
+    		(((int)(XPLMGetDataf(sim_graphics_misc_cockpit_light_level_g)*255)) & 0xFF) << 8 |
+    				(((int)(XPLMGetDataf(sim_graphics_misc_cockpit_light_level_b)*255)) & 0xFF) ;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_GRAPHICS_MISC_COCKPIT_LIGHT_LEVEL_RGB);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) rgb_light);
+    i++;
+    rgb_light = (((int)(XPLMGetDataf(sim_graphics_misc_outside_light_level_r)*255)) & 0xFF) << 16 |
+    		(((int)(XPLMGetDataf(sim_graphics_misc_outside_light_level_g)*255)) & 0xFF) << 8 |
+    				(((int)(XPLMGetDataf(sim_graphics_misc_outside_light_level_b)*255)) & 0xFF) ;
+    sim_packet.sim_data_points[i].id = custom_htoni(SIM_GRAPHICS_MISC_OUTSIDE_LIGHT_LEVEL_RGB);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) rgb_light);
     i++;
 
     // now we know the number of datapoints
