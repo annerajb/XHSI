@@ -43,12 +43,14 @@ XPLMDataRef xhsi_rwy_units;
 XPLMDataRef xhsi_rtu_selected_radio;
 
 // custom datarefs - common clock and timer
+XPLMDataRef xhsi_clock_brightness;
 XPLMDataRef xhsi_utc_selector;
 XPLMDataRef xhsi_et_running;
 XPLMDataRef xhsi_et_frozen_time;
 XPLMDataRef xhsi_show_date;
 
 // custom datarefs - EICAS
+XPLMDataRef eicas_brightness;
 XPLMDataRef engine_type;
 XPLMDataRef trq_scale;
 XPLMDataRef fuel_units;
@@ -56,11 +58,14 @@ XPLMDataRef temp_units;
 XPLMDataRef override_trq_max;
 
 // custom datarefs - MFD
+XPLMDataRef mfd_brightness;
 XPLMDataRef mfd_mode;
 XPLMDataRef mfd_fuel_used;
 XPLMDataRef mfd_crew_oxy_psi;
 
 // custom datarefs - CDU
+XPLMDataRef cdu_pilot_brightness;
+XPLMDataRef cdu_copilot_brightness;
 XPLMDataRef cdu_pilot_source;
 XPLMDataRef cdu_copilot_source;
 XPLMDataRef cdu_pilot_side;
@@ -72,6 +77,8 @@ XPLMDataRef egpws_gs_mode;
 XPLMDataRef egpws_sys;
 
 // custom datarefs - pilot
+XPLMDataRef efis_pilot_nd_brightness;
+XPLMDataRef efis_pilot_pfd_brightness;
 XPLMDataRef efis_pilot_shows_stas;
 XPLMDataRef efis_pilot_shows_data;
 XPLMDataRef efis_pilot_shows_pos;
@@ -98,6 +105,8 @@ XPLMDataRef efis_pilot_wxr_alert;
 XPLMDataRef efis_pilot_wxr_target;
 
 // custom datarefs - copilot
+XPLMDataRef efis_copilot_nd_brightness;
+XPLMDataRef efis_copilot_pfd_brightness;
 XPLMDataRef efis_copilot_map_range_selector;
 XPLMDataRef efis_copilot_dme_1_selector;
 XPLMDataRef efis_copilot_dme_2_selector;
@@ -201,15 +210,37 @@ XPLMDataRef sim_op_fail_rel_tire8;
 XPLMDataRef sim_op_fail_rel_tire9;
 XPLMDataRef sim_op_fail_rel_tire10;
 
-XPLMDataRef avionics_on;
-XPLMDataRef battery_on;
-XPLMDataRef cockpit_lights_on;
+
+
+/*
+ * Lights
+ */
 
 XPLMDataRef beacon_lights_on;
 XPLMDataRef landing_lights_on;
 XPLMDataRef nav_lights_on;
 XPLMDataRef strobe_lights_on;
 XPLMDataRef taxi_light_on;
+
+/*
+ * Instruments and cockpit lights
+ */
+XPLMDataRef cockpit_lights_on;                    // sim/cockpit/electrical/cockpit_lights_on [boolean]
+XPLMDataRef cockpit_lights;                       // sim/cockpit/electrical/cockpit_lights [float 0 - 1 range]
+XPLMDataRef cockpit_instrument_brightness;        // sim/cockpit/electrical/instrument_brightness (float 0 - 1 range)
+XPLMDataRef cockpit_hud_brightness;               // sim/cockpit/electrical/HUD_brightness (float 0 - 1 range)
+XPLMDataRef cockpit_instrument_brightness_ratio;  // sim/cockpit2/electrical/instrument_brightness_ratio_manual (array[16])
+XPLMDataRef cockpit_panel_brightness_ratio;       // sim/cockpit2/electrical/instrument_brightness_ratio_manual (array[16])
+
+/*
+ * Ambient light
+ */
+XPLMDataRef sim_graphics_misc_cockpit_light_level_r;
+XPLMDataRef sim_graphics_misc_cockpit_light_level_g;
+XPLMDataRef sim_graphics_misc_cockpit_light_level_b;
+XPLMDataRef sim_graphics_misc_outside_light_level_r;
+XPLMDataRef sim_graphics_misc_outside_light_level_g;
+XPLMDataRef sim_graphics_misc_outside_light_level_b;
 
 // For the ECAM messages no smoking and belts + light switches commands
 XPLMDataRef  landing_lights; 	// sim/cockpit2/switches/landing_lights_on boolean
@@ -480,28 +511,31 @@ XPLMDataRef  bleed_air_off;  // sim/cockpit2/annunciators/bleed_air_off [8]
 
 // Electrical
 // Aircraft constants
-XPLMDataRef  acf_batteries; 	// sim/aircraft/electrical/num_batteries integer
-XPLMDataRef  acf_buses; 		// sim/aircraft/electrical/num_buses integer
-XPLMDataRef  acf_generators; 	// sim/aircraft/electrical/num_generators integer
-XPLMDataRef  acf_inverters; 	// sim/aircraft/electrical/num_inverters integer
+XPLMDataRef acf_batteries; 	// sim/aircraft/electrical/num_batteries integer
+XPLMDataRef acf_buses; 		// sim/aircraft/electrical/num_buses integer
+XPLMDataRef acf_generators; // sim/aircraft/electrical/num_generators integer
+XPLMDataRef acf_inverters; 	// sim/aircraft/electrical/num_inverters integer
+
+XPLMDataRef avionics_on;
+XPLMDataRef battery_on;
 // Batteries
-XPLMDataRef  elec_battery_on; 				// sim/cockpit2/electrical/battery_on boolean [0/8]
-XPLMDataRef  elec_battery_amps; 			// sim/cockpit2/electrical/battery_amps float [0/8]
-XPLMDataRef  elec_voltage_actual_volts; 	// sim/cockpit2/electrical/battery_actual_volts float [0/8]
-XPLMDataRef  elec_voltage_indicated_volts; 	// sim/cockpit2/electrical/battery_indicated_volts float [0/8]
+XPLMDataRef elec_battery_on; 				// sim/cockpit2/electrical/battery_on boolean [0/8]
+XPLMDataRef elec_battery_amps; 				// sim/cockpit2/electrical/battery_amps float [0/8]
+XPLMDataRef elec_voltage_actual_volts; 		// sim/cockpit2/electrical/battery_actual_volts float [0/8]
+XPLMDataRef elec_voltage_indicated_volts; 	// sim/cockpit2/electrical/battery_indicated_volts float [0/8]
 // Generator
-XPLMDataRef  elec_generator_on; 	// sim/cockpit2/electrical/generator_on boolean [0/8]
-XPLMDataRef  elec_generator_amps; 	// sim/cockpit2/electrical/generator_amps float [0/8]
+XPLMDataRef elec_generator_on; 		// sim/cockpit2/electrical/generator_on boolean [0/8]
+XPLMDataRef elec_generator_amps; 	// sim/cockpit2/electrical/generator_amps float [0/8]
 // GPU
-XPLMDataRef  elec_gpu_on; 			// sim/cockpit2/electrical/generator_on boolean
-XPLMDataRef  elec_gpu_amps; 		// sim/cockpit2/electrical/generator_on boolean
+XPLMDataRef elec_gpu_on; 			// sim/cockpit2/electrical/generator_on boolean
+XPLMDataRef elec_gpu_amps; 			// sim/cockpit2/electrical/generator_on boolean
 // Inverters
-XPLMDataRef  elec_inverter_on; 		// sim/cockpit2/electrical/inverter_on boolean [0/2]
+XPLMDataRef elec_inverter_on; 		// sim/cockpit2/electrical/inverter_on boolean [0/2]
 // Buses
-XPLMDataRef  elec_bus_load_amps; 	// sim/cockpit2/electrical/bus_load_amps float [0/6]
-XPLMDataRef  elec_bus_volts; 		// sim/cockpit2/electrical/bus_volts float [0/6]
+XPLMDataRef elec_bus_load_amps; 	// sim/cockpit2/electrical/bus_load_amps float [0/6]
+XPLMDataRef elec_bus_volts; 		// sim/cockpit2/electrical/bus_volts float [0/6]
 // RAM air turbin
-XPLMDataRef  ram_air_turbin; 		// sim/cockpit2/switches/ram_air_turbin_on boolean
+XPLMDataRef ram_air_turbin; 		// sim/cockpit2/switches/ram_air_turbin_on boolean
 
 
 
@@ -1576,9 +1610,70 @@ void setEgpwsSystem(void* inRefcon, int inValue)
 	epgws_system = inValue != 0 ? 1 : 0;
 }
 
+float brightness[16];
+#define BRIGHTNESS_PFD_CPT 0
+#define BRIGHTNESS_ND_CPT 1
+#define BRIGHTNESS_PFD_FO 2
+#define BRIGHTNESS_ND_FO 3
+#define BRIGHTNESS_EICAS 4
+#define BRIGHTNESS_MFD 5
+#define BRIGHTNESS_CLOCK 6
+#define BRIGHTNESS_CDU_CPT 7
+#define BRIGHTNESS_CDU_FO 8
+#define BRIGHTNESS_CDU_OBS 9
+#define BRIGHTNESS_FCU 10
+#define BRIGHTNESS_OHP 11
+#define BRIGHTNESS_PEDESTAL 12
+
+float getBrightnessPFDCaptain(void* inRefcon) { return brightness[BRIGHTNESS_PFD_CPT]; }
+float getBrightnessNDCaptain(void* inRefcon) { return brightness[BRIGHTNESS_ND_CPT]; }
+float getBrightnessPFDCopilot(void* inRefcon) { return brightness[BRIGHTNESS_PFD_FO]; }
+float getBrightnessNDCopilot(void* inRefcon) { return brightness[BRIGHTNESS_ND_FO]; }
+float getBrightnessEICAS(void* inRefcon) { return brightness[BRIGHTNESS_EICAS]; }
+float getBrightnessMFD(void* inRefcon) { return brightness[BRIGHTNESS_MFD]; }
+float getBrightnessClock(void* inRefcon) { return brightness[BRIGHTNESS_CLOCK]; }
+float getBrightnessCDUCaptain(void* inRefcon) { return brightness[BRIGHTNESS_CDU_CPT]; }
+float getBrightnessCDUCopilot(void* inRefcon) { return brightness[BRIGHTNESS_CDU_FO]; }
+float getBrightnessCDUObserver(void* inRefcon) { return brightness[BRIGHTNESS_CDU_OBS]; }
+float getBrightnessFCU(void* inRefcon) { return brightness[BRIGHTNESS_FCU]; }
+float getBrightnessOHP(void* inRefcon) { return brightness[BRIGHTNESS_OHP]; }
+float getBrightnessPedestal(void* inRefcon) { return brightness[BRIGHTNESS_PEDESTAL]; }
+
+void setBrightnessPFDCaptain(void* inRefcon, float inValue) { brightness[BRIGHTNESS_PFD_CPT] = inValue; }
+void setBrightnessNDCaptain(void* inRefcon, float inValue) { brightness[BRIGHTNESS_ND_CPT] = inValue; }
+void setBrightnessPFDCopilot(void* inRefcon, float inValue) { brightness[BRIGHTNESS_PFD_FO] = inValue; }
+void setBrightnessNDCopilot(void* inRefcon, float inValue) { brightness[BRIGHTNESS_ND_FO] = inValue; }
+void setBrightnessEICAS(void* inRefcon, float inValue) { brightness[BRIGHTNESS_EICAS] = inValue; }
+void setBrightnessMFD(void* inRefcon, float inValue) { brightness[BRIGHTNESS_MFD] = inValue; }
+void setBrightnessClock(void* inRefcon, float inValue) { brightness[BRIGHTNESS_CLOCK] = inValue; }
+void setBrightnessCDUCaptain(void* inRefcon, float inValue) { brightness[BRIGHTNESS_CDU_CPT] = inValue; }
+void setBrightnessCDUCopilot(void* inRefcon, float inValue) { brightness[BRIGHTNESS_CDU_FO] = inValue; }
+void setBrightnessCDUObserver(void* inRefcon, float inValue) { brightness[BRIGHTNESS_CDU_OBS] = inValue; }
+void setBrightnessFCU(void* inRefcon, float inValue) { brightness[BRIGHTNESS_FCU] = inValue; }
+void setBrightnessOHP(void* inRefcon, float inValue) { brightness[BRIGHTNESS_OHP] = inValue; }
+void setBrightnessPedestal(void* inRefcon, float inValue) {	brightness[BRIGHTNESS_PEDESTAL] = inValue; }
+
+
+
 void registerPilotDataRefs(void) {
 
     XPLMDebugString("XHSI: registering custom pilot DataRefs\n");
+
+    // xhsi/nd_pilot/brightness
+    efis_pilot_nd_brightness = XPLMRegisterDataAccessor("xhsi/nd_pilot/brightness",
+                                        xplmType_Float,                                  // The types we support
+                                        1,                                               // Writable
+                                        NULL, NULL,
+                                        getBrightnessNDCaptain, setBrightnessNDCaptain, // Float accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+    // xhsi/pfd_pilot/brightness
+    efis_pilot_pfd_brightness = XPLMRegisterDataAccessor("xhsi/pfd_pilot/brightness",
+                                        xplmType_Float,                                  // The types we support
+                                        1,                                               // Writable
+                                        NULL, NULL,
+                                        getBrightnessPFDCaptain, setBrightnessPFDCaptain, // Float accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
     // xhsi/nd_pilot/sta
     efis_pilot_shows_stas = XPLMRegisterDataAccessor("xhsi/nd_pilot/sta",
@@ -1792,6 +1887,22 @@ void registerPilotDataRefs(void) {
 void registerCopilotDataRefs(void) {
 
     XPLMDebugString("XHSI: registering custom copilot DataRefs\n");
+
+    // xhsi/nd_copilot/brightness
+    efis_copilot_nd_brightness = XPLMRegisterDataAccessor("xhsi/nd_copilot/brightness",
+                                        xplmType_Float,                                  // The types we support
+                                        1,                                               // Writable
+                                        NULL, NULL,
+                                        getBrightnessNDCopilot, setBrightnessNDCopilot, // Float accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+    // xhsi/pfd_copilot/brightness
+    efis_copilot_pfd_brightness = XPLMRegisterDataAccessor("xhsi/pfd_copilot/brightness",
+                                        xplmType_Float,                                  // The types we support
+                                        1,                                               // Writable
+                                        NULL, NULL,
+                                        getBrightnessPFDCopilot, setBrightnessPFDCopilot, // Float accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
     // xhsi/nd_copilot/map_range
     efis_copilot_map_range_selector = XPLMRegisterDataAccessor("xhsi/nd_copilot/map_range",
@@ -2127,6 +2238,14 @@ void registerGeneralDataRefs(void) {
                                         getSelectedRadio, setSelectedRadio,            // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
+    // xhsi/clock/brightness
+    xhsi_clock_brightness = XPLMRegisterDataAccessor("xhsi/clock/brightness",
+                                        xplmType_Float,                                  // The types we support
+                                        1,                                               // Writable
+                                        NULL, NULL,
+                                        getBrightnessClock, setBrightnessClock,          // Float accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
     // xhsi/clock/utc_selector
     xhsi_utc_selector = XPLMRegisterDataAccessor("xhsi/clock/utc_selector",
                                         xplmType_Int,                                  // The types we support
@@ -2211,6 +2330,14 @@ void registerEICASDataRefs(void) {
 
     XPLMDebugString("XHSI: registering custom EICAS DataRefs\n");
 
+    // xhsi/eicas/brightness
+    eicas_brightness = XPLMRegisterDataAccessor("xhsi/eicas/brightness",
+                                        xplmType_Float,                                  // The types we support
+                                        1,                                               // Writable
+                                        NULL, NULL,
+                                        getBrightnessEICAS, setBrightnessEICAS,          // Float accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
     // xhsi/eicas/engine_type
     engine_type = XPLMRegisterDataAccessor("xhsi/eicas/engine_type",
                                         xplmType_Int,                                  // The types we support
@@ -2256,10 +2383,18 @@ void registerMFDDataRefs(void) {
 
     XPLMDebugString("XHSI: registering custom MFD DataRefs\n");
 
+    // xhsi/mfd/brightness
+    mfd_brightness = XPLMRegisterDataAccessor("xhsi/mfd/brightness",
+                                        xplmType_Float,                                  // The types we support
+                                        1,                                               // Writable
+                                        NULL, NULL,
+                                        getBrightnessMFD, setBrightnessMFD,              // Float accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
     // xhsi/mfd/mode
     mfd_mode = XPLMRegisterDataAccessor("xhsi/mfd/mode",
-                                        xplmType_Int,                                  // The types we support
-                                        1,                                                   // Writable
+                                        xplmType_Int,                // The types we support
+                                        1,                           // Writable
                                         getMFDMode, setMFDMode,      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
@@ -2290,6 +2425,22 @@ void registerMFDDataRefs(void) {
 void registerCDUDataRefs(void) {
 
     XPLMDebugString("XHSI: registering custom CDU DataRefs\n");
+
+    // xhsi/cdu_pilot/brightness
+    cdu_pilot_brightness = XPLMRegisterDataAccessor("xhsi/cdu_pilot/brightness",
+                                        xplmType_Float,                                  // The types we support
+                                        1,                                               // Writable
+                                        NULL, NULL,
+                                        getBrightnessCDUCaptain, setBrightnessCDUCaptain, // Float accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+    // xhsi/cdu_copilot/brightness
+    cdu_copilot_brightness = XPLMRegisterDataAccessor("xhsi/cdu_copilot/brightness",
+                                        xplmType_Float,                                  // The types we support
+                                        1,                                               // Writable
+                                        NULL, NULL,
+                                        getBrightnessCDUCopilot, setBrightnessCDUCopilot, // Float accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
     // xhsi/cdu_pilot/source
     cdu_pilot_source = XPLMRegisterDataAccessor("xhsi/cdu_pilot/source",
@@ -2335,12 +2486,18 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/style");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rwy_length_min");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rwy_units");
+
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/brightness");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/mode");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/fuel_used");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/mfd/crew_oxy_psi");
+
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu_pilot/brightness");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu_copilot/brightness");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu_pilot/source");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu_copilot/source");
-        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu_side");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu_pilot/side");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/cdu_copilot/side");
         // TODO: EGPWS
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/engine_type");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_scale");
@@ -2348,6 +2505,8 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/temp_units");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/eicas/trq_max_lbft");
 
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/brightness");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_pilot/brightness");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/sta");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/data");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_pilot/pos");
@@ -2370,6 +2529,8 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_pilot/da_bug");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_pilot/mins_mode");
 
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/brightness");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/brightness");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/map_range");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/radio1");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/nd_copilot/radio2");
@@ -2405,6 +2566,7 @@ float notifyDataRefEditorCallback(
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/pfd_copilot/mins_mode");
 //        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rtu/contact_atc");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/rtu/selected_radio");
+        XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/clock/brightness");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/clock/utc_selector");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/clock/et_running");
         XPLMSendMessageToPlugin(PluginID, MSG_ADD_DATAREF, (void*)"xhsi/clock/et_frozen_time");
@@ -2442,6 +2604,9 @@ float initGeneralCallback(
     // No radio selected in the RTU
     XPLMSetDatai(xhsi_rtu_selected_radio, 0);
 
+    // Clock Brightness set to MAX
+    XPLMSetDataf(xhsi_clock_brightness, 1.0f);
+
     // UTC Selector is in GPS position (0=GPS, 1=INT, 2=SET)
     XPLMSetDatai(xhsi_utc_selector,0);
 
@@ -2466,6 +2631,12 @@ float initPilotCallback(
     XPLMDebugString("XHSI: initializing custom pilot DataRefs\n");
 
     // set reasonable defaults for the pilot's ND
+
+    // ND Brightness set to MAX
+    XPLMSetDataf(efis_pilot_nd_brightness, 1.0f);
+
+    // PFD Brightness set to MAX
+    XPLMSetDataf(efis_pilot_pfd_brightness, 1.0f);
 
     // STA on
     XPLMSetDatai(efis_pilot_shows_stas, 1);
@@ -2556,6 +2727,12 @@ float initCopilotCallback(
     XPLMDebugString("XHSI: initializing custom copilot DataRefs\n");
 
     // set reasonable defaults for the copilot's ND
+
+    // ND Brightness set to MAX
+    XPLMSetDataf(efis_copilot_nd_brightness, 1.0f);
+
+    // PFD Brightness set to MAX
+    XPLMSetDataf(efis_copilot_pfd_brightness, 1.0f);
 
     // map range 40
     XPLMSetDatai(efis_copilot_map_range_selector, 2);
@@ -2719,15 +2896,24 @@ float initEICASCallback(
 
     // set some defaults...
 
+    // EICAS Brightness set to MAX
+    XPLMSetDataf(eicas_brightness, 1.0f);
+
     // type 0 = N1 / 1 = EPR / 2 = TRQ / 3 = MAP
     XPLMSetDatai(engine_type, 0);
 
 	// scale 0 = LbFt, 1 = Nm, 2 = %
     XPLMSetDatai(trq_scale, 0);
 
+    // xhsi/eicas/fuel_units
+    XPLMSetDatai(fuel_units,0);
+
+    // xhsi/eicas/temp_units
+    // Set to Celcius
+    XPLMSetDatai(temp_units,0);
+
 	// don't override the maximum torque that X-Plane calculates
 	XPLMSetDataf(override_trq_max, 0.0f);
-
 
     XPLMDebugString("XHSI: custom EICAS DataRefs initialized\n");
 
@@ -2744,6 +2930,9 @@ float initMFDCallback(
 	float zero_tab[8]= { 0,0,0,0,0,0,0,0 };
 
     XPLMDebugString("XHSI: initializing custom MFD DataRefs\n");
+
+    // MFD Brightness set to MAX
+    XPLMSetDataf(mfd_brightness, 1.0f);
 
     // set a default for the MFD mode
 
@@ -2765,10 +2954,6 @@ float initMFDCallback(
 	// TODO: Init value should be read from XHSI Aircraft preference file
 	XPLMSetDataf(mfd_crew_oxy_psi, 1850.0f);
 
-	// xhsi/temp_units
-	// Set to Celcius
-    XPLMSetDatai(temp_units, 0);
-
 	XPLMDebugString("XHSI: custom MFD DataRefs initialized\n");
 
     return 0.0f;
@@ -2783,6 +2968,12 @@ float initCDUCallback(
 									void *	inRefcon) {
 
     XPLMDebugString("XHSI: initializing custom CDU DataRefs\n");
+
+    // CDU Brightness Pilot set to MAX
+    XPLMSetDataf(cdu_pilot_brightness, 1.0f);
+
+    // CDU Brightness CoPilot set to MAX
+    XPLMSetDataf(cdu_copilot_brightness, 1.0f);
 
     // set a default for the CDU source
 
@@ -2801,6 +2992,12 @@ float initCDUCallback(
 
 
 void unregisterPilotDataRefs(void) {
+
+    // xhsi/nd_pilot/brightness
+	XPLMUnregisterDataAccessor(efis_pilot_nd_brightness);
+
+    // xhsi/pfd_pilot/brightness
+	XPLMUnregisterDataAccessor(efis_pilot_pfd_brightness);
 
     // xhsi/nd_pilot/sta
     XPLMUnregisterDataAccessor(efis_pilot_shows_stas);
@@ -2877,6 +3074,12 @@ void unregisterPilotDataRefs(void) {
 
 
 void unregisterCopilotDataRefs(void) {
+
+    // xhsi/nd_copilot/brightness
+	XPLMUnregisterDataAccessor(efis_copilot_nd_brightness);
+
+    // xhsi/pfd_copilot/brightness
+	XPLMUnregisterDataAccessor(efis_copilot_pfd_brightness);
 
     // xhsi/nd_copilot/map_range
     XPLMUnregisterDataAccessor(efis_copilot_map_range_selector);
@@ -3001,6 +3204,9 @@ void unregisterGeneralDataRefs(void) {
     // xhsi/rtu/selected_radio
     XPLMUnregisterDataAccessor(xhsi_rtu_selected_radio);
     
+    // xhsi/clock/brightness
+    XPLMUnregisterDataAccessor(xhsi_clock_brightness);
+
     // xhsi/clock/utc_selector
     XPLMUnregisterDataAccessor(xhsi_utc_selector);
 
@@ -3036,15 +3242,29 @@ void unregisterWeatherRadarDataRefs(void) {
 
 void unregisterEICASDataRefs(void) {
 
+	// xhsi/eicas/brightness
+	XPLMUnregisterDataAccessor(eicas_brightness);
+
     // xhsi/eicas/engine_type
     XPLMUnregisterDataAccessor(engine_type);
 
     // xhsi/eicas/trq_scale
     XPLMUnregisterDataAccessor(trq_scale);
 
+    // xhsi/eicas/fuel_units
+    XPLMUnregisterDataAccessor(fuel_units);
+
+    // xhsi/eicas/temp_units
+    XPLMUnregisterDataAccessor(temp_units);
+
+	// xhsi/eicas/trq_max_lbft
+    XPLMUnregisterDataAccessor(override_trq_max);
 }
 
 void unregisterMFDDataRefs(void) {
+
+    // xhsi/mfd/brightness
+	XPLMUnregisterDataAccessor(mfd_brightness);
 
     // xhsi/mfd/mode
     XPLMUnregisterDataAccessor(mfd_mode);
@@ -3058,6 +3278,12 @@ void unregisterMFDDataRefs(void) {
 }
 
 void unregisterCDUDataRefs(void) {
+
+    // xhsi/cdu_pilot/brightness
+	XPLMUnregisterDataAccessor(cdu_pilot_brightness);
+
+    // xhsi/cdu_copilot/brightness
+	XPLMUnregisterDataAccessor(cdu_copilot_brightness);
 
     // xhsi/cdu_pilot/source
     XPLMUnregisterDataAccessor(cdu_pilot_source);
@@ -3180,6 +3406,20 @@ void findDataRefs(void) {
     avionics_on = XPLMFindDataRef("sim/cockpit/electrical/avionics_on");
     battery_on = XPLMFindDataRef("sim/cockpit/electrical/battery_on");
     cockpit_lights_on = XPLMFindDataRef("sim/cockpit/electrical/cockpit_lights_on");
+
+    cockpit_lights = XPLMFindDataRef("sim/cockpit/electrical/cockpit_lights");
+    cockpit_instrument_brightness = XPLMFindDataRef("sim/cockpit/electrical/instrument_brightness");
+    cockpit_hud_brightness = XPLMFindDataRef("sim/cockpit/electrical/HUD_brightness");
+    cockpit_instrument_brightness_ratio = XPLMFindDataRef("sim/cockpit2/electrical/instrument_brightness_ratio_manual");
+    cockpit_panel_brightness_ratio = XPLMFindDataRef("sim/cockpit2/electrical/instrument_brightness_ratio_manual");
+
+    // Ambient light
+	sim_graphics_misc_cockpit_light_level_r = XPLMFindDataRef("sim/graphics/misc/cockpit_light_level_r");
+	sim_graphics_misc_cockpit_light_level_g = XPLMFindDataRef("sim/graphics/misc/cockpit_light_level_g");
+	sim_graphics_misc_cockpit_light_level_b = XPLMFindDataRef("sim/graphics/misc/cockpit_light_level_b");
+	sim_graphics_misc_outside_light_level_r = XPLMFindDataRef("sim/graphics/misc/outside_light_level_r");
+	sim_graphics_misc_outside_light_level_g = XPLMFindDataRef("sim/graphics/misc/outside_light_level_g");
+	sim_graphics_misc_outside_light_level_b = XPLMFindDataRef("sim/graphics/misc/outside_light_level_b");
 
     // Lights
     beacon_lights_on = XPLMFindDataRef("sim/cockpit/electrical/beacon_lights_on");

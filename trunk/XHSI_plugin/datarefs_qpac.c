@@ -310,8 +310,15 @@ XPLMDataRef qpac_wpt_id_capt;
 XPLMDataRef qpac_wpt_id_fo;
 
 
-//qpac FCU toggles, push/pull commands, RMP, MCDU
+// qpac FCU toggles, push/pull commands, RMP, MCDU
 XPLMCommandRef qpac_command[QPAC_KEY_MAX];
+
+/**
+ *  Some QPAC command does not support XPLMCommandOnce but only XPLMCommandBegin
+ * if release_command is not null, XPLMCommandRelease will be triggered
+ * in the next flight loop.
+ */
+int qpac_release_command = 0;
 
 int qpac_ready = 0;
 int qpac_version = 0;
@@ -628,7 +635,7 @@ void findQpacDataRefs(void) {
             qpac_wpt_id_fo = XPLMFindDataRef("AirbusFBW/WPT_ID_FO");
 
             //qpac fcu toggles and push/pull commands
-            qpac_command[QPAC_KEY_TO_CONFIG] = XPLMFindCommand("AirbusFBW/TOConfigPress");
+            qpac_command[0] = NULL;
             qpac_command[QPAC_KEY_TO_CONFIG] = XPLMFindCommand("AirbusFBW/TOConfigPress");
             qpac_command[QPAC_KEY_PUSH_ALT] = XPLMFindCommand("AirbusFBW/PushAltitude");
             qpac_command[QPAC_KEY_PULL_ALT] = XPLMFindCommand("AirbusFBW/PullAltitude");
@@ -941,8 +948,13 @@ float checkQpacCallback(
 
     findQpacDataRefs();
 
-    // come back in 5sec
-    return 5.0;
+    if (qpac_release_command != 0) {
+		XPLMCommandEnd(qpac_command[qpac_release_command]);
+		qpac_release_command=0;
+    }
+
+    // come back in 0.1 sec
+    return 0.1;
 }
 
 void cmdQpacSDPage(int page) {
@@ -978,15 +990,25 @@ void cmdQpacSDPage(int page) {
 
 void writeQpacDataRef(int id, float value) {
     char info_string[80];
-    sprintf(info_string, "XHSI: received AirbusFBW setting: ID=%d  VALUE=%f\n", id, value);
-    XPLMDebugString(info_string);
     switch (id) {
 		case QPAC_SD_PAGE :
 			cmdQpacSDPage((int) value);
 			break;
 		case QPAC_KEY_PRESS :
 			if (value>=0 && value <= QPAC_KEY_MAX && qpac_ready) {
+				if (qpac_command[(int)value] == NULL) {
+					sprintf(info_string, "XHSI: Null pointer QPAC Command Once VALUE=%d\n", (int) value);
+					XPLMDebugString(info_string);
+				} else {
+					if (value == 1.0) {
+						// Special behaviour for TO Config
+						XPLMCommandBegin(qpac_command[(int)value]);
+						qpac_release_command=(int)value;
+					} else {
 						XPLMCommandOnce(qpac_command[(int)value]);
+
+					}
+				}
 			}
 			break;
     }

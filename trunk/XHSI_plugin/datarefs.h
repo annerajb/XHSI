@@ -113,6 +113,21 @@ extern XPLMDataRef sim_op_fail_rel_tire10;
 extern XPLMDataRef avionics_on;
 extern XPLMDataRef battery_on;
 extern XPLMDataRef cockpit_lights_on;
+extern XPLMDataRef cockpit_lights;                       // sim/cockpit/electrical/cockpit_lights [float 0 - 1 range]
+extern XPLMDataRef cockpit_instrument_brightness;        // sim/cockpit/electrical/instrument_brightness (float 0 - 1 range)
+extern XPLMDataRef cockpit_hud_brightness;               // sim/cockpit/electrical/HUD_brightness (float 0 - 1 range)
+extern XPLMDataRef cockpit_instrument_brightness_ratio;  // sim/cockpit2/electrical/instrument_brightness_ratio_manual (array[16])
+extern XPLMDataRef cockpit_panel_brightness_ratio;       // sim/cockpit2/electrical/instrument_brightness_ratio_manual (array[16])
+
+/*
+ * Ambient light
+ */
+extern XPLMDataRef sim_graphics_misc_cockpit_light_level_r;
+extern XPLMDataRef sim_graphics_misc_cockpit_light_level_g;
+extern XPLMDataRef sim_graphics_misc_cockpit_light_level_b;
+extern XPLMDataRef sim_graphics_misc_outside_light_level_r;
+extern XPLMDataRef sim_graphics_misc_outside_light_level_g;
+extern XPLMDataRef sim_graphics_misc_outside_light_level_b;
 
 extern XPLMDataRef beacon_lights_on;
 extern XPLMDataRef landing_lights_on;
@@ -451,12 +466,14 @@ extern XPLMDataRef xhsi_rwy_units;
 //extern XPLMDataRef xhsi_rtu_contact_atc;
 extern XPLMDataRef xhsi_rtu_selected_radio;
 // custom datarefs - common clock and timer
+extern XPLMDataRef xhsi_clock_brightness;
 extern XPLMDataRef xhsi_utc_selector;
 extern XPLMDataRef xhsi_et_running;
 extern XPLMDataRef xhsi_et_frozen_time;
 extern XPLMDataRef xhsi_show_date;
 
 // custom datarefs - EICAS
+extern XPLMDataRef eicas_brightness;
 extern XPLMDataRef engine_type;
 extern XPLMDataRef trq_scale;
 extern XPLMDataRef fuel_units;
@@ -465,11 +482,14 @@ extern XPLMDataRef override_trq_max;
 
 
 // custom datarefs - MFD
+extern XPLMDataRef mfd_brightness;
 extern XPLMDataRef mfd_mode;
 extern XPLMDataRef mfd_fuel_used;
 extern XPLMDataRef mfd_crew_oxy_psi;
 
 // custom datarefs - CDU
+extern XPLMDataRef cdu_pilot_brightness;
+extern XPLMDataRef cdu_copilot_brightness;
 extern XPLMDataRef cdu_pilot_source;
 extern XPLMDataRef cdu_copilot_source;
 extern XPLMDataRef cdu_pilot_side;
@@ -481,6 +501,8 @@ extern XPLMDataRef egpws_gs_mode;
 extern XPLMDataRef egpws_sys;
 
 // custom datarefs - pilot
+extern XPLMDataRef efis_pilot_nd_brightness;
+extern XPLMDataRef efis_pilot_pfd_brightness;
 extern XPLMDataRef efis_pilot_shows_stas;
 extern XPLMDataRef efis_pilot_shows_data;
 extern XPLMDataRef efis_pilot_shows_pos;
@@ -507,6 +529,8 @@ extern XPLMDataRef efis_pilot_wxr_alert;
 extern XPLMDataRef efis_pilot_wxr_target;
 
 // custom datarefs - copilot
+extern XPLMDataRef efis_copilot_nd_brightness;
+extern XPLMDataRef efis_copilot_pfd_brightness;
 extern XPLMDataRef efis_copilot_map_range_selector;
 extern XPLMDataRef efis_copilot_dme_1_selector;
 extern XPLMDataRef efis_copilot_dme_2_selector;
