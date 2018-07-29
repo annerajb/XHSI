@@ -10,6 +10,7 @@
  *
  * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
  * Copyright (C) 2009-2010  Marc Rogiers (marrog.123@gmail.com)
+ * Copyright (C) 2018 Nicolas Carel
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,7 +42,6 @@ import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.Area;
-//import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.HashMap;
@@ -51,7 +51,7 @@ import java.util.Map;
 import net.sourceforge.xhsi.XHSIPreferences;
 import net.sourceforge.xhsi.XHSISettings;
 import net.sourceforge.xhsi.model.Avionics;
-//import net.sourceforge.xhsi.model.Avionics;
+import net.sourceforge.xhsi.util.ColorUtilities;
 
 
 public class GraphicsConfig implements ComponentListener {
@@ -67,7 +67,13 @@ public class GraphicsConfig implements ComponentListener {
 
     // for color inspiration: http://en.wikipedia.org/wiki/Internet_colors and http://en.wikipedia.org/wiki/X11_color_names
 
-    // green
+    /*
+     * ====================================================================
+     * This is the static color definitions section for XHSI Display Units
+     * These values should not be use in display units classes
+     * and are reserved for this.set_colors() method. 
+     * ====================================================================
+     */
     public Color color_lime = new Color(0x00FF00);
     public Color color_limegreen = new Color(0x32CD32);
     public Color color_mediumspringgreen = new Color(0x00FA9A);
@@ -116,6 +122,7 @@ public class GraphicsConfig implements ComponentListener {
     public Color color_cornflowerblue = new Color(0x6495ED);
     public Color color_midnightblue = new Color(0x191970);
     public Color color_cadetblue = new Color(0x5F9EA0);
+    public Color color_labelblue = new Color(0x009EDE);
 
     // cyan
     public Color color_lightcyan = new Color(0xE0FFFF);
@@ -154,6 +161,8 @@ public class GraphicsConfig implements ComponentListener {
     public Color color_bluegray = new Color(0x404068); // custom color, was 0x5A5A78, 0x57608B
     public Color color_brightspringgreen = color_springgreen.brighter();
 
+    // Gray
+    public Color color_verylightgray = new Color(0xD8D8D8);
 
     public Color color_poweroff =  Color.BLACK;
 
@@ -183,6 +192,23 @@ public class GraphicsConfig implements ComponentListener {
     public Color color_airbus_managed = Color.magenta;
     public Color color_airbussky = new Color(0x10A0FF); 
  
+    // Airbus Misc Colors
+    public Color color_airbus_button = new Color(0x131917);
+    public Color color_airbus_button_on = new Color(0x50A0C7); // was: 2F3C80 (too dark)
+    public Color color_airbus_button_off = new Color(0xFFFFFF);
+    public Color color_airbus_button_avail = new Color(0x6F7F4D);
+    public Color color_airbus_button_smoke = new Color(0xFF0000);
+    public Color color_airbus_button_fault = new Color(0x988148);
+    
+    /*
+     * =========================================================================
+     * This is the variable color definitions section for XHSI Display Units
+     * These values must used in display units classes. 
+     * These values may be adjusted in brightness by each DU brightness setting
+     * Some of them may be adjusted with ambient and cockpit lights for panels
+     * =========================================================================
+     */
+    
     // Weather Radar Colors
     public Color wxr_colors[] = new Color[10];
      
@@ -226,6 +252,7 @@ public class GraphicsConfig implements ComponentListener {
     public Color dim_markings_color;
     public Color range_arc_color;
     public Color range_label_color;
+    public Color label_color;
     public Color dim_label_color;
     public Color no_rcv_ndb_color;
     public Color no_rcv_vor_color;
@@ -252,16 +279,17 @@ public class GraphicsConfig implements ComponentListener {
     public Color chrono_background_color;
     public Color chrono_color;
     
-    // ECAM COLORS
+    // ECAM COLORS - used for ECAM/EICAS and MFD
     public Color ecam_caution_color;
     public Color ecam_warning_color;
     public Color ecam_normal_color;
     public Color ecam_markings_color;
     public Color ecam_action_color;
     public Color ecam_special_color;
+    public Color ecam_reference_color;
     public Color ecam_box_bg_color;
     
-    // PFD colors - used to managed PFD lightening
+    // PFD colors - used to managed PFD brightness
     public Color pfd_armed_color;
     public Color pfd_managed_color;
     public Color pfd_selected_color;
@@ -271,7 +299,7 @@ public class GraphicsConfig implements ComponentListener {
     public Color pfd_instrument_background_color;
     public Color pfd_markings_color;
     public Color pfd_sky_color;
-    public Color pfd_ground_color;// import net.sourceforge.xhsi.util.ColorUtilities;
+    public Color pfd_ground_color;
     public Color pfd_radio_alti_color;
     public Color pfd_reference_color;
     public Color pfd_mach_color;
@@ -279,6 +307,15 @@ public class GraphicsConfig implements ComponentListener {
     public Color pfd_active_color;
     public Color pfd_caution_color;
     public Color pfd_alarm_color;
+    
+    // Adjusting Colors     
+    public Color panel_background_color;
+    public Color panel_ohp_text_color;
+    public Color panel_main_text_color;
+    public Color panel_display_ohp_color;
+    public Color panel_display_main_color;
+    public Color panel_display_color;
+    public Color ohp_green_lines_color;
     
     // CDU colors
     public Color cdu_title_color;
@@ -298,10 +335,17 @@ public class GraphicsConfig implements ComponentListener {
     // Clock colors
     public Color clock_color;
     public Color clock_markings_color;
+    public Color clock_label_color;
     public Color clock_digital_54616E_color;
     public Color clock_digital_54616E_dark_color;
     public Color clock_digital_dark_gray_color;
 
+    /*
+     * =========================================================================
+     * This is the font definitions section for XHSI Display Units
+     * These values must used in display units classes. 
+     * =========================================================================
+     */
 
     String font_name = "Verdana";   
     public Font font_statusbar;
@@ -432,14 +476,23 @@ public class GraphicsConfig implements ComponentListener {
     public Area instrument_frame;
     public RoundRectangle2D inner_round_rect;
     public Area instrument_outer_frame;
-    public Map rendering_hints;
+    public Map<RenderingHints.Key, Object> rendering_hints;
 
     public boolean resized = false;
     public boolean reconfig = true;
     public boolean reconfigured = true;
     public long reconfigured_timestamp=0;
+    public boolean colors_updated = false;
 
     public int display_unit;
+    
+    /*
+     * Light and Brightness
+     */
+    public float du_brightness;
+    // TODO: Cockpit light_color ?
+    public float cockpit_light;
+    public float outside_light;
 
     public boolean powered;
     public int cdu_source;
@@ -447,6 +500,7 @@ public class GraphicsConfig implements ComponentListener {
     public int style;
     public boolean airbus_style;
     public boolean boeing_style;
+    public boolean custom_style;
     public boolean unknown_style;
 
     public boolean symbols_multiselection;
@@ -471,6 +525,9 @@ public class GraphicsConfig implements ComponentListener {
         this.preferences = XHSIPreferences.get_instance();
         this.settings = XHSISettings.get_instance();
         
+        // Setup startup brightness
+        du_brightness=1.0f;
+        
         // Setup instrument style
         style = this.settings.style;
         airbus_style = ( style == Avionics.STYLE_AIRBUS );
@@ -485,7 +542,7 @@ public class GraphicsConfig implements ComponentListener {
         
         set_colors(false, XHSIPreferences.BORDER_GRAY);
 
-        this.rendering_hints = new HashMap();
+        this.rendering_hints = new HashMap<RenderingHints.Key, Object>();
         this.rendering_hints.put(RenderingHints.KEY_ANTIALIASING, preferences.get_anti_alias() ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
         this.rendering_hints.put(RenderingHints.KEY_TEXT_ANTIALIASING, preferences.get_anti_alias() ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
         // VALUE_TEXT_ANTIALIAS_LCD_HRGB uses sub-pixel anti-aliasing, and is supposed to looks better than VALUE_TEXT_ANTIALIAS_ON on modern LCD dispalys
@@ -672,339 +729,356 @@ public class GraphicsConfig implements ComponentListener {
 
         // Weather radar colors
         if ( preferences.get_nd_wxr_color_gradient() ) {
-        	wxr_colors[0] = new Color(0,0,0);
-        	wxr_colors[1] = new Color(0,5,0);
-        	wxr_colors[2] = new Color(0,40,0);
-        	wxr_colors[3] = new Color(0,100,0);
-        	wxr_colors[4] = new Color(0,120,0);
-        	wxr_colors[5] = new Color(120,120,0);
-        	wxr_colors[6] = new Color(140,140,0);
-        	wxr_colors[7] = new Color(140,0,0);
-        	wxr_colors[8] = new Color(160,0,0);
-        	wxr_colors[9] = new Color(160,0,160);       	
+        	wxr_colors[0] = setDUBrightness(new Color(0,0,0));
+        	wxr_colors[1] = setDUBrightness(new Color(0,5,0));
+        	wxr_colors[2] = setDUBrightness(new Color(0,40,0));
+        	wxr_colors[3] = setDUBrightness(new Color(0,100,0));
+        	wxr_colors[4] = setDUBrightness(new Color(0,120,0));
+        	wxr_colors[5] = setDUBrightness(new Color(120,120,0));
+        	wxr_colors[6] = setDUBrightness(new Color(140,140,0));
+        	wxr_colors[7] = setDUBrightness(new Color(140,0,0));
+        	wxr_colors[8] = setDUBrightness(new Color(160,0,0));
+        	wxr_colors[9] = setDUBrightness(new Color(160,0,160));       	
         } else {
-        	wxr_colors[0] = new Color(0,0,0);
-        	wxr_colors[1] = new Color(0,0,0);
-        	wxr_colors[2] = new Color(0,0,0);
-        	wxr_colors[3] = new Color(0,110,0);
-        	wxr_colors[4] = new Color(0,140,0);
-        	wxr_colors[5] = new Color(140,140,0);
-        	wxr_colors[6] = new Color(150,150,0);
-        	wxr_colors[7] = new Color(150,0,0);
-        	wxr_colors[8] = new Color(150,0,0);
-        	wxr_colors[9] = new Color(160,0,160);
+        	wxr_colors[0] = setDUBrightness(new Color(0,0,0));
+        	wxr_colors[1] = setDUBrightness(new Color(0,0,0));
+        	wxr_colors[2] = setDUBrightness(new Color(0,0,0));
+        	wxr_colors[3] = setDUBrightness(new Color(0,110,0));
+        	wxr_colors[4] = setDUBrightness(new Color(0,140,0));
+        	wxr_colors[5] = setDUBrightness(new Color(140,140,0));
+        	wxr_colors[6] = setDUBrightness(new Color(150,150,0));
+        	wxr_colors[7] = setDUBrightness(new Color(150,0,0));
+        	wxr_colors[8] = setDUBrightness(new Color(150,0,0));
+        	wxr_colors[9] = setDUBrightness(new Color(160,0,160));
         }
         
         // Terrain colors
-        terrain_red_color = new Color(110,0,0);
-        terrain_bright_yellow_color = new Color(105,105,0);
-        terrain_yellow_color = new Color(75,75,0);        
-        terrain_green_color = new Color(0,70,0);
-        terrain_dark_green_color = new Color(0,40,0);
-        terrain_bright_green_color = new Color(0,105,0);
-        terrain_blue_color = new Color(0,0,80);
-        terrain_black_color = Color.black;
+        terrain_red_color = setDUBrightness(new Color(110,0,0));
+        terrain_bright_yellow_color = setDUBrightness(new Color(105,105,0));
+        terrain_yellow_color = setDUBrightness(new Color(75,75,0));        
+        terrain_green_color = setDUBrightness(new Color(0,70,0));
+        terrain_dark_green_color = setDUBrightness(new Color(0,40,0));
+        terrain_bright_green_color = setDUBrightness(new Color(0,105,0));
+        terrain_blue_color = setDUBrightness(new Color(0,0,80));
+        terrain_black_color = setDUBrightness(Color.black);
         
         if ( custom_colors ) {
             background_color = Color.BLACK;
                        
             // Navigation Display Colors
             if ( airbus_style ) {
-                navaid_color = color_boeingcyan;
-                term_wpt_color = Color.magenta;
-                wpt_color = color_cornflowerblue;
-                awy_wpt_color = Color.magenta.brighter();
-                arpt_color = Color.magenta;
+                navaid_color = setDUBrightness(color_boeingcyan);
+                term_wpt_color = setDUBrightness(Color.magenta);
+                wpt_color = setDUBrightness(color_cornflowerblue);
+                awy_wpt_color = setDUBrightness(Color.magenta.brighter());
+                arpt_color = setDUBrightness(Color.magenta);
                 
-                tuned_localizer_color = color_aquamarine;
-                silent_localizer_color = color_mediumaquamarine.darker().darker();
-                reference_localizer_color = color_lightaquamarine;
-                receiving_localizer_color = color_aquamarine.darker();
-                tuned_ndb_color = Color.GREEN;
-                no_rcv_ndb_color = Color.GREEN.darker();
-                tuned_vor_color = Color.WHITE;
-                no_rcv_vor_color = Color.WHITE.darker();
-                unknown_nav_color = color_cadetblue;
-                holding_color = color_deeppink;
-                traffic_color = color_lightsteelblue;
-                faraway_color = color_lightsteelblue.darker().darker();
-                pos_label_color = color_boeingcyan.darker();
-                tcas_label_color = color_lightsteelblue;
-                data_label_color = color_pastelhotpink;
-                terrain_label_color = Color.cyan;
-                fmc_active_color = Color.GREEN;
-                fmc_disp_color = Color.WHITE;
-                fmc_other_color = Color.GREEN; // Color.LIGHT_GRAY;
-                altitude_arc_color = color_yellowgreen;
-                fmc_ll_active_color = color_yellowgreen.brighter();
-                fmc_ll_disp_color = color_yellowgreen;
-                fmc_ll_other_color = color_yellowgreen.darker();
-                heading_labels_color = color_limegreen;
-                cardinal_labels_color = Color.WHITE;
-                nav_needle_color = color_mediumviolet;
-                deviation_scale_color = Color.LIGHT_GRAY;
-                range_arc_color = Color.WHITE; 
-                range_label_color = Color.cyan;
-                aircraft_color = Color.YELLOW;
-                chrono_background_color = color_airbusgray; // color_darkpalegreen.darker();
-                chrono_color = Color.GREEN.brighter();
+                tuned_localizer_color = setDUBrightness(color_aquamarine);
+                silent_localizer_color = setDUBrightness(color_mediumaquamarine.darker().darker());
+                reference_localizer_color = setDUBrightness(color_lightaquamarine);
+                receiving_localizer_color = setDUBrightness(color_aquamarine.darker());
+                tuned_ndb_color = setDUBrightness(Color.GREEN);
+                no_rcv_ndb_color = setDUBrightness(Color.GREEN.darker());
+                tuned_vor_color = setDUBrightness(Color.WHITE);
+                no_rcv_vor_color = setDUBrightness(Color.WHITE.darker());
+                unknown_nav_color = setDUBrightness(color_cadetblue);
+                holding_color = setDUBrightness(color_deeppink);
+                traffic_color = setDUBrightness(color_lightsteelblue);
+                faraway_color = setDUBrightness(color_lightsteelblue.darker().darker());
+                pos_label_color = setDUBrightness(color_boeingcyan.darker());
+                tcas_label_color = setDUBrightness(color_lightsteelblue);
+                data_label_color = setDUBrightness(color_pastelhotpink);
+                terrain_label_color = setDUBrightness(Color.cyan);
+                fmc_active_color = setDUBrightness(Color.GREEN);
+                fmc_disp_color = setDUBrightness(Color.WHITE);
+                fmc_other_color = setDUBrightness(Color.GREEN); // Color.LIGHT_GRAY;
+                altitude_arc_color = setDUBrightness(color_yellowgreen);
+                fmc_ll_active_color = setDUBrightness(color_yellowgreen.brighter());
+                fmc_ll_disp_color = setDUBrightness(color_yellowgreen);
+                fmc_ll_other_color = setDUBrightness(color_yellowgreen.darker());
+                heading_labels_color = setDUBrightness(color_limegreen);
+                cardinal_labels_color = setDUBrightness(Color.WHITE);
+                nav_needle_color = setDUBrightness(color_mediumviolet);
+                deviation_scale_color = setDUBrightness(Color.LIGHT_GRAY);
+                range_arc_color = setDUBrightness(Color.WHITE); 
+                range_label_color = setDUBrightness(Color.cyan);
+                aircraft_color = setDUBrightness(Color.YELLOW);
+                chrono_background_color = setDUBrightness(color_airbusgray); // color_darkpalegreen.darker();
+                chrono_color = setDUBrightness(Color.GREEN.brighter());
             } else {
             	// Boeing style (default)
-                navaid_color = color_boeingcyan;
-                term_wpt_color = color_cornflowerblue.darker();
-                wpt_color = color_cornflowerblue;
-                awy_wpt_color = color_cornflowerblue.brighter();
-                arpt_color = color_mediumaquamarine;
-                tuned_localizer_color = color_aquamarine;
-                silent_localizer_color = color_mediumaquamarine.darker().darker();
-                reference_localizer_color = color_lightaquamarine;
-                receiving_localizer_color = color_aquamarine.darker();
-                tuned_ndb_color = color_dodgerblue;
-                no_rcv_ndb_color = color_dodgerblue.darker();
-                tuned_vor_color = color_lime;
-                no_rcv_vor_color = color_lime.darker();
-                unknown_nav_color = color_cadetblue;
-                holding_color = color_deeppink;
-                traffic_color = color_lightsteelblue;
-                faraway_color = color_lightsteelblue.darker().darker();
-                pos_label_color = color_boeingcyan.darker();
-                tcas_label_color = color_lightsteelblue;
-                data_label_color = color_pastelhotpink;
-                terrain_label_color = color_dodgerblue;
-                fmc_active_color = color_hotpink;
-                fmc_disp_color = Color.WHITE;
-                fmc_other_color = Color.LIGHT_GRAY;
-                altitude_arc_color = color_yellowgreen;
-                fmc_ll_active_color = color_yellowgreen.brighter();
-                fmc_ll_disp_color = color_yellowgreen;
-                fmc_ll_other_color = color_yellowgreen.darker();
-                heading_labels_color = color_limegreen;
-                cardinal_labels_color = color_limegreen;
-                nav_needle_color = color_mediumviolet;
-                deviation_scale_color = Color.LIGHT_GRAY;
-                range_arc_color = Color.DARK_GRAY; // was: Color.GRAY
-                range_label_color = dim_markings_color;
-                aircraft_color = Color.WHITE;
-                chrono_background_color = Color.BLACK;
-                chrono_color = Color.WHITE;
+                navaid_color = setDUBrightness(color_boeingcyan);
+                term_wpt_color = setDUBrightness(color_cornflowerblue.darker());
+                wpt_color = setDUBrightness(color_cornflowerblue);
+                awy_wpt_color = setDUBrightness(color_cornflowerblue.brighter());
+                arpt_color = setDUBrightness(color_mediumaquamarine);
+                tuned_localizer_color = setDUBrightness(color_aquamarine);
+                silent_localizer_color = setDUBrightness(color_mediumaquamarine.darker().darker());
+                reference_localizer_color = setDUBrightness(color_lightaquamarine);
+                receiving_localizer_color = setDUBrightness(color_aquamarine.darker());
+                tuned_ndb_color = setDUBrightness(color_dodgerblue);
+                no_rcv_ndb_color = setDUBrightness(color_dodgerblue.darker());
+                tuned_vor_color = setDUBrightness(color_lime);
+                no_rcv_vor_color = setDUBrightness(color_lime.darker());
+                unknown_nav_color = setDUBrightness(color_cadetblue);
+                holding_color = setDUBrightness(color_deeppink);
+                traffic_color = setDUBrightness(color_lightsteelblue);
+                faraway_color = setDUBrightness(color_lightsteelblue.darker().darker());
+                pos_label_color = setDUBrightness(color_boeingcyan.darker());
+                tcas_label_color = setDUBrightness(color_lightsteelblue);
+                data_label_color = setDUBrightness(color_pastelhotpink);
+                terrain_label_color = setDUBrightness(color_dodgerblue);
+                fmc_active_color = setDUBrightness(color_hotpink);
+                fmc_disp_color = setDUBrightness(Color.WHITE);
+                fmc_other_color = setDUBrightness(Color.LIGHT_GRAY);
+                altitude_arc_color = setDUBrightness(color_yellowgreen);
+                fmc_ll_active_color = setDUBrightness(color_yellowgreen.brighter());
+                fmc_ll_disp_color = setDUBrightness(color_yellowgreen);
+                fmc_ll_other_color = setDUBrightness(color_yellowgreen.darker());
+                heading_labels_color = setDUBrightness(color_limegreen);
+                cardinal_labels_color = setDUBrightness(color_limegreen);
+                nav_needle_color = setDUBrightness(color_mediumviolet);
+                deviation_scale_color = setDUBrightness(Color.LIGHT_GRAY);
+                range_arc_color = setDUBrightness(Color.DARK_GRAY); // was: Color.GRAY
+                range_label_color = setDUBrightness(dim_markings_color);
+                aircraft_color = setDUBrightness(Color.WHITE);
+                chrono_background_color = setDUBrightness(Color.BLACK);
+                chrono_color = setDUBrightness(Color.WHITE);
             }
 
             
-            markings_color = Color.WHITE;
+            markings_color = setDUBrightness(Color.WHITE);
 //                float hsb[] = new float[3];
 //                Color.RGBtoHSB(markings_color.getRed(), markings_color.getGreen(), markings_color.getBlue(), hsb);
 //                hsb[2] *= 0.25f;
 //                markings_color = Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
-            dim_markings_color = Color.LIGHT_GRAY;
+            dim_markings_color = setDUBrightness(Color.LIGHT_GRAY);
 
-            dim_label_color = Color.DARK_GRAY;
-            normal_color = color_lime;
-            unusual_color = color_deepskyblue;
-            caution_color = color_amber;
-            warning_color = Color.RED;
+            label_color = setDUBrightness(color_boeingcyan);
+            dim_label_color = setDUBrightness(Color.DARK_GRAY);
+            normal_color = setDUBrightness(color_lime);
+            unusual_color = setDUBrightness(color_deepskyblue);
+            caution_color = setDUBrightness(color_amber);
+            warning_color = setDUBrightness(Color.RED);
             
-            heading_bug_color = color_magenta;
-            wind_color = color_palegreen; // was color_lavender
-            efb_color = color_lavender;
-            top_text_color = Color.WHITE;
-            grass_color = color_darkgreen;
-            hard_color = Color.GRAY;
-            sand_color = color_darktan;
-            snow_color = Color.LIGHT_GRAY;
-            sky_color = color_sky;
+            heading_bug_color = setDUBrightness(color_magenta);
+            wind_color = setDUBrightness(color_palegreen); // was color_lavender
+            efb_color = setDUBrightness(color_lavender);
+            top_text_color = setDUBrightness(Color.WHITE);
+            grass_color = setDUBrightness(color_darkgreen);
+            hard_color = setDUBrightness(Color.GRAY);
+            sand_color = setDUBrightness(color_darktan);
+            snow_color = setDUBrightness(Color.LIGHT_GRAY);
+            sky_color = setDUBrightness(color_sky);
             
-            ground_color = color_ground;
-            brightground_color = color_ground.brighter();
-            instrument_background_color = color_bluegray;
-            fpv_color = Color.LIGHT_GRAY;
-            clock_color = color_khaki;
+            ground_color = setDUBrightness(color_ground);
+            brightground_color = setDUBrightness(color_ground.brighter());
+            instrument_background_color = setDUBrightness(color_bluegray);
+            fpv_color = setDUBrightness(Color.LIGHT_GRAY);
+            
+            // Clock
+            clock_color = setDUBrightness(color_khaki);
+            clock_label_color = setDUBrightness(color_labelblue);
+            clock_markings_color = setDUBrightness(Color.white);
+            // Clock panel colors (should depends on cockpit light) 
+            clock_digital_54616E_color = Color.decode("#54616E");
+            clock_digital_54616E_dark_color = Color.decode("#54616E").darker().darker();
+            clock_digital_dark_gray_color = Color.decode("#080808");
+            
             
             // ECAM COLORS
-        	ecam_warning_color = Color.red;
-        	ecam_caution_color = color_amber;
-        	ecam_normal_color = Color.green;
-        	ecam_markings_color = Color.white;
-        	ecam_action_color = Color.cyan;
-        	ecam_special_color = Color.magenta;    
-        	ecam_box_bg_color = color_airbusgray.darker(); // was new Color(0x0f1c60);
+        	ecam_warning_color   = setDUBrightness(Color.red);
+        	ecam_caution_color   = setDUBrightness(color_amber);
+        	ecam_normal_color    = setDUBrightness(Color.green);
+        	ecam_markings_color  = setDUBrightness(Color.white);
+        	ecam_action_color    = setDUBrightness(Color.cyan);
+        	ecam_special_color   = setDUBrightness(Color.magenta);
+        	ecam_reference_color = setDUBrightness(Color.yellow);
+        	ecam_box_bg_color    = setDUBrightness(color_airbusgray.darker()); // was new Color(0x0f1c60);
             
             // PFD colors - used to managed PFD lightening
             if ( airbus_style ) {
                 // PFD colors Airbus Style 
-                pfd_armed_color = Color.cyan;
-                pfd_managed_color = Color.magenta;
-                pfd_selected_color = Color.cyan;
-                pfd_box_color = Color.white;
-                pfd_vsi_needle_color = Color.green;
-                pfd_instrument_background_color = color_airbusgray;
-                pfd_markings_color = Color.white;
-                pfd_radio_alti_color = Color.green;
-                pfd_reference_color = Color.yellow;
-                pfd_mach_color = Color.green;
-                pfd_alti_color = Color.green;
-                pfd_ils_color = Color.magenta;
-            	instrument_background_color = color_airbusgray;
-            	heading_bug_color = Color.cyan;           	
-            	pfd_sky_color = color_airbussky;
+                pfd_armed_color = setDUBrightness(Color.cyan);
+                pfd_managed_color = setDUBrightness(Color.magenta);
+                pfd_selected_color = setDUBrightness(Color.cyan);
+                pfd_box_color = setDUBrightness(Color.white);
+                pfd_vsi_needle_color = setDUBrightness(Color.green);
+                pfd_instrument_background_color = setDUBrightness(color_airbusgray);
+                pfd_markings_color = setDUBrightness(Color.white);
+                pfd_radio_alti_color = setDUBrightness(Color.green);
+                pfd_reference_color = setDUBrightness(Color.yellow);
+                pfd_mach_color = setDUBrightness(Color.green);
+                pfd_alti_color = setDUBrightness(Color.green);
+                pfd_ils_color = setDUBrightness(Color.magenta);
+            	instrument_background_color = setDUBrightness(color_airbusgray);
+            	heading_bug_color = setDUBrightness(Color.cyan);           	
+            	pfd_sky_color = setDUBrightness(color_airbussky);
             } else {
                 // PFD colors Boeing Style (default)
-                pfd_armed_color = Color.cyan;
-                pfd_managed_color = Color.magenta;
-                pfd_selected_color = Color.magenta;
-                pfd_box_color = Color.white;
-                pfd_vsi_needle_color = Color.white;
-                pfd_instrument_background_color = color_bluegray;
-                pfd_markings_color = Color.white;
-                pfd_radio_alti_color = Color.white;
-                pfd_reference_color = Color.white;
-                pfd_mach_color = Color.green;
-                pfd_alti_color = Color.white;
-                pfd_active_color = Color.green;
-                pfd_ils_color = Color.white;
-            	instrument_background_color = color_bluegray;
-            	heading_bug_color = color_magenta;             	
-            	pfd_sky_color = sky_color;
+                pfd_armed_color = setDUBrightness(Color.cyan);
+                pfd_managed_color = setDUBrightness(Color.magenta);
+                pfd_selected_color = setDUBrightness(Color.magenta);
+                pfd_box_color = setDUBrightness(Color.white);
+                pfd_vsi_needle_color = setDUBrightness(Color.white);
+                pfd_instrument_background_color = setDUBrightness(color_bluegray);
+                pfd_markings_color = setDUBrightness(Color.white);
+                pfd_radio_alti_color = setDUBrightness(Color.white);
+                pfd_reference_color = setDUBrightness(Color.white);
+                pfd_mach_color = setDUBrightness(Color.green);
+                pfd_alti_color = setDUBrightness(Color.white);
+                pfd_active_color = setDUBrightness(Color.green);
+                pfd_ils_color = setDUBrightness(Color.white);
+            	instrument_background_color = setDUBrightness(color_bluegray);
+            	heading_bug_color = setDUBrightness(color_magenta);             	
+            	pfd_sky_color = setDUBrightness(sky_color);
             }
             
-            pfd_ground_color = ground_color;
-            pfd_active_color = Color.green;
-            pfd_caution_color = color_amber;
-            pfd_alarm_color = Color.red;
+            pfd_ground_color = setDUBrightness(ground_color);
+            pfd_active_color = setDUBrightness(Color.green);
+            pfd_caution_color = setDUBrightness(color_amber);
+            pfd_alarm_color = setDUBrightness(Color.red);
             
             // CDU colors
-            cdu_title_color = Color.green;
-            cdu_data_color = Color.white;
-            cdu_scratch_pad_color = Color.white;
+            cdu_title_color = setDUBrightness(Color.green);
+            cdu_data_color = setDUBrightness(Color.white);
+            cdu_scratch_pad_color = setDUBrightness(Color.white);
         
             
         } else { // STANDARD COLORS (i.e. not customed)
         	
             background_color = Color.BLACK;
-            navaid_color = color_boeingcyan;
-            term_wpt_color = color_boeingcyan;
-            wpt_color = color_boeingcyan;
-            awy_wpt_color = color_boeingcyan;
-            arpt_color = color_boeingcyan;
-            tuned_localizer_color = color_lime;
-            silent_localizer_color = Color.GRAY;
-            reference_localizer_color = Color.WHITE;
-            receiving_localizer_color = Color.LIGHT_GRAY;
-            tuned_ndb_color = color_dodgerblue;
-            no_rcv_ndb_color = color_dodgerblue;
-            tuned_vor_color = color_lime;
-            no_rcv_vor_color = color_lime;
-            unknown_nav_color = color_lime;
-            holding_color = color_magenta;
-            traffic_color = Color.WHITE;
-            faraway_color = Color.DARK_GRAY;
-            pos_label_color = color_boeingcyan;
-            tcas_label_color = color_boeingcyan;
-            data_label_color = color_boeingcyan;
-            terrain_label_color = Color.cyan;
-            fmc_active_color = color_magenta;
-            fmc_disp_color = Color.WHITE;
-            fmc_other_color = Color.LIGHT_GRAY;
-            altitude_arc_color = color_lime;
-            fmc_ll_active_color = color_lime;
-            fmc_ll_disp_color = color_lime;
-            fmc_ll_other_color = color_lime;
-            heading_labels_color = color_lime;
-            cardinal_labels_color = color_limegreen;
-            nav_needle_color = color_magenta;
-            deviation_scale_color = Color.LIGHT_GRAY;
-            markings_color = Color.WHITE;
-            dim_markings_color = Color.LIGHT_GRAY;
-            range_arc_color = Color.GRAY; // was: Color.GRAY.brighter()
+            navaid_color = setDUBrightness(color_boeingcyan);
+            term_wpt_color = setDUBrightness(color_boeingcyan);
+            wpt_color = setDUBrightness(color_boeingcyan);
+            awy_wpt_color = setDUBrightness(color_boeingcyan);
+            arpt_color = setDUBrightness(color_boeingcyan);
+            tuned_localizer_color = setDUBrightness(color_lime);
+            silent_localizer_color = setDUBrightness(Color.GRAY);
+            reference_localizer_color = setDUBrightness(Color.WHITE);
+            receiving_localizer_color = setDUBrightness(Color.LIGHT_GRAY);
+            tuned_ndb_color = setDUBrightness(color_dodgerblue);
+            no_rcv_ndb_color = setDUBrightness(color_dodgerblue);
+            tuned_vor_color = setDUBrightness(color_lime);
+            no_rcv_vor_color = setDUBrightness(color_lime);
+            unknown_nav_color = setDUBrightness(color_lime);
+            holding_color = setDUBrightness(color_magenta);
+            traffic_color = setDUBrightness(Color.WHITE);
+            faraway_color = setDUBrightness(Color.DARK_GRAY);
+            pos_label_color = setDUBrightness(color_boeingcyan);
+            tcas_label_color = setDUBrightness(color_boeingcyan);
+            data_label_color = setDUBrightness(color_boeingcyan);
+            terrain_label_color = setDUBrightness(Color.cyan);
+            fmc_active_color = setDUBrightness(color_magenta);
+            fmc_disp_color = setDUBrightness(Color.WHITE);
+            fmc_other_color = setDUBrightness(Color.LIGHT_GRAY);
+            altitude_arc_color = setDUBrightness(color_lime);
+            fmc_ll_active_color = setDUBrightness(color_lime);
+            fmc_ll_disp_color = setDUBrightness(color_lime);
+            fmc_ll_other_color = setDUBrightness(color_lime);
+            heading_labels_color = setDUBrightness(color_lime);
+            cardinal_labels_color = setDUBrightness(color_limegreen);
+            nav_needle_color = setDUBrightness(color_magenta);
+            deviation_scale_color = setDUBrightness(Color.LIGHT_GRAY);
+            markings_color = setDUBrightness(Color.WHITE);
+            dim_markings_color = setDUBrightness(Color.LIGHT_GRAY);
+            range_arc_color = setDUBrightness(Color.GRAY); // was: Color.GRAY.brighter()
             range_label_color = dim_markings_color;
+            label_color = setDUBrightness(color_boeingcyan);
             dim_label_color = Color.BLACK;
-            normal_color = color_lime;
-            unusual_color = color_deepskyblue;
-            caution_color = color_amber;
-            warning_color = Color.RED;
-            aircraft_color = Color.WHITE;           
-            wind_color = Color.WHITE;
-            efb_color = Color.WHITE;
-            top_text_color = Color.WHITE;
-            grass_color = color_darkgreen;
-            hard_color = Color.GRAY;
-            sand_color = color_darktan;
-            snow_color = Color.LIGHT_GRAY;
-            sky_color = color_sky;
-            brightsky_color = color_sky.brighter();
-            ground_color = color_ground;
-            brightground_color = color_ground.brighter();            
-            fpv_color = Color.WHITE;
-            clock_color = Color.WHITE;
+            normal_color = setDUBrightness(color_lime);
+            unusual_color = setDUBrightness(color_deepskyblue);
+            caution_color = setDUBrightness(color_amber);
+            warning_color = setDUBrightness(Color.RED);
+            aircraft_color = setDUBrightness(Color.WHITE);           
+            wind_color = setDUBrightness(Color.WHITE);
+            efb_color = setDUBrightness(Color.WHITE);
+            top_text_color = setDUBrightness(Color.WHITE);
+            grass_color = setDUBrightness(color_darkgreen);
+            hard_color = setDUBrightness(Color.GRAY);
+            sand_color = setDUBrightness(color_darktan);
+            snow_color = setDUBrightness(Color.LIGHT_GRAY);
+            sky_color = setDUBrightness(color_sky);
+            brightsky_color = setDUBrightness(color_sky.brighter());
+            ground_color = setDUBrightness(color_ground);
+            brightground_color = setDUBrightness(color_ground.brighter());            
+            fpv_color = setDUBrightness(Color.WHITE);
+            clock_color = setDUBrightness(Color.WHITE);
             
             // Navigation Display Colors
             if ( this.settings.style == Avionics.STYLE_AIRBUS ) {
-                chrono_background_color = color_darkpalegreen;
-                chrono_color = Color.GREEN;
+                chrono_background_color = setDUBrightness(color_darkpalegreen);
+                chrono_color = setDUBrightness(Color.GREEN);
             } else {
                 chrono_background_color = Color.BLACK;
-                chrono_color = Color.WHITE;
+                chrono_color = setDUBrightness(Color.WHITE);
         	}
             
+            // Clock
+            clock_color = setDUBrightness(Color.white);
+            clock_label_color = setDUBrightness(color_labelblue);
+            clock_markings_color = setDUBrightness(Color.white);
+            // Clock panel colors (should depends on cockpit light) 
+            clock_digital_54616E_color = Color.decode("#54616E");
+            clock_digital_54616E_dark_color = Color.decode("#54616E").darker().darker();
+            clock_digital_dark_gray_color = Color.decode("#080808");
+            
             // ECAM COLORS
-        	ecam_warning_color = Color.red;
-        	ecam_caution_color = color_amber;
-        	ecam_normal_color = Color.green;
-        	ecam_markings_color = Color.white;
-        	ecam_action_color = Color.cyan;
-        	ecam_special_color = Color.magenta;
-        	ecam_box_bg_color = color_airbusgray; // was new Color(0x0f1c60);
+        	ecam_warning_color = setDUBrightness(Color.red);
+        	ecam_caution_color = setDUBrightness(color_amber);
+        	ecam_normal_color = setDUBrightness(Color.green);
+        	ecam_markings_color = setDUBrightness(Color.white);
+        	ecam_action_color = setDUBrightness(Color.cyan);
+        	ecam_special_color = setDUBrightness(Color.magenta);
+        	ecam_reference_color = setDUBrightness(Color.yellow);
+        	ecam_box_bg_color = setDUBrightness(color_airbusgray); // was new Color(0x0f1c60);
         	
             // PFD Colors - used to managed PFD lightening
             if ( airbus_style ) {
                 // PFD colors Airbus Style 
-                pfd_armed_color = Color.cyan;
-                pfd_managed_color = Color.magenta;
-                pfd_selected_color = Color.cyan;                
-                pfd_vsi_needle_color = Color.green;
-                pfd_instrument_background_color = color_airbusgray;
-                pfd_markings_color = Color.white;
-                pfd_radio_alti_color = Color.green;
-                pfd_reference_color = Color.yellow;
-                pfd_mach_color = Color.green;
-                pfd_alti_color = Color.green;
-                pfd_ils_color = Color.magenta;
-            	instrument_background_color = color_airbusgray;
-            	heading_bug_color = Color.cyan;
-            	pfd_sky_color = color_airbussky;
+                pfd_armed_color = setDUBrightness(Color.cyan);
+                pfd_managed_color = setDUBrightness(Color.magenta);
+                pfd_selected_color = setDUBrightness(Color.cyan);                
+                pfd_vsi_needle_color = setDUBrightness(Color.green);
+                pfd_instrument_background_color = setDUBrightness(color_airbusgray);
+                pfd_markings_color = setDUBrightness(Color.white);
+                pfd_radio_alti_color = setDUBrightness(Color.green);
+                pfd_reference_color = setDUBrightness(Color.yellow);
+                pfd_mach_color = setDUBrightness(Color.green);
+                pfd_alti_color = setDUBrightness(Color.green);
+                pfd_ils_color = setDUBrightness(Color.magenta);
+            	instrument_background_color = setDUBrightness(color_airbusgray);
+            	heading_bug_color = setDUBrightness(Color.cyan);
+            	pfd_sky_color = setDUBrightness(color_airbussky);
             } else {
             	// PFD colors Boeing Style (default)
-            	pfd_armed_color = Color.cyan;
-            	pfd_managed_color = Color.magenta;
-            	pfd_selected_color = Color.magenta;            	
-            	pfd_vsi_needle_color = Color.white;
-            	pfd_instrument_background_color = color_bluegray;
-            	pfd_markings_color = Color.white;
-            	pfd_radio_alti_color = Color.white;
-            	pfd_reference_color = Color.yellow;
-            	pfd_mach_color = Color.green;
-            	pfd_alti_color = Color.white;
-            	pfd_ils_color = Color.white;
-            	instrument_background_color = color_bluegray;
-            	heading_bug_color = color_magenta;
-            	pfd_sky_color = sky_color;
+            	pfd_armed_color = setDUBrightness(Color.cyan);
+            	pfd_managed_color = setDUBrightness(Color.magenta);
+            	pfd_selected_color = setDUBrightness(Color.magenta);            	
+            	pfd_vsi_needle_color = setDUBrightness(Color.white);
+            	pfd_instrument_background_color = setDUBrightness(color_bluegray);
+            	pfd_markings_color = setDUBrightness(Color.white);
+            	pfd_radio_alti_color = setDUBrightness(Color.white);
+            	pfd_reference_color = setDUBrightness(Color.yellow);
+            	pfd_mach_color = setDUBrightness(Color.green);
+            	pfd_alti_color = setDUBrightness(Color.white);
+            	pfd_ils_color = setDUBrightness(Color.white);
+            	instrument_background_color = setDUBrightness(color_bluegray);
+            	heading_bug_color = setDUBrightness(color_magenta);
+            	pfd_sky_color = setDUBrightness(sky_color);
             }
-            pfd_box_color = Color.white;            
-            pfd_ground_color = ground_color;
-            pfd_active_color = Color.green;
-            pfd_caution_color = color_amber;
-            pfd_alarm_color = Color.red;
+            pfd_box_color = setDUBrightness(Color.white);            
+            pfd_ground_color = setDUBrightness(ground_color);
+            pfd_active_color = setDUBrightness(Color.green);
+            pfd_caution_color = setDUBrightness(color_amber);
+            pfd_alarm_color = setDUBrightness(Color.red);
             
             // CDU colors
-            cdu_title_color = Color.white;
-            cdu_data_color = Color.white;
-            cdu_scratch_pad_color = Color.white;         
+            cdu_title_color = setDUBrightness(Color.white);
+            cdu_data_color = setDUBrightness(Color.white);
+            cdu_scratch_pad_color = setDUBrightness(Color.white);         
            
         }
-
-        clock_markings_color = Color.white;
-        clock_digital_54616E_color = Color.decode("#54616E");
-        clock_digital_54616E_dark_color = Color.decode("#54616E").darker().darker();
-        clock_digital_dark_gray_color = Color.decode("#080808");
        
         if ( border_color.equals(XHSIPreferences.BORDER_BROWN) ) {
             backpanel_color = color_jumbobrown;
@@ -1022,6 +1096,24 @@ public class GraphicsConfig implements ComponentListener {
         
     }
 
+    public boolean update_colors(float du_brightness) {
+    	boolean colors_updated = false;
+    	
+    	if (this.du_brightness != du_brightness) {
+    		// Remember the display unit brightness
+    		this.du_brightness = du_brightness;
+    		
+            // define the colors
+            set_colors( preferences.get_use_more_color(), preferences.get_border_color() );
+            border_gradient = new GradientPaint(
+                    0, 0, backpanel_color.darker().darker().darker(),
+                    frame_size.width, frame_size.height, backpanel_color.brighter(),
+                    true);
+            
+            colors_updated = true;
+    	}
+    	return colors_updated;
+    }
 
     public void update_config(Graphics2D g2) {
 
@@ -1047,6 +1139,7 @@ public class GraphicsConfig implements ComponentListener {
         this.rendering_hints.put(RenderingHints.KEY_TEXT_ANTIALIASING, preferences.get_anti_alias() ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
         // define the colors
+        // TODO: may be transfered to update_colors(...)
         set_colors( preferences.get_use_more_color(), preferences.get_border_color() );
         border_gradient = new GradientPaint(
                 0, 0, backpanel_color.darker().darker().darker(),
@@ -1120,8 +1213,245 @@ public class GraphicsConfig implements ComponentListener {
         set_fonts(g2, this.scaling_factor);
 
     }
+    
+    /**
+     * Puts absolute coordinates in relation to width. The method assumes for a
+     * square of 200 * 200 px. The center is at 100|100.
+     *
+     * @param relation the actual width of the square / 2
+     * @param coordinate the coordinate based from the center of a 200x200 px
+     * square
+     * @return a coordinate representing the same position in a square with the
+     * size (2+relation)*(2*relation)
+     */
+    public static int inRel(double relation, int coordinate) {
+        return (int) (relation * coordinate);
+    }
 
 
+    /**
+     * set color brightness level by darkening the color by (1-du_brightness)
+     * If du_brightness is 0, then this will result in
+     * a black return color.
+     * If du_brightness is 1, then the color will be kept as it was.
+     * If du_brightness is 2, then the will result in a nearly white return color.
+     *
+     * @param inputColor the color that the factor will be applied to
+     * @return The Color brightness set by the factor
+     */
+    public Color setDUBrightness(Color inputColor) {
+    	double factor = 1 - du_brightness;
+    	int r,g,b;
+    	
+        if (factor < -1) {
+            factor = -1;
+        }
+        if (factor > 1) {
+            factor = 1;
+        }
+        if (factor < 0 ) {
+        	factor = du_brightness - 1;
+
+        	/*
+            int maxFactorR = (int) (255.0 / inputColor.getRed() - 1);
+            int maxFactorG = (int) (255.0 / inputColor.getGreen() - 1);
+            int maxFactorB = (int) (255.0 / inputColor.getBlue() - 1);
+            factor = Math.min(factor, Math.min(maxFactorR, Math.min(maxFactorG, maxFactorB)));
+            */
+            
+            r = (int) Math.min(255, inputColor.getRed() + (factor * inputColor.getRed()));
+            g = (int) Math.min(255, inputColor.getGreen() + (factor * inputColor.getGreen()));
+            b = (int) Math.min(255, inputColor.getBlue() + (factor * inputColor.getBlue()));
+
+            // decrease saturation by 40% max
+        	if ( r == 0 ) r = (int) Math.min(255, 96*factor);
+        	if ( g == 0 ) g = (int) Math.min(255, 96*factor);
+        	if ( b == 0 ) b = (int) Math.min(255, 96*factor);
+
+        } else {
+            r = (int) (inputColor.getRed() - (factor * inputColor.getRed()));
+            g = (int) (inputColor.getGreen() - (factor * inputColor.getGreen()));
+            b = (int) (inputColor.getBlue() - (factor * inputColor.getBlue()));
+        }
+
+        return new Color(r, g, b, inputColor.getAlpha());
+    }
+    
+    /**
+     * Recalculates the color of the background light in the OHP. It uses a
+     * matrix to do linear interpolation upon tested data of the QPAC. The color
+     * can then be retrieved using
+     * {@link #get_ohp_background_light get_ohp_background_light}.
+     *
+     *
+     * @param ohp_background_setting A value between 0 and 1, representing the
+     * setting on the OHP
+     * @param outside_light A value between 0 and 180, with 180 being daylight
+     * and 0 being complete darkness
+     */
+    public static Color update_panel_background_color(double ohp_background_setting, double outside_light) {
+        //For interpolation, a method as described in this paper is used:
+        //http://bmia.bmt.tue.nl/people/BRomeny/Courses/8C080/Interpolation.pdf
+
+        //3D Array, where first dimension is outside light (night / day), 
+        //second dimension is ohp background light intensity (0%/25%/50%/75%/100%)
+        //and third dimension is the color channel (red/green/blue)
+        int[][][] data = new int[2][5][3];
+
+
+        //                     NIGHT
+        //                               { r ,  g ,  b }
+        /*   0% */ data[0][0] = new int[]{1, 2, 3};
+        /*  25% */ data[0][1] = new int[]{65, 66, 39};
+        /*  50% */ data[0][2] = new int[]{128, 129, 76};
+        /*  75% */ data[0][3] = new int[]{192, 193, 114};
+        /* 100% */ data[0][4] = new int[]{212, 213, 126};
+
+
+        //                     DAY
+        //                               { r ,  g ,  b }
+        /*   0% */ data[1][0] = new int[]{13, 24, 26};
+        /*  25% */ data[1][1] = new int[]{130, 133, 100};
+        /*  50% */ data[1][2] = new int[]{164, 181, 131};
+        /*  75% */ data[1][3] = new int[]{228, 245, 169};
+        /* 100% */ data[1][4] = new int[]{237, 253, 167};
+
+        int x = (int) (ohp_background_setting * 100);
+        int y = (int) (outside_light * 100);
+        return ColorUtilities.interpolate_color(data, x, y);
+    }
+
+    /**
+     * Recalculates the color of the texts on the panels. It uses a matrix to do
+     * linear interpolation upon tested data of the QPAC. The color can then be
+     * retrieved using {@link #get_ohp_text_color get_ohp_text_color}.
+     *
+     *
+     * @param ohp_background_setting A value between 0 and 1, representing the
+     * setting on the OHP
+     * @param outside_light A value between 0 and 180, with 180 being daylight
+     * and 0 being complete darkness
+     */
+    public static Color update_panel_text_color(double ohp_background_setting, double outside_light) {
+        //For interpolation, a method as described in this paper is used:
+        //http://bmia.bmt.tue.nl/people/BRomeny/Courses/8C080/Interpolation.pdf
+
+        //3D Array, where first dimension is outside light (night / day), 
+        //second dimension is ohp background light intensity (0%/25%/50%/75%/100%)
+        //and third dimension is the color channel (red/green/blue)
+        int[][][] data = new int[2][5][3];
+
+
+        //                     NIGHT
+        //                               { r ,  g ,  b }
+        /*   0% */ data[0][0] = new int[]{23, 23, 23};
+        /*  25% */ data[0][1] = new int[]{87, 87, 60};
+        /*  50% */ data[0][2] = new int[]{145, 145, 92};
+        /*  75% */ data[0][3] = new int[]{209, 209, 130};
+        /* 100% */ data[0][4] = new int[]{255, 255, 167};
+
+
+        //                     DAY
+        //                               { r ,  g ,  b }
+        /*   0% */ data[1][0] = new int[]{197, 198, 202};
+        /*  25% */ data[1][1] = new int[]{255, 255, 239};
+        /*  50% */ data[1][2] = new int[]{255, 255, 255};
+        /*  75% */ data[1][3] = new int[]{255, 255, 255};
+        /* 100% */ data[1][4] = new int[]{255, 255, 255};
+
+        int x = (int) (ohp_background_setting * 100);
+        int y = (int) (outside_light * 100);
+        return ColorUtilities.interpolate_color(data, x, y);
+    }
+
+    /**
+     * Recalculates the color of the texts in displays on the panels. It uses a
+     * matrix to do linear interpolation upon tested data of the QPAC. The color
+     * can then be retrieved using
+     * {@link #get_ohp_text_color get_ohp_text_color}.
+     *
+     *
+     * @param ohp_background_setting A value between 0 and 1, representing the
+     * setting on the OHP
+     * @param outside_light A value between 0 and 180, with 180 being daylight
+     * and 0 being complete darkness
+     */
+    public static Color update_panel_display_color(double ohp_background_setting, double outside_light) {
+        //For interpolation, a method as described in this paper is used:
+        //http://bmia.bmt.tue.nl/people/BRomeny/Courses/8C080/Interpolation.pdf
+
+        //3D Array, where first dimension is outside light (night / day), 
+        //second dimension is ohp background light intensity (0%/25%/50%/75%/100%)
+        //and third dimension is the color channel (red/green/blue)
+        int[][][] data = new int[2][5][3];
+
+
+        //                     NIGHT
+        //                               { r ,  g ,  b }
+        /*   0% */ data[0][0] = new int[]{55, 55, 55};
+        /*  25% */ data[0][1] = new int[]{105, 105, 105};
+        /*  50% */ data[0][2] = new int[]{155, 155, 155};
+        /*  75% */ data[0][3] = new int[]{205, 205, 205};
+        /* 100% */ data[0][4] = new int[]{255, 255, 255};
+
+
+        //                     DAY
+        //                               { r ,  g ,  b }
+        /*   0% */ data[1][0] = new int[]{197, 198, 202};
+        /*  25% */ data[1][1] = new int[]{255, 255, 239};
+        /*  50% */ data[1][2] = new int[]{255, 255, 255};
+        /*  75% */ data[1][3] = new int[]{255, 255, 255};
+        /* 100% */ data[1][4] = new int[]{255, 255, 255};
+
+        int x = (int) (ohp_background_setting * 100);
+        int y = (int) (outside_light * 100);
+        return ColorUtilities.interpolate_color(data, x, y);
+    }
+
+    /**
+     * Recalculates the color of the green arrows, representing pipes, on the
+     * OHP. It uses a matrix to do linear interpolation upon tested data of the
+     * QPAC. The color can then be retrieved using
+     * {@link #get_green_arrow_color get_green_arrow_color}.
+     *
+     *
+     * @param ohp_background_setting A value between 0 and 1, representing the
+     * setting on the OHP
+     * @param outside_light A value between 0 and 180, with 180 being daylight
+     * and 0 being complete darkness
+     */
+    public static Color update_ohp_green_lines_color(double ohp_background_setting, double outside_light) {
+        //For interpolation, a method as described in this paper is used:
+        //http://bmia.bmt.tue.nl/people/BRomeny/Courses/8C080/Interpolation.pdf
+
+        //3D Array, where first dimension is outside light (night / day), 
+        //second dimension is ohp background light intensity (0%/25%/50%/75%/100%)
+        //and third dimension is the color channel (red/green/blue)
+        int[][][] data = new int[2][5][3];
+
+
+        //                     NIGHT
+        //                               { r ,  g ,  b }
+        /*   0% */ data[0][0] = new int[]{3, 24, 14};
+        /*  25% */ data[0][1] = new int[]{5, 88, 16};
+        /*  50% */ data[0][2] = new int[]{7, 151, 18};
+        /*  75% */ data[0][3] = new int[]{9, 215, 20};
+        /* 100% */ data[0][4] = new int[]{11, 255, 22};
+
+
+        //                     DAY
+        //                               { r ,  g ,  b }
+        /*   0% */ data[1][0] = new int[]{25, 202, 119};
+        /*  25% */ data[1][1] = new int[]{27, 255, 125};
+        /*  50% */ data[1][2] = new int[]{30, 255, 117};
+        /*  75% */ data[1][3] = new int[]{31, 255, 125};
+        /* 100% */ data[1][4] = new int[]{32, 255, 126};
+
+        int x = (int) (ohp_background_setting * 100);
+        int y = (int) (outside_light * 100);
+        return ColorUtilities.interpolate_color(data, x, y);
+    }
+    
     public int get_text_width(Graphics graphics, Font font, String text) {
         return graphics.getFontMetrics(font).stringWidth(text);
     }

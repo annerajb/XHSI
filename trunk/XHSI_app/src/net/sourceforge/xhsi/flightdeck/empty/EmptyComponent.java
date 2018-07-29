@@ -28,7 +28,6 @@
 */
 package net.sourceforge.xhsi.flightdeck.empty;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -37,13 +36,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 
 import net.sourceforge.xhsi.PreferencesObserver;
 import net.sourceforge.xhsi.XHSIPreferences;
-import net.sourceforge.xhsi.XHSISettings;
-import net.sourceforge.xhsi.XHSIStatus;
 
+import net.sourceforge.xhsi.XHSIInstrument.DU;
 import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
@@ -61,7 +58,7 @@ public class EmptyComponent extends Component implements Observer, PreferencesOb
 
 
     // subcomponents --------------------------------------------------------
-    ArrayList subcomponents = new ArrayList();
+    ArrayList<EmptySubcomponent> subcomponents = new ArrayList<EmptySubcomponent>();
     long[] subcomponent_paint_times = new long[15];
     long total_paint_times = 0;
     long nb_of_paints = 0;
@@ -73,14 +70,16 @@ public class EmptyComponent extends Component implements Observer, PreferencesOb
 
     Aircraft aircraft;
     Avionics avionics;
+    DU display_unit;
 
 
-    public EmptyComponent(ModelFactory model_factory, int du) {
+    public EmptyComponent(ModelFactory model_factory, DU du) {
 
-        this.empty_gc = new EmptyGraphicsConfig(this, du);
+        this.empty_gc = new EmptyGraphicsConfig(this, du.ordinal());
         this.model_factory = model_factory;
         this.aircraft = this.model_factory.get_aircraft_instance();
         this.avionics = this.aircraft.get_avionics();
+        this.display_unit = du;
 
         empty_gc.reconfig = true;
 
@@ -132,11 +131,6 @@ public class EmptyComponent extends Component implements Observer, PreferencesOb
             g2.rotate(Math.PI, empty_gc.frame_size.width/2, empty_gc.frame_size.height/2);
         }
 
-// adjustable brightness is too slow
-//        float alpha = 0.9f;
-//        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, alpha);
-//        g2.setComposite(ac);
-
         g2.clearRect(0, 0, empty_gc.frame_size.width, empty_gc.frame_size.height);
 
         long time = 0;
@@ -148,7 +142,7 @@ public class EmptyComponent extends Component implements Observer, PreferencesOb
             }
 
             // paint each of the subcomponents
-            ((EmptySubcomponent) this.subcomponents.get(i)).paint(g2);
+            this.subcomponents.get(i).paint(g2);
 
             if (EmptyComponent.COLLECT_PROFILING_INFORMATION) {
                 paint_time = System.currentTimeMillis() - time;

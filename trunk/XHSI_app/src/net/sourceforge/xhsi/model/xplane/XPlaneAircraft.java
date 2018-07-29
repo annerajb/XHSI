@@ -22,6 +22,8 @@
 */
 package net.sourceforge.xhsi.model.xplane;
 
+import java.awt.Color;
+
 import net.sourceforge.xhsi.XHSIPreferences;
 import net.sourceforge.xhsi.XHSISettings;
 import net.sourceforge.xhsi.model.Aircraft;
@@ -54,6 +56,10 @@ public class XPlaneAircraft implements Aircraft {
     private static String x737_thrust_modes[] = { "---", "TO", "R-TO", "R-CLB", "CLB", "CRZ", "G/A", "CON", "MAX" };
     private static String cl30_thrust_modes[] = { "---", "CRZ", "CLB", "TO", "APR" };
 
+    private Color outside_light_color;
+    private int   outside_light_color_rgb;
+    private Color cockpit_light_color;
+    private int   cockpit_light_color_rgb;
 
     public XPlaneAircraft(ModelFactory sim_model) {
         this.sim_data = sim_model.get_repository_instance();
@@ -62,6 +68,10 @@ public class XPlaneAircraft implements Aircraft {
         this.sim_command = new XPlaneCommand((Aircraft)this, sim_model);
         this.xhsi_preferences = XHSIPreferences.get_instance();
         this.xhsi_settings = XHSISettings.get_instance();
+        outside_light_color_rgb = 0x0F0F0F;
+        outside_light_color = new Color(outside_light_color_rgb);     
+        cockpit_light_color_rgb = 0x0F0F0F;
+        cockpit_light_color = new Color(cockpit_light_color_rgb);  
     }
 
     public Avionics get_avionics() {
@@ -98,6 +108,72 @@ public class XPlaneAircraft implements Aircraft {
         return ( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_ELECTRICAL_COCKPIT_LIGHTS_ON) != 0.0f );
     }
 
+    public Color cockpit_light_color() {
+    	/*
+        if (xhsi_preferences.get_override_background_light()) {
+            double value = xhsi_preferences.get_override_background_light_value();
+            int r = (int) (value * 255);
+            int g = (int) (value * 255);
+            int b = (int) (value * 255);
+
+            return new Color(r, g, b, 255);
+        } else {
+        */
+        	// cache color, avoiding calling new() many times in a display loop
+        	if (cockpit_light_color_rgb != (int) (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_GRAPHICS_MISC_COCKPIT_LIGHT_LEVEL_RGB))) {
+        		cockpit_light_color_rgb = (int) (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_GRAPHICS_MISC_COCKPIT_LIGHT_LEVEL_RGB));
+        		cockpit_light_color = new Color(cockpit_light_color_rgb);
+        	}
+            return cockpit_light_color;
+        //}
+    }
+
+    public double cockpit_light_level() {
+    	/*
+        if (xhsi_preferences.get_override_background_light()) {
+            return xhsi_preferences.get_override_background_light_value();
+        } else {
+        */
+            double min_value, max_value, current_value;
+            current_value = (((int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_GRAPHICS_MISC_OUTSIDE_LIGHT_LEVEL_RGB))>>16)/255.0d;
+            if (avionics.is_ff_a320()) {
+                //Can't use the cockpitlights unfortunately as they are very weird.
+                min_value = 0;
+                max_value = 0.7980256676673889;                
+            } else {
+                min_value = 0.0893632173538208;
+                max_value = 0.7980256676673889;
+            }
+            current_value = current_value < min_value ? min_value : current_value;
+            if (current_value > max_value) {
+                System.err.println("Found a cockpit light level value bigger then " + max_value + ": " + current_value);
+                current_value = max_value;
+            }
+            return (current_value - min_value) / (max_value - min_value);
+        // }
+    }
+
+    public Color outside_light_color() {
+    	// cache color, avoiding calling new() many times in a display loop
+    	if (outside_light_color_rgb != (int) (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_GRAPHICS_MISC_OUTSIDE_LIGHT_LEVEL_RGB))) {
+    		outside_light_color_rgb = (int) (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_GRAPHICS_MISC_OUTSIDE_LIGHT_LEVEL_RGB));
+    		outside_light_color = new Color(outside_light_color_rgb);
+    	}
+        return outside_light_color;
+    }
+
+    public double outside_light_level() {
+        double min_value = 0;
+        double max_value = 0.7980256676673889;
+        double current_value = (((int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_GRAPHICS_MISC_OUTSIDE_LIGHT_LEVEL_RGB))>>16)/255.0d;
+        current_value = current_value < min_value ? min_value : current_value;
+        if (current_value > max_value) {
+            System.err.println("Found a outside light level value bigger then " + max_value + ": " + current_value);
+            current_value = max_value;
+        }
+        return (current_value - min_value) / (max_value - min_value);
+    }
+    
     public float lat() {return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_LATITUDE); } // degrees
     public float lon() { return sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_LONGITUDE); } // degrees
     public float msl_m() { return (sim_data.get_sim_float(XPlaneSimDataRepository.SIM_FLIGHTMODEL_POSITION_ELEVATION)); } // meters

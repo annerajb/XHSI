@@ -185,6 +185,19 @@ public class LowerEcamCommon extends MFDSubcomponent {
             g2.drawString(str_gw_units, mfd_gc.ec_col3_unit, mfd_gc.ec_line1);
 
             // line 2 : GW CG
+            
+            // Debugging : MFD Brightness
+            /*
+            g2.setFont(mfd_gc.font_xl);
+            g2.setColor(mfd_gc.ecam_markings_color);
+            g2.drawString("BGT", mfd_gc.ec_col3, mfd_gc.ec_line2);
+            g2.setColor(mfd_gc.ecam_normal_color);
+            String bgt_str = "" + Math.round(mfd_gc.du_brightness*100);
+            g2.drawString(bgt_str, mfd_gc.ec_col3_val+mfd_gc.digit_width_xl*3-mfd_gc.get_text_width(g2, mfd_gc.font_xl, bgt_str), mfd_gc.ec_line2);
+            g2.setFont(mfd_gc.font_m);
+            g2.setColor(mfd_gc.ecam_action_color);            
+            g2.drawString("%", mfd_gc.ec_col3_unit, mfd_gc.ec_line2);
+            */
         }
 
     }

@@ -68,7 +68,7 @@ public class CompassRose extends NDSubcomponent {
 
         if ( nd_gc.powered ) {
         	
-        	boolean refresh_rose = (nd_gc.reconfigured_timestamp > this.refreshed_timestamp);
+        	boolean refresh_rose = (nd_gc.colors_updated | (nd_gc.reconfigured_timestamp > this.refreshed_timestamp));
             float map_up;
             if ( nd_gc.hdg_up ) {
                 // HDG UP

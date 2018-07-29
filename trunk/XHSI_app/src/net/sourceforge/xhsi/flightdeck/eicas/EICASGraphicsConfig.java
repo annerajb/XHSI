@@ -174,8 +174,11 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
 
 
 
-    public void update_config(Graphics2D g2, boolean power, int instrument_style, int nb_engines, int detents ) {
-
+    public void update_config(Graphics2D g2, boolean power, int instrument_style, int nb_engines, int detents, float du_brightness ) {
+    	
+    	// Update colors if du_brightness changed
+    	update_colors(du_brightness);
+    	
         if (this.resized
                 || this.reconfig
                 || (this.powered != power)

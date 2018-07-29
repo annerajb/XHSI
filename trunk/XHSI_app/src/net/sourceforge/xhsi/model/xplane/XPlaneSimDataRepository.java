@@ -307,6 +307,10 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XHSI_TIME_UTC_SOURCE = 313;
     public static final int XHSI_TIME_ET_RUNNING = 314;
 
+     // Ambient Light
+    public static final int SIM_GRAPHICS_MISC_COCKPIT_LIGHT_LEVEL_RGB = 315;
+    public static final int SIM_GRAPHICS_MISC_OUTSIDE_LIGHT_LEVEL_RGB = 316;
+    
     // Aircraft constants
     public static final int SIM_AIRCRAFT_VIEW_ACF_VSO = 320;
     public static final int SIM_AIRCRAFT_VIEW_ACF_VS = 321;
@@ -776,7 +780,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int QPAC_ENG_IGNITION = 1105;
     // IDs reserved for QPAC up to 1199
     
-    // JarDesign Airbus A320neo
+    // JarDesign Airbus A320neo [1200-1399]
     public static final int JAR_A320NEO_STATUS = 1200;
     
     // FMS
@@ -888,18 +892,81 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int JAR_A320NEO_DC_STATUS = 1333;
     public static final int JAR_A320NEO_AC_STATUS = 1334;
     public static final int JAR_A320NEO_GEN_STATUS = 1335;
+    
+    // Reserved range [1400-1499]
+    
+    // Flight Factor A320 Values [1500-1799]
+    public static final int XFF_STATUS = 1500;
+    public static final int XFF_APU_MASTER = 1600; //Unused currently
+    public static final int XFF_APU_STARTER = 1601;
+    public static final int XFF_APU_BLEED = 1602;
+    public static final int XFF_APU_GEN = 1603;
+    public static final int XFF_FCC = 1604;
+    public static final int XFF_GEN_STATUS = 1605;
+    public static final int XFF_RUD_TRIM_SWITCH = 1620;
+    public static final int XFF_RUD_TRIM_RESET = 1621;
+    public static final int XFF_ENG1_MASTER_SWITCH = 1645;
+    public static final int XFF_ENG2_MASTER_SWITCH = 1646;
+    public static final int XFF_ENG_MODE_SWITCH = 1647;
+    public static final int XFF_THROTTLE_INPUT_L = 1648;
+    public static final int XFF_THROTTLE_INPUT_R = 1649;
+    public static final int XFF_EFIS_ND_SYMBOLS_CAPT = 1650;
+    public static final int XFF_EFIS_ND_SYMBOLS_FO = 1651;
+    public static final int XFF_STEER_L = 1652;
+    public static final int XFF_STEER_R = 1653;
+    public static final int XFF_STEER_L_PED_DISCO = 1654;
+    public static final int XFF_STEER_R_PED_DISCO = 1655;
+    public static final int XFF_CAPTAIN_PRIORITY = 1656;
+    public static final int XFF_FO_PRIORITY = 1657;
+    public static final int XFF_FCU_ALT_STEP = 1702;
+    public static final int XFF_FCU_AP1 = 1703;
+    public static final int XFF_FCU_AP2 = 1704;
+    public static final int XFF_FCU_ATHR = 1705;
+    public static final int XFF_FCU_APPR = 1706;
+    public static final int XFF_FCU_LOC = 1707;
+    public static final int XFF_FCU_EXPED = 1708;
+    public static final int XFF_FCU_SPD_MACH = 1709;
+    public static final int XFF_FCU_HDG_TRK = 1710;
+    public static final int XFF_FCU_METRIC_ALT = 1711;
+    public static final int XFF_FCU_FD_L = 1712;
+    public static final int XFF_FCU_FD_R = 1713;
+    public static final int XFF_FCU_LS_L = 1714;
+    public static final int XFF_FCU_LS_R = 1715;
+    public static final int XFF_FCU_CHRONO_L = 1716;
+    public static final int XFF_FCU_CHRONO_R = 1717;
+    public static final int XFF_FCU_SPD_MODE = 1718;
+    public static final int XFF_FCU_ALT_MODE = 1719;
+    public static final int XFF_FCU_HDG_MODE = 1720;
+    public static final int XFF_FCU_VS_MODE = 1721;
+    public static final int XFF_EFIS_NAV_MODE_C = 1722;
+    public static final int XFF_EFIS_NAV_MODE_FO = 1723;
+    public static final int XFF_AP_FD = 1724;
+    public static final int XFF_AP_APPR = 1725;
+    public static final int XFF_AP_DATA = 1726;
+    public static final int XFF_AP_SPEED = 1727;
+    public static final int XFF_AP_HEADING = 1728;
+    public static final int XFF_AP_ALTITUDE = 1729;
+    public static final int XFF_AP_VERTICAL = 1730;
+    public static final int XFF_CHRONO_CAPT = 1731;
+    public static final int XFF_CHRONO_FO = 1732;
+    public static final int XFF_BARO_STATUS = 1733;
+    public static final int XFF_BARO_C = 1734;
+    public static final int XFF_BARO_FO = 1735;
+    public static final int XFF_BARO_HPA = 1736;
+    public static final int XFF_MFD_BUTTONS = 1737;
+    
     // Plugin Version
     public static final int PLUGIN_VERSION_ID = 999;
 
 
     // array with sim data for all sim data points defined above
-    float[] sim_values_float = new float[1400];
-    String[] sim_values_string = new String[1400];
+    float[] sim_values_float = new float[1800];
+    String[] sim_values_string = new String[1800];
     // updated status and timestamp for all sim data
-    boolean[] sim_updated_float = new boolean[1400];
-    long[] sim_timestamp_float = new long[1400];
-    boolean[] sim_updated_string = new boolean[1400];
-    long[] sim_timestamp_string = new long[1400];
+    boolean[] sim_updated_float = new boolean[1800];
+    long[] sim_timestamp_float = new long[1800];
+    boolean[] sim_updated_string = new boolean[1800];
+    long[] sim_timestamp_string = new long[1800];
 
     long updates = 0;
     ArrayList<Observer> observers;

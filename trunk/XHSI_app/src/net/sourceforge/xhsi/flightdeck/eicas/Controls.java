@@ -94,15 +94,13 @@ public class Controls extends EICASSubcomponent {
         
         AffineTransform original_at = g2.getTransform();
         
-        g2.setColor(eicas_gc.color_boeingcyan);
+        g2.setColor(eicas_gc.label_color);
         g2.setFont(eicas_gc.font_s);
         g2.drawString("T", eicas_gc.trim_txt_x - eicas_gc.get_text_width(g2, eicas_gc.font_s, "T")/2, eicas_gc.trim_txt_y + eicas_gc.line_height_s*0);
         g2.drawString("R", eicas_gc.trim_txt_x - eicas_gc.get_text_width(g2, eicas_gc.font_s, "R")/2, eicas_gc.trim_txt_y + eicas_gc.line_height_s*1);
         g2.drawString("I", eicas_gc.trim_txt_x - eicas_gc.get_text_width(g2, eicas_gc.font_s, "I")/2, eicas_gc.trim_txt_y + eicas_gc.line_height_s*2);
         g2.drawString("M", eicas_gc.trim_txt_x - eicas_gc.get_text_width(g2, eicas_gc.font_s, "M")/2, eicas_gc.trim_txt_y + eicas_gc.line_height_s*3);
 
-        //g2.setColor(eicas_gc.color_boeingcyan);
-        //g2.setFont(eicas_gc.font_s);
         g2.drawString("ROLL", eicas_gc.lat_trim_x + eicas_gc.lat_trim_w/2 - eicas_gc.get_text_width(g2, eicas_gc.font_s, "ROLL")/2, eicas_gc.lat_trim_y - eicas_gc.line_height_s);
 
         g2.setColor(eicas_gc.dim_markings_color);
@@ -135,7 +133,7 @@ public class Controls extends EICASSubcomponent {
         g2.setTransform(original_at);
         
         
-        g2.setColor(eicas_gc.color_boeingcyan);
+        g2.setColor(eicas_gc.label_color);
         g2.setFont(eicas_gc.font_s);
         g2.drawString("YAW", eicas_gc.lat_trim_x + eicas_gc.lat_trim_w/2 - eicas_gc.get_text_width(g2, eicas_gc.font_s, "YAW")/2, eicas_gc.yaw_trim_y - eicas_gc.lat_trim_h*8/100 - eicas_gc.line_height_s);
 
@@ -161,7 +159,7 @@ public class Controls extends EICASSubcomponent {
         g2.drawPolygon(yaw_triangle_x, yaw_triangle_y, 3);
 
         
-        g2.setColor(eicas_gc.color_boeingcyan);
+        g2.setColor(eicas_gc.label_color);
         g2.setFont(eicas_gc.font_s);
         g2.drawString("PITCH", eicas_gc.pitch_trim_x, eicas_gc.pitch_trim_y - eicas_gc.line_height_s);
 
@@ -271,7 +269,7 @@ public class Controls extends EICASSubcomponent {
         g2.fillPolygon(flaps_triangle_x, flaps_triangle_y, 3);
         g2.setTransform(original_at);
         
-        g2.setColor(eicas_gc.color_boeingcyan);
+        g2.setColor(eicas_gc.label_color);
         g2.setFont(eicas_gc.font_s);
         g2.drawString("FLAPS", eicas_gc.wing_x, eicas_gc.wing_y + eicas_gc.line_height_s*10/4);
 
@@ -321,7 +319,7 @@ public class Controls extends EICASSubcomponent {
             g2.fillPolygon(spdbrk_triangle_x, spdbrk_triangle_y, 3);
             g2.setTransform(original_at);
 
-            g2.setColor(eicas_gc.color_boeingcyan);
+            g2.setColor(eicas_gc.label_color);
             g2.setFont(eicas_gc.font_s);
             g2.drawString("SPEEDBRK", eicas_gc.wing_x, eicas_gc.wing_y - eicas_gc.line_height_s*12/4);
         
@@ -357,7 +355,7 @@ public class Controls extends EICASSubcomponent {
         if ( this.aircraft.has_retractable_gear() ) {
             
             g2.setFont(eicas_gc.font_s);
-            g2.setColor(eicas_gc.color_boeingcyan);
+            g2.setColor(eicas_gc.label_color);
             g2.drawString("GEAR", eicas_gc.gear_x - eicas_gc.get_text_width(g2, eicas_gc.font_s, "GEAR")/2, eicas_gc.gear_y);
 
             draw_1_gear(g2, 0, "N", eicas_gc.gear_x, eicas_gc.gear_y + eicas_gc.line_height_s*13/8);
@@ -426,7 +424,7 @@ public class Controls extends EICASSubcomponent {
         }
 
         g2.setFont(eicas_gc.font_s);
-        g2.setColor(eicas_gc.color_boeingcyan);
+        g2.setColor(eicas_gc.label_color);
         g2.drawString("AUTOBRK", eicas_gc.autbrk_x - eicas_gc.get_text_width(g2, eicas_gc.font_s, "AUTOBRK")/2, eicas_gc.autbrk_y);
  
         if ( ( ! on_ground && ( autobrake == -1 ) ) || ( on_ground && ( autobrake > 0 ) ) ) {

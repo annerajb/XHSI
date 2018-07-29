@@ -328,10 +328,14 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 //    }
 
 
-    public void update_config(Graphics2D g2, int mode, int submode, int range, boolean zoomin, boolean power, int instrument_style) {
+    public void update_config(Graphics2D g2, int mode, int submode, int range, boolean zoomin,
+    		boolean power, int instrument_style, float du_brightness) {
     	// TODO: add boolean narrow_mode
 
-        if (this.resized
+    	// Update colors if du_brightness changed
+    	colors_updated = update_colors(du_brightness);
+
+    	boolean settings_updated = (this.resized
                 || this.reconfig
                 || (this.map_mode != mode)
                 || (this.map_submode != submode)
@@ -339,7 +343,9 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
                 || (this.map_zoomin != zoomin)
                 || (this.powered != power)
                 || (this.style != instrument_style)
-            ) {
+            );
+    	
+        if (settings_updated) {
             // one of the settings has been changed
 
             // remember the new settings
@@ -688,7 +694,9 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             sl_box_h = sl_wind_y + sl_line_height*2/10;
             sl_img = new BufferedImage(sl_box_w,sl_box_h,BufferedImage.TYPE_INT_ARGB);
             
-            // Terrain
+            /*
+             * EGPWS - Terrain
+             */
             terr_img_1 = new BufferedImage(panel_rect.width,panel_rect.height,BufferedImage.TYPE_INT_ARGB);
             terr_img_2 = new BufferedImage(panel_rect.width,panel_rect.height,BufferedImage.TYPE_INT_ARGB);
             terr_sweep_step = 75.0f/(preferences.get_nd_terrain_sweep_duration()*1000); 
@@ -753,28 +761,14 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             	terr_info_x = panel_rect.x + panel_rect.width * 855/1000;
             	terr_info_y = this.frame_size.height*745/1000;
             }
-            terr_info_img = new BufferedImage(terr_info_width,terr_info_height,BufferedImage.TYPE_INT_ARGB);
-
-            /*
-             * Terrain textures hd = high density, md = medium density, ld = low density
-             */
-            int terr_text_size=16;
-            terrain_tp_hd_red = create_regular_terrain_texture(terrain_red_color,terr_text_size,0);
-            terrain_tp_hd_yellow = create_regular_terrain_texture(terrain_bright_yellow_color,terr_text_size,0);
-            terrain_tp_md_yellow = create_regular_terrain_texture(terrain_yellow_color,terr_text_size,1);
-            terrain_tp_ld_yellow = create_regular_terrain_texture(terrain_yellow_color,terr_text_size,2);
-            terrain_tp_solid_green = create_solid_terrain_texture(terrain_green_color,terr_text_size);
-            terrain_tp_hd_green = create_regular_terrain_texture(terrain_green_color,terr_text_size,0);
-            terrain_tp_md_green = create_regular_terrain_texture(terrain_green_color,terr_text_size,1);
-            terrain_tp_ld_green = create_regular_terrain_texture(terrain_dark_green_color,terr_text_size,2);
-            terrain_tp_blue = create_regular_terrain_texture(terrain_blue_color,terr_text_size,1);
-            terrain_tp_black = create_regular_terrain_texture(terrain_black_color,terr_text_size,2);
-            
+            terr_info_img = new BufferedImage(terr_info_width,terr_info_height,BufferedImage.TYPE_INT_ARGB);          
         	float terr_sweep_max = 75.0f;
         	terr_clip = new Area(new Arc2D.Float(map_center_x - rose_radius, map_center_y - rose_radius,
 					rose_radius*2, rose_radius*2, 90-terr_sweep_max, terr_sweep_max*2, Arc2D.PIE));
             
-            // Weather radar
+            /*
+             *  Weather radar
+             */
             // wxr_radius limits the weather radar range to 100nm
             wxr_radius = Math.min(rose_radius, (int)(pixels_per_nm*100));
             wxr_img_1 = new BufferedImage(panel_rect.width,panel_rect.height,BufferedImage.TYPE_INT_ARGB);
@@ -824,13 +818,36 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             // clear the flags
             this.resized = false;
             this.reconfig = false;
-            // some subcomponents need to be reminded to redraw imediately
+            // some subcomponents need to be reminded to redraw immediately
             this.reconfigured = true;
 
         }
-
+        
+        if (colors_updated | settings_updated) {
+            fix_awy_symbol_img = create_fix_symbol(awy_wpt_color);
+            fix_term_symbol_img = create_fix_symbol(term_wpt_color);
+            airport_symbol_img = create_airport_symbol(arpt_color);
+            createTerrainTextures();        	
+        }
     }
 
+    private void createTerrainTextures() {
+        /*
+         * Terrain textures hd = high density, md = medium density, ld = low density
+         */
+        int terr_text_size=16;
+        terrain_tp_hd_red = create_regular_terrain_texture(terrain_red_color,terr_text_size,0);
+        terrain_tp_hd_yellow = create_regular_terrain_texture(terrain_bright_yellow_color,terr_text_size,0);
+        terrain_tp_md_yellow = create_regular_terrain_texture(terrain_yellow_color,terr_text_size,1);
+        terrain_tp_ld_yellow = create_regular_terrain_texture(terrain_yellow_color,terr_text_size,2);
+        terrain_tp_solid_green = create_solid_terrain_texture(terrain_green_color,terr_text_size);
+        terrain_tp_hd_green = create_regular_terrain_texture(terrain_green_color,terr_text_size,0);
+        terrain_tp_md_green = create_regular_terrain_texture(terrain_green_color,terr_text_size,1);
+        terrain_tp_ld_green = create_regular_terrain_texture(terrain_dark_green_color,terr_text_size,2);
+        terrain_tp_blue = create_regular_terrain_texture(terrain_blue_color,terr_text_size,1);
+        terrain_tp_black = create_regular_terrain_texture(terrain_black_color,terr_text_size,2);
+    }
+    
     /**
      * Creates random terrain textures for the EPGWS terrain map on ND
      * @param texture_color : Color

@@ -28,22 +28,18 @@
 */
 package net.sourceforge.xhsi.flightdeck.eicas;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 
 import net.sourceforge.xhsi.PreferencesObserver;
 import net.sourceforge.xhsi.XHSIPreferences;
-import net.sourceforge.xhsi.XHSISettings;
-import net.sourceforge.xhsi.XHSIStatus;
 
+import net.sourceforge.xhsi.XHSIInstrument.DU;
 import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
@@ -61,7 +57,7 @@ public class EICASComponent extends Component implements Observer, PreferencesOb
 
 
     // subcomponents --------------------------------------------------------
-    ArrayList subcomponents = new ArrayList();
+    ArrayList<EICASSubcomponent> subcomponents = new ArrayList<EICASSubcomponent>();
     long[] subcomponent_paint_times = new long[15];
     long total_paint_times = 0;
     long nb_of_paints = 0;
@@ -73,14 +69,17 @@ public class EICASComponent extends Component implements Observer, PreferencesOb
 
     Aircraft aircraft;
     Avionics avionics;
+    DU display_unit;
 
 
-    public EICASComponent(ModelFactory model_factory, int du) {
+    public EICASComponent(ModelFactory model_factory, DU du) {
 
-        this.eicas_gc = new EICASGraphicsConfig(this, du);
+        this.eicas_gc = new EICASGraphicsConfig(this, du.ordinal());
         this.model_factory = model_factory;
         this.aircraft = this.model_factory.get_aircraft_instance();
         this.avionics = this.aircraft.get_avionics();
+        this.display_unit = du;
+
 
         eicas_gc.reconfig = true;
 
@@ -124,7 +123,8 @@ public class EICASComponent extends Component implements Observer, PreferencesOb
         g2.setBackground(eicas_gc.background_color);
 
         // send Graphics object to eicas_gc to recompute positions, if necessary because the panel has been resized or a mode setting has been changed
-        eicas_gc.update_config( g2, this.avionics.power(), this.avionics.get_instrument_style(), this.aircraft.num_engines(), this.aircraft.get_flap_detents() );
+        eicas_gc.update_config( g2, this.avionics.power(), this.avionics.get_instrument_style(), this.aircraft.num_engines(),
+        		this.aircraft.get_flap_detents(), this.avionics.du_brightness(display_unit));
 
         // rotate the display
         XHSIPreferences.Orientation orientation = XHSIPreferences.get_instance().get_panel_orientation( this.eicas_gc.display_unit );
@@ -135,11 +135,6 @@ public class EICASComponent extends Component implements Observer, PreferencesOb
         } else if ( orientation == XHSIPreferences.Orientation.DOWN ) {
             g2.rotate(Math.PI, eicas_gc.frame_size.width/2, eicas_gc.frame_size.height/2);
         }
-
-// adjustable brightness is too slow
-//        float alpha = 0.9f;
-//        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, alpha);
-//        g2.setComposite(ac);
 
         g2.clearRect(0, 0, eicas_gc.frame_size.width, eicas_gc.frame_size.height);
 
@@ -152,7 +147,7 @@ public class EICASComponent extends Component implements Observer, PreferencesOb
             }
 
             // paint each of the subcomponents
-            ((EICASSubcomponent) this.subcomponents.get(i)).paint(g2);
+            this.subcomponents.get(i).paint(g2);
 
             if (EICASComponent.COLLECT_PROFILING_INFORMATION) {
                 paint_time = System.currentTimeMillis() - time;

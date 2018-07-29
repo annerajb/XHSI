@@ -64,7 +64,7 @@ public class ClockChrono extends NDSubcomponent {
     public void paint(Graphics2D g2) {
 
         if ( nd_gc.powered ) {
-        	boolean refresh_all = (nd_gc.reconfigured_timestamp > this.refreshed_timestamp);
+        	boolean refresh_all = (nd_gc.colors_updated | (nd_gc.reconfigured_timestamp > this.refreshed_timestamp));
         	this.refreshed_timestamp =  nd_gc.current_time_millis;
         	
         	// Navigation Display Chrono

@@ -82,7 +82,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox panel_locked_checkbox;
     private JButton get_button;
 
-    private static final int MAX_WINS = 8; // Empty, PFD, ND, EICAS, MFD, Annunciators, Clock and CDU
+    private static final int MAX_WINS = 9; // Empty, PFD, ND, EICAS, MFD, Annunciators, Clock and CDU
     private JCheckBox panel_active_checkbox[] = new JCheckBox[MAX_WINS];
     private JTextField panel_pos_x_textfield[] = new JTextField[MAX_WINS];
     private JTextField panel_pos_y_textfield[] = new JTextField[MAX_WINS];

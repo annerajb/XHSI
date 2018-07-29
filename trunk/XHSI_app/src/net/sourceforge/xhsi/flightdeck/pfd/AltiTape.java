@@ -187,9 +187,9 @@ public class AltiTape extends PFDSubcomponent {
                 float da = (float)da_bug;
                 int da_y = pfd_gc.adi_cy - Math.round( (da - alt) * pfd_gc.tape_height / 800.0f );
                 if ( ( alt > da ) || this.aircraft.on_ground() ) {
-                    g2.setColor(pfd_gc.color_lime);
+                    g2.setColor(pfd_gc.normal_color);
                 } else {
-                    g2.setColor(pfd_gc.color_amber);
+                    g2.setColor(pfd_gc.caution_color);
                 }
                 g2.drawLine(pfd_gc.altitape_left - 2, da_y, pfd_gc.altitape_left + pfd_gc.tape_width - 1, da_y);
                 int[] da_triangle_x = {
@@ -293,7 +293,7 @@ public class AltiTape extends PFDSubcomponent {
         } else {
             qnh_str = "" + qnh;
         }
-        g2.setColor(pfd_gc.color_lime);
+        g2.setColor(pfd_gc.normal_color);
         g2.setFont(pfd_gc.font_xl);
         g2.drawString(qnh_str, pfd_gc.altitape_left + 4*pfd_gc.digit_width_xl - pfd_gc.get_text_width(g2, pfd_gc.font_xl, qnh_str), pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_xl*9/8);
         if ( ! std ) {

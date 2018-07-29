@@ -148,7 +148,7 @@ public class LowerEicas extends MFDSubcomponent {
 
         			String ind_str;
         			int ind_x;
-        			g2.setColor(mfd_gc.color_boeingcyan);
+        			g2.setColor(mfd_gc.label_color);
         			g2.setFont(mfd_gc.font_m);
 
         			// N2

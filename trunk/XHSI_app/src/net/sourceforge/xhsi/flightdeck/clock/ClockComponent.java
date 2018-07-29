@@ -48,6 +48,7 @@ import javax.swing.event.MouseInputListener;
 import net.sourceforge.xhsi.PreferencesObserver;
 import net.sourceforge.xhsi.XHSIPreferences;
 
+import net.sourceforge.xhsi.XHSIInstrument.DU;
 import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
@@ -75,14 +76,16 @@ public class ClockComponent extends Component implements Observer, PreferencesOb
 
     Aircraft aircraft;
     Avionics avionics;
+    DU display_unit;
 
 
-    public ClockComponent(ModelFactory model_factory, int du) {
+    public ClockComponent(ModelFactory model_factory, DU du) {
 
-        this.clock_gc = new ClockGraphicsConfig(this, du);
+        this.clock_gc = new ClockGraphicsConfig(this, du.ordinal());
         this.model_factory = model_factory;
         this.aircraft = this.model_factory.get_aircraft_instance();
         this.avionics = this.aircraft.get_avionics();
+        this.display_unit = du;
 
         clock_gc.reconfig = true;
         
@@ -128,7 +131,7 @@ public class ClockComponent extends Component implements Observer, PreferencesOb
 
         // send Graphics object to annun_gc to recompute positions, if necessary because the panel has been resized or a mode setting has been changed
         // TODO: this.avionics.get_clock_style()
-        clock_gc.update_config( g2, this.aircraft.battery(), this.avionics.get_instrument_style() );
+        clock_gc.update_config( g2, this.aircraft.battery(), this.avionics.get_instrument_style(), this.avionics.du_brightness(display_unit) );
 
         // rotate the display
         XHSIPreferences.Orientation orientation = XHSIPreferences.get_instance().get_panel_orientation( this.clock_gc.display_unit );
@@ -139,11 +142,6 @@ public class ClockComponent extends Component implements Observer, PreferencesOb
         } else if ( orientation == XHSIPreferences.Orientation.DOWN ) {
             g2.rotate(Math.PI, clock_gc.frame_size.width/2, clock_gc.frame_size.height/2);
         }
-
-// adjustable brightness is too slow
-//        float alpha = 0.9f;
-//        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, alpha);
-//        g2.setComposite(ac);
 
         g2.clearRect(0, 0, clock_gc.frame_size.width, clock_gc.frame_size.height);
 
@@ -156,7 +154,7 @@ public class ClockComponent extends Component implements Observer, PreferencesOb
             }
 
             // paint each of the subcomponents
-            ((ClockSubcomponent) this.subcomponents.get(i)).paint(g2);
+            this.subcomponents.get(i).paint(g2);
 
             if (ClockComponent.COLLECT_PROFILING_INFORMATION) {
                 paint_time = System.currentTimeMillis() - time;

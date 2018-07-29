@@ -44,6 +44,7 @@ import javax.swing.event.MouseInputListener;
 import net.sourceforge.xhsi.PreferencesObserver;
 import net.sourceforge.xhsi.XHSIPreferences;
 
+import net.sourceforge.xhsi.XHSIInstrument.DU;
 import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
@@ -76,17 +77,19 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
     Avionics avionics;
     QpacMcduData qpac_mcdu_data;
     XfmcData xfmc_data;
+    DU display_unit;
 
 
-    public CDUComponent(ModelFactory model_factory, int du) {
+    public CDUComponent(ModelFactory model_factory, DU du) {
 
-        this.cdu_gc = new CDUGraphicsConfig(this, du);
+        this.cdu_gc = new CDUGraphicsConfig(this, du.ordinal());
         this.model_factory = model_factory;
         this.aircraft = this.model_factory.get_aircraft_instance();
         this.avionics = this.aircraft.get_avionics();
         this.preferences = XHSIPreferences.get_instance();
         this.qpac_mcdu_data = QpacMcduData.getInstance();
         this.xfmc_data = XfmcData.getInstance();
+        this.display_unit = du;
 
         cdu_gc.reconfig = true;
 
@@ -141,7 +144,7 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
         }
 
         // send Graphics object to annun_gc to recompute positions, if necessary because the panel has been resized or a mode setting has been changed
-        cdu_gc.update_config( g2, this.avionics.power(), this.avionics.get_cdu_source(), this.preferences.cdu_display_only() );
+        cdu_gc.update_config( g2, this.avionics.power(), this.avionics.get_cdu_source(), this.preferences.cdu_display_only(), this.avionics.du_brightness(display_unit) );
 
         // rotate the display
         XHSIPreferences.Orientation orientation = XHSIPreferences.get_instance().get_panel_orientation( this.cdu_gc.display_unit );
@@ -152,11 +155,6 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
         } else if ( orientation == XHSIPreferences.Orientation.DOWN ) {
             g2.rotate(Math.PI, cdu_gc.frame_size.width/2, cdu_gc.frame_size.height/2);
         }
-
-// adjustable brightness is too slow
-//        float alpha = 0.9f;
-//        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, alpha);
-//        g2.setComposite(ac);
 
         g2.clearRect(0, 0, cdu_gc.frame_size.width, cdu_gc.frame_size.height);
 
@@ -170,7 +168,7 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
             }
 
             // paint each of the subcomponents
-            ((CDUSubcomponent) this.subcomponents.get(i)).paint(g2);
+            this.subcomponents.get(i).paint(g2);
 
             if (CDUComponent.COLLECT_PROFILING_INFORMATION) {
                 paint_time = System.currentTimeMillis() - time;
@@ -212,9 +210,9 @@ public class CDUComponent extends Component implements Observer, PreferencesObse
      */
     public void update() {
     	// TODO: repaint only if cdu_packet received or if mcdu_packet received
-    	if ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY) && avionics.is_qpac() && qpac_mcdu_data.updated ) {
+    	if ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY) && avionics.is_qpac() && qpac_mcdu_data.updated) {
     		repaint();
-    	} else if (cdu_gc.cdu_source == Avionics.CDU_SOURCE_XFMC && this.xfmc_data.updated ) {	
+    	} else if (cdu_gc.cdu_source == Avionics.CDU_SOURCE_XFMC && this.xfmc_data.updated) {	
     		repaint();
     	}
         

@@ -744,14 +744,19 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
 //    }
 
 
-    public void update_config(Graphics2D g2, boolean power, int instrument_style, int nb_engines) {
+    public void update_config(Graphics2D g2, boolean power, int instrument_style, int nb_engines, float du_brightness) {
+    	
+    	// Update colors if du_brightness changed
+    	boolean colors_updated = update_colors(du_brightness);
 
-        if (this.resized
+    	boolean settings_updated = (this.resized
                 || this.reconfig
                 || (this.style != instrument_style)
                 || (this.num_eng !=  nb_engines)
                 || (this.powered != power)
-            ) {
+            );
+    	
+        if (settings_updated) {
             // one of the settings has been changed
 
         	// remember the instrument style
@@ -1571,6 +1576,8 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             wheel_door_main_l = panel_rect.width * 100/1000;
             wheel_shape_w = mfd_size * 12/1000;
             wheel_shape_g = new BufferedImage(wheel_shape_w,5, BufferedImage.TYPE_INT_ARGB);
+            
+            /*
             Graphics2D g2_s = wheel_shape_g.createGraphics();
             g2_s.setColor(background_color);
             g2_s.fillRect(0, 0, wheel_shape_w, 5);
@@ -1584,7 +1591,11 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             g2_r.fillRect(0, 0, wheel_shape_w, 5);
             g2_r.setColor(warning_color);
             g2_r.drawLine(0, 0, 0, 5);               
-            wheel_paint_r = new TexturePaint(wheel_shape_r, wheel_rect);   
+            wheel_paint_r = new TexturePaint(wheel_shape_r, wheel_rect); 
+            */
+            
+            wheel_paint_g = wheelTexturePaint(normal_color);
+            wheel_paint_r = wheelTexturePaint(warning_color);
 
             
             // Door/oxy
@@ -1701,10 +1712,26 @@ public class MFDGraphicsConfig extends GraphicsConfig implements ComponentListen
 
             
         }
+        
+        if (colors_updated | settings_updated) {
+            wheel_paint_g = wheelTexturePaint(normal_color);
+            wheel_paint_r = wheelTexturePaint(warning_color);
+        }
 
     }
 
 
+    private TexturePaint wheelTexturePaint(Color front_color) {       
+        BufferedImage wheel_shape_img = new BufferedImage(wheel_shape_w,5, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2_ws = wheel_shape_img.createGraphics();
+        g2_ws.setColor(background_color);
+        g2_ws.fillRect(0, 0, wheel_shape_w, 5);
+        g2_ws.setColor(front_color);
+        g2_ws.drawLine(0, 0, 0, 5);    
+        Rectangle2D wheel_rect = new Rectangle2D.Double(0, 0, wheel_shape_w, 5);
+        return new TexturePaint(wheel_shape_img, wheel_rect);
+    }
+    
 //    public int get_text_width(Graphics graphics, Font font, String text) {
 //        return graphics.getFontMetrics(font).stringWidth(text);
 //    }

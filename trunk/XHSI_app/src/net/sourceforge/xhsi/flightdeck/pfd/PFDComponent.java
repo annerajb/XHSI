@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 import net.sourceforge.xhsi.PreferencesObserver;
 import net.sourceforge.xhsi.XHSIPreferences;
 
+import net.sourceforge.xhsi.XHSIInstrument.DU;
 import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
@@ -67,15 +68,17 @@ public class PFDComponent extends Component implements Observer, PreferencesObse
     Aircraft aircraft;
     Avionics avionics;
     XHSIPreferences preferences;
+    DU display_unit;
 
 
-    public PFDComponent(ModelFactory model_factory, int du) {
+    public PFDComponent(ModelFactory model_factory, DU du) {
 
-        this.pfd_gc = new PFDGraphicsConfig(this, du);
+        this.pfd_gc = new PFDGraphicsConfig(this, du.ordinal());
         this.model_factory = model_factory;
         this.aircraft = this.model_factory.get_aircraft_instance();
         this.avionics = this.aircraft.get_avionics();
         this.preferences = XHSIPreferences.get_instance();
+        this.display_unit = du;
 
         pfd_gc.reconfig = true;
 
@@ -133,7 +136,7 @@ public class PFDComponent extends Component implements Observer, PreferencesObse
         g2.setBackground(pfd_gc.background_color);
 
         // send Graphics object to pfd_gc to recompute positions, if necessary because the panel has been resized or a mode setting has been changed
-        pfd_gc.update_config( g2, this.avionics.power(), this.avionics.get_instrument_style() );
+        pfd_gc.update_config( g2, this.avionics.power(), this.avionics.get_instrument_style(), this.avionics.du_brightness(display_unit) );
 
         // rotate the display
         XHSIPreferences.Orientation orientation = XHSIPreferences.get_instance().get_panel_orientation( this.pfd_gc.display_unit );
@@ -144,11 +147,6 @@ public class PFDComponent extends Component implements Observer, PreferencesObse
         } else if ( orientation == XHSIPreferences.Orientation.DOWN ) {
             g2.rotate(Math.PI, pfd_gc.frame_size.width/2, pfd_gc.frame_size.height/2);
         }
-
-//// adjustable brightness has some undesired side-effects
-//float alpha = 0.5f;
-//AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
-//g2.setComposite(ac);
 
         g2.clearRect(0, 0, pfd_gc.frame_size.width, pfd_gc.frame_size.height);
 
@@ -161,7 +159,6 @@ public class PFDComponent extends Component implements Observer, PreferencesObse
             }
 
             // paint each of the subcomponents
-            // ((PFDSubcomponent) this.subcomponents.get(i)).paint(g2);
             this.subcomponents.get(i).paint(g2);
 
             if (PFDComponent.COLLECT_PROFILING_INFORMATION) {

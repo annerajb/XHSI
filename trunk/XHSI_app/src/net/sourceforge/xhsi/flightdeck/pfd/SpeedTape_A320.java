@@ -108,7 +108,7 @@ public class SpeedTape_A320 extends PFDSubcomponent {
 
 
         // Yellow line and triangle for actual IAS
-        g2.setColor(Color.yellow);
+        g2.setColor(pfd_gc.pfd_reference_color);
         int tape_middle_y=pfd_gc.tape_top + pfd_gc.tape_height/2;
         // thick
         Stroke original_stroke = g2.getStroke();
@@ -130,7 +130,7 @@ public class SpeedTape_A320 extends PFDSubcomponent {
         		pfd_gc.tape_top + pfd_gc.tape_height/2 - pfd_gc.tape_width*1/10,
         		pfd_gc.tape_top + pfd_gc.tape_height/2 + pfd_gc.tape_width*1/10
         };
-        g2.setColor(Color.yellow);
+        g2.setColor(pfd_gc.pfd_reference_color);
         g2.fillPolygon(speed_tri_x, speed_tri_y, 3);
         
         
@@ -178,7 +178,7 @@ public class SpeedTape_A320 extends PFDSubcomponent {
                 ias_trend = - ias;
             }
             int asi10_y = pfd_gc.adi_cy - Math.round( ias_trend * pfd_gc.tape_height / 80.0f );
-            g2.setColor(Color.yellow);
+            g2.setColor(pfd_gc.pfd_reference_color);
             g2.drawLine(ias_trend_x, pfd_gc.adi_cy, ias_trend_x , asi10_y);
             int arrow_dx = pfd_gc.tape_width*1/16;
             int arrow_dy = pfd_gc.tape_width*2/16 * (int)Math.signum(ias_trend);

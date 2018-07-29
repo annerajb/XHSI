@@ -84,8 +84,11 @@ public class CDUGraphicsConfig extends GraphicsConfig implements ComponentListen
         init();
     }
 
-    public void update_config(Graphics2D g2, boolean power, int source, boolean cdu_display_only) {
-
+    public void update_config(Graphics2D g2, boolean power, int source, boolean cdu_display_only, float du_brightness) {
+    	
+    	// Update colors if du_brightness changed
+    	colors_updated = update_colors(du_brightness);
+    	
         if (this.resized
                 || this.reconfig
                 || (this.powered != power)

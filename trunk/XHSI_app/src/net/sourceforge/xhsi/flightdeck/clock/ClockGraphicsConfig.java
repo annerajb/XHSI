@@ -46,6 +46,7 @@ import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
 import net.sourceforge.xhsi.model.Avionics;
+import net.sourceforge.xhsi.util.ColorUtilities;
 
 
 public class ClockGraphicsConfig extends GraphicsConfig implements ComponentListener {
@@ -195,14 +196,18 @@ public class ClockGraphicsConfig extends GraphicsConfig implements ComponentList
     }
 
 
-    public void update_config(Graphics2D g2, boolean power, int clock_style) {
+    public void update_config(Graphics2D g2, boolean power, int clock_style, float du_brightness) {
     	
-    	 boolean clock_style_changed = this.clock_style != clock_style;
-
+    	boolean clock_style_changed = this.clock_style != clock_style;
+     	
+     	// Update colors if du_brightness changed
+     	colors_updated = update_colors(du_brightness);
+     	
         if (this.resized
                 || this.reconfig
                 || (this.powered != power
                 || (clock_style_changed))
+                || colors_updated
             ) {
             // one of the settings has been changed
 
@@ -276,7 +281,7 @@ public class ClockGraphicsConfig extends GraphicsConfig implements ComponentList
                     clusterWidth, clusterHeight, frontpanel_color.darker().darker(),
                     false);
 
-            if (resized || clock_style_changed || !size_set) {
+            if (colors_updated || resized || clock_style_changed || !size_set) {
 
             	/*
             	 * Reference measure from original picture
@@ -622,14 +627,14 @@ public class ClockGraphicsConfig extends GraphicsConfig implements ComponentList
     	
     	g_dial.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
     	
-    	// g2.setColor(ColorUtilities.multiply(Color.decode("#54616E"), aircraft.get_cockpit_light_color()));
+    	// g_dial.setColor(ColorUtilities.multiply(Color.decode("#54616E"), aircraft.cockpit_light_color()));
     	g_dial.setColor(clock_digital_54616E_color);
     	g_dial.fillPolygon(frame_x, frame_y, frame_x.length);
-    	// g2.setColor(ColorUtilities.multiply(Color.decode("#54616E").darker().darker(), aircraft.get_cockpit_light_color()));
+    	// g_dial.setColor(ColorUtilities.multiply(Color.decode("#54616E").darker().darker(), aircraft.get_cockpit_light_color()));
     	g_dial.setColor(clock_digital_54616E_dark_color);
     	g_dial.drawPolygon(frame_x, frame_y, frame_x.length);
 
-    	// g2.setColor(ColorUtilities.multiply(Color.decode("#080808"), aircraft.get_cockpit_light_color()));
+    	// g_dial.setColor(ColorUtilities.multiply(Color.decode("#080808"), aircraft.get_cockpit_light_color()));
     	g_dial.setColor(clock_digital_dark_gray_color);
 
     	g_dial.fillRoundRect(background_x, background_y, background_width, background_height, background_corner_size, background_corner_size);
@@ -646,14 +651,14 @@ public class ClockGraphicsConfig extends GraphicsConfig implements ComponentList
     	g_dial.drawRoundRect(et_background_x, et_background_y, et_background_width, et_background_height, times_background_corner_size, times_background_corner_size);
 
     	g_dial.setFont(font_label_bold);
-    	// g2.setColor(clock_gc.getInstumentMarkerColor(aircraft.get_cockpit_light_color()));
+    	// g_dial.setColor(clock_gc.getInstumentMarkerColor(aircraft.get_cockpit_light_color()));
     	g_dial.setColor(markings_color);
     	g_dial.drawString("RST", rst_string_x, rst_string_y);
     	g_dial.drawString("CHR", chr_string_x, chr_string_y);
     	g_dial.drawString("DATE", date_string_x, date_string_y);
     	g_dial.drawString("GPS", gps_string_x, gps_string_y);
     	g_dial.drawString("RUN", run_string_x, run_string_y);
-    	g_dial.setColor(Color.WHITE);
+    	g_dial.setColor(markings_color);
     	g_dial.setFont(font_label);
     	g_dial.drawString("CHR", chr2_string_x, chr2_string_y);
     	g_dial.drawString("UTC", utc_string_x, utc_string_y);
@@ -664,7 +669,7 @@ public class ClockGraphicsConfig extends GraphicsConfig implements ComponentList
     	g_dial.drawString("STP", stp_string_x, stp_string_y);
     	g_dial.drawString("RST", rst_run_string_x, rst_run_string_y);
     	g_dial.setFont(font_label_small);
-    	g_dial.setColor(Color.decode("#009EDE"));
+    	g_dial.setColor(clock_label_color);
     	g_dial.drawString("MIN", min_string_x, min_string_y);
     	g_dial.drawString("SEC", sec_string_x, sec_string_y);
     	g_dial.drawString("HR/MO", hr_mo_string_x, hr_mo_string_y);
@@ -673,19 +678,14 @@ public class ClockGraphicsConfig extends GraphicsConfig implements ComponentList
     	g_dial.drawString("HR", hr_string_x, hr_string_y);
     	g_dial.drawString("MIN", min2_string_x, min2_string_y);
 
-    	g_dial.setColor(Color.decode("#D8D8D8"));
+    	g_dial.setColor(color_verylightgray);
     	g_dial.fill( new Ellipse2D.Float(button_reset_x, button_reset_y, small_button_size_x, small_button_size_y));
     	g_dial.fill( new Ellipse2D.Float(button_chr_x, button_chr_y, small_button_size_x, small_button_size_y));
     	g_dial.fill( new Ellipse2D.Float(button_date_x, button_date_y, large_button_size_x, large_button_size_y));
     	
         return dial_img;
     }
-
-    
-    private static int inRel(double relation, int coordinate) {
-        return (int) (relation * coordinate);
-    }
-
+   
     public void componentResized(ComponentEvent event) {
         this.component_size = event.getComponent().getSize();
         this.frame_size = event.getComponent().getSize();
