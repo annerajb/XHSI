@@ -170,7 +170,7 @@ extern int ufmc_ready;
 #define UFMC_KEY_CDU_SLEW_UP    75
 #define UFMC_KEY_CDU_SLEW_DOWN  76
 // END
-#define UFMC_KEY_MAX            71
+#define UFMC_KEY_MAX            77
 
 // CDU Keys
 extern XPLMDataRef ufmc_keys[UFMC_KEY_MAX];
