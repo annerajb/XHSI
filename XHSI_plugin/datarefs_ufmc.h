@@ -104,7 +104,7 @@ extern int ufmc_ready;
 #define UFMC_KEY_CDU_DEP_ARR    14
 #define UFMC_KEY_CDU_AP         15
 #define UFMC_KEY_CDU_VNAV       16
-#define UFMC_KEY_CDU_BRT        -1
+
 #define UFMC_KEY_CDU_FIX        17
 #define UFMC_KEY_CDU_LEGS       18
 #define UFMC_KEY_CDU_HOLD       19
@@ -115,7 +115,6 @@ extern int ufmc_ready;
 #define UFMC_KEY_CDU_RAD_NAV    24
 #define UFMC_KEY_CDU_SLEW_LEFT  25
 #define UFMC_KEY_CDU_SLEW_RIGHT 26
-
 #define UFMC_KEY_CDU_A          27
 #define UFMC_KEY_CDU_B          28
 #define UFMC_KEY_CDU_C          29
@@ -169,8 +168,9 @@ extern int ufmc_ready;
 #define UFMC_KEY_CDU_AIRPORT    74
 #define UFMC_KEY_CDU_SLEW_UP    75
 #define UFMC_KEY_CDU_SLEW_DOWN  76
+#define UFMC_KEY_CDU_BRT        77
 // END
-#define UFMC_KEY_MAX            77
+#define UFMC_KEY_MAX            78
 
 // CDU Keys
 extern XPLMDataRef ufmc_keys[UFMC_KEY_MAX];
