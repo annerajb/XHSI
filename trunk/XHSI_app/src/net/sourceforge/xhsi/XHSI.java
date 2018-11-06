@@ -904,6 +904,7 @@ public class XHSI implements ActionListener {
     		// Hard way
     		// shutdownCommand = new String[] {"sudo", "shutdown -h now"};
     		// Elegant way on ubuntu with console kit
+    		/* Deprecated Starting Debian 8 and Ubuntu 16
     		shutdownCommand = new String[] {"dbus-send",
     		  "--system",
     		  "--dest=org.freedesktop.ConsoleKit",
@@ -912,6 +913,9 @@ public class XHSI implements ActionListener {
     		  "--reply-timeout=2000",
     		  "/org/freedesktop/ConsoleKit/Manager",
     		  "org.freedesktop.ConsoleKit.Manager.Stop"};
+    		  */
+    		// New way to shut down with systemctl based Linux distribs
+    		shutdownCommand = new String[] {"systemctl", "poweroff", "-i"};
     	} else if ("Mac OS X".equals(operatingSystem)) {
     		logger.warning("XHSI on MacOS : Received Shutdown command");
     		// Hard way
