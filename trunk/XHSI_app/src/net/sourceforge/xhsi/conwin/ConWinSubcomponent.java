@@ -43,7 +43,9 @@ import net.sourceforge.xhsi.model.TCAS;
 
 public abstract class ConWinSubcomponent extends Component {
 
-    public ConWinGraphicsConfig gc;
+	private static final long serialVersionUID = 1L;
+	
+	public ConWinGraphicsConfig gc;
     public ModelFactory model_factory;
     public Aircraft aircraft;
     public Avionics avionics;

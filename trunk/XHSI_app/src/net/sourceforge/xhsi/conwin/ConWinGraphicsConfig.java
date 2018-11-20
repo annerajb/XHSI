@@ -28,32 +28,23 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
+
 import java.util.HashMap;
-import java.util.logging.Logger;
+// import java.util.logging.Logger;
 import java.util.Map;
 
-import net.sourceforge.xhsi.XHSISettings;
 import net.sourceforge.xhsi.XHSIPreferences;
-
-import net.sourceforge.xhsi.model.Avionics;
-
-import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
 
 
 public class ConWinGraphicsConfig implements ComponentListener {
 
-    private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
+    // private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     public static int INITIAL_PANEL_WIDTH = 600;
     public static int INITIAL_PANEL_HEIGHT = 30;
@@ -93,7 +84,7 @@ public class ConWinGraphicsConfig implements ComponentListener {
     public int border_top = border;
     public int border_bottom = border;
 
-    public Map rendering_hints;
+    public Map<RenderingHints.Key, Object> rendering_hints;
 
     public boolean resized = false;
     public boolean reconfig = true;
@@ -113,7 +104,7 @@ public class ConWinGraphicsConfig implements ComponentListener {
 
         this.preferences = XHSIPreferences.get_instance();
 
-        this.rendering_hints = new HashMap();
+        this.rendering_hints = new HashMap<RenderingHints.Key, Object>();
         this.rendering_hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         this.rendering_hints.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         // VALUE_TEXT_ANTIALIAS_LCD_HRGB uses sub-pixel anti-aliasing, and is supposed to looks better than VALUE_TEXT_ANTIALIAS_ON on modern LCD dispalys
