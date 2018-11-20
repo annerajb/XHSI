@@ -32,13 +32,7 @@ import net.sourceforge.xhsi.XHSIStatus;
 
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.SimDataRepository;
-
-import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
-import net.sourceforge.xhsi.flightdeck.Subcomponent;
-
 import net.sourceforge.xhsi.util.RunningAverager;
-//import net.sourceforge.xhsi.util.TimedFilter;
-
 
 
 public class StatusBar extends ConWinSubcomponent {

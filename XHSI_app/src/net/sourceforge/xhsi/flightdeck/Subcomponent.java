@@ -43,6 +43,8 @@ import net.sourceforge.xhsi.model.TCAS;
 
 public abstract class Subcomponent extends Component {
 
+	private static final long serialVersionUID = 1L;
+	
     public GraphicsConfig gc;
     public ModelFactory model_factory;
     public Aircraft aircraft;

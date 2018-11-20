@@ -45,7 +45,7 @@ import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.HashMap;
-import java.util.logging.Logger;
+// import java.util.logging.Logger;
 import java.util.Map;
 
 import net.sourceforge.xhsi.XHSIPreferences;
@@ -56,7 +56,7 @@ import net.sourceforge.xhsi.util.ColorUtilities;
 
 public class GraphicsConfig implements ComponentListener {
 
-    private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
+    // private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     public static int INITIAL_PANEL_SIZE = 560;
     public static int INITIAL_BORDER_SIZE = 16;
@@ -765,8 +765,14 @@ public class GraphicsConfig implements ComponentListener {
         if ( custom_colors ) {
             background_color = Color.BLACK;
                        
-            // Navigation Display Colors
+            /*
+             *  Custom colors: Navigation Display
+             */
             if ( airbus_style ) {
+            	/*
+            	 * Custom colors Airbus Style 
+            	 */
+            	
                 navaid_color = setDUBrightness(color_boeingcyan);
                 term_wpt_color = setDUBrightness(Color.magenta);
                 wpt_color = setDUBrightness(color_cornflowerblue);
@@ -791,7 +797,7 @@ public class GraphicsConfig implements ComponentListener {
                 terrain_label_color = setDUBrightness(Color.cyan);
                 fmc_active_color = setDUBrightness(Color.GREEN);
                 fmc_disp_color = setDUBrightness(Color.WHITE);
-                fmc_other_color = setDUBrightness(Color.GREEN); // Color.LIGHT_GRAY;
+                fmc_other_color = setDUBrightness(Color.GREEN).darker();
                 altitude_arc_color = setDUBrightness(color_yellowgreen);
                 fmc_ll_active_color = setDUBrightness(color_yellowgreen.brighter());
                 fmc_ll_disp_color = setDUBrightness(color_yellowgreen);
@@ -805,8 +811,12 @@ public class GraphicsConfig implements ComponentListener {
                 aircraft_color = setDUBrightness(Color.YELLOW);
                 chrono_background_color = setDUBrightness(color_airbusgray); // color_darkpalegreen.darker();
                 chrono_color = setDUBrightness(Color.GREEN.brighter());
+                
             } else {
-            	// Boeing style (default)
+            	/*
+            	 * Custom colors - Boeing Style
+            	 */
+
                 navaid_color = setDUBrightness(color_boeingcyan);
                 term_wpt_color = setDUBrightness(color_cornflowerblue.darker());
                 wpt_color = setDUBrightness(color_cornflowerblue);
@@ -876,7 +886,9 @@ public class GraphicsConfig implements ComponentListener {
             instrument_background_color = setDUBrightness(color_bluegray);
             fpv_color = setDUBrightness(Color.LIGHT_GRAY);
             
-            // Clock
+            /*
+             * Custom colors - Clock 
+             */
             clock_color = setDUBrightness(color_khaki);
             clock_label_color = setDUBrightness(color_labelblue);
             clock_markings_color = setDUBrightness(Color.white);
@@ -885,8 +897,9 @@ public class GraphicsConfig implements ComponentListener {
             clock_digital_54616E_dark_color = Color.decode("#54616E").darker().darker();
             clock_digital_dark_gray_color = Color.decode("#080808");
             
-            
-            // ECAM COLORS
+            /*
+             * Custom colors - ECAM 
+             */
         	ecam_warning_color   = setDUBrightness(Color.red);
         	ecam_caution_color   = setDUBrightness(color_amber);
         	ecam_normal_color    = setDUBrightness(Color.green);
@@ -896,9 +909,13 @@ public class GraphicsConfig implements ComponentListener {
         	ecam_reference_color = setDUBrightness(Color.yellow);
         	ecam_box_bg_color    = setDUBrightness(color_airbusgray.darker()); // was new Color(0x0f1c60);
             
-            // PFD colors - used to managed PFD lightening
+            /*
+             *  PFD colors
+             */
             if ( airbus_style ) {
-                // PFD colors Airbus Style 
+                /*
+                 * Custom colors - PFD Airbus Style 
+                 */
                 pfd_armed_color = setDUBrightness(Color.cyan);
                 pfd_managed_color = setDUBrightness(Color.magenta);
                 pfd_selected_color = setDUBrightness(Color.cyan);
@@ -915,7 +932,9 @@ public class GraphicsConfig implements ComponentListener {
             	heading_bug_color = setDUBrightness(Color.cyan);           	
             	pfd_sky_color = setDUBrightness(color_airbussky);
             } else {
-                // PFD colors Boeing Style (default)
+                /*
+                 *  Custom colors - PFD Boeing Style (default)
+                 */
                 pfd_armed_color = setDUBrightness(Color.cyan);
                 pfd_managed_color = setDUBrightness(Color.magenta);
                 pfd_selected_color = setDUBrightness(Color.magenta);
@@ -945,76 +964,146 @@ public class GraphicsConfig implements ComponentListener {
             cdu_scratch_pad_color = setDUBrightness(Color.white);
         
             
-        } else { // STANDARD COLORS (i.e. not customed)
+        } else { 
+        	/*
+        	 * STANDARD COLORS (i.e. not customed)
+        	 */
         	
             background_color = Color.BLACK;
-            navaid_color = setDUBrightness(color_boeingcyan);
-            term_wpt_color = setDUBrightness(color_boeingcyan);
-            wpt_color = setDUBrightness(color_boeingcyan);
-            awy_wpt_color = setDUBrightness(color_boeingcyan);
-            arpt_color = setDUBrightness(color_boeingcyan);
-            tuned_localizer_color = setDUBrightness(color_lime);
-            silent_localizer_color = setDUBrightness(Color.GRAY);
-            reference_localizer_color = setDUBrightness(Color.WHITE);
-            receiving_localizer_color = setDUBrightness(Color.LIGHT_GRAY);
-            tuned_ndb_color = setDUBrightness(color_dodgerblue);
-            no_rcv_ndb_color = setDUBrightness(color_dodgerblue);
-            tuned_vor_color = setDUBrightness(color_lime);
-            no_rcv_vor_color = setDUBrightness(color_lime);
-            unknown_nav_color = setDUBrightness(color_lime);
-            holding_color = setDUBrightness(color_magenta);
-            traffic_color = setDUBrightness(Color.WHITE);
-            faraway_color = setDUBrightness(Color.DARK_GRAY);
-            pos_label_color = setDUBrightness(color_boeingcyan);
-            tcas_label_color = setDUBrightness(color_boeingcyan);
-            data_label_color = setDUBrightness(color_boeingcyan);
-            terrain_label_color = setDUBrightness(Color.cyan);
-            fmc_active_color = setDUBrightness(color_magenta);
-            fmc_disp_color = setDUBrightness(Color.WHITE);
-            fmc_other_color = setDUBrightness(Color.LIGHT_GRAY);
-            altitude_arc_color = setDUBrightness(color_lime);
-            fmc_ll_active_color = setDUBrightness(color_lime);
-            fmc_ll_disp_color = setDUBrightness(color_lime);
-            fmc_ll_other_color = setDUBrightness(color_lime);
-            heading_labels_color = setDUBrightness(color_lime);
-            cardinal_labels_color = setDUBrightness(color_limegreen);
-            nav_needle_color = setDUBrightness(color_magenta);
-            deviation_scale_color = setDUBrightness(Color.LIGHT_GRAY);
-            markings_color = setDUBrightness(Color.WHITE);
-            dim_markings_color = setDUBrightness(Color.LIGHT_GRAY);
-            range_arc_color = setDUBrightness(Color.GRAY); // was: Color.GRAY.brighter()
-            range_label_color = dim_markings_color;
-            label_color = setDUBrightness(color_boeingcyan);
-            dim_label_color = Color.BLACK;
-            normal_color = setDUBrightness(color_lime);
-            unusual_color = setDUBrightness(color_deepskyblue);
-            caution_color = setDUBrightness(color_amber);
-            warning_color = setDUBrightness(Color.RED);
-            aircraft_color = setDUBrightness(Color.WHITE);           
-            wind_color = setDUBrightness(Color.WHITE);
-            efb_color = setDUBrightness(Color.WHITE);
-            top_text_color = setDUBrightness(Color.WHITE);
-            grass_color = setDUBrightness(color_darkgreen);
-            hard_color = setDUBrightness(Color.GRAY);
-            sand_color = setDUBrightness(color_darktan);
-            snow_color = setDUBrightness(Color.LIGHT_GRAY);
-            sky_color = setDUBrightness(color_sky);
-            brightsky_color = setDUBrightness(color_sky.brighter());
-            ground_color = setDUBrightness(color_ground);
-            brightground_color = setDUBrightness(color_ground.brighter());            
-            fpv_color = setDUBrightness(Color.WHITE);
-            clock_color = setDUBrightness(Color.WHITE);
+
             
-            // Navigation Display Colors
+            /*
+             *  STANDARD COLORS: Navigation Display
+             */
             if ( this.settings.style == Avionics.STYLE_AIRBUS ) {
+                /*
+                 *  STANDARD COLORS: Navigation Display Airbus Style
+                 */
+                navaid_color = setDUBrightness(color_boeingcyan);
+                term_wpt_color = setDUBrightness(color_boeingcyan);
+                wpt_color = setDUBrightness(color_boeingcyan);
+                awy_wpt_color = setDUBrightness(color_boeingcyan);
+                arpt_color = setDUBrightness(color_boeingcyan);
+                tuned_localizer_color = setDUBrightness(color_lime);
+                silent_localizer_color = setDUBrightness(Color.GRAY);
+                reference_localizer_color = setDUBrightness(Color.WHITE);
+                receiving_localizer_color = setDUBrightness(Color.LIGHT_GRAY);
+                tuned_ndb_color = setDUBrightness(color_dodgerblue);
+                no_rcv_ndb_color = setDUBrightness(color_dodgerblue);
+                tuned_vor_color = setDUBrightness(color_lime);
+                no_rcv_vor_color = setDUBrightness(color_lime);
+                unknown_nav_color = setDUBrightness(color_lime);
+                holding_color = setDUBrightness(color_magenta);
+                traffic_color = setDUBrightness(Color.WHITE);
+                faraway_color = setDUBrightness(Color.DARK_GRAY);
+                pos_label_color = setDUBrightness(color_boeingcyan);
+                tcas_label_color = setDUBrightness(color_boeingcyan);
+                data_label_color = setDUBrightness(color_boeingcyan);
+                terrain_label_color = setDUBrightness(Color.cyan);
+                fmc_active_color = setDUBrightness(Color.GREEN);
+                fmc_disp_color = setDUBrightness(Color.WHITE);
+                fmc_other_color = setDUBrightness(Color.GREEN);
+                altitude_arc_color = setDUBrightness(color_lime);
+                fmc_ll_active_color = setDUBrightness(color_lime);
+                fmc_ll_disp_color = setDUBrightness(color_lime);
+                fmc_ll_other_color = setDUBrightness(color_lime);
+                heading_labels_color = setDUBrightness(color_lime);
+                cardinal_labels_color = setDUBrightness(color_limegreen);
+                nav_needle_color = setDUBrightness(color_magenta);
+                deviation_scale_color = setDUBrightness(Color.LIGHT_GRAY);
+                markings_color = setDUBrightness(Color.WHITE);
+                dim_markings_color = setDUBrightness(Color.LIGHT_GRAY);
+                range_arc_color = setDUBrightness(Color.GRAY); // was: Color.GRAY.brighter()
+                range_label_color = dim_markings_color;
+                label_color = setDUBrightness(color_boeingcyan);
+                dim_label_color = Color.BLACK;
+                normal_color = setDUBrightness(color_lime);
+                unusual_color = setDUBrightness(color_deepskyblue);
+                caution_color = setDUBrightness(color_amber);
+                warning_color = setDUBrightness(Color.RED);
+                aircraft_color = setDUBrightness(Color.WHITE);           
+                wind_color = setDUBrightness(Color.WHITE);
+                efb_color = setDUBrightness(Color.WHITE);
+                top_text_color = setDUBrightness(Color.WHITE);
+                grass_color = setDUBrightness(color_darkgreen);
+                hard_color = setDUBrightness(Color.GRAY);
+                sand_color = setDUBrightness(color_darktan);
+                snow_color = setDUBrightness(Color.LIGHT_GRAY);
+                sky_color = setDUBrightness(color_sky);
+                brightsky_color = setDUBrightness(color_sky.brighter());
+                ground_color = setDUBrightness(color_ground);
+                brightground_color = setDUBrightness(color_ground.brighter());            
+                fpv_color = setDUBrightness(Color.WHITE);
+                clock_color = setDUBrightness(Color.WHITE);
                 chrono_background_color = setDUBrightness(color_darkpalegreen);
                 chrono_color = setDUBrightness(Color.GREEN);
             } else {
+                /*
+                 *  STANDARD COLORS: Navigation Display Boeing Style
+                 */
+                navaid_color = setDUBrightness(color_boeingcyan);
+                term_wpt_color = setDUBrightness(color_boeingcyan);
+                wpt_color = setDUBrightness(color_boeingcyan);
+                awy_wpt_color = setDUBrightness(color_boeingcyan);
+                arpt_color = setDUBrightness(color_boeingcyan);
+                tuned_localizer_color = setDUBrightness(color_lime);
+                silent_localizer_color = setDUBrightness(Color.GRAY);
+                reference_localizer_color = setDUBrightness(Color.WHITE);
+                receiving_localizer_color = setDUBrightness(Color.LIGHT_GRAY);
+                tuned_ndb_color = setDUBrightness(color_dodgerblue);
+                no_rcv_ndb_color = setDUBrightness(color_dodgerblue);
+                tuned_vor_color = setDUBrightness(color_lime);
+                no_rcv_vor_color = setDUBrightness(color_lime);
+                unknown_nav_color = setDUBrightness(color_lime);
+                holding_color = setDUBrightness(color_magenta);
+                traffic_color = setDUBrightness(Color.WHITE);
+                faraway_color = setDUBrightness(Color.DARK_GRAY);
+                pos_label_color = setDUBrightness(color_boeingcyan);
+                tcas_label_color = setDUBrightness(color_boeingcyan);
+                data_label_color = setDUBrightness(color_boeingcyan);
+                terrain_label_color = setDUBrightness(Color.cyan);
+                fmc_active_color = setDUBrightness(color_magenta);
+                fmc_disp_color = setDUBrightness(Color.WHITE);
+                fmc_other_color = setDUBrightness(Color.LIGHT_GRAY);
+                altitude_arc_color = setDUBrightness(color_lime);
+                fmc_ll_active_color = setDUBrightness(color_lime);
+                fmc_ll_disp_color = setDUBrightness(color_lime);
+                fmc_ll_other_color = setDUBrightness(color_lime);
+                heading_labels_color = setDUBrightness(color_lime);
+                cardinal_labels_color = setDUBrightness(color_limegreen);
+                nav_needle_color = setDUBrightness(color_magenta);
+                deviation_scale_color = setDUBrightness(Color.LIGHT_GRAY);
+                markings_color = setDUBrightness(Color.WHITE);
+                dim_markings_color = setDUBrightness(Color.LIGHT_GRAY);
+                range_arc_color = setDUBrightness(Color.GRAY); // was: Color.GRAY.brighter()
+                range_label_color = dim_markings_color;
+                label_color = setDUBrightness(color_boeingcyan);
+                dim_label_color = Color.BLACK;
+                normal_color = setDUBrightness(color_lime);
+                unusual_color = setDUBrightness(color_deepskyblue);
+                caution_color = setDUBrightness(color_amber);
+                warning_color = setDUBrightness(Color.RED);
+                aircraft_color = setDUBrightness(Color.WHITE);           
+                wind_color = setDUBrightness(Color.WHITE);
+                efb_color = setDUBrightness(Color.WHITE);
+                top_text_color = setDUBrightness(Color.WHITE);
+                grass_color = setDUBrightness(color_darkgreen);
+                hard_color = setDUBrightness(Color.GRAY);
+                sand_color = setDUBrightness(color_darktan);
+                snow_color = setDUBrightness(Color.LIGHT_GRAY);
+                sky_color = setDUBrightness(color_sky);
+                brightsky_color = setDUBrightness(color_sky.brighter());
+                ground_color = setDUBrightness(color_ground);
+                brightground_color = setDUBrightness(color_ground.brighter());            
+                fpv_color = setDUBrightness(Color.WHITE);
+                clock_color = setDUBrightness(Color.WHITE);
                 chrono_background_color = Color.BLACK;
                 chrono_color = setDUBrightness(Color.WHITE);
         	}
             
-            // Clock
+            /*
+             * STANDARD COLORS: Clock 
+             */            
             clock_color = setDUBrightness(Color.white);
             clock_label_color = setDUBrightness(color_labelblue);
             clock_markings_color = setDUBrightness(Color.white);
@@ -1023,7 +1112,9 @@ public class GraphicsConfig implements ComponentListener {
             clock_digital_54616E_dark_color = Color.decode("#54616E").darker().darker();
             clock_digital_dark_gray_color = Color.decode("#080808");
             
-            // ECAM COLORS
+            /*
+             * STANDARD COLORS: ECAM 
+             */
         	ecam_warning_color = setDUBrightness(Color.red);
         	ecam_caution_color = setDUBrightness(color_amber);
         	ecam_normal_color = setDUBrightness(Color.green);
@@ -1033,9 +1124,13 @@ public class GraphicsConfig implements ComponentListener {
         	ecam_reference_color = setDUBrightness(Color.yellow);
         	ecam_box_bg_color = setDUBrightness(color_airbusgray); // was new Color(0x0f1c60);
         	
-            // PFD Colors - used to managed PFD lightening
+            /*
+             * STANDARD COLORS: PFD 
+             */
             if ( airbus_style ) {
-                // PFD colors Airbus Style 
+                /*
+                 * STANDARD COLORS - PFD colors Airbus Style 
+                 */
                 pfd_armed_color = setDUBrightness(Color.cyan);
                 pfd_managed_color = setDUBrightness(Color.magenta);
                 pfd_selected_color = setDUBrightness(Color.cyan);                
@@ -1051,7 +1146,9 @@ public class GraphicsConfig implements ComponentListener {
             	heading_bug_color = setDUBrightness(Color.cyan);
             	pfd_sky_color = setDUBrightness(color_airbussky);
             } else {
-            	// PFD colors Boeing Style (default)
+            	/*
+            	 * STANDARD COLORS - PFD  Boeing Style (default)
+            	 */
             	pfd_armed_color = setDUBrightness(Color.cyan);
             	pfd_managed_color = setDUBrightness(Color.magenta);
             	pfd_selected_color = setDUBrightness(Color.magenta);            	
