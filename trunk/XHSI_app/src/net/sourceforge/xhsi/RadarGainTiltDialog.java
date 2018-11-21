@@ -40,7 +40,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import net.sourceforge.xhsi.flightdeck.nd.MovingMap;
 import net.sourceforge.xhsi.model.Avionics;
 
 
@@ -61,7 +60,7 @@ public class RadarGainTiltDialog extends JDialog implements ActionListener {
     private static DecimalFormat gain_formatter;
     private static DecimalFormat tilt_formatter;
 
-
+    @SuppressWarnings("unused")
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     public RadarGainTiltDialog(JFrame owner_frame, Avionics avionics) {

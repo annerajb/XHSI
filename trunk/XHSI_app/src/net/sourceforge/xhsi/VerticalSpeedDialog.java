@@ -54,7 +54,7 @@ public class VerticalSpeedDialog extends JDialog implements ActionListener {
 
     private Avionics avionics;
 
-
+    @SuppressWarnings("unused")
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     public VerticalSpeedDialog(JFrame owner_frame, Avionics avionics) {

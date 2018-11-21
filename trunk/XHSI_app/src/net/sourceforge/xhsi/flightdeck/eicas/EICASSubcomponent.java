@@ -22,30 +22,24 @@
 */
 package net.sourceforge.xhsi.flightdeck.eicas;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
+
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.Transparency;
-import java.awt.image.BufferedImage;
 
 import net.sourceforge.xhsi.XHSIPreferences;
 
-import net.sourceforge.xhsi.model.Aircraft;
-import net.sourceforge.xhsi.model.AircraftEnvironment;
-import net.sourceforge.xhsi.model.Avionics;
-import net.sourceforge.xhsi.model.FMS;
+
 import net.sourceforge.xhsi.model.ModelFactory;
-import net.sourceforge.xhsi.model.TCAS;
+
 
 import net.sourceforge.xhsi.flightdeck.Subcomponent;
 
 
 public abstract class EICASSubcomponent extends Subcomponent {
 
-    EICASGraphicsConfig eicas_gc;
+	private static final long serialVersionUID = 1L;
+	
+	EICASGraphicsConfig eicas_gc;
 //    ModelFactory model_factory;
 //    Aircraft aircraft;
 //    Avionics avionics;

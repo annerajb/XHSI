@@ -46,7 +46,6 @@ import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
 import net.sourceforge.xhsi.model.Avionics;
-import net.sourceforge.xhsi.util.ColorUtilities;
 
 
 public class ClockGraphicsConfig extends GraphicsConfig implements ComponentListener {

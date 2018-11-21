@@ -31,16 +31,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Logger;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-//import javax.swing.JSlider;
 import javax.swing.JTextField;
 
 
@@ -57,7 +53,7 @@ public class MaxTRQDialog extends JDialog implements ActionListener {
 
     private XHSISettings xhsi_settings = XHSISettings.get_instance();
 
-
+    @SuppressWarnings("unused")
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     public MaxTRQDialog(JFrame owner_frame) {

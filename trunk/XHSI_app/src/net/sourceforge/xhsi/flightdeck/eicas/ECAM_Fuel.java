@@ -1,10 +1,8 @@
 package net.sourceforge.xhsi.flightdeck.eicas;
 
-import java.awt.BasicStroke;
+
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSIPreferences;
@@ -14,7 +12,8 @@ import net.sourceforge.xhsi.model.ModelFactory;
 public class ECAM_Fuel extends EICASSubcomponent {
 
     private static final long serialVersionUID = 1L;
-
+    
+    @SuppressWarnings("unused")
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
 

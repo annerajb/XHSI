@@ -1,7 +1,6 @@
 package net.sourceforge.xhsi.flightdeck.eicas;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
@@ -11,7 +10,9 @@ import net.sourceforge.xhsi.model.ModelFactory;
 
 public class ECAM_Flaps extends EICASSubcomponent {
 
-    private Stroke original_stroke;
+	private static final long serialVersionUID = 1L;
+	
+	private Stroke original_stroke;
 
 	public ECAM_Flaps(ModelFactory model_factory, EICASGraphicsConfig hsi_gc, Component parent_component) {
 		super(model_factory, hsi_gc, parent_component);
@@ -42,11 +43,12 @@ public class ECAM_Flaps extends EICASSubcomponent {
         int flaps_w = eicas_gc.ecam_flaps_w;
         int flaps_h = eicas_gc.ecam_flaps_h;
         
+        /*
         int slats_center_x = eicas_gc.ecam_slats_center_x;
         int slats_center_y = eicas_gc.ecam_slats_center_y;
         int slats_w = eicas_gc.ecam_slats_w;
         int slats_h = eicas_gc.ecam_slats_h;
-                
+        */      
         
         int[] flaps_triangle_x = {
         		eicas_gc.ecam_flaps_center_x - eicas_gc.ecam_flaps_box_w*13/100,
@@ -208,8 +210,10 @@ public class ECAM_Flaps extends EICASSubcomponent {
         int flaps_w = eicas_gc.ecam_flaps_box_w*40/100;
         int flaps_h = eicas_gc.ecam_flaps_box_h*62/100;
         
+        /*
         int slats_center_x = eicas_gc.ecam_slats_center_x;
         int slats_center_y = eicas_gc.ecam_slats_center_y;
+        */
         int slats_w = eicas_gc.ecam_flaps_box_w*25/100;
         int slats_h = eicas_gc.ecam_flaps_box_h*50/100;
                 

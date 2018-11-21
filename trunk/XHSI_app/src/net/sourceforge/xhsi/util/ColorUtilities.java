@@ -25,7 +25,7 @@ package net.sourceforge.xhsi.util;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
-import java.awt.Paint;
+
 
 /**
  * @author Cameron Behar

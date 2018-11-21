@@ -3,16 +3,16 @@ package net.sourceforge.xhsi.flightdeck.eicas;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.text.DecimalFormat;
 import java.util.List;
 
 import net.sourceforge.xhsi.model.CduLine;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.QpacEwdData;
-import net.sourceforge.xhsi.model.QpacMcduData;
 
 public class ECAM_Messages extends EICASSubcomponent {
 	
+	private static final long serialVersionUID = 1L;
+
 	private String message_list[] = { 		
 			"APU AVAIL",
 			"APU BLEED",

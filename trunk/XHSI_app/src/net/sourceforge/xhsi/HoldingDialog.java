@@ -64,7 +64,7 @@ public class HoldingDialog extends JDialog implements ActionListener {
 
     private XHSISettings xhsi_settings = XHSISettings.get_instance();
 
-
+    @SuppressWarnings("unused")
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     public HoldingDialog(JFrame owner_frame) {
