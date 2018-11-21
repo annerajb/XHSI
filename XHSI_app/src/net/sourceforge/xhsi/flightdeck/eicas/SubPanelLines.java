@@ -21,36 +21,21 @@
 */
 package net.sourceforge.xhsi.flightdeck.eicas;
 
-//import java.awt.BasicStroke;
-//import java.awt.Color;
-//import java.awt.Color;
 import java.awt.BasicStroke;
 import java.awt.Component;
 import java.awt.Stroke;
-//import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-//import java.awt.Shape;
-//import java.awt.Stroke;
-//import java.awt.geom.AffineTransform;
-//import java.awt.geom.Area;
-//import java.awt.geom.Rectangle2D;
-//import java.awt.geom.RoundRectangle2D;
-//import java.awt.image.BufferedImage;
-//import java.text.DecimalFormat;
-//import java.text.DecimalFormatSymbols;
 
 import java.util.logging.Logger;
 
-//import net.sourceforge.xhsi.XHSISettings;
-
 import net.sourceforge.xhsi.model.ModelFactory;
-
 
 
 public class SubPanelLines extends EICASSubcomponent {
 
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     private Stroke original_stroke;

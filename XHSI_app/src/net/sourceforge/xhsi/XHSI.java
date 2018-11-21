@@ -26,7 +26,6 @@ package net.sourceforge.xhsi;
 
 
 import java.awt.Color;
-//import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Image;
@@ -44,7 +43,6 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-//import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JCheckBoxMenuItem;
@@ -56,7 +54,6 @@ import net.sourceforge.xhsi.model.ModelFactory;
 
 import net.sourceforge.xhsi.model.aptnavdata.AptNavXP900DatNavigationObjectBuilder;
 import net.sourceforge.xhsi.model.elevationdata.GlobeElevationBuilder;
-//import net.sourceforge.xhsi.model.aptnavdata.AptNavXP900DatTaxiChartBuilder;
 
 import net.sourceforge.xhsi.model.xplane.XPlaneDataPacketDecoder;
 import net.sourceforge.xhsi.model.xplane.XPlaneFlightSessionPlayer;
@@ -65,7 +62,6 @@ import net.sourceforge.xhsi.model.xplane.XPlaneModelFactory;
 import net.sourceforge.xhsi.model.xplane.XPlaneNearestAirport;
 import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 import net.sourceforge.xhsi.model.xplane.XPlaneUDPReceiver;
-import net.sourceforge.xhsi.model.xplane.XPlaneUDPSender;
 import net.sourceforge.xhsi.model.xplane.XPlaneWeatherReceiver;
 
 import net.sourceforge.xhsi.flightdeck.UIHeartbeat;
@@ -114,7 +110,7 @@ public class XHSI implements ActionListener {
 
     private PreferencesDialog preferences_dialog;
     private ProgressDialog nob_progress_dialog;
-    private ProgressDialog geb_progress_dialog;
+    // private ProgressDialog geb_progress_dialog;
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
@@ -250,7 +246,7 @@ public class XHSI implements ActionListener {
             if ( this.preferences.get_preference(XHSIPreferences.PREF_SIMCOM).equals(XHSIPreferences.XHSI_PLUGIN) ) {
 
                 // Communicating with X-Plane/XHSI_plugin
-                XPlaneUDPSender udp_sender = new XPlaneUDPSender();
+                // XPlaneUDPSender udp_sender = new XPlaneUDPSender();
                 // XPlaneUDPReceiver udp_receiver = new XPlaneUDPReceiver( Integer.parseInt(preferences.get_preference(XHSIPreferences.PREF_PORT)) );
                 XPlaneUDPReceiver udp_receiver = new XPlaneUDPReceiver( Integer.parseInt(preferences.get_preference(XHSIPreferences.PREF_PORT)),
                 		preferences.get_preference(XHSIPreferences.PREF_MULTICAST).equals("true"),
@@ -733,7 +729,7 @@ public class XHSI implements ActionListener {
         // Preferences dialog
         this.preferences_dialog = new PreferencesDialog(this.xhsi_frame, this.instruments);
         this.nob_progress_dialog = new ProgressDialog(this.xhsi_frame);
-        this.geb_progress_dialog = new ProgressDialog(this.xhsi_frame);
+        // this.geb_progress_dialog = new ProgressDialog(this.xhsi_frame);
 
         // define the frames for other dialog windows
         XHSISettings.get_instance().init_frames(this.xhsi_frame);

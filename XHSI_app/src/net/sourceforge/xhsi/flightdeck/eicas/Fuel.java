@@ -22,17 +22,10 @@
 package net.sourceforge.xhsi.flightdeck.eicas;
 
 import java.awt.BasicStroke;
-//import java.awt.Color;
 import java.awt.Component;
-//import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-//import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
-//import java.awt.geom.Area;
-//import java.awt.geom.Rectangle2D;
-//import java.awt.geom.RoundRectangle2D;
-//import java.awt.image.BufferedImage;
 
 import java.util.logging.Logger;
 
@@ -41,11 +34,11 @@ import net.sourceforge.xhsi.XHSISettings;
 import net.sourceforge.xhsi.model.ModelFactory;
 
 
-
 public class Fuel extends EICASSubcomponent {
 
     private static final long serialVersionUID = 1L;
-
+    
+    @SuppressWarnings("unused")
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
 

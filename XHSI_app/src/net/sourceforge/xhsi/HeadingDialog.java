@@ -54,8 +54,8 @@ public class HeadingDialog extends JDialog implements ActionListener {
 
     private Avionics avionics;
 
-
-    private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
+    @SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     public HeadingDialog(JFrame owner_frame, Avionics avionics) {
         super(owner_frame, "Heading");

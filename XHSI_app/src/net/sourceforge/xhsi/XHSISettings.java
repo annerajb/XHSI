@@ -26,7 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
-//import java.util.logging.Logger;
+import java.util.logging.Logger;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
@@ -36,7 +36,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
-import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.Avionics.InstrumentSide;
 import net.sourceforge.xhsi.model.NavigationRadio;
@@ -49,7 +48,8 @@ import net.sourceforge.xhsi.model.SimCommand;
 */
 public class XHSISettings implements ActionListener, PreferencesObserver {
 
-    //private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
+    @SuppressWarnings("unused")
+    private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     public Avionics avionics;
 

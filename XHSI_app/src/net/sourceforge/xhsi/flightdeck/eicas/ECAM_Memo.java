@@ -3,12 +3,14 @@ package net.sourceforge.xhsi.flightdeck.eicas;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.text.DecimalFormat;
+
 
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 
 public class ECAM_Memo extends EICASSubcomponent {
+
+	private static final long serialVersionUID = 1L;
 
 	private String memo_list[] = { 
 			"LAND ASAP", // (amber or red)

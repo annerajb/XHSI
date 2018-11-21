@@ -22,17 +22,11 @@
 */
 package net.sourceforge.xhsi.flightdeck.eicas;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
 
 import net.sourceforge.xhsi.XHSIPreferences;
 import net.sourceforge.xhsi.model.ModelFactory;
-
-//import net.sourceforge.xhsi.panel.GraphicsConfig;
-//import net.sourceforge.xhsi.panel.Subcomponent;
-
 
 
 public class EICASInstrumentFrame extends EICASSubcomponent {

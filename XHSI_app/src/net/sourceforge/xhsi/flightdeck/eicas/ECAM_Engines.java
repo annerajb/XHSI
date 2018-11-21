@@ -1,7 +1,6 @@
 package net.sourceforge.xhsi.flightdeck.eicas;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -20,7 +19,8 @@ import net.sourceforge.xhsi.model.ModelFactory;
 public class ECAM_Engines extends EICASSubcomponent {
 
     private static final long serialVersionUID = 1L;
-
+    
+    @SuppressWarnings("unused")
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     private Stroke original_stroke;
@@ -171,7 +171,7 @@ public class ECAM_Engines extends EICASSubcomponent {
         String ind_str1;
         String ind_str2;
         int ind_x1;
-        int ind_x2;
+        // int ind_x2;
         int ind_middle;
         int eng_l=0;
         int eng_r=1; // place the text between eng_l and eng_r
@@ -289,6 +289,7 @@ public class ECAM_Engines extends EICASSubcomponent {
         g2.drawString(units_str, ind_x2, y + eicas_gc.line_height_m);
     }
     
+
     private void drawSecondaryLegends(Graphics2D g2, int cols, int num_eng, boolean piston, boolean turboprop, boolean epr_jet) {
     	
         String ind_str1;

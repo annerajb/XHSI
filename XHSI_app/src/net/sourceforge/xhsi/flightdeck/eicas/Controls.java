@@ -48,6 +48,7 @@ public class Controls extends EICASSubcomponent {
 
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     private DecimalFormat one_decimal_format;

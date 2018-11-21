@@ -23,37 +23,23 @@
  */
 package net.sourceforge.xhsi.flightdeck.eicas;
 
-import java.awt.Color;
+
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
-import java.util.HashMap;
 import java.util.logging.Logger;
-import java.util.Map;
-
-import net.sourceforge.xhsi.XHSIInstrument;
-import net.sourceforge.xhsi.XHSIPreferences;
-
-import net.sourceforge.xhsi.model.Avionics;
 
 import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
 
 
 public class EICASGraphicsConfig extends GraphicsConfig implements ComponentListener {
 
+	@SuppressWarnings("unused")
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
+	
     public static final int MAX_DETENTS = 12;
     public int num_eng = 0; 
     public int eng_label = 0; // engine at the left of engines labels 

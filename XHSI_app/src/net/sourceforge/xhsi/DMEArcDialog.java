@@ -55,6 +55,7 @@ public class DMEArcDialog extends JDialog implements ActionListener {
 
     private XHSISettings xhsi_settings;
 
+    @SuppressWarnings("unused")
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
 
