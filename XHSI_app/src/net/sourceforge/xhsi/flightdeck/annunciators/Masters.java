@@ -4,6 +4,7 @@
 * ...
 * 
 * Copyright (C) 2010  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2018  Nicolas Carel
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -21,7 +22,6 @@
 */
 package net.sourceforge.xhsi.flightdeck.annunciators;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
@@ -31,12 +31,15 @@ import java.awt.event.MouseEvent;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.model.ModelFactory;
+import net.sourceforge.xhsi.model.SimCommand;
+import net.sourceforge.xhsi.util.ColorUtilities;
 
 
 public class Masters extends AnnunSubcomponent {
 
     private static final long serialVersionUID = 1L;
 
+    private SimCommand sim_command;
     
     Color off_warning;
     Color on_warning;
@@ -45,12 +48,12 @@ public class Masters extends AnnunSubcomponent {
     Color off_border;
     Color on_border;
 
-    
+    @SuppressWarnings("unused")
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     public Masters(ModelFactory model_factory, AnnunGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
-        
+        this.sim_command = this.aircraft.get_sim_command();
         off_warning = annun_gc.warning_color.darker().darker().darker().darker().darker();
         on_warning = annun_gc.warning_color;
         off_caution = annun_gc.caution_color.darker().darker().darker().darker().darker();
@@ -65,73 +68,39 @@ public class Masters extends AnnunSubcomponent {
         if ( true ) {
             drawMasters(g2);
         }
+        if (preferences.get_draw_mouse_areas()) drawMouseAreas(g2);
     }
 
-
-    private Color blendColor(Color off_color, Color on_color, float blend) {
-        
-        Color blend_color;
-        
-        if ( blend == 0.0f ) {
-            blend_color = off_color;
-        } else if ( blend == 1.0f ) {
-            blend_color = on_color;
-        } else {
-            
-            float off_red = (float)off_color.getRed() / 255.0f;
-            float off_green = (float)off_color.getGreen() / 255.0f;
-            float off_blue = (float)off_color.getBlue() / 255.0f;
-            float on_red = (float)on_color.getRed() / 255.0f;
-            float on_green = (float)on_color.getGreen() / 255.0f;
-            float on_blue = (float)on_color.getBlue() / 255.0f;
-
-            blend_color = new Color(
-                    Math.min( 1.0f, off_red + (on_red - off_red) * blend ),
-                    Math.min( 1.0f, off_green + (on_green - off_green) * blend ),
-                    Math.min( 1.0f, off_blue + (on_blue - off_blue) * blend )
-                    );
-            
-        }
-        
-        return blend_color;
-        
-    }
-    
+   
     
     private void drawMasters(Graphics2D g2) {
 
-        float warning;
-        float caution;
+        double warning;
+        double caution;
         
         if ( this.avionics.is_cl30() ) {
             warning = this.avionics.cl30_mast_warn();
             caution = this.avionics.cl30_mast_caut();
         } else {
-            warning = ( this.aircraft.master_warning() && this.aircraft.battery() ) ? 1.0f : 0.0f;
-            caution = ( this.aircraft.master_caution() && this.aircraft.battery() ) ? 1.0f : 0.0f;
+            warning = ( this.aircraft.master_warning() && this.aircraft.battery() ) ? 1.0 : 0.0;
+            caution = ( this.aircraft.master_caution() && this.aircraft.battery() ) ? 1.0 : 0.0;
         }
 
-        int master_x = annun_gc.master_square.x + annun_gc.master_square.width/2 - annun_gc.master_square.width/2*3/4;
-        int master_w = annun_gc.master_square.width*3/4;
-        int warning_y = annun_gc.master_square.y + annun_gc.master_square.height/2 - annun_gc.line_height_xxl*4 - annun_gc.line_height_xxl/2;
-        int caution_y = annun_gc.master_square.y + annun_gc.master_square.height/2 + annun_gc.line_height_xxl/2;
-        int master_h = annun_gc.line_height_xxl*4;
-
         Stroke original_stroke = g2.getStroke();
-        g2.setStroke(new BasicStroke(2.0f * master_h/16));
+        g2.setStroke(annun_gc.master_stroke);
         g2.setFont(annun_gc.font_xxl);
 
-        g2.setColor( blendColor(off_warning, on_warning, warning) );
-        g2.fillRoundRect(master_x, warning_y, master_w, master_h, master_h/16, master_h/16);
-        g2.setColor( blendColor(off_border, on_border, warning) );
-        g2.drawRoundRect(master_x, warning_y, master_w, master_h, master_h/16, master_h/16);
+        g2.setColor( ColorUtilities.blend(off_warning, on_warning, warning) );
+        g2.fill(annun_gc.master_buttons[AnnunGraphicsConfig.BUTTON_MASTER_WARNING]);
+        g2.setColor( ColorUtilities.blend(off_border, on_border, warning) );
+        g2.draw(annun_gc.master_buttons[AnnunGraphicsConfig.BUTTON_MASTER_WARNING]);
         g2.drawString("MASTER", annun_gc.master_square.x + annun_gc.master_square.width/2 - annun_gc.get_text_width(g2, annun_gc.font_xxl, "MASTER")/2, annun_gc.master_square.y + annun_gc.master_square.height/2 - annun_gc.line_height_xxl*2 - annun_gc.line_height_xxl/2 - 2);
         g2.drawString("WARNING", annun_gc.master_square.x + annun_gc.master_square.width/2 - annun_gc.get_text_width(g2, annun_gc.font_xxl, "WARNING")/2, annun_gc.master_square.y + annun_gc.master_square.height/2 - annun_gc.line_height_xxl*1 - annun_gc.line_height_xxl/2 - 2);
 
-        g2.setColor( blendColor(off_caution, on_caution, caution) );
-        g2.fillRoundRect(master_x, caution_y, master_w, master_h, master_h/16, master_h/16);
-        g2.setColor( blendColor(off_border, on_border, caution) );
-        g2.drawRoundRect(master_x, caution_y, master_w, master_h, master_h/16, master_h/16);
+        g2.setColor( ColorUtilities.blend(off_caution, on_caution, caution) );
+        g2.fill(annun_gc.master_buttons[AnnunGraphicsConfig.BUTTON_MASTER_CAUTION]);
+        g2.setColor( ColorUtilities.blend(off_border, on_border, caution) );
+        g2.draw(annun_gc.master_buttons[AnnunGraphicsConfig.BUTTON_MASTER_CAUTION]);
         g2.drawString("MASTER", annun_gc.master_square.x + annun_gc.master_square.width/2 - annun_gc.get_text_width(g2, annun_gc.font_xxl, "MASTER")/2, annun_gc.master_square.y + annun_gc.master_square.height/2 + annun_gc.line_height_xxl/2 + annun_gc.line_height_xxl*2 - 2);
         g2.drawString("CAUTION", annun_gc.master_square.x + annun_gc.master_square.width/2 - annun_gc.get_text_width(g2, annun_gc.font_xxl, "CAUTION")/2, annun_gc.master_square.y + annun_gc.master_square.height/2 + annun_gc.line_height_xxl/2 + annun_gc.line_height_xxl*3 - 2);
 
@@ -139,6 +108,26 @@ public class Masters extends AnnunSubcomponent {
 
     }
 
-    public void mouseClicked(Graphics2D g2, MouseEvent e) {    	
+    public void drawMouseAreas(Graphics2D g2) {
+    	g2.setColor(Color.yellow);
+    	for (int i = 0; i < annun_gc.master_buttons.length; i++) {
+    		g2.draw(annun_gc.master_buttons[i]);
+    	}
     }
+    
+    public void mouseClicked(Graphics2D g2, MouseEvent e) {  	
+    	for (int i = 0; i < annun_gc.master_buttons.length; i++) {
+    		if (annun_gc.master_buttons[i].contains(e.getX(), e.getY())) {
+    			switch (i) {
+    			case AnnunGraphicsConfig.BUTTON_MASTER_WARNING:
+    				sim_command.send(SimCommand.CMD_MASTER_WRN);
+    				break;
+    			case AnnunGraphicsConfig.BUTTON_MASTER_CAUTION:
+    				sim_command.send(SimCommand.CMD_MASTER_CTN);
+    				break;
+    			}
+    		}
+    	}
+    }
+    
 }

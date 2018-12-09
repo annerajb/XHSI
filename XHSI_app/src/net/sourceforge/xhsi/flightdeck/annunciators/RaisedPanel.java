@@ -37,6 +37,7 @@ public class RaisedPanel extends AnnunSubcomponent {
 
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
 

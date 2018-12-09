@@ -36,12 +36,13 @@ import net.sourceforge.xhsi.model.ModelFactory;
 public class Annunciators extends AnnunSubcomponent {
 
     private static final long serialVersionUID = 1L;
-
+    
+    @SuppressWarnings("unused")
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
 
     private static final int ROWS = 6;
-    private static final int COLS = 2;
+    // private static final int COLS = 2;
 
 
 
