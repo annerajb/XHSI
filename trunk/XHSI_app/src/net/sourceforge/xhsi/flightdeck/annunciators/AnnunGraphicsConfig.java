@@ -6,6 +6,7 @@
  *
  * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
  * Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
+ * Copyright (C) 2018  Nicolas Carel
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,37 +24,25 @@
  */
 package net.sourceforge.xhsi.flightdeck.annunciators;
 
-import java.awt.Color;
+
+import java.awt.BasicStroke;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.GradientPaint;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-import java.util.HashMap;
 import java.util.logging.Logger;
-import java.util.Map;
-
-import net.sourceforge.xhsi.XHSIInstrument;
-import net.sourceforge.xhsi.XHSIPreferences;
-
-import net.sourceforge.xhsi.model.Avionics;
 
 import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
 
 
 public class AnnunGraphicsConfig extends GraphicsConfig implements ComponentListener {
 
+    @SuppressWarnings("unused")
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
 
@@ -65,19 +54,21 @@ public class AnnunGraphicsConfig extends GraphicsConfig implements ComponentList
     public int annun_square_size;
     public GradientPaint annun_gradient;
 
+    /*
+     * Master Warning and Caution
+     */
+    public Stroke master_stroke;
 
+    public final static int BUTTON_MASTER_WARNING = 0;
+    public final static int BUTTON_MASTER_CAUTION = 1;
+    public Shape[] master_buttons;
+    
     public AnnunGraphicsConfig(Component root_component, int du) {
         super(root_component);
         this.display_unit = du;
+        master_buttons = new Shape[2];
         init();
     }
-
-
-//    public void init() {
-//
-//        super.init();
-//
-//    }
 
 
     public void update_config(Graphics2D g2, boolean power) {
@@ -201,7 +192,20 @@ public class AnnunGraphicsConfig extends GraphicsConfig implements ComponentList
                 // override font sizes
                 set_fonts(g2, (float)square_size / 300.0f);
             }
-
+            
+            /*
+             * Master Warning and Caution
+             */
+            int master_x = master_square.x + master_square.width/2 - master_square.width/2*3/4;
+            int master_w = master_square.width*3/4;
+            int warning_y = master_square.y + master_square.height/2 - line_height_xxl*4 - line_height_xxl/2;
+            int caution_y = master_square.y + master_square.height/2 + line_height_xxl/2;
+            int master_h = line_height_xxl*4;
+            int master_r = master_h/16;
+            master_stroke = new BasicStroke(2.0f * master_r);
+            master_buttons[BUTTON_MASTER_WARNING] = new RoundRectangle2D.Double(master_x, warning_y, master_w, master_h, master_r, master_r);
+            master_buttons[BUTTON_MASTER_CAUTION] = new RoundRectangle2D.Double(master_x, caution_y, master_w, master_h, master_r, master_r);
+            
             annun_square_size = square_size;
 
 //            annun_gradient = new GradientPaint(
@@ -216,16 +220,6 @@ public class AnnunGraphicsConfig extends GraphicsConfig implements ComponentList
         }
 
     }
-
-
-//    public int get_text_width(Graphics graphics, Font font, String text) {
-//        return graphics.getFontMetrics(font).stringWidth(text);
-//    }
-
-
-//    public int get_text_height(Graphics graphics, Font font) {
-//        return graphics.getFontMetrics(font).getHeight();
-//    }
 
 
     public void componentResized(ComponentEvent event) {

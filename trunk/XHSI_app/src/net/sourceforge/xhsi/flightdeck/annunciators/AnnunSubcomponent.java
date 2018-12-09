@@ -25,16 +25,10 @@ package net.sourceforge.xhsi.flightdeck.annunciators;
 
 import java.awt.Component;
 import java.awt.Graphics2D;
-
 import java.awt.event.MouseEvent;
 
-
 import net.sourceforge.xhsi.XHSIPreferences;
-
-
 import net.sourceforge.xhsi.model.ModelFactory;
-
-
 import net.sourceforge.xhsi.flightdeck.Subcomponent;
 
 

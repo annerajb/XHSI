@@ -44,13 +44,10 @@ import net.sourceforge.xhsi.PreferencesObserver;
 import net.sourceforge.xhsi.XHSIPreferences;
 
 import net.sourceforge.xhsi.XHSIInstrument.DU;
-import net.sourceforge.xhsi.flightdeck.mfdcp.MFDCPSubcomponent;
 import net.sourceforge.xhsi.model.Aircraft;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.Observer;
-
-//import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
 
 
 public class AnnunComponent extends Component implements Observer, PreferencesObserver, MouseInputListener {
@@ -86,6 +83,8 @@ public class AnnunComponent extends Component implements Observer, PreferencesOb
         this.display_unit = du;
 
         annun_gc.reconfig = true;
+        
+        this.addMouseListener(this);
 
         addComponentListener(annun_gc);
         subcomponents.add(new RaisedPanel(model_factory, annun_gc, this));

@@ -35,7 +35,8 @@ import net.sourceforge.xhsi.model.ModelFactory;
 public class FlapsIndicator extends AnnunSubcomponent {
 
     private static final long serialVersionUID = 1L;
-
+    
+    @SuppressWarnings("unused")
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
 
@@ -56,8 +57,6 @@ public class FlapsIndicator extends AnnunSubcomponent {
         float pos = this.aircraft.get_flap_position();
         float handle = this.aircraft.get_flap_handle();
         int detents = this.aircraft.get_flap_detents();
-//pos=1.0f;
-//detents=8;
 
         int f_r = annun_gc.flaps_square.width/2*7/8;
         int f_x = annun_gc.flaps_square.x + annun_gc.flaps_square.width/2;
