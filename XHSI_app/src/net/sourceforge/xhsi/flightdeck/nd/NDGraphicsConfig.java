@@ -243,6 +243,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public float max_range;
 
     public int range_mode_message_y;
+    public int gps_message_y;
     
     // Terrain    
     public TexturePaint terrain_tp_hd_red;
@@ -536,6 +537,9 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 
             // Range and Mode change message
             range_mode_message_y = this.frame_size.height*38/100;
+            
+            // GPS Message 
+            gps_message_y = this.frame_size.height*97/100;
 
             // Fonts and graphics settings for compass rose
             if (boeing_style) {

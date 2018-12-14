@@ -29,6 +29,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 
+import net.sourceforge.xhsi.XHSIStatus;
+import net.sourceforge.xhsi.flightdeck.nd.NDFramedElement.FE_Color;
 //import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 
@@ -41,14 +43,20 @@ public class APHeading extends NDSubcomponent {
 
 	private static final long serialVersionUID = 1L;
 	float dash[] = { 11.0f, 22.0f };
+	private boolean failed_hdg;
 	
 	public APHeading(ModelFactory model_factory, NDGraphicsConfig hsi_gc) {
 		super(model_factory, hsi_gc);
+        this.failed_hdg=false;
 	}
 		
 	public void paint(Graphics2D g2) {
 
             if ( nd_gc.powered && ! nd_gc.mode_plan ) {
+            	
+                if (failed_hdg != (!this.avionics.hdg_valid() || (! XHSIStatus.receiving && nd_gc.airbus_style ))) {        	
+                	failed_hdg=!this.avionics.hdg_valid() || (! XHSIStatus.receiving && nd_gc.airbus_style );                	
+                }
 
                 GeneralPath polyline = null;
 
@@ -65,44 +73,47 @@ public class APHeading extends NDSubcomponent {
                 }
                 float ap_heading_offset = map_up - ( avionics.heading_bug() - this.aircraft.magnetic_variation() );
 
-                // rotate according to heading bug
-                AffineTransform original_at = g2.getTransform();
-                g2.rotate(
-                        Math.toRadians((double) (-1 * ap_heading_offset)),
-                        nd_gc.map_center_x,
-                        nd_gc.map_center_y
-                );
 
-                // heading bug
-                int heading_bug_width = Math.round(30.0f * nd_gc.scaling_factor);
-                int heading_bug_height = Math.round(12.0f * nd_gc.scaling_factor);
+                if (!failed_hdg) {
+                    // rotate according to heading bug
+                    AffineTransform original_at = g2.getTransform();
+                    g2.rotate(
+                            Math.toRadians((double) (-1 * ap_heading_offset)),
+                            nd_gc.map_center_x,
+                            nd_gc.map_center_y
+                    );
+                    
+                	// heading bug
+                	int heading_bug_width = Math.round(30.0f * nd_gc.scaling_factor);
+                	int heading_bug_height = Math.round(12.0f * nd_gc.scaling_factor);
 
-                g2.setColor(nd_gc.heading_bug_color);
-                polyline = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 9);
-                polyline.moveTo(nd_gc.map_center_x - heading_bug_width/2, nd_gc.rose_y_offset);
-                polyline.lineTo(nd_gc.map_center_x - heading_bug_width/2, nd_gc.rose_y_offset - heading_bug_height);
-                polyline.lineTo(nd_gc.map_center_x - (heading_bug_width/3 - 1), nd_gc.rose_y_offset - heading_bug_height);
-                polyline.lineTo(nd_gc.map_center_x, nd_gc.rose_y_offset);
-                polyline.lineTo(nd_gc.map_center_x + (heading_bug_width/3 - 1), nd_gc.rose_y_offset - heading_bug_height);
-                polyline.lineTo(nd_gc.map_center_x + heading_bug_width/2, nd_gc.rose_y_offset - heading_bug_height);
-                polyline.lineTo(nd_gc.map_center_x + heading_bug_width/2, nd_gc.rose_y_offset);
-                polyline.lineTo (nd_gc.map_center_x - heading_bug_width/2, nd_gc.rose_y_offset);
-                g2.draw(polyline);
-                if ( this.avionics.ap_hdg_sel_on() || ( this.avionics.is_x737() && this.avionics.x737_hdg() > 0 ) ) {
-                    g2.fill(polyline);
+                	g2.setColor(nd_gc.heading_bug_color);
+                	polyline = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 9);
+                	polyline.moveTo(nd_gc.map_center_x - heading_bug_width/2, nd_gc.rose_y_offset);
+                	polyline.lineTo(nd_gc.map_center_x - heading_bug_width/2, nd_gc.rose_y_offset - heading_bug_height);
+                	polyline.lineTo(nd_gc.map_center_x - (heading_bug_width/3 - 1), nd_gc.rose_y_offset - heading_bug_height);
+                	polyline.lineTo(nd_gc.map_center_x, nd_gc.rose_y_offset);
+                	polyline.lineTo(nd_gc.map_center_x + (heading_bug_width/3 - 1), nd_gc.rose_y_offset - heading_bug_height);
+                	polyline.lineTo(nd_gc.map_center_x + heading_bug_width/2, nd_gc.rose_y_offset - heading_bug_height);
+                	polyline.lineTo(nd_gc.map_center_x + heading_bug_width/2, nd_gc.rose_y_offset);
+                	polyline.lineTo (nd_gc.map_center_x - heading_bug_width/2, nd_gc.rose_y_offset);
+                	g2.draw(polyline);
+                	if ( this.avionics.ap_hdg_sel_on() || ( this.avionics.is_x737() && this.avionics.x737_hdg() > 0 ) ) {
+                		g2.fill(polyline);
+                	}
+
+
+                	if ( ! nd_gc.mode_classic_hsi ) {
+                		// dotted line from plane to heading bug, not for APP CTR or VOR CTR
+                		Stroke original_stroke = g2.getStroke();
+                		g2.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f));
+                		g2.draw(new Line2D.Double(nd_gc.map_center_x, nd_gc.map_center_y, nd_gc.map_center_x, nd_gc.rose_y_offset));
+                		g2.setStroke(original_stroke);
+                	}
+
+                	// reset transformation
+                	g2.setTransform(original_at);
                 }
-                
-
-                if ( ! nd_gc.mode_classic_hsi ) {
-                    // dotted line from plane to heading bug, not for APP CTR or VOR CTR
-                    Stroke original_stroke = g2.getStroke();
-                    g2.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f));
-                    g2.draw(new Line2D.Double(nd_gc.map_center_x, nd_gc.map_center_y, nd_gc.map_center_x, nd_gc.rose_y_offset));
-                    g2.setStroke(original_stroke);
-                }
-
-                // reset transformation
-                g2.setTransform(original_at);
 
             }
 

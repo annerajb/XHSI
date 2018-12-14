@@ -31,8 +31,10 @@ import java.text.DecimalFormat;
 
 
 import net.sourceforge.xhsi.XHSIPreferences;
+import net.sourceforge.xhsi.XHSIStatus;
 //import net.sourceforge.xhsi.XHSISettings;
 
+import net.sourceforge.xhsi.flightdeck.nd.NDFramedElement.FE_Color;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 
@@ -48,16 +50,38 @@ public class HeadingLabel extends NDSubcomponent {
     int old_hdg_text_length = 0;
     BufferedImage hdg_label_decoration_buf_img;
 
+    private boolean failed_hdg;
+    NDFramedElement failed_flag;
 
     public HeadingLabel(ModelFactory model_factory, NDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
         this.hdg_label_decoration_buf_img = null;
+        this.failed_hdg=false;
+        failed_flag = new NDFramedElement(NDFramedElement.HDG_FLAG, 0, hsi_gc, FE_Color.FE_COLOR_ALARM);
+        failed_flag.enableFlashing();
+        failed_flag.disableFraming();
+        failed_flag.setBigFont(true);
     }
 
 
     public void paint(Graphics2D g2) {
         
         if ( nd_gc.powered && ! nd_gc.mode_plan ) {
+        	
+            if (failed_hdg != (!this.avionics.hdg_valid() || (! XHSIStatus.receiving && nd_gc.airbus_style ))) {
+            	// FCOM 1.31.40 p26 (18) 
+            	// if the heading information fails, the HDG flag replaces the heading scale (red)           	
+            	failed_hdg=!this.avionics.hdg_valid() || (! XHSIStatus.receiving && nd_gc.airbus_style );
+            	if (failed_hdg) {
+            		failed_flag.setText("HDG", nd_gc.airbus_style ? FE_Color.FE_COLOR_ALARM : FE_Color.FE_COLOR_CAUTION);
+            		if (nd_gc.boeing_style)
+            			failed_flag.enableFraming();
+            		else
+            			failed_flag.disableFraming();
+            	} else {
+            		failed_flag.clearText();
+            	}
+            }
 
             // int y = nd_gc.border_top + nd_gc.line_height_large;
             int heading_text_y = nd_gc.border_top + nd_gc.line_height_xl*10/8;
@@ -126,10 +150,11 @@ public class HeadingLabel extends NDSubcomponent {
             g2.setFont(nd_gc.font_xxl);
             DecimalFormat degrees_formatter = new DecimalFormat("000");
             String text = degrees_formatter.format( mag_value );
+            if (failed_hdg) text = "- - -";
             g2.drawString(text , center_x - 3*nd_gc.digit_width_xxl/2, heading_text_y);
 
             // current heading pointer
-            if ( ! nd_gc.mode_classic_hsi ) {
+            if ( ! nd_gc.mode_classic_hsi && ! failed_hdg) {
 //                int hdg_pointer_height = (int) Math.min(16,18 * nd_gc.shrink_scaling_factor);
 //                int hdg_pointer_width = (int) (10.0f * nd_gc.shrink_scaling_factor);
                 int hdg_pointer_height = Math.round(30.0f * nd_gc.scaling_factor / 2.0f);
@@ -173,67 +198,68 @@ public class HeadingLabel extends NDSubcomponent {
             // drift angle pointer or track line 
             // -- with map zoom indication 
             // Range label code moved to CompassRose Class
-            rotate(g2, trk_line);
-            if ( nd_gc.mode_classic_hsi ) {
-                // old style HSI
-                // drift angle pointer in APP CTR and VOR CTR modes
-//                int pointer_height = (int)(nd_gc.big_tick_length / 2);
-//                int pointer_width = (int)(nd_gc.big_tick_length / 3);
-                int pointer_height = Math.round(20.0f * nd_gc.scaling_factor / 2.0f);
-                int pointer_width = Math.round(20.0f * nd_gc.scaling_factor / 3.0f);
-                g2.setColor(nd_gc.aircraft_color);
-                g2.drawLine(
-                    nd_gc.map_center_x, nd_gc.map_center_y - nd_gc.rose_radius,
-                    nd_gc.map_center_x + pointer_width, nd_gc.map_center_y - nd_gc.rose_radius + pointer_height
-                );
-                g2.drawLine(
-                    nd_gc.map_center_x + pointer_width, nd_gc.map_center_y - nd_gc.rose_radius + pointer_height,
-                    nd_gc.map_center_x, nd_gc.map_center_y - nd_gc.rose_radius + 2*pointer_height
-                );
-                g2.drawLine(
-                    nd_gc.map_center_x, nd_gc.map_center_y - nd_gc.rose_radius + 2*pointer_height,
-                    nd_gc.map_center_x - pointer_width, nd_gc.map_center_y - nd_gc.rose_radius + pointer_height
-                );
-                g2.drawLine(
-                    nd_gc.map_center_x - pointer_width, nd_gc.map_center_y - nd_gc.rose_radius + pointer_height,
-                    nd_gc.map_center_x, nd_gc.map_center_y - nd_gc.rose_radius
-                );
-            } else {
-                // map style ND
-//                g2.setColor(nd_gc.range_arc_color);
-                g2.setColor(nd_gc.dim_markings_color);
-                int tick_halfwidth = (int)(5 * nd_gc.scaling_factor);
-                g2.drawLine(
-                    nd_gc.map_center_x, nd_gc.map_center_y - (nd_gc.rose_radius*3/16),
-                    nd_gc.map_center_x, heading_box_bottom_y); // was: , rose_top_y + 2 )
-                if ( ! XHSIPreferences.get_instance().get_draw_range_arcs() ) {
-                    g2.drawLine(
-                        nd_gc.map_center_x - tick_halfwidth, nd_gc.map_center_y - (nd_gc.rose_radius*3/4),
-                        nd_gc.map_center_x + tick_halfwidth, nd_gc.map_center_y - (nd_gc.rose_radius*3/4) );
-                    g2.drawLine(
-                        nd_gc.map_center_x - tick_halfwidth, nd_gc.map_center_y - (nd_gc.rose_radius/2),
-                        nd_gc.map_center_x + tick_halfwidth, nd_gc.map_center_y - (nd_gc.rose_radius/2) );
-                    g2.drawLine(
-                        nd_gc.map_center_x - tick_halfwidth, nd_gc.map_center_y - (nd_gc.rose_radius/4),
-                        nd_gc.map_center_x + tick_halfwidth, nd_gc.map_center_y - (nd_gc.rose_radius/4) );
-                }
-                
-                /* CODE MOVED TO CompassRose Class
+            if (!failed_hdg) {
+            	rotate(g2, trk_line);
+            	if ( nd_gc.mode_classic_hsi ) {
+            		// old style HSI
+            		// drift angle pointer in APP CTR and VOR CTR modes
+            		//                int pointer_height = (int)(nd_gc.big_tick_length / 2);
+            		//                int pointer_width = (int)(nd_gc.big_tick_length / 3);
+            		int pointer_height = Math.round(20.0f * nd_gc.scaling_factor / 2.0f);
+            		int pointer_width = Math.round(20.0f * nd_gc.scaling_factor / 3.0f);
+            		g2.setColor(nd_gc.aircraft_color);
+            		g2.drawLine(
+            				nd_gc.map_center_x, nd_gc.map_center_y - nd_gc.rose_radius,
+            				nd_gc.map_center_x + pointer_width, nd_gc.map_center_y - nd_gc.rose_radius + pointer_height
+            				);
+            		g2.drawLine(
+            				nd_gc.map_center_x + pointer_width, nd_gc.map_center_y - nd_gc.rose_radius + pointer_height,
+            				nd_gc.map_center_x, nd_gc.map_center_y - nd_gc.rose_radius + 2*pointer_height
+            				);
+            		g2.drawLine(
+            				nd_gc.map_center_x, nd_gc.map_center_y - nd_gc.rose_radius + 2*pointer_height,
+            				nd_gc.map_center_x - pointer_width, nd_gc.map_center_y - nd_gc.rose_radius + pointer_height
+            				);
+            		g2.drawLine(
+            				nd_gc.map_center_x - pointer_width, nd_gc.map_center_y - nd_gc.rose_radius + pointer_height,
+            				nd_gc.map_center_x, nd_gc.map_center_y - nd_gc.rose_radius
+            				);
+            	} else {
+            		// map style ND
+            		//                g2.setColor(nd_gc.range_arc_color);
+            		g2.setColor(nd_gc.dim_markings_color);
+            		int tick_halfwidth = (int)(5 * nd_gc.scaling_factor);
+            		g2.drawLine(
+            				nd_gc.map_center_x, nd_gc.map_center_y - (nd_gc.rose_radius*3/16),
+            				nd_gc.map_center_x, heading_box_bottom_y); // was: , rose_top_y + 2 )
+            		if ( ! XHSIPreferences.get_instance().get_draw_range_arcs() ) {
+            			g2.drawLine(
+            					nd_gc.map_center_x - tick_halfwidth, nd_gc.map_center_y - (nd_gc.rose_radius*3/4),
+            					nd_gc.map_center_x + tick_halfwidth, nd_gc.map_center_y - (nd_gc.rose_radius*3/4) );
+            			g2.drawLine(
+            					nd_gc.map_center_x - tick_halfwidth, nd_gc.map_center_y - (nd_gc.rose_radius/2),
+            					nd_gc.map_center_x + tick_halfwidth, nd_gc.map_center_y - (nd_gc.rose_radius/2) );
+            			g2.drawLine(
+            					nd_gc.map_center_x - tick_halfwidth, nd_gc.map_center_y - (nd_gc.rose_radius/4),
+            					nd_gc.map_center_x + tick_halfwidth, nd_gc.map_center_y - (nd_gc.rose_radius/4) );
+            		}
+
+            		/* CODE MOVED TO CompassRose Class
                 // a label at half the range
                 g2.setFont(nd_gc.font_xs);
                 g2.setColor(nd_gc.dim_markings_color);
 //                int range = nd_gc.map_range;
-                
+
                 String ctr_ranges[] = {"2.5", "5", "10", "20", "40", "80", "160"};
                 String exp_ranges[] = {"5", "10", "20", "40", "80", "160", "320"};
                 String zoomin_ctr_ranges[] = {"0.025", "0.05", "0.10", "0.20", "0.40", "0.80", "1.60"};
                 String zoomin_exp_ranges[] = {"0.05", "0.10", "0.20", "0.40", "0.80", "1.60", "3.20"};
-                
+
                 String x737_ctr_ranges[] = {"1.25", "2.5", "5", "10", "20", "40", "80", "160"};
                 String x737_exp_ranges[] = {"2.5", "5", "10", "20", "40", "80", "160", "320"};
                 String x737_zoomin_ctr_ranges[] = {"0.0125", "0.025", "0.05", "0.10", "0.20", "0.40", "0.80", "1.60"};
                 String x737_zoomin_exp_ranges[] = {"0.025", "0.05", "0.10", "0.20", "0.40", "0.80", "1.60", "3.20"};
-                
+
                 String range_text;
                 int range_index = this.avionics.map_range_index();
                 if ( this.avionics.is_x737() ) {
@@ -270,9 +296,10 @@ public class HeadingLabel extends NDSubcomponent {
                     nd_gc.map_center_x - nd_gc.get_text_width(g2, nd_gc.font_xs, range_text) - 4,
                     nd_gc.map_center_y - (nd_gc.rose_radius / 2) - (nd_gc.get_text_height(g2, g2.getFont()) / 2) + 5
                 );
-                */
+            		 */
+            	}
+            	unrotate(g2);
             }
-            unrotate(g2);
 
         }
 

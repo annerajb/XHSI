@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSISettings;
+import net.sourceforge.xhsi.XHSIStatus;
 
 import net.sourceforge.xhsi.model.Airport;
 import net.sourceforge.xhsi.model.Avionics;
@@ -127,8 +128,9 @@ public class MovingMap extends NDSubcomponent {
     public void paint(Graphics2D g2) {
 
         // don't draw the map in classic-HSI-style APP CTR or VOR CTR
-        if ( nd_gc.powered && ! nd_gc.mode_classic_hsi ) {
-        	boolean display_map = !(nd_gc.airbus_style && ( nd_gc.display_mode_change_msg() || nd_gc.display_range_change_msg()));
+    	// don't draw the map if heading is invalid, except plan mode (HDG=True North)
+        if ( nd_gc.powered && ! nd_gc.mode_classic_hsi && (this.avionics.hdg_valid() || nd_gc.mode_plan) ) {
+        	boolean display_map = !(nd_gc.airbus_style && ( (!XHSIStatus.receiving)  || nd_gc.display_mode_change_msg() || nd_gc.display_range_change_msg()));
 
             // if (this.fix_image == null)
             //    render_navigation_object_images();

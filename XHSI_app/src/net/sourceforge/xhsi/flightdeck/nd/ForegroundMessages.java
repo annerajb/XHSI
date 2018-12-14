@@ -65,13 +65,15 @@ public class ForegroundMessages extends NDSubcomponent {
             drawDisagree(g2);
             if (nd_gc.airbus_style) {
                 if (nd_gc.display_mode_change_msg()) {
-                	displayGlobalMessage(g2,"MODE CHANGED");
+                	displayGlobalMessage(g2,"MODE CHANGED",nd_gc.normal_color);
                 } else if (nd_gc.display_range_change_msg()) {
-                    displayGlobalMessage(g2,"RANGE CHANGED");
+                    displayGlobalMessage(g2,"RANGE CHANGED",nd_gc.normal_color);
                 } else {
                 	displayEGPWSMessage(g2);   
                 	drawTerrainInfoBox(g2);
                 	drawWeatherInfoBox(g2);
+                	if (! this.avionics.hdg_valid() && ! nd_gc.mode_plan) 
+                		displayGlobalMessage(g2,"MAP NOT AVAIL",nd_gc.warning_color);
                 }
             } else 
             	displayEGPWSMessage(g2);
@@ -307,8 +309,8 @@ public class ForegroundMessages extends NDSubcomponent {
     }
 
 
-    private void displayGlobalMessage(Graphics2D g2, String message){
-        g2.setColor(nd_gc.normal_color);
+    private void displayGlobalMessage(Graphics2D g2, String message, Color message_color){
+        g2.setColor(message_color);
         g2.setFont(nd_gc.font_xxxl);
         int message_width = g2.getFontMetrics(nd_gc.font_xxxl).stringWidth(message);
         // int box_width = message_width + 2*nd_gc.digit_width_xxxl;
