@@ -51,6 +51,13 @@ public class ColorUtilities {
     public static final int AIRBUS_BACK_PANEL = 2;
     public static final int AIRBUS_FRONT_PANEL = 3;
 
+    /**
+     * Mix color c0 and c1 using their alpha channel as mixing ratio
+     * 
+     * @param c0 : Color 0  
+     * @param c1 : Color 1
+     * @return Mixed color
+     */
     public static Color blend(Color c0, Color c1) {
         double totalAlpha = c0.getAlpha() + c1.getAlpha();
         double weight0 = c0.getAlpha() / totalAlpha;
@@ -64,21 +71,38 @@ public class ColorUtilities {
         return new Color((int) r, (int) g, (int) b, (int) a);
     }
 
+    /**
+     * Mix color c0 and c1 using alpha [0.0 - 1.0] as mixing ratio
+     * alpha=0 means full c0
+     * alpha=1 means full c1
+     * 
+     * @param c0 : Color 0  
+     * @param c1 : Color 1
+     * @param alpha : double between 0 and 1 - other values are illegal
+     * @return Mixed color
+     */
     public static Color blend(Color c0, Color c1, double alpha) {
-        double weight0 = alpha;
-        double weight1 = 1 - alpha;
+    	
+    	if (alpha==1) {
+    		return c1;
+    	} else if (alpha==0) {
+    		return c0;
+    	} else {
+    		double weight0 = alpha;
+    		double weight1 = 1 - alpha;
 
-        double r = weight0 * c0.getRed() + weight1 * c1.getRed();
-        double g = weight0 * c0.getGreen() + weight1 * c1.getGreen();
-        double b = weight0 * c0.getBlue() + weight1 * c1.getBlue();
-        double a = weight0 * c0.getAlpha() + weight1 * c1.getAlpha();
+    		double r = weight0 * c0.getRed() + weight1 * c1.getRed();
+    		double g = weight0 * c0.getGreen() + weight1 * c1.getGreen();
+    		double b = weight0 * c0.getBlue() + weight1 * c1.getBlue();
+    		double a = weight0 * c0.getAlpha() + weight1 * c1.getAlpha();
 
-        try {
-            return new Color((int) r, (int) g, (int) b, (int) a);
-        } catch (IllegalArgumentException e) {
-            System.err.println("Blending unsuccesfull: Alpha = " + alpha + ".");
-            throw e;
-        }
+    		try {
+    			return new Color((int) r, (int) g, (int) b, (int) a);
+    		} catch (IllegalArgumentException e) {
+    			System.err.println("Blending unsuccesfull: Alpha = " + alpha + ".");
+    			throw e;
+    		}
+    	}
     }
 
     public static Color multiply(Color c0, Color c1) {

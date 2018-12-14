@@ -57,7 +57,11 @@ public class NDFail extends NDSubcomponent {
 
     public void paint(Graphics2D g2) {
         if ( ! XHSIStatus.receiving ) {
-            drawFailCross(g2);
+            if ( nd_gc.boeing_style) {
+                drawFailCross(g2);
+            } else {
+            	drawFailIndicator(g2);
+            }
         }
     }
 
@@ -70,6 +74,15 @@ public class NDFail extends NDSubcomponent {
         g2.drawLine(nd_gc.border_left, nd_gc.border_top, nd_gc.frame_size.width - nd_gc.border_right, nd_gc.frame_size.height - nd_gc.border_bottom);
         g2.drawLine(nd_gc.frame_size.width - nd_gc.border_right, nd_gc.border_top, nd_gc.border_left, nd_gc.frame_size.height - nd_gc.border_bottom);
         g2.setStroke(original_stroke);
+
+    }
+
+    private void drawFailIndicator(Graphics2D g2) {
+
+        g2.setColor(nd_gc.caution_color);
+    	String failed_str = "XHSI COMM LOST";
+        g2.setFont(nd_gc.font_xxl);
+    	g2.drawString( failed_str, nd_gc.map_center_x - nd_gc.get_text_width(g2, nd_gc.font_xxl, failed_str)/2,  nd_gc.gps_message_y  - nd_gc.line_height_xxl );
 
     }
 

@@ -36,6 +36,10 @@ import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 
+import net.sourceforge.xhsi.XHSIStatus;
+import net.sourceforge.xhsi.flightdeck.nd.NDFramedElement.FE_Color;
+import net.sourceforge.xhsi.flightdeck.pfd.PFDFramedElement;
+import net.sourceforge.xhsi.flightdeck.pfd.PFDFramedElement.PFE_Color;
 import net.sourceforge.xhsi.model.ModelFactory;
 
 
@@ -49,6 +53,8 @@ public class CompassRose extends NDSubcomponent {
     
     private float drawn_map_up;
     private long refreshed_timestamp;
+    private boolean failed_hsi;
+    NDFramedElement failed_flag;
     
     float range_dashes[] = { 10.0f, 10.0f };
     
@@ -56,6 +62,11 @@ public class CompassRose extends NDSubcomponent {
         super(model_factory, hsi_gc);
         this.refreshed_timestamp=0;
         this.drawn_map_up=0.0f;
+        this.failed_hsi=false;
+        failed_flag = new NDFramedElement(NDFramedElement.HDG_FLAG, 0, hsi_gc, FE_Color.FE_COLOR_ALARM);
+        failed_flag.enableFlashing();
+        failed_flag.disableFraming();
+        failed_flag.setBigFont(true);
     }
 
 
@@ -86,6 +97,23 @@ public class CompassRose extends NDSubcomponent {
             	this.drawn_map_up=map_up;
             } 
         	
+			
+            if (failed_hsi != (!this.avionics.hdg_valid() || (! XHSIStatus.receiving && nd_gc.airbus_style ))) {
+            	// FCOM 1.31.40 p26 (18) 
+            	// if the heading information fails, the HDG flag replaces the heading scale (red)
+            	refresh_rose=true;
+            	failed_hsi=!this.avionics.hdg_valid() || (! XHSIStatus.receiving && nd_gc.airbus_style );
+            	if (failed_hsi) {
+            		failed_flag.setText(nd_gc.airbus_style ? "HDG" : "MAP", nd_gc.airbus_style ? FE_Color.FE_COLOR_ALARM : FE_Color.FE_COLOR_CAUTION);
+            		if (nd_gc.boeing_style)
+            			failed_flag.enableFraming();
+            		else
+            			failed_flag.disableFraming();
+            	} else {
+            		failed_flag.clearText();
+            	}
+            }
+            
         	if (USE_BUFFERED_IMAGE) {
         		g2_rose = nd_gc.compass_rose_img.createGraphics();
         		g2_rose.setRenderingHints(nd_gc.rendering_hints);
@@ -115,8 +143,9 @@ public class CompassRose extends NDSubcomponent {
         			left_right_angle = 60.0f;
         		}
         		if ( nd_gc.mode_centered ) left_right_angle = 180.0f;
-
+     			
         		g2_rose.setColor(nd_gc.markings_color);
+        		
         		if ( ! nd_gc.mode_centered ) {
         			draw_main_arc(g2_rose, left_right_angle);
         		} else if (nd_gc.mode_plan || nd_gc.airbus_style){
@@ -125,7 +154,7 @@ public class CompassRose extends NDSubcomponent {
 
         		if ( ! nd_gc.mode_plan ) {
 
-        			draw_compass_ticks( g2_rose, left_right_angle, this.drawn_map_up);
+        			if ( !failed_hsi ) draw_compass_ticks( g2_rose, left_right_angle, this.drawn_map_up);
 
         			if ( nd_gc.mode_centered ) {
         				draw_45_deg_marks(g2_rose);
@@ -137,7 +166,18 @@ public class CompassRose extends NDSubcomponent {
         				}
         			}
 
-        			draw_plane_symbol(g2_rose);
+        			if (failed_hsi && nd_gc.airbus_style) {    
+        				g2_rose.setColor(nd_gc.warning_color);	
+        		        g2.drawOval(
+        		                nd_gc.map_center_x - nd_gc.rose_radius/20,
+        		                nd_gc.map_center_y - nd_gc.rose_radius/20,
+        		                nd_gc.rose_radius/10,
+        		                nd_gc.rose_radius/10
+        		        );        				
+        			} else {
+        				draw_plane_symbol(g2_rose);
+        			}
+        			
 
         			if (!nd_gc.mode_classic_hsi || nd_gc.airbus_style) draw_range_label(g2_rose);  
 
@@ -152,13 +192,19 @@ public class CompassRose extends NDSubcomponent {
         		// paint buffer
         		g2.drawImage(nd_gc.compass_rose_img, 0, 0, null);
         	}
+        	
+        	if (failed_hsi) failed_flag.paint(g2);
 
         }
 
     }
 
     private void draw_main_arc(Graphics2D g2, float left_right_angle) {
-    	g2.setColor(nd_gc.markings_color);
+		if (failed_hsi && !nd_gc.mode_plan && nd_gc.airbus_style) {
+			g2_rose.setColor(nd_gc.warning_color);	
+		} else {        			
+			g2_rose.setColor(nd_gc.markings_color);
+		}      	
     	g2.drawArc(
     			nd_gc.map_center_x - nd_gc.rose_radius,
     			nd_gc.map_center_y - nd_gc.rose_radius,
@@ -171,7 +217,11 @@ public class CompassRose extends NDSubcomponent {
     
     private void draw_main_circles(Graphics2D g2) {
         // circle
-        g2.setColor(nd_gc.markings_color);
+		if (failed_hsi && !nd_gc.mode_plan && nd_gc.airbus_style) {
+			g2_rose.setColor(nd_gc.warning_color);	
+		} else {        			
+			g2_rose.setColor(nd_gc.markings_color);
+		}  
         g2.drawOval(
                 nd_gc.map_center_x - nd_gc.rose_radius,
                 nd_gc.map_center_y - nd_gc.rose_radius,
@@ -179,7 +229,11 @@ public class CompassRose extends NDSubcomponent {
                 nd_gc.rose_radius*2
         );
         // inner circle
-        g2.setColor(nd_gc.range_arc_color);
+		if (failed_hsi && !nd_gc.mode_plan && nd_gc.airbus_style) {
+			g2_rose.setColor(nd_gc.warning_color);	
+		} else {        			
+			g2_rose.setColor(nd_gc.range_arc_color);
+		}  
         Stroke original_stroke = g2.getStroke();
         if (nd_gc.airbus_style) g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, range_dashes, 0.0f));
         g2.drawOval(
@@ -498,7 +552,12 @@ public class CompassRose extends NDSubcomponent {
     private void draw_scale_rings(Graphics2D g2) {
 
         // dim or dash the scale rings in Arc mode
-        g2.setColor(nd_gc.range_arc_color);
+		if (failed_hsi && !nd_gc.mode_plan) {
+			g2_rose.setColor(nd_gc.warning_color);	
+		} else {        			
+			g2_rose.setColor(nd_gc.range_arc_color);
+		}    
+        
         Stroke original_stroke = g2.getStroke();
         if (nd_gc.airbus_style) g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, range_dashes, 0.0f));
 
