@@ -200,6 +200,9 @@ public class GraphicsConfig implements ComponentListener {
     public Color color_airbus_button_smoke = new Color(0xFF0000);
     public Color color_airbus_button_fault = new Color(0x988148);
     
+    // Failed Red Cross Color - XHSI COMM LOST
+    public Color xhsi_comm_lost_color;
+    
     /*
      * =========================================================================
      * This is the variable color definitions section for XHSI Display Units
@@ -751,6 +754,9 @@ public class GraphicsConfig implements ComponentListener {
         	wxr_colors[8] = setDUBrightness(new Color(150,0,0));
         	wxr_colors[9] = setDUBrightness(new Color(160,0,160));
         }
+        
+        // XHSI COMM LOST Failed red cross or communications lost message (Full Brightness)
+        xhsi_comm_lost_color = Color.red;
         
         // Terrain colors
         terrain_red_color = setDUBrightness(new Color(110,0,0));

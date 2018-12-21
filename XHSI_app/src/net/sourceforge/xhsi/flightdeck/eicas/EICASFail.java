@@ -22,38 +22,23 @@
 package net.sourceforge.xhsi.flightdeck.eicas;
 
 import java.awt.BasicStroke;
-//import java.awt.Color;
 import java.awt.Component;
-//import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-//import java.awt.Shape;
 import java.awt.Stroke;
-//import java.awt.geom.AffineTransform;
-//import java.awt.geom.Area;
-//import java.awt.geom.Rectangle2D;
-//import java.awt.geom.RoundRectangle2D;
-//import java.awt.image.BufferedImage;
 
-//import java.util.logging.Logger;
-
-//import net.sourceforge.xhsi.XHSIPreferences;
-//import net.sourceforge.xhsi.XHSISettings;
 import net.sourceforge.xhsi.XHSIStatus;
 import net.sourceforge.xhsi.model.ModelFactory;
-
 
 
 public class EICASFail extends EICASSubcomponent {
 
     private static final long serialVersionUID = 1L;
 
-//    private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
-
+    // private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     public EICASFail(ModelFactory model_factory, EICASGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
     }
-
 
     public void paint(Graphics2D g2) {
         if ( ! XHSIStatus.receiving ) {
@@ -61,17 +46,13 @@ public class EICASFail extends EICASSubcomponent {
         }
     }
 
-
     private void drawFailCross(Graphics2D g2) {
-
-        g2.setColor(eicas_gc.warning_color);
+        g2.setColor(eicas_gc.xhsi_comm_lost_color);
         Stroke original_stroke = g2.getStroke();
         g2.setStroke(new BasicStroke(8.0f * eicas_gc.scaling_factor));
         g2.drawLine(eicas_gc.border_left, eicas_gc.border_top, eicas_gc.frame_size.width - eicas_gc.border_right, eicas_gc.frame_size.height - eicas_gc.border_bottom);
         g2.drawLine(eicas_gc.frame_size.width - eicas_gc.border_right, eicas_gc.border_top, eicas_gc.border_left, eicas_gc.frame_size.height - eicas_gc.border_bottom);
         g2.setStroke(original_stroke);
-
     }
-
 
 }

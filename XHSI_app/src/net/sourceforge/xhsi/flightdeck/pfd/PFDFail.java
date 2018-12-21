@@ -22,33 +22,19 @@
 package net.sourceforge.xhsi.flightdeck.pfd;
 
 import java.awt.BasicStroke;
-//import java.awt.Color;
 import java.awt.Component;
-//import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-//import java.awt.Shape;
 import java.awt.Stroke;
-//import java.awt.geom.AffineTransform;
-//import java.awt.geom.Area;
-//import java.awt.geom.Rectangle2D;
-//import java.awt.geom.RoundRectangle2D;
-//import java.awt.image.BufferedImage;
 
-//import java.util.logging.Logger;
-
-//import net.sourceforge.xhsi.XHSIPreferences;
-//import net.sourceforge.xhsi.XHSISettings;
 import net.sourceforge.xhsi.XHSIStatus;
 import net.sourceforge.xhsi.model.ModelFactory;
-
 
 
 public class PFDFail extends PFDSubcomponent {
 
     private static final long serialVersionUID = 1L;
 
-//    private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
-
+    // private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     public PFDFail(ModelFactory model_factory, PFDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
@@ -61,17 +47,13 @@ public class PFDFail extends PFDSubcomponent {
         }
     }
 
-
     private void drawFailCross(Graphics2D g2) {
-
-        g2.setColor(pfd_gc.warning_color);
+        g2.setColor(pfd_gc.xhsi_comm_lost_color);
         Stroke original_stroke = g2.getStroke();
         g2.setStroke(new BasicStroke(8.0f * pfd_gc.scaling_factor));
         g2.drawLine(pfd_gc.border_left, pfd_gc.border_top, pfd_gc.frame_size.width - pfd_gc.border_right, pfd_gc.frame_size.height - pfd_gc.border_bottom);
         g2.drawLine(pfd_gc.frame_size.width - pfd_gc.border_right, pfd_gc.border_top, pfd_gc.border_left, pfd_gc.frame_size.height - pfd_gc.border_bottom);
         g2.setStroke(original_stroke);
-
     }
-
 
 }
