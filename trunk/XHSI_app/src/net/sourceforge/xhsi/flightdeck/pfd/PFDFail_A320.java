@@ -21,10 +21,8 @@
 */
 package net.sourceforge.xhsi.flightdeck.pfd;
 
-import java.awt.BasicStroke;
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
 
 import net.sourceforge.xhsi.XHSIStatus;
 import net.sourceforge.xhsi.model.ModelFactory;
@@ -34,8 +32,7 @@ public class PFDFail_A320 extends PFDSubcomponent {
 
     private static final long serialVersionUID = 1L;
 
-//    private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
-
+    // private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     public PFDFail_A320(ModelFactory model_factory, PFDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
@@ -50,14 +47,11 @@ public class PFDFail_A320 extends PFDSubcomponent {
 
 
     private void drawFailCross(Graphics2D g2) {
-
-        g2.setColor(pfd_gc.caution_color);
+        g2.setColor(pfd_gc.xhsi_comm_lost_color);
     	String failed_str = "XHSI COMM LOST";
         g2.setFont(pfd_gc.font_xxl);
     	g2.drawString( failed_str, pfd_gc.adi_cx - pfd_gc.get_text_width(g2, pfd_gc.font_xxl, failed_str)/2,  pfd_gc.tape_top - pfd_gc.line_height_xxl );
-
     }
-
 
 }
 

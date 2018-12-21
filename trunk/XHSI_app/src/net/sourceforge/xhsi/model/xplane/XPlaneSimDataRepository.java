@@ -983,13 +983,41 @@ public class XPlaneSimDataRepository implements SimDataRepository {
 
     public XPlaneSimDataRepository() {
         observers = new ArrayList<Observer>();
-        for (int i=0; i<1300; i++) {
+        for (int i=0; i<1800; i++) {
             sim_values_string[i] = "";
             sim_timestamp_string[i] = 0;
             sim_timestamp_float[i] = 0;
             sim_updated_string[i] = false;
             sim_updated_float[i] = false;
         }
+        // Some data should be initialized with values different from 0
+
+        sim_values_float[SIM_COCKPIT_ELECTRICAL_INSTRUMENT_BRIGHTNESS] = 0.8f;
+        sim_values_float[SIM_COCKPIT_ELECTRICAL_COCKPIT_LIGHT] = 0.8f;
+        sim_values_float[SIM_COCKPIT_ELECTRICAL_HUD_BRIGHTNESS] = 0.8f;
+        sim_values_float[XHSI_DU_BRIGHT_PFD_CPT] = 1.0f;
+        sim_values_float[XHSI_DU_BRIGHT_ND_CPT] = 1.0f;
+        sim_values_float[XHSI_DU_BRIGHT_PFD_FO] = 1.0f;
+        sim_values_float[XHSI_DU_BRIGHT_ND_FO] = 1.0f;
+        sim_values_float[XHSI_DU_BRIGHT_EICAS] = 1.0f;
+        sim_values_float[XHSI_DU_BRIGHT_MFD] = 1.0f;
+        sim_values_float[XHSI_DU_BRIGHT_CLOCK] = 1.0f;
+        sim_values_float[XHSI_DU_BRIGHT_CDU_CPT] = 1.0f;
+        sim_values_float[XHSI_DU_BRIGHT_CDU_FO] = 1.0f;
+        sim_values_float[XHSI_DU_BRIGHT_CDU_OBS] = 1.0f;
+        sim_values_float[XHSI_DU_BRIGHT_FCU] = 1.0f;
+        sim_values_float[XHSI_DU_BRIGHT_OHP] = 1.0f;
+        sim_values_float[XHSI_DU_BRIGHT_PEDESTAL] = 1.0f;
+        sim_values_float[XHSI_DU_BRIGHT_DOME] = 1.0f;
+        sim_values_float[XHSI_DU_BRIGHT_TABLET] = 1.0f;
+        sim_values_float[SIM_COCKPIT_SWITCHES_EFIS_MAP_MODE] = 1; // 0=Centered, 1=Expanded
+        sim_values_float[SIM_COCKPIT_SWITCHES_EFIS_MAP_SUBMODE] = 3; // 0=APP, 1=VOR, 2=MAP, 3=NAV, 4=PLN
+        sim_values_float[SIM_COCKPIT_SWITCHES_EFIS_DME_1_SELECTOR] = 1; // OFF
+        sim_values_float[SIM_COCKPIT_SWITCHES_EFIS_DME_2_SELECTOR] = 1; // OFF
+        sim_values_float[XHSI_EFIS_COPILOT_MAP_CTR] = 1;
+        sim_values_float[XHSI_EFIS_COPILOT_MAP_MODE] = 3;
+        sim_values_float[SIM_COCKPIT_ELECTRICAL_AVIONICS_ON] = 1;
+        sim_values_float[SIM_COCKPIT2_SWITCHES_AUTO_BRAKE_LEVEL] = 1; // Auto-brake OFF
     }
 
     public boolean is_replaying() {
