@@ -1017,7 +1017,10 @@ public class XPlaneSimDataRepository implements SimDataRepository {
         sim_values_float[XHSI_EFIS_COPILOT_MAP_CTR] = 1;
         sim_values_float[XHSI_EFIS_COPILOT_MAP_MODE] = 3;
         sim_values_float[SIM_COCKPIT_ELECTRICAL_AVIONICS_ON] = 1;
+        sim_values_float[SIM_COCKPIT_ELECTRICAL_BATTERY_ON] = 1;
         sim_values_float[SIM_COCKPIT2_SWITCHES_AUTO_BRAKE_LEVEL] = 1; // Auto-brake OFF
+        sim_values_float[SIM_GAUGES_FAILURES_PILOT] = 0x36DB6;    // start with all instruments failed
+        sim_values_float[SIM_GAUGES_FAILURES_COPILOT] = 0x36DB6;  // start with all instruments failed
     }
 
     public boolean is_replaying() {

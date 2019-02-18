@@ -59,7 +59,7 @@ public class RadioHeadingArrows extends NDSubcomponent {
 
         if ( nd_gc.powered && ! nd_gc.mode_plan && ( ! avionics.efis_shows_pos() || ( nd_gc.mode_classic_hsi ) ) ) {
 
-            if ( this.preferences.get_draw_only_inside_rose() && this.preferences.get_limit_arcs_at_60() && ! nd_gc.mode_centered ) {
+            if ( this.preferences.get_draw_only_inside_rose() && nd_gc.limit_arcs && ! nd_gc.mode_centered ) {
                 clip(g2, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, 0, nd_gc.sixty_deg_hlimit*2, nd_gc.frame_size.height);
                 clipped = true;
             } else clipped = false;

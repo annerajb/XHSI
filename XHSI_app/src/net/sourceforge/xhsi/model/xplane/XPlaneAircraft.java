@@ -146,7 +146,7 @@ public class XPlaneAircraft implements Aircraft {
             }
             current_value = current_value < min_value ? min_value : current_value;
             if (current_value > max_value) {
-                System.err.println("Found a cockpit light level value bigger then " + max_value + ": " + current_value);
+                // System.err.println("Found a cockpit light level value bigger than " + max_value + ": " + current_value);
                 current_value = max_value;
             }
             return (current_value - min_value) / (max_value - min_value);
@@ -168,7 +168,7 @@ public class XPlaneAircraft implements Aircraft {
         double current_value = (((int) sim_data.get_sim_float(XPlaneSimDataRepository.SIM_GRAPHICS_MISC_OUTSIDE_LIGHT_LEVEL_RGB))>>16)/255.0d;
         current_value = current_value < min_value ? min_value : current_value;
         if (current_value > max_value) {
-            System.err.println("Found a outside light level value bigger then " + max_value + ": " + current_value);
+            // System.err.println("Found a outside light level value bigger than " + max_value + ": " + current_value);
             current_value = max_value;
         }
         return (current_value - min_value) / (max_value - min_value);

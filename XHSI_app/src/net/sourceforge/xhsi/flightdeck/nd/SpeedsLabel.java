@@ -23,21 +23,12 @@
 */
 package net.sourceforge.xhsi.flightdeck.nd;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
 import java.text.DecimalFormat;
 
-import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
-
-//import net.sourceforge.xhsi.panel.GraphicsConfig;
-//import net.sourceforge.xhsi.panel.Subcomponent;
-
 
 
 public class SpeedsLabel extends NDSubcomponent {
@@ -50,11 +41,13 @@ public class SpeedsLabel extends NDSubcomponent {
     int wind_speed;
 
     private DecimalFormat degrees_formatter;
+    private DecimalFormat speed_formatter;
 
 
     public SpeedsLabel(ModelFactory model_factory, NDGraphicsConfig hsi_gc) {
         super(model_factory, hsi_gc);
         degrees_formatter = new DecimalFormat("000");
+        speed_formatter = new DecimalFormat("##0");
         // Out of range value that must be refreshed
         wind_direction = 361.0f;
         wind_speed = -1;
@@ -91,19 +84,25 @@ public class SpeedsLabel extends NDSubcomponent {
             map_up = 0.0f;
         }
 
+        // Ground Speed
         g2.setColor(nd_gc.top_text_color);
-        g2.setFont(this.nd_gc.font_s);
+        g2.setFont(nd_gc.sl_font_text);
         g2.drawString("GS", nd_gc.sl_gs_label_x, nd_gc.sl_speeds_y);
-        g2.setFont(this.nd_gc.font_l);
+        g2.setFont(nd_gc.sl_font_value);
+        g2.setColor(nd_gc.speed_color);
         g2.drawString("" + Math.round(aircraft.ground_speed()), nd_gc.sl_gs_x, nd_gc.sl_speeds_y);
 
-        g2.setFont(this.nd_gc.font_s);
+        // True Air Speed
+        g2.setColor(nd_gc.top_text_color);
+        g2.setFont(nd_gc.sl_font_text);
         g2.drawString("TAS", nd_gc.sl_tas_label_x, nd_gc.sl_speeds_y);
-        g2.setFont(this.nd_gc.font_l);
+        g2.setFont(nd_gc.sl_font_value);
+        g2.setColor(nd_gc.speed_color);
         g2.drawString("" + Math.round(aircraft.true_air_speed()), nd_gc.sl_tas_x, nd_gc.sl_speeds_y);
 
         g2.setColor(nd_gc.wind_color);
         String wind_text = null;
+        String speed_text = null;
         int wind_dir = Math.round(wind_direction + this.aircraft.magnetic_variation());
         if (wind_dir < 0) {
             wind_dir += 360;
@@ -112,38 +111,44 @@ public class SpeedsLabel extends NDSubcomponent {
         if (wind_dir == 0) {
             wind_dir = 360;
         }
-        if (wind_speed > 4) {
-            wind_text = degrees_formatter.format(wind_dir) + "\u00B0" + "/" + wind_speed;
+        if (nd_gc.boeing_style) {
+        	if (wind_speed > 4) {
+        		wind_text = degrees_formatter.format(wind_dir) + "\u00B0" + "/" + wind_speed;
+        	} else {
+        		wind_text = "---\u00B0" + "/--";
+        	}
+        	g2.drawString(wind_text, nd_gc.sl_wind_x, nd_gc.sl_wind_y);
         } else {
-            wind_text = "---\u00B0" + "/--";
+        	if (wind_speed > 4) {
+        		wind_text = degrees_formatter.format(wind_dir);
+        		speed_text = speed_formatter.format(wind_speed);
+        	} else {
+        		wind_text = "---";
+        		speed_text = "---";
+        	}
+        	g2.drawString(wind_text, nd_gc.sl_wind_x, nd_gc.sl_wind_y);  
+        	g2.drawString(speed_text, nd_gc.sl_wind_speed_x, nd_gc.sl_wind_y);
+        	g2.setColor(nd_gc.top_text_color);
+        	g2.drawString("/", nd_gc.sl_wind_slash_x, nd_gc.sl_wind_y);
         }
-        g2.drawString(wind_text, nd_gc.sl_wind_x, nd_gc.sl_wind_y);
 
         // wind direction arrow
         if (wind_speed > 4) {
             
-            g2.clearRect(0, nd_gc.sl_wind_y, nd_gc.sl_wind_x + nd_gc.sl_wind_dir_arrow_length*10/8, nd_gc.sl_wind_dir_arrow_length*11/8);
-
+        	// clearRect is slow ! 1ms !
+            // g2.clearRect(0, nd_gc.sl_wind_y, nd_gc.sl_wind_x + nd_gc.sl_wind_dir_arrow_length*10/8, nd_gc.sl_wind_dir_arrow_length*11/8);
+        	g2.setColor(nd_gc.background_color);
+        	g2.fillRect(0, nd_gc.sl_wind_y, nd_gc.sl_wind_x + nd_gc.sl_wind_dir_arrow_length*10/8, nd_gc.sl_wind_dir_arrow_length*11/8);
+        	g2.setColor(nd_gc.wind_color);
             Stroke original_stroke = g2.getStroke();
-            g2.setStroke(new BasicStroke(2.0f * nd_gc.scaling_factor, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            AffineTransform original_at = null;
-            original_at = g2.getTransform();
+            g2.setStroke(nd_gc.sl_stroke);
+            AffineTransform original_at = g2.getTransform();;
+            
             AffineTransform rotate = AffineTransform.getRotateInstance(Math.toRadians((double) (wind_direction - map_up + this.aircraft.magnetic_variation())),
             		nd_gc.sl_wind_dir_arrow_cx,
             		nd_gc.sl_wind_dir_arrow_cy);
             g2.transform(rotate);
 
-//            GeneralPath polyline;
-//            polyline = new GeneralPath(GeneralPath.WIND_NON_ZERO, 2);
-//            polyline.moveTo (wind_dir_arrow_cx, wind_dir_arrow_cy - (wind_dir_arrow_length/2));
-//            polyline.lineTo(wind_dir_arrow_cx, wind_dir_arrow_cy + (wind_dir_arrow_length/2));
-//            polyline.lineTo(wind_dir_arrow_cx + 5, wind_dir_arrow_cy + (wind_dir_arrow_length/2) - 5);
-//            g2.draw(polyline);
-//            polyline = new GeneralPath(GeneralPath.WIND_NON_ZERO, 2);
-//            polyline.moveTo (wind_dir_arrow_cx, wind_dir_arrow_cy - (wind_dir_arrow_length/2));
-//            polyline.lineTo(wind_dir_arrow_cx, wind_dir_arrow_cy + (wind_dir_arrow_length/2));
-//            polyline.lineTo(wind_dir_arrow_cx - 5, wind_dir_arrow_cy + (wind_dir_arrow_length/2) - 5);
-//            g2.draw(polyline);
             g2.drawLine(nd_gc.sl_wind_dir_arrow_cx, nd_gc.sl_wind_dir_arrow_cy - (nd_gc.sl_wind_dir_arrow_length/2), nd_gc.sl_wind_dir_arrow_cx, nd_gc.sl_wind_dir_arrow_cy + (nd_gc.sl_wind_dir_arrow_length/2));
             g2.drawLine(nd_gc.sl_wind_dir_arrow_cx, nd_gc.sl_wind_dir_arrow_cy + (nd_gc.sl_wind_dir_arrow_length/2), nd_gc.sl_wind_dir_arrow_cx + nd_gc.sl_arrow_head, nd_gc.sl_wind_dir_arrow_cy + (nd_gc.sl_wind_dir_arrow_length/2) - nd_gc.sl_arrow_head);
             g2.drawLine(nd_gc.sl_wind_dir_arrow_cx, nd_gc.sl_wind_dir_arrow_cy + (nd_gc.sl_wind_dir_arrow_length/2), nd_gc.sl_wind_dir_arrow_cx - nd_gc.sl_arrow_head, nd_gc.sl_wind_dir_arrow_cy + (nd_gc.sl_wind_dir_arrow_length/2) - nd_gc.sl_arrow_head);

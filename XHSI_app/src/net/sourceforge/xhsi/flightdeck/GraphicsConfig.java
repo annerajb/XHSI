@@ -187,8 +187,8 @@ public class GraphicsConfig implements ComponentListener {
     public Color color_airbusgray = new Color(0x585860); // was: 0x7f7f87
 
     // Airbus PFD Colors
-    public Color color_airbus_selected = Color.cyan;
-    public Color color_airbus_armed = Color.cyan;
+    public Color color_airbus_selected = new Color(0x00B2FF); // Color.cyan; //00b2ff
+    public Color color_airbus_armed = new Color(0x00B2FF); // Color.cyan;
     public Color color_airbus_managed = Color.magenta;
     public Color color_airbussky = new Color(0x10A0FF); 
  
@@ -267,6 +267,7 @@ public class GraphicsConfig implements ComponentListener {
     public Color aircraft_color;
     public Color heading_bug_color;
     public Color wind_color;
+    public Color speed_color;
     public Color efb_color;
     public Color top_text_color;
     public Color grass_color;
@@ -813,10 +814,12 @@ public class GraphicsConfig implements ComponentListener {
                 nav_needle_color = setDUBrightness(color_mediumviolet);
                 deviation_scale_color = setDUBrightness(Color.LIGHT_GRAY);
                 range_arc_color = setDUBrightness(Color.WHITE); 
-                range_label_color = setDUBrightness(Color.cyan);
+                range_label_color = setDUBrightness(color_airbus_selected);
                 aircraft_color = setDUBrightness(Color.YELLOW);
                 chrono_background_color = setDUBrightness(color_airbusgray); // color_darkpalegreen.darker();
                 chrono_color = setDUBrightness(Color.GREEN.brighter());
+                wind_color = setDUBrightness(Color.GREEN);
+                speed_color = setDUBrightness(Color.GREEN);
                 
             } else {
             	/*
@@ -860,6 +863,8 @@ public class GraphicsConfig implements ComponentListener {
                 aircraft_color = setDUBrightness(Color.WHITE);
                 chrono_background_color = setDUBrightness(Color.BLACK);
                 chrono_color = setDUBrightness(Color.WHITE);
+                wind_color = setDUBrightness(color_palegreen); // was color_lavender
+                speed_color = setDUBrightness(Color.WHITE);
             }
 
             
@@ -878,7 +883,7 @@ public class GraphicsConfig implements ComponentListener {
             warning_color = setDUBrightness(Color.RED);
             
             heading_bug_color = setDUBrightness(color_magenta);
-            wind_color = setDUBrightness(color_palegreen); // was color_lavender
+            
             efb_color = setDUBrightness(color_lavender);
             top_text_color = setDUBrightness(Color.WHITE);
             grass_color = setDUBrightness(color_darkgreen);
@@ -910,7 +915,7 @@ public class GraphicsConfig implements ComponentListener {
         	ecam_caution_color   = setDUBrightness(color_amber);
         	ecam_normal_color    = setDUBrightness(Color.green);
         	ecam_markings_color  = setDUBrightness(Color.white);
-        	ecam_action_color    = setDUBrightness(Color.cyan);
+        	ecam_action_color    = setDUBrightness(color_airbus_selected);
         	ecam_special_color   = setDUBrightness(Color.magenta);
         	ecam_reference_color = setDUBrightness(Color.yellow);
         	ecam_box_bg_color    = setDUBrightness(color_airbusgray.darker()); // was new Color(0x0f1c60);
@@ -922,9 +927,9 @@ public class GraphicsConfig implements ComponentListener {
                 /*
                  * Custom colors - PFD Airbus Style 
                  */
-                pfd_armed_color = setDUBrightness(Color.cyan);
+                pfd_armed_color = setDUBrightness(color_airbus_armed);
                 pfd_managed_color = setDUBrightness(Color.magenta);
-                pfd_selected_color = setDUBrightness(Color.cyan);
+                pfd_selected_color = setDUBrightness(color_airbus_selected);
                 pfd_box_color = setDUBrightness(Color.white);
                 pfd_vsi_needle_color = setDUBrightness(Color.green);
                 pfd_instrument_background_color = setDUBrightness(color_airbusgray);
@@ -935,7 +940,7 @@ public class GraphicsConfig implements ComponentListener {
                 pfd_alti_color = setDUBrightness(Color.green);
                 pfd_ils_color = setDUBrightness(Color.magenta);
             	instrument_background_color = setDUBrightness(color_airbusgray);
-            	heading_bug_color = setDUBrightness(Color.cyan);           	
+            	heading_bug_color = setDUBrightness(color_airbus_selected);           	
             	pfd_sky_color = setDUBrightness(color_airbussky);
             } else {
                 /*
@@ -1020,7 +1025,7 @@ public class GraphicsConfig implements ComponentListener {
                 markings_color = setDUBrightness(Color.WHITE);
                 dim_markings_color = setDUBrightness(Color.LIGHT_GRAY);
                 range_arc_color = setDUBrightness(Color.GRAY); // was: Color.GRAY.brighter()
-                range_label_color = dim_markings_color;
+                range_label_color = setDUBrightness(color_airbus_selected);
                 label_color = setDUBrightness(color_boeingcyan);
                 dim_label_color = Color.BLACK;
                 normal_color = setDUBrightness(color_lime);
@@ -1028,7 +1033,8 @@ public class GraphicsConfig implements ComponentListener {
                 caution_color = setDUBrightness(color_amber);
                 warning_color = setDUBrightness(Color.RED);
                 aircraft_color = setDUBrightness(Color.WHITE);           
-                wind_color = setDUBrightness(Color.WHITE);
+                wind_color = setDUBrightness(Color.GREEN);
+                speed_color = setDUBrightness(Color.GREEN);
                 efb_color = setDUBrightness(Color.WHITE);
                 top_text_color = setDUBrightness(Color.WHITE);
                 grass_color = setDUBrightness(color_darkgreen);
@@ -1091,6 +1097,7 @@ public class GraphicsConfig implements ComponentListener {
                 warning_color = setDUBrightness(Color.RED);
                 aircraft_color = setDUBrightness(Color.WHITE);           
                 wind_color = setDUBrightness(Color.WHITE);
+                speed_color = setDUBrightness(Color.WHITE);
                 efb_color = setDUBrightness(Color.WHITE);
                 top_text_color = setDUBrightness(Color.WHITE);
                 grass_color = setDUBrightness(color_darkgreen);
@@ -1125,7 +1132,7 @@ public class GraphicsConfig implements ComponentListener {
         	ecam_caution_color = setDUBrightness(color_amber);
         	ecam_normal_color = setDUBrightness(Color.green);
         	ecam_markings_color = setDUBrightness(Color.white);
-        	ecam_action_color = setDUBrightness(Color.cyan);
+        	ecam_action_color = setDUBrightness(color_airbus_selected);
         	ecam_special_color = setDUBrightness(Color.magenta);
         	ecam_reference_color = setDUBrightness(Color.yellow);
         	ecam_box_bg_color = setDUBrightness(color_airbusgray); // was new Color(0x0f1c60);
@@ -1137,9 +1144,9 @@ public class GraphicsConfig implements ComponentListener {
                 /*
                  * STANDARD COLORS - PFD colors Airbus Style 
                  */
-                pfd_armed_color = setDUBrightness(Color.cyan);
+                pfd_armed_color = setDUBrightness(color_airbus_armed);
                 pfd_managed_color = setDUBrightness(Color.magenta);
-                pfd_selected_color = setDUBrightness(Color.cyan);                
+                pfd_selected_color = setDUBrightness(color_airbus_selected);                
                 pfd_vsi_needle_color = setDUBrightness(Color.green);
                 pfd_instrument_background_color = setDUBrightness(color_airbusgray);
                 pfd_markings_color = setDUBrightness(Color.white);
@@ -1149,7 +1156,7 @@ public class GraphicsConfig implements ComponentListener {
                 pfd_alti_color = setDUBrightness(Color.green);
                 pfd_ils_color = setDUBrightness(Color.magenta);
             	instrument_background_color = setDUBrightness(color_airbusgray);
-            	heading_bug_color = setDUBrightness(Color.cyan);
+            	heading_bug_color = setDUBrightness(color_airbus_selected);
             	pfd_sky_color = setDUBrightness(color_airbussky);
             } else {
             	/*

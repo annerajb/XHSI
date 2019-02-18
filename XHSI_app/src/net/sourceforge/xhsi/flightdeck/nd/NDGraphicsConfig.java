@@ -6,6 +6,7 @@
  *
  * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
  * Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
+ * Copyright (C) 2019  Nicolas Carel
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,40 +24,28 @@
  */
 package net.sourceforge.xhsi.flightdeck.nd;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Frame;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.TexturePaint;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
 import java.util.logging.Logger;
-import java.util.Map;
 
-import net.sourceforge.xhsi.XHSIInstrument;
 import net.sourceforge.xhsi.XHSIPreferences;
-
 import net.sourceforge.xhsi.model.Avionics;
-
 import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
 
 
@@ -97,6 +86,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int pixel_distance_plane_bottom_screen;
     public int pixel_distance_plane_lower_left_corner;
     public float half_view_angle;
+    public float arc_limit_deg;
     public int big_tick_length;
     public int medium_tick_length;
     public int small_tick_length;
@@ -104,6 +94,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public Area inner_rose_area;
     public Area clip_rose_area;
     public int sixty_deg_hlimit;
+    public BufferedImage clip_rose_area_img;
 
     private int map_mode;
     private int map_submode;
@@ -129,7 +120,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public boolean mode_mismatch_caution;
     public boolean tcas_always_on;
     public boolean draw_only_inside_rose;
-    public boolean limit_arcs_at_60;
+    public boolean limit_arcs;
     
     // Compass Rose 
     public BufferedImage compass_rose_img;
@@ -147,6 +138,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int range_label_half_x;
     public int range_label_full_y;
     public int range_label_full_x;
+    public int range_label_3_4_y;
     // Cardinal winds
     public Font cardinal_labels_font;
     public int cardinal_vert_x;
@@ -159,6 +151,16 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public Polygon cardinal_tri_S;
     public Polygon cardinal_tri_E;
     public Polygon cardinal_tri_W;
+    
+    // Heading bug
+    
+	int heading_bug_width;
+	int heading_bug_height;
+	public int heading_bug_value_x;
+	public int heading_bug_value_y;
+	public double heading_bug_display_limit;
+	Stroke heading_bug_stroke;
+	GeneralPath heading_bug_polyline = null;
     
     // Moving Map Symbols
     public Font navaid_font;
@@ -219,6 +221,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public BufferedImage chrono_img;
     
     // Speed Labels (and wind arrow)
+    public Font sl_font_text;
+    public Font sl_font_value;
     public int sl_line_height;
     public int sl_gs_label_x;
     public int sl_gs_x;
@@ -226,6 +230,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int sl_tas_x;
     public int sl_speeds_y;    
     public int sl_wind_x;
+    public int sl_wind_slash_x;
+    public int sl_wind_speed_x;
     public int sl_wind_y;
     public int sl_wind_dir_arrow_length;
     public int sl_arrow_head;
@@ -235,6 +241,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int sl_box_y;
     public int sl_box_h;
     public int sl_box_w;
+    public Stroke sl_stroke;
     public BufferedImage sl_img;
     
     public int arrow_length;
@@ -302,7 +309,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int wxr_tile_width;
     public int wxr_tile_height;
     public int wxr_radius;
-	public Area wxr_clip; 
+	public Area wxr_clip;
+	public Font wxr_label_font;
 
 
 
@@ -374,7 +382,9 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             this.mode_mismatch_caution = this.preferences.get_mode_mismatch_caution();
             this.tcas_always_on = this.preferences.get_tcas_always_on();
             this.draw_only_inside_rose = this.preferences.get_draw_only_inside_rose();
-            this.limit_arcs_at_60 = this.preferences.get_limit_arcs_at_60();
+            this.arc_limit_deg = this.preferences.get_limit_arcs_deg();
+            this.limit_arcs = (arc_limit_deg != 0);
+            
 
             // compute radio info box 
             rib_line_1 = line_height_l + line_height_l/5;
@@ -530,10 +540,12 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
                     map_center_y - rose_radius + rose_thickness,
                     (rose_radius * 2) - (rose_thickness * 2),
                     (rose_radius * 2) - (rose_thickness * 2)));
-            this.sixty_deg_hlimit = (int)(Math.sin(Math.PI/3.0) * rose_radius);
+            // this.sixty_deg_hlimit = (int)(Math.sin(Math.PI/3.0) * rose_radius);
+            this.sixty_deg_hlimit = (int)(Math.sin(arc_limit_deg*Math.PI/180.0) * rose_radius);
             
             clip_rose_area = new Area(new Rectangle2D.Float(0,0, frame_size.width, frame_size.height));
             clip_rose_area.subtract(inner_rose_area);
+            clip_rose_area_img = createClipRoseAreaImage();
 
             // Range and Mode change message
             range_mode_message_y = this.frame_size.height*38/100;
@@ -550,6 +562,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
                 range_label_half_x = map_center_x;
                 range_label_full_y = map_center_y - rose_radius + line_height_xs;
                 range_label_full_x = map_center_x;
+                if (!mode_centered) range_label_half_y = map_center_y - (rose_radius / 2) - (line_height_m / 2) + 5;
+                range_label_3_4_y = map_center_y - (rose_radius *3 / 4) + (line_height_xl * 15 / 8); // unused for Boeing
                 cardinal_labels_font=this.font_s;
                 cardinal_vert_x = map_center_x - max_char_advance_xs/2;
                 cardinal_N_y = map_center_y - rose_radius - 10;
@@ -565,12 +579,14 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             } else {
                 compass_text_font=this.font_xxl;
                 compass_small_text_font=this.font_l;
-                range_label_font=this.font_l;
+                range_label_font=this.font_xl;
                 cardinal_labels_font=this.font_l;
                 range_label_half_y = map_center_y + rose_radius*66/200 - line_height_xs;
                 range_label_half_x = map_center_x - rose_radius*66/200;
                 range_label_full_y = map_center_y + rose_radius*68/100 - line_height_xs;
                 range_label_full_x = map_center_x - rose_radius*68/100;
+                if (!mode_centered) range_label_half_y = map_center_y - (rose_radius / 2) + (line_height_xl * 9 / 8);
+                range_label_3_4_y = map_center_y - (rose_radius * 3 / 4) + (line_height_xl * 9 / 8);
                 cardinal_vert_x = map_center_x - max_char_advance_m/2;
                 cardinal_N_y = map_center_y - rose_radius + line_height_l*15/8;
                 cardinal_S_y = map_center_y + rose_radius - line_height_l*10/8;
@@ -579,22 +595,43 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
                 cardinal_W_x = map_center_x - rose_radius + max_char_advance_l*10/8;
                 int tri_dx = max_char_advance_l/2;
                 int tri_dy = line_height_l/2;
-                cardinal_tri_N.reset();
-                cardinal_tri_N.addPoint(map_center_x, map_center_y - rose_radius);
-                cardinal_tri_N.addPoint(map_center_x+tri_dx, map_center_y - rose_radius + line_height_l);
-                cardinal_tri_N.addPoint(map_center_x-tri_dx, map_center_y - rose_radius + line_height_l);
-                cardinal_tri_S.reset();
-                cardinal_tri_S.addPoint(map_center_x, map_center_y + rose_radius);
-                cardinal_tri_S.addPoint(map_center_x+tri_dx, map_center_y + rose_radius - line_height_l);
-                cardinal_tri_S.addPoint(map_center_x-tri_dx, map_center_y + rose_radius - line_height_l);
-                cardinal_tri_E.reset();
-                cardinal_tri_E.addPoint(map_center_x + rose_radius, map_center_y);
-                cardinal_tri_E.addPoint(map_center_x + rose_radius - max_char_advance_l, map_center_y - tri_dy);
-                cardinal_tri_E.addPoint(map_center_x + rose_radius - max_char_advance_l, map_center_y + tri_dy);
-                cardinal_tri_W.reset();
-                cardinal_tri_W.addPoint(map_center_x - rose_radius, map_center_y);
-                cardinal_tri_W.addPoint(map_center_x - rose_radius + max_char_advance_l, map_center_y - tri_dy);
-                cardinal_tri_W.addPoint(map_center_x - rose_radius + max_char_advance_l, map_center_y + tri_dy);
+                if (mode_plan) {
+                	cardinal_tri_N.reset();
+                	cardinal_tri_N.addPoint(map_center_x, map_center_y - rose_radius);
+                	cardinal_tri_N.addPoint(map_center_x+tri_dx, map_center_y - rose_radius + line_height_l);
+                	cardinal_tri_N.addPoint(map_center_x-tri_dx, map_center_y - rose_radius + line_height_l);
+                	cardinal_tri_S.reset();
+                	cardinal_tri_S.addPoint(map_center_x, map_center_y + rose_radius);
+                	cardinal_tri_S.addPoint(map_center_x+tri_dx, map_center_y + rose_radius - line_height_l);
+                	cardinal_tri_S.addPoint(map_center_x-tri_dx, map_center_y + rose_radius - line_height_l);
+                	cardinal_tri_E.reset();
+                	cardinal_tri_E.addPoint(map_center_x + rose_radius, map_center_y);
+                	cardinal_tri_E.addPoint(map_center_x + rose_radius - max_char_advance_l, map_center_y - tri_dy);
+                	cardinal_tri_E.addPoint(map_center_x + rose_radius - max_char_advance_l, map_center_y + tri_dy);
+                	cardinal_tri_W.reset();
+                	cardinal_tri_W.addPoint(map_center_x - rose_radius, map_center_y);
+                	cardinal_tri_W.addPoint(map_center_x - rose_radius + max_char_advance_l, map_center_y - tri_dy);
+                	cardinal_tri_W.addPoint(map_center_x - rose_radius + max_char_advance_l, map_center_y + tri_dy);
+                } else {
+                    tri_dx = max_char_advance_l/3;
+                    tri_dy = line_height_l/3;
+                	cardinal_tri_N.reset();
+                	cardinal_tri_N.addPoint(map_center_x, map_center_y - rose_radius);
+                	cardinal_tri_N.addPoint(map_center_x+tri_dx, map_center_y - rose_radius - line_height_l*2/3);
+                	cardinal_tri_N.addPoint(map_center_x-tri_dx, map_center_y - rose_radius - line_height_l*2/3);
+                	cardinal_tri_S.reset();
+                	cardinal_tri_S.addPoint(map_center_x, map_center_y + rose_radius);
+                	cardinal_tri_S.addPoint(map_center_x+tri_dx, map_center_y + rose_radius + line_height_l*2/3);
+                	cardinal_tri_S.addPoint(map_center_x-tri_dx, map_center_y + rose_radius + line_height_l*2/3);
+                	cardinal_tri_E.reset();
+                	cardinal_tri_E.addPoint(map_center_x + rose_radius, map_center_y);
+                	cardinal_tri_E.addPoint(map_center_x + rose_radius + max_char_advance_l*2/3, map_center_y - tri_dy);
+                	cardinal_tri_E.addPoint(map_center_x + rose_radius + max_char_advance_l*2/3, map_center_y + tri_dy);
+                	cardinal_tri_W.reset();
+                	cardinal_tri_W.addPoint(map_center_x - rose_radius, map_center_y);
+                	cardinal_tri_W.addPoint(map_center_x - rose_radius - max_char_advance_l*2/3, map_center_y - tri_dy);
+                	cardinal_tri_W.addPoint(map_center_x - rose_radius - max_char_advance_l*2/3, map_center_y + tri_dy);
+                }
 
             }
             
@@ -677,20 +714,81 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             clock_img = new BufferedImage(clock_box_w,clock_box_h,BufferedImage.TYPE_INT_ARGB);
             chrono_img = new BufferedImage(chrono_box_w,chrono_box_h,BufferedImage.TYPE_INT_ARGB);
             
+            /*
+             * Heading Bug
+             */            
+            // heading_bug_display_limit = 40 in a square ND from real A320          
+            float x_limit_ratio = Math.min(1.0f, (map_center_x-border_left)/(float)rose_radius);            
+            heading_bug_display_limit = Math.min(Math.min(68, arc_limit_deg),Math.toDegrees(Math.asin(x_limit_ratio)))-8;
+            heading_bug_value_x = map_center_x - get_text_width(g2, font_xxl, "000")/2;
+            heading_bug_value_y = rose_y_offset - (int)(4*shrink_scaling_factor);
+            float dash[] = { 11.0f, 22.0f };
+            heading_bug_stroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
+        	if (boeing_style) {
+            	heading_bug_width = Math.round(30.0f * scaling_factor);
+            	heading_bug_height = Math.round(12.0f * scaling_factor);
+        		heading_bug_polyline = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 9);
+        		heading_bug_polyline.moveTo(map_center_x - heading_bug_width/2, rose_y_offset);
+        		heading_bug_polyline.lineTo(map_center_x - heading_bug_width/2, rose_y_offset - heading_bug_height);
+        		heading_bug_polyline.lineTo(map_center_x - (heading_bug_width/3 - 1), rose_y_offset - heading_bug_height);
+        		heading_bug_polyline.lineTo(map_center_x, rose_y_offset);
+        		heading_bug_polyline.lineTo(map_center_x + (heading_bug_width/3 - 1), rose_y_offset - heading_bug_height);
+        		heading_bug_polyline.lineTo(map_center_x + heading_bug_width/2, rose_y_offset - heading_bug_height);
+        		heading_bug_polyline.lineTo(map_center_x + heading_bug_width/2, rose_y_offset);
+        		heading_bug_polyline.lineTo (map_center_x - heading_bug_width/2, rose_y_offset);
+        	} else {
+            	heading_bug_width = Math.round(12.5f * shrink_scaling_factor);
+            	// heading_bug_height = Math.round(25.0f * scaling_factor);
+            	heading_bug_height = Math.round(27.0f * shrink_scaling_factor);            	
+        		heading_bug_polyline = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 3);
+        		heading_bug_polyline.moveTo(map_center_x, rose_y_offset);
+        		heading_bug_polyline.lineTo(map_center_x - heading_bug_width, rose_y_offset - heading_bug_height);
+        		heading_bug_polyline.lineTo(map_center_x + heading_bug_width, rose_y_offset - heading_bug_height);
+        		heading_bug_polyline.lineTo(map_center_x, rose_y_offset);
+        	}
+        	
             // Speed Labels (and wind arrow)
-            sl_line_height = line_height_l;
-            sl_gs_label_x = border_left + (int)(10*scaling_factor);
-            sl_gs_x = sl_gs_label_x + 2 + get_text_width(g2, font_s,"GS");
-            sl_tas_label_x = sl_gs_x + digit_width_fixed_l*4; //  gs_x + nd_gc.get_text_width(g2, nd_gc.font_l, "999   "); // \u00A0 is Unicode non-breaking space
-            sl_tas_x = sl_tas_label_x + 2 + get_text_width(g2, font_s,"TAS");
-            sl_speeds_y = border_top + sl_line_height;
-            
-            sl_wind_x = sl_gs_label_x;
-            sl_wind_y = border_top + sl_line_height*24/10;
-            sl_wind_dir_arrow_length = Math.round(40.0f * scaling_factor);
-            sl_arrow_head = Math.round(3.0f * scaling_factor);
-            sl_wind_dir_arrow_cx = sl_wind_x + sl_wind_dir_arrow_length/2;
-            sl_wind_dir_arrow_cy = sl_wind_y + sl_line_height*2/10 + sl_wind_dir_arrow_length*1/8 + sl_wind_dir_arrow_length/2;
+        	if (boeing_style) {
+        		sl_font_text = font_s;
+        		sl_font_value = font_l;
+        		sl_line_height = line_height_l;
+        		sl_gs_label_x = border_left + (int)(10*scaling_factor);
+        		sl_gs_x = sl_gs_label_x + 2 + get_text_width(g2, font_s,"GS");
+        		sl_tas_label_x = sl_gs_x + digit_width_fixed_l*4; //  gs_x + nd_gc.get_text_width(g2, nd_gc.font_l, "999   "); // \u00A0 is Unicode non-breaking space
+        		sl_tas_x = sl_tas_label_x + 2 + get_text_width(g2, font_s,"TAS");
+        		sl_speeds_y = border_top + sl_line_height;
+
+        		sl_wind_x = sl_gs_label_x;
+        		sl_wind_slash_x = sl_wind_x + this.digit_width_xl*3;
+        		sl_wind_speed_x = sl_wind_x + this.digit_width_xl*5;
+        		
+        		sl_wind_y = border_top + sl_line_height*24/10;
+        		sl_wind_dir_arrow_length = Math.round(40.0f * scaling_factor);
+        		sl_arrow_head = Math.round(3.0f * scaling_factor);
+        		sl_wind_dir_arrow_cx = sl_wind_x + sl_wind_dir_arrow_length/2;
+        		sl_wind_dir_arrow_cy = sl_wind_y + sl_line_height*2/10 + sl_wind_dir_arrow_length*1/8 + sl_wind_dir_arrow_length/2;
+        		sl_stroke = new BasicStroke(2.0f * scaling_factor, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+        	} else {
+        		sl_font_text = font_s;
+        		sl_font_value = font_xl;
+        		sl_line_height = line_height_xl;
+        		sl_gs_label_x = border_left + (int)(30*scaling_factor);
+        		sl_gs_x = sl_gs_label_x + 2 + get_text_width(g2, font_l,"GS");
+        		sl_tas_label_x = sl_gs_x + digit_width_fixed_xl*4; //  gs_x + nd_gc.get_text_width(g2, nd_gc.font_l, "999   "); // \u00A0 is Unicode non-breaking space
+        		sl_tas_x = sl_tas_label_x + 2 + get_text_width(g2, font_l,"TAS");
+        		sl_speeds_y = border_top + sl_line_height*3/2;
+
+        		sl_wind_x = sl_gs_label_x;
+        		sl_wind_slash_x = sl_wind_x + this.digit_width_xl*3;
+        		sl_wind_speed_x = sl_wind_x + this.digit_width_xl*9/2;
+        		
+        		sl_wind_y = border_top + sl_line_height*29/10;
+        		sl_wind_dir_arrow_length = Math.round(28.0f * scaling_factor);
+        		sl_arrow_head = Math.round(5.0f * scaling_factor);
+        		sl_wind_dir_arrow_cx = sl_wind_x + sl_wind_dir_arrow_length/2;
+        		sl_wind_dir_arrow_cy = sl_wind_y + sl_line_height*2/10 + sl_wind_dir_arrow_length*1/8 + sl_wind_dir_arrow_length/2;
+        		sl_stroke = new BasicStroke(3.0f * scaling_factor, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+        	}
             
             sl_box_x = border_left;
             sl_box_y = border_top;
@@ -807,14 +905,15 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             	wxr_info_y = left_label_xpdr_y + line_height_xs*1/8;
             	wxr_label1_y = line_height_xs*9/8;
             	wxr_label2_y = line_height_xs*20/8;
+            	wxr_label_font = font_s;
         	} else {
-            	wxr_info_width = this.digit_width_xl*21/2;
+            	wxr_info_width = this.digit_width_xl*16/2;
             	wxr_info_height = line_height_xl * 5/2;
             	wxr_info_x = panel_rect.x + panel_rect.width *990/1000 - wxr_info_width;
-            	wxr_info_y = this.frame_size.height*765/1000;
+            	wxr_info_y = this.frame_size.height*700/1000;
             	wxr_label1_y = line_height_l*9/8;
             	wxr_label2_y = line_height_l*20/8;
-
+            	wxr_label_font = font_l;
         	}
 	
         	wxr_info_img = new BufferedImage(wxr_info_width,wxr_info_height,BufferedImage.TYPE_INT_ARGB);
@@ -991,6 +1090,31 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     		g_arpt.drawLine(shift+c16, shift+c2, shift+c2,shift+c16);
     	}
     	return arpt_image;
+    }
+    
+    private BufferedImage createClipRoseAreaImage() {
+    	BufferedImage clip_image = new BufferedImage(frame_size.width,frame_size.height,BufferedImage.TYPE_INT_ARGB);
+    	Graphics2D g_clip = clip_image.createGraphics();
+    	g_clip.setRenderingHints(rendering_hints);
+    	
+		// Clear the buffered Image first
+    	g_clip.setComposite(AlphaComposite.Clear);
+    	g_clip.fillRect(0, 0, frame_size.width, frame_size.height);
+    	g_clip.setComposite(AlphaComposite.SrcOver);
+		
+        if ( draw_only_inside_rose ) {
+        	g_clip.setColor(background_color);
+        	g_clip.fill(clip_rose_area);
+            if ( limit_arcs && ! mode_plan && ! mode_centered ) {
+            	g_clip.fillRect(0, 0, map_center_x - sixty_deg_hlimit, frame_size.height);
+            	g_clip.fillRect(map_center_x + sixty_deg_hlimit, 0, map_center_x - sixty_deg_hlimit, frame_size.height);
+            }
+        } else {
+            // leave at least the top of the window uncluttered
+        	g_clip.setColor(background_color);
+        	g_clip.fillRect(0,0, frame_size.width, rose_y_offset);
+        }
+        return clip_image;
     }
     
     public boolean display_inhibit() {

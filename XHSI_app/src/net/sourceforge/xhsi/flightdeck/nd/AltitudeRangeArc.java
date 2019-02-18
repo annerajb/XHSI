@@ -2,7 +2,8 @@
 * AltitudeRangeArc.java
 * 
 * Based on vertical speed and groundspeed, indicate the approximate map position
-* where the selected AP altitude will be reached
+* where the selected AP altitude will be reached.
+* This arc range is also call the "Energy circle"
 * 
 * Copyright (C) 2009-2010  Marc Rogiers (marrog.123@gmail.com)
 * 
@@ -22,18 +23,13 @@
 */
 package net.sourceforge.xhsi.flightdeck.nd;
 
-//import java.awt.Color;
+
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.geom.Arc2D;
 import java.util.logging.Logger;
 
-//import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
-
-//import net.sourceforge.xhsi.panel.GraphicsConfig;
-//import net.sourceforge.xhsi.panel.Subcomponent;
-
 
 
 public class AltitudeRangeArc extends NDSubcomponent {
@@ -52,8 +48,10 @@ public class AltitudeRangeArc extends NDSubcomponent {
 
 
     public void paint(Graphics2D g2) {
+    	
+    	// Must have Vertical Speed and altitude working 
 
-        if ( nd_gc.powered && nd_gc.mode_map ) {
+        if ( nd_gc.powered && nd_gc.mode_map && avionics.alt_valid() ) {
             // only in map modes, not in PLAN, APP CTR, VOR CTR
 
             //float current_altitude = this.aircraft.indicated_altitude();

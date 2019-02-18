@@ -3382,11 +3382,15 @@ public class XPlaneAvionics implements Avionics, Observer {
     	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
     		if (is_qpac() ) {    			
     			return (qpac_failures_data & 0x0004) > 0 ? true : false;
-    		} 
+    		} else {
+    			return failure_mode(FailedElement.PFD_ATTITUDE) == FailureMode.INOPERATIVE ? false : true;
+    		}
     	} else if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
     		if (is_qpac() ) {    			
     			return (qpac_failures_data & 0x0040) > 0 ? true : false;
-    		} 
+    		} else {
+    			return failure_mode(FailedElement.PFD_ATTITUDE) == FailureMode.INOPERATIVE ? false : true;
+    		}
     	} 
     	// Instructor : always true
     	return true;
@@ -3400,11 +3404,15 @@ public class XPlaneAvionics implements Avionics, Observer {
     	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
     		if (is_qpac() ) {    			
     			return (qpac_failures_data & 0x0008) > 0 ? true : false;
-    		} 
+    		} else {
+    			return failure_mode(FailedElement.PFD_HEADING) == FailureMode.INOPERATIVE ? false : true;
+    		}
     	} else if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
     		if (is_qpac() ) {    			
     			return (qpac_failures_data & 0x0080) > 0 ? true : false;
-    		} 
+    		} else {
+    			return failure_mode(FailedElement.PFD_HEADING) == FailureMode.INOPERATIVE ? false : true;
+    		}
     	} 
     	// Instructor : always true
     	return true;
@@ -3420,11 +3428,15 @@ public class XPlaneAvionics implements Avionics, Observer {
     	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
     		if (is_qpac() ) {    			
     			return (qpac_failures_data & 0x0002) > 0 ? true : false;
-    		} 
+    		} else {
+    			return failure_mode(FailedElement.PFD_AIR_SPEED) == FailureMode.INOPERATIVE ? false : true;
+    		}
     	} else if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
     		if (is_qpac() ) {    			
     			return (qpac_failures_data & 0x0020) > 0 ? true : false;
-    		} 
+    		} else {
+    			return failure_mode(FailedElement.PFD_AIR_SPEED) == FailureMode.INOPERATIVE ? false : true;
+    		}
     	} 
     	// Instructor : always true
     	return true;
@@ -3439,11 +3451,15 @@ public class XPlaneAvionics implements Avionics, Observer {
     	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT ) ) {
     		if (is_qpac() ) {    			
     			return (qpac_failures_data & 0x0001) > 0 ? true : false;
-    		} 
+    		} else {
+    			return failure_mode(FailedElement.PFD_ALTITUDE) == FailureMode.INOPERATIVE ? false : true;
+    		}
     	} else if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.COPILOT ) ) {
     		if (is_qpac() ) {    			
     			return (qpac_failures_data & 0x0010) > 0 ? true : false;
-    		} 
+    		} else {
+    			return failure_mode(FailedElement.PFD_ALTITUDE) == FailureMode.INOPERATIVE ? false : true;
+    		}
     	} 
     	// Instructor : always true
     	return true;

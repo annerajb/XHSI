@@ -97,6 +97,7 @@ public class XHSIPreferences {
     public static final String PREF_SYMBOLS_MULTISELECTION = "symbols.multiselection";
     public static final String PREF_DRAW_RANGE_ARCS = "draw.range.arcs";
     public static final String PREF_LIMIT_ARCS_60DEG = "nd.limit.arcs.60deg";
+    public static final String PREF_LIMIT_ARCS_DEG = "nd.limit.arcs.deg";
     public static final String PREF_MODE_MISMATCH_CAUTION = "mode.mismatch.caution";
     public static final String PREF_TCAS_ALWAYS_ON = "tcas.always.on";
     public static final String PREF_CLASSIC_HSI = "classic.hsi";
@@ -653,13 +654,14 @@ public class XHSIPreferences {
     }
 
     /**
-     * @return            - Limit the arcs in Expanded mode to 60 degrees
+     * @return            - the arcs limit in Expanded mode in degrees
      *
      */
-    public boolean get_limit_arcs_at_60() {
-        return get_preference(PREF_LIMIT_ARCS_60DEG).equalsIgnoreCase("true");
+    public float get_limit_arcs_deg() {
+    	float alpha = (float)Float.parseFloat(get_preference(PREF_LIMIT_ARCS_DEG));
+    	return alpha;
     }
-
+    
     /**
      * @return            - draw the runways or not
      *
@@ -1346,7 +1348,12 @@ public class XHSIPreferences {
             this.preferences.setProperty(PREF_LIMIT_ARCS_60DEG, "false");
             this.unsaved_changes = true;
         }
-
+        
+        if ( ! this.preferences.containsKey(PREF_LIMIT_ARCS_DEG) ) {
+            this.preferences.setProperty(PREF_LIMIT_ARCS_DEG, "60");
+            this.unsaved_changes = true;
+        }
+        
         if ( ! this.preferences.containsKey(PREF_AIRBUS_MODES) ) {
             this.preferences.setProperty(PREF_AIRBUS_MODES, "false");
             this.unsaved_changes = true;
