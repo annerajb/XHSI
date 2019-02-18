@@ -29,6 +29,7 @@ import java.awt.Component;
 import java.awt.Graphics2D;
 
 import net.sourceforge.xhsi.XHSIPreferences;
+import net.sourceforge.xhsi.XHSIStatus;
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.Localizer;
@@ -64,7 +65,9 @@ public class ForegroundMessages extends NDSubcomponent {
             drawTrafficMessage(g2);
             drawDisagree(g2);
             if (nd_gc.airbus_style) {
-                if (nd_gc.display_mode_change_msg()) {
+            	if (nav_db_loading()) {
+            		displayGlobalMessage(g2,"LOADING",nd_gc.normal_color);
+            	} else if (nd_gc.display_mode_change_msg()) {
                 	displayGlobalMessage(g2,"MODE CHANGED",nd_gc.normal_color);
                 } else if (nd_gc.display_range_change_msg()) {
                     displayGlobalMessage(g2,"RANGE CHANGED",nd_gc.normal_color);
@@ -342,7 +345,7 @@ public class ForegroundMessages extends NDSubcomponent {
     }
  
     private void drawTerrainInfoBox(Graphics2D g2){
-    	if (  (!( nd_gc.mode_app || nd_gc.mode_vor )) && avionics.efis_shows_terrain()) {
+    	if (  (!( nd_gc.mode_app || nd_gc.mode_vor || nd_gc.mode_plan)) && avionics.efis_shows_terrain()) {
     		g2.drawImage(nd_gc.terr_info_img, nd_gc.terr_info_x, nd_gc.terr_info_y, null);
     	}	
     }
@@ -351,10 +354,16 @@ public class ForegroundMessages extends NDSubcomponent {
     	if (    ( !( nd_gc.mode_app || nd_gc.mode_vor )) &&         		
         		(!avionics.efis_shows_terrain()) && 
         		(!nd_gc.display_inhibit()) &&
-        		(!nd_gc.map_zoomin) ) {
+        		// No weather radar in map_zoomin or plan mode
+        		(!nd_gc.map_zoomin) &&
+        		(!nd_gc.mode_plan) ) {
     	
     		g2.drawImage(nd_gc.wxr_info_img, nd_gc.wxr_info_x, nd_gc.wxr_info_y, null);
     	}
     	
+    }
+    
+    private boolean nav_db_loading() {
+    	return (XHSIStatus.nav_db_cycle.length()<4) && !XHSIStatus.nav_db_status.equals(XHSIStatus.STATUS_NAV_DB_NOT_FOUND);
     }
 }

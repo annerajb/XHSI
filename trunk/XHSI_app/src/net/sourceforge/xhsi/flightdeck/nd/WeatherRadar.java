@@ -123,7 +123,9 @@ public class WeatherRadar extends NDSubcomponent {
         		avionics.wxr_active() && 
         		(!avionics.efis_shows_terrain()) && 
         		(!nd_gc.display_inhibit()) &&
-        		(!nd_gc.map_zoomin) ) {
+        		// No weather radar in map_zoomin or plan mode
+        		(!nd_gc.map_zoomin) &&
+        		(!nd_gc.mode_plan)) {
         	if (!wxr_on) {
         		prepareInfoBox();
         		// initSweep(false);
@@ -196,27 +198,25 @@ public class WeatherRadar extends NDSubcomponent {
 						nd_gc.wxr_radius*2, nd_gc.wxr_radius*2, 90-sweep_min, sweep_min-sweep_angle, Arc2D.PIE));
 
 				g2.setClip(wxr_clip_1);
-				g2.drawImage( nd_gc.wxr_img_1, 0, 0, null);
+				g2.drawImage( nd_gc.wxr_img_1, nd_gc.panel_rect.x, nd_gc.panel_rect.y, null);
 			}
 			if (wxr_img_2_valid) {
 				wxr_clip_2 = new Area(new Arc2D.Float(nd_gc.map_center_x - nd_gc.wxr_radius, nd_gc.map_center_y - nd_gc.wxr_radius,
 						nd_gc.wxr_radius*2, nd_gc.wxr_radius*2, 90-sweep_max, sweep_max-sweep_angle, Arc2D.PIE));
 				g2.setClip(wxr_clip_2);
-				g2.drawImage( nd_gc.wxr_img_2, 0, 0, null);
+				g2.drawImage( nd_gc.wxr_img_2, nd_gc.panel_rect.x, nd_gc.panel_rect.y, null);
 			}
 		} else {
 			g2.setClip(nd_gc.wxr_clip);
-			if (wxr_img_1_valid && current_image==1) g2.drawImage( nd_gc.wxr_img_1, 0, 0, null);
-			if (wxr_img_2_valid && current_image==2) g2.drawImage( nd_gc.wxr_img_2, 0, 0, null);
+			if (wxr_img_1_valid && current_image==1) g2.drawImage( nd_gc.wxr_img_1, nd_gc.panel_rect.x, nd_gc.panel_rect.y, null);
+			if (wxr_img_2_valid && current_image==2) g2.drawImage( nd_gc.wxr_img_2, nd_gc.panel_rect.x, nd_gc.panel_rect.y, null);
 		}
 		g2.setClip(original_clip);
-
-
 	}
 	
 	private void drawInfoBox(Graphics2D g2) {
 		String label_str;
-		g2.setFont(nd_gc.terr_label_font);
+		g2.setFont(nd_gc.wxr_label_font);
         int wxr_mode = this.avionics.wxr_mode();
         boolean on_ground = this.aircraft.on_ground();
 
@@ -226,23 +226,23 @@ public class WeatherRadar extends NDSubcomponent {
 					g2.setColor(nd_gc.color_airbus_selected);	
 					float tilt_value = avionics.wxr_auto_tilt_value(this.aircraft.altitude_ind(),100);				
 					String tilt_str = tilt_formatter.format(tilt_value)+"°";
-					int tilt_str_width=1+nd_gc.get_text_width(g2, nd_gc.terr_label_font, tilt_str);
+					int tilt_str_width=1+nd_gc.get_text_width(g2, nd_gc.wxr_label_font, tilt_str);
 					g2.drawString(tilt_str, nd_gc.wxr_info_width-tilt_str_width, nd_gc.wxr_label2_y);
 				} else {
 					String tilt_str = "MAN " + tilt_formatter.format(avionics.wxr_tilt())+"°";
 					g2.setColor(nd_gc.color_airbus_selected);	
-					int tilt_str_width=1+nd_gc.get_text_width(g2, nd_gc.terr_label_font, tilt_str);
+					int tilt_str_width=1+nd_gc.get_text_width(g2, nd_gc.wxr_label_font, tilt_str);
 					g2.drawString(tilt_str, nd_gc.wxr_info_width-tilt_str_width, nd_gc.wxr_label2_y);
 				}
 				if (!avionics.wxr_auto_gain()) {
 					String gain_str = "MAN GAIN";
-					int gain_str_width=1+nd_gc.get_text_width(g2, nd_gc.terr_label_font, gain_str);
+					int gain_str_width=1+nd_gc.get_text_width(g2, nd_gc.wxr_label_font, gain_str);
 					g2.setColor(nd_gc.pfd_markings_color);				
 					g2.drawString(gain_str,  nd_gc.wxr_info_width-gain_str_width, nd_gc.wxr_label1_y);
 				} else {
 					g2.setColor(nd_gc.color_airbus_selected);	
 					String tilt_str = "TILT";
-					int tilt_str_width=1+nd_gc.get_text_width(g2, nd_gc.terr_label_font, tilt_str);
+					int tilt_str_width=1+nd_gc.get_text_width(g2, nd_gc.wxr_label_font, tilt_str);
 					g2.drawString(tilt_str, nd_gc.wxr_info_width-tilt_str_width, nd_gc.wxr_label1_y);
 				}
 			}
@@ -298,7 +298,7 @@ public class WeatherRadar extends NDSubcomponent {
         if ( nd_gc.map_zoomin ) this.pixels_per_nm *= 100.0f;
 
         this.map_projection.setScale(nd_gc.pixels_per_nm);
-        this.map_projection.setCenter(nd_gc.map_center_x,nd_gc.map_center_y);
+        this.map_projection.setCenter(nd_gc.map_center_x+nd_gc.border_left,nd_gc.map_center_y+nd_gc.border_bottom);
         this.map_projection.setAcf(this.center_lat, this.center_lon);
         
         // determine max and min lat/lon in viewport to only draw those
@@ -397,10 +397,13 @@ public class WeatherRadar extends NDSubcomponent {
         g2.setTransform(original_at);
 	}
 	
-	private void initSweep(boolean start_from_right) {   	
+	private void initSweep(boolean start_from_right) {
+		// Radar cannot exceed 140° scan
+		float full_range = nd_gc.limit_arcs ? nd_gc.arc_limit_deg : 70.0f;
+		if (full_range>70) full_range=70;
     	sweep_direction = start_from_right ? -1.0f : 1.0f;
-    	sweep_max = avionics.wxr_narrow() ? 30.0f : 60.0f;
-    	sweep_min = avionics.wxr_narrow() ? -30.0f : -60.0f;
+    	sweep_max = avionics.wxr_narrow() ? full_range/2 : full_range;
+    	sweep_min = avionics.wxr_narrow() ? -full_range/2 : -full_range;
     	sweep_angle = start_from_right ? sweep_max : sweep_min;
 		current_image = start_from_right ? 2 : 1;
 		if (start_from_right) { 

@@ -235,7 +235,7 @@ public class HSI_A320 extends PFDSubcomponent {
 		}
 			 
 		if (hdg_bug_on) {
-			String str_bug = "" + Math.round(this.avionics.heading_bug());
+			String str_bug = degrees_formatter.format(Math.round(this.avionics.heading_bug()));
 			if (bug_cx < pfd_gc.hdg_left ) {
 				g2.setFont(pfd_gc.font_l);
 				g2.drawString(str_bug, pfd_gc.hdg_left, pfd_gc.hdg_top - pfd_gc.hdg_height/12);

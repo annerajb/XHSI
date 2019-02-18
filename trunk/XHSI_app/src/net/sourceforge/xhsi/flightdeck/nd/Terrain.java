@@ -120,7 +120,8 @@ public class Terrain extends NDSubcomponent {
     			terr_img_2_valid=false;
     			initSweep(false);
     		}
-        	if ( ! nd_gc.map_zoomin ) {
+    		// No terrain in map_zoomin or plan mode
+        	if ( ! nd_gc.map_zoomin && ! nd_gc.mode_plan) {
         		paintTerrain(g2);   
         		
         		if (preferences.get_nd_terrain_sweep_bar()) drawSweepBars(g2, sweep_angle);
@@ -242,7 +243,7 @@ public class Terrain extends NDSubcomponent {
 							nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90+sweep_max, sweep_angle-sweep_max, Arc2D.PIE)));
 				}
 				g2.setClip(terr_clip_1);
-				g2.drawImage(nd_gc.terr_img_1, 0, 0, null);
+				g2.drawImage(nd_gc.terr_img_1, nd_gc.panel_rect.x, nd_gc.panel_rect.y, null);
 			}
 			
 			if (terr_img_2_valid) {
@@ -257,13 +258,13 @@ public class Terrain extends NDSubcomponent {
 							nd_gc.rose_radius*2, nd_gc.rose_radius*2, 90+sweep_max, sweep_angle-sweep_max, Arc2D.PIE)));
 				}		
 				g2.setClip(terr_clip_2);
-				g2.drawImage( nd_gc.terr_img_2, 0, 0, null);
+				g2.drawImage( nd_gc.terr_img_2, nd_gc.panel_rect.x, nd_gc.panel_rect.y, null);
 			}
 			
 		} else {
 			g2.setClip(nd_gc.terr_clip);
-			if (terr_img_1_valid && current_image==1) g2.drawImage( nd_gc.terr_img_1, 0, 0, null);
-			if (terr_img_2_valid && current_image==2) g2.drawImage( nd_gc.terr_img_2, 0, 0, null);
+			if (terr_img_1_valid && current_image==1) g2.drawImage( nd_gc.terr_img_1, nd_gc.panel_rect.x, nd_gc.panel_rect.y, null);
+			if (terr_img_2_valid && current_image==2) g2.drawImage( nd_gc.terr_img_2, nd_gc.panel_rect.x, nd_gc.panel_rect.y, null);
 		}
 		g2.setClip(original_clip);
 	}
@@ -308,7 +309,8 @@ public class Terrain extends NDSubcomponent {
         */
 
         this.map_projection.setScale(nd_gc.pixels_per_nm);
-        this.map_projection.setCenter(nd_gc.map_center_x,nd_gc.map_center_y);
+        // this.map_projection.setCenter(nd_gc.map_center_x,nd_gc.map_center_y);
+        this.map_projection.setCenter(nd_gc.map_center_x+nd_gc.border_left,nd_gc.map_center_y+nd_gc.border_bottom);
         this.map_projection.setAcf(this.center_lat, this.center_lon);
         
         // determine max and min lat/lon in viewport to only draw those
@@ -490,7 +492,7 @@ public class Terrain extends NDSubcomponent {
 	}
 	
 	private void initSweep(boolean current_is_one) {   	
-    	sweep_max = 75.0f;
+    	sweep_max = nd_gc.mode_centered ? 180 : (nd_gc.limit_arcs ? nd_gc.arc_limit_deg : 75.0f);
     	sweep_min = 0.0f;
     	sweep_angle = sweep_min;
 		current_image = current_is_one ? 2 : 1;

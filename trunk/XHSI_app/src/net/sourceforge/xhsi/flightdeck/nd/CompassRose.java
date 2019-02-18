@@ -92,7 +92,7 @@ public class CompassRose extends NDSubcomponent {
                 map_up = 0.0f;
             }
             
-            if (Math.abs(map_up-this.drawn_map_up)*nd_gc.pixels_per_deg > 0.9f) {
+            if (Math.abs(map_up-this.drawn_map_up)*nd_gc.pixels_per_deg > 0.2f) {
             	refresh_rose=true;
             	this.drawn_map_up=map_up;
             } 
@@ -139,8 +139,9 @@ public class CompassRose extends NDSubcomponent {
 
 
         		float left_right_angle = nd_gc.half_view_angle;
-        		if ( ! nd_gc.mode_plan && ! nd_gc.mode_centered && this.preferences.get_draw_only_inside_rose() && this.preferences.get_limit_arcs_at_60() ) {
-        			left_right_angle = 60.0f;
+        		if ( ! nd_gc.mode_plan && ! nd_gc.mode_centered && nd_gc.draw_only_inside_rose && nd_gc.limit_arcs ) {
+        			// left_right_angle = 60.0f;
+        			left_right_angle = nd_gc.arc_limit_deg;
         		}
         		if ( nd_gc.mode_centered ) left_right_angle = 180.0f;
      			
@@ -160,7 +161,7 @@ public class CompassRose extends NDSubcomponent {
         				draw_45_deg_marks(g2_rose);
         			} else {
         				// in expanded mode, clip left and right
-        				if ( this.preferences.get_draw_only_inside_rose() && this.preferences.get_limit_arcs_at_60() ) {
+        				if ( nd_gc.draw_only_inside_rose && nd_gc.limit_arcs ) {
         					g2_rose.clearRect(0, 0, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, nd_gc.frame_size.height);
         					g2_rose.clearRect(nd_gc.map_center_x + nd_gc.sixty_deg_hlimit, 0, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, nd_gc.frame_size.height);
         				}
@@ -168,19 +169,26 @@ public class CompassRose extends NDSubcomponent {
 
         			if (failed_hsi && nd_gc.airbus_style) {    
         				g2_rose.setColor(nd_gc.warning_color);	
-        		        g2.drawOval(
-        		                nd_gc.map_center_x - nd_gc.rose_radius/20,
-        		                nd_gc.map_center_y - nd_gc.rose_radius/20,
-        		                nd_gc.rose_radius/10,
-        		                nd_gc.rose_radius/10
+        				g2_rose.drawOval(
+        		                nd_gc.map_center_x - nd_gc.rose_radius/30,
+        		                nd_gc.map_center_y - nd_gc.rose_radius/30,
+        		                nd_gc.rose_radius/15,
+        		                nd_gc.rose_radius/15
         		        );        				
         			} else {
         				draw_plane_symbol(g2_rose);
         			}
         			
-
-        			if (!nd_gc.mode_classic_hsi || nd_gc.airbus_style) draw_range_label(g2_rose);  
-
+        			if (nd_gc.airbus_style) {
+        				if (nd_gc.mode_centered) { 
+        					draw_range_label_plan(g2_rose);       				
+        				} else {
+        					draw_range_label(g2_rose);
+        				}
+        			} else {
+        				if (!nd_gc.mode_classic_hsi) draw_range_label(g2_rose);
+        			}
+       			
         		} else { 
         			// nd_gc.mode_plan
         			draw_range_label_plan(g2_rose);
@@ -342,15 +350,29 @@ public class CompassRose extends NDSubcomponent {
         // 45 degrees marks for APP CTR, VOR CTR and MAP CTR
         int mark_length = nd_gc.big_tick_length;
     	AffineTransform original_at = g2.getTransform();
-        g2.drawLine(nd_gc.map_center_x, nd_gc.map_center_y - nd_gc.rose_radius - mark_length, nd_gc.map_center_x, nd_gc.map_center_y - nd_gc.rose_radius);
-        g2.drawLine(nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius, nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius + mark_length);
-        g2.drawLine(nd_gc.map_center_x - nd_gc.rose_radius - mark_length, nd_gc.map_center_y, nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y);
-        g2.drawLine(nd_gc.map_center_x + nd_gc.rose_radius, nd_gc.map_center_y, nd_gc.map_center_x + nd_gc.rose_radius + mark_length, nd_gc.map_center_y);
-        g2.transform(AffineTransform.getRotateInstance(Math.toRadians(45.0), nd_gc.map_center_x, nd_gc.map_center_y));
-        g2.drawLine(nd_gc.map_center_x, nd_gc.map_center_y - nd_gc.rose_radius - mark_length, nd_gc.map_center_x, nd_gc.map_center_y - nd_gc.rose_radius);
-        g2.drawLine(nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius, nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius + mark_length);
-        g2.drawLine(nd_gc.map_center_x - nd_gc.rose_radius - mark_length, nd_gc.map_center_y, nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y);
-        g2.drawLine(nd_gc.map_center_x + nd_gc.rose_radius, nd_gc.map_center_y, nd_gc.map_center_x + nd_gc.rose_radius + mark_length, nd_gc.map_center_y);
+    	if (nd_gc.airbus_style) {
+    		// draw triangles
+    		g2.fill(nd_gc.cardinal_tri_N);
+    		g2.fill(nd_gc.cardinal_tri_S);
+    		g2.fill(nd_gc.cardinal_tri_E);
+    		g2.fill(nd_gc.cardinal_tri_W);
+    		g2.transform(AffineTransform.getRotateInstance(Math.toRadians(45.0), nd_gc.map_center_x, nd_gc.map_center_y));
+    		// draw triangles again with 45° shift
+    		g2.fill(nd_gc.cardinal_tri_N);
+    		g2.fill(nd_gc.cardinal_tri_S);
+    		g2.fill(nd_gc.cardinal_tri_E);
+    		g2.fill(nd_gc.cardinal_tri_W);   		
+    	} else {
+    		g2.drawLine(nd_gc.map_center_x, nd_gc.map_center_y - nd_gc.rose_radius - mark_length, nd_gc.map_center_x, nd_gc.map_center_y - nd_gc.rose_radius);
+    		g2.drawLine(nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius, nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius + mark_length);
+    		g2.drawLine(nd_gc.map_center_x - nd_gc.rose_radius - mark_length, nd_gc.map_center_y, nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y);
+    		g2.drawLine(nd_gc.map_center_x + nd_gc.rose_radius, nd_gc.map_center_y, nd_gc.map_center_x + nd_gc.rose_radius + mark_length, nd_gc.map_center_y);
+    		g2.transform(AffineTransform.getRotateInstance(Math.toRadians(45.0), nd_gc.map_center_x, nd_gc.map_center_y));
+    		g2.drawLine(nd_gc.map_center_x, nd_gc.map_center_y - nd_gc.rose_radius - mark_length, nd_gc.map_center_x, nd_gc.map_center_y - nd_gc.rose_radius);
+    		g2.drawLine(nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius, nd_gc.map_center_x, nd_gc.map_center_y + nd_gc.rose_radius + mark_length);
+    		g2.drawLine(nd_gc.map_center_x - nd_gc.rose_radius - mark_length, nd_gc.map_center_y, nd_gc.map_center_x - nd_gc.rose_radius, nd_gc.map_center_y);
+    		g2.drawLine(nd_gc.map_center_x + nd_gc.rose_radius, nd_gc.map_center_y, nd_gc.map_center_x + nd_gc.rose_radius + mark_length, nd_gc.map_center_y);
+    	}
         g2.setTransform(original_at);
     }
     
@@ -501,52 +523,115 @@ public class CompassRose extends NDSubcomponent {
 
 //        int range = nd_gc.map_range;
         
-        String ctr_ranges[] = {"2.5", "5", "10", "20", "40", "80", "160"};
-        String exp_ranges[] = {"5", "10", "20", "40", "80", "160", "320"};
-        String zoomin_ctr_ranges[] = {"0.025", "0.05", "0.10", "0.20", "0.40", "0.80", "1.60"};
-        String zoomin_exp_ranges[] = {"0.05", "0.10", "0.20", "0.40", "0.80", "1.60", "3.20"};
+        String ctr_ranges[]     = {"2.5",  "5",   "10", "20", "40", "80",  "160"};
+        String ctr_ranges_3_4[] = {"3.75", "7.5", "15", "30", "60", "120", "240"};
         
-        String x737_ctr_ranges[] = {"1.25", "2.5", "5", "10", "20", "40", "80", "160"};
-        String x737_exp_ranges[] = {"2.5", "5", "10", "20", "40", "80", "160", "320"};
-        String x737_zoomin_ctr_ranges[] = {"0.0125", "0.025", "0.05", "0.10", "0.20", "0.40", "0.80", "1.60"};
-        String x737_zoomin_exp_ranges[] = {"0.025", "0.05", "0.10", "0.20", "0.40", "0.80", "1.60", "3.20"};
+        String exp_ranges[] =     {"5",   "10", "20", "40", "80",  "160", "320"};
+        String exp_ranges_3_4[] = {"7.5", "15", "30", "60", "120", "240", "480"};
         
-        String range_text;
+        String zoomin_ctr_ranges[] =     {"0.025",  "0.05",  "0.10", "0.20", "0.40", "0.80", "1.60"};
+        String zoomin_ctr_ranges_3_4[] = {"0.0375", "0.075", "0.15", "0.30", "0.60", "1.20", "2.40"};
+        
+        String zoomin_exp_ranges[] =     {"0.05",  "0.10", "0.20", "0.40", "0.80", "1.60", "3.20"};
+        String zoomin_exp_ranges_3_4[] = {"0.075", "0.15", "0.30", "0.60", "1.20", "2.40", "4.80"};
+        
+        String x737_ctr_ranges[]     = {"1.25",  "2.5",  "5",   "10", "20", "40", "80",  "160"};
+        String x737_ctr_ranges_3_4[] = {"1.875", "3.75", "7.5", "15", "30", "60", "120", "240"};
+
+        String x737_exp_ranges[] =     {"2.5",  "5",   "10", "20", "40", "80",  "160", "320"};
+        String x737_exp_ranges_3_4[] = {"3.75", "7.5", "15", "30", "60", "120", "240", "480"};
+
+        String x737_zoomin_ctr_ranges[]     = {"0.0125",  "0.025",  "0.05",  "0.10", "0.20", "0.40", "0.80", "1.60"};
+        String x737_zoomin_ctr_ranges_3_4[] = {"0.01875", "0.0375", "0.075", "0.15", "0.30", "0.60", "1.20", "2.40"};
+        
+        String x737_zoomin_exp_ranges[]     = {"0.025",  "0.05",  "0.10", "0.20", "0.40", "0.80", "1.60", "3.20"};
+        String x737_zoomin_exp_ranges_3_4[] = {"0.0375", "0.075", "0.20", "0.30", "0.60", "1.20", "2.40", "4.80"};
+        
+        String range_text;     // range label at the 1/2 arc
+        String range_text_3_4; // range label at the 3/4 arc
+        
         int range_index = this.avionics.map_range_index();
         if ( this.avionics.is_x737() ) {
             if ( nd_gc.mode_centered ) {
                 if ( nd_gc.map_zoomin ) {
                    range_text = x737_zoomin_ctr_ranges[range_index];
+                   range_text_3_4 = x737_zoomin_ctr_ranges_3_4[range_index];
                 } else {
                    range_text = x737_ctr_ranges[range_index];
+                   range_text_3_4 = x737_ctr_ranges_3_4[range_index];
                 }
             } else {
                 if ( nd_gc.map_zoomin ) {
                     range_text = x737_zoomin_exp_ranges[range_index];
+                    range_text_3_4 = x737_zoomin_exp_ranges_3_4[range_index];
                 } else {
                     range_text = x737_exp_ranges[range_index];
+                    range_text_3_4 = x737_exp_ranges_3_4[range_index];
                 }
             }
         } else {
             if ( nd_gc.mode_centered ) {
                 if ( nd_gc.map_zoomin ) {
                    range_text = zoomin_ctr_ranges[range_index];
+                   range_text_3_4 = zoomin_ctr_ranges_3_4[range_index];
                 } else {
                    range_text = ctr_ranges[range_index];
+                   range_text_3_4 = ctr_ranges_3_4[range_index];
                 }
             } else {
                 if ( nd_gc.map_zoomin ) {
                     range_text = zoomin_exp_ranges[range_index];
+                    range_text_3_4 = zoomin_exp_ranges_3_4[range_index];
                 } else {
                     range_text = exp_ranges[range_index];
+                    range_text_3_4 = exp_ranges_3_4[range_index];
                 }
             }
         }
-        g2.drawString(
-            range_text,
-            nd_gc.map_center_x - nd_gc.get_text_width(g2, nd_gc.font_xs, range_text) - 4,
-            nd_gc.map_center_y - (nd_gc.rose_radius / 2) - (nd_gc.get_text_height(g2, g2.getFont()) / 2) + 5
-        );
+        if (nd_gc.airbus_style) {
+        	float range_label_deg = (nd_gc.arc_limit_deg>72.5f) ? 65.0f : nd_gc.arc_limit_deg - 7.5f;
+        	
+        	AffineTransform original_at = g2.getTransform();
+            AffineTransform rotate_to_heading = AffineTransform.getRotateInstance(
+                    Math.toRadians(range_label_deg),
+                    nd_gc.map_center_x,
+                    nd_gc.map_center_y
+            );
+            g2.transform(rotate_to_heading);
+        	g2.drawString(
+        			range_text,
+        			nd_gc.map_center_x - nd_gc.get_text_width(g2, nd_gc.font_xs, range_text) - 4,
+        			nd_gc.range_label_half_y
+        			);
+        	g2.drawString(
+        			range_text_3_4,
+        			nd_gc.map_center_x - nd_gc.get_text_width(g2, nd_gc.font_xs, range_text_3_4) - 4,
+        			nd_gc.range_label_3_4_y
+        			);
+            rotate_to_heading = AffineTransform.getRotateInstance(
+                    Math.toRadians(range_label_deg*-2.0),
+                    nd_gc.map_center_x,
+                    nd_gc.map_center_y
+            );
+            g2.transform(rotate_to_heading);
+        	g2.drawString(
+        			range_text,
+        			nd_gc.map_center_x - nd_gc.get_text_width(g2, nd_gc.font_xs, range_text) - 4,
+        			nd_gc.range_label_half_y
+        			);
+        	g2.drawString(
+        			range_text_3_4,
+        			nd_gc.map_center_x - nd_gc.get_text_width(g2, nd_gc.font_xs, range_text_3_4) - 4,
+        			nd_gc.range_label_3_4_y
+        			);
+        	g2.setTransform(original_at);
+        } else {
+        	g2.drawString(
+        			range_text,
+        			nd_gc.map_center_x - nd_gc.get_text_width(g2, nd_gc.font_xs, range_text) - 4,
+        			nd_gc.map_center_y - (nd_gc.rose_radius / 2) - (nd_gc.get_text_height(g2, g2.getFont()) / 2) + 5
+        			);
+        }
     }
 
     private void draw_scale_rings(Graphics2D g2) {
@@ -566,8 +651,9 @@ public class CompassRose extends NDSubcomponent {
             if ( nd_gc.mode_centered || nd_gc.mode_plan ) {
                 if (nd_gc.boeing_style || i==2) g2.drawOval( nd_gc.map_center_x - radius, nd_gc.map_center_y - radius, radius*2, radius*2 );
             } else {
-                if ( this.preferences.get_draw_only_inside_rose() && this.preferences.get_limit_arcs_at_60() ) {
-                    g2.draw(new Arc2D.Float( nd_gc.map_center_x - radius, nd_gc.map_center_y - radius, radius*2, radius*2, 30.0f, 120.0f, Arc2D.OPEN ) );
+                if ( this.preferences.get_draw_only_inside_rose() && nd_gc.limit_arcs ) {
+                    // g2.draw(new Arc2D.Float( nd_gc.map_center_x - radius, nd_gc.map_center_y - radius, radius*2, radius*2, 30.0f, 120.0f, Arc2D.OPEN ) );
+                	g2.draw(new Arc2D.Float( nd_gc.map_center_x - radius, nd_gc.map_center_y - radius, radius*2, radius*2, 90 - nd_gc.arc_limit_deg, nd_gc.arc_limit_deg*2, Arc2D.OPEN ) );
                 } else {
                     g2.draw(new Arc2D.Float( nd_gc.map_center_x - radius, nd_gc.map_center_y - radius, radius*2, radius*2, 0.0f, 180.0f, Arc2D.OPEN ) );
                 }

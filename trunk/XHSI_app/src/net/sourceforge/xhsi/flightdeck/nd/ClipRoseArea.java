@@ -34,6 +34,8 @@ public class ClipRoseArea extends NDSubcomponent {
     // private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     private static final long serialVersionUID = 1L;
+    
+    public static boolean USE_BUFFERED_IMAGE = true;
 
     public ClipRoseArea(ModelFactory model_factory, NDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
@@ -43,18 +45,22 @@ public class ClipRoseArea extends NDSubcomponent {
     public void paint(Graphics2D g2) {
 
         if ( nd_gc.powered ) {
-            if ( nd_gc.draw_only_inside_rose ) {
-                g2.setColor(nd_gc.background_color);
-                g2.fill(nd_gc.clip_rose_area);
-                if ( nd_gc.limit_arcs_at_60 && ! nd_gc.mode_plan && ! nd_gc.mode_centered ) {
-                    g2.fillRect(0, 0, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, nd_gc.frame_size.height);
-                    g2.fillRect(nd_gc.map_center_x + nd_gc.sixty_deg_hlimit, 0, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, nd_gc.frame_size.height);
-                }
-            } else {
-                // leave at least the top of the window uncluttered
-            	g2.setColor(nd_gc.background_color);
-                g2.fillRect(0,0, nd_gc.frame_size.width, nd_gc.rose_y_offset);
-            }
+        	if (USE_BUFFERED_IMAGE) {
+        		g2.drawImage(nd_gc.clip_rose_area_img, 0, 0, null);
+        	} else {
+        		if ( nd_gc.draw_only_inside_rose ) {
+        			g2.setColor(nd_gc.background_color);
+        			g2.fill(nd_gc.clip_rose_area);
+        			if ( nd_gc.limit_arcs && ! nd_gc.mode_plan && ! nd_gc.mode_centered ) {
+        				g2.fillRect(0, 0, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, nd_gc.frame_size.height);
+        				g2.fillRect(nd_gc.map_center_x + nd_gc.sixty_deg_hlimit, 0, nd_gc.map_center_x - nd_gc.sixty_deg_hlimit, nd_gc.frame_size.height);
+        			}
+        		} else {
+        			// leave at least the top of the window uncluttered
+        			g2.setColor(nd_gc.background_color);
+        			g2.fillRect(0,0, nd_gc.frame_size.width, nd_gc.rose_y_offset);
+        		}
+        	}
         }
 
     }
