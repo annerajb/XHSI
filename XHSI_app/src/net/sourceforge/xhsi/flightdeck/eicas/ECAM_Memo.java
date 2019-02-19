@@ -126,33 +126,25 @@ public class ECAM_Memo extends EICASSubcomponent {
     private void DrawXHSIEcamMemo(Graphics2D g2) {
     	
     	String memo_str;
-		boolean takeoff_inhibit = false;
-		boolean landing_inhibit = false;
+    	boolean alarm_inhibit = this.avionics.to_inhibit() || this.avionics.ldg_inhibit();
 		boolean takeoff_memo = false;
 		boolean landing_memo = false;
 		
     	g2.setFont(eicas_gc.font_l);        
     	
-    	// T.O. INHIBIT
-    	// T.O. INHIBIT from takeoff thrust up to 1500 feet AGL on Airbus 
-    	// T.O. INHIBIT for General Aviation should be up to 500 feet
-
-    	if (this.aircraft.on_ground() ) { 
-    		// and at least one engine on
-    		// and wasn't airbone since last engine off
-    		// and more than 120 seconds since last engine start
-    		// and throttle lever percent < 40%
-    		takeoff_inhibit = true;
+    	if (this.avionics.to_inhibit()) {
+    		ememo_color[EMEMO_T_O_INHIBIT] = eicas_gc.ecam_special_color;
+    		ememo_status[EMEMO_T_O_INHIBIT] = true;
+    	} else {
+    		ememo_status[EMEMO_T_O_INHIBIT] = false;
     	}
-    		
     	
-    	
-    	
-    	
-    	// LDG INHIBIT
-    	// below 750 feet AGL till on ground on Airbus
-    	// should be bellow 300 feet AGL on General Aviation
-    	
+    	if (this.avionics.ldg_inhibit()) {
+    		ememo_color[EMEMO_LDG_INHIBIT] = eicas_gc.ecam_special_color;
+    		ememo_status[EMEMO_LDG_INHIBIT] = true;
+    	} else {
+    		ememo_status[EMEMO_LDG_INHIBIT] = false;
+    	}
     	
     	// APU
     	if (this.aircraft.apu_gen_on()) {
@@ -304,19 +296,17 @@ public class ECAM_Memo extends EICASSubcomponent {
         }
         
         // display the first 8 lines of the pop list
+        // TODO: Skip alarms if alarm_inhibit is true
         for (int i=0, line=0; i < MAX_EMEMO_MSG && line < 8; i++) {
         	if (ememo_status[i]) { 
         			memo_str = memo_list[i];
         			g2.setColor(ememo_color[i]);
         			g2.drawString(memo_str, eicas_gc.memo_x,eicas_gc.memo_y + line * eicas_gc.line_height_l);          			
         			line++;
-        	}
-        	
+        	}        	
         }
     	
-
         
     } 
-
     
 }
