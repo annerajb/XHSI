@@ -6,6 +6,7 @@
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * Copyright (C) 2010  Marc Rogiers (marrog.123@gmail.com)
 * Copyright (c) 2016  Saso Kiselkov
+* Copyright (c) 2019  Nicolas Carel
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -43,8 +44,6 @@ import net.sourceforge.xhsi.model.RadioNavBeacon;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.SimDataRepository;
 import net.sourceforge.xhsi.model.TCAS;
-import net.sourceforge.xhsi.model.Avionics.FCC;
-import net.sourceforge.xhsi.model.Avionics.InstrumentSide;
 
 
 public class XPlaneAvionics implements Avionics, Observer {
@@ -1648,6 +1647,49 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     }
 
+    /**
+     * @return integer - FWC (Flight Warning Computer) flight phase
+     * 0 : power off
+     * 1 : electric power on
+     * 2 : 1st engine started
+     * 3 : 1st engine to TOGA/FLEX power
+     * 4 : 80 kts
+     * 5 : Lift off
+     * 6 : 1500 ft radio or 2mn after lift off - cruise period
+     * 7 : 800 ft radio
+     * 8 : Touch down
+     * 9 : 80 kts
+     * 10 : 2nd engine shutdown
+     * 0 or 1 : 5 mn after phase 10
+     * 
+     */
+    public int fwc_phase() {
+    	// TODO: Create FWC dataref and computer flight phase in the plugin
+    	return 0;
+    }
+    
+    /**
+     * @return boolean - Takeoff Alarms Inhibit
+     * Airbus: FCOM 1.31.15, FWC flight phase 3, 4, 5
+     *         from TOGA on ground to 1500 ft radio or 2mn after takeoff
+     * General aviation: from takeoff thrust on ground up to 500 feet or 2mn after takeoff
+     */
+    public boolean to_inhibit() {
+    	int phase = fwc_phase();
+    	return (phase == 3) || (phase == 4) || (phase == 5);
+    }
+    
+    /**
+     * @return boolean - Landing Alarms Inhibit
+     * Airbus: FCOM 1.31.15, FWC flight phase 7, 8
+     *         Airbone < 800 ft to 80 kts on ground
+     * General aviation: Airbone < 300 ft to 40 kts on ground
+     */
+    public boolean ldg_inhibit() {
+    	int phase = fwc_phase();
+    	return (phase == 7) || (phase == 8);
+    }
+    
     public boolean is_x737() {
         return ( sim_data.get_sim_float(XPlaneSimDataRepository.X737_STATUS) != 0.0f );
     }

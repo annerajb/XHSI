@@ -5,7 +5,7 @@
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
-* Copyright (C) 2018  Nicolas Carel
+* Copyright (C) 2019  Nicolas Carel
 * Copyright (C) 2018  Patrick Burkart (pburkartpublic@gmail.com) (Technische Hochschule Ingolstadt)
 * 
 * This program is free software; you can redistribute it and/or
@@ -728,6 +728,36 @@ public interface Avionics {
      */
     public float acf_bank();
 
+    /**
+     * @return integer - FWC (Flight Warning Computer) flight phase
+     * 0 : power off
+     * 1 : electric power on
+     * 2 : 1st engine started
+     * 3 : 1st engine to TOGA/FLEX power
+     * 4 : 80 kts
+     * 5 : Lift off
+     * 6 : 1500 ft radio or 2mn after lift off - cruise period
+     * 7 : 800 ft radio
+     * 8 : Touch down
+     * 9 : 80 kts
+     * 10 : 2nd engine shutdown
+     * 0 or 1 : 5 mn after phase 10
+     * 
+     */
+    public int fwc_phase();
+    
+    /**
+     * @return boolean - Takeoff Alarm Inhibits
+     * 
+     */
+    public boolean to_inhibit();
+    
+    /**
+     * @return boolean - Landing Alarm Inhibits
+     * 
+     */
+    public boolean ldg_inhibit();
+    
     /**
      * @return boolean - receiving X737 data
      */
