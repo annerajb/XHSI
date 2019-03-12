@@ -320,6 +320,7 @@ int createQpacEwdPacket(void) {
    char color = 'u';
    int red_len, blue_len, amber_len, green_len, white_len;
    int space = 0;
+   int qpac_fwc;
 
    char red_buffer[EWD_BUF_LEN];
    char blue_buffer[EWD_BUF_LEN];
@@ -424,12 +425,20 @@ int createQpacEwdPacket(void) {
      encoded_string[p] = 0;
      strcpy(qpacEwdMsgPacket.lines[i].linestr,encoded_string);
      qpacEwdMsgPacket.lines[i].len = custom_htoni(p);
-
-
-     // strcpy(qpacEwdMsgPacket.lines[i].linestr,green_buffer);
-     // qpacEwdMsgPacket.lines[i].len = custom_htoni((int)strlen(qpacEwdMsgPacket.lines[i].linestr));
    }
 
+   // TO INHIBIT
+   qpac_fwc = XPLMGetDatai(qpac_ecam_flight_phase);
+   if (qpac_fwc == 3 || qpac_fwc == 4 || qpac_fwc == 5) {
+	   strcat (qpacEwdMsgPacket.lines[0].linestr, ";m25TO INHIBIT");
+	   qpacEwdMsgPacket.lines[0].len = custom_htoni(strlen(qpacEwdMsgPacket.lines[0].linestr));
+   }
+
+   // LDG INHIBIT
+   if (qpac_fwc == 7 || qpac_fwc == 8) {
+	   strcat (qpacEwdMsgPacket.lines[0].linestr, ";m25LDG INHIBIT");
+	   qpacEwdMsgPacket.lines[0].len = custom_htoni(strlen(qpacEwdMsgPacket.lines[0].linestr));
+   }
   return 4 + 4 + QPAC_EWD_LINES * 88;
 
 }

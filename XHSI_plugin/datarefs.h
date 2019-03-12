@@ -43,6 +43,7 @@
 #define AP_KEY_STICK_CAPT 71
 #define AP_KEY_STICK_FO 72
 
+
 // global vars
 extern XPLMDataRef groundspeed;
 extern XPLMDataRef true_airspeed;
@@ -458,6 +459,10 @@ extern XPLMDataRef pressurization_max_alt;
 //extern XPLMDataRef relative_distance_mtrs;
 //extern XPLMDataRef relative_altitude_mtrs;
 
+/*
+ *  XHSI Custom datarefs
+ *  --------------------
+ */
 
 // custom datarefs - general
 extern XPLMDataRef xhsi_instrument_style;
@@ -479,7 +484,7 @@ extern XPLMDataRef trq_scale;
 extern XPLMDataRef fuel_units;
 extern XPLMDataRef temp_units;
 extern XPLMDataRef override_trq_max;
-
+extern XPLMDataRef fwc_phase;
 
 // custom datarefs - MFD
 extern XPLMDataRef mfd_brightness;

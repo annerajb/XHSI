@@ -35,6 +35,11 @@
 
 // variables that will contain references to be used by XPLMGetData...
 
+/*
+ *  XHSI Custom datarefs
+ *  --------------------
+ */
+
 // custom datarefs - general
 XPLMDataRef xhsi_instrument_style;
 XPLMDataRef xhsi_rwy_length_min;
@@ -56,6 +61,7 @@ XPLMDataRef trq_scale;
 XPLMDataRef fuel_units;
 XPLMDataRef temp_units;
 XPLMDataRef override_trq_max;
+XPLMDataRef fwc_phase;
 
 // custom datarefs - MFD
 XPLMDataRef mfd_brightness;
@@ -143,7 +149,11 @@ XPLMDataRef efis_copilot_wxr_narrow;
 XPLMDataRef efis_copilot_wxr_alert;
 XPLMDataRef efis_copilot_wxr_target;
 
-// standard datarefs
+
+/*
+ *  Standard datarefs
+ *  -----------------
+ */
 XPLMDataRef groundspeed;
 XPLMDataRef true_airspeed;
 XPLMDataRef magpsi;
@@ -687,6 +697,17 @@ void	setOverrideTRQmax(void* inRefcon, float inValue)
       eicas_trq_max = inValue;
 }
 
+// Flight Warning Computer - Flight Phase
+// Read only
+int fwc_flight_phase;
+int getFWCFlightPhase(void* inRefcon)
+{
+     return fwc_flight_phase;
+}
+void setFWCFlightPhase(void* inRefcon, int inValue)
+{
+	fwc_flight_phase = inValue;
+}
 
 // xhsi/eicas/fuel_units
 int eicas_fuel_units;
@@ -2341,38 +2362,44 @@ void registerEICASDataRefs(void) {
     // xhsi/eicas/engine_type
     engine_type = XPLMRegisterDataAccessor("xhsi/eicas/engine_type",
                                         xplmType_Int,                                  // The types we support
-                                        1,                                                   // Writable
-                                        getEICASMode, setEICASMode,      // Integer accessors
+                                        1,                                             // Writable
+                                        getEICASMode, setEICASMode,                    // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
     // xhsi/eicas/trq_scale
     trq_scale = XPLMRegisterDataAccessor("xhsi/eicas/trq_scale",
                                         xplmType_Int,                                  // The types we support
-                                        1,                                                   // Writable
-                                        getTRQscale, setTRQscale,      // Integer accessors
+                                        1,                                             // Writable
+                                        getTRQscale, setTRQscale,                      // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
     // xhsi/eicas/fuel_units
     fuel_units = XPLMRegisterDataAccessor("xhsi/eicas/fuel_units",
-                                        xplmType_Int,      // Integer accessors
-                                        1,                                                   // Writable
-                                        getFuelUnits, setFuelUnits,      // Integer accessors
+                                        xplmType_Int,                                  // Integer type
+                                        1,                                             // Writable
+                                        getFuelUnits, setFuelUnits,                    // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
     // xhsi/eicas/temp_units
     temp_units = XPLMRegisterDataAccessor("xhsi/eicas/temp_units",
-                                        xplmType_Int,      // Integer accessors
-                                        1,                                                   // Writable
-                                        getTempUnits, setTempUnits,      // Integer accessors
+                                        xplmType_Int,                                  // Integer type
+                                        1,                                             // Writable
+                                        getTempUnits, setTempUnits,                    // Integer accessors
                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
 
 	// xhsi/eicas/trq_max_lbft
 	override_trq_max = XPLMRegisterDataAccessor("xhsi/eicas/trq_max_lbft",
-										xplmType_Float,      // Integer accessors
-										1,                                                   // Writable
-										NULL, NULL,      // No integer accessors
-										getOverrideTRQmax, setOverrideTRQmax,      // Float accessors
+										xplmType_Float,                                // Float type
+										1,                                             // Writable
+										NULL, NULL,                                    // No integer accessors
+										getOverrideTRQmax, setOverrideTRQmax,          // Float accessors
 										NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);                                   // Refcons not used
+    // xhsi/eicas/fwc_phase
+	fwc_phase = XPLMRegisterDataAccessor("xhsi/eicas/fwc_phase",
+                                        xplmType_Int,                                  // Integer type
+                                        1,                                             // Writable
+                                        getFWCFlightPhase, setFWCFlightPhase,          // Integer accessors
+                                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
     XPLMDebugString("XHSI: custom EICAS DataRefs registered\n");
 
@@ -2915,6 +2942,9 @@ float initEICASCallback(
 	// don't override the maximum torque that X-Plane calculates
 	XPLMSetDataf(override_trq_max, 0.0f);
 
+    // Set FWC Flight Phase to 0 (Power OFF)
+    XPLMSetDatai(fwc_phase,0);
+
     XPLMDebugString("XHSI: custom EICAS DataRefs initialized\n");
 
     return 0.0f;
@@ -3259,6 +3289,9 @@ void unregisterEICASDataRefs(void) {
 
 	// xhsi/eicas/trq_max_lbft
     XPLMUnregisterDataAccessor(override_trq_max);
+
+	// xhsi/eicas/fwc_phase
+    XPLMUnregisterDataAccessor(fwc_phase);
 }
 
 void unregisterMFDDataRefs(void) {
@@ -3323,6 +3356,7 @@ float computeChronoCallback(
 	}
 	return 1.0f;
 }
+
 
 void findDataRefs(void) {
 
