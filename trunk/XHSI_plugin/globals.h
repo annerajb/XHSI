@@ -4,8 +4,8 @@
 // Global constants ============================
 
 // version info
-#define PLUGIN_VERSION_TEXT "XHSI Plugin 2.0 Beta 11"
-#define PLUGIN_VERSION_NUMBER 20011
+#define PLUGIN_VERSION_TEXT "XHSI Plugin 2.0 Beta 12 Alpha 1"
+#define PLUGIN_VERSION_NUMBER 20012
 
 
 // max number of IP/UDP destinations

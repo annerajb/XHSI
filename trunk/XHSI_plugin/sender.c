@@ -41,7 +41,8 @@
 
 //char pack_msg[200];
 
-
+float fwc_chrono=0;
+int   fwc_chrono_running=0;
 
 float sendADCCallback(
                                    float	inElapsedSinceLastCall,
@@ -146,6 +147,21 @@ float sendAuxiliarySystemsCallback(
 
 }
 
+/**
+ * Compute total fuel flow
+ */
+float totalFuelFlow() {
+	float tab_fuel_flow[8];
+	float total_fuel_flow=0;
+	int engines,e;
+    engines = XPLMGetDatai(num_engines);
+    XPLMGetDatavf(fuel_flow, tab_fuel_flow, 0, engines);
+    for (e=0; e<engines; e++) {
+    	total_fuel_flow += tab_fuel_flow[e];
+    }
+    return total_fuel_flow;
+}
+
 
 float sendAvionicsCallback(
                                    float	inElapsedSinceLastCall,
@@ -160,6 +176,111 @@ float sendAvionicsCallback(
 #if IBM
 	char msg[80];
 #endif
+	int sim_run = !XPLMGetDatai(sim_paused);
+    int engines = XPLMGetDatai(num_engines);
+    float engifloat[8];
+
+    /*
+     * Compute Avionics custom datarefs
+     */
+	if (xhsi_plugin_enabled && sim_run) {
+		// Compute internal chrono
+	    if (fwc_chrono_running) {
+	    	fwc_chrono+=inElapsedSinceLastCall;
+	    }
+		// FWC : Flight Warning Computer
+		// Final State Automate
+		switch (XPLMGetDatai(fwc_phase)) {
+		case 0: // Off
+			if (XPLMGetDatai(avionics_on)==1) XPLMSetDatai(fwc_phase, 1);
+			// If power is on, switch to 1
+			break;
+		case 1:
+			// if one engine started, switch to 2
+			// positive fuel flow or without engine
+		    if (engines==0 || (totalFuelFlow()>0)) XPLMSetDatai(fwc_phase, 2);
+			break;
+		case 2:
+			if (engines==0 && XPLMGetDataf(airspeed_pilot)>20) {
+				// no engine and speed > 20 kts, switch to 3
+				XPLMSetDatai(fwc_phase, 3);
+			} else {
+				// take off thrust (75%), switch to 3
+				XPLMGetDatavf(engine_n1, engifloat, 0, engines);
+				if ( engifloat[0] > 75.0f ) XPLMSetDatai(fwc_phase, 3);
+			}
+			break;
+		case 3:
+			// 80 kts on jet engine, 40 kts on piston engine, switch to 4
+			if (XPLMGetDataf(airspeed_pilot)>80.0f) XPLMSetDatai(fwc_phase, 4);
+			// Rejected take off, back to phase 2
+			XPLMGetDatavf(engine_n1, engifloat, 0, engines);
+			if ( (engifloat[0] < 25.0f) && (XPLMGetDataf(airspeed_pilot)<30.0f)) XPLMSetDatai(fwc_phase, 2);
+			break;
+		case 4:
+			// lift off, switch to 5
+			if (XPLMGetDatai(on_ground)!=1) {
+				XPLMSetDatai(fwc_phase, 5);
+				fwc_chrono_running = 1;
+				fwc_chrono = 0;
+			}
+			// Rejected take off, back to phase 2
+			XPLMGetDatavf(engine_n1, engifloat, 0, engines);
+			if ( (engifloat[0] < 25.0f) && (XPLMGetDataf(airspeed_pilot)<30.0f)) XPLMSetDatai(fwc_phase, 2);
+			break;
+		case 5:
+			// 1500 ft jet engine, 300 ft piston engine, or 2mn, switch to 6
+			if (XPLMGetDataf(agl)* 3.28084f>1500.0f || (fwc_chrono>120)) {
+				XPLMSetDatai(fwc_phase, 6);
+				fwc_chrono_running = 0;
+			}
+			break;
+		case 6:
+			// 800 ft jet engine, 150 ft piston, switch to 7
+			if (XPLMGetDataf(agl)* 3.28084f<800.0f) XPLMSetDatai(fwc_phase, 7);
+			break;
+		case 7:
+			// touch down, switch to 8
+			// > 1500 ft, back to 6
+			if (XPLMGetDataf(agl)* 3.28084f>1500.0f) XPLMSetDatai(fwc_phase, 6);
+			if (XPLMGetDatai(on_ground)==1) XPLMSetDatai(fwc_phase, 8);
+			// Go around thrust (75%), switch to 5
+			XPLMGetDatavf(engine_n1, engifloat, 0, engines);
+			if ( engifloat[0] > 75.0f ) XPLMSetDatai(fwc_phase, 5);
+			break;
+		case 8:
+			// below 80 kts jet engine, below 40 kts piston engine, switch to 9
+			if (XPLMGetDataf(airspeed_pilot)<80.0f) XPLMSetDatai(fwc_phase, 9);
+			// Touch and go thrust (75%), switch to 4
+			XPLMGetDatavf(engine_n1, engifloat, 0, engines);
+			if ( engifloat[0] > 75.0f ) XPLMSetDatai(fwc_phase, 4);
+			break;
+		case 9:
+			// all engine shut down, switch to 10
+			if (engines==0 || (totalFuelFlow()==0)) {
+				XPLMSetDatai(fwc_phase, 10);
+				fwc_chrono_running = 1;
+				fwc_chrono = 0;
+			}
+			break;
+		case 10:
+			// 5 mn after, back to 0
+			// If engine relight, back to 2
+			if ((totalFuelFlow()>0) ) {
+				XPLMSetDatai(fwc_phase, 2);
+				fwc_chrono_running = 0;
+			}
+			if (fwc_chrono>300) {
+				XPLMSetDatai(fwc_phase, 0);
+				fwc_chrono_running = 0;
+			}
+			break;
+		default:
+			// Unknown state, reset to 0
+			XPLMSetDatai(fwc_phase,0);
+			break;
+		}
+	}
 
 	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open) {
 
@@ -244,8 +365,12 @@ float sendEnginesCallback(
 	float cabin_alt;
 	float oxy_ratio=100.0f;
     int sim_run = !XPLMGetDatai(sim_paused);
-	// Compute fuel used
+
+    /*
+     * Compute Engine custom datarefs
+     */
 	if (xhsi_plugin_enabled && sim_run) {
+		// Compute fuel used
 	    engines = XPLMGetDatai(num_engines);
 	    XPLMGetDatavf(fuel_flow, tab_fuel_flow, 0, engines);
 	    XPLMGetDatavf(mfd_fuel_used, tab_fuel_used, 0, engines);
@@ -253,6 +378,7 @@ float sendEnginesCallback(
 	    	tab_fuel_used[e] += tab_fuel_flow[e] * inElapsedSinceLastCall;
 	    }
 	    XPLMSetDatavf(mfd_fuel_used, tab_fuel_used, 0, engines);
+	    // Compute Oxygen Crew
 	    crew_oxygen = XPLMGetDataf(mfd_crew_oxy_psi);
 	    if (crew_oxygen > 0.0f) {
 

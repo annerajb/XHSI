@@ -447,6 +447,8 @@ extern XPLMDataRef qpac_sd_line_blue[QPAC_SD_LINES];
 extern XPLMDataRef qpac_sd_line_green[QPAC_SD_LINES];
 extern XPLMDataRef qpac_sd_line_red[QPAC_SD_LINES];
 extern XPLMDataRef qpac_sd_line_white[QPAC_SD_LINES];
+// ECAM FWC Flight Warning Computer
+XPLMDataRef qpac_ecam_flight_phase;
 
 // Anti-ice
 extern XPLMDataRef qpac_wing_anti_ice;

@@ -277,6 +277,8 @@ XPLMDataRef qpac_sd_line_blue[QPAC_SD_LINES];
 XPLMDataRef qpac_sd_line_green[QPAC_SD_LINES];
 XPLMDataRef qpac_sd_line_red[QPAC_SD_LINES];
 XPLMDataRef qpac_sd_line_white[QPAC_SD_LINES];
+// ECAM FWC Flight Warning Computer
+XPLMDataRef qpac_ecam_flight_phase;
 
 // Anti-ice
 XPLMDataRef qpac_wing_anti_ice;
@@ -633,6 +635,9 @@ void findQpacDataRefs(void) {
             qpac_wpt_minutes_fo = XPLMFindDataRef("AirbusFBW/WPT_Minutes_FO");
             qpac_wpt_id_capt = XPLMFindDataRef("AirbusFBW/WPT_ID");
             qpac_wpt_id_fo = XPLMFindDataRef("AirbusFBW/WPT_ID_FO");
+
+            // FWC Flight Warning Computer
+            qpac_ecam_flight_phase = XPLMFindDataRef("AirbusFBW/ECAMFlightPhase");
 
             //qpac fcu toggles and push/pull commands
             qpac_command[0] = NULL;
