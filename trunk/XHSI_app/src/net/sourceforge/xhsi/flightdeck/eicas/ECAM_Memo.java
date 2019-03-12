@@ -14,6 +14,8 @@ public class ECAM_Memo extends EICASSubcomponent {
 
 	private String memo_list[] = { 
 			"LAND ASAP", // (amber or red)
+			"LDG INHIBIT", // (magenta)
+			"T.O. INHIBIT", // (magenta)
 			"APU AVAIL",
 			"APU BLEED",
 			"AUDIO 3 XFRD",
@@ -37,50 +39,48 @@ public class ECAM_Memo extends EICASSubcomponent {
 			"GPWS FLAP 3",
 			"HYD PTU",
 			"ICE NOT DET",
-			"LDG INHIBIT", // (magenta)
 			"LDG LT",
 			"NW STRG DISC",
 			"PARK BRK",
 			"RAT OUT",
 			"SPEED BRK",
 			"SWITCHG PNL",
-			"T.O. INHIBIT", // (magenta)
 			"TCAS STBY",
 			"WING A.ICE"
 		 };
 	
 	private static final int EMEMO_LAND_ASAP = 0;
-	private static final int EMEMO_APU_AVAIL = 1;
-	private static final int EMEMO_APU_BLEED = 2;
-	private static final int EMEMO_AUDIO_3_XFRD = 3;
-	private static final int EMEMO_AUTO_BRK_LO = 4;
-	private static final int EMEMO_AUTO_BRK_MAX = 5;
-	private static final int EMEMO_AUTO_BRK_MED = 6;
-	private static final int EMEMO_GND_SPLRS_ARMED = 7;
-	private static final int EMEMO_GPWS_FLAP_MODE_OFF = 8;
-	private static final int EMEMO_IRS_IN_ALIGN = 9;
-	private static final int EMEMO_IRS_IN_ALIGN_MN = 10;
-	private static final int EMEMO_NO_SMOKING = 11;
-	private static final int EMEMO_OUTER_TK_FUEL_XFRD = 12;
-	private static final int EMEMO_OUTR_TK_FUEL_XFRD = 13;
-	private static final int EMEMO_REFUELG = 14;
-	private static final int EMEMO_SEAT_BELTS = 15;
-	private static final int EMEMO_STROBE_LT_OFF = 16;
-	private static final int EMEMO_BRK_FAN = 17;
-	private static final int EMEMO_CTR_TK_FEEDG = 18;
-	private static final int EMEMO_ENG_A_ICE = 19;
-	private static final int EMEMO_FUEL_X_FEED = 20;
-	private static final int EMEMO_GPWS_FLAP_3 = 21;
-	private static final int EMEMO_HYD_PTU = 22;
-	private static final int EMEMO_ICE_NOT_DET = 23;
-	private static final int EMEMO_LDG_INHIBIT = 24; // (magenta)
-	private static final int EMEMO_LDG_LT = 25;
-	private static final int EMEMO_NW_STRG_DISC = 26;
-	private static final int EMEMO_PARK_BRK = 27;
-	private static final int EMEMO_RAT_OUT = 28;
-	private static final int EMEMO_SPEED_BRK = 29;
-	private static final int EMEMO_SWITCHG_PNL = 30;
-	private static final int EMEMO_T_O_INHIBIT = 31;// (magenta)
+	private static final int EMEMO_LDG_INHIBIT = 1; // (magenta)
+	private static final int EMEMO_T_O_INHIBIT = 2; // (magenta)
+	private static final int EMEMO_APU_AVAIL = 3;
+	private static final int EMEMO_APU_BLEED = 4;
+	private static final int EMEMO_AUDIO_3_XFRD = 5;
+	private static final int EMEMO_AUTO_BRK_LO = 6;
+	private static final int EMEMO_AUTO_BRK_MAX = 7;
+	private static final int EMEMO_AUTO_BRK_MED = 8;
+	private static final int EMEMO_GND_SPLRS_ARMED = 9;
+	private static final int EMEMO_GPWS_FLAP_MODE_OFF = 10;
+	private static final int EMEMO_IRS_IN_ALIGN = 11;
+	private static final int EMEMO_IRS_IN_ALIGN_MN = 12;
+	private static final int EMEMO_NO_SMOKING = 13;
+	private static final int EMEMO_OUTER_TK_FUEL_XFRD = 14;
+	private static final int EMEMO_OUTR_TK_FUEL_XFRD = 15;
+	private static final int EMEMO_REFUELG = 16;
+	private static final int EMEMO_SEAT_BELTS = 17;
+	private static final int EMEMO_STROBE_LT_OFF = 18;
+	private static final int EMEMO_BRK_FAN = 19;
+	private static final int EMEMO_CTR_TK_FEEDG = 20;
+	private static final int EMEMO_ENG_A_ICE = 21;
+	private static final int EMEMO_FUEL_X_FEED = 22;
+	private static final int EMEMO_GPWS_FLAP_3 = 23;
+	private static final int EMEMO_HYD_PTU = 24;
+	private static final int EMEMO_ICE_NOT_DET = 25;
+	private static final int EMEMO_LDG_LT = 26;
+	private static final int EMEMO_NW_STRG_DISC = 27;
+	private static final int EMEMO_PARK_BRK = 28;
+	private static final int EMEMO_RAT_OUT = 29;
+	private static final int EMEMO_SPEED_BRK = 30;
+	private static final int EMEMO_SWITCHG_PNL = 31;
 	private static final int EMEMO_TCAS_STBY = 32;
 	private static final int EMEMO_WING_A_ICE = 33;
 	private static final int MAX_EMEMO_MSG = 33;

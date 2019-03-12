@@ -248,6 +248,7 @@ public class GraphicsConfig implements ComponentListener {
     public Color fmc_ll_disp_color;
     public Color fmc_ll_other_color;
     public Color heading_labels_color;
+    public Color heading_symbol_color;
     public Color cardinal_labels_color;
     public Color nav_needle_color;
     public Color deviation_scale_color;
@@ -810,6 +811,7 @@ public class GraphicsConfig implements ComponentListener {
                 fmc_ll_disp_color = setDUBrightness(color_yellowgreen);
                 fmc_ll_other_color = setDUBrightness(color_yellowgreen.darker());
                 heading_labels_color = setDUBrightness(color_limegreen);
+                heading_symbol_color = setDUBrightness(Color.GREEN);
                 cardinal_labels_color = setDUBrightness(Color.WHITE);
                 nav_needle_color = setDUBrightness(color_mediumviolet);
                 deviation_scale_color = setDUBrightness(Color.LIGHT_GRAY);
@@ -855,6 +857,7 @@ public class GraphicsConfig implements ComponentListener {
                 fmc_ll_disp_color = setDUBrightness(color_yellowgreen);
                 fmc_ll_other_color = setDUBrightness(color_yellowgreen.darker());
                 heading_labels_color = setDUBrightness(color_limegreen);
+                heading_symbol_color = setDUBrightness(Color.LIGHT_GRAY);
                 cardinal_labels_color = setDUBrightness(color_limegreen);
                 nav_needle_color = setDUBrightness(color_mediumviolet);
                 deviation_scale_color = setDUBrightness(Color.LIGHT_GRAY);
@@ -1019,6 +1022,7 @@ public class GraphicsConfig implements ComponentListener {
                 fmc_ll_disp_color = setDUBrightness(color_lime);
                 fmc_ll_other_color = setDUBrightness(color_lime);
                 heading_labels_color = setDUBrightness(color_lime);
+                heading_symbol_color = setDUBrightness(Color.GREEN);
                 cardinal_labels_color = setDUBrightness(color_limegreen);
                 nav_needle_color = setDUBrightness(color_magenta);
                 deviation_scale_color = setDUBrightness(Color.LIGHT_GRAY);
@@ -1082,6 +1086,7 @@ public class GraphicsConfig implements ComponentListener {
                 fmc_ll_disp_color = setDUBrightness(color_lime);
                 fmc_ll_other_color = setDUBrightness(color_lime);
                 heading_labels_color = setDUBrightness(color_lime);
+                heading_symbol_color = setDUBrightness(Color.LIGHT_GRAY);
                 cardinal_labels_color = setDUBrightness(color_limegreen);
                 nav_needle_color = setDUBrightness(color_magenta);
                 deviation_scale_color = setDUBrightness(Color.LIGHT_GRAY);
