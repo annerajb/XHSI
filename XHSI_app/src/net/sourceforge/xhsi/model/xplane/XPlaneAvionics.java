@@ -1661,11 +1661,10 @@ public class XPlaneAvionics implements Avionics, Observer {
      * 9 : 80 kts
      * 10 : 2nd engine shutdown
      * 0 or 1 : 5 mn after phase 10
-     * 
+     * FWC Phase is computed inside the XHSI plugin
      */
     public int fwc_phase() {
-    	// TODO: Create FWC dataref and computer flight phase in the plugin
-    	return 0;
+    	return (int) sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_FWC_PHASE);
     }
     
     /**

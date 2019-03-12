@@ -153,7 +153,7 @@ public class ECAM_Messages extends EICASSubcomponent {
         for(int i=0; i < 7; i++) {        
         	int y = eicas_gc.memo_y + eicas_gc.line_height_xl*i*11/10;
         	int x;
-            String ewd_str = QpacEwdData.getLine(i);
+            String ewd_str = QpacEwdData.getLine(i);           
             List<CduLine> l = QpacEwdData.decodeLine(ewd_str);
             for(CduLine o : l){
             		if (o.pos>23) {
@@ -175,8 +175,6 @@ public class ECAM_Messages extends EICASSubcomponent {
     private void DrawXHSIEcamMessages(Graphics2D g2) {
     	
     	String message_str;
-		boolean takeoff_inhibit = false;
-		boolean landing_inhibit = false;
 		boolean takeoff_memo = false;
 		boolean landing_memo = false;
 
@@ -184,10 +182,6 @@ public class ECAM_Messages extends EICASSubcomponent {
 		
     	g2.setFont(eicas_gc.font_l);        
     	
-    	// T.O. INHIBIT
-    	// T.O. INHIBIT from takeoff thrust up to 1500 feet AGL on Airbus 
-    	// T.O. INHIBIT for General Aviation should be up to 500 feet
-
     	// T.O. Memo comes up when all conditions are reached
     	// - on ground
 		// - at least one engine on
@@ -195,9 +189,9 @@ public class ECAM_Messages extends EICASSubcomponent {
 		// - more than 120 seconds since last engine start
 		// - throttle lever percent < 40%
     	
-    	if (this.aircraft.on_ground() ) {
+    	if (this.avionics.fwc_phase() == 2) {
     		// Display Takeoff Memo
-    		takeoff_inhibit = true;
+    		takeoff_memo = true;
     		
     		// DrawString "T.O   "
     		String to_str = "T.O   ";
@@ -206,7 +200,7 @@ public class ECAM_Messages extends EICASSubcomponent {
     		g2.drawString(to_str, eicas_gc.message_x, eicas_gc.memo_y + eicas_gc.line_height_l);
     		g2.drawLine(eicas_gc.message_x, eicas_gc.memo_y + eicas_gc.line_height_l, x_shift, eicas_gc.memo_y + eicas_gc.line_height_l);
     		
-    	} else if ( !this.aircraft.on_ground() ) {
+    	} else if ( (this.avionics.fwc_phase() == 6 || this.avionics.fwc_phase()==7) && ((this.aircraft.agl_m()*3.28084f) < 2000) ) {
     		// Display LDG Memo
     		// DrawString "LDG   "
     		String ldg_str = "LDG   ";

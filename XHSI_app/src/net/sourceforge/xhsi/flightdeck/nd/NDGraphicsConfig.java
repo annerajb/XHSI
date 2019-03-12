@@ -162,6 +162,15 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 	Stroke heading_bug_stroke;
 	GeneralPath heading_bug_polyline = null;
     
+	// Heading Label / symbol / line
+	public int heading_line_y;
+	public int heading_text_y;
+	public int heading_box_bottom_y;
+	public int track_diamond_shift;
+	public int track_diamond_size;
+	public int track_diamond_bottom;
+	public BufferedImage track_diamond_img;
+	
     // Moving Map Symbols
     public Font navaid_font;
     public Font data_font;
@@ -442,8 +451,13 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
                 // for NAV submode, invert the centered/expanded
                 if ( submode == Avionics.EFIS_MAP_NAV ) mode_centered = ! mode_centered;
             }
-            hdg_up = mode_app || mode_vor;
-            trk_up = ! ( hdg_up || mode_plan );
+            if (airbus_style) {
+            	hdg_up = true;
+            	trk_up = false;
+            } else {
+            	hdg_up = mode_app || mode_vor;
+            	trk_up = ! ( hdg_up || mode_plan );
+            }
 
 
             // position of the plane and size of the rose
@@ -746,6 +760,15 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
         		heading_bug_polyline.lineTo(map_center_x + heading_bug_width, rose_y_offset - heading_bug_height);
         		heading_bug_polyline.lineTo(map_center_x, rose_y_offset);
         	}
+        	
+        	// Heading line and symbols
+            heading_text_y = border_top + line_height_xl*10/8;
+            heading_box_bottom_y = border_top + line_height_xl*12/8;
+        	heading_line_y = boeing_style ? heading_box_bottom_y : map_center_y - rose_radius; 
+        	track_diamond_shift = rose_radius/40;
+        	track_diamond_size = track_diamond_shift*2;
+        	track_diamond_bottom = heading_line_y + track_diamond_size*3/2-2;
+        	track_diamond_img = createTrackDiamond();
         	
             // Speed Labels (and wind arrow)
         	if (boeing_style) {
@@ -1115,6 +1138,29 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
         	g_clip.fillRect(0,0, frame_size.width, rose_y_offset);
         }
         return clip_image;
+    }
+    
+    private BufferedImage createTrackDiamond() {   
+    	BufferedImage diamond_image = new BufferedImage(track_diamond_size,track_diamond_size*3/2,BufferedImage.TYPE_INT_ARGB);
+    	Graphics2D g_dmd = diamond_image.createGraphics();
+    	// diamond
+    	int d_d = track_diamond_shift - 1;
+    	int track_x[] = {
+    			track_diamond_shift,
+    			track_diamond_shift + d_d,
+    			track_diamond_shift,
+    			track_diamond_shift - d_d
+    	};
+    	int track_y[] = {
+    			1 ,
+    			1 + d_d*3/2,
+    			1 + 3*d_d,
+    			1 + d_d*3/2	
+    	};
+    	g_dmd.setColor(pfd_active_color);
+    	g_dmd.setStroke(new BasicStroke(2.0f));
+    	g_dmd.drawPolygon(track_x, track_y, 4);
+    	return diamond_image;
     }
     
     public boolean display_inhibit() {
