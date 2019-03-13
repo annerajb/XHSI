@@ -429,7 +429,7 @@ public class PFDFramedElement {
     			frame_w = pfd_gc.hdg_width;
     			text_c = pfd_gc.adi_cx;
     			text_x = frame_x; 
-    			text_y[0] = pfd_gc.hdg_top + pfd_gc.line_height_xxl*5/4;			
+    			text_y[0] = pfd_gc.hdg_top + pfd_gc.line_height_xxl;			
     			break; 		
     		case ATT_FLAG:
     			frame_x = pfd_gc.hdg_left;  // stub
@@ -439,8 +439,8 @@ public class PFDFramedElement {
     			text_y[0] = pfd_gc.adi_cy;			
     			break; 	    						
     		case SPD_FLAG:
-    			frame_x = pfd_gc.speedtape_left;  
-    			frame_w = pfd_gc.tape_width*6/8;
+    			frame_x = pfd_gc.speedtape_left+pfd_gc.tape_width*1/16;  
+    			frame_w = pfd_gc.tape_width*11/16;
     			text_c = frame_x + frame_w/2;
     			text_x = frame_x;  
     			text_y[0] = pfd_gc.adi_cy + pfd_gc.line_height_l/2;			
