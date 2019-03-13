@@ -254,7 +254,10 @@ public class HSI_A320 extends PFDSubcomponent {
         int drift_cx = pfd_gc.adi_cx - Math.round( drift * pfd_gc.hdg_width / 50.0f );
 		if ( drift >  180.0f ) drift -= 360.0f;
 		if ( drift < -180.0f ) drift += 360.0f;
+		
+		g2.drawImage(pfd_gc.hdg_diamond_img, drift_cx - pfd_gc.hdg_diamond_shift, pfd_gc.hdg_top, null);
 		// diamond
+		/*
 		int d_d = pfd_gc.hdg_height/6;
 		int drift_x[] = {
 				drift_cx,
@@ -272,6 +275,7 @@ public class HSI_A320 extends PFDSubcomponent {
 		g2.setStroke(new BasicStroke(3.0f));
 		g2.drawPolygon(drift_x, drift_y, 4);
 		g2.setStroke(original_stroke);
+		*/
 		
 	}
 

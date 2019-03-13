@@ -32,10 +32,12 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -44,9 +46,12 @@ import java.awt.event.ComponentListener;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.io.File;
+import java.io.InputStream;
 import java.util.HashMap;
 // import java.util.logging.Logger;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSIPreferences;
 import net.sourceforge.xhsi.XHSISettings;
@@ -61,7 +66,8 @@ public class GraphicsConfig implements ComponentListener {
     public static int INITIAL_PANEL_SIZE = 560;
     public static int INITIAL_BORDER_SIZE = 16;
 
-
+	private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
+	
     public XHSIPreferences preferences;
     public XHSISettings settings;
 
@@ -351,8 +357,13 @@ public class GraphicsConfig implements ComponentListener {
      * These values must used in display units classes. 
      * =========================================================================
      */
-
-    String font_name = "Verdana";   
+    
+    // new XHSI font for instruments
+    Font font_aircraft_instrument;
+    String font_aircraft_instrument_name = "AircraftInstruments";
+    
+    String font_name = "Verdana";
+    // String font_name = "AircraftInstruments";
     public Font font_statusbar;
 
     public Font font_tiny;
@@ -521,9 +532,26 @@ public class GraphicsConfig implements ComponentListener {
 
     public GraphicsConfig(Component root_component) {
         // our children will call init()
-        //init();
+        // init();
+    	try {
+    		InputStream font_stream =  GraphicsConfig.class.getResourceAsStream("AircraftInstruments.ttf");    		    		
+    		font_aircraft_instrument = Font.createFont(Font.TRUETYPE_FONT, font_stream);    		 
+    		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    		ge.registerFont(font_aircraft_instrument);
+    		font_stream.close();
+    	} catch (Exception e) {
+    		// Handle exception
+    		logger.warning("Cannot load AircraftInstruments.ttf font");
+    		logger.warning(e.getMessage());
+    		e.printStackTrace();
+    		font_aircraft_instrument = null;
+    	} 
     }
 
+    private Font getAircraftInstrumentsFont(float size) {
+    	Font derive = font_aircraft_instrument;
+    	return derive.deriveFont(size);
+    }
 
     public void init() {
 
@@ -568,8 +596,8 @@ public class GraphicsConfig implements ComponentListener {
                 true);
 
     }
-
-
+  
+    
     public void set_fonts(Graphics2D g2, float scale) {
 
             // fonts
@@ -592,22 +620,41 @@ public class GraphicsConfig implements ComponentListener {
                 this.font_xxxs = new Font( this.font_name, Font.BOLD, Math.round(8.0f * scale));
                 this.font_normal = new Font( this.font_name, Font.BOLD, Math.round(14.0f * scale));
             } else {
-                this.font_statusbar = new Font(this.font_name, Font.PLAIN, 9);
-                this.font_tiny = new Font( this.font_name, Font.PLAIN, 10);
-                this.font_small = new Font( this.font_name, Font.PLAIN, 12);
-                this.font_medium = new Font( this.font_name, Font.PLAIN, 16);
-                this.font_large = new Font( this.font_name, Font.PLAIN, 24);
-                this.font_zl = new Font( this.font_name, Font.PLAIN, Math.round(64.0f * scale));
-                this.font_xxxl = new Font( this.font_name, Font.PLAIN, Math.round(32.0f * scale));
-                this.font_xxl = new Font( this.font_name, Font.PLAIN, Math.round(24.0f * scale));
-                this.font_xl = new Font( this.font_name, Font.PLAIN, Math.round(21.0f * scale));
-                this.font_l = new Font( this.font_name, Font.PLAIN, Math.round(18.0f * scale));
-                this.font_m = new Font( this.font_name, Font.PLAIN, Math.round(16.0f * scale));
-                this.font_s = new Font( this.font_name, Font.PLAIN, Math.round(14.0f * scale));
-                this.font_xs = new Font( this.font_name, Font.PLAIN, Math.round(12.0f * scale));
-                this.font_xxs = new Font( this.font_name, Font.PLAIN, Math.round(10.0f * scale));
-                this.font_xxxs = new Font( this.font_name, Font.PLAIN, Math.round(8.0f * scale));
-                this.font_normal = new Font( this.font_name, Font.PLAIN, Math.round(14.0f * scale));
+            	if (font_aircraft_instrument != null) {
+            		this.font_statusbar = new Font(this.font_name, Font.PLAIN, 9);
+            		this.font_tiny = getAircraftInstrumentsFont(10);
+            		this.font_small = getAircraftInstrumentsFont(12);
+            		this.font_medium = getAircraftInstrumentsFont(16);
+            		this.font_large = getAircraftInstrumentsFont(24);
+            		this.font_zl = getAircraftInstrumentsFont(Math.round(64.0f * scale));
+            		this.font_xxxl = getAircraftInstrumentsFont(Math.round(35.0f * scale));
+            		this.font_xxl = getAircraftInstrumentsFont(Math.round(26.0f * scale));
+            		this.font_xl = getAircraftInstrumentsFont(Math.round(23.0f * scale));
+            		this.font_l = getAircraftInstrumentsFont(Math.round(20.0f * scale));
+            		this.font_m = getAircraftInstrumentsFont(Math.round(17.0f * scale));
+            		this.font_s = getAircraftInstrumentsFont(Math.round(15.0f * scale));
+            		this.font_xs = getAircraftInstrumentsFont(Math.round(13.0f * scale));
+            		this.font_xxs = getAircraftInstrumentsFont(Math.round(11.0f * scale));
+            		this.font_xxxs = getAircraftInstrumentsFont( Math.round(9.0f * scale));
+            		this.font_normal = getAircraftInstrumentsFont(Math.round(15.0f * scale)); 		
+            	} else {
+            		this.font_statusbar = new Font(this.font_name, Font.PLAIN, 9);
+            		this.font_tiny = new Font( this.font_name, Font.PLAIN, 10);
+            		this.font_small = new Font( this.font_name, Font.PLAIN, 12);
+            		this.font_medium = new Font( this.font_name, Font.PLAIN, 16);
+            		this.font_large = new Font( this.font_name, Font.PLAIN, 24);
+            		this.font_zl = new Font( this.font_name, Font.PLAIN, Math.round(64.0f * scale));
+            		this.font_xxxl = new Font( this.font_name, Font.PLAIN, Math.round(32.0f * scale));
+            		this.font_xxl = new Font( this.font_name, Font.PLAIN, Math.round(24.0f * scale));
+            		this.font_xl = new Font( this.font_name, Font.PLAIN, Math.round(21.0f * scale));
+            		this.font_l = new Font( this.font_name, Font.PLAIN, Math.round(18.0f * scale));
+            		this.font_m = new Font( this.font_name, Font.PLAIN, Math.round(16.0f * scale));
+            		this.font_s = new Font( this.font_name, Font.PLAIN, Math.round(14.0f * scale));
+            		this.font_xs = new Font( this.font_name, Font.PLAIN, Math.round(12.0f * scale));
+            		this.font_xxs = new Font( this.font_name, Font.PLAIN, Math.round(10.0f * scale));
+            		this.font_xxxs = new Font( this.font_name, Font.PLAIN, Math.round(8.0f * scale));
+            		this.font_normal = new Font( this.font_name, Font.PLAIN, Math.round(14.0f * scale));
+            	}
             }
 
             // calculate font metrics

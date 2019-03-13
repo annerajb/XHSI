@@ -240,7 +240,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
             	DecimalFormat markform = new DecimalFormat("000");
 
             	String mark_str = markform.format( Math.abs(alt_mark / 100));
-            	g2.drawString(mark_str, pfd_gc.altitape_left, alt_y + pfd_gc.line_height_xl/2 - 2);
+            	g2.drawString(mark_str, pfd_gc.altitape_left + 1 + pfd_gc.tape_width*1/40, alt_y + pfd_gc.line_height_xl/2 - 2);
 
             	// Little triangle before mark
             	g2.drawLine(pfd_gc.altitape_left - pfd_gc.tape_width*1/20, alt_y, pfd_gc.altitape_left - pfd_gc.tape_width*4/40, alt_y + pfd_gc.tape_width*2/40);
