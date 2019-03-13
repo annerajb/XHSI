@@ -765,8 +765,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             heading_text_y = border_top + line_height_xl*10/8;
             heading_box_bottom_y = border_top + line_height_xl*12/8;
         	heading_line_y = boeing_style ? heading_box_bottom_y : map_center_y - rose_radius; 
-        	track_diamond_shift = rose_radius/40;
-        	track_diamond_size = track_diamond_shift*2;
+        	track_diamond_shift = (int) (10 * shrink_scaling_factor);
+        	track_diamond_size = (int) (20 * shrink_scaling_factor);
         	track_diamond_bottom = heading_line_y + track_diamond_size*3/2-2;
         	track_diamond_img = createTrackDiamond();
         	

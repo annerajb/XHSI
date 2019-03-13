@@ -113,11 +113,11 @@ public class SpeedTape_A320 extends PFDSubcomponent {
         // thick
         Stroke original_stroke = g2.getStroke();
         g2.setStroke(new BasicStroke(3.5f * pfd_gc.scaling_factor));
-        g2.drawLine(pfd_gc.speedtape_left- pfd_gc.tape_width/8, tape_middle_y, pfd_gc.speedtape_left + 1, tape_middle_y  );
-        g2.drawLine(speedtape_right - pfd_gc.tape_width*3/16, tape_middle_y, speedtape_right + pfd_gc.tape_width*3/16, tape_middle_y  );
+        g2.drawLine(pfd_gc.speedtape_left - pfd_gc.tape_width/8, tape_middle_y, pfd_gc.speedtape_left, tape_middle_y  );
+        g2.drawLine(speedtape_right - pfd_gc.tape_width*4/16, tape_middle_y, speedtape_right + pfd_gc.tape_width*3/16, tape_middle_y  );
         // thin
         g2.setStroke(new BasicStroke(0.6f * pfd_gc.scaling_factor));
-        g2.drawLine(pfd_gc.speedtape_left + 1, tape_middle_y, speedtape_right - pfd_gc.tape_width*3/16, tape_middle_y  );
+        g2.drawLine(pfd_gc.speedtape_left, tape_middle_y, speedtape_right - pfd_gc.tape_width*3/16, tape_middle_y  );
         g2.setStroke(original_stroke);
         
         int[] speed_tri_x = {
@@ -153,7 +153,7 @@ public class SpeedTape_A320 extends PFDSubcomponent {
                     g2.setFont(pfd_gc.font_xl);
                     DecimalFormat speed_format = new DecimalFormat("000");            		
                     String mark_str = speed_format.format(ias_mark);
-                    g2.drawString(mark_str, pfd_gc.speedtape_left + pfd_gc.tape_width*9/16 - pfd_gc.get_text_width(g2, pfd_gc.font_xl, mark_str),  ias_y + pfd_gc.line_height_l/2 - 2);
+                    g2.drawString(mark_str, pfd_gc.speedtape_left + pfd_gc.tape_width*8/16 - pfd_gc.get_text_width(g2, pfd_gc.font_xl, mark_str),  ias_y + pfd_gc.line_height_l/2 - 2);
                 }
 
             }

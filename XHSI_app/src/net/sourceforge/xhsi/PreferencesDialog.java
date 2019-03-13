@@ -5,7 +5,7 @@
  * 
  * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
  * Copyright (C) 2010-2015  Marc Rogiers (marrog.123@gmail.com)
- * Copyright (C) 2015-2017  Nicolas Carel
+ * Copyright (C) 2015-2019  Nicolas Carel
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -64,7 +64,13 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
     private XHSIPreferences preferences;
 
+    /*
+     * System tab
+     * ----------
+     */ 
     //private JComboBox simcom_combobox;
+    //private String[] simcoms = { XHSIPreferences.XHSI_PLUGIN, XHSIPreferences.SCS };
+    
     private JTextField aptnav_dir_textfield;
     private JTextField egpws_db_dir_textfield;
     private JTextField port_textfield;
@@ -77,12 +83,14 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private String operators[] = { XHSIPreferences.PILOT, XHSIPreferences.COPILOT, XHSIPreferences.INSTRUCTOR };
     private JCheckBox allow_shutdown;
 
-    private JCheckBox conwin_minimized_checkbox;
+    /*
+     * Windows tab
+     * -----------
+     */    
     private JCheckBox start_ontop_checkbox;
     private JCheckBox hide_window_frame_checkbox;
     private JCheckBox panel_locked_checkbox;
     private JButton get_button;
-
     private static final int MAX_WINS = 9; // Empty, PFD, ND, EICAS, MFD, Annunciators, Clock and CDU
     private JCheckBox panel_active_checkbox[] = new JCheckBox[MAX_WINS];
     private JTextField panel_pos_x_textfield[] = new JTextField[MAX_WINS];
@@ -92,83 +100,56 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JTextField panel_border_textfield[] = new JTextField[MAX_WINS];
     private JCheckBox panel_square_checkbox[] = new JCheckBox[MAX_WINS];
     private JComboBox panel_orientation_combobox[] = new JComboBox[MAX_WINS];
-
-    private JCheckBox anti_alias_checkbox;
-    private JComboBox border_style_combobox;
-    private String borderstyles[] = { XHSIPreferences.BORDER_RELIEF, XHSIPreferences.BORDER_LIGHT, XHSIPreferences.BORDER_DARK, XHSIPreferences.BORDER_NONE };
-    private JComboBox border_color_combobox;
-    private String bordercolors[] = { XHSIPreferences.BORDER_GRAY, XHSIPreferences.BORDER_BROWN, XHSIPreferences.BORDER_BLUE };
-    
     private String orientations[] = {
-        XHSIPreferences.Orientation.UP.get_rotation(),
-        XHSIPreferences.Orientation.LEFT.get_rotation(),
-        XHSIPreferences.Orientation.RIGHT.get_rotation(),
-        XHSIPreferences.Orientation.DOWN.get_rotation(),
-        };
-
-    private JCheckBox use_power_checkbox;
-    private JCheckBox auto_frontcourse_checkbox;
-    private JComboBox hsi_source_combobox;
-    private String hsi_sources[] = { XHSIPreferences.USER, XHSIPreferences.NAV1, XHSIPreferences.NAV2 };
-
-    private JTextField min_rwy_textfield;
-    //private String[] simcoms = { XHSIPreferences.XHSI_PLUGIN, XHSIPreferences.SCS };
-    private JComboBox rwy_units_combobox;
-    private String units[] = { "meters", "feet" };
-    private JCheckBox draw_rwy_checkbox;
-    private JCheckBox draw_bezier_pavements_checkbox;
-    private JCheckBox airbus_modes_checkbox;
-    private JCheckBox symbols_multiselection_checkbox;    
-    private JCheckBox draw_range_arcs_checkbox;
-    private JCheckBox limit_arcs_60deg_checkbox;
-    private String[] arc_limits = { "0","60","70","75","80","85","90" };
-    private JComboBox limit_arcs_deg_combobox;
-    private JCheckBox use_more_color_checkbox;
-    private JCheckBox mode_mismatch_caution_checkbox;
-    private JCheckBox tcas_always_on_checkbox;
-    private JCheckBox classic_hsi_checkbox;
-    private JCheckBox appvor_uncluttered_checkbox;
-    private JCheckBox plan_aircraft_center_checkbox;
-    private JCheckBox draw_inside_rose_checkbox;
-    private JCheckBox bold_fonts_checkbox;
-    private JCheckBox nd_navaid_frequencies;
-    private JCheckBox nd_write_ap_hdg;
-    private JCheckBox nd_show_clock;
-    // ND EGPWS TERRAIN OPTIONS
-    private JComboBox terrain_resolution_combobox;
-    private String terrain_resolutions[] = { XHSIPreferences.RES_FINE, XHSIPreferences.RES_MEDIUM, XHSIPreferences.RES_COARSE };
-    private JCheckBox nd_show_vertical_path;
-    private JCheckBox nd_terrain_auto_display;
-    private JCheckBox nd_terrain_peaks_mode;
-    private JCheckBox nd_terrain_sweep;
-    private JCheckBox nd_terrain_sweep_bar;
-    private JTextField nd_terrain_sweep_time;
-    // ND WEATHER RADAR OPTIONS
-    private JComboBox wxr_resolution_combobox;
-    private String wxr_resolutions[] = { XHSIPreferences.RES_FINE, XHSIPreferences.RES_MEDIUM, XHSIPreferences.RES_COARSE };
-    private JCheckBox nd_wxr_sweep;
-    private JCheckBox nd_wxr_sweep_bar;
-    private JTextField nd_wxr_sweep_time;
-    private JCheckBox nd_wxr_dual_settings;
-    private JCheckBox nd_wxr_color_gradient;
-
-    // realistic attenuation
-    // 
-    
-    private JCheckBox arpt_chart_nav_dest;
-
+            XHSIPreferences.Orientation.UP.get_rotation(),
+            XHSIPreferences.Orientation.LEFT.get_rotation(),
+            XHSIPreferences.Orientation.RIGHT.get_rotation(),
+            XHSIPreferences.Orientation.DOWN.get_rotation(),
+            };
     private int du_pos_x[] = new int[MAX_WINS];
     private int du_pos_y[] = new int[MAX_WINS];
     private int du_width[] = new int[MAX_WINS];
     private int du_height[] = new int[MAX_WINS];
+    private JCheckBox conwin_minimized_checkbox;
+    
+    /*
+     * Graphics tab
+     * ------------
+     */    
+    private JComboBox border_style_combobox;
+    private String borderstyles[] = { XHSIPreferences.BORDER_RELIEF, XHSIPreferences.BORDER_LIGHT, XHSIPreferences.BORDER_DARK, XHSIPreferences.BORDER_NONE };
+    private JComboBox border_color_combobox;
+    private String bordercolors[] = { XHSIPreferences.BORDER_GRAY, XHSIPreferences.BORDER_BROWN, XHSIPreferences.BORDER_BLUE };
+    private JCheckBox use_more_color_checkbox;
+    private JComboBox instruments_font_combobox;
+    private String instruments_fonts[] = { "Builtin", "Verdana", "Tahoma", "Arial", "Arial Rounded MT Bold", "DejaVu Sans Mono", "FreeSans", "Lucida Sans", "MS Reference Sans Serif", "Ubuntu", "Ubuntu Mono", "Lucida Sans" };
+    // TODO: Get system fonts list
+    private JCheckBox bold_fonts_checkbox;    
+    private JCheckBox anti_alias_checkbox;
+    private JCheckBox draw_bezier_pavements_checkbox;
 
+    /*
+     * Avionics tab
+     * ------------
+     */   
     private JComboBox instrument_style_combobox;
     private String instrument_styles[] = { XHSIPreferences.INSTRUMENT_STYLE_SWITCHABLE, XHSIPreferences.INSTRUMENT_STYLE_BOEING, XHSIPreferences.INSTRUMENT_STYLE_AIRBUS };
+    private JTextField min_rwy_textfield;
+    private JComboBox rwy_units_combobox;
+    private String units[] = { "meters", "feet" };
+    private JCheckBox use_power_checkbox;
+    private JCheckBox auto_frontcourse_checkbox;
+    private JComboBox hsi_source_combobox;
+    private String hsi_sources[] = { XHSIPreferences.USER, XHSIPreferences.NAV1, XHSIPreferences.NAV2 };
+    
+    /*
+     * PFD tab
+     * -------
+     */
     private JComboBox horizon_style_combobox;
     private String horizons[] = { XHSIPreferences.HORIZON_SQUARE, XHSIPreferences.HORIZON_ROUNDED, XHSIPreferences.HORIZON_FULLWIDTH, XHSIPreferences.HORIZON_FULLSCREEN /*, XHSIPreferences.HORIZON_AIRBUS */ };
     private JComboBox dial_transparency_combobox;
     private String transparencies[] = { "0", "25", "50", "75" };
-
     private JCheckBox draw_single_cue_fd_checkbox;
     private JCheckBox draw_aoa_checkbox;
     private JCheckBox pfd_hsi_checkbox;
@@ -181,7 +162,57 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JComboBox draw_yoke_input_combobox;
     private String draw_yoke_input[] = { XHSIPreferences.YOKE_INPUT_NONE, XHSIPreferences.YOKE_INPUT_AUTO, XHSIPreferences.YOKE_INPUT_RUDDER, XHSIPreferences.YOKE_INPUT_ALWAYS, XHSIPreferences.YOKE_INPUT_ALWAYS_RUDDER };
 
+    /*
+     * ND tab
+     * ------
+     */
+    private JCheckBox airbus_modes_checkbox;
+    private JCheckBox symbols_multiselection_checkbox; 
+    private JCheckBox classic_hsi_checkbox;
+    private JCheckBox appvor_uncluttered_checkbox;
+    private JCheckBox mode_mismatch_caution_checkbox;    
+    private JCheckBox plan_aircraft_center_checkbox;
+    private JCheckBox draw_inside_rose_checkbox;   
+    private JCheckBox draw_range_arcs_checkbox;
+    private JCheckBox limit_arcs_60deg_checkbox;
+    private JComboBox limit_arcs_deg_combobox;
+    private String[] arc_limits = { "0","60","70","75","80","85","90" };
+    private JCheckBox draw_rwy_checkbox;
+    private JCheckBox tcas_always_on_checkbox;
+    private JCheckBox nd_navaid_frequencies;
+    private JCheckBox nd_write_ap_hdg;
+    private JCheckBox nd_show_clock;
     
+    /*
+     * EGPWS tab
+     * ---------
+     */
+    private JComboBox terrain_resolution_combobox;
+    private String terrain_resolutions[] = { XHSIPreferences.RES_FINE, XHSIPreferences.RES_MEDIUM, XHSIPreferences.RES_COARSE };
+    private JCheckBox nd_show_vertical_path;
+    private JCheckBox nd_terrain_auto_display;
+    private JCheckBox nd_terrain_peaks_mode;
+    private JCheckBox nd_terrain_sweep;
+    private JCheckBox nd_terrain_sweep_bar;
+    private JTextField nd_terrain_sweep_time;
+
+    /*
+     * Weather Radar tab
+     * -----------------
+     */
+    private JComboBox wxr_resolution_combobox;
+    private String wxr_resolutions[] = { XHSIPreferences.RES_FINE, XHSIPreferences.RES_MEDIUM, XHSIPreferences.RES_COARSE };
+    private JCheckBox nd_wxr_sweep;
+    private JCheckBox nd_wxr_sweep_bar;
+    private JTextField nd_wxr_sweep_time;
+    private JCheckBox nd_wxr_dual_settings;
+    private JCheckBox nd_wxr_color_gradient;
+    // realistic attenuation    
+ 
+    /*
+     * EICAS tab
+     * ---------
+     */
     private JComboBox eicas_layout_combobox;
     private final String[] eicas_layouts = { XHSIPreferences.EICAS_LAYOUT_PRIMARY, XHSIPreferences.EICAS_LAYOUT_PRIMARY_AND_CONTROLS, XHSIPreferences.EICAS_LAYOUT_FULL };
     private JComboBox engine_count_combobox;
@@ -194,6 +225,10 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JComboBox temp_unit_combobox;
     private String temp_units[] = { XHSIPreferences.TEMP_UNITS_SWITCHABLE, XHSIPreferences.TEMP_UNITS_CELCIUS, XHSIPreferences.TEMP_UNITS_FAHRENHEIT };
 
+    /*
+     * MFD tab
+     * -------
+     */
     private JComboBox mfd_mode_combobox;
     private String mfd_modes[] = { 
     		XHSIPreferences.MFD_MODE_SWITCHABLE,
@@ -213,15 +248,18 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     		XHSIPreferences.MFD_MODE_WHEELS,
     		XHSIPreferences.MFD_MODE_FCTL,
             XHSIPreferences.MFD_MODE_SYS,
-    		XHSIPreferences.MFD_MODE_STATUS };
-    
+    		XHSIPreferences.MFD_MODE_STATUS };    
     private JComboBox arpt_chart_color_combobox;
     private String arpt_chart_colors[] = { XHSIPreferences.ARPT_DIAGRAM_COLOR_AUTO, XHSIPreferences.ARPT_DIAGRAM_COLOR_DAY, XHSIPreferences.ARPT_DIAGRAM_COLOR_NIGHT };
+    private JCheckBox arpt_chart_nav_dest;
 
+    /*
+     * CDU tab
+     * -------
+     */
     private JCheckBox cdu_display_only;
     private JComboBox cdu_source_combobox;
     private String cdu_sources[] = { XHSIPreferences.CDU_SOURCE_SWITCHABLE, XHSIPreferences.CDU_SOURCE_AIRCRAFT_OR_DUMMY, XHSIPreferences.CDU_SOURCE_XFMC, XHSIPreferences.CDU_SOURCE_UFMC };
-
     private JComboBox cdu_side_combobox;
     private String cdu_sides[] = { XHSIPreferences.CDU_SIDE_SWITCHABLE, XHSIPreferences.CDU_SIDE_LEFT, XHSIPreferences.CDU_SIDE_RIGHT };
 
@@ -293,6 +331,13 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         for (int i=0; i<instrument_styles.length; i++) {
             if ( instrumentstyle.equals( instrument_styles[i] ) ) {
                 this.instrument_style_combobox.setSelectedIndex(i);
+            }
+        }
+        
+        String instruments_font = preferences.get_preference(XHSIPreferences.PREF_INSTRUMENTS_FONT);
+        for (int i=0; i<instruments_fonts.length; i++) {
+            if ( instruments_font.equals( instruments_fonts[i] ) ) {
+                this.instruments_font_combobox.setSelectedIndex(i);
             }
         }
         
@@ -1120,6 +1165,25 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         graphics_panel.add(this.use_more_color_checkbox, cons);
         dialog_line++;
 
+        // Instruments fonts
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        graphics_panel.add(new JLabel("Instruments font", JLabel.TRAILING), cons);
+        
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.instruments_font_combobox = new JComboBox();
+        for (int i=0; i<instruments_fonts.length; i++) {
+            this.instruments_font_combobox.addItem(this.instruments_fonts[i]);
+        }
+        this.instruments_font_combobox.addActionListener(this);
+        graphics_panel.add(this.instruments_font_combobox, cons);
+        dialog_line++;
+        
         // Bold fonts
         cons.gridx = 0;
         cons.gridwidth = 1;
@@ -2507,6 +2571,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
             if ( ! bordercolors[this.border_color_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_BORDER_COLOR)) )
                 this.preferences.set_preference(XHSIPreferences.PREF_BORDER_COLOR, bordercolors[this.border_color_combobox.getSelectedIndex()]);
+
+            if ( ! instruments_fonts[this.instruments_font_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_INSTRUMENTS_FONT)) )
+                this.preferences.set_preference(XHSIPreferences.PREF_INSTRUMENTS_FONT, instruments_fonts[this.instruments_font_combobox.getSelectedIndex()]);
 
             if ( this.draw_bezier_pavements_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_DRAW_BEZIER_PAVEMENTS).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_DRAW_BEZIER_PAVEMENTS, this.draw_bezier_pavements_checkbox.isSelected()?"true":"false");

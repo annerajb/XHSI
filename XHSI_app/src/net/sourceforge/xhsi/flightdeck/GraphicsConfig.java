@@ -600,180 +600,182 @@ public class GraphicsConfig implements ComponentListener {
     
     public void set_fonts(Graphics2D g2, float scale) {
 
-            // fonts
-            // Verdana is easier to read than Lucida Sans, and available on Win, Mac and Lin
-            if ( XHSIPreferences.get_instance().get_bold_fonts() ) {
-                this.font_statusbar = new Font(this.font_name, Font.PLAIN, 9);
-                this.font_tiny = new Font( this.font_name, Font.BOLD, 10);
-                this.font_small = new Font( this.font_name, Font.BOLD, 12);
-                this.font_medium = new Font( this.font_name, Font.BOLD, 16);
-                this.font_large = new Font( this.font_name, Font.PLAIN, 24);
-                this.font_zl = new Font( this.font_name, Font.PLAIN, Math.round(64.0f * scale));
-                this.font_xxxl = new Font( this.font_name, Font.PLAIN, Math.round(32.0f * scale));
-                this.font_xxl = new Font( this.font_name, Font.BOLD, Math.round(24.0f * scale));
-                this.font_xl = new Font( this.font_name, Font.BOLD, Math.round(21.0f * scale));
-                this.font_l = new Font( this.font_name, Font.BOLD, Math.round(18.0f * scale));
-                this.font_m = new Font( this.font_name, Font.BOLD, Math.round(16.0f * scale));
-                this.font_s = new Font( this.font_name, Font.BOLD, Math.round(14.0f * scale));
-                this.font_xs = new Font( this.font_name, Font.BOLD, Math.round(12.0f * scale));
-                this.font_xxs = new Font( this.font_name, Font.BOLD, Math.round(10.0f * scale));
-                this.font_xxxs = new Font( this.font_name, Font.BOLD, Math.round(8.0f * scale));
-                this.font_normal = new Font( this.font_name, Font.BOLD, Math.round(14.0f * scale));
-            } else {
-            	if (font_aircraft_instrument != null) {
-            		this.font_statusbar = new Font(this.font_name, Font.PLAIN, 9);
-            		this.font_tiny = getAircraftInstrumentsFont(10);
-            		this.font_small = getAircraftInstrumentsFont(12);
-            		this.font_medium = getAircraftInstrumentsFont(16);
-            		this.font_large = getAircraftInstrumentsFont(24);
-            		this.font_zl = getAircraftInstrumentsFont(Math.round(64.0f * scale));
-            		this.font_xxxl = getAircraftInstrumentsFont(Math.round(35.0f * scale));
-            		this.font_xxl = getAircraftInstrumentsFont(Math.round(26.0f * scale));
-            		this.font_xl = getAircraftInstrumentsFont(Math.round(23.0f * scale));
-            		this.font_l = getAircraftInstrumentsFont(Math.round(20.0f * scale));
-            		this.font_m = getAircraftInstrumentsFont(Math.round(17.0f * scale));
-            		this.font_s = getAircraftInstrumentsFont(Math.round(15.0f * scale));
-            		this.font_xs = getAircraftInstrumentsFont(Math.round(13.0f * scale));
-            		this.font_xxs = getAircraftInstrumentsFont(Math.round(11.0f * scale));
-            		this.font_xxxs = getAircraftInstrumentsFont( Math.round(9.0f * scale));
-            		this.font_normal = getAircraftInstrumentsFont(Math.round(15.0f * scale)); 		
-            	} else {
-            		this.font_statusbar = new Font(this.font_name, Font.PLAIN, 9);
-            		this.font_tiny = new Font( this.font_name, Font.PLAIN, 10);
-            		this.font_small = new Font( this.font_name, Font.PLAIN, 12);
-            		this.font_medium = new Font( this.font_name, Font.PLAIN, 16);
-            		this.font_large = new Font( this.font_name, Font.PLAIN, 24);
-            		this.font_zl = new Font( this.font_name, Font.PLAIN, Math.round(64.0f * scale));
-            		this.font_xxxl = new Font( this.font_name, Font.PLAIN, Math.round(32.0f * scale));
-            		this.font_xxl = new Font( this.font_name, Font.PLAIN, Math.round(24.0f * scale));
-            		this.font_xl = new Font( this.font_name, Font.PLAIN, Math.round(21.0f * scale));
-            		this.font_l = new Font( this.font_name, Font.PLAIN, Math.round(18.0f * scale));
-            		this.font_m = new Font( this.font_name, Font.PLAIN, Math.round(16.0f * scale));
-            		this.font_s = new Font( this.font_name, Font.PLAIN, Math.round(14.0f * scale));
-            		this.font_xs = new Font( this.font_name, Font.PLAIN, Math.round(12.0f * scale));
-            		this.font_xxs = new Font( this.font_name, Font.PLAIN, Math.round(10.0f * scale));
-            		this.font_xxxs = new Font( this.font_name, Font.PLAIN, Math.round(8.0f * scale));
-            		this.font_normal = new Font( this.font_name, Font.PLAIN, Math.round(14.0f * scale));
-            	}
-            }
+    	boolean use_builtin_instruments_font = this.preferences.get_preference(XHSIPreferences.PREF_INSTRUMENTS_FONT).equals("Builtin");
+    	if (!use_builtin_instruments_font) this.font_name = this.preferences.get_preference(XHSIPreferences.PREF_INSTRUMENTS_FONT);
 
-            // calculate font metrics
-            // W is probably the largest characher...
-            FontMetrics fm;
+    	// Verdana is easier to read than Lucida Sans, and available on Win, Mac and Lin
+    	if (font_aircraft_instrument != null && use_builtin_instruments_font) {
+    		this.font_statusbar = new Font(this.font_name, Font.PLAIN, 9);
+    		this.font_tiny = getAircraftInstrumentsFont(10);
+    		this.font_small = getAircraftInstrumentsFont(12);
+    		this.font_medium = getAircraftInstrumentsFont(16);
+    		this.font_large = getAircraftInstrumentsFont(24);
+    		this.font_zl = getAircraftInstrumentsFont(Math.round(64.0f * scale));
+    		this.font_xxxl = getAircraftInstrumentsFont(Math.round(35.0f * scale));
+    		this.font_xxl = getAircraftInstrumentsFont(Math.round(26.0f * scale));
+    		this.font_xl = getAircraftInstrumentsFont(Math.round(23.0f * scale));
+    		this.font_l = getAircraftInstrumentsFont(Math.round(20.0f * scale));
+    		this.font_m = getAircraftInstrumentsFont(Math.round(17.0f * scale));
+    		this.font_s = getAircraftInstrumentsFont(Math.round(15.0f * scale));
+    		this.font_xs = getAircraftInstrumentsFont(Math.round(13.0f * scale));
+    		this.font_xxs = getAircraftInstrumentsFont(Math.round(11.0f * scale));
+    		this.font_xxxs = getAircraftInstrumentsFont( Math.round(9.0f * scale));
+    		this.font_normal = getAircraftInstrumentsFont(Math.round(15.0f * scale)); 
+    	} else {
+    		if ( XHSIPreferences.get_instance().get_bold_fonts() ) {
+    			this.font_statusbar = new Font(this.font_name, Font.PLAIN, 9);
+    			this.font_tiny = new Font( this.font_name, Font.BOLD, 10);
+    			this.font_small = new Font( this.font_name, Font.BOLD, 12);
+    			this.font_medium = new Font( this.font_name, Font.BOLD, 16);
+    			this.font_large = new Font( this.font_name, Font.PLAIN, 24);
+    			this.font_zl = new Font( this.font_name, Font.PLAIN, Math.round(64.0f * scale));
+    			this.font_xxxl = new Font( this.font_name, Font.PLAIN, Math.round(32.0f * scale));
+    			this.font_xxl = new Font( this.font_name, Font.BOLD, Math.round(24.0f * scale));
+    			this.font_xl = new Font( this.font_name, Font.BOLD, Math.round(21.0f * scale));
+    			this.font_l = new Font( this.font_name, Font.BOLD, Math.round(18.0f * scale));
+    			this.font_m = new Font( this.font_name, Font.BOLD, Math.round(16.0f * scale));
+    			this.font_s = new Font( this.font_name, Font.BOLD, Math.round(14.0f * scale));
+    			this.font_xs = new Font( this.font_name, Font.BOLD, Math.round(12.0f * scale));
+    			this.font_xxs = new Font( this.font_name, Font.BOLD, Math.round(10.0f * scale));
+    			this.font_xxxs = new Font( this.font_name, Font.BOLD, Math.round(8.0f * scale));
+    			this.font_normal = new Font( this.font_name, Font.BOLD, Math.round(14.0f * scale));
+    		} else {
+    			this.font_statusbar = new Font(this.font_name, Font.PLAIN, 9);
+    			this.font_tiny = new Font( this.font_name, Font.PLAIN, 10);
+    			this.font_small = new Font( this.font_name, Font.PLAIN, 12);
+    			this.font_medium = new Font( this.font_name, Font.PLAIN, 16);
+    			this.font_large = new Font( this.font_name, Font.PLAIN, 24);
+    			this.font_zl = new Font( this.font_name, Font.PLAIN, Math.round(64.0f * scale));
+    			this.font_xxxl = new Font( this.font_name, Font.PLAIN, Math.round(32.0f * scale));
+    			this.font_xxl = new Font( this.font_name, Font.PLAIN, Math.round(24.0f * scale));
+    			this.font_xl = new Font( this.font_name, Font.PLAIN, Math.round(21.0f * scale));
+    			this.font_l = new Font( this.font_name, Font.PLAIN, Math.round(18.0f * scale));
+    			this.font_m = new Font( this.font_name, Font.PLAIN, Math.round(16.0f * scale));
+    			this.font_s = new Font( this.font_name, Font.PLAIN, Math.round(14.0f * scale));
+    			this.font_xs = new Font( this.font_name, Font.PLAIN, Math.round(12.0f * scale));
+    			this.font_xxs = new Font( this.font_name, Font.PLAIN, Math.round(10.0f * scale));
+    			this.font_xxxs = new Font( this.font_name, Font.PLAIN, Math.round(8.0f * scale));
+    			this.font_normal = new Font( this.font_name, Font.PLAIN, Math.round(14.0f * scale));
+    		}
+		}
 
-            fm = g2.getFontMetrics(this.font_large);
-            this.line_height_large = fm.getAscent();
-            this.max_char_advance_large = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_large =  fm.stringWidth("88") - fm.stringWidth("8");
+    	// calculate font metrics
+    	// W is probably the largest characher...
+    	FontMetrics fm;
 
-            fm = g2.getFontMetrics(this.font_medium);
-            this.line_height_medium = fm.getAscent();
-            this.max_char_advance_medium = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_medium =  fm.stringWidth("88") - fm.stringWidth("8");
+    	fm = g2.getFontMetrics(this.font_large);
+    	this.line_height_large = fm.getAscent();
+    	this.max_char_advance_large = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_large =  fm.stringWidth("88") - fm.stringWidth("8");
 
-            fm = g2.getFontMetrics(this.font_small);
-            this.line_height_small = fm.getAscent();
-            this.max_char_advance_small = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_small =  fm.stringWidth("88") - fm.stringWidth("8");
+    	fm = g2.getFontMetrics(this.font_medium);
+    	this.line_height_medium = fm.getAscent();
+    	this.max_char_advance_medium = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_medium =  fm.stringWidth("88") - fm.stringWidth("8");
 
-            fm = g2.getFontMetrics(this.font_tiny);
-            this.line_height_tiny = fm.getAscent();
-            this.max_char_advance_tiny = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_tiny =  fm.stringWidth("88") - fm.stringWidth("8");
+    	fm = g2.getFontMetrics(this.font_small);
+    	this.line_height_small = fm.getAscent();
+    	this.max_char_advance_small = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_small =  fm.stringWidth("88") - fm.stringWidth("8");
 
-            fm = g2.getFontMetrics(this.font_zl);
-            this.line_height_zl = fm.getAscent();
-            this.max_char_advance_zl = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_zl =  fm.stringWidth("88") - fm.stringWidth("8");
+    	fm = g2.getFontMetrics(this.font_tiny);
+    	this.line_height_tiny = fm.getAscent();
+    	this.max_char_advance_tiny = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_tiny =  fm.stringWidth("88") - fm.stringWidth("8");
 
-            fm = g2.getFontMetrics(this.font_xxxl);
-            this.line_height_xxxl = fm.getAscent();
-            this.max_char_advance_xxxl = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_xxxl =  fm.stringWidth("88") - fm.stringWidth("8");
+    	fm = g2.getFontMetrics(this.font_zl);
+    	this.line_height_zl = fm.getAscent();
+    	this.max_char_advance_zl = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_zl =  fm.stringWidth("88") - fm.stringWidth("8");
 
-            fm = g2.getFontMetrics(this.font_xxl);
-            this.line_height_xxl = fm.getAscent();
-            this.max_char_advance_xxl = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_xxl =  fm.stringWidth("88") - fm.stringWidth("8");
+    	fm = g2.getFontMetrics(this.font_xxxl);
+    	this.line_height_xxxl = fm.getAscent();
+    	this.max_char_advance_xxxl = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_xxxl =  fm.stringWidth("88") - fm.stringWidth("8");
 
-            fm = g2.getFontMetrics(this.font_xl);
-            this.line_height_xl = fm.getAscent();
-            this.max_char_advance_xl = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_xl =  fm.stringWidth("88") - fm.stringWidth("8");
+    	fm = g2.getFontMetrics(this.font_xxl);
+    	this.line_height_xxl = fm.getAscent();
+    	this.max_char_advance_xxl = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_xxl =  fm.stringWidth("88") - fm.stringWidth("8");
 
-            fm = g2.getFontMetrics(this.font_l);
-            this.line_height_l = fm.getAscent();
-            this.max_char_advance_l = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_l =  fm.stringWidth("88") - fm.stringWidth("8");
+    	fm = g2.getFontMetrics(this.font_xl);
+    	this.line_height_xl = fm.getAscent();
+    	this.max_char_advance_xl = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_xl =  fm.stringWidth("88") - fm.stringWidth("8");
 
-            fm = g2.getFontMetrics(this.font_m);
-            this.line_height_m = fm.getAscent();
-            this.max_char_advance_m = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_m =  fm.stringWidth("88") - fm.stringWidth("8");
+    	fm = g2.getFontMetrics(this.font_l);
+    	this.line_height_l = fm.getAscent();
+    	this.max_char_advance_l = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_l =  fm.stringWidth("88") - fm.stringWidth("8");
 
-            fm = g2.getFontMetrics(this.font_s);
-            this.line_height_s = fm.getAscent();
-            this.max_char_advance_s = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_s =  fm.stringWidth("88") - fm.stringWidth("8");
+    	fm = g2.getFontMetrics(this.font_m);
+    	this.line_height_m = fm.getAscent();
+    	this.max_char_advance_m = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_m =  fm.stringWidth("88") - fm.stringWidth("8");
 
-            fm = g2.getFontMetrics(this.font_xs);
-            this.line_height_xs = fm.getAscent();
-            this.max_char_advance_xs = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_xs =  fm.stringWidth("88") - fm.stringWidth("8");
+    	fm = g2.getFontMetrics(this.font_s);
+    	this.line_height_s = fm.getAscent();
+    	this.max_char_advance_s = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_s =  fm.stringWidth("88") - fm.stringWidth("8");
 
-            fm = g2.getFontMetrics(this.font_xxs);
-            this.line_height_xxs = fm.getAscent();
-            this.max_char_advance_xxs = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_xxs =  fm.stringWidth("88") - fm.stringWidth("8");
+    	fm = g2.getFontMetrics(this.font_xs);
+    	this.line_height_xs = fm.getAscent();
+    	this.max_char_advance_xs = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_xs =  fm.stringWidth("88") - fm.stringWidth("8");
 
-            fm = g2.getFontMetrics(this.font_xxxs);
-            this.line_height_xxxs = fm.getAscent();
-            this.max_char_advance_xxxs = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_xxxs =  fm.stringWidth("88") - fm.stringWidth("8");
+    	fm = g2.getFontMetrics(this.font_xxs);
+    	this.line_height_xxs = fm.getAscent();
+    	this.max_char_advance_xxs = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_xxs =  fm.stringWidth("88") - fm.stringWidth("8");
 
-            fm = g2.getFontMetrics(this.font_normal);
-            this.line_height_normal = fm.getAscent();
-            this.max_char_advance_normal = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_normal =  fm.stringWidth("88") - fm.stringWidth("8");
+    	fm = g2.getFontMetrics(this.font_xxxs);
+    	this.line_height_xxxs = fm.getAscent();
+    	this.max_char_advance_xxxs = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_xxxs =  fm.stringWidth("88") - fm.stringWidth("8");
 
-            // Fixed fonts
-            this.font_fixed_zl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(41.0f * scale));
-            this.font_fixed_xxxl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(31.0f * scale));
-            this.font_fixed_xxl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(27.0f * scale));
-            this.font_fixed_xl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(23.0f * scale));
-            this.font_fixed_l = new Font( this.font_fixed_name, Font.PLAIN, Math.round(20.0f * scale));
-            this.font_fixed_m = new Font( this.font_fixed_name, Font.PLAIN, Math.round(16.0f * scale));
-            
-            // Get metrics for fixed fonts
-            fm = g2.getFontMetrics(this.font_fixed_zl);
-            this.line_height_fixed_zl = fm.getAscent();
-            this.max_char_advance_fixed_zl = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_fixed_zl =  fm.stringWidth("88") - fm.stringWidth("8");
-            
-            fm = g2.getFontMetrics(this.font_fixed_xxxl);
-            this.line_height_fixed_xxxl = fm.getAscent();
-            this.max_char_advance_fixed_xxxl = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_fixed_xxxl =  fm.stringWidth("88") - fm.stringWidth("8");
-            
-            fm = g2.getFontMetrics(this.font_fixed_xxl);
-            this.line_height_fixed_xxl = fm.getAscent();
-            this.max_char_advance_fixed_xxl = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_fixed_xxl =  fm.stringWidth("88") - fm.stringWidth("8");
+    	fm = g2.getFontMetrics(this.font_normal);
+    	this.line_height_normal = fm.getAscent();
+    	this.max_char_advance_normal = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_normal =  fm.stringWidth("88") - fm.stringWidth("8");
 
-            fm = g2.getFontMetrics(this.font_fixed_xl);
-            this.line_height_fixed_xl = fm.getAscent();
-            this.max_char_advance_fixed_xl = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_fixed_xl =  fm.stringWidth("88") - fm.stringWidth("8");
+    	// Fixed fonts
+    	this.font_fixed_zl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(41.0f * scale));
+    	this.font_fixed_xxxl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(31.0f * scale));
+    	this.font_fixed_xxl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(27.0f * scale));
+    	this.font_fixed_xl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(23.0f * scale));
+    	this.font_fixed_l = new Font( this.font_fixed_name, Font.PLAIN, Math.round(20.0f * scale));
+    	this.font_fixed_m = new Font( this.font_fixed_name, Font.PLAIN, Math.round(16.0f * scale));
 
-            fm = g2.getFontMetrics(this.font_fixed_l);
-            this.line_height_fixed_l = fm.getAscent();
-            this.max_char_advance_fixed_l = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_fixed_l =  fm.stringWidth("88") - fm.stringWidth("8");
-            
-            fm = g2.getFontMetrics(this.font_fixed_m);
-            this.line_height_fixed_m = fm.getAscent();
-            this.max_char_advance_fixed_m = fm.stringWidth("WW") - fm.stringWidth("W");
-            this.digit_width_fixed_m =  fm.stringWidth("88") - fm.stringWidth("8");
+    	// Get metrics for fixed fonts
+    	fm = g2.getFontMetrics(this.font_fixed_zl);
+    	this.line_height_fixed_zl = fm.getAscent();
+    	this.max_char_advance_fixed_zl = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_fixed_zl =  fm.stringWidth("88") - fm.stringWidth("8");
+
+    	fm = g2.getFontMetrics(this.font_fixed_xxxl);
+    	this.line_height_fixed_xxxl = fm.getAscent();
+    	this.max_char_advance_fixed_xxxl = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_fixed_xxxl =  fm.stringWidth("88") - fm.stringWidth("8");
+
+    	fm = g2.getFontMetrics(this.font_fixed_xxl);
+    	this.line_height_fixed_xxl = fm.getAscent();
+    	this.max_char_advance_fixed_xxl = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_fixed_xxl =  fm.stringWidth("88") - fm.stringWidth("8");
+
+    	fm = g2.getFontMetrics(this.font_fixed_xl);
+    	this.line_height_fixed_xl = fm.getAscent();
+    	this.max_char_advance_fixed_xl = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_fixed_xl =  fm.stringWidth("88") - fm.stringWidth("8");
+
+    	fm = g2.getFontMetrics(this.font_fixed_l);
+    	this.line_height_fixed_l = fm.getAscent();
+    	this.max_char_advance_fixed_l = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_fixed_l =  fm.stringWidth("88") - fm.stringWidth("8");
+
+    	fm = g2.getFontMetrics(this.font_fixed_m);
+    	this.line_height_fixed_m = fm.getAscent();
+    	this.max_char_advance_fixed_m = fm.stringWidth("WW") - fm.stringWidth("W");
+    	this.digit_width_fixed_m =  fm.stringWidth("88") - fm.stringWidth("8");
     }
 
 

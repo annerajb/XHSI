@@ -6,7 +6,7 @@
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * Copyright (C) 2010-2014  Marc Rogiers (marrog.123@gmail.com)
-* Copyright (C) 2015-2017  Nicolas Carel
+* Copyright (C) 2015-2019  Nicolas Carel
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -81,6 +81,8 @@ public class XHSIPreferences {
     public static final String PREF_BORDER_STYLE = "border.style";
     public static final String PREF_BORDER_COLOR = "border.color";
     public static final String PREF_USE_MORE_COLOR = "use.more.color";
+    public static final String PREF_INSTRUMENTS_FONT = "instruments.font";
+    public static final String PREF_CDU_FONT = "cdu.font";
     public static final String PREF_BOLD_FONTS = "bold.fonts";
     public static final String PREF_DRAW_BEZIER_PAVEMENTS = "draw.bezier.pavements";
 
@@ -1290,7 +1292,12 @@ public class XHSIPreferences {
             this.preferences.setProperty(PREF_ANTI_ALIAS, "true");
             this.unsaved_changes = true;
         }
-
+        
+        if ( ! this.preferences.containsKey(PREF_INSTRUMENTS_FONT) ) {
+            this.preferences.setProperty(PREF_INSTRUMENTS_FONT, "Builtin");
+            this.unsaved_changes = true;
+        }
+        
         if ( ! this.preferences.containsKey(PREF_BOLD_FONTS) ) {
 //            if ( isMac() ) {
 //                this.preferences.setProperty(PREF_BOLD_FONTS, "false");
