@@ -25,11 +25,13 @@
 package net.sourceforge.xhsi.flightdeck.pfd;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Component;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.image.BufferedImage;
 import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.model.Avionics;
@@ -100,6 +102,10 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int hdg_left;
     public int hdg_height;
     public int hdg_width;
+	public int hdg_diamond_shift;
+	public int hdg_diamond_size;
+	public BufferedImage hdg_diamond_img;
+	
     // ILS Data
     public int ils_line1;
     public int ils_line2;
@@ -250,8 +256,11 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             hdg_top = adi_cy + instrument_size * 405 / 1000;
             hdg_left = adi_cx - adi_size_left*9/10;
             hdg_height = instrument_size * 65 / 1000;
-            hdg_width = (adi_size_left + adi_size_right)*9/10;
-            
+            hdg_width = (adi_size_left + adi_size_right)*9/10;           
+            hdg_diamond_shift = hdg_height/6;
+            hdg_diamond_size = hdg_diamond_shift*2;           
+            hdg_diamond_img = createTrackDiamond();
+        	
             // ILS data on Airbus
             ils_line3 = hdg_top + hdg_width; 
             ils_line2 = ils_line3 + line_height_l;
@@ -262,6 +271,28 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
 
     }
 
+    private BufferedImage createTrackDiamond() {   
+    	BufferedImage diamond_image = new BufferedImage(hdg_diamond_size,hdg_diamond_size*3/2,BufferedImage.TYPE_INT_ARGB);
+    	Graphics2D g_dmd = diamond_image.createGraphics();
+    	// diamond
+    	int d_d = hdg_diamond_shift - 1;
+    	int diamond_x[] = {
+    			hdg_diamond_shift,
+    			hdg_diamond_shift + d_d,
+    			hdg_diamond_shift,
+    			hdg_diamond_shift - d_d
+    	};
+    	int diamond_y[] = {
+    			1 ,
+    			1 + d_d*3/2,
+    			1 + 3*d_d,
+    			1 + d_d*3/2	
+    	};
+    	g_dmd.setColor(pfd_active_color);
+    	g_dmd.setStroke(new BasicStroke(2.0f * scaling_factor));
+    	g_dmd.drawPolygon(diamond_x, diamond_y, 4);
+    	return diamond_image;
+    }
 
     public void componentResized(ComponentEvent event) {
         this.component_size = event.getComponent().getSize();

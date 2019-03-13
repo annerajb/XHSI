@@ -1158,7 +1158,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     			1 + d_d*3/2	
     	};
     	g_dmd.setColor(pfd_active_color);
-    	g_dmd.setStroke(new BasicStroke(2.0f));
+    	g_dmd.setStroke(new BasicStroke(2.0f * scaling_factor));
     	g_dmd.drawPolygon(track_x, track_y, 4);
     	return diamond_image;
     }
