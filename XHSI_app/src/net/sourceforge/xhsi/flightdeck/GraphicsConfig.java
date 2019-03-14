@@ -738,7 +738,14 @@ public class GraphicsConfig implements ComponentListener {
     	this.max_char_advance_normal = fm.stringWidth("WW") - fm.stringWidth("W");
     	this.digit_width_normal =  fm.stringWidth("88") - fm.stringWidth("8");
 
-    	// Fixed fonts
+    	// Fixed fonts (CDU)
+    	boolean use_builtin_cdu_font = this.preferences.get_preference(XHSIPreferences.PREF_CDU_FONT).equals("Builtin");
+    	if (!use_builtin_cdu_font) { 
+    		this.font_fixed_name = this.preferences.get_preference(XHSIPreferences.PREF_CDU_FONT);
+    	} else {
+    		this.font_fixed_name = "Andale Mono";
+    	}
+    	
     	this.font_fixed_zl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(41.0f * scale));
     	this.font_fixed_xxxl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(31.0f * scale));
     	this.font_fixed_xxl = new Font( this.font_fixed_name, Font.PLAIN, Math.round(27.0f * scale));
