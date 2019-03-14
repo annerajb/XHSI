@@ -26,6 +26,8 @@ package net.sourceforge.xhsi;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -123,6 +125,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private JCheckBox use_more_color_checkbox;
     private JComboBox instruments_font_combobox;
     private String instruments_fonts[] = { "Builtin", "Verdana", "Tahoma", "Arial", "Arial Rounded MT Bold", "DejaVu Sans Mono", "FreeSans", "Lucida Sans", "MS Reference Sans Serif", "Ubuntu", "Ubuntu Mono", "Lucida Sans" };
+    private JComboBox cdu_font_combobox;
+    private String cdu_fonts[] = { "Builtin", "Andale Mono", "DejaVu Sans Mono", "Ubuntu Mono"};
+
     // TODO: Get system fonts list
     private JCheckBox bold_fonts_checkbox;    
     private JCheckBox anti_alias_checkbox;
@@ -326,6 +331,11 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
         
         // GRAPHICS
+        
+        // Get system font list
+        GraphicsEnvironment ge;  
+        ge = GraphicsEnvironment.getLocalGraphicsEnvironment();  
+        String[] font_families = ge.getAvailableFontFamilyNames();
 
         String instrumentstyle = preferences.get_preference(XHSIPreferences.PREF_INSTRUMENT_STYLE);
         for (int i=0; i<instrument_styles.length; i++) {
@@ -338,6 +348,13 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         for (int i=0; i<instruments_fonts.length; i++) {
             if ( instruments_font.equals( instruments_fonts[i] ) ) {
                 this.instruments_font_combobox.setSelectedIndex(i);
+            }
+        }
+        
+        String cdu_font = preferences.get_preference(XHSIPreferences.PREF_CDU_FONT);
+        for (int i=0; i<instruments_fonts.length; i++) {
+            if ( cdu_font.equals( instruments_fonts[i] ) ) {
+                this.cdu_font_combobox.setSelectedIndex(i);
             }
         }
         
@@ -1182,6 +1199,25 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         }
         this.instruments_font_combobox.addActionListener(this);
         graphics_panel.add(this.instruments_font_combobox, cons);
+        dialog_line++;
+        
+        // CDU fonts
+        cons.gridx = 0;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        graphics_panel.add(new JLabel("Instruments font", JLabel.TRAILING), cons);
+        
+        cons.gridx = 2;
+        cons.gridwidth = 1;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.cdu_font_combobox = new JComboBox();
+        for (int i=0; i<cdu_fonts.length; i++) {
+            this.cdu_font_combobox.addItem(this.cdu_fonts[i]);
+        }
+        this.cdu_font_combobox.addActionListener(this);
+        graphics_panel.add(this.cdu_font_combobox, cons);
         dialog_line++;
         
         // Bold fonts
@@ -2574,6 +2610,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
             if ( ! instruments_fonts[this.instruments_font_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_INSTRUMENTS_FONT)) )
                 this.preferences.set_preference(XHSIPreferences.PREF_INSTRUMENTS_FONT, instruments_fonts[this.instruments_font_combobox.getSelectedIndex()]);
+
+            if ( ! cdu_fonts[this.cdu_font_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_CDU_FONT)) )
+                this.preferences.set_preference(XHSIPreferences.PREF_CDU_FONT, cdu_fonts[this.cdu_font_combobox.getSelectedIndex()]);
 
             if ( this.draw_bezier_pavements_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_DRAW_BEZIER_PAVEMENTS).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_DRAW_BEZIER_PAVEMENTS, this.draw_bezier_pavements_checkbox.isSelected()?"true":"false");
