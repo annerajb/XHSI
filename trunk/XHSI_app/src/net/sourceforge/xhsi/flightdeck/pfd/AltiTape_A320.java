@@ -28,11 +28,8 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
-import java.awt.geom.Area;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.logging.Logger;
@@ -53,6 +50,11 @@ public class AltiTape_A320 extends PFDSubcomponent {
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
     
+    DecimalFormat decaform;
+    DecimalFormat feet_format;
+    DecimalFormat inhg_format;
+    DecimalFormatSymbols format_symbols;
+    
     enum AltitudeAlert { NORMAL, FLASHING, PULSING };
     
     private AltitudeAlert altitude_alert_status;
@@ -64,6 +66,12 @@ public class AltiTape_A320 extends PFDSubcomponent {
 
     public AltiTape_A320(ModelFactory model_factory, PFDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
+        decaform = new DecimalFormat("00");
+        feet_format = new DecimalFormat("000");
+        inhg_format = new DecimalFormat("00.00");
+        format_symbols = inhg_format.getDecimalFormatSymbols();
+        format_symbols.setDecimalSeparator('.');
+        inhg_format.setDecimalFormatSymbols(format_symbols);
         altitude_alert_status = AltitudeAlert.NORMAL;
         altitude_captured = true;
         altitude_captured_ap = Math.round(this.avionics.autopilot_altitude());
@@ -120,17 +128,15 @@ public class AltiTape_A320 extends PFDSubcomponent {
         	std = this.avionics.qpac_baro_std(); 
         	qnh_display = this.avionics.qpac_baro_hide();        	
         }
-        
-        int altitape_right = pfd_gc.altitape_left + pfd_gc.tape_width*60/100;       
-        
+              
         pfd_gc.setTransparent(g2, this.preferences.get_draw_colorgradient_horizon());
         g2.setColor(pfd_gc.instrument_background_color);
-        g2.fillRect(pfd_gc.altitape_left + 1, pfd_gc.tape_top - 1, altitape_right - pfd_gc.altitape_left - 1, pfd_gc.tape_height + 2);	
+        g2.fillRect(pfd_gc.altitape_left + 1, pfd_gc.tape_top - 1, pfd_gc.altitape_right - pfd_gc.altitape_left - 1, pfd_gc.tape_height + 2);	
         g2.setColor(pfd_gc.markings_color);
-        g2.drawLine(altitape_right, pfd_gc.tape_top ,altitape_right, pfd_gc.tape_top + pfd_gc.tape_height + 1 );
+        g2.drawLine(pfd_gc.altitape_right, pfd_gc.tape_top ,pfd_gc.altitape_right, pfd_gc.tape_top + pfd_gc.tape_height + 1 );
         if (std) {
-        	g2.drawLine(pfd_gc.altitape_left, pfd_gc.tape_top, altitape_right, pfd_gc.tape_top );
-        	g2.drawLine(pfd_gc.altitape_left, pfd_gc.tape_top + pfd_gc.tape_height + 1, altitape_right, pfd_gc.tape_top + pfd_gc.tape_height + 1 );
+        	g2.drawLine(pfd_gc.altitape_left, pfd_gc.tape_top, pfd_gc.altitape_right, pfd_gc.tape_top );
+        	g2.drawLine(pfd_gc.altitape_left, pfd_gc.tape_top + pfd_gc.tape_height + 1, pfd_gc.altitape_right, pfd_gc.tape_top + pfd_gc.tape_height + 1 );
         } else {
             g2.drawLine(pfd_gc.altitape_left, pfd_gc.tape_top, pfd_gc.altitape_left + pfd_gc.tape_width*7/8, pfd_gc.tape_top );
             g2.drawLine(pfd_gc.altitape_left, pfd_gc.tape_top + pfd_gc.tape_height + 1,pfd_gc.altitape_left + pfd_gc.tape_width*7/8, pfd_gc.tape_top + pfd_gc.tape_height + 1 );        	
@@ -190,15 +196,15 @@ public class AltiTape_A320 extends PFDSubcomponent {
             int mda_y = pfd_gc.adi_cy - Math.round( ((float)dest_alt + mda - alt) * pfd_gc.tape_height / alt_f_range );
             // between 500 and 1000ft
             g2.setColor(pfd_gc.pfd_caution_color);
-            g2.drawLine(altitape_right + pfd_gc.tape_width / 12, h1000_y, altitape_right + pfd_gc.tape_width / 12, mda_y);
-            g2.drawLine(altitape_right+1, h1000_y, altitape_right + pfd_gc.tape_width / 12, h1000_y);
+            g2.drawLine(pfd_gc.altitape_right + pfd_gc.tape_width / 12, h1000_y, pfd_gc.altitape_right + pfd_gc.tape_width / 12, mda_y);
+            g2.drawLine(pfd_gc.altitape_right+1, h1000_y, pfd_gc.altitape_right + pfd_gc.tape_width / 12, h1000_y);
             //g2.fillRect(altitape_right+1,  h1000_y, pfd_gc.tape_width / 7 ,  pfd_gc.tape_top + pfd_gc.tape_height + h1000_y - h500_y );
             // between 500 and 1000ft            
 
         	g2.setStroke(new BasicStroke(2.0f * halfstroke));
             float red_dashes[] = { halfstroke*2.0f, halfstroke*2.0f };
             g2.setStroke(new BasicStroke(2.0f * halfstroke, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, red_dashes, 0.0f));
-            g2.drawLine(altitape_right+1+halfstroke, mda_y, altitape_right+1+halfstroke, ra_y+2);
+            g2.drawLine(pfd_gc.altitape_right+1+halfstroke, mda_y, pfd_gc.altitape_right+1+halfstroke, ra_y+2);
             // g2.fillRect(altitape_right+1, h500_y, pfd_gc.tape_width / 7 ,  pfd_gc.tape_top + pfd_gc.tape_height + h500_y - loc_y + 2 );
             // localizer altitude
             g2.setStroke(original_stroke);
@@ -215,10 +221,10 @@ public class AltiTape_A320 extends PFDSubcomponent {
         if ( radio_altitude < 570f ) { 
             // Ground bar on Airbus
         	g2.setColor(pfd_gc.pfd_alarm_color); 
-        	g2.fillRect(altitape_right+1, ra_y, pfd_gc.tape_width / 11 ,  pfd_gc.tape_top + pfd_gc.tape_height - ra_y + 2);
+        	g2.fillRect(pfd_gc.altitape_right+1, ra_y, pfd_gc.tape_width / 11 ,  pfd_gc.tape_top + pfd_gc.tape_height - ra_y + 2);
             // TODO : Airbus FCOM 1.31.40 p.13 (2) Landing elevation, an horizontal blue line indicates barometric Ground that may differ from radio altimeter ground
             g2.setColor(Color.blue);
-            g2.drawLine(pfd_gc.altitape_left, gnd_y, altitape_right, gnd_y);
+            g2.drawLine(pfd_gc.altitape_left, gnd_y, pfd_gc.altitape_right, gnd_y);
         } 
 
         		
@@ -233,7 +239,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
             
             // Airbus marks are on the right
            	g2.setColor(pfd_gc.markings_color);
-           	g2.drawLine(altitape_right, alt_y, altitape_right - pfd_gc.tape_width*1/12, alt_y);
+           	g2.drawLine(pfd_gc.altitape_right, alt_y, pfd_gc.altitape_right - pfd_gc.tape_width*1/12, alt_y);
  
             if (alt_mark % alt_modulo == 0) {
             	g2.setFont(pfd_gc.font_xl);
@@ -421,57 +427,30 @@ public class AltiTape_A320 extends PFDSubcomponent {
 
     	// Altitude Indication
     	// Airbus FCOM 1.31.40 p11 (1)
-    	// 
-    	int[] box_x = {
-    			pfd_gc.altitape_left - pfd_gc.tape_width*2/50,
-    			altitape_right,
-    			altitape_right,
-    			pfd_gc.altitape_left + pfd_gc.digit_width_xxl*3 + pfd_gc.digit_width_xl * 9/4,
-    			pfd_gc.altitape_left + pfd_gc.digit_width_xxl*3 + pfd_gc.digit_width_xl * 9/4,
-    			altitape_right,
-    			altitape_right,
-    			pfd_gc.altitape_left - pfd_gc.tape_width*2/50,
-    	};
-    	int[] box_y = {
-    			pfd_gc.adi_cy - pfd_gc.line_height_xxl*6/9,
-    			pfd_gc.adi_cy - pfd_gc.line_height_xxl*6/9,
-    			pfd_gc.adi_cy - pfd_gc.line_height_l*3/2,
-    			pfd_gc.adi_cy - pfd_gc.line_height_l*3/2,
-    			pfd_gc.adi_cy + pfd_gc.line_height_l*3/2,
-    			pfd_gc.adi_cy + pfd_gc.line_height_l*3/2,
-    			pfd_gc.adi_cy + pfd_gc.line_height_xxl*6/9,
-    			pfd_gc.adi_cy + pfd_gc.line_height_xxl*6/9,
-    	};
     	
-    	//Composite oricomp = g2.getComposite();
-    	//g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-    	g2.setColor(pfd_gc.background_color);
-    	// g2.fillPolygon(box_x, box_y, 8);
-    	g2.fillRect(pfd_gc.altitape_left - pfd_gc.tape_width*2/50, pfd_gc.adi_cy - pfd_gc.line_height_xxl*6/9, altitape_right-pfd_gc.altitape_left+pfd_gc.tape_width*3/50, pfd_gc.line_height_xxl*12/9);
-    	//g2.setComposite(oricomp);
-    	
+    	g2.setColor(pfd_gc.background_color);    	
+    	g2.fillRect(pfd_gc.alti_ind_rect_x, pfd_gc.alti_ind_rect_y, pfd_gc.alti_ind_rect_w, pfd_gc.alti_ind_rect_h);
     	// Airbus FCOM 1.31.40 p11 (1) amber bold when deviation from FCU selected altitude or flight level
     	// The altitude window changes from yellow to amber, if the aircraft deviates from the FCU selected altitude or flight level
     	switch (altitude_alert_status) {
     	case NORMAL : 
     		g2.setColor(pfd_gc.pfd_reference_color);
-    		g2.drawPolyline(box_x, box_y, 8);
+    		g2.drawPolyline(pfd_gc.alti_box_x, pfd_gc.alti_box_y, 8);    		
     		break;
     	case PULSING : 
     		g2.setColor(pfd_gc.pfd_reference_color);
     		if ((pfd_gc.current_time_millis % 1000) < 500) g2.setStroke(new BasicStroke(4.0f));
-    		g2.drawPolyline(box_x, box_y, 8);
+    		g2.drawPolyline(pfd_gc.alti_box_x, pfd_gc.alti_box_y, 8);
     		g2.setStroke(original_stroke);
     		break;
     	case FLASHING : 
     		g2.setColor(pfd_gc.pfd_caution_color);
-    		if ((pfd_gc.current_time_millis % 1000) < 500) { g2.setStroke(new BasicStroke(4.0f)); g2.drawPolyline(box_x, box_y, 8); g2.setStroke(original_stroke); }
+    		if ((pfd_gc.current_time_millis % 1000) < 500) { g2.setStroke(new BasicStroke(4.0f)); g2.drawPolyline(pfd_gc.alti_box_x, pfd_gc.alti_box_y, 8); g2.setStroke(original_stroke); }
     		break;
     	}
 
 
-    	Area alt_ind_area = new Area ( new Polygon(box_x, box_y, 8) );
-    	g2.clip(alt_ind_area);
+    	g2.clip(pfd_gc.alti_ind_area);
         // g2.clipRect(pfd_gc.altitape_left, pfd_gc.adi_cy - pfd_gc.line_height_xxl, pfd_gc.tape_width*2, 2 * pfd_gc.line_height_xxl);
 
         // TODO : flight phase + MDA MH settings
@@ -500,12 +479,12 @@ public class AltiTape_A320 extends PFDSubcomponent {
             int	x1k = x10k + pfd_gc.digit_width_xxl;
             int	x100 = x1k + pfd_gc.digit_width_xxl;
             //int	x20 = x100 + pfd_gc.digit_width_xxl;
-            int x20 = altitape_right + pfd_gc.digit_width_l*2/10 ;
+            int x20 = pfd_gc.altitape_right + pfd_gc.digit_width_l*2/10 ;
 
              
             int ydelta = Math.round( pfd_gc.line_height_l*alt_frac );
 
-            DecimalFormat decaform = new DecimalFormat("00");
+            // DecimalFormat decaform = new DecimalFormat("00");
             g2.setFont(pfd_gc.font_l);
             g2.drawString(decaform.format( (alt_20 + 40) % 100 ), x20, pfd_gc.adi_cy + pfd_gc.line_height_l/2 - 2 + ydelta - pfd_gc.line_height_l*2);
             g2.drawString(decaform.format( (alt_20 + 20) % 100 ), x20, pfd_gc.adi_cy + pfd_gc.line_height_l/2 - 2 + ydelta - pfd_gc.line_height_l);
@@ -573,7 +552,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
                          
             int ydelta = Math.round( pfd_gc.line_height_l*alt_frac );
 
-            DecimalFormat decaform = new DecimalFormat("00");
+            // DecimalFormat decaform = new DecimalFormat("00");
             g2.setFont(pfd_gc.font_l);
             g2.drawString(decaform.format( (alt_20 + 40) % 100 ), x20, pfd_gc.adi_cy + pfd_gc.line_height_l/2 - 2 - ydelta + pfd_gc.line_height_l*2);
             g2.drawString(decaform.format( (alt_20 + 20) % 100 ), x20, pfd_gc.adi_cy + pfd_gc.line_height_l/2 - 2 - ydelta + pfd_gc.line_height_l);
@@ -643,10 +622,9 @@ public class AltiTape_A320 extends PFDSubcomponent {
     	    	ap_alt = this.avionics.qpac_constraint_alt();
     		}
     	}
+    	
         // Clip outside area
-        Area outside = new Area(new Rectangle(pfd_gc.altitape_left - pfd_gc.tape_width*3/24, pfd_gc.tape_top, pfd_gc.tape_width + pfd_gc.tape_width*3/24, pfd_gc.tape_height));
-        outside.subtract(new Area(alt_ind_area));
-        g2.clip(outside);
+        g2.clip(pfd_gc.alti_outside_area);
         if (! hide_bug ) g2.drawPolygon(bug_x, bug_y, 7);
     	g2.clearRect(pfd_gc.altitape_left-1, alt_str_y - pfd_gc.line_height_l*9/10, alt_str_w + pfd_gc.digit_width_l*2/3, pfd_gc.line_height_l);
     	g2.setFont(pfd_gc.font_l);
@@ -655,8 +633,6 @@ public class AltiTape_A320 extends PFDSubcomponent {
         if ( hide_bug )  g2.drawString(alt_str, alt_str_x, alt_str_y);   
 
     }
-
-
 
 }
 

@@ -21,37 +21,19 @@
 */
 package net.sourceforge.xhsi.flightdeck.pfd;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-//import java.awt.Color;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Composite;
-import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
-//import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
 import java.util.logging.Logger;
-
-//import net.sourceforge.xhsi.XHSISettings;
 
 import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.Localizer;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.NavigationRadio;
 import net.sourceforge.xhsi.model.RadioNavigationObject;
-
-//import net.sourceforge.xhsi.panel.GraphicsConfig;
-//import net.sourceforge.xhsi.panel.Subcomponent;
-
 
 
 public class AltiTape extends PFDSubcomponent {
@@ -60,9 +42,19 @@ public class AltiTape extends PFDSubcomponent {
 
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
-
+    DecimalFormat decaform;
+    DecimalFormat feet_format;
+    DecimalFormat inhg_format;
+    DecimalFormatSymbols format_symbols;
+    
     public AltiTape(ModelFactory model_factory, PFDGraphicsConfig hsi_gc, Component parent_component) {
         super(model_factory, hsi_gc, parent_component);
+        decaform = new DecimalFormat("00");
+        feet_format = new DecimalFormat("000");
+        inhg_format = new DecimalFormat("00.00");
+        format_symbols = inhg_format.getDecimalFormatSymbols();
+        format_symbols.setDecimalSeparator('.');
+        inhg_format.setDecimalFormatSymbols(format_symbols);
     }
 
 
@@ -89,9 +81,9 @@ public class AltiTape extends PFDSubcomponent {
 
         // Altitude scale
         float alt = this.aircraft.altitude_ind();
-//alt = 39660;
-//float utc_time = this.aircraft.sim_time_zulu();
-//alt = (utc_time) % 10000 -5300;
+//  alt = 39660;
+// float utc_time = this.aircraft.sim_time_zulu();
+// alt = (utc_time) % 10000 -5300;
 
 
         // Landing altitude
@@ -259,9 +251,7 @@ public class AltiTape extends PFDSubcomponent {
 
 
         // AP ALT preselect
-        DecimalFormat feet_format = new DecimalFormat("000");
         int ap_alt = Math.round(this.avionics.autopilot_altitude());
-//ap_alt=41000;
         g2.setColor(pfd_gc.heading_bug_color);
         g2.setFont(pfd_gc.font_l);
         String alt_str = feet_format.format(ap_alt % 1000);
@@ -299,10 +289,6 @@ public class AltiTape extends PFDSubcomponent {
         if ( ! std ) {
             g2.setFont(pfd_gc.font_l);
             g2.drawString(" HPA", pfd_gc.altitape_left + 4*pfd_gc.digit_width_xl, pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_xl*9/8);
-            DecimalFormat inhg_format = new DecimalFormat("00.00");
-            DecimalFormatSymbols format_symbols = inhg_format.getDecimalFormatSymbols();
-            format_symbols.setDecimalSeparator('.');
-            inhg_format.setDecimalFormatSymbols(format_symbols);
             String inhg_str = inhg_format.format(alt_inhg);
             g2.setFont(pfd_gc.font_m);
             g2.drawString(inhg_str, pfd_gc.altitape_left + 4*pfd_gc.digit_width_xl - pfd_gc.get_text_width(g2, pfd_gc.font_m, inhg_str), pfd_gc.tape_top + pfd_gc.tape_height + pfd_gc.line_height_xl*9/8 + pfd_gc.line_height_m);
@@ -312,37 +298,18 @@ public class AltiTape extends PFDSubcomponent {
 
 
         // alt readout
-        int[] box_x = {
-            pfd_gc.altitape_left + pfd_gc.tape_width*1/8,
-            pfd_gc.altitape_left + pfd_gc.tape_width*1/8 + pfd_gc.tape_width*3/16,
-            pfd_gc.altitape_left + pfd_gc.tape_width*1/8 + pfd_gc.tape_width*3/16,
-            pfd_gc.altitape_left + pfd_gc.tape_width + pfd_gc.tape_width*35/80,
-            pfd_gc.altitape_left + pfd_gc.tape_width + pfd_gc.tape_width*35/80,
-            pfd_gc.altitape_left + pfd_gc.tape_width*1/8 + pfd_gc.tape_width*3/16,
-            pfd_gc.altitape_left + pfd_gc.tape_width*1/8 + pfd_gc.tape_width*3/16,
-        };
-        int[] box_y = {
-            pfd_gc.adi_cy,
-            pfd_gc.adi_cy + pfd_gc.tape_width*3/20,
-            pfd_gc.adi_cy + pfd_gc.line_height_xxl,
-            pfd_gc.adi_cy + pfd_gc.line_height_xxl,
-            pfd_gc.adi_cy - pfd_gc.line_height_xxl,
-            pfd_gc.adi_cy - pfd_gc.line_height_xxl,
-            pfd_gc.adi_cy - pfd_gc.tape_width*3/20
-        };
-//Composite oricomp = g2.getComposite();
-//g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+        // Composite oricomp = g2.getComposite();
+        // g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
         g2.setColor(pfd_gc.background_color);
-        g2.fillPolygon(box_x, box_y, 7);
-//g2.setComposite(oricomp);
+        g2.fillPolygon(pfd_gc.alti_box_x, pfd_gc.alti_box_y, 7);
+        // g2.setComposite(oricomp);
         g2.setColor(pfd_gc.markings_color);
-        g2.drawPolygon(box_x, box_y, 7);
-
+        g2.drawPolygon(pfd_gc.alti_box_x, pfd_gc.alti_box_y, 7);
         g2.clipRect(pfd_gc.altitape_left, pfd_gc.adi_cy - pfd_gc.line_height_xxl, pfd_gc.tape_width*2, 2 * pfd_gc.line_height_xxl);
 
         if ( alt >= 0.0f ) {
 
-//            int alt_int = alt.intValue();
+        	// int alt_int = alt.intValue();
             int alt_int = (int)alt;
             int alt_20 = alt_int / 20 * 20;
             float alt_frac = (alt - (float)alt_20) / 20.0f;
@@ -356,7 +323,7 @@ public class AltiTape extends PFDSubcomponent {
             int x20 = x100 + pfd_gc.digit_width_l;
             int ydelta = Math.round( pfd_gc.line_height_l*alt_frac );
 
-            DecimalFormat decaform = new DecimalFormat("00");
+            // DecimalFormat decaform = new DecimalFormat("00");
             g2.setFont(pfd_gc.font_l);
             g2.drawString(decaform.format( (alt_20 + 40) % 100 ), x20, pfd_gc.adi_cy + pfd_gc.line_height_l/2 - 2 + ydelta - pfd_gc.line_height_l*2);
             g2.drawString(decaform.format( (alt_20 + 20) % 100 ), x20, pfd_gc.adi_cy + pfd_gc.line_height_l/2 - 2 + ydelta - pfd_gc.line_height_l);
@@ -414,7 +381,7 @@ public class AltiTape extends PFDSubcomponent {
 
             // the same for negative altitudes, except that the vertical positions have to be reversed
 
-//            int alt_int = -alt.intValue();
+        	// int alt_int = -alt.intValue();
             int alt_int = - (int)alt;
             int alt_20 = alt_int / 20 * 20;
             float alt_frac = (-alt - (float)alt_20) / 20.0f;
@@ -428,7 +395,6 @@ public class AltiTape extends PFDSubcomponent {
             int x20 = x100 + pfd_gc.digit_width_xl;
             int ydelta = Math.round( pfd_gc.line_height_l*alt_frac );
 
-            DecimalFormat decaform = new DecimalFormat("00");
             g2.setFont(pfd_gc.font_l);
             g2.drawString(decaform.format( (alt_20 + 40) % 100 ), x20, pfd_gc.adi_cy + pfd_gc.line_height_l/2 - 2 - ydelta + pfd_gc.line_height_l*2);
             g2.drawString(decaform.format( (alt_20 + 20) % 100 ), x20, pfd_gc.adi_cy + pfd_gc.line_height_l/2 - 2 - ydelta + pfd_gc.line_height_l);
