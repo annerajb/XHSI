@@ -29,8 +29,11 @@ import java.awt.BasicStroke;
 import java.awt.Component;
 import java.awt.Composite;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.util.logging.Logger;
 
@@ -59,8 +62,7 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int tape_top;
     public int tape_height;
     public int tape_width;
-    public int speedtape_left;
-    public int altitape_left;
+    public int speedtape_left;    
     public int fma_left;
     public int fma_width;
     public int fma_top;
@@ -112,7 +114,19 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     public int ils_line3;
     public int ils_x;
     
-    
+    // Altimeter tape
+    public int altitape_left;
+    public int altitape_right;
+    public int[] alti_box_x;
+    public int[] alti_box_y;
+    public int[] alti_bug_x;
+    public int alti_ind_rect_x;
+    public int alti_ind_rect_y;
+    public int alti_ind_rect_w;
+    public int alti_ind_rect_h;
+    public Area alti_ind_area;
+    public Area alti_outside_area;
+
 
     public PFDGraphicsConfig(Component root_component, int du) {
         super(root_component);
@@ -178,6 +192,7 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             altitape_left = adi_cx + adi_size_right + (instrument_size * 73 / 1000);
 
             if ( instrument_style == Avionics.STYLE_AIRBUS ) {
+            	// TODO : airbus_style is set in super class !!
             	airbus_style = true;
             	boeing_style = false;
             	adi_cy = panel_offset_y + this.panel_rect.y + instrument_size * 515 / 1000;
@@ -190,7 +205,7 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
                 adi_pitch90 = adi_size_down * 90 / adi_pitchscale;
                 tape_width = instrument_size * 140 / 1000;
                 speedtape_left = adi_cx - adi_size_left - (instrument_size * 30 / 1000) - tape_width;
-                altitape_left = adi_cx + adi_size_right + (instrument_size * 65 / 1000);
+                
             	tape_height = instrument_size * 530 / 1000;
                 vsi_height = instrument_size * 640 / 1000;
                 fma_width =  instrument_size * 980 / 1000; // full width on A320 
@@ -200,6 +215,58 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
                 fma_col_2 = fma_width*206/500;
                 fma_col_3 = fma_width*325/500;
                 fma_col_4 = fma_width*419/500;
+                
+                // Altimeter tape
+                altitape_left = adi_cx + adi_size_right + (instrument_size * 65 / 1000);
+                altitape_right = altitape_left + tape_width*60/100; 
+            	alti_box_x = new int[] {
+            			altitape_left - tape_width*2/50,
+            			altitape_right,
+            			altitape_right,
+            			altitape_left + digit_width_xxl*3 + digit_width_xl * 9/4,
+            			altitape_left + digit_width_xxl*3 + digit_width_xl * 9/4,
+            			altitape_right,
+            			altitape_right,
+            			altitape_left - tape_width*2/50,
+            	};
+            	alti_box_y = new int[] {
+            			adi_cy - line_height_xxl*6/11,
+            			adi_cy - line_height_xxl*6/11,
+            			adi_cy - line_height_l*12/10,
+            			adi_cy - line_height_l*12/10,
+            			adi_cy + line_height_l*12/10,
+            			adi_cy + line_height_l*12/10,
+            			adi_cy + line_height_xxl*6/11,
+            			adi_cy + line_height_xxl*6/11,
+            	};
+            	alti_ind_rect_x = altitape_left - tape_width*2/50;
+            	alti_ind_rect_y = adi_cy - line_height_xxl*6/11;
+            	alti_ind_rect_w = altitape_right - altitape_left + tape_width*3/50 + 1;
+            	alti_ind_rect_h = line_height_xxl*12/11;
+                alti_bug_x = new int[] {
+                		altitape_left - 2,
+                		altitape_left - tape_width*3/24,
+                		altitape_left - tape_width*3/24,
+                		altitape_left + tape_width*4/20,
+                		altitape_left + tape_width*4/20,
+                		altitape_left - tape_width*3/24,
+                		altitape_left - tape_width*3/24
+                };
+                /*
+                int[] alti_bug_y = {
+                		alt_y,
+                		alt_y + pfd_gc.tape_width*2/21,
+                		alt_y + pfd_gc.tape_height*2/18,
+                		alt_y + pfd_gc.tape_height*2/18,
+                		alt_y - pfd_gc.tape_height*2/18,
+                		alt_y - pfd_gc.tape_height*2/18,
+                		alt_y - pfd_gc.tape_width*2/21
+                };
+                */ 
+                alti_ind_area = new Area ( new Polygon(alti_box_x, alti_box_y, 8) );
+                alti_outside_area = new Area(new Rectangle(altitape_left - tape_width*3/24, tape_top, tape_width + tape_width*3/24, tape_height));
+                alti_outside_area.subtract(new Area(alti_ind_area));
+                
             } else {
             	airbus_style = false;
             	boeing_style = true;
@@ -212,6 +279,26 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
                 fma_col_2 = fma_width*206/500;
                 fma_col_3 = fma_width*325/500;
                 fma_col_4 = fma_width*419/500;
+                
+                // Altimeter tape
+                alti_box_x = new int[]  {
+                    altitape_left + tape_width*1/8,
+                    altitape_left + tape_width*1/8 + tape_width*3/16,
+                    altitape_left + tape_width*1/8 + tape_width*3/16,
+                    altitape_left + tape_width + tape_width*35/80,
+                    altitape_left + tape_width + tape_width*35/80,
+                    altitape_left + tape_width*1/8 + tape_width*3/16,
+                    altitape_left + tape_width*1/8 + tape_width*3/16,
+                };
+                alti_box_y = new int[] {
+                    adi_cy,
+                    adi_cy + tape_width*3/20,
+                    adi_cy + line_height_xxl,
+                    adi_cy + line_height_xxl,
+                    adi_cy - line_height_xxl,
+                    adi_cy - line_height_xxl,
+                    adi_cy - tape_width*3/20
+                };
             }
             
             tape_top = adi_cy - tape_height/2;
