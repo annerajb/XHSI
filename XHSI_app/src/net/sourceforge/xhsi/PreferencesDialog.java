@@ -124,7 +124,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     private String bordercolors[] = { XHSIPreferences.BORDER_GRAY, XHSIPreferences.BORDER_BROWN, XHSIPreferences.BORDER_BLUE };
     private JCheckBox use_more_color_checkbox;
     private JComboBox instruments_font_combobox;
-    private String instruments_fonts[] = { "Builtin", "Verdana", "Tahoma", "Arial", "Arial Rounded MT Bold", "DejaVu Sans Mono", "FreeSans", "Lucida Sans", "MS Reference Sans Serif", "Ubuntu", "Ubuntu Mono", "Lucida Sans" };
+    private String instruments_fonts[] = { "Builtin", "Verdana", "Tahoma", "boeingGlass", "Arial", "Arial Rounded MT Bold", "DejaVu Sans Mono", "FreeSans", "Lucida Sans", "MS Reference Sans Serif", "Ubuntu", "Ubuntu Mono", "Lucida Sans" };
     private JComboBox cdu_font_combobox;
     private String cdu_fonts[] = { "Builtin", "Andale Mono", "DejaVu Sans Mono", "Ubuntu Mono"};
 

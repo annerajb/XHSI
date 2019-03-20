@@ -90,7 +90,8 @@ public class SpeedsLabel extends NDSubcomponent {
         g2.drawString("GS", nd_gc.sl_gs_label_x, nd_gc.sl_speeds_y);
         g2.setFont(nd_gc.sl_font_value);
         g2.setColor(nd_gc.speed_color);
-        g2.drawString("" + Math.round(aircraft.ground_speed()), nd_gc.sl_gs_x, nd_gc.sl_speeds_y);
+        String gs_str = "" + Math.round(aircraft.ground_speed());
+        g2.drawString(gs_str, nd_gc.sl_gs_x - nd_gc.get_text_width(g2, nd_gc.sl_font_value, gs_str), nd_gc.sl_speeds_y);
 
         // True Air Speed
         g2.setColor(nd_gc.top_text_color);
@@ -98,7 +99,8 @@ public class SpeedsLabel extends NDSubcomponent {
         g2.drawString("TAS", nd_gc.sl_tas_label_x, nd_gc.sl_speeds_y);
         g2.setFont(nd_gc.sl_font_value);
         g2.setColor(nd_gc.speed_color);
-        g2.drawString("" + Math.round(aircraft.true_air_speed()), nd_gc.sl_tas_x, nd_gc.sl_speeds_y);
+        String tas_str = "" + Math.round(aircraft.true_air_speed());
+        g2.drawString(tas_str, nd_gc.sl_tas_x - nd_gc.get_text_width(g2, nd_gc.sl_font_value, tas_str), nd_gc.sl_speeds_y);
 
         g2.setColor(nd_gc.wind_color);
         String wind_text = null;
@@ -123,8 +125,8 @@ public class SpeedsLabel extends NDSubcomponent {
         		wind_text = degrees_formatter.format(wind_dir);
         		speed_text = speed_formatter.format(wind_speed);
         	} else {
-        		wind_text = "---";
-        		speed_text = "---";
+        		wind_text = "___";
+        		speed_text = "___";
         	}
         	g2.drawString(wind_text, nd_gc.sl_wind_x, nd_gc.sl_wind_y);  
         	g2.drawString(speed_text, nd_gc.sl_wind_speed_x, nd_gc.sl_wind_y);

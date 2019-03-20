@@ -96,7 +96,7 @@ public class DestinationLabel extends NDSubcomponent {
         int buf_img_height = -1;
 
         if (timed_filter.time_to_perform()) {
-
+        	
             // create a new image when the timer triggers
 
             buf_img_width = nd_gc.max_char_advance_l * 8;
@@ -168,6 +168,8 @@ public class DestinationLabel extends NDSubcomponent {
 
         }
 
+        // if (nd_gc.powered && nd_gc.airbus_style) drawApproachType(g2);
+        
         // copy the buffered image to the screen on each invocation of paint()
         if ( nd_gc.powered && this.destination_active ) {
 
@@ -252,5 +254,10 @@ public class DestinationLabel extends NDSubcomponent {
 
     }
 
+    public void drawApproachType(Graphics2D g2) {
+    	g2.setFont(nd_gc.appr_type_font);
+    	g2.setColor(nd_gc.pfd_active_color);
+    	g2.drawString("ILS03", nd_gc.appr_type_x, nd_gc.appr_type_y);    	
+    }
 
 }
