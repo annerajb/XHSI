@@ -231,12 +231,13 @@ public class AltiTape_A320 extends PFDSubcomponent {
         // scale markings
         // round to nearest multiple of 100
         int alt100 = Math.round(alt / 100.0f) * 100;
+        int alt_x = pfd_gc.altitape_left + 1 + pfd_gc.tape_width*1/40;
         
         // From there, go 500ft up and down on Airbus     
         for (int alt_mark = alt100 - alt_range; alt_mark <= alt100 + alt_range; alt_mark += 100) {
 
             int alt_y = pfd_gc.adi_cy - Math.round( ((float)alt_mark - alt) * pfd_gc.tape_height / alt_f_range );
-            
+                        
             // Airbus marks are on the right
            	g2.setColor(pfd_gc.markings_color);
            	g2.drawLine(pfd_gc.altitape_right, alt_y, pfd_gc.altitape_right - pfd_gc.tape_width*1/12, alt_y);
@@ -246,7 +247,7 @@ public class AltiTape_A320 extends PFDSubcomponent {
             	DecimalFormat markform = new DecimalFormat("000");
 
             	String mark_str = markform.format( Math.abs(alt_mark / 100));
-            	g2.drawString(mark_str, pfd_gc.altitape_left + 1 + pfd_gc.tape_width*1/40, alt_y + pfd_gc.line_height_xl/2 - 2);
+            	g2.drawString(mark_str, alt_x, alt_y + pfd_gc.line_height_xl/2 - 2);
 
             	// Little triangle before mark
             	g2.drawLine(pfd_gc.altitape_left - pfd_gc.tape_width*1/20, alt_y, pfd_gc.altitape_left - pfd_gc.tape_width*4/40, alt_y + pfd_gc.tape_width*2/40);

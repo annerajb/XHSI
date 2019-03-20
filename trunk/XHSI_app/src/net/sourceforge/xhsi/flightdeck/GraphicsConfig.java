@@ -611,10 +611,10 @@ public class GraphicsConfig implements ComponentListener {
     		this.font_medium = getAircraftInstrumentsFont(16);
     		this.font_large = getAircraftInstrumentsFont(24);
     		this.font_zl = getAircraftInstrumentsFont(Math.round(64.0f * scale));
-    		this.font_xxxl = getAircraftInstrumentsFont(Math.round(35.0f * scale));
-    		this.font_xxl = getAircraftInstrumentsFont(Math.round(26.0f * scale));
-    		this.font_xl = getAircraftInstrumentsFont(Math.round(23.0f * scale));
-    		this.font_l = getAircraftInstrumentsFont(Math.round(20.0f * scale));
+    		this.font_xxxl = getAircraftInstrumentsFont(Math.round(29.0f * scale));
+    		this.font_xxl = getAircraftInstrumentsFont(Math.round(24.0f * scale));
+    		this.font_xl = getAircraftInstrumentsFont(Math.round(22.0f * scale));
+    		this.font_l = getAircraftInstrumentsFont(Math.round(19.0f * scale));
     		this.font_m = getAircraftInstrumentsFont(Math.round(17.0f * scale));
     		this.font_s = getAircraftInstrumentsFont(Math.round(15.0f * scale));
     		this.font_xs = getAircraftInstrumentsFont(Math.round(13.0f * scale));
@@ -629,8 +629,8 @@ public class GraphicsConfig implements ComponentListener {
     			this.font_medium = new Font( this.font_name, Font.BOLD, 16);
     			this.font_large = new Font( this.font_name, Font.PLAIN, 24);
     			this.font_zl = new Font( this.font_name, Font.PLAIN, Math.round(64.0f * scale));
-    			this.font_xxxl = new Font( this.font_name, Font.PLAIN, Math.round(32.0f * scale));
-    			this.font_xxl = new Font( this.font_name, Font.BOLD, Math.round(24.0f * scale));
+    			this.font_xxxl = new Font( this.font_name, Font.PLAIN, Math.round(30.0f * scale));
+    			this.font_xxl = new Font( this.font_name, Font.BOLD, Math.round(23.0f * scale));
     			this.font_xl = new Font( this.font_name, Font.BOLD, Math.round(21.0f * scale));
     			this.font_l = new Font( this.font_name, Font.BOLD, Math.round(18.0f * scale));
     			this.font_m = new Font( this.font_name, Font.BOLD, Math.round(16.0f * scale));

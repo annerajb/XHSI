@@ -195,6 +195,11 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public Stroke fmc_stroke_active;
     public Stroke fmc_stroke_inactive;
     
+    // Destination and approach type
+    public Font appr_type_font;
+	public int appr_type_x;
+	public int appr_type_y;
+    
     // RadioLabel & Radio info box -> rib prefix
     public int rib_width;
     public int rib_line_1;
@@ -521,7 +526,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             	this.big_tick_length = (int) (-20 * shrink_scaling_factor);
             	this.medium_tick_length = this.big_tick_length / 2;
             	this.small_tick_length = this.big_tick_length / 3;
-            	this.tick_text_y_offset = rose_y_offset + big_tick_length*10/8;
+            	this.tick_text_y_offset = rose_y_offset + big_tick_length*12/8;
             }
 
             // NDB/VOR arrows
@@ -591,7 +596,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
                 cardinal_tri_E.reset();
                 cardinal_tri_W.reset();
             } else {
-                compass_text_font=this.font_xxl;
+                compass_text_font=this.font_xxxl;
                 compass_small_text_font=this.font_l;
                 range_label_font=this.font_xl;
                 cardinal_labels_font=this.font_l;
@@ -792,23 +797,23 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
         		sl_wind_dir_arrow_cy = sl_wind_y + sl_line_height*2/10 + sl_wind_dir_arrow_length*1/8 + sl_wind_dir_arrow_length/2;
         		sl_stroke = new BasicStroke(2.0f * scaling_factor, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         	} else {
-        		sl_font_text = font_s;
-        		sl_font_value = font_xl;
-        		sl_line_height = line_height_xl;
-        		sl_gs_label_x = border_left + (int)(30*scaling_factor);
-        		sl_gs_x = sl_gs_label_x + 2 + get_text_width(g2, font_l,"GS");
-        		sl_tas_label_x = sl_gs_x + digit_width_fixed_xl*4; //  gs_x + nd_gc.get_text_width(g2, nd_gc.font_l, "999   "); // \u00A0 is Unicode non-breaking space
-        		sl_tas_x = sl_tas_label_x + 2 + get_text_width(g2, font_l,"TAS");
-        		sl_speeds_y = border_top + sl_line_height*3/2;
+        		sl_font_text = font_l;
+        		sl_font_value = font_xxl;
+        		sl_line_height = line_height_xxl;
+        		sl_gs_label_x = border_left + digit_width_l*35/10; // (int)(30*scaling_factor);
+        		sl_gs_x = sl_gs_label_x + get_text_width(g2, sl_font_text, "GS") + digit_width_l / 2 + get_text_width(g2, sl_font_value, "000");
+        		sl_tas_label_x = sl_gs_x + digit_width_l; 
+        		sl_tas_x = sl_tas_label_x + get_text_width(g2, sl_font_text, "TAS") + digit_width_l / 2 + get_text_width(g2, sl_font_value, "000");
+        		sl_speeds_y = border_top + sl_line_height*25/20;
 
         		sl_wind_x = sl_gs_label_x;
-        		sl_wind_slash_x = sl_wind_x + this.digit_width_xl*3;
-        		sl_wind_speed_x = sl_wind_x + this.digit_width_xl*9/2;
+        		sl_wind_slash_x = sl_wind_x + this.digit_width_xxl*33/10;
+        		sl_wind_speed_x = sl_wind_x + this.digit_width_xxl*9/2;
         		
-        		sl_wind_y = border_top + sl_line_height*29/10;
+        		sl_wind_y = border_top + sl_line_height*45/20;
         		sl_wind_dir_arrow_length = Math.round(28.0f * scaling_factor);
         		sl_arrow_head = Math.round(5.0f * scaling_factor);
-        		sl_wind_dir_arrow_cx = sl_wind_x + sl_wind_dir_arrow_length/2;
+        		sl_wind_dir_arrow_cx = sl_wind_x + this.digit_width_xxl*15/10; // + sl_wind_dir_arrow_length/2;
         		sl_wind_dir_arrow_cy = sl_wind_y + sl_line_height*2/10 + sl_wind_dir_arrow_length*1/8 + sl_wind_dir_arrow_length/2;
         		sl_stroke = new BasicStroke(3.0f * scaling_factor, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         	}
@@ -940,6 +945,13 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
         	}
 	
         	wxr_info_img = new BufferedImage(wxr_info_width,wxr_info_height,BufferedImage.TYPE_INT_ARGB);
+        	
+        	/*
+        	 * Approach type message
+        	 */
+        	appr_type_font = font_xxxl;
+        	appr_type_x = panel_rect.x + panel_rect.width / 2 - digit_width_xxxl*4;
+        	appr_type_y = line_height_xl;
         	
             // clear the flags
             this.resized = false;
