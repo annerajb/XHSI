@@ -221,13 +221,19 @@ public class APU extends MFDSubcomponent {
     }
 
     private void drawElec(Graphics2D g2, String bloc_str, boolean display_values, int load, int volt, int freq, int x, int y, boolean on_bus) {
-    	int w = mfd_gc.digit_width_m * 8;
-    	int h = mfd_gc.line_height_l * 9/2;
+    	int w = mfd_gc.digit_width_xl * 8;
+    	int h = mfd_gc.line_height_xl * 71/20;
+    	int lh = mfd_gc.line_height_l + mfd_gc.line_height_xxl*32/10;
+    	int line0 = y + mfd_gc.line_height_l;	
+    	int line1 = y + (mfd_gc.line_height_l + mfd_gc.line_height_xxl)*h/lh;
+    	int line2 = y + (mfd_gc.line_height_l + mfd_gc.line_height_xxl*2)*h/lh;
+    	int line3 = y + (mfd_gc.line_height_l + mfd_gc.line_height_xxl*3)*h/lh;
+    	
         g2.setColor(mfd_gc.ecam_markings_color);
-        g2.setFont(mfd_gc.font_m);
+        g2.setFont(mfd_gc.font_l);
         g2.drawRect(x,y,w,h);
         if (display_values && ( freq<390 || volt < 105)) { g2.setColor(mfd_gc.ecam_caution_color); }
-        g2.drawString( bloc_str, x + w/2 - mfd_gc.get_text_width(g2, mfd_gc.font_m, bloc_str)/2, y + mfd_gc.line_height_m );
+        g2.drawString( bloc_str, x + w/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, bloc_str)/2, line0 );
         
         // Triangle
         int tri_x[] = { x + w/2 -w/13,x + w/2, x + w/2 + w/13 };
@@ -238,9 +244,9 @@ public class APU extends MFDSubcomponent {
         // Legends
         g2.setColor(mfd_gc.ecam_action_color);
         g2.setFont(mfd_gc.font_s);
-        g2.drawString("%",  x+w-mfd_gc.digit_width_m*2, y + mfd_gc.line_height_l *2);
-        g2.drawString("V",  x+w-mfd_gc.digit_width_m*2, y + mfd_gc.line_height_l *3);
-        g2.drawString("Hz", x+w-mfd_gc.digit_width_m*2, y + mfd_gc.line_height_l *4);
+        g2.drawString("%",  x+w-mfd_gc.digit_width_m*2, line1);
+        g2.drawString("V",  x+w-mfd_gc.digit_width_m*2, line2);
+        g2.drawString("Hz", x+w-mfd_gc.digit_width_m*2, line3);
         
         // Values
         if (display_values) {
@@ -248,28 +254,31 @@ public class APU extends MFDSubcomponent {
         	String str_freq = ""+freq;
         	String str_load = ""+load;
         	if (freq==0) { str_freq = "XX"; }
-        	g2.setFont(mfd_gc.font_l);
+        	g2.setFont(mfd_gc.font_xl);
         	g2.setColor(mfd_gc.ecam_normal_color);       
-        	g2.drawString(str_load,  x+w-mfd_gc.digit_width_m*5/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, str_load), y + mfd_gc.line_height_l *2);
+        	g2.drawString(str_load,  x+w-mfd_gc.digit_width_m*5/2 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_load), line1);
         	if (volt<105) {g2.setColor(mfd_gc.ecam_caution_color); } else { g2.setColor(mfd_gc.ecam_normal_color); }
-        	g2.drawString(str_volt,  x+w-mfd_gc.digit_width_m*5/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, str_volt) , y + mfd_gc.line_height_l *3);
+        	g2.drawString(str_volt,  x+w-mfd_gc.digit_width_m*5/2 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_volt), line2);
         	if (freq<390) {g2.setColor(mfd_gc.ecam_caution_color); } else { g2.setColor(mfd_gc.ecam_normal_color); }
-        	g2.drawString(str_freq, x+w-mfd_gc.digit_width_m*5/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, str_freq), y + mfd_gc.line_height_l *4);
+        	g2.drawString(str_freq, x+w-mfd_gc.digit_width_m*5/2 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_freq), line3);
         }
     }
     
     private void drawBleed(Graphics2D g2, String bloc_str, boolean display_values, int psi, int x, int y) {
-    	int w = mfd_gc.digit_width_m * 8;
-    	int h = mfd_gc.line_height_m * 3;
+    	int w = mfd_gc.digit_width_l * 7;
+    	int h = mfd_gc.line_height_xl * 21/10;
+    	int lh = mfd_gc.line_height_l + mfd_gc.line_height_xxl*12/10;
+    	int line0 = y + mfd_gc.line_height_l;	
+    	int line1 = y + (mfd_gc.line_height_l + mfd_gc.line_height_xxl)*h/lh;
         g2.setColor(mfd_gc.ecam_markings_color);
-        g2.setFont(mfd_gc.font_m);
+        g2.setFont(mfd_gc.font_l);
         g2.drawRect(x,y,w,h);
-        g2.drawString( bloc_str, x + w/2 - mfd_gc.get_text_width(g2, mfd_gc.font_m, bloc_str)/2, y + mfd_gc.line_height_m );
+        g2.drawString( bloc_str, x + w/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, bloc_str)/2, line0 );
                
         // Legends
         g2.setColor(mfd_gc.ecam_action_color);
         g2.setFont(mfd_gc.font_s);
-        g2.drawString("PSI",  x+w-mfd_gc.digit_width_m*3, y + mfd_gc.line_height_l *2);
+        g2.drawString("PSI",  x+w-mfd_gc.digit_width_m*3, line1);
         
         // Values
         if (display_values) {
@@ -277,8 +286,8 @@ public class APU extends MFDSubcomponent {
         	g2.setColor(mfd_gc.ecam_normal_color);       
         	if (psi==0) { str_psi = "XX"; }
         	if (psi<10) {g2.setColor(mfd_gc.ecam_caution_color); } else { g2.setColor(mfd_gc.ecam_normal_color); }
-        	g2.setFont(mfd_gc.font_l);
-        	g2.drawString(str_psi,  x+w-mfd_gc.digit_width_m*4 - mfd_gc.get_text_width(g2, mfd_gc.font_l, str_psi) , y + mfd_gc.line_height_l *2);
+        	g2.setFont(mfd_gc.font_xl);
+        	g2.drawString(str_psi,  x+w-mfd_gc.digit_width_m*4 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, str_psi), line1);
         }
     }
  
