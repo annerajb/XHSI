@@ -134,6 +134,7 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
     public int ecam_slats_h;
     public Point ecam_slats_bullet[] = new Point[MAX_DETENTS];
     public int ecam_messages_w;
+    public Font ecam_messages_font;    
     public int eng_label_x;
     public int ref_n1_x;
     public int ref_n1_y;
@@ -289,6 +290,7 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                 dial_font_s_h[8] = line_height_xxs;
             } else {
             	// Airbus style
+                ecam_messages_font= font_xl;
 
             	// the dials take +/-60% of the width in V1 software with 2 engines
             	// otherwise, dials takes 100% of the width
