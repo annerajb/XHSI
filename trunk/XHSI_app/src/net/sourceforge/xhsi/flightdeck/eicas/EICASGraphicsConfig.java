@@ -134,7 +134,9 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
     public int ecam_slats_h;
     public Point ecam_slats_bullet[] = new Point[MAX_DETENTS];
     public int ecam_messages_w;
-    public Font ecam_messages_font;    
+    public Font messages_font;
+    public int messages_font_digit_width;
+    public int messages_line_height;
     public int eng_label_x;
     public int ref_n1_x;
     public int ref_n1_y;
@@ -290,7 +292,6 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                 dial_font_s_h[8] = line_height_xxs;
             } else {
             	// Airbus style
-                ecam_messages_font= font_xl;
 
             	// the dials take +/-60% of the width in V1 software with 2 engines
             	// otherwise, dials takes 100% of the width
@@ -413,8 +414,15 @@ public class EICASGraphicsConfig extends GraphicsConfig implements ComponentList
                 dial_font_s_w[8] = digit_width_xxs;
                 dial_font_s_h[8] = line_height_xxs;
             }
-            message_x = panel_rect.x + panel_rect.width*40/1000;
-
+            
+            /*
+             * Adjust messages position, 24 characters wide
+             */
+            messages_font = font_xl;
+            messages_font_digit_width = this.digit_width_fixed_xl;
+            message_x = panel_rect.x + panel_rect.width*40/1000 
+            		    + (panel_rect.width*560/1000 - this.get_text_width(g2, messages_font, "000000000000000000000000"))/2; 
+            messages_line_height = line_height_xl;
             		
             
             //dial_ng_y = panel_rect.y + eicas_size*87/100;

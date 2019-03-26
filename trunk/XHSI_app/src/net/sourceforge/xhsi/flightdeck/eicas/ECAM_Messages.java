@@ -128,9 +128,9 @@ public class ECAM_Messages extends EICASSubcomponent {
     
     private void decodeFont(Graphics2D g2, char font_code) {
     	switch (font_code) {
-    	case 'l' : g2.setFont(eicas_gc.ecam_messages_font); break;
+    	case 'l' : g2.setFont(eicas_gc.messages_font); break;
     	case 's' : g2.setFont(eicas_gc.font_s); break;
-        default : g2.setFont(eicas_gc.ecam_messages_font); break;
+        default : g2.setFont(eicas_gc.messages_font); break;
     	}
     }
 
@@ -151,19 +151,19 @@ public class ECAM_Messages extends EICASSubcomponent {
      * Message zone fits 24 characters
      */
     private void DrawQpacEcamMessages(Graphics2D g2) {
-    	g2.setFont(eicas_gc.ecam_messages_font);
+    	g2.setFont(eicas_gc.messages_font);
     	g2.setColor(eicas_gc.ecam_normal_color);
         for(int i=0; i < 7; i++) {        
-        	int y = eicas_gc.memo_y + eicas_gc.line_height_xl*i*11/10;
+        	int y = eicas_gc.memo_y + eicas_gc.messages_line_height*i; // *11/10;
         	int x;
             String ewd_str = QpacEwdData.getLine(i);           
             List<CduLine> l = QpacEwdData.decodeLine(ewd_str);
             for(CduLine o : l){
             		if (o.pos>23) {
             			// It is an ECAM Memo
-            			x = eicas_gc.memo_x + (int) Math.round( (o.pos-25) * eicas_gc.digit_width_l);
+            			x = eicas_gc.memo_x + (int) Math.round( (o.pos-25) * eicas_gc.messages_font_digit_width);
             		} else {
-            			x = eicas_gc.message_x + (int) Math.round( o.pos * eicas_gc.digit_width_l);
+            			x = eicas_gc.message_x + (int) Math.round( o.pos * eicas_gc.messages_font_digit_width);
             		}
                     decodeColor(g2, o.color );
                     if (eicas_gc.font_monospaced) {
@@ -188,7 +188,7 @@ public class ECAM_Messages extends EICASSubcomponent {
 
 		boolean all_ok = true;
 		
-    	g2.setFont(eicas_gc.ecam_messages_font);        
+    	g2.setFont(eicas_gc.messages_font);        
     	
     	// T.O. Memo comes up when all conditions are reached
     	// - on ground
@@ -205,8 +205,8 @@ public class ECAM_Messages extends EICASSubcomponent {
     		String to_str = "T.O   ";
     		int x_shift = eicas_gc.get_text_width(g2, eicas_gc.font_l, to_str);
     		g2.setColor(eicas_gc.ecam_normal_color);
-    		g2.drawString(to_str, eicas_gc.message_x, eicas_gc.memo_y + eicas_gc.line_height_l);
-    		g2.drawLine(eicas_gc.message_x, eicas_gc.memo_y + eicas_gc.line_height_l, x_shift, eicas_gc.memo_y + eicas_gc.line_height_l);
+    		g2.drawString(to_str, eicas_gc.message_x, eicas_gc.memo_y + eicas_gc.messages_line_height);
+    		g2.drawLine(eicas_gc.message_x, eicas_gc.memo_y + eicas_gc.line_height_l, x_shift, eicas_gc.memo_y + eicas_gc.messages_line_height);
     		
     	} else if ( (this.avionics.fwc_phase() == 6 || this.avionics.fwc_phase()==7) && ((this.aircraft.agl_m()*3.28084f) < 2000) ) {
     		// Display LDG Memo
@@ -215,8 +215,8 @@ public class ECAM_Messages extends EICASSubcomponent {
     		g2.setColor(eicas_gc.ecam_normal_color);
     		int x_shift = eicas_gc.get_text_width(g2, eicas_gc.font_l, ldg_str);
     		g2.setColor(eicas_gc.ecam_normal_color);
-    		g2.drawString(ldg_str, eicas_gc.message_x, eicas_gc.memo_y + eicas_gc.line_height_l);
-    		g2.drawLine(eicas_gc.message_x, eicas_gc.memo_y + eicas_gc.line_height_l, x_shift, eicas_gc.memo_y + eicas_gc.line_height_l);
+    		g2.drawString(ldg_str, eicas_gc.message_x, eicas_gc.memo_y + eicas_gc.messages_line_height);
+    		g2.drawLine(eicas_gc.message_x, eicas_gc.memo_y + eicas_gc.line_height_l, x_shift, eicas_gc.memo_y + eicas_gc.messages_line_height);
   		
     	} else {
     		// Display ECAM messages
@@ -246,7 +246,7 @@ public class ECAM_Messages extends EICASSubcomponent {
         	if (emsg_status[i]) { 
         			message_str = message_list[i];
         			g2.setColor(emsg_color[i]);
-        			g2.drawString(message_str, eicas_gc.message_x, eicas_gc.memo_y + line * eicas_gc.line_height_l);          			
+        			g2.drawString(message_str, eicas_gc.message_x, eicas_gc.memo_y + line * eicas_gc.messages_line_height);          			
         			line++;
         	}
         	

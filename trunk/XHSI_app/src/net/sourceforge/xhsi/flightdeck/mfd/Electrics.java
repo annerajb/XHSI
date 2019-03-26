@@ -272,8 +272,8 @@ public class Electrics extends MFDSubcomponent  {
 	 */
 	private void drawBusBox(Graphics2D g2, String bus_str, int num, boolean powered, int x, int y, int w, int h) {
 		int str_x;
-		// TODO : center text on box vertically
-		int str_y = y + mfd_gc.line_height_xl;
+		int lh = mfd_gc.line_height_xxl*12/10;
+		int str_y = y + mfd_gc.line_height_xxl * h/lh;
         g2.setColor(mfd_gc.ecam_box_bg_color);
         g2.setFont(mfd_gc.font_xl);
 		g2.fillRect(x, y, w, h);
@@ -312,16 +312,18 @@ public class Electrics extends MFDSubcomponent  {
     	// int h = mfd_gc.line_height_l * 9/2;
     	int w = mfd_gc.elec_gen_w;
     	int h = mfd_gc.elec_gen_h;
-    	int line1 = y + mfd_gc.line_height_l + mfd_gc.line_height_xxl;
-    	int line2 = y + mfd_gc.line_height_l + mfd_gc.line_height_xxl*2;
-    	int line3 = y + mfd_gc.line_height_l + mfd_gc.line_height_xxl*3;
+    	int lh = mfd_gc.line_height_l + mfd_gc.line_height_xxl*33/10;
+    	int line0 = y + mfd_gc.line_height_l;	
+    	int line1 = y + (mfd_gc.line_height_l + mfd_gc.line_height_xxl)*h/lh;
+    	int line2 = y + (mfd_gc.line_height_l + mfd_gc.line_height_xxl*2)*h/lh;
+    	int line3 = y + (mfd_gc.line_height_l + mfd_gc.line_height_xxl*3)*h/lh;
         g2.setColor(mfd_gc.ecam_markings_color);
         g2.setFont(mfd_gc.font_l);
         scalePen(g2);
         g2.drawRect(x,y,w,h);
         resetPen(g2);
         if (display_values && active && ( freq<390 || volt < 105)) { g2.setColor(mfd_gc.ecam_caution_color); }
-        g2.drawString( bloc_str, x + w/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, bloc_str)/2, y + mfd_gc.line_height_l );
+        g2.drawString( bloc_str, x + w/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, bloc_str)/2, line0 );
         
         // Triangle
         /*
@@ -382,13 +384,14 @@ public class Electrics extends MFDSubcomponent  {
     }
     
     private void drawElecAux(Graphics2D g2, String bloc_str, boolean display_values, int load, int volt, int freq, boolean active, int x, int y) {
-    	// int w = mfd_gc.digit_width_m * 8;
-    	// int h = mfd_gc.line_height_l * 9/2;
+
     	int w = mfd_gc.elec_ext_apu_w;
-    	int h = mfd_gc.elec_ext_apu_h;
-    	int line1 = y + mfd_gc.line_height_l + mfd_gc.line_height_xxl;
-    	int line2 = y + mfd_gc.line_height_l + mfd_gc.line_height_xxl*2;
-    	int line3 = y + mfd_gc.line_height_l + mfd_gc.line_height_xxl*3;
+    	int h = mfd_gc.elec_ext_apu_h;    	
+    	int lh = mfd_gc.line_height_l + mfd_gc.line_height_xxl*22/10;
+    	int line0 = y + mfd_gc.line_height_l;	
+    	int line1 = y + (mfd_gc.line_height_l + mfd_gc.line_height_xxl)*h/lh;
+    	int line2 = y + (mfd_gc.line_height_l + mfd_gc.line_height_xxl*2)*h/lh;
+    	
         g2.setColor(mfd_gc.ecam_markings_color);
         g2.setFont(mfd_gc.font_l);        
         if ((display_values && active) || (!active)) {
@@ -397,7 +400,7 @@ public class Electrics extends MFDSubcomponent  {
         	resetPen(g2);
         }
         if (display_values && ( freq<390 || volt < 105)) { g2.setColor(mfd_gc.ecam_caution_color); }
-        g2.drawString( bloc_str, x + w/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, bloc_str)/2, y + mfd_gc.line_height_l );
+        g2.drawString( bloc_str, x + w/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, bloc_str)/2, line0 );
          
         if (display_values && active) {
         	// Legends
@@ -433,8 +436,10 @@ public class Electrics extends MFDSubcomponent  {
     private void drawElecBatTr(Graphics2D g2, String bloc_str, boolean display_values, int volt, int amp, boolean active, int x, int y) {
     	int w = mfd_gc.elec_bat_w;
     	int h = mfd_gc.elec_bat_h;
-    	int line1 = y + mfd_gc.line_height_l + mfd_gc.line_height_xxl;
-    	int line2 = y + mfd_gc.line_height_l + mfd_gc.line_height_xxl*2;
+    	int lh = mfd_gc.line_height_l + mfd_gc.line_height_xxl*22/10;
+    	int line0 = y + mfd_gc.line_height_l;
+    	int line1 = y + (mfd_gc.line_height_l + mfd_gc.line_height_xxl)*h/lh;
+    	int line2 = y + (mfd_gc.line_height_l + mfd_gc.line_height_xxl*2)*h/lh;
     	
     	g2.setColor(mfd_gc.ecam_markings_color);
     	g2.setFont(mfd_gc.font_l);
@@ -442,7 +447,7 @@ public class Electrics extends MFDSubcomponent  {
     	g2.drawRect(x,y,w,h);
     	resetPen(g2);
     	if ((volt<25 || volt >31) && (amp<5) && active) {g2.setColor(mfd_gc.ecam_caution_color); } else { g2.setColor(mfd_gc.ecam_markings_color); }
-    	g2.drawString( bloc_str, x + w/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, bloc_str)/2, y + mfd_gc.line_height_l );
+    	g2.drawString( bloc_str, x + w/2 - mfd_gc.get_text_width(g2, mfd_gc.font_l, bloc_str)/2, line0 );
 
     	if (active) {
     		// A320 FCOM 1.24.20 p 11 
@@ -476,8 +481,9 @@ public class Electrics extends MFDSubcomponent  {
     private void drawElecEmerTr(Graphics2D g2, String bloc_str, boolean display_values, int volt, int amp, int x, int y) {
     	int w = mfd_gc.elec_ess_tr_w;
     	int h = mfd_gc.elec_bat_h;
-    	int line1 = y + mfd_gc.line_height_l + mfd_gc.line_height_xxl;
-    	int line2 = y + mfd_gc.line_height_l + mfd_gc.line_height_xxl*2;
+    	int lh = mfd_gc.line_height_l + mfd_gc.line_height_xxl*22/10;
+    	int line1 = y + (mfd_gc.line_height_l + mfd_gc.line_height_xxl)*h/lh;
+    	int line2 = y + (mfd_gc.line_height_l + mfd_gc.line_height_xxl*2)*h/lh;
     	g2.setColor(mfd_gc.ecam_markings_color);
     	g2.setFont(mfd_gc.font_l);
     	if (display_values) {
@@ -511,8 +517,9 @@ public class Electrics extends MFDSubcomponent  {
     private void drawElecEmerGen(Graphics2D g2, String bloc_str, boolean display_values, int volt, int amp, int x, int y) {
     	int w = mfd_gc.elec_emerg_w;
     	int h = mfd_gc.elec_bat_h;
-    	int line1 = y + mfd_gc.line_height_l + mfd_gc.line_height_xxl;
-    	int line2 = y + mfd_gc.line_height_l + mfd_gc.line_height_xxl*2;
+    	int lh = mfd_gc.line_height_l + mfd_gc.line_height_xxl*22/10;
+    	int line1 = y + (mfd_gc.line_height_l + mfd_gc.line_height_xxl)*h/lh;
+    	int line2 = y + (mfd_gc.line_height_l + mfd_gc.line_height_xxl*2)*h/lh;
     	g2.setColor(mfd_gc.ecam_markings_color);
     	g2.setFont(mfd_gc.font_l);
     	if (display_values) {
