@@ -366,6 +366,11 @@ public class GraphicsConfig implements ComponentListener {
     // String font_name = "AircraftInstruments";
     public Font font_statusbar;
 
+    /**
+     *  True if configured font is a monospaced font
+     */
+    public boolean font_monospaced;
+    
     public Font font_tiny;
     public int line_height_tiny;
     public int max_char_advance_tiny;
@@ -667,6 +672,8 @@ public class GraphicsConfig implements ComponentListener {
     	this.line_height_large = fm.getAscent();
     	this.max_char_advance_large = fm.stringWidth("WW") - fm.stringWidth("W");
     	this.digit_width_large =  fm.stringWidth("88") - fm.stringWidth("8");
+    	
+    	font_monospaced = fm.stringWidth("0") == fm.stringWidth(" ");
 
     	fm = g2.getFontMetrics(this.font_medium);
     	this.line_height_medium = fm.getAscent();

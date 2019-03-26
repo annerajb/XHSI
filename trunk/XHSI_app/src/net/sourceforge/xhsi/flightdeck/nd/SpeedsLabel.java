@@ -121,12 +121,12 @@ public class SpeedsLabel extends NDSubcomponent {
         	}
         	g2.drawString(wind_text, nd_gc.sl_wind_x, nd_gc.sl_wind_y);
         } else {
-        	if (wind_speed > 4) {
+        	if (wind_speed > 2) {
         		wind_text = degrees_formatter.format(wind_dir);
         		speed_text = speed_formatter.format(wind_speed);
         	} else {
-        		wind_text = "___";
-        		speed_text = "___";
+        		wind_text = "---";
+        		speed_text = "---";
         	}
         	g2.drawString(wind_text, nd_gc.sl_wind_x, nd_gc.sl_wind_y);  
         	g2.drawString(speed_text, nd_gc.sl_wind_speed_x, nd_gc.sl_wind_y);

@@ -128,9 +128,9 @@ public class ECAM_Messages extends EICASSubcomponent {
     
     private void decodeFont(Graphics2D g2, char font_code) {
     	switch (font_code) {
-    	case 'l' : g2.setFont(eicas_gc.font_l); break;
+    	case 'l' : g2.setFont(eicas_gc.ecam_messages_font); break;
     	case 's' : g2.setFont(eicas_gc.font_s); break;
-        default : g2.setFont(eicas_gc.font_m); break;
+        default : g2.setFont(eicas_gc.ecam_messages_font); break;
     	}
     }
 
@@ -147,8 +147,11 @@ public class ECAM_Messages extends EICASSubcomponent {
     	
     }
     
+    /*
+     * Message zone fits 24 characters
+     */
     private void DrawQpacEcamMessages(Graphics2D g2) {
-    	g2.setFont(eicas_gc.font_l);
+    	g2.setFont(eicas_gc.ecam_messages_font);
     	g2.setColor(eicas_gc.ecam_normal_color);
         for(int i=0; i < 7; i++) {        
         	int y = eicas_gc.memo_y + eicas_gc.line_height_xl*i*11/10;
@@ -163,7 +166,12 @@ public class ECAM_Messages extends EICASSubcomponent {
             			x = eicas_gc.message_x + (int) Math.round( o.pos * eicas_gc.digit_width_l);
             		}
                     decodeColor(g2, o.color );
-                    g2.drawString(insertSpaces(o.text), x, y);
+                    if (eicas_gc.font_monospaced) {
+                    	g2.drawString(o.text, x, y);
+                    } else {
+                    	g2.drawString(insertSpaces(o.text), x, y);	
+                    }
+                    
             }
         } 
     }
@@ -180,7 +188,7 @@ public class ECAM_Messages extends EICASSubcomponent {
 
 		boolean all_ok = true;
 		
-    	g2.setFont(eicas_gc.font_l);        
+    	g2.setFont(eicas_gc.ecam_messages_font);        
     	
     	// T.O. Memo comes up when all conditions are reached
     	// - on ground
