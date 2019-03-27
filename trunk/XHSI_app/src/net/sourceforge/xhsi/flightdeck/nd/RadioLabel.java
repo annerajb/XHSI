@@ -72,19 +72,9 @@ public class RadioLabel extends NDSubcomponent {
     public static DecimalFormat adf_freq_formatter;
     public static DecimalFormat near_dme_formatter;
     public static DecimalFormat far_dme_formatter;
+    public static DecimalFormat int_dme_formatter;
+    public static DecimalFormat dec_dme_formatter;
     public static DecimalFormat degrees_formatter;
-
-    // int radio_label_y;
-    int dme_text_width = 0;
-
-    /*
-    int radio_info_box_width;
-    int line_1;
-    int line_2;
-    int line_3;
-    int line_4;
-    int radio_info_box_height;
-    */
 
     NavigationObjectRepository nor;
 
@@ -94,6 +84,8 @@ public class RadioLabel extends NDSubcomponent {
         public String type;
         public String id;
         public String dme;
+        public String dme_int; // Integer part of DME distance
+        public String dme_dec; // Decimal part of DME distance (1 digit)
         public int radial;
         public int obs;
         public String radial_text;
@@ -129,23 +121,29 @@ public class RadioLabel extends NDSubcomponent {
                 // defaults, display the labels dimmed
                 this.color = nd_gc.no_rcv_vor_color;
                 if (radio.freq_is_nav()) {
-                    this.type ="NAV " + radio.get_bank();
+                    this.type ="NAV" + nd_gc.rib_spacing + radio.get_bank();
                     this.id = RadioLabel.nav_freq_formatter.format(radio.get_frequency());
                     // even if we don't receive the VOR or LOC or ILS, maybe we receive a DME
                     float dme_distance = radio.get_distance();
-                    if ( dme_distance == 0.0f )
+                    if ( dme_distance == 0.0f ) {
                         this.dme = "---";
-                    else {
+                        this.dme_int = "---";
+                        this.dme_dec = "-";
+                    } else {
                         if (dme_distance > 99.4f) {
                             this.dme = RadioLabel.far_dme_formatter.format(dme_distance);
+                            this.dme_int = RadioLabel.int_dme_formatter.format(dme_distance);
+                            this.dme_dec = "";
                         } else {
                             this.dme = RadioLabel.near_dme_formatter.format(dme_distance);
+                            this.dme_int = RadioLabel.int_dme_formatter.format(dme_distance);
+                            this.dme_dec = RadioLabel.dec_dme_formatter.format((dme_distance-(int)dme_distance)*10);
                         }
                     }
                 } else /* if (radio.freq_is_adf()) */ {
                     this.obs_text = "";
                     this.color = nd_gc.no_rcv_ndb_color;
-                    this.type ="ADF " + radio.get_bank();
+                    this.type ="ADF" + nd_gc.rib_spacing  + radio.get_bank();
                     this.id = RadioLabel.adf_freq_formatter.format(radio.get_frequency());
                     this.dme = "";
                 }
@@ -157,15 +155,15 @@ public class RadioLabel extends NDSubcomponent {
                         
                         if (((RadioNavBeacon) rnav_object).type == RadioNavBeacon.TYPE_NDB) {
                             this.obs_text = "";
-                            this.type = "ADF " + radio.get_bank();
+                            this.type = "ADF" + nd_gc.rib_spacing + radio.get_bank();
                             this.color = nd_gc.tuned_ndb_color;
                         } else if (((RadioNavBeacon) rnav_object).type == RadioNavBeacon.TYPE_VOR) {
-                            this.type = "VOR " + radio.get_bank();
+                            this.type = "VOR" + nd_gc.rib_spacing  + radio.get_bank();
                             this.color = nd_gc.tuned_vor_color;
                             this.radial = Math.round(radio.get_radial());
                             this.radial_text = "R " + RadioLabel.degrees_formatter.format( this.radial );
                         } else if (((RadioNavBeacon) rnav_object).type == RadioNavBeacon.TYPE_STANDALONE_DME) {
-                            this.type = "DME " + radio.get_bank();
+                            this.type = "DME" + nd_gc.rib_spacing + radio.get_bank();
                             this.color = nd_gc.tuned_vor_color;
                             this.draw_arrow = false;
                         } else {
@@ -179,9 +177,9 @@ public class RadioLabel extends NDSubcomponent {
                         
                         loc_object = (Localizer) rnav_object;
                         if ( loc_object.has_gs )
-                                this.type = "ILS " + radio.get_bank();
+                                this.type = "ILS" + nd_gc.rib_spacing + radio.get_bank();
                         else
-                                this.type = "LOC " + radio.get_bank();
+                                this.type = "LOC" + nd_gc.rib_spacing + radio.get_bank();
                         this.color = nd_gc.tuned_localizer_color;
                         this.id = rnav_object.ilt;
                         this.draw_arrow = false;
@@ -189,7 +187,7 @@ public class RadioLabel extends NDSubcomponent {
                     } else {
                         
                         // we are receiving something, but it is not a RadioNavBeacon, and it is not a Localizer
-                        this.type = (this.is_adf ? "ADF " : "NAV ") + radio.get_bank();
+                        this.type = (this.is_adf ? "ADF" + nd_gc.rib_spacing  : "NAV"+ nd_gc.rib_spacing ) + radio.get_bank();
                         this.id = radio.get_nav_id();
                         this.color = nd_gc.unknown_nav_color;
                         
@@ -240,6 +238,8 @@ public class RadioLabel extends NDSubcomponent {
         RadioLabel.adf_freq_formatter = new DecimalFormat("0000");
         RadioLabel.near_dme_formatter = new DecimalFormat("0.0");
         RadioLabel.far_dme_formatter = new DecimalFormat("0");
+        RadioLabel.int_dme_formatter = new DecimalFormat("000");
+        RadioLabel.dec_dme_formatter = new DecimalFormat("0");
         DecimalFormatSymbols symbols = nav_freq_formatter.getDecimalFormatSymbols();
         symbols.setDecimalSeparator('.');
         RadioLabel.nav_freq_formatter.setDecimalFormatSymbols(symbols);
@@ -255,14 +255,10 @@ public class RadioLabel extends NDSubcomponent {
 
         if ( nd_gc.powered ) {
 
-            dme_text_width = nd_gc.get_text_width(g2, nd_gc.font_xs, "DME ");
-            // radio_label_y = nd_gc.frame_size.height - nd_gc.rib_height - nd_gc.border_bottom;
-
             // get currently tuned in radios
             this.selected_radio1 = this.avionics.get_selected_radio(1);
             this.selected_radio2 = this.avionics.get_selected_radio(2);
-
-            
+          
             if (this.selected_radio1 != null) {
                 this.radio1_box_info = new RadioBoxInfo(this.selected_radio1);
                 boolean refresh_radio1 = true;
@@ -326,22 +322,35 @@ public class RadioLabel extends NDSubcomponent {
         g2.setColor(radio_box_info.color);
         g2.setBackground(nd_gc.background_color);
         g2.clearRect(0, 0, nd_gc.rib_width, nd_gc.rib_height);
-        g2.setFont(nd_gc.font_l);
+        g2.setFont(nd_gc.boeing_style ? nd_gc.font_l : nd_gc.font_xxl);
         g2.drawString(radio_box_info.type, text_x, nd_gc.rib_line_1);
         g2.drawString(radio_box_info.id, text_x, nd_gc.rib_line_2);
+    
         if ( ! radio_box_info.dme.equals("") ) {
-        	g2.setColor(radio_box_info.value_color);
-            g2.setFont(nd_gc.font_s);
-            g2.drawString(radio_box_info.dme, dme_text_width + text_x, nd_gc.rib_line_3);
-            g2.setColor(radio_box_info.color);
-            g2.setFont(nd_gc.font_xs);
-            g2.drawString("DME", text_x, nd_gc.rib_line_3);
+        	if (nd_gc.boeing_style) {
+        		g2.setColor(radio_box_info.value_color);
+        		g2.setFont(nd_gc.font_s);
+        		g2.drawString(radio_box_info.dme, nd_gc.rib_dme_text_width + text_x, nd_gc.rib_line_3);
+        		g2.setColor(radio_box_info.color);
+        		g2.setFont(nd_gc.font_xs);
+        		g2.drawString("DME", text_x, nd_gc.rib_line_3);
+        	} else {
+        		g2.setColor(radio_box_info.value_color);
+        		g2.setFont(nd_gc.font_xxl);
+        		g2.drawString(radio_box_info.dme, text_x, nd_gc.rib_line_3);
+        		g2.setColor(nd_gc.pfd_selected_color);
+        		g2.setFont(nd_gc.font_l);
+        		g2.drawString("NM", text_x + nd_gc.rib_dme_text_width, nd_gc.rib_line_3);
+        	}
         }
-        g2.setFont(nd_gc.font_xs);
-        if ( this.avionics.efis_shows_pos() )
-            g2.drawString(radio_box_info.radial_text, text_x, nd_gc.rib_line_4);
-        else
-            g2.drawString(radio_box_info.obs_text, text_x, nd_gc.rib_line_4);
+        
+        if (nd_gc.boeing_style) {
+        	g2.setFont(nd_gc.font_xs);
+        	if ( this.avionics.efis_shows_pos() )
+        		g2.drawString(radio_box_info.radial_text, text_x, nd_gc.rib_line_4);
+        	else
+        		g2.drawString(radio_box_info.obs_text, text_x, nd_gc.rib_line_4);
+        }
         if ( ! nd_gc.mode_plan && ( ! avionics.efis_shows_pos() || ( nd_gc.mode_classic_hsi ) ) ) {
             Stroke original_stroke = g2.getStroke();
             g2.setStroke(new BasicStroke(1.0f));

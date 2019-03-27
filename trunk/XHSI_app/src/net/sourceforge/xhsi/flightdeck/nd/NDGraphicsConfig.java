@@ -207,6 +207,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int rib_line_3;
     public int rib_line_4;
     public int rib_height;
+    public int rib_dme_text_width;
+    public String rib_spacing;
     public int radio1_text_x;
     public int radio2_text_x;
     public int radio1_arrow_x;
@@ -401,15 +403,15 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             
 
             // compute radio info box 
-            rib_line_1 = line_height_l + line_height_l/5;
-            rib_line_2 = rib_line_1 + line_height_l;
-            rib_line_3 = rib_line_2 + line_height_s;
-            rib_line_4 = rib_line_3 + line_height_s;
-            rib_height = rib_line_4 + line_height_l/2;
-            rib_width = digit_width_l * 9;
-            left_radio_box_img = new BufferedImage(rib_width, rib_height, BufferedImage.TYPE_INT_ARGB);
-            right_radio_box_img = new BufferedImage(rib_width, rib_height, BufferedImage.TYPE_INT_ARGB);
             if (boeing_style) {
+                rib_line_1 = line_height_l + line_height_l/5;
+                rib_line_2 = rib_line_1 + line_height_l;
+                rib_line_3 = rib_line_2 + line_height_s;
+                rib_line_4 = rib_line_3 + line_height_s;
+                rib_height = rib_line_4 + line_height_l/2;
+                rib_width = digit_width_l * 9;
+                rib_dme_text_width = get_text_width(g2, font_xs, "DME ");
+                rib_spacing = " ";
             	radio1_text_x = digit_width_l;
             	radio2_text_x = digit_width_l * 25/10;
             	radio1_arrow_x = rib_width - digit_width_l;
@@ -418,6 +420,14 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             	radio2_box_x = frame_size.width - border_right - rib_width;
             	radio_box_y = frame_size.height - rib_height - border_bottom;
             } else {
+                rib_line_1 = line_height_xxl + line_height_l/5;
+                rib_line_2 = rib_line_1 + line_height_xxl;
+                rib_line_3 = rib_line_2 + line_height_xxl;
+                rib_line_4 = rib_line_3 + line_height_s; // Unused (obs)
+                rib_height = rib_line_3 + line_height_l/4;
+                rib_width = digit_width_xl * 9;                
+                rib_dme_text_width = get_text_width(g2, font_xxl, "0000");
+                rib_spacing = " ";
                 radio2_text_x = digit_width_l;
                 radio1_text_x = digit_width_l * 25/10;
                 radio2_arrow_x = rib_width - digit_width_l;
@@ -426,6 +436,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
                 radio2_box_x = frame_size.width - border_right - rib_width;
                 radio_box_y = frame_size.height - rib_height - border_bottom;
             }
+            left_radio_box_img = new BufferedImage(rib_width, rib_height, BufferedImage.TYPE_INT_ARGB);
+            right_radio_box_img = new BufferedImage(rib_width, rib_height, BufferedImage.TYPE_INT_ARGB);
             
             // set some booleans for easy checking
             if ( preferences.get_airbus_modes() ) {
@@ -781,9 +793,9 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
         		sl_font_value = font_l;
         		sl_line_height = line_height_l;
         		sl_gs_label_x = border_left + (int)(10*scaling_factor);
-        		sl_gs_x = sl_gs_label_x + 2 + get_text_width(g2, font_s,"GS");
+        		sl_gs_x = sl_gs_label_x + 2 + get_text_width(g2, font_s,"GS") + digit_width_s + get_text_width(g2, sl_font_value, "000");;
         		sl_tas_label_x = sl_gs_x + digit_width_fixed_l*4; //  gs_x + nd_gc.get_text_width(g2, nd_gc.font_l, "999   "); // \u00A0 is Unicode non-breaking space
-        		sl_tas_x = sl_tas_label_x + 2 + get_text_width(g2, font_s,"TAS");
+        		sl_tas_x = sl_tas_label_x + 2 + get_text_width(g2, font_s,"TAS") + digit_width_s + get_text_width(g2, sl_font_value, "000");
         		sl_speeds_y = border_top + sl_line_height;
 
         		sl_wind_x = sl_gs_label_x;

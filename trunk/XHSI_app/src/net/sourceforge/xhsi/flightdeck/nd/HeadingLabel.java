@@ -140,7 +140,7 @@ public class HeadingLabel extends NDSubcomponent {
             	g2.setFont(nd_gc.font_xxl);
             	DecimalFormat degrees_formatter = new DecimalFormat("000");
             	String text = degrees_formatter.format( mag_value );
-            	if (failed_hdg) text = "- - -";
+            	if (failed_hdg) text = nd_gc.font_monospaced ? "---" : "- - -";
             	g2.drawString(text , center_x - 3*nd_gc.digit_width_xxl/2, nd_gc.heading_text_y);
             }
 
