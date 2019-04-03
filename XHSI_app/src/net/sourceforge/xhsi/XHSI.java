@@ -430,6 +430,7 @@ public class XHSI implements ActionListener {
                     this.preferences.add_subsciption(clock_ui, XHSIPreferences.PREF_DU_PREPEND);
                     this.preferences.add_subsciption(clock_ui, XHSIPreferences.PREF_USE_POWER);
                     this.preferences.add_subsciption(clock_ui, XHSIPreferences.PREF_INSTRUMENT_STYLE);
+                    this.preferences.add_subsciption(clock_ui, XHSIPreferences.PREF_CLOCK_DISPLAY_DIGITAL);
                     break;
                 case XHSIInstrument.CDU_ID :
                     // CDU

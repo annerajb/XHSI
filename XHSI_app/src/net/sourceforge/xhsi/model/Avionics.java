@@ -202,6 +202,11 @@ public interface Avionics {
     public int get_instrument_style();
 
     /**
+     * @return int - general instrument style 0=ANALOG, 1=DIGITAL
+     */
+    public int get_clock_style();
+    
+    /**
      * @return int - general instrument side : PILOT, COPILOT, INSTRUCTOR
      */
     public InstrumentSide get_instrument_side();

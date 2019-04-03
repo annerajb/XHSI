@@ -7,6 +7,7 @@
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2019  Nicolas Carel
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -27,7 +28,6 @@ package net.sourceforge.xhsi.flightdeck.nd;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.logging.Logger;
@@ -60,7 +60,7 @@ public class DestinationLabel extends NDSubcomponent {
     DecimalFormatSymbols format_symbols;
     TimedFilter timed_filter;
 
-    BufferedImage buf_image;
+    // BufferedImage buf_image;
     boolean destination_active = false;
 
 
@@ -92,16 +92,8 @@ public class DestinationLabel extends NDSubcomponent {
         long dest_eta = 0;
         float dest_dist = 0.0f;
 
-        int buf_img_width = -1;
-        int buf_img_height = -1;
-
         if (timed_filter.time_to_perform()) {
         	
-            // create a new image when the timer triggers
-
-            buf_img_width = nd_gc.max_char_advance_l * 8;
-            buf_img_height = nd_gc.line_height_l * 5;
-
             int source = this.avionics.hsi_source();
             // The label should always show the next FMC waypoint in MAP, NAV and PLN modes
             if ( ( this.avionics.map_submode() == Avionics.EFIS_MAP_MAP ) ||( this.avionics.map_submode() == Avionics.EFIS_MAP_NAV ) || ( this.avionics.map_submode() == Avionics.EFIS_MAP_PLN ) ) {
@@ -157,13 +149,14 @@ public class DestinationLabel extends NDSubcomponent {
                 //see above: dest_ete = this.aircraft.ete_for_distance(dest_dist);
                 dest_eta = this.aircraft.time_after_ete(dest_ete);
 
-                this.buf_image = create_buffered_image(buf_img_width, buf_img_height);
-                Graphics2D gImg = get_graphics(this.buf_image);
+                // this.buf_image = create_buffered_image(nd_gc.dl_img_width, dl_img_height);
+                Graphics2D gImg = get_graphics(nd_gc.dl_buf_image);
+                // Clear image
                 render_destination_label(gImg, dest_name, dest_ete, dest_eta, dest_dist, (this.aircraft.ground_speed() < 50), source == Avionics.HSI_SOURCE_GPS );
                 gImg.dispose();
 
             } else {
-                this.buf_image = null;
+                // this.buf_image = null;
             }
 
         }
@@ -172,12 +165,10 @@ public class DestinationLabel extends NDSubcomponent {
         
         // copy the buffered image to the screen on each invocation of paint()
         if ( nd_gc.powered && this.destination_active ) {
-
             // the buffered image has been created, and it has not been deliberately set to null
-            int x = nd_gc.panel_rect.x + nd_gc.panel_rect.width - (nd_gc.max_char_advance_l * 6);
-            int y = nd_gc.panel_rect.y;
-            g2.drawImage(this.buf_image, x, y, null);
-
+            // int x = nd_gc.panel_rect.x + nd_gc.panel_rect.width - (nd_gc.max_char_advance_l * 6);
+            // int y = nd_gc.panel_rect.y;
+            g2.drawImage(nd_gc.dl_buf_image, nd_gc.dl_img_x, nd_gc.dl_img_y, null);
         }
 
     }
@@ -185,21 +176,14 @@ public class DestinationLabel extends NDSubcomponent {
 
     public void render_destination_label(Graphics2D g2, String wpt_name, float wpt_ete, long wpt_eta, float wpt_dist, boolean too_slow, boolean fmc_dest) {
 
-        int line1 = nd_gc.line_height_l;
-        int line2 = line1 + nd_gc.line_height_xs;
-        int line3 = line2 + nd_gc.line_height_l;
-        int line4 = line3 + nd_gc.line_height_l;
-        int box_height = line4 + nd_gc.line_height_xs/2;
-        int dx = nd_gc.max_char_advance_l/2;
-
         g2.setBackground(nd_gc.background_color);
-        g2.clearRect(0, 0, (nd_gc.max_char_advance_l * 7), box_height);
+        g2.clearRect(0, 0, (nd_gc.max_char_advance_l * 7), nd_gc.dl_box_height);
         if ( fmc_dest )
             g2.setColor(nd_gc.fmc_active_color);
         else
             g2.setColor(nd_gc.nav_needle_color);
         g2.setFont(nd_gc.font_l);
-        g2.drawString(wpt_name, dx + 0, line1);
+        g2.drawString(wpt_name, nd_gc.dl_dx + 0, nd_gc.dl_line1);
 
         g2.setColor(nd_gc.top_text_color);
 
@@ -207,10 +191,10 @@ public class DestinationLabel extends NDSubcomponent {
 
             g2.setFont(nd_gc.font_xs);
             String ete_text = "" + ete_minutes_formatter.format(wpt_ete);
-            g2.drawString(ete_text, dx + 0, line2);
+            g2.drawString(ete_text, nd_gc.dl_dx + 0, nd_gc.dl_line2);
             g2.setFont(nd_gc.font_xxs);
             String ete_label_text = "min";
-            g2.drawString(ete_label_text, dx + nd_gc.get_text_width(g2, nd_gc.font_xs, ete_text), line2);
+            g2.drawString(ete_label_text, nd_gc.dl_dx + nd_gc.get_text_width(g2, nd_gc.font_xs, ete_text), nd_gc.dl_line2);
 
             long time_at_arrival_s = wpt_eta;
             long hours_at_arrival = time_at_arrival_s / 3600l;
@@ -219,24 +203,24 @@ public class DestinationLabel extends NDSubcomponent {
 
             String time_of_arrival_text = "" + eta_hours_formatter.format(hours_at_arrival) + eta_minutes_formatter.format(minutes_at_arrival);
             g2.setFont(nd_gc.font_l);
-            g2.drawString(time_of_arrival_text, dx + 0, line3);
+            g2.drawString(time_of_arrival_text, nd_gc.dl_dx + 0, nd_gc.dl_line3);
             g2.setFont(nd_gc.font_s);
-            g2.drawString("Z", dx + nd_gc.get_text_width(g2, nd_gc.font_l, time_of_arrival_text), line3);
+            g2.drawString("Z", nd_gc.dl_dx + nd_gc.get_text_width(g2, nd_gc.font_l, time_of_arrival_text), nd_gc.dl_line3);
 
         } else {
 
             // we are too slow, or ETE=0, or distance=0
             g2.setFont(nd_gc.font_xs);
             String ete_text = "-.-";
-            g2.drawString(ete_text, dx + 0, line2);
+            g2.drawString(ete_text, nd_gc.dl_dx + 0, nd_gc.dl_line2);
             g2.setFont(nd_gc.font_xxs);
             String ete_label_text = "min";
-            g2.drawString(ete_label_text, dx + nd_gc.get_text_width(g2, nd_gc.font_xs, ete_text), line2);
+            g2.drawString(ete_label_text, nd_gc.dl_dx + nd_gc.get_text_width(g2, nd_gc.font_xs, ete_text), nd_gc.dl_line2);
             String time_of_arrival_text = "----.-";
             g2.setFont(nd_gc.font_l);
-            g2.drawString(time_of_arrival_text, dx + 0, line3);
+            g2.drawString(time_of_arrival_text, nd_gc.dl_dx + 0, nd_gc.dl_line3);
             g2.setFont(nd_gc.font_s);
-            g2.drawString("Z", dx + nd_gc.get_text_width(g2, nd_gc.font_l, time_of_arrival_text), line3);
+            g2.drawString("Z", nd_gc.dl_dx + nd_gc.get_text_width(g2, nd_gc.font_l, time_of_arrival_text), nd_gc.dl_line3);
 
         }
         g2.setFont(nd_gc.font_l);
@@ -248,9 +232,9 @@ public class DestinationLabel extends NDSubcomponent {
         } else {
             dist_text = integer_formatter.format(wpt_dist);
         }
-        g2.drawString(dist_text, dx + 0, line4);
+        g2.drawString(dist_text, nd_gc.dl_dx + 0, nd_gc.dl_line4);
         g2.setFont(nd_gc.font_s);
-        g2.drawString("NM", dx + nd_gc.get_text_width(g2, nd_gc.font_l, dist_text), line4);
+        g2.drawString("NM", nd_gc.dl_dx + nd_gc.get_text_width(g2, nd_gc.font_l, dist_text), nd_gc.dl_line4);
 
     }
 

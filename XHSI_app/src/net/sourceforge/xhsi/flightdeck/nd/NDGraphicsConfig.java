@@ -195,11 +195,24 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public Stroke fmc_stroke_active;
     public Stroke fmc_stroke_inactive;
     
+    // Destination label
+    public int dl_line1;
+    public int dl_line2;
+    public int dl_line3;
+    public int dl_line4;
+    public int dl_box_height;
+    public int dl_dx;
+    public int dl_img_width;
+    public int dl_img_height;
+    public int dl_img_x;
+    public int dl_img_y;
+    public BufferedImage dl_buf_image;
+    
     // Destination and approach type
     public Font appr_type_font;
 	public int appr_type_x;
 	public int appr_type_y;
-    
+	
     // RadioLabel & Radio info box -> rib prefix
     public int rib_width;
     public int rib_line_1;
@@ -216,6 +229,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int radio1_box_x;
     public int radio2_box_x;
     public int radio_box_y;
+    public Stroke radio_arrow_stroke;
     public BufferedImage left_radio_box_img;
     public BufferedImage right_radio_box_img;
 
@@ -419,6 +433,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             	radio1_box_x = border_left;
             	radio2_box_x = frame_size.width - border_right - rib_width;
             	radio_box_y = frame_size.height - rib_height - border_bottom;
+            	radio_arrow_stroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
             } else {
                 rib_line_1 = line_height_xxl + line_height_l/5;
                 rib_line_2 = rib_line_1 + line_height_xxl;
@@ -427,7 +442,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
                 rib_height = rib_line_3 + line_height_l/4;
                 rib_width = digit_width_xl * 9;                
                 rib_dme_text_width = get_text_width(g2, font_xxl, "0000");
-                rib_spacing = " ";
+                rib_spacing = "";
                 radio2_text_x = digit_width_l;
                 radio1_text_x = digit_width_l * 25/10;
                 radio2_arrow_x = rib_width - digit_width_l;
@@ -435,6 +450,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
                 radio1_box_x = border_left;
                 radio2_box_x = frame_size.width - border_right - rib_width;
                 radio_box_y = frame_size.height - rib_height - border_bottom;
+                radio_arrow_stroke = new BasicStroke(2.0f*scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
             }
             left_radio_box_img = new BufferedImage(rib_width, rib_height, BufferedImage.TYPE_INT_ARGB);
             right_radio_box_img = new BufferedImage(rib_width, rib_height, BufferedImage.TYPE_INT_ARGB);
@@ -964,6 +980,35 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
         	appr_type_font = font_xxxl;
         	appr_type_x = panel_rect.x + panel_rect.width / 2 - digit_width_xxxl*4;
         	appr_type_y = line_height_xl;
+        	
+        	/*
+        	 * Destination Label
+        	 */
+        	if (boeing_style) {
+        		dl_line1 = line_height_l;
+        		dl_line2 = dl_line1 + line_height_xs;
+        		dl_line3 = dl_line2 + line_height_l;
+        		dl_line4 = dl_line3 + line_height_l;
+        		dl_box_height = dl_line4 + line_height_xs/2;
+        		dl_dx = max_char_advance_l/2;
+                dl_img_width = max_char_advance_l * 8;
+                dl_img_height = line_height_l * 5;
+                dl_img_x = panel_rect.x + panel_rect.width - (max_char_advance_l * 6);
+                dl_img_y = panel_rect.y;
+        	} else {
+                dl_line1 = line_height_xl;
+                dl_line2 = dl_line1 + line_height_xl;
+                dl_line3 = dl_line2 + line_height_xl;
+                dl_line4 = dl_line3 + line_height_xl;
+                dl_box_height = dl_line3 + line_height_xs/2;
+                dl_dx = max_char_advance_l/2;   
+                dl_img_width = max_char_advance_l * 8;
+                dl_img_height = line_height_l * 5;
+                dl_img_x = panel_rect.x + panel_rect.width - (max_char_advance_l * 6);
+                dl_img_y = panel_rect.y;
+        	}
+        	dl_buf_image = new BufferedImage(dl_img_width, dl_img_height,BufferedImage.TYPE_INT_ARGB);
+        	// create_buffered_image(dl_img_width, dl_img_height);
         	
             // clear the flags
             this.resized = false;
