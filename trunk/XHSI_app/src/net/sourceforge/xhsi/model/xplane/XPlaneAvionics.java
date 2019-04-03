@@ -353,6 +353,10 @@ public class XPlaneAvionics implements Avionics, Observer {
 
     }
 
+    public int get_clock_style() {
+      return xhsi_preferences.get_preference(XHSIPreferences.PREF_CLOCK_DISPLAY_DIGITAL).equals("true") ? 1 : 0;
+    }
+    
     public InstrumentSide get_instrument_side() {
     	if (xhsi_preferences.get_instrument_operator().equals( XHSIPreferences.PILOT )) {
     		return InstrumentSide.PILOT;

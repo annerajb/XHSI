@@ -131,7 +131,7 @@ public class ClockComponent extends Component implements Observer, PreferencesOb
 
         // send Graphics object to annun_gc to recompute positions, if necessary because the panel has been resized or a mode setting has been changed
         // TODO: this.avionics.get_clock_style()
-        clock_gc.update_config( g2, this.aircraft.battery(), this.avionics.get_instrument_style(), this.avionics.du_brightness(display_unit) );
+        clock_gc.update_config( g2, this.aircraft.battery(), this.avionics.get_clock_style(), this.avionics.du_brightness(display_unit) );
 
         // rotate the display
         XHSIPreferences.Orientation orientation = XHSIPreferences.get_instance().get_panel_orientation( this.clock_gc.display_unit );

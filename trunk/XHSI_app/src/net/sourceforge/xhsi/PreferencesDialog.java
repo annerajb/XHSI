@@ -138,6 +138,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
      * ------------
      */   
     private JComboBox instrument_style_combobox;
+    private JCheckBox digital_clock_checkbox;
     private String instrument_styles[] = { XHSIPreferences.INSTRUMENT_STYLE_SWITCHABLE, XHSIPreferences.INSTRUMENT_STYLE_BOEING, XHSIPreferences.INSTRUMENT_STYLE_AIRBUS };
     private JTextField min_rwy_textfield;
     private JComboBox rwy_units_combobox;
@@ -414,7 +415,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
 
         // Avionics Options
-
+      
+        this.digital_clock_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_CLOCK_DISPLAY_DIGITAL).equalsIgnoreCase("true"));
+        
         this.use_power_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_USE_POWER).equalsIgnoreCase("true"));
 
         this.auto_frontcourse_checkbox.setSelected(preferences.get_preference(XHSIPreferences.PREF_AUTO_FRONTCOURSE).equalsIgnoreCase("true"));
@@ -1306,6 +1309,19 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         this.instrument_style_combobox.addItem("Airbus");
         this.instrument_style_combobox.addActionListener(this);
         avionics_options_panel.add(this.instrument_style_combobox, cons);
+        dialog_line++;
+        
+        // Digital clock
+        cons.gridx = 0;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.EAST;
+        avionics_options_panel.add(new JLabel("Digital Clock", JLabel.TRAILING), cons);
+        
+        cons.gridx = 2;
+        cons.gridy = dialog_line;
+        cons.anchor = GridBagConstraints.WEST;
+        this.digital_clock_checkbox = new JCheckBox("  (unchecked = analog clock)");
+        avionics_options_panel.add(this.digital_clock_checkbox, cons);
         dialog_line++;
         
         // Empty line for spacing
@@ -2590,8 +2606,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
             // GRAPHICS
 
-            if ( ! instrument_styles[this.instrument_style_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_INSTRUMENT_STYLE)) )
-                this.preferences.set_preference(XHSIPreferences.PREF_INSTRUMENT_STYLE, instrument_styles[this.instrument_style_combobox.getSelectedIndex()]);
 
             if ( this.use_more_color_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_USE_MORE_COLOR).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_USE_MORE_COLOR, this.use_more_color_checkbox.isSelected()?"true":"false");
@@ -2653,6 +2667,11 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
 
             // Avionics options
+            if ( ! instrument_styles[this.instrument_style_combobox.getSelectedIndex()].equals(this.preferences.get_preference(XHSIPreferences.PREF_INSTRUMENT_STYLE)) )
+                this.preferences.set_preference(XHSIPreferences.PREF_INSTRUMENT_STYLE, instrument_styles[this.instrument_style_combobox.getSelectedIndex()]);
+
+            if ( this.digital_clock_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_CLOCK_DISPLAY_DIGITAL).equals("true") )
+                this.preferences.set_preference(XHSIPreferences.PREF_CLOCK_DISPLAY_DIGITAL, this.digital_clock_checkbox.isSelected()?"true":"false");
 
             if ( this.use_power_checkbox.isSelected() != this.preferences.get_preference(XHSIPreferences.PREF_USE_POWER).equals("true") )
                 this.preferences.set_preference(XHSIPreferences.PREF_USE_POWER, this.use_power_checkbox.isSelected()?"true":"false");

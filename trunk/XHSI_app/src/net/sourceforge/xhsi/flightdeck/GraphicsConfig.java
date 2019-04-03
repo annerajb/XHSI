@@ -360,7 +360,9 @@ public class GraphicsConfig implements ComponentListener {
     
     // new XHSI font for instruments
     Font font_aircraft_instrument;
+    Font font_aircraft_instrument_bold;
     String font_aircraft_instrument_name = "AircraftInstruments";
+    String font_aircraft_instrument_bold_name = "AircraftInstruments Bold";
     
     String font_name = "Verdana";
     // String font_name = "AircraftInstruments";
@@ -551,10 +553,23 @@ public class GraphicsConfig implements ComponentListener {
     		e.printStackTrace();
     		font_aircraft_instrument = null;
     	} 
+    	try {
+    		InputStream font_stream =  GraphicsConfig.class.getResourceAsStream("AircraftInstruments-Bold.ttf");    		    		
+    		font_aircraft_instrument_bold = Font.createFont(Font.TRUETYPE_FONT, font_stream);    		 
+    		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    		ge.registerFont(font_aircraft_instrument_bold);
+    		font_stream.close();
+    	} catch (Exception e) {
+    		// Handle exception
+    		logger.warning("Cannot load AircraftInstruments-Bold.ttf font");
+    		logger.warning(e.getMessage());
+    		e.printStackTrace();
+    		font_aircraft_instrument_bold = null;
+    	} 
     }
 
-    private Font getAircraftInstrumentsFont(float size) {
-    	Font derive = font_aircraft_instrument;
+    private Font getAircraftInstrumentsFont(float size, boolean bold) {
+    	Font derive = bold ? font_aircraft_instrument_bold : font_aircraft_instrument;
     	return derive.deriveFont(size);
     }
 
@@ -606,28 +621,29 @@ public class GraphicsConfig implements ComponentListener {
     public void set_fonts(Graphics2D g2, float scale) {
 
     	boolean use_builtin_instruments_font = this.preferences.get_preference(XHSIPreferences.PREF_INSTRUMENTS_FONT).equals("Builtin");
+    	boolean bold_font = XHSIPreferences.get_instance().get_bold_fonts();
     	if (!use_builtin_instruments_font) this.font_name = this.preferences.get_preference(XHSIPreferences.PREF_INSTRUMENTS_FONT);
 
     	// Verdana is easier to read than Lucida Sans, and available on Win, Mac and Lin
     	if (font_aircraft_instrument != null && use_builtin_instruments_font) {
     		this.font_statusbar = new Font(this.font_name, Font.PLAIN, 9);
-    		this.font_tiny = getAircraftInstrumentsFont(10);
-    		this.font_small = getAircraftInstrumentsFont(12);
-    		this.font_medium = getAircraftInstrumentsFont(16);
-    		this.font_large = getAircraftInstrumentsFont(24);
-    		this.font_zl = getAircraftInstrumentsFont(Math.round(64.0f * scale));
-    		this.font_xxxl = getAircraftInstrumentsFont(Math.round(29.0f * scale));
-    		this.font_xxl = getAircraftInstrumentsFont(Math.round(24.0f * scale));
-    		this.font_xl = getAircraftInstrumentsFont(Math.round(22.0f * scale));
-    		this.font_l = getAircraftInstrumentsFont(Math.round(19.0f * scale));
-    		this.font_m = getAircraftInstrumentsFont(Math.round(17.0f * scale));
-    		this.font_s = getAircraftInstrumentsFont(Math.round(15.0f * scale));
-    		this.font_xs = getAircraftInstrumentsFont(Math.round(13.0f * scale));
-    		this.font_xxs = getAircraftInstrumentsFont(Math.round(11.0f * scale));
-    		this.font_xxxs = getAircraftInstrumentsFont( Math.round(9.0f * scale));
-    		this.font_normal = getAircraftInstrumentsFont(Math.round(15.0f * scale)); 
+    		this.font_tiny = getAircraftInstrumentsFont(10, bold_font);
+    		this.font_small = getAircraftInstrumentsFont(12, bold_font);
+    		this.font_medium = getAircraftInstrumentsFont(16, bold_font);
+    		this.font_large = getAircraftInstrumentsFont(24, bold_font);
+    		this.font_zl = getAircraftInstrumentsFont(Math.round(64.0f * scale), bold_font);
+    		this.font_xxxl = getAircraftInstrumentsFont(Math.round(29.0f * scale), bold_font);
+    		this.font_xxl = getAircraftInstrumentsFont(Math.round(24.0f * scale), bold_font);
+    		this.font_xl = getAircraftInstrumentsFont(Math.round(22.0f * scale), bold_font);
+    		this.font_l = getAircraftInstrumentsFont(Math.round(19.0f * scale), bold_font);
+    		this.font_m = getAircraftInstrumentsFont(Math.round(17.0f * scale), bold_font);
+    		this.font_s = getAircraftInstrumentsFont(Math.round(15.0f * scale), bold_font);
+    		this.font_xs = getAircraftInstrumentsFont(Math.round(13.0f * scale), bold_font);
+    		this.font_xxs = getAircraftInstrumentsFont(Math.round(11.0f * scale), bold_font);
+    		this.font_xxxs = getAircraftInstrumentsFont( Math.round(9.0f * scale), bold_font);
+    		this.font_normal = getAircraftInstrumentsFont(Math.round(15.0f * scale), bold_font); 
     	} else {
-    		if ( XHSIPreferences.get_instance().get_bold_fonts() ) {
+    		if ( bold_font ) {
     			this.font_statusbar = new Font(this.font_name, Font.PLAIN, 9);
     			this.font_tiny = new Font( this.font_name, Font.BOLD, 10);
     			this.font_small = new Font( this.font_name, Font.BOLD, 12);

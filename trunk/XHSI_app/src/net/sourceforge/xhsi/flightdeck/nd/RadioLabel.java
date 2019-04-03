@@ -265,7 +265,7 @@ public class RadioLabel extends NDSubcomponent {
             	if (USE_BUFFERED_IMAGE) {
             		g2_left = nd_gc.left_radio_box_img.createGraphics();
             		g2_left.setRenderingHints(nd_gc.rendering_hints);
-            		g2_left.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+            		g2_left.setStroke(nd_gc.radio_arrow_stroke);
             		if (refresh_radio1) {
             			left_refreshed_timestamp = nd_gc.current_time_millis;
             			// Clear the buffered Image first
@@ -292,7 +292,7 @@ public class RadioLabel extends NDSubcomponent {
             	if (USE_BUFFERED_IMAGE) {
             		g2_right = nd_gc.right_radio_box_img.createGraphics();
             		g2_right.setRenderingHints(nd_gc.rendering_hints);
-            		g2_right.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+            		g2_right.setStroke(nd_gc.radio_arrow_stroke);
             		if (refresh_radio2) {
             			right_refreshed_timestamp = nd_gc.current_time_millis;
             			// Clear the buffered Image first
@@ -346,6 +346,7 @@ public class RadioLabel extends NDSubcomponent {
         
         if (nd_gc.boeing_style) {
         	g2.setFont(nd_gc.font_xs);
+        	g2.setColor(radio_box_info.color);
         	if ( this.avionics.efis_shows_pos() )
         		g2.drawString(radio_box_info.radial_text, text_x, nd_gc.rib_line_4);
         	else
@@ -353,7 +354,8 @@ public class RadioLabel extends NDSubcomponent {
         }
         if ( ! nd_gc.mode_plan && ( ! avionics.efis_shows_pos() || ( nd_gc.mode_classic_hsi ) ) ) {
             Stroke original_stroke = g2.getStroke();
-            g2.setStroke(new BasicStroke(1.0f));
+            g2.setStroke(nd_gc.radio_arrow_stroke);
+            g2.setColor(radio_box_info.color);
             int arrow_t = nd_gc.line_height_l/2;
             int arrow_l = nd_gc.line_height_l*2;
             int arrow_w = arrow_l*10/25;
