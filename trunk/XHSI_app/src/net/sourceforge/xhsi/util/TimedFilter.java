@@ -34,16 +34,41 @@ public class TimedFilter {
      * The last time the filter was activated
      */
     long time_of_last_activation;
+    
+    /**
+     * The last time the graphic config was reconfigured
+     */
+    long reconfigured_timestamp;
+    
+    /**
+     * The last time the graphic config color was updated / DU brightness changed
+     */
+    long color_reconfigured_timestamp;
 
     public TimedFilter(long filter_timeout) {
         this.filter_timeout = filter_timeout;
         this.time_of_last_activation = 0;
+        this.reconfigured_timestamp = 0;
     }
 
     public boolean time_to_perform() {
         long now = System.currentTimeMillis();
         if (((now - time_of_last_activation) > filter_timeout) || (time_of_last_activation == 0)) {
             time_of_last_activation = now;
+            return true;
+        } else
+            return false;
+    }
+    
+    public boolean time_to_perform(long config_timestamp, long color_timestamp) {
+        long now = System.currentTimeMillis();
+        if (((now - time_of_last_activation) > filter_timeout) ||
+        		(time_of_last_activation == 0) || 
+        		config_timestamp != reconfigured_timestamp ||
+        		color_timestamp != color_reconfigured_timestamp ) {
+            time_of_last_activation = now;
+            reconfigured_timestamp = config_timestamp;
+            color_reconfigured_timestamp = color_timestamp;
             return true;
         } else
             return false;

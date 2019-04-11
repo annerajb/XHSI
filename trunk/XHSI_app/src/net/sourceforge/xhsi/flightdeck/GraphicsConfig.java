@@ -505,6 +505,7 @@ public class GraphicsConfig implements ComponentListener {
     public boolean reconfig = true;
     public boolean reconfigured = true;
     public long reconfigured_timestamp=0;
+    public long color_updated_timestamp=0;
     public boolean colors_updated = false;
 
     public int display_unit;
@@ -1305,6 +1306,7 @@ public class GraphicsConfig implements ComponentListener {
                     true);
             
             colors_updated = true;
+            color_updated_timestamp = current_time_millis;
     	}
     	return colors_updated;
     }

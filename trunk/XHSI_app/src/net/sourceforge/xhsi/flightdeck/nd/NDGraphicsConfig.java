@@ -196,12 +196,22 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public Stroke fmc_stroke_inactive;
     
     // Destination label
+    public int dl_id_line;
+    public int dl_min_line;
+    public int dl_eta_line;
+    public int dl_dist_line;
+    /*
     public int dl_line1;
     public int dl_line2;
     public int dl_line3;
     public int dl_line4;
+    */
     public int dl_box_height;
     public int dl_dx;
+    public int dl_waypoint_id_x;
+    public int dl_course_x;
+    public int dl_dist_unit_x;
+    public int dl_dist_value_x;
     public int dl_img_width;
     public int dl_img_height;
     public int dl_img_x;
@@ -985,30 +995,37 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
         	 * Destination Label
         	 */
         	if (boeing_style) {
-        		dl_line1 = line_height_l;
-        		dl_line2 = dl_line1 + line_height_xs;
-        		dl_line3 = dl_line2 + line_height_l;
-        		dl_line4 = dl_line3 + line_height_l;
-        		dl_box_height = dl_line4 + line_height_xs/2;
+        		dl_id_line = line_height_l;
+        		dl_min_line = dl_id_line + line_height_xs;
+        		dl_eta_line = dl_min_line + line_height_l;
+        		dl_dist_line = dl_eta_line + line_height_l;
+        		dl_box_height = dl_dist_line + line_height_xs/2;
         		dl_dx = max_char_advance_l/2;
+        		dl_waypoint_id_x = dl_dx;
+        	    dl_course_x = dl_dx;
+        	    dl_dist_unit_x = dl_dx + max_char_advance_l * 5;
+        	    dl_dist_value_x = dl_dx;
                 dl_img_width = max_char_advance_l * 8;
                 dl_img_height = line_height_l * 5;
-                dl_img_x = panel_rect.x + panel_rect.width - (max_char_advance_l * 6);
+                dl_img_x = panel_rect.x + panel_rect.width - dl_img_width;
                 dl_img_y = panel_rect.y;
         	} else {
-                dl_line1 = line_height_xl;
-                dl_line2 = dl_line1 + line_height_xl;
-                dl_line3 = dl_line2 + line_height_xl;
-                dl_line4 = dl_line3 + line_height_xl;
-                dl_box_height = dl_line3 + line_height_xs/2;
-                dl_dx = max_char_advance_l/2;   
-                dl_img_width = max_char_advance_l * 8;
-                dl_img_height = line_height_l * 5;
-                dl_img_x = panel_rect.x + panel_rect.width - (max_char_advance_l * 6);
-                dl_img_y = panel_rect.y;
+        		dl_id_line = line_height_xl;
+        		dl_min_line = dl_id_line;
+        		dl_dist_line = dl_id_line + line_height_xl;
+                dl_eta_line = dl_dist_line + line_height_xl;
+                dl_box_height = dl_eta_line + line_height_xs/2;
+                dl_dx = max_char_advance_xxl * 5;
+                dl_waypoint_id_x = 0;
+        	    dl_course_x = max_char_advance_xxl * 11/2;
+        	    dl_dist_unit_x = max_char_advance_xxl * 9;
+        	    dl_dist_value_x = max_char_advance_xxl * 5;
+                dl_img_width = max_char_advance_xxl * 11;
+                dl_img_height = line_height_xl * 3;
+                dl_img_x = panel_rect.x + panel_rect.width - dl_img_width ;
+                dl_img_y = panel_rect.y + line_height_xl/2;
         	}
         	dl_buf_image = new BufferedImage(dl_img_width, dl_img_height,BufferedImage.TYPE_INT_ARGB);
-        	// create_buffered_image(dl_img_width, dl_img_height);
         	
             // clear the flags
             this.resized = false;

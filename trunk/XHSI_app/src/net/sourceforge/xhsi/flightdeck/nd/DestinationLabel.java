@@ -92,7 +92,7 @@ public class DestinationLabel extends NDSubcomponent {
         long dest_eta = 0;
         float dest_dist = 0.0f;
 
-        if (timed_filter.time_to_perform()) {
+        if (timed_filter.time_to_perform(nd_gc.reconfigured_timestamp, nd_gc.color_updated_timestamp)) {
         	
             int source = this.avionics.hsi_source();
             // The label should always show the next FMC waypoint in MAP, NAV and PLN modes
@@ -136,7 +136,7 @@ public class DestinationLabel extends NDSubcomponent {
                 NavigationRadio radio = this.avionics.get_gps_radio();
                 dest_ete = radio.get_ete();
                 dest_dist = radio.get_distance();
-                dest_name = this.avionics.gps_nav_id();
+                dest_name = this.avionics.gps_nav_id();                
                 this.destination_active = ( ! dest_name.equals("") );
             }
 
@@ -178,52 +178,87 @@ public class DestinationLabel extends NDSubcomponent {
 
         g2.setBackground(nd_gc.background_color);
         g2.clearRect(0, 0, (nd_gc.max_char_advance_l * 7), nd_gc.dl_box_height);
+        
+        // Display Waypoint / Navaid ID
+        String waypoint_name = wpt_name;
         if ( fmc_dest )
             g2.setColor(nd_gc.fmc_active_color);
         else
             g2.setColor(nd_gc.nav_needle_color);
-        g2.setFont(nd_gc.font_l);
-        g2.drawString(wpt_name, nd_gc.dl_dx + 0, nd_gc.dl_line1);
+        if (nd_gc.boeing_style) {
+        	g2.setFont(nd_gc.font_l);
+        } else {
+        	g2.setFont(nd_gc.font_xxl);
+        	if (wpt_name.equals("K---")) { 
+        		waypoint_name = "PPOS";
+        		g2.setColor(nd_gc.markings_color);
+        	}
+        }        
+        g2.drawString(waypoint_name, nd_gc.dl_waypoint_id_x, nd_gc.dl_id_line);
 
+        
         g2.setColor(nd_gc.top_text_color);
 
         if ( ! too_slow && (wpt_ete != 0.0f) && (wpt_dist > 0.0f) ) {
 
-            g2.setFont(nd_gc.font_xs);
-            String ete_text = "" + ete_minutes_formatter.format(wpt_ete);
-            g2.drawString(ete_text, nd_gc.dl_dx + 0, nd_gc.dl_line2);
-            g2.setFont(nd_gc.font_xxs);
-            String ete_label_text = "min";
-            g2.drawString(ete_label_text, nd_gc.dl_dx + nd_gc.get_text_width(g2, nd_gc.font_xs, ete_text), nd_gc.dl_line2);
+        	// Minutes to go
+        	if (nd_gc.boeing_style) {
+        		g2.setFont(nd_gc.font_xs);
+        		String ete_text = "" + ete_minutes_formatter.format(wpt_ete);
+        		g2.drawString(ete_text, nd_gc.dl_dx + 0, nd_gc.dl_min_line);
+        		g2.setFont(nd_gc.font_xxs);
+        		String ete_label_text = "min";
+        		g2.drawString(ete_label_text, nd_gc.dl_dx + nd_gc.get_text_width(g2, nd_gc.font_xs, ete_text), nd_gc.dl_min_line);
+        	}
 
+        	// ETA
             long time_at_arrival_s = wpt_eta;
             long hours_at_arrival = time_at_arrival_s / 3600l;
             float minutes_at_arrival = (( (float)time_at_arrival_s / 3600.0f ) - (float)hours_at_arrival ) * 60.0f;
             hours_at_arrival %= 24l;
-
-            String time_of_arrival_text = "" + eta_hours_formatter.format(hours_at_arrival) + eta_minutes_formatter.format(minutes_at_arrival);
-            g2.setFont(nd_gc.font_l);
-            g2.drawString(time_of_arrival_text, nd_gc.dl_dx + 0, nd_gc.dl_line3);
-            g2.setFont(nd_gc.font_s);
-            g2.drawString("Z", nd_gc.dl_dx + nd_gc.get_text_width(g2, nd_gc.font_l, time_of_arrival_text), nd_gc.dl_line3);
+            if (nd_gc.boeing_style) {
+            	String time_of_arrival_text = "" + eta_hours_formatter.format(hours_at_arrival) + eta_minutes_formatter.format(minutes_at_arrival);
+            	g2.setFont(nd_gc.font_l);
+            	g2.drawString(time_of_arrival_text, nd_gc.dl_dx + 0, nd_gc.dl_eta_line);
+            	g2.setFont(nd_gc.font_s);
+            	g2.drawString("Z", nd_gc.dl_dx + nd_gc.get_text_width(g2, nd_gc.font_l, time_of_arrival_text), nd_gc.dl_eta_line);
+            } else {
+            	String time_of_arrival_text = "" + eta_hours_formatter.format(hours_at_arrival) +":"+ eta_hours_formatter.format(minutes_at_arrival);
+            	g2.setFont(nd_gc.font_xxl);
+            	g2.setColor(nd_gc.fmc_active_color);
+            	g2.drawString(time_of_arrival_text, nd_gc.dl_course_x, nd_gc.dl_eta_line);
+            }
 
         } else {
-
             // we are too slow, or ETE=0, or distance=0
-            g2.setFont(nd_gc.font_xs);
-            String ete_text = "-.-";
-            g2.drawString(ete_text, nd_gc.dl_dx + 0, nd_gc.dl_line2);
-            g2.setFont(nd_gc.font_xxs);
-            String ete_label_text = "min";
-            g2.drawString(ete_label_text, nd_gc.dl_dx + nd_gc.get_text_width(g2, nd_gc.font_xs, ete_text), nd_gc.dl_line2);
-            String time_of_arrival_text = "----.-";
-            g2.setFont(nd_gc.font_l);
-            g2.drawString(time_of_arrival_text, nd_gc.dl_dx + 0, nd_gc.dl_line3);
-            g2.setFont(nd_gc.font_s);
-            g2.drawString("Z", nd_gc.dl_dx + nd_gc.get_text_width(g2, nd_gc.font_l, time_of_arrival_text), nd_gc.dl_line3);
+        	
+        	// Minutes to go
+        	if (nd_gc.boeing_style) {
+        		g2.setFont(nd_gc.font_xs);
+        		String ete_text = "-.-";
+        		g2.drawString(ete_text, nd_gc.dl_dx + 0, nd_gc.dl_min_line);
+        		g2.setFont(nd_gc.font_xxs);
+        		String ete_label_text = "min";
+        		g2.drawString(ete_label_text, nd_gc.dl_dx + nd_gc.get_text_width(g2, nd_gc.font_xs, ete_text), nd_gc.dl_min_line);
+        	}
+        	
+        	// ETA
+        	if (nd_gc.boeing_style) {
+        		String time_of_arrival_text = "----.-";
+        		g2.setFont(nd_gc.font_l);
+        		g2.drawString(time_of_arrival_text, nd_gc.dl_dx + 0, nd_gc.dl_eta_line);
+        		g2.setFont(nd_gc.font_s);
+        		g2.drawString("Z", nd_gc.dl_dx + nd_gc.get_text_width(g2, nd_gc.font_l, time_of_arrival_text), nd_gc.dl_eta_line);
+        	} else {
+        		g2.setColor(nd_gc.fmc_active_color);
+        		String time_of_arrival_text = "--:--";
+        		g2.setFont(nd_gc.font_xxl);
+        		g2.drawString(time_of_arrival_text, nd_gc.dl_course_x, nd_gc.dl_eta_line);
+        	}
 
         }
-        g2.setFont(nd_gc.font_l);
+        
+        // Display Distance
         String dist_text;
         if (wpt_dist == 0.0f) {
             dist_text = "---";
@@ -232,9 +267,18 @@ public class DestinationLabel extends NDSubcomponent {
         } else {
             dist_text = integer_formatter.format(wpt_dist);
         }
-        g2.drawString(dist_text, nd_gc.dl_dx + 0, nd_gc.dl_line4);
-        g2.setFont(nd_gc.font_s);
-        g2.drawString("NM", nd_gc.dl_dx + nd_gc.get_text_width(g2, nd_gc.font_l, dist_text), nd_gc.dl_line4);
+        if (nd_gc.boeing_style) {
+            g2.setFont(nd_gc.font_l);
+        	g2.drawString(dist_text, nd_gc.dl_dist_value_x, nd_gc.dl_dist_line);
+        	g2.setFont(nd_gc.font_s);
+        	g2.drawString("NM", nd_gc.dl_dist_value_x + nd_gc.get_text_width(g2, nd_gc.font_l, dist_text), nd_gc.dl_dist_line);
+        } else {
+            g2.setFont(nd_gc.font_xxl);
+        	g2.drawString(dist_text, nd_gc.dl_dist_value_x, nd_gc.dl_dist_line);
+        	g2.setFont(nd_gc.font_l);
+        	g2.setColor(nd_gc.pfd_selected_color);
+        	g2.drawString("NM", nd_gc.dl_dist_unit_x, nd_gc.dl_dist_line);      	
+        }
 
     }
 

@@ -192,7 +192,7 @@ public class FMSRoute extends MFDSubcomponent {
         rte_x3 = rte_x2 + mfd_gc.digit_width_xl*5; // total dist
         rte_x4 = rte_x3 + mfd_gc.digit_width_xl*6; // ttg
         rte_x5 = rte_x4 + mfd_gc.digit_width_xl*5; // eta
-        rte_x6 = rte_x5 + mfd_gc.digit_width_xl*5; // index
+        rte_x6 = rte_x5 + mfd_gc.digit_width_xl*6; // index
 
         g2.drawString("TO", rte_x0, rte_y);
         g2.drawString("ALT", rte_x1, rte_y);

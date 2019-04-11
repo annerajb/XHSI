@@ -98,7 +98,7 @@ public class RefSourceLabel extends NDSubcomponent {
 
     public void paint(Graphics2D g2) {
 
-        if ( nd_gc.powered ) {
+        if ( nd_gc.powered && nd_gc.boeing_style) {
 //                && ( ( this.avionics.map_submode() == Avionics.EFIS_MAP_APP ) || ( this.avionics.map_submode() == Avionics.EFIS_MAP_VOR ) )
 
             DecimalFormat degrees_formatter = new DecimalFormat("000");
