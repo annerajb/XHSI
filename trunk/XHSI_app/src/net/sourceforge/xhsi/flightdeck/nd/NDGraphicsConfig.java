@@ -811,7 +811,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
         	track_diamond_shift = (int) (10 * shrink_scaling_factor);
         	track_diamond_size = (int) (20 * shrink_scaling_factor);
         	track_diamond_bottom = heading_line_y + track_diamond_size*3/2-2;
-        	track_diamond_img = createTrackDiamond();
+        	
         	
             // Speed Labels (and wind arrow)
         	if (boeing_style) {
@@ -1035,10 +1035,11 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
 
         }
         
-        if (colors_updated | settings_updated) {
+        if (colors_updated || settings_updated) {
             fix_awy_symbol_img = create_fix_symbol(awy_wpt_color);
             fix_term_symbol_img = create_fix_symbol(term_wpt_color);
             airport_symbol_img = create_airport_symbol(arpt_color);
+            track_diamond_img = createTrackDiamond();
             createTerrainTextures();        	
         }
     }

@@ -137,14 +137,16 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
     
     public void update_config(Graphics2D g2, boolean power, int instrument_style, float du_brightness) {
 
-     	// Update colors if du_brightness changed
-     	update_colors(du_brightness);
-     	
-        if (this.resized
+    	// Update colors if du_brightness changed
+    	colors_updated = update_colors(du_brightness);
+    
+    	boolean settings_updated = (this.resized
                 || this.reconfig
                 || (this.powered != power)
                 || (this.style != instrument_style)
-            ) {
+            );
+    	
+        if (settings_updated) {
             // one of the settings has been changed
 
             // remember the new settings
@@ -354,6 +356,10 @@ public class PFDGraphicsConfig extends GraphicsConfig implements ComponentListen
             ils_line1 = ils_line2 + line_height_l;
             ils_x = speedtape_left;
 
+        }
+        
+        if (colors_updated || settings_updated) {
+        	hdg_diamond_img = createTrackDiamond();        	
         }
 
     }
