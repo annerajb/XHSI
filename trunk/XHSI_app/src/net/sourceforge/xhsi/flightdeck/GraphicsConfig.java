@@ -228,6 +228,9 @@ public class GraphicsConfig implements ComponentListener {
     public Color background_color;
 //    public Color border_color;
     public GradientPaint border_gradient;
+    public Color tuned_navaid_color;
+    public Color to_navaid_color;
+    public Color fpln_navaid_color;    
     public Color tuned_vor_color;
     public Color tuned_localizer_color;
     public Color reference_localizer_color;
@@ -848,7 +851,7 @@ public class GraphicsConfig implements ComponentListener {
         terrain_dark_green_color = setDUBrightness(new Color(0,40,0));
         terrain_bright_green_color = setDUBrightness(new Color(0,105,0));
         terrain_blue_color = setDUBrightness(new Color(0,0,80));
-        terrain_black_color = setDUBrightness(Color.black);
+        terrain_black_color = Color.black;
         
         if ( custom_colors ) {
             background_color = Color.BLACK;
@@ -860,10 +863,12 @@ public class GraphicsConfig implements ComponentListener {
             	/*
             	 * Custom colors Airbus Style 
             	 */
-            	
-                navaid_color = setDUBrightness(color_boeingcyan);
+                tuned_navaid_color = setDUBrightness(color_airbus_selected);  // Navaid is tuned for display
+                to_navaid_color = setDUBrightness(Color.WHITE);   // Navaid is the TO waypoint
+                fpln_navaid_color = setDUBrightness(Color.GREEN); // Navaid is part of the flight plan           	
+                navaid_color = setDUBrightness(Color.magenta);
                 term_wpt_color = setDUBrightness(Color.magenta);
-                wpt_color = setDUBrightness(color_cornflowerblue);
+                wpt_color = setDUBrightness(Color.magenta);
                 awy_wpt_color = setDUBrightness(Color.magenta.brighter());
                 arpt_color = setDUBrightness(Color.magenta);
                 
@@ -907,7 +912,9 @@ public class GraphicsConfig implements ComponentListener {
             	/*
             	 * Custom colors - Boeing Style
             	 */
-
+                tuned_navaid_color = setDUBrightness(color_airbus_selected);  // Navaid is tuned for display
+                to_navaid_color = setDUBrightness(Color.WHITE);   // Navaid is the TO waypoint
+                fpln_navaid_color = setDUBrightness(Color.GREEN); // Navaid is part of the flight plan
                 navaid_color = setDUBrightness(color_boeingcyan);
                 term_wpt_color = setDUBrightness(color_cornflowerblue.darker());
                 wpt_color = setDUBrightness(color_cornflowerblue);
@@ -1073,6 +1080,9 @@ public class GraphicsConfig implements ComponentListener {
                 /*
                  *  STANDARD COLORS: Navigation Display Airbus Style
                  */
+                tuned_navaid_color = setDUBrightness(color_airbus_selected);  // Navaid is tuned for display
+                to_navaid_color = setDUBrightness(Color.WHITE);   // Navaid is the TO waypoint
+                fpln_navaid_color = setDUBrightness(Color.GREEN); // Navaid is part of the flight plan
                 navaid_color = setDUBrightness(color_boeingcyan);
                 term_wpt_color = setDUBrightness(color_boeingcyan);
                 wpt_color = setDUBrightness(color_boeingcyan);
@@ -1137,6 +1147,9 @@ public class GraphicsConfig implements ComponentListener {
                 /*
                  *  STANDARD COLORS: Navigation Display Boeing Style
                  */
+                tuned_navaid_color = setDUBrightness(color_airbus_selected);  // Navaid is tuned for display
+                to_navaid_color = setDUBrightness(Color.WHITE);   // Navaid is the TO waypoint
+                fpln_navaid_color = setDUBrightness(Color.GREEN); // Navaid is part of the flight plan
                 navaid_color = setDUBrightness(color_boeingcyan);
                 term_wpt_color = setDUBrightness(color_boeingcyan);
                 wpt_color = setDUBrightness(color_boeingcyan);

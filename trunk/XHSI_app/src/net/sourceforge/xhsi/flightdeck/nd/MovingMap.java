@@ -7,7 +7,7 @@
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * Copyright (C) 2009-2014  Marc Rogiers (marrog.123@gmail.com)
-* Copyright (C) 2017-2018  Nicolas Carel
+* Copyright (C) 2017-2019  Nicolas Carel
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -71,7 +71,6 @@ public class MovingMap extends NDSubcomponent {
 
     private static final long serialVersionUID = 1L;
     private static final boolean DRAW_LAT_LON_GRID = false;
-    // private BufferedImage fix_image;
 
     public static DecimalFormat vor_freq_formatter;
     public static DecimalFormat ndb_freq_formatter;
@@ -1254,7 +1253,6 @@ public class MovingMap extends NDSubcomponent {
         NavigationObject navobj = null;
         RadioNavBeacon rnb;
 
-        //float min_rwy = this.preferences.get_min_rwy_length();
         float min_rwy = this.aircraft.get_min_rwy_length();
         
         for (int i=0; i<nav_objects.size(); i++) {
@@ -1318,41 +1316,34 @@ public class MovingMap extends NDSubcomponent {
 
         int course_line = (int) (vor.range * nd_gc.pixels_per_nm);
 
-        // just a big hexagon for VOR without DME
-//        int x_points_hexagon[] = { x-4, x+4, x+8, x+4, x-4, x-8 };
-//        int y_points_hexagon[] = { y-7, y-7, y, y+7, y+7, y };
-        int x4 = Math.round(4.0f*nd_gc.scaling_factor);
-        int x8 = Math.round(8.0f*nd_gc.scaling_factor);
-        int x12= Math.round(12.0f*nd_gc.scaling_factor);
-        int y7 = Math.round(7.0f*nd_gc.scaling_factor);
-        int y12= Math.round(12.0f*nd_gc.scaling_factor);
-        int x_points_hexagon[] = { x-x4, x+x4, x+x8, x+x4, x-x4, x-x8 };
-        int y_points_hexagon[] = { y-y7, y-y7, y, y+y7, y+y7, y };
-
         AffineTransform original_at = g2.getTransform();
         g2.rotate(Math.toRadians(this.map_up), x, y);
         Graphics g = (Graphics) g2;
-        if ( bank > 0 )
-            g.setColor(nd_gc.tuned_vor_color);
-        else
-            g.setColor(nd_gc.navaid_color);
-        g.drawPolygon(x_points_hexagon, y_points_hexagon, 6);
-        g2.setFont(nd_gc.font_s); // was: xs
-        g.drawString(vor.ilt, x + x12, y + y12);
+        if ( bank > 0 ) {
+        	g.setColor(nd_gc.boeing_style ? nd_gc.tuned_vor_color : nd_gc.tuned_navaid_color);
+        	g2.drawImage( nd_gc.vor_tuned_symbol_img, x-nd_gc.vor_shift_x,y-nd_gc.vor_shift_y, null);
+        } else {
+        	g.setColor(nd_gc.navaid_color);
+        	g2.drawImage( nd_gc.vor_symbol_img, x-nd_gc.vor_shift_x,y-nd_gc.vor_shift_y, null);
+        }
+        
+        
+        g2.setFont(nd_gc.navaid_font); 
+        g.drawString(vor.ilt, x + nd_gc.vor_name_x, y + nd_gc.vor_name_y);
         if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
-            g2.setFont(nd_gc.font_xs); // was: xxs
-            g.drawString(MovingMap.vor_freq_formatter.format(vor.frequency), x + x12, y + y12 - nd_gc.line_height_s);
+            g2.setFont(nd_gc.data_font); 
+            g.drawString(MovingMap.vor_freq_formatter.format(vor.frequency), x + nd_gc.vor_name_x, y + nd_gc.vor_data_y);
         }
         if ( ( bank > 0 ) && ! avionics.efis_shows_pos() ) {
             // the selected course and reciprocal
             g2.setTransform(original_at);
             g2.rotate(Math.toRadians( course + vor.offset ), x, y);
             Stroke original_stroke = g2.getStroke();
-            //g2.setStroke(new BasicStroke(1.0f*nd_gc.scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, longdashes, 0.0f));
-            g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
+            // g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
+            g2.setStroke(bank==1 ? nd_gc.vor_longdashes_1_stroke : nd_gc.vor_longdashes_2_stroke);
             g.drawLine(x, y, x, y + course_line);
-            //g2.setStroke(new BasicStroke(1.0f*nd_gc.scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, shortdashes, 0.0f));
-            g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?shortdashes_1:shortdashes_2, 0.0f));
+            // g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?shortdashes_1:shortdashes_2, 0.0f));
+            g2.setStroke(bank==1 ? nd_gc.vor_shortdashes_1_stroke : nd_gc.vor_shortdashes_2_stroke);
             g.drawLine(x, y - course_line, x, y);
             g2.setStroke(original_stroke);
         }
@@ -1366,41 +1357,23 @@ public class MovingMap extends NDSubcomponent {
         int course_line = (int) (vordme.range * nd_gc.pixels_per_nm);
 
         // a somewhat smaller hexagon with 3 leaves for VOR with DME
-        int x3 = Math.round(3.0f*nd_gc.scaling_factor);
-        int x6 = Math.round(6.0f*nd_gc.scaling_factor);
-        int x8 = Math.round(8.0f*nd_gc.scaling_factor);
-        int x11 = Math.round(11.0f*nd_gc.scaling_factor);
-        int x12 = Math.round(12.0f*nd_gc.scaling_factor);
-        int y3 = x3;
-        int y5 = Math.round(5.0f*nd_gc.scaling_factor);
-        int y8 = x8;
-        int y11 = x11;
-        int y12 = Math.round(12.0f*nd_gc.scaling_factor);
-        int x_points_hexagon[] = { x-x3, x+x3, x+x6, x+x3, x-x3, x-x6 };
-        int y_points_hexagon[] = { y-y5, y-y5, y, y+y5, y+y5, y };
-        int x_points_ul_leaf[] = { x-x6, x-x3, x-x8, x-x11 };
-        int y_points_ul_leaf[] = { y,   y-y5, y-y8, y-y3 };
-        int x_points_ur_leaf[] = { x+x6, x+x3, x+x8, x+x11 };
-        int y_points_ur_leaf[] = { y,   y-y5, y-y8, y-y3 };
-        int x_points_b_leaf[] =  { x-x3, x+x3, x+x3, x-x3 };
-        int y_points_b_leaf[] =  { y+y5, y+y5, y+y11, y+y11 };
 
         AffineTransform original_at = g2.getTransform();
         g2.rotate(Math.toRadians(this.map_up), x, y);
         Graphics g = (Graphics) g2;
-        if ( bank > 0 )
-            g.setColor(nd_gc.tuned_vor_color);
-        else
+        if ( bank > 0 ) {
+            g.setColor(nd_gc.boeing_style ? nd_gc.tuned_vor_color : nd_gc.tuned_navaid_color);
+            g2.drawImage( nd_gc.vordme_tuned_symbol_img, x-nd_gc.vordme_shift_x,y-nd_gc.vordme_shift_y, null);
+        } else {
             g.setColor(nd_gc.navaid_color);
-        g.drawPolygon(x_points_hexagon, y_points_hexagon, 6);
-        g.drawPolygon(x_points_ul_leaf, y_points_ul_leaf, 4);
-        g.drawPolygon(x_points_ur_leaf, y_points_ur_leaf, 4);
-        g.drawPolygon(x_points_b_leaf, y_points_b_leaf, 4);
-        g2.setFont(nd_gc.font_s);
-        g.drawString(vordme.ilt, x + x12, y + y12);
+            g2.drawImage( nd_gc.vordme_symbol_img, x-nd_gc.vordme_shift_x,y-nd_gc.vordme_shift_y, null);
+        }
+
+        g2.setFont(nd_gc.navaid_font);
+        g.drawString(vordme.ilt, x + nd_gc.vordme_name_x, y + nd_gc.vordme_name_y);
         if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
-            g2.setFont(nd_gc.font_xs);
-            g.drawString(MovingMap.vor_freq_formatter.format(vordme.frequency), x + x12, y + y12 - nd_gc.line_height_s);
+            g2.setFont(nd_gc.data_font);
+            g.drawString(MovingMap.vor_freq_formatter.format(vordme.frequency), x + nd_gc.vordme_name_x, y + nd_gc.vordme_data_y);
         }
         if ( bank > 0 ) {
             Stroke original_stroke = g2.getStroke();
@@ -1408,15 +1381,18 @@ public class MovingMap extends NDSubcomponent {
                 // the selected course and reciprocal
                 g2.setTransform(original_at);
                 g2.rotate(Math.toRadians( course + vordme.offset ), x, y);
-                //g2.setStroke(new BasicStroke(1.0f*nd_gc.scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, shortdashes, 0.0f));
-                g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?shortdashes_1:shortdashes_2, 0.0f));
+                
+                // g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?shortdashes_1:shortdashes_2, 0.0f));
+                g2.setStroke(bank==1 ? nd_gc.vor_shortdashes_1_stroke : nd_gc.vor_shortdashes_2_stroke);
                 g.drawLine(x, y - course_line, x, y);
-                //g2.setStroke(new BasicStroke(1.0f*nd_gc.scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, longdashes, 0.0f));
-                g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
+                
+                // g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
+                g2.setStroke(bank==1 ? nd_gc.vor_longdashes_1_stroke : nd_gc.vor_longdashes_2_stroke);
                 g.drawLine(x, y, x, y + course_line);
             }
             if ( dme_radius > 0 ) {
-                g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
+                // g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
+                g2.setStroke(bank==1 ? nd_gc.vor_longdashes_1_stroke : nd_gc.vor_longdashes_2_stroke);
                 g2.drawOval(x-(int)(dme_radius*nd_gc.pixels_per_nm), y-(int)(dme_radius*nd_gc.pixels_per_nm), (int)(2*dme_radius*nd_gc.pixels_per_nm), (int)(2*dme_radius*nd_gc.pixels_per_nm));
             }
             g2.setStroke(original_stroke);
@@ -1429,81 +1405,54 @@ public class MovingMap extends NDSubcomponent {
     private void drawDME(Graphics2D g2, int x, int y, RadioNavBeacon dme, int bank, float dme_radius) {
 
         // a sort-of-Y-symbol for a standalone DME or TACAN
-        int x3 = Math.round(3.0f*nd_gc.scaling_factor);
-        int x6 = Math.round(6.0f*nd_gc.scaling_factor);
-        int x8 = Math.round(8.0f*nd_gc.scaling_factor);
-        int x11 = Math.round(11.0f*nd_gc.scaling_factor);
-        int x12 = Math.round(12.0f*nd_gc.scaling_factor);
-        int y3 = x3;
-        int y5 = Math.round(5.0f*nd_gc.scaling_factor);
-        int y8 = x8;
-        int y11 = Math.round(11.0f*nd_gc.scaling_factor);
-        int y12 = Math.round(12.0f*nd_gc.scaling_factor);
-        int x_points[] = { x+x6, x+x11, x+x8, x+x3, x-x3, x-x8, x-x11, x-x6, x-x3, x-x3,  x+x3, x+x3 };
-        int y_points[] = { y,   y-y3,  y-y8, y-y5, y-y5, y-y8, y-y3,  y,   y+y5, y+y11, y+y11, y+y5 };
-
         AffineTransform original_at = g2.getTransform();
         g2.rotate(Math.toRadians(this.map_up), x, y);
         Graphics g = (Graphics) g2;
-        if ( bank > 0 )
-            g.setColor(nd_gc.tuned_vor_color);
-        else
+
+        if ( bank > 0 ) {
+            g.setColor(nd_gc.boeing_style ? nd_gc.tuned_vor_color : nd_gc.tuned_navaid_color);
+        	g2.drawImage( nd_gc.dme_tuned_symbol_img, x-nd_gc.dme_shift_x,y-nd_gc.dme_shift_y, null);
+        } else {
             g.setColor(nd_gc.navaid_color);
-        g.drawPolygon(x_points, y_points, 12);
-        g2.setFont(nd_gc.font_s);
-        g.drawString(dme.ilt, x + x12, y + y12);
+        	g2.drawImage( nd_gc.dme_symbol_img, x-nd_gc.dme_shift_x,y-nd_gc.dme_shift_y, null);
+        }
+        
+        g2.setFont(nd_gc.navaid_font);
+        g.drawString(dme.ilt, x + nd_gc.dme_name_x, y + nd_gc.dme_name_y);
         if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
-            g2.setFont(nd_gc.font_xs);
-            g.drawString(MovingMap.vor_freq_formatter.format(dme.frequency), x + x12, y + y12 - nd_gc.line_height_s);
+            g2.setFont(nd_gc.data_font);
+            g.drawString(MovingMap.vor_freq_formatter.format(dme.frequency), x + nd_gc.dme_name_x, y + nd_gc.dme_data_y);
         }
         if ( bank > 0 ) {
             Stroke original_stroke = g2.getStroke();
-            //g2.setStroke(new BasicStroke(1.0f*nd_gc.scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, longdashes, 0.0f));
-            g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
+            
+            // g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
+            g2.setStroke(bank==1 ? nd_gc.vor_longdashes_1_stroke : nd_gc.vor_longdashes_2_stroke);
             if ( dme_radius > 0 ) {
-                // g2.rotate(Math.toRadians(-this.map_up), x, y);
+            
                 g2.drawOval(x-(int)(dme_radius*nd_gc.pixels_per_nm), y-(int)(dme_radius*nd_gc.pixels_per_nm), (int)(2*dme_radius*nd_gc.pixels_per_nm), (int)(2*dme_radius*nd_gc.pixels_per_nm));
             }
             g2.setStroke(original_stroke);
         }
         g2.setTransform(original_at);
-
     }
 
 
     private void drawNDB(Graphics2D g2, int x, int y, RadioNavBeacon ndb, boolean tuned) {
 
         AffineTransform original_at = g2.getTransform();
-        g2.rotate(Math.toRadians(this.map_up), x, y);
-        Graphics g = (Graphics) g2;
-        if (tuned)
-            g.setColor(nd_gc.tuned_ndb_color);
+        g2.rotate(Math.toRadians(this.map_up), x, y);        
+        if (nd_gc.boeing_style) 
+        	g2.setColor(tuned ? nd_gc.tuned_ndb_color : nd_gc.navaid_color);
         else
-            g.setColor(nd_gc.navaid_color);
+        	g2.setColor(tuned ? nd_gc.tuned_navaid_color : nd_gc.navaid_color);
+        g2.drawImage(tuned ? nd_gc.ndb_tuned_symbol_img : nd_gc.ndb_symbol_img, x-nd_gc.ndb_shift_x,y-nd_gc.ndb_shift_y, null);
 
-        // alternative 1: two concentric circles
-        //g.drawOval(x-2,y-2,4,4);
-        //g.drawOval(x-8,y-8,16,16);
-
-        // alternative 2: a small circle surrounded by dots
-        int c4 = Math.round(3.0f*nd_gc.scaling_factor);
-        int c7 = Math.round(5.5f*nd_gc.scaling_factor);
-        int c10 = Math.round(8.0f*nd_gc.scaling_factor);
-        int x12 = Math.round(12.0f*nd_gc.scaling_factor);
-        int y12 = Math.round(12.0f*nd_gc.scaling_factor);
-        Stroke original_stroke = g2.getStroke();
-        g2.setStroke(new BasicStroke(2.0f));
-        g2.drawOval(x-c4, y-c4, 2*c4, 2*c4);
-        g2.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dots, 0.0f));
-        g2.drawOval(x-c7, y-c7, 2*c7, 2*c7);
-        g2.drawOval(x-c10, y-c10, 2*c10, 2*c10);
-
-        g2.setStroke(original_stroke);
-        g2.setFont(nd_gc.font_s);
-        g.drawString(ndb.ilt, x + x12, y + y12);
+        g2.setFont(nd_gc.navaid_font);
+        g2.drawString(ndb.ilt, x + nd_gc.ndb_name_x, y + nd_gc.ndb_name_y);
         if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
-            g2.setFont(nd_gc.font_xs);
-            g.drawString(MovingMap.ndb_freq_formatter.format(ndb.frequency), x + x12, y + y12 - nd_gc.line_height_s);
+        	g2.setFont(nd_gc.data_font);
+            g2.drawString(MovingMap.ndb_freq_formatter.format(ndb.frequency), x + nd_gc.ndb_name_x, y + nd_gc.ndb_data_y);
         }
         g2.setTransform(original_at);
 
@@ -1519,7 +1468,7 @@ public class MovingMap extends NDSubcomponent {
         if ( (fix.on_awy) || (nd_gc.map_range <= 20) || nd_gc.map_zoomin ) {
             g2.setColor(fix.on_awy ? nd_gc.awy_wpt_color : nd_gc.term_wpt_color );
             g2.setFont(nd_gc.navaid_font);
-            g2.drawString(fix.name, x+nd_gc.fix_name_x, y+nd_gc.fix_name_y);
+            g2.drawString(fix.name, x + nd_gc.fix_name_x, y + nd_gc.fix_name_y);
         }
         g2.setTransform(original_at);
     }
@@ -1547,7 +1496,6 @@ public class MovingMap extends NDSubcomponent {
         AffineTransform original_at = g2.getTransform();
         g2.rotate(Math.toRadians(this.map_up), x, y);
 
-        //g2.setColor(nd_gc.receiving_localizer_color);
         if ( receiving ) {
             if ( selected ) {
                 g2.setColor(nd_gc.reference_localizer_color);
@@ -1588,14 +1536,16 @@ public class MovingMap extends NDSubcomponent {
                 g2.drawOval(x-c4, y-c4, 2*c4, 2*c4);
             }
 
-            // Boeing style: the localizer centerline and two short paralel lines representing the runway
+            // Boeing style: the localizer centerline and two short parallel lines representing the runway
             if ( ! nd_gc.map_zoomin ) {
                 g2.drawLine(x-rwy_halfwidth, y-rwy_backcourse, x-rwy_halfwidth, y+rwy_frontcourse);
                 g2.drawLine(x+rwy_halfwidth, y-rwy_backcourse, x+rwy_halfwidth, y+rwy_frontcourse);
             }
-            g2.setStroke(new BasicStroke(stroke_width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?shortdashes_1:shortdashes_2, 0.0f));
+            //g2.setStroke(new BasicStroke(stroke_width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?shortdashes_1:shortdashes_2, 0.0f));
+            g2.setStroke(bank==1 ? nd_gc.loc_shortdashes_1_stroke : nd_gc.loc_shortdashes_2_stroke);
             g2.drawLine(x, y-rwy_backcourse, x, y-localizer_extension/2);
-            g2.setStroke(new BasicStroke(stroke_width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
+            // g2.setStroke(new BasicStroke(stroke_width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
+            g2.setStroke(bank==1 ? nd_gc.loc_longdashes_1_stroke : nd_gc.loc_longdashes_2_stroke);
             g2.drawLine(x, y+rwy_frontcourse, x, y+localizer_extension);
 
             g2.setTransform(original_at);
@@ -1613,7 +1563,8 @@ public class MovingMap extends NDSubcomponent {
 
         // DME arc
         if ( localizer.has_dme && (dme_radius > 0) ) {
-            g2.setStroke(new BasicStroke(stroke_width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
+            // g2.setStroke(new BasicStroke(stroke_width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
+            g2.setStroke(bank==1 ? nd_gc.loc_longdashes_1_stroke : nd_gc.loc_longdashes_2_stroke);
             //g2.rotate(Math.toRadians(localizer.bearing - this.map_up), x, y);
             g2.drawOval(dme_x-(int)(dme_radius*nd_gc.pixels_per_nm), dme_y-(int)(dme_radius*nd_gc.pixels_per_nm),
                     (int)(2*dme_radius*nd_gc.pixels_per_nm), (int)(2*dme_radius*nd_gc.pixels_per_nm));
@@ -1629,13 +1580,7 @@ public class MovingMap extends NDSubcomponent {
     	AffineTransform original_at = g2.getTransform();
     	g2.rotate(Math.toRadians(this.map_up), x, y);
     	g2.setColor(nd_gc.arpt_color);
-    	if (nd_gc.airbus_style) {
-    		g2.drawImage( nd_gc.airport_symbol_img , x-nd_gc.airport_shift_x,y-nd_gc.airport_shift_y, null);
-    		// g2.setStroke(new BasicStroke(1.0f));
-    		// g2.drawOval(x-c9, y-c9, 2*c9, 2*c9);
-    	} else {
-    		g2.drawImage( nd_gc.airport_symbol_img , x-nd_gc.airport_shift_x,y-nd_gc.airport_shift_y, null);
-    	}
+    	g2.drawImage( nd_gc.airport_symbol_img , x-nd_gc.airport_shift_x,y-nd_gc.airport_shift_y, null);    	
     	g2.setFont(nd_gc.navaid_font);
     	g2.drawString(airport.icao_code, x + nd_gc.airport_name_x, y + nd_gc.airport_name_y );
     	if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
@@ -1743,7 +1688,7 @@ public class MovingMap extends NDSubcomponent {
         if ( (next_entry != null) && ( ! next_entry.name.equals("NTFND") ) && (! next_entry.discontinuity) ) {
             // draw a line to the next waypoint
             if ( inactive /* || ! next_entry.name.equals(this.avionics.gps_nav_id()) */ ) {
-                // the next FMS waypoint is not active, or it seems to be active, but the GPS datarefs is targetting another waypoint
+                // the next FMS waypoint is not active, or it seems to be active, but the GPS datarefs is targeting another waypoint
                 g2.setColor(nd_gc.fmc_other_color);
             } else {
                 g2.setColor(nd_gc.fmc_active_color);
