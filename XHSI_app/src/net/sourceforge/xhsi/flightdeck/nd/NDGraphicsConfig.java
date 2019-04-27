@@ -29,6 +29,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Rectangle;
@@ -36,6 +37,7 @@ import java.awt.Stroke;
 import java.awt.TexturePaint;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
@@ -46,6 +48,7 @@ import java.util.logging.Logger;
 
 import net.sourceforge.xhsi.XHSIPreferences;
 import net.sourceforge.xhsi.model.Avionics;
+import net.sourceforge.xhsi.model.RadioNavBeacon;
 import net.sourceforge.xhsi.flightdeck.GraphicsConfig;
 
 
@@ -174,23 +177,69 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     // Moving Map Symbols
     public Font navaid_font;
     public Font data_font;
-    public BufferedImage fix_awy_symbol_img;
-    public BufferedImage fix_term_symbol_img;
+
     public int fix_shift_x;
     public int fix_shift_y;
     public int fix_name_x;
     public int fix_name_y;
-    public BufferedImage airport_symbol_img;
+    public BufferedImage fix_awy_symbol_img;
+    public BufferedImage fix_term_symbol_img;
+    
     public int airport_shift_x;
     public int airport_shift_y;
     public int airport_name_x;
     public int airport_name_y;
     public int airport_data_y;
+    public BufferedImage airport_symbol_img;
+    
+    public int ndb_shift_x;
+    public int ndb_shift_y;
+    public int ndb_name_x;
+    public int ndb_name_y;
+    public int ndb_data_y;
     public BufferedImage ndb_symbol_img;
+    public BufferedImage ndb_tuned_symbol_img;
+    
+    public int dme_shift_x;
+    public int dme_shift_y;
+    public int dme_name_x;
+    public int dme_name_y;
+    public int dme_data_y;
     public BufferedImage dme_symbol_img;
+    public BufferedImage dme_tuned_symbol_img;
+    
+    public int vor_shift_x;
+    public int vor_shift_y;
+    public int vor_name_x;
+    public int vor_name_y;
+    public int vor_data_y;
     public BufferedImage vor_symbol_img;
+    public BufferedImage vor_tuned_symbol_img;
+    public Stroke vor_longdashes_1_stroke;
+    public Stroke vor_longdashes_2_stroke;
+    public Stroke vor_shortdashes_1_stroke;
+    public Stroke vor_shortdashes_2_stroke;
+    
+    public int vordme_shift_x;
+    public int vordme_shift_y;
+    public int vordme_name_x;
+    public int vordme_name_y;
+    public int vordme_data_y;
     public BufferedImage vordme_symbol_img;
+    public BufferedImage vordme_tuned_symbol_img;
+    
+    public int loc_shift_x;
+    public int loc_shift_y;
+    public int loc_name_x;
+    public int loc_name_y;
+    public int loc_data_y;
     public BufferedImage loc_symbol_img;
+    public BufferedImage loc_tuned_symbol_img;
+    public Stroke loc_longdashes_1_stroke;
+    public Stroke loc_longdashes_2_stroke;
+    public Stroke loc_shortdashes_1_stroke;
+    public Stroke loc_shortdashes_2_stroke;
+    
     // Moving Map FMS
     public Stroke fmc_stroke_active;
     public Stroke fmc_stroke_inactive;
@@ -703,12 +752,40 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             // BufferedImage to cache CompassRose SubComponent
             compass_rose_img = new BufferedImage(this.frame_size.width,this.frame_size.height,BufferedImage.TYPE_INT_ARGB);
             
+            /*
+             * Create MovingMap Strokes
+             */
+            // float range_dashes[] = { 10.0f, 10.0f };
             
-            // Moving Map Symbols
-            // Font selection sounds stupid, but may differ in future 
+            float longdashes_1[] = { 16.0f, 6.0f };
+            float longdashes_2[] = { 10.0f, 2.0f, 10.0f, 8.0f };
+            
+            float shortdashes_1[] = { 4.0f, 12.0f };
+            float shortdashes_2[] = { 3.0f, 2.0f, 3.0f, 14.0f };
+            
+            float dashdots[] = { 18.0f, 5.0f, 4.0f, 5.0f };
+            float dashdotdots[] = { 18.0f, 5.0f, 4.0f, 5.0f, 4.0f, 5.0f };
+            float dots[] = { 1.0f, 2.0f };
+            
+            vor_longdashes_1_stroke  = new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, longdashes_1, 0.0f);
+            vor_longdashes_2_stroke  = new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, longdashes_2, 0.0f);            
+            vor_shortdashes_1_stroke = new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, shortdashes_1, 0.0f);
+            vor_shortdashes_2_stroke = new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, shortdashes_2, 0.0f);
+            
+            loc_longdashes_1_stroke  = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, longdashes_1, 0.0f);
+            loc_longdashes_2_stroke  = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, longdashes_2, 0.0f);            
+            loc_shortdashes_1_stroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, shortdashes_1, 0.0f);
+            loc_shortdashes_2_stroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, shortdashes_2, 0.0f);
+            
+            /*
+             *  Moving Map Symbols
+             */
+            
+            // Font selection 
             navaid_font = (boeing_style ? font_s : font_s);
             data_font = (boeing_style ? font_xs : font_xs);
-            // Fix symbol - Shift = 2 pixels
+            
+            // Fix symbol
             fix_awy_symbol_img = create_fix_symbol(awy_wpt_color);
             fix_term_symbol_img = create_fix_symbol(term_wpt_color);
             fix_shift_x = Math.round(5.0f*scaling_factor) - 2;
@@ -716,19 +793,48 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             fix_name_x = Math.round((boeing_style ? 12.0f : 10.5f)*scaling_factor);
             fix_name_y = (boeing_style ? Math.round(12.0f*scaling_factor) : 0);
             
-            // Airport symbol - Shift = 2 pixels
+            // Airport symbol
             airport_shift_x = Math.round(9.0f*scaling_factor) + 3;
             airport_shift_y = Math.round(9.0f*scaling_factor) + 3;
             airport_name_x = Math.round((boeing_style ? 12.0f : 11.0f)*scaling_factor);
             airport_name_y = (boeing_style ? Math.round(12.0f*scaling_factor) : -Math.round(1.0f*scaling_factor) );
-            airport_data_y = (boeing_style ? -Math.round(2.0f*scaling_factor) : Math.round(12.0f*scaling_factor) );
-            airport_symbol_img = create_airport_symbol(arpt_color);
+            airport_data_y = (boeing_style ? airport_name_y - line_height_s : Math.round(12.0f*scaling_factor) );
             
-            ndb_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
-            dme_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
-            vor_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
-            vordme_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
+            // NDB symbol
+            ndb_shift_x = Math.round(9.0f*scaling_factor) + 3;
+            ndb_shift_y = Math.round(9.0f*scaling_factor) + 3;
+            ndb_name_x = Math.round((boeing_style ? 12.0f : 11.0f)*scaling_factor);
+            ndb_name_y = (boeing_style ? Math.round(12.0f*scaling_factor) : -Math.round(1.0f*scaling_factor) );
+            ndb_data_y = (boeing_style ? ndb_name_y - line_height_s : Math.round(12.0f*scaling_factor) );
+            
+            // DME symbol
+            dme_shift_x = Math.round(9.0f*scaling_factor) + 3;
+            dme_shift_y = Math.round(9.0f*scaling_factor) + 3;
+            dme_name_x = Math.round((boeing_style ? 12.0f : 13.0f)*scaling_factor);
+            dme_name_y = (boeing_style ? Math.round(12.0f*scaling_factor) : -Math.round(1.0f*scaling_factor) );
+            dme_data_y = (boeing_style ? dme_name_y - line_height_s : Math.round(12.0f*scaling_factor) );            
+            
+            // VOR symbol
+            vor_shift_x = Math.round(9.0f*scaling_factor) + 3;
+            vor_shift_y = Math.round(9.0f*scaling_factor) + 3;
+            vor_name_x = Math.round((boeing_style ? 12.0f : 11.0f)*scaling_factor);
+            vor_name_y = (boeing_style ? Math.round(12.0f*scaling_factor) : -Math.round(1.0f*scaling_factor) );
+            vor_data_y = (boeing_style ? vor_name_y - line_height_s : Math.round(12.0f*scaling_factor) );            
+            
+            // VORDME symbol
+            vordme_shift_x = Math.round(11.0f*scaling_factor) + 3;
+            vordme_shift_y = Math.round(11.0f*scaling_factor) + 3;
+            vordme_name_x = Math.round((boeing_style ? 12.0f : 13.0f)*scaling_factor);
+            vordme_name_y = (boeing_style ? Math.round(12.0f*scaling_factor) : -Math.round(1.0f*scaling_factor) );
+            vordme_data_y = (boeing_style ? vordme_name_y - line_height_s : Math.round(12.0f*scaling_factor) );            
+
+            // LOC symbol
+            loc_shift_x = Math.round(9.0f*scaling_factor) + 3;
+            loc_shift_y = Math.round(9.0f*scaling_factor) + 3;
             loc_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
+            loc_name_x = Math.round((boeing_style ? 12.0f : 11.0f)*scaling_factor);
+            loc_name_y = (boeing_style ? Math.round(12.0f*scaling_factor) : -Math.round(1.0f*scaling_factor) );
+            loc_data_y = (boeing_style ? loc_name_y - line_height_s : Math.round(12.0f*scaling_factor) ); 
             
             fmc_stroke_active = new BasicStroke(boeing_style ? 1.5f : 2.5f);
             float range_dashes[] = { 8.0f, 8.0f };
@@ -1039,6 +1145,16 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             fix_awy_symbol_img = create_fix_symbol(awy_wpt_color);
             fix_term_symbol_img = create_fix_symbol(term_wpt_color);
             airport_symbol_img = create_airport_symbol(arpt_color);
+            ndb_symbol_img = create_NDB_symbol(navaid_color);
+            ndb_tuned_symbol_img = create_NDB_symbol(boeing_style ? tuned_ndb_color : tuned_navaid_color);
+            dme_symbol_img = create_DME_symbol(navaid_color);
+            dme_tuned_symbol_img = create_DME_symbol(boeing_style ? tuned_vor_color : tuned_navaid_color);
+            vor_symbol_img = create_VOR_symbol(navaid_color);
+            vor_tuned_symbol_img = create_VOR_symbol(boeing_style ? tuned_vor_color : tuned_navaid_color);
+            vordme_symbol_img = create_VORDME_symbol(navaid_color);
+            vordme_tuned_symbol_img = create_VORDME_symbol(boeing_style ? tuned_vor_color: tuned_navaid_color);
+            loc_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
+            loc_tuned_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
             track_diamond_img = createTrackDiamond();
             createTerrainTextures();        	
         }
@@ -1058,7 +1174,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
         terrain_tp_md_green = create_regular_terrain_texture(terrain_green_color,terr_text_size,1);
         terrain_tp_ld_green = create_regular_terrain_texture(terrain_dark_green_color,terr_text_size,2);
         terrain_tp_blue = create_regular_terrain_texture(terrain_blue_color,terr_text_size,1);
-        terrain_tp_black = create_regular_terrain_texture(terrain_black_color,terr_text_size,2);
+        terrain_tp_black = create_solid_terrain_texture(terrain_black_color,terr_text_size);
     }
     
     /**
@@ -1142,8 +1258,9 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     
     
     private BufferedImage create_fix_symbol(Color fix_color) {
-    	
-    	// fix_symbol_img.setBackground(new Color(255, 255, 255, 0));
+    	// Boeing : triangle
+    	// Airbus : diamond
+    	    	
     	int x5 = Math.round(5.0f*scaling_factor);
     	int y3 = Math.round(3.0f*scaling_factor);
     	int y5 = Math.round(5.0f*scaling_factor);
@@ -1164,7 +1281,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     		g_fix.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
     		g_fix.drawPolygon(x_points_triangle, y_points_triangle, 3);
     	} else { 
-    		g_fix.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+    		g_fix.setStroke(new BasicStroke(1.5f*scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
     		g_fix.drawPolygon(x_points_diamond, y_points_diamond, 4);
     	}
     	return fix_image;
@@ -1172,10 +1289,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     
     
     private BufferedImage create_airport_symbol(Color airport_color) {
-    
-    	// Boeing Airport symbol (circle)
         int c9 = Math.round(9.0f*scaling_factor);
-
         int c2 = Math.round(2.0f*scaling_factor);
         int c16 = Math.round(16.0f*scaling_factor);
         int c18 = Math.round(18.0f*scaling_factor);
@@ -1193,13 +1307,176 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             g_arpt.drawOval(shift,shift, 2*c9, 2*c9); // with a thicker line and somewhat bigger symbol than the navaids...
     	} else {
     		// Airbus Airport symbol (star)
-    		g_arpt.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+    		g_arpt.setStroke(new BasicStroke(1.5f*scaling_factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
     		g_arpt.drawLine(shift, shift+c9, shift+c18,shift+c9);
     		g_arpt.drawLine(shift+c9, shift, shift+c9,shift+c18);
     		g_arpt.drawLine(shift+c2, shift+c2, shift+c16,shift+c16);
     		g_arpt.drawLine(shift+c16, shift+c2, shift+c2,shift+c16);
     	}
     	return arpt_image;
+    }
+    
+    private BufferedImage create_VOR_symbol(Color vor_color) {
+    	// Boeing : just a big hexagon for VOR without DME
+    	// Airbus : + sign
+
+    	int x = vor_shift_x;
+    	int y = vor_shift_y;	
+        int c9 = Math.round(9.0f*scaling_factor);
+        int x4 = Math.round(4.0f*scaling_factor);
+        int x8 = Math.round(8.0f*scaling_factor);
+        int y7 = Math.round(7.0f*scaling_factor);
+        
+        int shift=2; // Shift to avoid rendering being clipped 
+        
+        int x_points_hexagon[] = { x-x4, x+x4, x+x8, x+x4, x-x4, x-x8 };
+        int y_points_hexagon[] = { y-y7, y-y7, y, y+y7, y+y7, y };
+
+    	BufferedImage vor_image = new BufferedImage(x*2+shift*2+1,y*2+shift*2+1,BufferedImage.TYPE_INT_ARGB);
+    	Graphics2D g_vor = vor_image.createGraphics();
+    	g_vor.setRenderingHints(rendering_hints);
+    	g_vor.setColor(vor_color);
+        
+    	if (boeing_style) { 
+    		g_vor.setStroke(new BasicStroke(2.5f));
+    		g_vor.drawPolygon(x_points_hexagon, y_points_hexagon, 6);
+    	} else {
+    		g_vor.setStroke(new BasicStroke(1.8f*scaling_factor));    		   		
+    		g_vor.drawLine(x, y-c9, x, y+c9);
+    		g_vor.drawLine(x-c9,y, x+c9, y);
+    	}        
+        return vor_image;
+    }
+    
+    private BufferedImage create_VORDME_symbol(Color vordme_color) {
+    	// Boeing : Hexagon with 3 leaves
+    	// Airbus : Circle over a + sing    	
+
+        // a somewhat smaller hexagon with 3 leaves for VOR with DME
+    	int x = vordme_shift_x;
+    	int y = vordme_shift_y;
+    	int c5 = Math.round(5.0f*scaling_factor);
+        int c9 = Math.round(9.0f*scaling_factor);
+        int x3 = Math.round(3.0f*scaling_factor);
+        int x6 = Math.round(6.0f*scaling_factor);
+        int x8 = Math.round(8.0f*scaling_factor);
+        int x11 = Math.round(11.0f*scaling_factor);
+        int y3 = x3;
+        int y5 = Math.round(5.0f*scaling_factor);
+        int y8 = x8;
+        int y11 = x11;
+        int x_points_hexagon[] = { x-x3, x+x3, x+x6, x+x3, x-x3, x-x6 };
+        int y_points_hexagon[] = { y-y5, y-y5, y, y+y5, y+y5, y };
+        int x_points_ul_leaf[] = { x-x6, x-x3, x-x8, x-x11 };
+        int y_points_ul_leaf[] = { y,   y-y5, y-y8, y-y3 };
+        int x_points_ur_leaf[] = { x+x6, x+x3, x+x8, x+x11 };
+        int y_points_ur_leaf[] = { y,   y-y5, y-y8, y-y3 };
+        int x_points_b_leaf[] =  { x-x3, x+x3, x+x3, x-x3 };
+        int y_points_b_leaf[] =  { y+y5, y+y5, y+y11, y+y11 };
+       
+        int shift=2; // Shift to avoid rendering being clipped 
+        
+    	BufferedImage vordme_image = new BufferedImage(x*2+shift*2+1,y*2+shift*2+1,BufferedImage.TYPE_INT_ARGB);
+    	Graphics2D g_vordme = vordme_image.createGraphics();
+    	g_vordme.setRenderingHints(rendering_hints);
+
+    	if (boeing_style) { 
+    		g_vordme.setColor(vordme_color);
+    		g_vordme.setStroke(new BasicStroke(2.5f));
+        	g_vordme.drawPolygon(x_points_hexagon, y_points_hexagon, 6);
+        	g_vordme.drawPolygon(x_points_ul_leaf, y_points_ul_leaf, 4);
+        	g_vordme.drawPolygon(x_points_ur_leaf, y_points_ur_leaf, 4);
+        	g_vordme.drawPolygon(x_points_b_leaf, y_points_b_leaf, 4);
+    	} else {
+    		g_vordme.setStroke(new BasicStroke(1.5f*scaling_factor));
+    		g_vordme.setColor(vordme_color);  
+    		g_vordme.drawLine(x, y-c9, x, y+c9);
+    		g_vordme.drawLine(x-c9, y, x+c9, y);
+    		g_vordme.setColor(background_color);
+    		g_vordme.fillOval(x-c5, y-c5, 2*c5, 2*c5);
+    		g_vordme.setColor(vordme_color);
+    		g_vordme.drawOval(x-c5, y-c5, 2*c5, 2*c5);
+    	}
+    	return vordme_image;
+    }
+   
+    private BufferedImage create_DME_symbol(Color dme_color) {
+        // Boeing : a sort-of-Y-symbol for a standalone DME or TACAN
+    	// Airbus : circle
+    	
+    	int x = dme_shift_x;
+    	int y = dme_shift_y;
+
+        int x3 = Math.round(3.0f*scaling_factor);
+        int x6 = Math.round(6.0f*scaling_factor);
+        int x8 = Math.round(8.0f*scaling_factor);
+        int x11 = Math.round(11.0f*scaling_factor);
+        int c9 = Math.round(9.0f*scaling_factor);
+
+        int y3 = x3;
+        int y5 = Math.round(5.0f*scaling_factor);
+        int y8 = x8;
+        int y11 = Math.round(11.0f*scaling_factor);
+
+        int x_points[] = { x+x6, x+x11, x+x8, x+x3, x-x3, x-x8, x-x11, x-x6, x-x3, x-x3,  x+x3,  x+x3 };
+        int y_points[] = { y,    y-y3,  y-y8, y-y5, y-y5, y-y8, y-y3,  y,    y+y5, y+y11, y+y11, y+y5 };
+
+        int shift=2; // Shift to avoid rendering being clipped 
+        
+    	BufferedImage dme_image = new BufferedImage(x*2+shift*2+1,y*2+shift*2+1,BufferedImage.TYPE_INT_ARGB);
+    	Graphics2D g_dme = dme_image.createGraphics();
+    	g_dme.setRenderingHints(rendering_hints);
+    	
+    	g_dme.setColor(dme_color);
+    	if (boeing_style) { 
+    		g_dme.setStroke(new BasicStroke(2.5f));	
+    		g_dme.drawPolygon(x_points, y_points, 12);
+    	} else {
+    		g_dme.setStroke(new BasicStroke(1.5f*scaling_factor));
+    		g_dme.drawOval(x-c9, y-c9, 2*c9, 2*c9);
+    	}
+        return dme_image;
+    }
+
+    
+    private BufferedImage create_NDB_symbol(Color ndb_color) {
+    	// Boeing : a small circle surrounded by dots
+    	// Airbus : a triangle
+    	
+        // alternative 1: two concentric circles
+        // g.drawOval(x-2,y-2,4,4);
+        // g.drawOval(x-8,y-8,16,16);
+
+        // alternative 2: a small circle surrounded by dots
+    	int x = ndb_shift_x;
+    	int y = ndb_shift_y;
+    	float dots[] = { 1.0f, 2.0f };
+        int c4 = Math.round(3.0f*scaling_factor);
+        int c7 = Math.round(5.5f*scaling_factor);
+        int c10 = Math.round(8.0f*scaling_factor);
+        int x7 = Math.round(6.93f*scaling_factor);
+        int y4 = Math.round(4.0f*scaling_factor);
+        
+        int shift=2; // Shift to avoid rendering being clipped 
+        
+    	BufferedImage ndb_image = new BufferedImage(x*2+shift*2+1,y*2+shift*2+1,BufferedImage.TYPE_INT_ARGB);
+    	Graphics2D g_ndb = ndb_image.createGraphics();
+    	g_ndb.setRenderingHints(rendering_hints);
+    	g_ndb.setColor(ndb_color);
+    	
+    	if (boeing_style) { 
+    		g_ndb.setStroke(new BasicStroke(2.0f));
+    		g_ndb.drawOval(x-c4, y-c4, 2*c4, 2*c4);
+    		g_ndb.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dots, 0.0f));
+    		g_ndb.drawOval(x-c7, y-c7, 2*c7, 2*c7);
+    		g_ndb.drawOval(x-c10, y-c10, 2*c10, 2*c10);
+    	} else {
+            int x_points_triangle[] = { x, x-x7, x+x7 };
+            int y_points_triangle[] = { y-c10, y+y4, y+y4 };
+    		g_ndb.setStroke(new BasicStroke(1.7f*scaling_factor));
+    		g_ndb.drawPolygon(x_points_triangle, y_points_triangle, 3);
+    	}
+        return ndb_image;
     }
     
     private BufferedImage createClipRoseAreaImage() {
