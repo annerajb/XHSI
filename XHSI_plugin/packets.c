@@ -1,3 +1,25 @@
+/*
+ * packet.c
+ *
+ *
+ * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
+ * Copyright (C) 2009-2017  Marc Rogiers (marrog.123@gmail.com)
+ * Copyright (C) 2019 Nicolas Carel
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -25,6 +47,7 @@
 #include "datarefs.h"
 #include "datarefs_ufmc.h"
 #include "datarefs_x737.h"
+#include "datarefs_z737.h"
 #include "datarefs_cl30.h"
 #include "datarefs_pilotedge.h"
 #include "datarefs_qpac.h"
@@ -135,6 +158,8 @@ void decodeIncomingPacket(void) {
         	writeUFmcDataRef(id, float_value);
         } else 	if ((id >= FF_A320_STATUS) && (id <= FF_A320_ID_END)) {
         	writeFlightFactorA320Data(id, float_value);
+        } else 	if ((id >= Z737_STATUS) && (id <= Z737_ID_END)) {
+        	writeZibo737DataRef(id, float_value);
         } else {
         	writeDataRef(id, float_value);
         }
@@ -1845,6 +1870,12 @@ int createCustomAvionicsPacket(void) {
         
     }
 
+    sim_packet.sim_data_points[i].id = custom_htoni(Z737_STATUS);
+    sim_packet.sim_data_points[i].value = custom_htonf((float) z737_ready);
+    i++;
+    if ( z737_ready ) {
+
+    }
 
     sim_packet.sim_data_points[i].id = custom_htoni(CL30_STATUS);
     sim_packet.sim_data_points[i].value = custom_htonf((float) cl30_ready);
