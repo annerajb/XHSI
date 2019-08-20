@@ -1605,6 +1605,15 @@ public class XPlaneAvionics implements Avionics, Observer {
     	return false;
     }
     
+    /**
+     * @return float - autopilot bank angle in degrees
+     * default value is 25°
+     * this value is used by the FMC to compute the turn radius
+     */
+    public float autopilot_bank_angle() {
+    	return 25.0f;
+    }
+    
     public float heading_bug() { return normalize( sim_data.get_sim_float(XPlaneSimDataRepository.SIM_COCKPIT_AUTOPILOT_HEADING_MAG) ); }
 
     public float fd_pitch() {
@@ -1789,7 +1798,14 @@ public class XPlaneAvionics implements Avionics, Observer {
         return ( sim_data.get_sim_float(XPlaneSimDataRepository.X737_ATHR_ARMED) == 1.0f );
     }
 
+    /**
+     * @return boolean - receiving ZiboMod Boeing 737 data
+     */
+    public boolean is_zibo_mod_737() {
+    	return ( sim_data.get_sim_float(XPlaneSimDataRepository.Z737_STATUS) != 0.0f );
+    }
 
+    
     public int autopilot_mode() {
 
         if ( is_x737() ) {

@@ -955,18 +955,22 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int XFF_BARO_HPA = 1736;
     public static final int XFF_MFD_BUTTONS = 1737;
     
+    public static final int Z737_STATUS = 1800;
+    public static final int Z737_KEY_PRESS = 1801;
+    public static final int Z737_ID_END = 1899;
+    
     // Plugin Version
     public static final int PLUGIN_VERSION_ID = 999;
 
 
     // array with sim data for all sim data points defined above
-    float[] sim_values_float = new float[1800];
-    String[] sim_values_string = new String[1800];
+    float[] sim_values_float = new float[1900];
+    String[] sim_values_string = new String[1900];
     // updated status and timestamp for all sim data
-    boolean[] sim_updated_float = new boolean[1800];
-    long[] sim_timestamp_float = new long[1800];
-    boolean[] sim_updated_string = new boolean[1800];
-    long[] sim_timestamp_string = new long[1800];
+    boolean[] sim_updated_float = new boolean[1900];
+    long[] sim_timestamp_float = new long[1900];
+    boolean[] sim_updated_string = new boolean[1900];
+    long[] sim_timestamp_string = new long[1900];
 
     long updates = 0;
     ArrayList<Observer> observers;
