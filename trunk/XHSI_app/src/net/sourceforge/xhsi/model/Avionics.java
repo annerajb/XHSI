@@ -709,6 +709,13 @@ public interface Avionics {
     public boolean autopilot_autoland_warning();
     
     /**
+     * @return float - autopilot bank angle in degrees
+     * default value is 25°
+     * this value is used by the FMC to compute the turn radius
+     */
+    public float autopilot_bank_angle();
+    
+    /**
      * @return float - heading in degrees selected in autopilot
      */
     public float heading_bug();        // degrees
@@ -814,6 +821,10 @@ public interface Avionics {
 
     public boolean x737_athr_armed();
 
+    /**
+     * @return boolean - receiving ZiboMod Boeing 737 data
+     */
+    public boolean is_zibo_mod_737();
 
     /**
      * @return int - autopilot mode (0=Off/1=FD/2=CMD)

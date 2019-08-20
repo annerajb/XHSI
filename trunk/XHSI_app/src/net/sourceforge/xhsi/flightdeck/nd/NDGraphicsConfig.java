@@ -184,6 +184,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int fix_name_y;
     public BufferedImage fix_awy_symbol_img;
     public BufferedImage fix_term_symbol_img;
+    public BufferedImage fix_fpln_symbol_img;
+    public BufferedImage fix_to_wpt_symbol_img;
     
     public int airport_shift_x;
     public int airport_shift_y;
@@ -199,6 +201,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int ndb_data_y;
     public BufferedImage ndb_symbol_img;
     public BufferedImage ndb_tuned_symbol_img;
+    public BufferedImage ndb_fpln_symbol_img;
+    public BufferedImage ndb_to_wpt_symbol_img;
     
     public int dme_shift_x;
     public int dme_shift_y;
@@ -207,6 +211,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int dme_data_y;
     public BufferedImage dme_symbol_img;
     public BufferedImage dme_tuned_symbol_img;
+    public BufferedImage dme_fpln_symbol_img;
+    public BufferedImage dme_to_wpt_symbol_img;
     
     public int vor_shift_x;
     public int vor_shift_y;
@@ -215,6 +221,9 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int vor_data_y;
     public BufferedImage vor_symbol_img;
     public BufferedImage vor_tuned_symbol_img;
+    public BufferedImage vor_fpln_symbol_img;
+    public BufferedImage vor_to_wpt_symbol_img;
+
     public Stroke vor_longdashes_1_stroke;
     public Stroke vor_longdashes_2_stroke;
     public Stroke vor_shortdashes_1_stroke;
@@ -227,6 +236,9 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int vordme_data_y;
     public BufferedImage vordme_symbol_img;
     public BufferedImage vordme_tuned_symbol_img;
+    public BufferedImage vordme_fpln_symbol_img;
+    public BufferedImage vordme_to_wpt_symbol_img;
+
     
     public int loc_shift_x;
     public int loc_shift_y;
@@ -235,14 +247,27 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     public int loc_data_y;
     public BufferedImage loc_symbol_img;
     public BufferedImage loc_tuned_symbol_img;
+    public BufferedImage loc_fpln_symbol_img;
+    public BufferedImage loc_to_wpt_symbol_img;    
     public Stroke loc_longdashes_1_stroke;
     public Stroke loc_longdashes_2_stroke;
     public Stroke loc_shortdashes_1_stroke;
     public Stroke loc_shortdashes_2_stroke;
+    public Stroke loc_basic_stroke;
+    
+    public Stroke map_dashdots_stroke;
+    public Stroke map_dashdotdots_stroke;
     
     // Moving Map FMS
     public Stroke fmc_stroke_active;
     public Stroke fmc_stroke_inactive;
+    public int fmc_entry_shift_x;
+    public int fmc_entry_shift_y;
+    public int fmc_name_x;
+    public int fmc_name_y;
+    public int fmc_data_y;
+    public BufferedImage fmc_entry_active_fix;
+    public BufferedImage fmc_entry_fix;
     
     // Destination label
     public int dl_id_line;
@@ -543,8 +568,11 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
                 // for NAV submode, invert the centered/expanded
                 if ( submode == Avionics.EFIS_MAP_NAV ) mode_centered = ! mode_centered;
             }
+            
+            // For plan mode i.e. north mode, hdg_up and trk_up = false
             if (airbus_style) {
-            	hdg_up = true;
+            	// Airbus is always in heading up mode.
+            	hdg_up = ! mode_plan;
             	trk_up = false;
             } else {
             	hdg_up = mode_app || mode_vor;
@@ -777,6 +805,10 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             loc_shortdashes_1_stroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, shortdashes_1, 0.0f);
             loc_shortdashes_2_stroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, shortdashes_2, 0.0f);
             
+            loc_basic_stroke = new BasicStroke(2.0f);
+            
+            map_dashdots_stroke = new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dashdots, 0.0f);
+            map_dashdotdots_stroke = new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dashdotdots, 0.0f);
             /*
              *  Moving Map Symbols
              */
@@ -788,8 +820,8 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             // Fix symbol
             fix_awy_symbol_img = create_fix_symbol(awy_wpt_color);
             fix_term_symbol_img = create_fix_symbol(term_wpt_color);
-            fix_shift_x = Math.round(5.0f*scaling_factor) - 2;
-            fix_shift_y = Math.round(6.0f*scaling_factor) - 2;
+            fix_shift_x = Math.round(5.0f*scaling_factor) + 2;
+            fix_shift_y = Math.round(6.0f*scaling_factor) + 2;
             fix_name_x = Math.round((boeing_style ? 12.0f : 10.5f)*scaling_factor);
             fix_name_y = (boeing_style ? Math.round(12.0f*scaling_factor) : 0);
             
@@ -836,9 +868,20 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             loc_name_y = (boeing_style ? Math.round(12.0f*scaling_factor) : -Math.round(1.0f*scaling_factor) );
             loc_data_y = (boeing_style ? loc_name_y - line_height_s : Math.round(12.0f*scaling_factor) ); 
             
+            // FMC Flight plan and waypoints
             fmc_stroke_active = new BasicStroke(boeing_style ? 1.5f : 2.5f);
             float range_dashes[] = { 8.0f, 8.0f };
             fmc_stroke_inactive =  new BasicStroke(boeing_style ? 1.5f : 2.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 8.0f, range_dashes, 0.0f);
+            fmc_name_x = Math.round((boeing_style ? 12.0f : 11.0f)*scaling_factor);
+            fmc_name_y = (boeing_style ? Math.round(12.0f*scaling_factor) : -Math.round(1.0f*scaling_factor) );
+            fmc_data_y = (boeing_style ? loc_name_y - line_height_s : Math.round(12.0f*scaling_factor) ); 
+            if (boeing_style) {
+            	fmc_entry_shift_x = Math.round(11.0f*scaling_factor) + 3;
+            	fmc_entry_shift_y = Math.round(11.0f*scaling_factor) + 3;
+            } else {
+            	fmc_entry_shift_x = fix_shift_x;
+            	fmc_entry_shift_y = fix_shift_y;
+            }
             
             // Clock - Time - Chrono
             if (boeing_style) {
@@ -1030,10 +1073,13 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             	terr_label_color = map_zoomin ? ecam_caution_color : color_airbus_selected; 
             	terr_label_font = font_xl;
             	
-            	terr_info_width = this.digit_width_l*11/2;
+            	terr_info_width = this.digit_width_xl*5;
             	terr_info_height = terr_min_box_y + terr_box_height + line_height_l/5+1;
-            	terr_info_x = panel_rect.x + panel_rect.width * 855/1000;
-            	terr_info_y = this.frame_size.height*745/1000;
+            	// terr_info_x = panel_rect.x + panel_rect.width * 855/1000;
+            	// terr_info_y = this.frame_size.height*745/1000;
+            	terr_info_x = frame_size.width - border_right - terr_box_width - digit_width_xl;            	
+            	terr_info_y = frame_size.height - border_bottom - rib_height - terr_info_height;
+            	
             }
             terr_info_img = new BufferedImage(terr_info_width,terr_info_height,BufferedImage.TYPE_INT_ARGB);          
         	float terr_sweep_max = 75.0f;
@@ -1095,7 +1141,7 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
         	 */
         	appr_type_font = font_xxxl;
         	appr_type_x = panel_rect.x + panel_rect.width / 2 - digit_width_xxxl*4;
-        	appr_type_y = line_height_xl;
+        	appr_type_y = panel_rect.y + line_height_xl;
         	
         	/*
         	 * Destination Label
@@ -1155,6 +1201,15 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
             vordme_tuned_symbol_img = create_VORDME_symbol(boeing_style ? tuned_vor_color: tuned_navaid_color);
             loc_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
             loc_tuned_symbol_img = new BufferedImage(10,10,BufferedImage.TYPE_INT_ARGB);
+
+            if (boeing_style) {
+            	fmc_entry_active_fix = createFMSEntryStar(fmc_active_color);
+            	fmc_entry_fix = createFMSEntryStar(fmc_disp_color);
+            } else {
+            	fmc_entry_active_fix = create_fix_symbol(fmc_active_color);
+            	fmc_entry_fix = create_fix_symbol(fmc_disp_color);
+            }
+            	
             track_diamond_img = createTrackDiamond();
             createTerrainTextures();        	
         }
@@ -1261,19 +1316,24 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     	// Boeing : triangle
     	// Airbus : diamond
     	    	
+    	int x = fix_shift_x;
+    	int y = fix_shift_y;	
+    	
     	int x5 = Math.round(5.0f*scaling_factor);
     	int y3 = Math.round(3.0f*scaling_factor);
     	int y5 = Math.round(5.0f*scaling_factor);
     	int y6 = Math.round(6.0f*scaling_factor);
+    	
         int shift=2; // Shift to avoid rendering being clipped 
     	
-    	int x_points_triangle[] = { shift, x5*2+shift, x5+shift };
+    	int x_points_triangle[] = { x-x5, x+x5, x };
     	int y_points_triangle[] = { y6+y3+shift, y6+y3+shift, shift };
 
-    	int x_points_diamond[] = { shift, x5+shift, x5*2+shift, x5+shift };
-    	int y_points_diamond[] = { y5+shift, y5*2+shift, y5+shift, shift };
-
-    	BufferedImage fix_image = new BufferedImage(x5*2+shift*2,y5*2+shift*2,BufferedImage.TYPE_INT_ARGB);
+    	int x_points_diamond[] = { x-x5, x, x+x5, x };
+    	int y_points_diamond[] = { y, y+y5, y, y-y5 };
+    	
+    	BufferedImage fix_image = new BufferedImage(x*2+shift*2+1,y*2+shift*2+1,BufferedImage.TYPE_INT_ARGB);
+    	
     	Graphics2D g_fix = fix_image.createGraphics();
     	g_fix.setRenderingHints(rendering_hints);
     	g_fix.setColor(fix_color);
@@ -1477,6 +1537,28 @@ public class NDGraphicsConfig extends GraphicsConfig implements ComponentListene
     		g_ndb.drawPolygon(x_points_triangle, y_points_triangle, 3);
     	}
         return ndb_image;
+    }
+    
+    private BufferedImage createFMSEntryStar(Color star_color) {
+    	int x = ndb_shift_x;
+    	int y = ndb_shift_y;
+    	int s3 = Math.round(2.0f*scaling_factor);
+    	int s13 = Math.round(12.0f*scaling_factor);
+    	int c4 = Math.round(4.0f*scaling_factor);
+    	int c6 = Math.round(6.0f*scaling_factor);
+    	int x12 = Math.round(12.0f*scaling_factor);
+    	int y12 = Math.round(12.0f*scaling_factor);
+    	int x_points_star[] = { x-s3, x, x+s3, x+s13, x+s3, x, x-s3, x-s13, x-s3 };
+    	int y_points_star[] = { y-s3, y-s13, y-s3, y, y+s3, y+s13, y+s3, y, y-s3 };
+    	
+        int shift=2; // Shift to avoid rendering being clipped 
+        
+    	BufferedImage star_image = new BufferedImage(x*2+shift*2+1,y*2+shift*2+1,BufferedImage.TYPE_INT_ARGB);
+    	Graphics2D g_star = star_image.createGraphics();
+    	g_star.setRenderingHints(rendering_hints);
+    	g_star.setColor(star_color);
+    	g_star.drawPolygon(x_points_star, y_points_star, 9);
+    	return star_image;
     }
     
     private BufferedImage createClipRoseAreaImage() {

@@ -240,6 +240,7 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
             int altitude;
             float lat;
             float lon;
+            float course;
             boolean is_displayed;
             boolean is_active;
             float leg_dist;
@@ -269,12 +270,26 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
                 is_displayed = ( offset+i == displayed_entry_index );
                 is_active = ( offset+i == active_entry_index );
 
+          
+
+                //new_fms_entry = new FMSEntry(offset + i, id, type, lat, lon, altitude, leg_dist, total_ete, is_active, is_displayed);
+                // No, we will re-use the existing FMSEntry[offset + i]
+                new_fms_entry = this.fms.get_entry(offset + i);
+
+                new_fms_entry.index = offset + i;
+                new_fms_entry.name = id;
+                new_fms_entry.type = type;
+                new_fms_entry.lat = lat;
+                new_fms_entry.lon = lon;
+                
                 // leg distance
                 if ( ( offset+i == 0 ) && ( ! is_active ) ) {
                 	// this is only for the legacy default FMS, where the entry with index zero was never an actual waypoint
                 	leg_dist = 0;
+                	course = -1;
                 } else {
                 	leg_dist = CoordinateSystem.rough_distance(lat, lon, last_lat, last_lon);
+                	course = new_fms_entry.bearingFrom(last_lat, last_lon);
                 	last_lat = lat;
                 	last_lon = lon;
                 }
@@ -294,16 +309,9 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
 
                 logger.finest("FMC [" + (offset+i) + "] : " + id + " leg=" + leg_dist);
 
-                //new_fms_entry = new FMSEntry(offset + i, id, type, lat, lon, altitude, leg_dist, total_ete, is_active, is_displayed);
-                // No, we will re-use the existing FMSEntry[offset + i]
-                new_fms_entry = this.fms.get_entry(offset + i);
-
-                new_fms_entry.index = offset + i;
-                new_fms_entry.name = id;
-                new_fms_entry.type = type;
-                new_fms_entry.lat = lat;
-                new_fms_entry.lon = lon;
-                new_fms_entry.altitude = altitude;
+                new_fms_entry.altitude = Math.round(altitude / 10)*10;
+                if (altitude % 10 == 3) new_fms_entry.overfly = true;
+                new_fms_entry.bearing_to = course;
                 new_fms_entry.leg_dist = leg_dist;
                 new_fms_entry.total_ete = total_ete;
                 new_fms_entry.active = is_active;

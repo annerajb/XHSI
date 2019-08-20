@@ -89,19 +89,10 @@ public class MovingMap extends NDSubcomponent {
     float center_lat;
     float pixels_per_deg_lon;
     float pixels_per_deg_lat;
-    // float pixels_per_nm;
-    
-    float range_dashes[] = { 10.0f, 10.0f };
-    
-    float longdashes_1[] = { 16.0f, 6.0f };
-    float longdashes_2[] = { 10.0f, 2.0f, 10.0f, 8.0f };
-    
-    float shortdashes_1[] = { 4.0f, 12.0f };
-    float shortdashes_2[] = { 3.0f, 2.0f, 3.0f, 14.0f };
-    
-    float dashdots[] = { 18.0f, 5.0f, 4.0f, 5.0f };
-    float dashdotdots[] = { 18.0f, 5.0f, 4.0f, 5.0f, 4.0f, 5.0f };
-    float dots[] = { 1.0f, 2.0f };
+    // float pixels_per_nm;    
+     
+    private float dashdots[] = { 18.0f, 5.0f, 4.0f, 5.0f };
+    private float dashdotdots[] = { 18.0f, 5.0f, 4.0f, 5.0f, 4.0f, 5.0f };
     
     Area panel = null;
 
@@ -881,7 +872,8 @@ public class MovingMap extends NDSubcomponent {
                     drawNDB(g2, x1, y1, nav1, true);
                 if ( avionics.efis_shows_pos() && ( ! nd_gc.mode_plan ) ) {
                     Stroke original_stroke = g2.getStroke();
-                    g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dashdots, 0.0f));
+                    // g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dashdots, 0.0f));
+                    g2.setStroke(nd_gc.map_dashdots_stroke);
                     g2.drawLine(nd_gc.map_center_x, nd_gc.map_center_y, x1, y1);
                     g2.setStroke(original_stroke);
                 }
@@ -905,7 +897,8 @@ public class MovingMap extends NDSubcomponent {
                     drawNDB(g2, x2, y2, nav2, true);
                 if ( avionics.efis_shows_pos() && ( ! nd_gc.mode_plan ) ) {
                     Stroke original_stroke = g2.getStroke();
-                    g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dashdotdots, 0.0f));
+                    // g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dashdotdots, 0.0f));
+                    g2.setStroke(nd_gc.map_dashdotdots_stroke);
                     g2.drawLine(nd_gc.map_center_x, nd_gc.map_center_y, x2, y2);
                     g2.setStroke(original_stroke);
                 }
@@ -1339,12 +1332,13 @@ public class MovingMap extends NDSubcomponent {
             g2.setTransform(original_at);
             g2.rotate(Math.toRadians( course + vor.offset ), x, y);
             Stroke original_stroke = g2.getStroke();
-            // g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
+            
             g2.setStroke(bank==1 ? nd_gc.vor_longdashes_1_stroke : nd_gc.vor_longdashes_2_stroke);
             g.drawLine(x, y, x, y + course_line);
-            // g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?shortdashes_1:shortdashes_2, 0.0f));
+            
             g2.setStroke(bank==1 ? nd_gc.vor_shortdashes_1_stroke : nd_gc.vor_shortdashes_2_stroke);
             g.drawLine(x, y - course_line, x, y);
+            
             g2.setStroke(original_stroke);
         }
         g2.setTransform(original_at);
@@ -1382,16 +1376,13 @@ public class MovingMap extends NDSubcomponent {
                 g2.setTransform(original_at);
                 g2.rotate(Math.toRadians( course + vordme.offset ), x, y);
                 
-                // g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?shortdashes_1:shortdashes_2, 0.0f));
                 g2.setStroke(bank==1 ? nd_gc.vor_shortdashes_1_stroke : nd_gc.vor_shortdashes_2_stroke);
                 g.drawLine(x, y - course_line, x, y);
                 
-                // g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
                 g2.setStroke(bank==1 ? nd_gc.vor_longdashes_1_stroke : nd_gc.vor_longdashes_2_stroke);
                 g.drawLine(x, y, x, y + course_line);
             }
             if ( dme_radius > 0 ) {
-                // g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
                 g2.setStroke(bank==1 ? nd_gc.vor_longdashes_1_stroke : nd_gc.vor_longdashes_2_stroke);
                 g2.drawOval(x-(int)(dme_radius*nd_gc.pixels_per_nm), y-(int)(dme_radius*nd_gc.pixels_per_nm), (int)(2*dme_radius*nd_gc.pixels_per_nm), (int)(2*dme_radius*nd_gc.pixels_per_nm));
             }
@@ -1425,8 +1416,6 @@ public class MovingMap extends NDSubcomponent {
         }
         if ( bank > 0 ) {
             Stroke original_stroke = g2.getStroke();
-            
-            // g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
             g2.setStroke(bank==1 ? nd_gc.vor_longdashes_1_stroke : nd_gc.vor_longdashes_2_stroke);
             if ( dme_radius > 0 ) {
             
@@ -1476,8 +1465,6 @@ public class MovingMap extends NDSubcomponent {
 
     private void drawLocalizer(Graphics2D g2, int x, int y, Localizer localizer, int bank, boolean selected, boolean receiving, boolean is_the_twin, float dme_radius) {
 
-        float stroke_width = 2.0f;
-
         int rwy_frontcourse = (int) (2.0f*nd_gc.pixels_per_nm);
         int rwy_backcourse = (int) (0.2f*nd_gc.pixels_per_nm);
         int rwy_halfwidth = (int) (0.2f*nd_gc.pixels_per_nm);
@@ -1526,7 +1513,7 @@ public class MovingMap extends NDSubcomponent {
 
         Stroke original_stroke = g2.getStroke();
         g2.rotate(Math.toRadians(localizer.bearing - this.map_up), x, y);
-        g2.setStroke(new BasicStroke(stroke_width));
+        g2.setStroke(nd_gc.loc_basic_stroke);
 
         if ( ( nd_gc.map_range < 160 ) || nd_gc.map_zoomin ) {
 
@@ -1541,10 +1528,8 @@ public class MovingMap extends NDSubcomponent {
                 g2.drawLine(x-rwy_halfwidth, y-rwy_backcourse, x-rwy_halfwidth, y+rwy_frontcourse);
                 g2.drawLine(x+rwy_halfwidth, y-rwy_backcourse, x+rwy_halfwidth, y+rwy_frontcourse);
             }
-            //g2.setStroke(new BasicStroke(stroke_width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?shortdashes_1:shortdashes_2, 0.0f));
             g2.setStroke(bank==1 ? nd_gc.loc_shortdashes_1_stroke : nd_gc.loc_shortdashes_2_stroke);
             g2.drawLine(x, y-rwy_backcourse, x, y-localizer_extension/2);
-            // g2.setStroke(new BasicStroke(stroke_width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
             g2.setStroke(bank==1 ? nd_gc.loc_longdashes_1_stroke : nd_gc.loc_longdashes_2_stroke);
             g2.drawLine(x, y+rwy_frontcourse, x, y+localizer_extension);
 
@@ -1552,7 +1537,7 @@ public class MovingMap extends NDSubcomponent {
             if ( avionics.efis_shows_data() && localizer.has_dme && ( ( nd_gc.map_range < 40 ) || nd_gc.map_zoomin ) ) {
                 // the exact location of the DME
                 g2.rotate(Math.toRadians(this.map_up), dme_x, dme_y);
-                g2.setStroke(new BasicStroke(stroke_width));
+                g2.setStroke(nd_gc.loc_basic_stroke);
                 int r3 = Math.round(2.0f*nd_gc.scaling_factor);
                 g2.drawRect(dme_x-r3, dme_y-r3, 2*r3, 2*r3);
             }
@@ -1562,8 +1547,7 @@ public class MovingMap extends NDSubcomponent {
         }
 
         // DME arc
-        if ( localizer.has_dme && (dme_radius > 0) ) {
-            // g2.setStroke(new BasicStroke(stroke_width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, (bank==1)?longdashes_1:longdashes_2, 0.0f));
+        if ( localizer.has_dme && (dme_radius > 0) ) {            
             g2.setStroke(bank==1 ? nd_gc.loc_longdashes_1_stroke : nd_gc.loc_longdashes_2_stroke);
             //g2.rotate(Math.toRadians(localizer.bearing - this.map_up), x, y);
             g2.drawOval(dme_x-(int)(dme_radius*nd_gc.pixels_per_nm), dme_y-(int)(dme_radius*nd_gc.pixels_per_nm),
@@ -1731,11 +1715,20 @@ public class MovingMap extends NDSubcomponent {
                         g2.drawOval(x-c4, y-c4, 2*c4, 2*c4);
                     } else {
                         g2.setColor(Color.RED);
-                        // don't print ETA and altitude restrictions for non-active, non-displayed unnamed waypoints
-                        data_inhibit = true;
+                        if (nd_gc.airbus_style)
+                        	g2.drawImage(nd_gc.fmc_entry_active_fix, x-nd_gc.fmc_entry_shift_x,y-nd_gc.fmc_entry_shift_y, null);
+                                                // don't print ETA and altitude restrictions for non-active, non-displayed unnamed waypoints
+                        data_inhibit = nd_gc.boeing_style;  // true if boeing_style
                     }
-                    // no text label for L/L or Lat/Lon
-                    label_y -= 1;
+                    if (nd_gc.boeing_style) {
+                    	// no text label for L/L or Lat/Lon
+                    	label_y -= 1;
+                    } else {
+                    	// Display N/SxxE/Oxxx instead of LAT/LON
+                    	g2.setFont(nd_gc.navaid_font);
+                    	g2.drawString(entry.name, x + nd_gc.fmc_name_x, y + label_y);
+                    	label_y += nd_gc.line_height_xs;
+                    }
                 } else {
                     // T/C, T/D, B/D, S/C, ACCEL or DECEL
                     if (entry.active && ! override_active) {
@@ -1746,8 +1739,8 @@ public class MovingMap extends NDSubcomponent {
                         g2.setColor(nd_gc.fmc_ll_other_color);
                     }
                     g2.drawOval(x-c6, y-c6, 2*c6, 2*c6);
-                    g2.setFont(nd_gc.font_s);
-                    g2.drawString(entry.name, x + x12, y + label_y);
+                    g2.setFont(nd_gc.navaid_font);
+                    g2.drawString(entry.name, x + nd_gc.fmc_name_x, y + label_y);
                     label_y += nd_gc.line_height_xs;
                 }
             } else {
@@ -1760,13 +1753,13 @@ public class MovingMap extends NDSubcomponent {
                     g2.setColor(nd_gc.fmc_other_color);
                 }
                 g2.drawPolygon(x_points_star, y_points_star, 9);
-                g2.setFont(nd_gc.font_s);
-                g2.drawString(entry.name, x + x12, y + label_y);
+                g2.setFont(nd_gc.navaid_font);
+                g2.drawString(entry.name, x + nd_gc.fmc_name_x, y + label_y);
                 label_y += nd_gc.line_height_xs;
             }
 
             if ( avionics.efis_shows_data() && !data_inhibit ) {
-                g2.setFont(nd_gc.font_xs);
+                g2.setFont(nd_gc.data_font);
 // the color is already set...
 //                if (entry.active) {
 //                    g2.setColor(nd_gc.fmc_active_color);
@@ -1776,7 +1769,7 @@ public class MovingMap extends NDSubcomponent {
 //                    g2.setColor(nd_gc.fmc_other_color);
 //                }
                 if ( entry.altitude != 0 ) {
-                    g2.drawString("" + entry.altitude, x + x12, y + label_y);
+                    g2.drawString("" + entry.altitude, x + nd_gc.fmc_name_x, y + label_y);
                     label_y += nd_gc.line_height_xs;
                 }
                 if ( entry.total_ete != 0.0f ) {
@@ -1785,7 +1778,7 @@ public class MovingMap extends NDSubcomponent {
                     int minutes_at_arrival = wpt_eta % 60;
 //                    String eta_text = "" + eta_hours_formatter.format(hours_at_arrival) + eta_minutes_formatter.format(minutes_at_arrival) + "z";
                     String eta_text = "" + hms_formatter.format(hours_at_arrival) + hms_formatter.format(minutes_at_arrival) + "z";
-                    g2.drawString(eta_text, x + x12, y + label_y);
+                    g2.drawString(eta_text, x + nd_gc.fmc_name_x, y + label_y);
                 }
 //                g2.setFont(nd_gc.font_small);
             }

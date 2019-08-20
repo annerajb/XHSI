@@ -60,6 +60,7 @@ public class FMSRoute extends MFDSubcomponent {
     private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
     private int rte_y;
+    private int rte_y1;
     private int rte_x0;
     private int rte_x1;
     private int rte_x2;
@@ -67,6 +68,7 @@ public class FMSRoute extends MFDSubcomponent {
     private int rte_x4;
     private int rte_x5;
     private int rte_x6;
+    private int rte_x7;
     private boolean show_index;
     
     private float total_dist;
@@ -77,6 +79,7 @@ public class FMSRoute extends MFDSubcomponent {
     private DecimalFormat eta_hours_formatter;
     private DecimalFormat eta_minutes_formatter;
     private DecimalFormat index_formatter;
+    private DecimalFormat bearing_formatter;
      
     
     public FMSRoute(ModelFactory model_factory, MFDGraphicsConfig hsi_gc, Component parent_component) {
@@ -89,6 +92,7 @@ public class FMSRoute extends MFDSubcomponent {
         eta_hours_formatter = new DecimalFormat("00");
         eta_minutes_formatter = new DecimalFormat("00");
         index_formatter = new DecimalFormat("00");
+        bearing_formatter = new DecimalFormat("000");
         show_index=true;
 
     }
@@ -105,6 +109,7 @@ public class FMSRoute extends MFDSubcomponent {
 
         float leg;
         
+        g2.setFont(mfd_gc.font_xl);
         
         if ( fms_entry.discontinuity ) {
         	g2.setColor(mfd_gc.fmc_other_color);
@@ -120,9 +125,17 @@ public class FMSRoute extends MFDSubcomponent {
             } else {
                 g2.setColor(mfd_gc.fmc_other_color);
             }
-            
-            g2.drawString(fms_entry.name, rte_x0, rte_y);
+            if (fms_entry.overfly) {
+            	g2.drawString(fms_entry.name+"Δ", rte_x0, rte_y);
+            } else {
+            	g2.drawString(fms_entry.name, rte_x0, rte_y);
+            }
 
+            g2.setFont(mfd_gc.font_m);
+            g2.drawString("Lat:"+fms_entry.lat, rte_x0+mfd_gc.digit_width_fixed_m, rte_y1);
+            g2.drawString("Lon:"+fms_entry.lon, rte_x2, rte_y1);
+            
+            g2.setFont(mfd_gc.font_xl);
             // altitude
             if ( fms_entry.altitude != 0 ) {
                 String alt_str = Integer.toString(fms_entry.altitude);
@@ -147,22 +160,28 @@ public class FMSRoute extends MFDSubcomponent {
             dist_str = Integer.toString(Math.round(total_dist));
             g2.drawString(dist_str, rte_x3 + mfd_gc.digit_width_xl*4 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, dist_str), rte_y);
             
+            // course
+            if (fms_entry.bearing_to >= 0 ) {
+            	String crs_str = bearing_formatter.format(fms_entry.bearing_to + aircraft.magnetic_variation());
+            	g2.drawString(crs_str, rte_x4 + mfd_gc.digit_width_xl*4 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, crs_str), rte_y);
+            }
+            
             // ttg and eta
             if ( fms_entry.total_ete != 0.0f ) {
                 float ttg = fms_entry.total_ete;
                 String ttg_str = one_decimal_formatter.format(ttg);
-                g2.drawString(ttg_str, rte_x4 + mfd_gc.digit_width_xl*4 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, ttg_str), rte_y);
+                g2.drawString(ttg_str, rte_x5 + mfd_gc.digit_width_xl*4 - mfd_gc.get_text_width(g2, mfd_gc.font_xl, ttg_str), rte_y);
                 int wpt_eta = Math.round( (float)this.aircraft.time_after_ete(fms_entry.total_ete) / 60.0f );
                 int hours_at_arrival = (wpt_eta / 60) % 24;
                 int minutes_at_arrival = wpt_eta % 60;
                 String eta_str = eta_hours_formatter.format(hours_at_arrival) + eta_minutes_formatter.format(minutes_at_arrival) + "z";
-                g2.drawString(eta_str, rte_x5, rte_y);
+                g2.drawString(eta_str, rte_x6, rte_y);
             }
             from_discontinuity=false;
             
         }
-        if (show_index ) {       	
-        	g2.drawString(index_formatter.format(index), rte_x6, rte_y);
+        if (show_index) {       	
+        	g2.drawString(index_formatter.format(index), rte_x7, rte_y);
         }
 
     }
@@ -186,21 +205,24 @@ public class FMSRoute extends MFDSubcomponent {
         g2.setFont(mfd_gc.font_xl);
 
         rte_y = title_y + mfd_gc.line_height_xl*2;
+        rte_y1 = rte_y + mfd_gc.line_height_m;
         rte_x0 = title_x;
-        rte_x1 = rte_x0 + mfd_gc.get_text_width(g2, mfd_gc.font_xl, "WOXOW "); // alt
+        rte_x1 = rte_x0 + mfd_gc.get_text_width(g2, mfd_gc.font_xl, "WOXOWW "); // alt
         rte_x2 = rte_x1 + mfd_gc.digit_width_xl*6; // leg dist
         rte_x3 = rte_x2 + mfd_gc.digit_width_xl*5; // total dist
-        rte_x4 = rte_x3 + mfd_gc.digit_width_xl*6; // ttg
-        rte_x5 = rte_x4 + mfd_gc.digit_width_xl*5; // eta
-        rte_x6 = rte_x5 + mfd_gc.digit_width_xl*6; // index
+        rte_x4 = rte_x3 + mfd_gc.digit_width_xl*6; // course
+        rte_x5 = rte_x4 + mfd_gc.digit_width_xl*5; // ttg
+        rte_x6 = rte_x5 + mfd_gc.digit_width_xl*6; // eta
+        rte_x7 = rte_x6 + mfd_gc.digit_width_xl*6; // index
 
         g2.drawString("TO", rte_x0, rte_y);
-        g2.drawString("ALT", rte_x1, rte_y);
-        g2.drawString("LEG", rte_x2, rte_y);
-        g2.drawString("DST", rte_x3, rte_y);
-        g2.drawString("ETE", rte_x4, rte_y);
-        g2.drawString("ETA", rte_x5, rte_y);
-        if (show_index) g2.drawString("NDX", rte_x6, rte_y);
+        g2.drawString(" ALT", rte_x1, rte_y);
+        g2.drawString(" LEG", rte_x2, rte_y);
+        g2.drawString(" DST", rte_x3, rte_y);
+        g2.drawString(" CRS", rte_x4, rte_y);
+        g2.drawString(" ETE", rte_x5, rte_y);
+        g2.drawString("ETA", rte_x6, rte_y);
+        if (show_index) g2.drawString("NDX", rte_x7, rte_y);
         rte_y += mfd_gc.line_height_xl*150/100;
         
         fms = this.avionics.get_fms();
@@ -219,6 +241,7 @@ public class FMSRoute extends MFDSubcomponent {
             }
             
             if ( fms_entry != null ) {
+            	rte_y1 = rte_y + mfd_gc.line_height_m;
                 drawFMSEntry(g2, fms_entry, i);
                 i = fms_entry.index;
             }
@@ -229,7 +252,9 @@ public class FMSRoute extends MFDSubcomponent {
                 i += 1;
                 fms_entry = fms.get_entry(i);
                 if ( fms_entry != null ) {
-                    rte_y += mfd_gc.line_height_xl*125/100;
+                    // rte_y += mfd_gc.line_height_xl*125/100;
+                    rte_y += mfd_gc.line_height_xl*175/100;
+                    rte_y1 = rte_y + mfd_gc.line_height_m;
                     drawFMSEntry(g2, fms_entry, i);
                 }
                 n += 1;
