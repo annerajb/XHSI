@@ -107,6 +107,17 @@ extern XPLMDataRef z737_efis1_TERR;
 extern XPLMDataRef z737_efis1_DH_source;
 extern XPLMDataRef z737_efis1_DH_value;
 
+/*
+ * FMS
+ */
+extern XPLMDataRef laminar_B738_fms_legs;           // laminar/B738/fms/legs [String]
+extern XPLMDataRef laminar_B738_fms_legs_lat;       // laminar/B738/fms/legs_lat float[128]
+extern XPLMDataRef laminar_B738_fms_legs_lon;       // laminar/B738/fms/legs_lon float[128]
+extern XPLMDataRef laminar_B738_fms_legs_alt_calc;  // laminar/B738/fms/legs_alt_calc float[128]
+extern XPLMDataRef laminar_B738_fms_legs_alt_rest1; // laminar/B738/fms/legs_alt_rest1 float[128]
+extern XPLMDataRef laminar_B738_fms_legs_spd;       // laminar/B738/fms/legs_spd float[128]
+extern XPLMDataRef laminar_B738_fms_num_of_wpts;    // laminar/B738/fms/num_of_wpts float
+
 
 extern int z737_ready;
 

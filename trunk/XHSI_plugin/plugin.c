@@ -92,6 +92,7 @@
 #include "commands.h"
 #include "xfmc.h"
 #include "ufmc.h"
+#include "z737_fmc.h"
 #include "qpac_msg.h"
 #include "jar_a320neo_msg.h"
 
@@ -324,6 +325,12 @@ PLUGIN_API int XPluginEnable(void) {
             -1.0f,
             NULL);
 
+    // Z737 Zibo Mod Boeing 737-800 FMC
+    XPLMRegisterFlightLoopCallback(
+    		sendZibo737ExtendedFmsCallback,
+            -1.0f,
+            NULL);
+
     // QPAC Messages E/WD and MCDU
     XPLMRegisterFlightLoopCallback(
             sendQpacMsgCallback,
@@ -412,6 +419,7 @@ PLUGIN_API void XPluginDisable(void) {
     XPLMUnregisterFlightLoopCallback(sendQpacMsgCallback, NULL);
     XPLMUnregisterFlightLoopCallback(sendJar_a320MsgCallback, NULL);
     XPLMUnregisterFlightLoopCallback(sendZibo737MsgCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(sendZibo737ExtendedFmsCallback, NULL);
 
     XPLMUnregisterFlightLoopCallback(computeChronoCallback, NULL);
 

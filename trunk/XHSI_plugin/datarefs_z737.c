@@ -106,6 +106,18 @@ XPLMDataRef z737_fmc2_scratch_white;
 XPLMDataRef z737_fmc2_scratch_inverted;
 
 
+/*
+ * FMS
+ */
+XPLMDataRef laminar_B738_fms_legs; // laminar/B738/fms/legs [String]
+XPLMDataRef laminar_B738_fms_legs_lat; // laminar/B738/fms/legs_lat float[128]
+XPLMDataRef laminar_B738_fms_legs_lon; // laminar/B738/fms/legs_lon float[128]
+XPLMDataRef laminar_B738_fms_legs_alt_calc; // laminar/B738/fms/legs_alt_calc float[128]
+XPLMDataRef laminar_B738_fms_legs_alt_rest1; // laminar/B738/fms/legs_alt_rest1 float[128]
+XPLMDataRef laminar_B738_fms_legs_spd; // laminar/B738/fms/legs_spd float[128]
+
+XPLMDataRef laminar_B738_fms_num_of_wpts; // laminar/B738/fms/num_of_wpts float
+
 /* Unused Datarefs grabbed by DRT
  *
  *
@@ -1440,11 +1452,16 @@ laminar/B738/FMS/irs_hdg_fmc_set
 laminar/B738/FMS/irs_pos_fmc
 laminar/B738/FMS/irs_pos_fmc_set
 laminar/B738/FMS/last_pos_str
-laminar/B738/fms/legs
+
+XPLMDataRef laminar_B738_fms_legs; // laminar/B738/fms/legs [String]
 laminar/B738/fms/legs_2
-laminar/B738/fms/legs_alt_calc
+
+XPLMDataRef laminar_B738_fms_legs_alt_calc; // laminar/B738/fms/legs_alt_calc float[128]
+
 laminar/B738/fms/legs_alt_calc_2
-laminar/B738/fms/legs_alt_rest1
+
+XPLMDataRef laminar_B738_fms_legs_alt_rest1 // laminar/B738/fms/legs_alt_rest1 float[128]
+
 laminar/B738/fms/legs_alt_rest1_2
 laminar/B738/fms/legs_alt_rest2
 laminar/B738/fms/legs_alt_rest2_2
@@ -1467,9 +1484,10 @@ laminar/B738/fms/legs_hold_dist
 laminar/B738/fms/legs_hold_dist_2
 laminar/B738/fms/legs_hold_time
 laminar/B738/fms/legs_hold_time_2
-laminar/B738/fms/legs_lat
+XPLMDataRef laminar_B738_fms_legs_lat; // laminar/B738/fms/legs_lat float[128]
+
 laminar/B738/fms/legs_lat_2
-laminar/B738/fms/legs_lon
+XPLMDataRef laminar_B738_fms_legs_lon; // laminar/B738/fms/legs_lon float[128]
 laminar/B738/fms/legs_lon_2
 laminar/B738/fms/legs_mod_active
 laminar/B738/fms/legs_num2
@@ -1493,7 +1511,7 @@ laminar/B738/fms/legs_rad_lon_2
 laminar/B738/fms/legs_rad_turn
 laminar/B738/fms/legs_rad_turn_2
 laminar/B738/fms/legs_rnp
-laminar/B738/fms/legs_spd
+XPLMDataRef laminar_B738_fms_legs_spd; // laminar/B738/fms/legs_spd float[128]
 laminar/B738/fms/legs_spd_2
 laminar/B738/fms/legs_spd_calc
 laminar/B738/fms/legs_step_ctr
@@ -3440,6 +3458,19 @@ void findZibo737DataRefs(void) {
             z737_command[Z737_KEY_FMC2_Y] = XPLMFindCommand("laminar/B738/button/fmc2_Y");
             z737_command[Z737_KEY_FMC2_Z] = XPLMFindCommand("laminar/B738/button/fmc2_Z");
 
+            /*
+             * FMS
+             */
+            laminar_B738_fms_legs = XPLMFindCommand("laminar/B738/fms/legs");
+            laminar_B738_fms_legs_lat = XPLMFindCommand("laminar/B738/fms/legs_lat");
+            laminar_B738_fms_legs_lon = XPLMFindCommand("laminar/B738/fms/legs_lon");
+            laminar_B738_fms_legs_alt_calc = XPLMFindCommand("laminar/B738/fms/legs_alt_calc");
+            laminar_B738_fms_legs_alt_rest1 = XPLMFindCommand("laminar/B738/fms/legs_alt_rest1");
+            laminar_B738_fms_legs_spd = XPLMFindCommand("laminar/B738/fms/legs_spd");
+
+            laminar_B738_fms_num_of_wpts = XPLMFindCommand("laminar/B738/fms/num_of_wpts");
+
+
             sprintf(buf, "XHSI: Z737 plugin found - loading CDU datarefs\n");
             XPLMDebugString(buf);
             z737_cdu_ready = 1;
@@ -3604,14 +3635,14 @@ int createZibo737CduPacket(int cdu_id) {
    int j;
    int p;
    char color = 'u';
-   int label_len, small_len, white_len, inverted_len;
+   int label_len, small_len, white_len, inverted_len, magenta_len, green_len;
    int space = 0;
    char label_buffer[Z737_CDU_BUF_LEN];
    char inverted_buffer[Z737_CDU_BUF_LEN];
    char white_buffer[Z737_CDU_BUF_LEN];
    char small_buffer[Z737_CDU_BUF_LEN];
-   // char magenta_buffer[Z737_CDU_BUF_LEN];
-   // char green_buffer[Z737_CDU_BUF_LEN];
+   char magenta_buffer[Z737_CDU_BUF_LEN];
+   char green_buffer[Z737_CDU_BUF_LEN];
 
    char encoded_string[Z737_CDU_BUF_LEN];
 
@@ -3706,15 +3737,15 @@ int createZibo737CduPacket(int cdu_id) {
 	    	 white_len =     getZiboFMCString(white_buffer,    z737_fmc2_content_white[i]);
 		     small_len =     getZiboFMCString(small_buffer,    z737_fmc2_content_small[i]);
 	    	 inverted_len =  getZiboFMCString(inverted_buffer, z737_fmc2_content_inverted[i]);
-	    	 // magenta_len = getZiboFMCString(magenta_buffer, z737_fmc2_content_magenta[i]);
-	    	 // green_len =   getZiboFMCString(green_buffer,   z737_fmc2_content_green[i]);
+	    	 magenta_len =   getZiboFMCString(magenta_buffer,  z737_fmc2_content_magenta[i]);
+	    	 green_len =     getZiboFMCString(green_buffer,    z737_fmc2_content_green[i]);
 	   } else {
 		     label_len =     getZiboFMCString(label_buffer,    z737_fmc1_label_white[i]);
 	    	 white_len =     getZiboFMCString(white_buffer,    z737_fmc1_content_white[i]);
 	    	 small_len =     getZiboFMCString(small_buffer,    z737_fmc1_content_small[i]);
 	    	 inverted_len =  getZiboFMCString(inverted_buffer, z737_fmc1_content_inverted[i]);
-	    	 // magenta_len = getZiboFMCString(magenta_buffer, z737_fmc1_content_magenta[i]);
-	    	 // green_len =   getZiboFMCString(green_buffer,   z737_fmc1_content_green[i]);
+	    	 magenta_len =   getZiboFMCString(magenta_buffer,  z737_fmc1_content_magenta[i]);
+	    	 green_len =     getZiboFMCString(green_buffer,    z737_fmc1_content_green[i]);
 	   }
 
 	 /*
@@ -3801,7 +3832,31 @@ int createZibo737CduPacket(int cdu_id) {
     		 }
     		 if (inverted_buffer[j] < ' ') inverted_buffer[j] = '?';
     		 encoded_string[p++] = inverted_buffer[j];
-    	 } else if (( (j < white_len) || (j<small_len) || (j<inverted_len))
+    	 } else if ((j < magenta_len) && (magenta_buffer[j] != ' ') ) {
+    		 if (color != 'M') {
+    			 color = 'M';
+				 space = 0;
+    			 if (p>0) { encoded_string[p++] = ';'; }
+    			 encoded_string[p++] = 'l';
+    			 encoded_string[p++] = 'm';
+    			 encoded_string[p++] = '0' + j/10;
+    			 encoded_string[p++] = '0' + j%10;
+    		 }
+    		 if (magenta_buffer[j] < ' ') magenta_buffer[j] = '?';
+    		 encoded_string[p++] = magenta_buffer[j];
+    	 } else if ((j < green_len) && (green_buffer[j] != ' ') ) {
+    		 if (color != 'G') {
+    			 color = 'G';
+				 space = 0;
+    			 if (p>0) { encoded_string[p++] = ';'; }
+    			 encoded_string[p++] = 'l';
+    			 encoded_string[p++] = 'g';
+    			 encoded_string[p++] = '0' + j/10;
+    			 encoded_string[p++] = '0' + j%10;
+    		 }
+    		 if (green_buffer[j] < ' ') green_buffer[j] = '?';
+    		 encoded_string[p++] = green_buffer[j];
+    	 } else if (( (j < white_len) || (j<small_len) || (j<inverted_len) || (j<magenta_len) || (j<green_len))
     			  && (space<2) ) {
     		 encoded_string[p++]=' ';
     		 space++;

@@ -57,8 +57,8 @@ XPWidgetID	src_port_default_label, nav_data_default_label, fms_data_default_labe
 XPWidgetID  dest_enable_checkbox[NUM_DEST];
 XPWidgetID  default_local_button, default_multicast_button, cancel_button, set_button;
 XPWidgetID  fms_label, fms_desc1_label, fms_desc2_label;
-XPWidgetID  fms_auto_radiobutton, fms_legacy_radiobutton, fms_ufmc_radiobutton;
-XPWidgetID  fms_auto_rb_label, fms_legacy_rb_label, fms_ufmc_rb_label;
+XPWidgetID  fms_auto_radiobutton, fms_legacy_radiobutton, fms_ufmc_radiobutton, fms_z737_fmc_radiobutton;
+XPWidgetID  fms_auto_rb_label, fms_legacy_rb_label, fms_ufmc_rb_label, fms_z737_fmc_rb_label;
 
 // Remote box widgets
 XPWidgetID  remote_dialog;
@@ -123,6 +123,7 @@ void setWidgetValues() {
 	XPSetWidgetProperty(fms_auto_radiobutton, xpProperty_ButtonState, (fms_source==FMS_SOURCE_AUTO) ? 1 : 0);
 	XPSetWidgetProperty(fms_legacy_radiobutton, xpProperty_ButtonState, (fms_source==FMS_SOURCE_LEGACY) ? 1: 0);
 	XPSetWidgetProperty(fms_ufmc_radiobutton, xpProperty_ButtonState, (fms_source==FMS_SOURCE_UFMC) ? 1 : 0);
+	XPSetWidgetProperty(fms_z737_fmc_radiobutton, xpProperty_ButtonState, (fms_source==FMS_SOURCE_Z737) ? 1 : 0);
 
 }
 
@@ -205,6 +206,8 @@ XPWidgetFunc_t settingsDialogHandler(
 				fms_source = FMS_SOURCE_LEGACY;
 			} else if ((int)XPGetWidgetProperty(fms_ufmc_radiobutton, xpProperty_ButtonState, NULL) ) {
 				fms_source = FMS_SOURCE_UFMC;
+			} else if ((int)XPGetWidgetProperty(fms_z737_fmc_radiobutton, xpProperty_ButtonState, NULL) ) {
+				fms_source = FMS_SOURCE_Z737;
 			} else {
 				// Unknown ? -> Auto
 				fms_source = FMS_SOURCE_AUTO;
@@ -231,16 +234,25 @@ XPWidgetFunc_t settingsDialogHandler(
     	if(inParam1 == (intptr_t)fms_auto_radiobutton) {
             XPSetWidgetProperty(fms_legacy_radiobutton, xpProperty_ButtonState, 0);
             XPSetWidgetProperty(fms_ufmc_radiobutton, xpProperty_ButtonState, 0);
+            XPSetWidgetProperty(fms_z737_fmc_radiobutton, xpProperty_ButtonState, 0);
             XPSetWidgetProperty((XPWidgetID)inParam1, xpProperty_ButtonState, 1);
     	}
     	if(inParam1 == (intptr_t)fms_legacy_radiobutton) {
             XPSetWidgetProperty(fms_auto_radiobutton, xpProperty_ButtonState, 0);
             XPSetWidgetProperty(fms_ufmc_radiobutton, xpProperty_ButtonState, 0);
+            XPSetWidgetProperty(fms_z737_fmc_radiobutton, xpProperty_ButtonState, 0);
             XPSetWidgetProperty((XPWidgetID)inParam1, xpProperty_ButtonState, 1);
     	}
     	if(inParam1 == (intptr_t)fms_ufmc_radiobutton) {
             XPSetWidgetProperty(fms_legacy_radiobutton, xpProperty_ButtonState, 0);
             XPSetWidgetProperty(fms_auto_radiobutton, xpProperty_ButtonState, 0);
+            XPSetWidgetProperty(fms_z737_fmc_radiobutton, xpProperty_ButtonState, 0);
+            XPSetWidgetProperty((XPWidgetID)inParam1, xpProperty_ButtonState, 1);
+    	}
+    	if(inParam1 == (intptr_t)fms_z737_fmc_radiobutton) {
+            XPSetWidgetProperty(fms_legacy_radiobutton, xpProperty_ButtonState, 0);
+            XPSetWidgetProperty(fms_auto_radiobutton, xpProperty_ButtonState, 0);
+            XPSetWidgetProperty(fms_ufmc_radiobutton, xpProperty_ButtonState, 0);
             XPSetWidgetProperty((XPWidgetID)inParam1, xpProperty_ButtonState, 1);
     	}
     }
@@ -257,7 +269,7 @@ void createSettingsDialog(int x, int y) {
 
 	// x, y : lower left
 	int w = 400 + 30;
-	int h = 460 + 20+2*15 + 20 + 140; // was: 385 ; now : 460
+	int h = 460 + 20+2*15 + 20 + 20+ 140; // was: 385 ; now : 460
 	// x0, y0 : top left
 	int x0 = x;
 	int y0 = y + h;
@@ -521,6 +533,17 @@ void createSettingsDialog(int x, int y) {
 	XPSetWidgetProperty(fms_ufmc_radiobutton, xpProperty_ButtonState, 0);
 	fms_ufmc_rb_label = XPCreateWidget(x0+75, y1, x0+75+100+10+55, y1-15,
 									   1, "UMFC x737FMC by Javier Cortes", 0, settings_dialog,
+									   xpWidgetClass_Caption);
+
+	y1 -= 20;
+	fms_z737_fmc_radiobutton = XPCreateWidget(x0+30, y1, x0+30+30, y1-15,
+									  1, "", 0, settings_dialog,
+									  xpWidgetClass_Button);
+	XPSetWidgetProperty(fms_z737_fmc_radiobutton, xpProperty_ButtonType, xpRadioButton);
+	XPSetWidgetProperty(fms_z737_fmc_radiobutton, xpProperty_ButtonBehavior, xpButtonBehaviorRadioButton);
+	XPSetWidgetProperty(fms_z737_fmc_radiobutton, xpProperty_ButtonState, 0);
+	fms_z737_fmc_rb_label = XPCreateWidget(x0+75, y1, x0+75+100+10+55, y1-15,
+									   1, "Laminar B737-800 with ZiboMod", 0, settings_dialog,
 									   xpWidgetClass_Caption);
 
 	// Cancel and Set buttons
