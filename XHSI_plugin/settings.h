@@ -39,6 +39,7 @@ extern unsigned long int   fms_source;
 #define FMS_SOURCE_AUTO   0
 #define FMS_SOURCE_LEGACY 1
 #define FMS_SOURCE_UFMC   2
+#define FMS_SOURCE_Z737   3
 
 
 
