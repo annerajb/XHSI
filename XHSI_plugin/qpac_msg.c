@@ -514,6 +514,7 @@ int createQpacMcduPacket(int mcdu_id) {
    strncpy(qpacMcduMsgPacket.packet_id, "QPAM", 4);
    qpacMcduMsgPacket.nb_of_lines = custom_htoni(QPAC_MCDU_LINES);
    qpacMcduMsgPacket.side = custom_htoni(mcdu_id);
+   qpacMcduMsgPacket.status = 0;
 
    l=0;
    // Page title

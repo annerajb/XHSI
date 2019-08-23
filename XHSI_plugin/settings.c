@@ -43,6 +43,7 @@ unsigned long int   engines_data_rate;
 unsigned long int   static_data_rate;
 unsigned long int   fms_data_rate;
 unsigned long int   tcas_data_rate;
+unsigned long int   cdu_data_rate;
 float               adc_data_delay;
 float               avionics_data_delay;
 float               aux_sys_data_delay;
@@ -50,6 +51,7 @@ float               engines_data_delay;
 float               static_data_delay;
 float               fms_data_delay;
 float               tcas_data_delay;
+float               cdu_data_delay;
 
 unsigned long int  fms_source;
 
@@ -95,6 +97,8 @@ void defaultSettings() {
 	engines_data_rate = 7;
 	aux_sys_data_rate = 5;
 	static_data_rate = 1;
+	cdu_data_rate = 15;
+	cdu_data_delay = 1.0f / (float)cdu_data_rate;
 	expert_settings = 0;
 
 	fms_source = FMS_SOURCE_LEGACY;
@@ -177,6 +181,11 @@ void readConfig() {
 				static_data_delay = 1.0f / (float)static_data_rate;
 			}
 
+			if (expert_settings && strcmp(param, "cdu_data_rate")==0) {
+				cdu_data_rate = d_value;
+				cdu_data_delay = 1.0f / (float)cdu_data_rate;
+			}
+
 			if (strcmp(param, "expert_settings")==0) {
 				expert_settings = d_value;
 			}
@@ -245,6 +254,7 @@ void writeSettings() {
 		fprintf(cfg_file, "engine_data_rate %ld\n", engines_data_rate);
 		fprintf(cfg_file, "aux_sys_data_rate %ld\n", aux_sys_data_rate);
 		fprintf(cfg_file, "static_data_rate %ld\n", static_data_rate);
+		fprintf(cfg_file, "cdu_data_rate %ld\n", cdu_data_rate);
 		fprintf(cfg_file, "expert_settings %ld\n", expert_settings);
 		fprintf(cfg_file, "fms_source %ld\n", fms_source);
 
