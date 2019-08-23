@@ -4,7 +4,7 @@
 * This is the Airbus A320 Qpac MCDU data class
 * 
 * Copyright (C) 2010  Marc Rogiers (marrog.123@gmail.com)
-* Copyright (C) 2015  Nicolas Carel
+* Copyright (C) 2015-2019  Nicolas Carel
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -40,6 +40,9 @@ public class QpacMcduData {
 	
 	static List qpacMcdu1Lines = new ArrayList();
 	static List qpacMcdu2Lines = new ArrayList();
+	
+	static int mcdu1Status;
+	static int mcdu2Status;
 	
 	public static QpacMcduData getInstance(){
 		if(instance == null){
@@ -90,7 +93,18 @@ public class QpacMcduData {
 		}
 	}
 
+	public void setStatus(int mcdu_id, int status) {
+		if (mcdu_id==0) { 
+			mcdu1Status = status; 
+		} else {
+			mcdu2Status = status;
+		}
+	}
 
+	public static int getStatus(int mcdu_id) {
+		return (mcdu_id==0) ? mcdu1Status : mcdu2Status;
+	}
+	
 	/*
 	 * LINE COMPRESSION PROTOCOL FOR QPAC MESSAGES
 	 *
