@@ -7,6 +7,10 @@
 #define Z737_CDU_BUF_LEN 80
 #define Z737_CDU_LINE_WIDTH 24
 
+// Default rate is 15 Callbacks par second
+// Send CDU Message 2 times per second
+#define Z737_MAX_MSG_COUNT 7
+
 // global vars
 
 extern XPLMDataRef z737_plugin_status;
@@ -108,6 +112,53 @@ extern XPLMDataRef z737_efis1_DH_source;
 extern XPLMDataRef z737_efis1_DH_value;
 
 /*
+ * CDU 1
+ */
+extern XPLMDataRef z737_fmc1_title_white;
+extern XPLMDataRef z737_fmc1_title_small;
+extern XPLMDataRef z737_fmc1_title_inverted;
+extern XPLMDataRef z737_fmc1_title_magenta;
+extern XPLMDataRef z737_fmc1_title_green;
+
+extern XPLMDataRef z737_fmc1_label_white[Z737_FMC_LINES];
+extern XPLMDataRef z737_fmc1_content_white[Z737_FMC_LINES];
+extern XPLMDataRef z737_fmc1_content_small[Z737_FMC_LINES];
+extern XPLMDataRef z737_fmc1_content_inverted[Z737_FMC_LINES];
+extern XPLMDataRef z737_fmc1_content_green[Z737_FMC_LINES];
+extern XPLMDataRef z737_fmc1_content_magenta[Z737_FMC_LINES];
+
+extern XPLMDataRef z737_fmc1_scratch_white;
+extern XPLMDataRef z737_fmc1_scratch_inverted;
+
+extern XPLMDataRef z737_fmc_exec_lights;       // laminar/B738/indicators/fmc_exec_lights
+extern XPLMDataRef z737_fms_exec_light_pilot;  // laminar/B738/indicators/fms_exec_light_pilot
+
+extern XPLMDataRef z737_fmc_message;      // laminar/B738/fmc/fmc_message
+extern XPLMDataRef z737_fmc_message_warn; // laminar/B738/fmc/fmc_message_warn
+
+/*
+ *  CDU2
+ */
+extern XPLMDataRef z737_fmc2_title_white;
+extern XPLMDataRef z737_fmc2_title_small;
+extern XPLMDataRef z737_fmc2_title_inverted;
+extern XPLMDataRef z737_fmc2_title_magenta;
+extern XPLMDataRef z737_fmc2_title_green;
+
+extern XPLMDataRef z737_fmc2_label_white[Z737_FMC_LINES];
+extern XPLMDataRef z737_fmc2_content_white[Z737_FMC_LINES];
+extern XPLMDataRef z737_fmc2_content_small[Z737_FMC_LINES];
+extern XPLMDataRef z737_fmc2_content_inverted[Z737_FMC_LINES];
+extern XPLMDataRef z737_fmc2_content_green[Z737_FMC_LINES];
+extern XPLMDataRef z737_fmc2_content_magenta[Z737_FMC_LINES];
+
+extern XPLMDataRef z737_fmc2_scratch_white;
+extern XPLMDataRef z737_fmc2_scratch_inverted;
+
+extern XPLMDataRef z737_fmc_exec_lights_fo;     // laminar/B738/indicators/fmc_exec_lights_fo
+extern XPLMDataRef z737_fms_exec_light_copilot; // laminar/B738/indicators/fms_exec_light_copilot
+
+/*
  * FMS
  */
 extern XPLMDataRef laminar_B738_fms_legs;           // laminar/B738/fms/legs [String]
@@ -120,9 +171,13 @@ extern XPLMDataRef laminar_B738_fms_num_of_wpts;    // laminar/B738/fms/num_of_w
 
 
 extern int z737_ready;
+extern int z737_msg_count;
+extern int z737_fmc_keypressed;
 
-// Key codes (values passed with Z737_KEY_PRESS ID)
 
+/*
+ *  Key codes (values passed with Z737_KEY_PRESS ID)
+ */
 
 // FMC1 KEYS
 #define Z737_KEY_FMC1_LSK1L      0

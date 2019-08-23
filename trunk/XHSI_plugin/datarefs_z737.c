@@ -51,7 +51,8 @@ int z737_ready = 0;
 int z737_version = 0;
 int z737_cdu_ready = 0;
 
-float z737_msg_delay;
+int z737_msg_count = 0;
+int z737_fmc_keypressed = 0;
 
 // Plugin signature
 XPLMPluginID z737_PluginId = XPLM_NO_PLUGIN_ID;
@@ -71,7 +72,9 @@ struct QpacMcduMsgLinesDataPacket zibo737Cdu2PreviousMsgPacket;
 
 float zibo737_msg_delay;
 
-// CDU1
+/*
+ * CDU 1
+ */
 XPLMDataRef z737_fmc1_title_white;
 XPLMDataRef z737_fmc1_title_small;
 XPLMDataRef z737_fmc1_title_inverted;
@@ -88,7 +91,15 @@ XPLMDataRef z737_fmc1_content_magenta[Z737_FMC_LINES];
 XPLMDataRef z737_fmc1_scratch_white;
 XPLMDataRef z737_fmc1_scratch_inverted;
 
-// CDU2
+XPLMDataRef z737_fmc_exec_lights;       // laminar/B738/indicators/fmc_exec_lights
+XPLMDataRef z737_fms_exec_light_pilot;  // laminar/B738/indicators/fms_exec_light_pilot
+
+XPLMDataRef z737_fmc_message; // laminar/B738/fmc/fmc_message
+XPLMDataRef z737_fmc_message_warn; // laminar/B738/fmc/fmc_message_warn
+
+/*
+ *  CDU2
+ */
 XPLMDataRef z737_fmc2_title_white;
 XPLMDataRef z737_fmc2_title_small;
 XPLMDataRef z737_fmc2_title_inverted;
@@ -105,6 +116,8 @@ XPLMDataRef z737_fmc2_content_magenta[Z737_FMC_LINES];
 XPLMDataRef z737_fmc2_scratch_white;
 XPLMDataRef z737_fmc2_scratch_inverted;
 
+XPLMDataRef z737_fmc_exec_lights_fo;     // laminar/B738/indicators/fmc_exec_lights_fo
+XPLMDataRef z737_fms_exec_light_copilot; // laminar/B738/indicators/fms_exec_light_copilot
 
 /*
  * FMS
@@ -3475,6 +3488,7 @@ void findZibo737DataRefs(void) {
             XPLMDebugString(buf);
             z737_cdu_ready = 1;
 
+
             for (i=0; i<Z737_FMC_LINES; i++) {
             	// CDU1
 
@@ -3543,6 +3557,11 @@ void findZibo737DataRefs(void) {
             }
 
             // CDU1
+            z737_fmc_exec_lights = XPLMFindDataRef("laminar/B738/indicators/fmc_exec_lights");
+            z737_fms_exec_light_pilot = XPLMFindDataRef("laminar/B738/indicators/fms_exec_light_pilot");
+            z737_fmc_message = XPLMFindDataRef("laminar/B738/fmc/fmc_message");
+            z737_fmc_message_warn = XPLMFindDataRef("laminar/B738/fmc/fmc_message_warn");
+
             z737_fmc1_scratch_inverted = XPLMFindDataRef("laminar/B738/fmc1/Line_entry_I");
             z737_fmc1_scratch_white = XPLMFindDataRef("laminar/B738/fmc1/Line_entry");
 
@@ -3553,7 +3572,12 @@ void findZibo737DataRefs(void) {
             z737_fmc1_title_white = XPLMFindDataRef("laminar/B738/fmc1/Line00_L");
             z737_fmc1_title_small = XPLMFindDataRef("laminar/B738/fmc1/Line00_S");
 
+
+
             // CDU2
+            z737_fmc_exec_lights_fo = XPLMFindDataRef("laminar/B738/indicators/fmc_exec_lights_fo");
+            z737_fms_exec_light_copilot = XPLMFindDataRef("laminar/B738/indicators/fms_exec_light_copilot");
+
             z737_fmc2_scratch_inverted = XPLMFindDataRef("laminar/B738/fmc2/Line_entry_I");
             z737_fmc2_scratch_white = XPLMFindDataRef("laminar/B738/fmc2/Line_entry");
 
@@ -3593,6 +3617,7 @@ void writeZibo737DataRef(int id, float value) {
 					XPLMDebugString(info_string);
 				} else {
 					XPLMCommandOnce(z737_command[(int)value]);
+					z737_fmc_keypressed=1;
 				}
 			}
 			break;
@@ -3637,6 +3662,7 @@ int createZibo737CduPacket(int cdu_id) {
    char color = 'u';
    int label_len, small_len, white_len, inverted_len, magenta_len, green_len;
    int space = 0;
+   int status = 0;
    char label_buffer[Z737_CDU_BUF_LEN];
    char inverted_buffer[Z737_CDU_BUF_LEN];
    char white_buffer[Z737_CDU_BUF_LEN];
@@ -3653,6 +3679,16 @@ int createZibo737CduPacket(int cdu_id) {
    strncpy(zibo737CduMsgPacket.packet_id, "QPAM", 4);
    zibo737CduMsgPacket.nb_of_lines = custom_htoni(Z737_CDU_LINES);
    zibo737CduMsgPacket.side = custom_htoni(cdu_id);
+   if (cdu_id) {
+	   status =
+			   (XPLMGetDataf(z737_fmc_exec_lights_fo)!=0.0 ? MCDU_FLAG_EXEC : 0) |
+			   (XPLMGetDataf(z737_fmc_message)!=0.0 ? MCDU_FLAG_MSG : 0);
+   } else {
+	   status =
+			   (XPLMGetDataf(z737_fmc_exec_lights)!=0.0 ? MCDU_FLAG_EXEC : 0 ) |
+			   (XPLMGetDataf(z737_fmc_message)!=0.0 ? MCDU_FLAG_MSG : 0);
+   }
+   zibo737CduMsgPacket.status = custom_htoni(status);
 
    // Line count (0 to 13)
    l=0;
@@ -3920,11 +3956,12 @@ float sendZibo737MsgCallback(
 
 
 	// TODO: Store previous packet / Send if different
-	// TODO: Force sending CDU packets every 2 seconds (application startup time)
-    // TODO: adjust packet delay. Set to adc * 3.0
-	z737_msg_delay = adc_data_delay * 3.0f;
 
-	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open && z737_cdu_ready)  {
+	z737_msg_count++;
+
+	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open && z737_cdu_ready && (z737_fmc_keypressed>0 || z737_msg_count> Z737_MAX_MSG_COUNT))  {
+		z737_msg_count=0;
+		if (z737_fmc_keypressed>0) z737_fmc_keypressed--;
 
 		cdu_packet_size = createZibo737CduPacket(XPLMGetDatai(cdu_pilot_side));
 		if ( cdu_packet_size > 0 ) {
@@ -3961,10 +3998,11 @@ float sendZibo737MsgCallback(
 				zibo737Cdu2PreviousMsgPacket = zibo737CduMsgPacket;
 		}
 
-        return z737_msg_delay;
+        return cdu_data_delay;
 
 	} else {
-		return 10.0f;
+		// return 10.0f;
+		return cdu_data_delay;
 	}
 
 }
