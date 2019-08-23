@@ -34,10 +34,12 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -59,11 +61,8 @@ public class CDUZiboMod737 extends CDUSubcomponent {
 	private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
 	private BufferedImage image = null;
-	private BufferedImage athr_img = null;
+	private BufferedImage msg_img = null;
 	private BufferedImage exec_img = null;
-	private BufferedImage lnav_img = null;
-	private BufferedImage vnav_img = null;
-
 
 	boolean drawregions = false;
 	Font font;
@@ -82,6 +81,8 @@ public class CDUZiboMod737 extends CDUSubcomponent {
 	double border;
 	double border_x;
 	double border_y;
+	
+	boolean reverse; // Reverse video string
 
 	List<ClickRegion> regions;
 
@@ -162,16 +163,14 @@ public class CDUZiboMod737 extends CDUSubcomponent {
 	public static final int Z737_KEY_FMC1_CLR        = 67;
 	public static final int Z737_KEY_FMC1_PLUS_M     = 68;
 	public static final int Z737_KEY_FMC1_SPACE      = 69;
-	public static final int Z737_KEY_FMC1_OVERFL     = 70;
+	public static final int Z737_KEY_FMC1_CLB        = 70;
 
-	// Unused
-	public static final int Z737_KEY_FMC1_DATA       = 71;
-	public static final int Z737_KEY_FMC1_FPLN       = 72;
-	public static final int Z737_KEY_FMC1_DIR_TO     = 73;
-	public static final int Z737_KEY_FMC1_AIRPORT    = 74;
-	public static final int Z737_KEY_FMC1_SLEW_UP    = 75;
-	public static final int Z737_KEY_FMC1_SLEW_DOWN  = 76;
-	public static final int Z737_KEY_FMC1_BRT        = 77;
+	public static final int Z737_KEY_FMC1_CRZ        = 71;
+	public static final int Z737_KEY_FMC1_DES        = 72;
+	public static final int Z737_KEY_FMC1_FMC_COMM   = 73;
+	public static final int Z737_KEY_FMC1_ATC        = 74;
+	public static final int Z737_KEY_FMC1_BRT        = 75;
+
 
 
 	public CDUZiboMod737(ModelFactory model_factory, CDUGraphicsConfig cdu_gc, Component parent_component) {
@@ -180,10 +179,8 @@ public class CDUZiboMod737 extends CDUSubcomponent {
 
 		try {
 			image = ImageIO.read(this.getClass().getResourceAsStream("img/z737cdu_800x480.png"));
-			athr_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_athr_litv_m.png"));
+			msg_img = ImageIO.read(this.getClass().getResourceAsStream("img/z737cdu_msg.png"));
 			exec_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_exec_litv_m.png"));
-			lnav_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_lnav_litv_m.png"));
-			vnav_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_vnav_litv_m.png"));
 		} catch (IOException ioe){}
 
 		// Andale Mono is one of the Core Webfonts, Lucida Console is not! https://en.wikipedia.org/wiki/Core_fonts_for_the_Web
@@ -279,6 +276,16 @@ public class CDUZiboMod737 extends CDUSubcomponent {
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 
 		g2.drawImage(image, null, 0, 0);
+		
+		int stat = QpacMcduData.getStatus(avionics.get_cdu_side());
+		
+        if((stat & 1) == 1) {
+            g2.drawImage(exec_img,null, 383, 397);
+        }
+        if((stat & 2) == 2) {
+            g2.drawImage(msg_img,null,435, 541);
+        }
+        
 		g2.setTransform(orig);
 		if ( cdu_gc.powered ) {
 			drawDisplayLines(g2);
@@ -293,20 +300,17 @@ public class CDUZiboMod737 extends CDUSubcomponent {
 		}
 	}
 
-	/*
-	 * TODO: Beware, some colors are RAW, it should use brightness adjustable colors schema !!!!
-	 */
 	private void decodeColor(Graphics2D g2, char color_code) {
 		switch (color_code) {
-		case 'r' : g2.setColor(cdu_gc.ecam_warning_color); break;
-		case 'b' : g2.setColor(cdu_gc.ecam_action_color); break;
-		case 'w' : g2.setColor(cdu_gc.ecam_markings_color); break;
-		case 'y' : g2.setColor(Color.YELLOW); break;
-		case 'm' : g2.setColor(Color.MAGENTA); break;
-		case 'a' : g2.setColor(cdu_gc.ecam_caution_color); break;
-		case 'g' : g2.setColor(cdu_gc.ecam_normal_color); break;
-		case 'i' : g2.setColor(cdu_gc.ecam_normal_color); break; // Inverted (green)
-		default : g2.setColor(Color.GRAY); break;
+		case 'r' : g2.setColor(cdu_gc.ecam_warning_color); reverse=false; break;
+		case 'b' : g2.setColor(cdu_gc.ecam_action_color); reverse=false; break;
+		case 'w' : g2.setColor(cdu_gc.ecam_markings_color); reverse=false; break;
+		case 'y' : g2.setColor(cdu_gc.ecam_reference_color); reverse=false; break;
+		case 'm' : g2.setColor(cdu_gc.ecam_special_color); reverse=false; break;
+		case 'a' : g2.setColor(cdu_gc.ecam_caution_color); reverse=false; break;
+		case 'g' : g2.setColor(cdu_gc.ecam_normal_color); reverse=false; break;
+		case 'i' : g2.setColor(cdu_gc.ecam_reference_color); reverse=true; break; // Inverted (green)
+		default : g2.setColor(Color.GRAY); reverse=false; break;
 		}
 	}
 
@@ -344,7 +348,15 @@ public class CDUZiboMod737 extends CDUSubcomponent {
 				x = (int) Math.round( cdu_gc.cdu_screen_topleft_x + o.pos * cdu_gc.cdu_25_digit_width);
 				decodeColor(g2, o.color);
 				decodeFont(g2, o.font);
-				g2.drawString(translateCduLine(o.text), x, cdu_gc.cdu_xfmc_line[i]);
+				/*
+				if (reverse) {
+					AttributedString asCduLine = new AttributedString(translateCduLine(o.text));
+					asCduLine.addAttribute(TextAttribute.BACKGROUND, cdu_gc.ecam_markings_color, 2, 9);
+					g2.drawString(asCduLine.getIterator(), x, cdu_gc.cdu_xfmc_line[i]);
+				} else {
+				*/
+					g2.drawString(translateCduLine(o.text), x, cdu_gc.cdu_xfmc_line[i]);
+				//}
 			}    
 		}
 	}
@@ -386,8 +398,8 @@ public class CDUZiboMod737 extends CDUSubcomponent {
 				case '.' : w = Z737_KEY_FMC1_DOT; break;
 				case '/' : w = Z737_KEY_FMC1_SLASH; break;    		
 				case '+' : w = Z737_KEY_FMC1_PLUS_M; break;
-				case '*' : w = Z737_KEY_FMC1_OVERFL; break;
-				case 127 : w = Z737_KEY_FMC1_DEL; break; // DEL -> CLEAR
+				// case '*' : w = Z737_KEY_FMC1_OVERFL; break;
+				case 127 : w = Z737_KEY_FMC1_CLR; break; // DEL -> CLEAR
 				case 8   : w = Z737_KEY_FMC1_DEL; break; // BackSpace
 				case ' ' : w = Z737_KEY_FMC1_SPACE; break; 
 				case 27  : w = Z737_KEY_FMC1_MENU; break; // ESCAPE -> MCDU_MENU
@@ -407,18 +419,19 @@ public class CDUZiboMod737 extends CDUSubcomponent {
 				case KeyEvent.VK_F10 : w = Z737_KEY_FMC1_LSK4R; break;
 				case KeyEvent.VK_F11 : w = Z737_KEY_FMC1_LSK5R; break;
 				case KeyEvent.VK_F12 : w = Z737_KEY_FMC1_LSK6R; break;
-				case KeyEvent.VK_UP : w = Z737_KEY_FMC1_SLEW_UP; break;
-				case KeyEvent.VK_DOWN : w = Z737_KEY_FMC1_SLEW_DOWN; break;
+				case KeyEvent.VK_UP : w = Z737_KEY_FMC1_SLEW_LEFT; break;
+				case KeyEvent.VK_DOWN : w = Z737_KEY_FMC1_SLEW_RIGHT; break;
 				case KeyEvent.VK_LEFT : w = Z737_KEY_FMC1_SLEW_LEFT; break;
 				case KeyEvent.VK_RIGHT : w = Z737_KEY_FMC1_SLEW_RIGHT; break; 
 
 				case KeyEvent.VK_PAGE_UP : w = Z737_KEY_FMC1_PERF; break;
 				case KeyEvent.VK_PAGE_DOWN : w = Z737_KEY_FMC1_PROG; break;
 				case KeyEvent.VK_HOME : w = Z737_KEY_FMC1_INIT; break;
-				case KeyEvent.VK_END : w = Z737_KEY_FMC1_FPLN; break; 
-				case KeyEvent.VK_INSERT : w = Z737_KEY_FMC1_DIR_TO; break;
-				case KeyEvent.VK_SCROLL_LOCK : w = Z737_KEY_FMC1_DATA; break;
-				case KeyEvent.VK_PAUSE : w = Z737_KEY_FMC1_RAD_NAV; break;
+				case KeyEvent.VK_END : w = Z737_KEY_FMC1_LEGS; break; 
+				case KeyEvent.VK_INSERT : w = Z737_KEY_FMC1_RTE; break;
+				case KeyEvent.VK_SCROLL_LOCK : w = Z737_KEY_FMC1_DEP_ARR; break;		
+				case KeyEvent.VK_PAUSE : w = Z737_KEY_FMC1_HOLD; break;
+				case KeyEvent.VK_ENTER : w = Z737_KEY_FMC1_EXEC; break;
 				}
 
 			if (w > -0.5f) {

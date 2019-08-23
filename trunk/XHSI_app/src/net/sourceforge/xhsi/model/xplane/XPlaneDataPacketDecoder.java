@@ -730,6 +730,8 @@ public class XPlaneDataPacketDecoder implements XPlaneDataPacketObserver {
 
             int nb_of_lines = data_stream.readInt();
             int side = data_stream.readInt();
+            int status = data_stream.readInt();
+            qpac_mcdu.setStatus(side, status);
             logger.finest("Receiving QPAC MCDU"+side+" packet");
             
             byte[] buff = new byte[buff_max];
