@@ -4056,6 +4056,9 @@ int createStaticPacket(void) {
     sim_packet.sim_data_points[i].value = custom_htonf((float) XPLMGetDatai(xhsi_rwy_units));
     i++;
 
+    sim_packet.sim_data_points[i].id = custom_htoni(XHSI_FMS_TYPE);
+    sim_packet.sim_data_points[i].value = custom_htonf((float)xp11_fms_type);
+    i++;
 
     // now we know the number of datapoints
     sim_packet.nb_of_sim_data_points = custom_htoni( i );

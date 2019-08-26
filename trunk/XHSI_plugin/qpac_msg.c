@@ -5,6 +5,22 @@
  *      Author: Nicolas Carel
  *
  *  Send QPAC MCDU and ECAM messages packets
+ *
+ * Copyright (C) 2015-2019 Nicolas Carel
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <stdio.h>
@@ -115,6 +131,10 @@ XPLMPluginID qpacPaPluginId = XPLM_NO_PLUGIN_ID;
 XPLMPluginID qpacV2PluginId = XPLM_NO_PLUGIN_ID;
 int qpac_mcdu_ready = 0;
 int qpac_ewd_ready = 0;
+
+int qpac_mcdu_msg_count = 0;
+int qpac_ewd_msg_count = 0;
+int qpac_mcdu_keypressed = 0;
 
 struct QpacEwdMsgLinesDataPacket qpacEwdMsgPacket;
 struct QpacMcduMsgLinesDataPacket qpacMcduMsgPacket;
@@ -1028,13 +1048,14 @@ float sendQpacMsgCallback(
 
 
 	// TODO: Store previous packet / Send if different
-	// TODO: Force sending MCDU packets every 2 seconds (application startup time)
-    // TODO: adjust packet delay. Set to adc * 3.0
-	qpac_msg_delay = adc_data_delay * 3.0f;
+	qpac_mcdu_msg_count++;
 
 	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open && qpac_ewd_ready)  {
 
-		if (qpac_mcdu_ready) {
+		if (qpac_mcdu_ready && (qpac_mcdu_keypressed>0 || qpac_mcdu_msg_count> QPAC_MAX_MCDU_MSG_COUNT)) {
+			qpac_mcdu_msg_count=0;
+			if (qpac_mcdu_keypressed>0) qpac_mcdu_keypressed--;
+
 			mcdu_packet_size = createQpacMcduPacket(XPLMGetDatai(cdu_pilot_side));
 	        if ( mcdu_packet_size > 0 ) {
 	            for (i=0; i<NUM_DEST; i++) {
@@ -1071,26 +1092,29 @@ float sendQpacMsgCallback(
 	        }
 		}
 
-		ewd_packet_size = createQpacEwdPacket();
+		qpac_ewd_msg_count++;
+		if (qpac_ewd_msg_count> QPAC_MAX_EWD_MSG_COUNT) {
+			qpac_ewd_msg_count=0;
+			ewd_packet_size = createQpacEwdPacket();
 
-        if ( ewd_packet_size > 0 ) {
-            for (i=0; i<NUM_DEST; i++) {
-                if (dest_enable[i]) {
-                    if (sendto(sockfd, (const char*)&qpacEwdMsgPacket, ewd_packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr)) == -1) {
-                        XPLMDebugString("XHSI: caught error while sending QpacEwdMsg packet! (");
-                        XPLMDebugString((char * const) strerror(GET_ERRNO));
-                        XPLMDebugString(")\n");
-                    }
+			if ( ewd_packet_size > 0 ) {
+				for (i=0; i<NUM_DEST; i++) {
+					if (dest_enable[i]) {
+						if (sendto(sockfd, (const char*)&qpacEwdMsgPacket, ewd_packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr)) == -1) {
+							XPLMDebugString("XHSI: caught error while sending QpacEwdMsg packet! (");
+							XPLMDebugString((char * const) strerror(GET_ERRNO));
+							XPLMDebugString(")\n");
+						}
 
-                }
-            }
-            qpacEwdPreviousMsgPacket = qpacEwdMsgPacket;
-            return qpac_msg_delay;
-        } else {
-            return qpac_msg_delay;
-        }
+					}
+				}
+				qpacEwdPreviousMsgPacket = qpacEwdMsgPacket;
+			}
+		}
 
+        return cdu_data_delay;
 	} else {
+		// MCDU is not ready
 		return 10.0f;
 	}
 

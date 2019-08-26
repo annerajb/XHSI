@@ -95,6 +95,7 @@
 #include "z737_fmc.h"
 #include "qpac_msg.h"
 #include "jar_a320neo_msg.h"
+#include "xp11_cdu.h"
 
 
 
@@ -349,6 +350,12 @@ PLUGIN_API int XPluginEnable(void) {
             -1.0f,
             NULL);
 
+    // X-Plane 11.35 CDU
+    XPLMRegisterFlightLoopCallback(
+    		sendXP11CduMsgCallback,
+            -1.0f,
+            NULL);
+
     // Notify DataRefEditor of our custom DataRefs
     XPLMRegisterFlightLoopCallback(
             notifyDataRefEditorCallback,
@@ -420,6 +427,7 @@ PLUGIN_API void XPluginDisable(void) {
     XPLMUnregisterFlightLoopCallback(sendJar_a320MsgCallback, NULL);
     XPLMUnregisterFlightLoopCallback(sendZibo737MsgCallback, NULL);
     XPLMUnregisterFlightLoopCallback(sendZibo737ExtendedFmsCallback, NULL);
+    XPLMUnregisterFlightLoopCallback(sendXP11CduMsgCallback, NULL);
 
     XPLMUnregisterFlightLoopCallback(computeChronoCallback, NULL);
 

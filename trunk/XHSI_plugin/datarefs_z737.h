@@ -171,6 +171,8 @@ extern XPLMDataRef laminar_B738_fms_num_of_wpts;    // laminar/B738/fms/num_of_w
 
 
 extern int z737_ready;
+extern int z737_version;
+extern int z737_cdu_ready;
 extern int z737_msg_count;
 extern int z737_fmc_keypressed;
 

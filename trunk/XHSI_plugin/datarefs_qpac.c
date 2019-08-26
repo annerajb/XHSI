@@ -1010,8 +1010,8 @@ void writeQpacDataRef(int id, float value) {
 						XPLMCommandBegin(qpac_command[(int)value]);
 						qpac_release_command=(int)value;
 					} else {
+						qpac_mcdu_keypressed++;
 						XPLMCommandOnce(qpac_command[(int)value]);
-
 					}
 				}
 			}
