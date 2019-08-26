@@ -307,7 +307,7 @@ public class CDUZiboMod737 extends CDUSubcomponent {
 		case 'm' : g2.setColor(cdu_gc.ecam_special_color); reverse=false; break;
 		case 'a' : g2.setColor(cdu_gc.ecam_caution_color); reverse=false; break;
 		case 'g' : g2.setColor(cdu_gc.ecam_normal_color); reverse=false; break;
-		case 'i' : g2.setColor(Color.black); reverse=true; break; // Inverted (black on white)
+		case 'i' : g2.setColor(cdu_gc.ecam_markings_color); reverse=true; break; // Inverted (black on white)
 		default : g2.setColor(Color.GRAY); reverse=false; break;
 		}
 	}
@@ -344,12 +344,12 @@ public class CDUZiboMod737 extends CDUSubcomponent {
 			List<CduLine> l = QpacMcduData.decodeLine(QpacMcduData.getLine(cdu_side,i));
 			for(CduLine o : l){                    
 				x = (int) Math.round( cdu_gc.cdu_screen_topleft_x + o.pos * cdu_gc.cdu_25_digit_width);
-				if (reverse) {
-					int text_width=cdu_gc.get_text_width(g2, cdu_gc.cdu_24_normal_font, o.text);
-					g2.setColor(cdu_gc.ecam_markings_color);
-					g2.fillRect(x, cdu_gc.cdu_xfmc_line[i], text_width, cdu_gc.line_height_fixed_xl);
-				}
 				decodeColor(g2, o.color);
+				if (reverse) {
+					int text_width=cdu_gc.get_text_width(g2, cdu_gc.cdu_24_normal_font, o.text.trim());					
+					g2.fillRect(x, cdu_gc.cdu_xfmc_line[i]-cdu_gc.line_height_fixed_xl, text_width, cdu_gc.line_height_fixed_xl*11/10);
+					g2.setColor(Color.black);
+				}				
 				decodeFont(g2, o.font);
 				g2.drawString(translateCduLine(o.text), x, cdu_gc.cdu_xfmc_line[i]);
 				
