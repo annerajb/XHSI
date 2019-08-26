@@ -55,13 +55,13 @@ public class QpacMcduData {
 		qpacMcdu1Lines = new ArrayList();
 		qpacMcdu2Lines = new ArrayList();
 		
-		for(int i=0; i < 15; i++){
+		for(int i=0; i < 17; i++){
 			qpacMcdu1Lines.add(new HashMap());
 			qpacMcdu2Lines.add(new HashMap());
 		}
 		
-        Map m1 = (Map) qpacMcdu1Lines.get(14);
-        Map m2 = (Map) qpacMcdu2Lines.get(14);
+        Map m1 = (Map) qpacMcdu1Lines.get(16);
+        Map m2 = (Map) qpacMcdu2Lines.get(16);
 
         m1.put("decode", 1);
         m2.put("decode", 1);

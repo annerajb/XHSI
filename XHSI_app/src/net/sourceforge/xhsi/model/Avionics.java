@@ -25,6 +25,7 @@
 package net.sourceforge.xhsi.model;
 
 import net.sourceforge.xhsi.XHSIInstrument.DU;
+import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 
 
 public interface Avionics {
@@ -200,7 +201,15 @@ public interface Avionics {
      * @return int - general instrument style STYLE_BOEING, STYLE_AIRBUS
      */
     public int get_instrument_style();
-
+    
+    /**
+     * @return int - X-Plane 11 FMS type. 
+     * 0: X-Plane 11 FMS is not running
+     * 1: Boeing 737-800
+     * 2-99: Reserved
+     */
+    public int get_fms_type();  
+    
     /**
      * @return int - general instrument style 0=ANALOG, 1=DIGITAL
      */
