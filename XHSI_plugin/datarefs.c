@@ -24,6 +24,7 @@
 #include "structs.h"
 #include "ids.h"
 #include "xfmc.h"
+#include "xp11_cdu.h"
 #include "datarefs.h"
 #include "datarefs_x737.h"
 #include "datarefs_qpac.h"
@@ -602,6 +603,16 @@ XPLMDataRef acf_gear_steers;
 XPLMDataRef nose_wheel_steer;
 XPLMDataRef tire_steer_cmd;
 XPLMDataRef tire_steer_act;
+
+// X-Plane 11.35 FMS
+// https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/
+XPLMDataRef fms_cdu1_text[XP11_FMS_LINES];
+XPLMDataRef fms_cdu1_style[XP11_FMS_LINES];
+XPLMDataRef fms_cdu2_text[XP11_FMS_LINES];
+XPLMDataRef fms_cdu2_style[XP11_FMS_LINES];
+
+int xp11_cdu_ready = 0;
+int xp11_fms_type = 0;
 
 /*
  * END of datarefs not yet exported
@@ -3820,6 +3831,28 @@ void findDataRefs(void) {
     tire_steer_cmd = XPLMFindDataRef("sim/flightmodel/parts/controls/tire_steer_cmd");
     tire_steer_act = XPLMFindDataRef("sim/flightmodel/parts/controls/tire_steer_act");
 
+    // X-Plane 11.35 FMS
+    // https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/
+    for (i=0; i<XP11_FMS_LINES; i++) {
+    	// CDU1
+    	sprintf(buf, "sim/cockpit2/radios/indicators/fms_cdu1_text_line%d", i);
+    	fms_cdu1_text[i] = XPLMFindDataRef(buf);
+    	sprintf(buf, "sim/cockpit2/radios/indicators/fms_cdu1_style_line%d", i);
+    	fms_cdu1_style[i] = XPLMFindDataRef(buf);
+
+    	// CDU2
+    	sprintf(buf, "sim/cockpit2/radios/indicators/fms_cdu2_text_line%d", i);
+    	fms_cdu2_text[i] = XPLMFindDataRef(buf);
+    	sprintf(buf, "sim/cockpit2/radios/indicators/fms_cdu2_style_line%d", i);
+    	fms_cdu2_style[i] = XPLMFindDataRef(buf);
+    }
+    if ( fms_cdu1_text[0] != NULL ) {
+    	xp11_cdu_ready=1;
+    	xp11_fms_type=1;
+    } else {
+    	xp11_cdu_ready=0;
+    	xp11_fms_type=0;
+    }
 
 //	// TCAS
 //	relative_bearing_degs = XPLMFindDataRef("sim/cockpit2/tcas/indicators/relative_bearing_degs");

@@ -165,6 +165,8 @@
 #define SIM_COCKPIT_RADIOS_TRANSPONDER_CODE 181
 #define SIM_COCKPIT_RADIOS_TRANSPONDER_ID 182
 
+// FMS [ comes with X-Plane 11.35 ]
+#define XHSI_FMS_TYPE 184  // 0:Legacy XP10  1:XP11 737-800  2 and more: reserved
 
 // RTU
 #define XHSI_RTU_CONTACT_ATC 185 // also works for PilotEdge

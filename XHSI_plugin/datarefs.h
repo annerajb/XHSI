@@ -582,6 +582,16 @@ extern XPLMDataRef nose_wheel_steer;
 extern XPLMDataRef tire_steer_cmd;
 extern XPLMDataRef tire_steer_act;
 
+// X-Plane 11.35 FMS
+#define XP11_FMS_LINES 16
+// https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/
+extern XPLMDataRef fms_cdu1_text[XP11_FMS_LINES];
+extern XPLMDataRef fms_cdu1_style[XP11_FMS_LINES];
+extern XPLMDataRef fms_cdu2_text[XP11_FMS_LINES];
+extern XPLMDataRef fms_cdu2_style[XP11_FMS_LINES];
+extern int xp11_cdu_ready;
+extern int xp11_fms_type;
+
 // Multiplayer
 extern XPLMDataRef multiplayer_x[NUM_TCAS];
 extern XPLMDataRef multiplayer_y[NUM_TCAS];

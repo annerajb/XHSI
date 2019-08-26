@@ -15,7 +15,7 @@
 #define QPAC_SD_LINES 18
 #define MCDU_BUF_LEN 80
 #define EWD_BUF_LEN 80
-
+#define QPAC_MAX_EWD_MSG_COUNT 4
 
 // ECAM
 extern XPLMDataRef qpac_ewd_red[QPAC_EWD_LINES];
@@ -27,9 +27,13 @@ extern XPLMDataRef qpac_ewd_white[QPAC_EWD_LINES];
 extern int qpac_mcdu_ready;
 extern int qpac_ewd_ready;
 
-// MCDU
+extern int qpac_mcdu_msg_count;
+extern int qpac_ewd_msg_count;
+extern int qpac_mcdu_keypressed;
 
+// MCDU
 #define QPAC_MCDU_LINES 14
+#define QPAC_MAX_MCDU_MSG_COUNT 7
 
 // MCDU1
 extern XPLMDataRef qpac_mcdu1_title_yellow;
