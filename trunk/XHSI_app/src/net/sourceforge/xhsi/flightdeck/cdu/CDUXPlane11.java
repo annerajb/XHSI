@@ -1,0 +1,294 @@
+/**
+* CDUXPlane11.java
+* 
+* Displays the Legacy X-Plane 11.35 CDU
+* 
+* CDUXPlane11 FMC uses QPAC MCDU message packet encoding
+* 
+* Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
+* Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
+* Copyright (C) 2019  Nicolas Carel
+* 
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2 
+* of the License, or (at your option) any later version.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU Lesser General Public
+* License along with this library; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+package net.sourceforge.xhsi.flightdeck.cdu;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
+
+import net.sourceforge.xhsi.model.Avionics;
+import net.sourceforge.xhsi.model.CduLine;
+import net.sourceforge.xhsi.model.ModelFactory;
+import net.sourceforge.xhsi.model.QpacMcduData;
+import net.sourceforge.xhsi.model.xplane.XPlaneUDPSender;
+
+
+public class CDUXPlane11 extends CDUSubcomponent {
+
+	private static final long serialVersionUID = 1L;
+
+	private static Logger logger = Logger.getLogger("net.sourceforge.xhsi");
+
+	private BufferedImage image = null;
+	private BufferedImage msg_img = null;
+	private BufferedImage exec_img = null;
+
+	boolean drawregions = false;
+	Font font;
+
+	int displayunit_topleft_x = 76;
+	int displayunit_topleft_y = 49;
+	double row_coef = 19.8;
+	int upper_y = 2;
+	double scratch_y_coef = 13.0;
+	double char_width_coef = 1.5; 
+
+	XPlaneUDPSender udp_sender = null; 
+
+	double scalex = 1;
+	double scaley = 1;
+	double border;
+	double border_x;
+	double border_y;
+	
+	boolean reverse; // Reverse video string
+
+	List<ClickRegion> regions;
+
+
+
+	public CDUXPlane11(ModelFactory model_factory, CDUGraphicsConfig cdu_gc, Component parent_component) {
+		super(model_factory, cdu_gc, parent_component);
+
+
+		try {
+			image = ImageIO.read(this.getClass().getResourceAsStream("img/z737cdu_800x480.png"));
+			msg_img = ImageIO.read(this.getClass().getResourceAsStream("img/z737cdu_msg.png"));
+			exec_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_exec_litv_m.png"));
+		} catch (IOException ioe){}
+
+		// Andale Mono is one of the Core Webfonts, Lucida Console is not! https://en.wikipedia.org/wiki/Core_fonts_for_the_Web
+		font = new Font("Andale Mono",1, 18);        
+
+		regions = new ArrayList<ClickRegion>();
+
+		// LSK
+		regions.add(new ClickRegion(new Point(6, 62), new Point(48+26, 300), 1, 6, 
+				new int[][] {{0}, {1}, {2}, {3}, {4}, {5}} ));
+
+		// RSK
+		regions.add(new ClickRegion(new Point(432-26, 62), new Point(474, 300), 1, 6, 
+				new int[][] {{6}, {7}, {8}, {9}, {10}, {11}} ));
+
+		// A..Z, SP, DEL, /, CLR
+		regions.add(new ClickRegion(new Point(192, 452), new Point(432, 774), 5, 6,
+				new int[][] {
+			{27, 28, 29, 30, 31},
+			{32, 33, 34, 35, 36},
+			{37, 38, 39, 40, 41},
+			{42, 43, 44, 45, 46},
+			{47, 48, 49, 50, 51},
+			{52, 69, 54, 55, 67}} ));
+
+		// 1..9, ., 0, +/-
+		regions.add(new ClickRegion(new Point(52, 562), new Point(186, 768), 3, 4, 
+				new int[][] {{57, 58, 59}, {60, 61, 62}, {63, 64, 65}, {66, 56, 68}} ));
+
+		// INIT REF, RTE, CLB, CRZ, DES, BRT, MENU, LEGS, DEP ARR, HOLD, PROG, EXEC
+		regions.add(new ClickRegion(new Point(52, 348), new Point(436, 452), 6, 2, 
+				new int[][] {{12, 13, 70, 71, 72, -1}, {23, 18, 14, 19, 21, 22}} ));
+
+		// MENU, NAV RAD, PREV PAGE, NEXT PAGE
+		regions.add(new ClickRegion(new Point(52, 454), new Point(180, 554), 2, 2, 
+				new int[][] {{20, 17}, {25, 26}} ));
+
+		udp_sender = XPlaneUDPSender.get_instance();
+
+		logger.finest("CDU X-Plane 11");
+	}
+
+	public void paint(Graphics2D g2) {
+		if ( ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY) && (!this.avionics.is_qpac() && !this.avionics.is_jar_a320neo() 
+    			&& !this.avionics.is_zibo_mod_737() && (this.avionics.get_fms_type() > 0)) ) ) {
+			if ( this.preferences.cdu_display_only() ) {
+				drawDisplayOnly(g2);
+			} else {
+				drawFullPanel(g2);
+			}
+		}
+	}
+
+
+	private void drawDisplayOnly(Graphics2D g2) {
+
+		if ( cdu_gc.powered ) {
+			String str_title = QpacMcduData.getLine(Avionics.CDU_LEFT,0);
+
+			if (str_title.isEmpty()) {
+				str_title = "Legacy X-Plane 11";
+				g2.setColor(Color.MAGENTA);
+				g2.setFont(cdu_gc.font_xl);
+				g2.drawString(str_title, cdu_gc.cdu_middle_x - cdu_gc.get_text_width(g2, cdu_gc.font_xl, str_title), cdu_gc.cdu_first_line);
+			} 
+
+			scalex = (double)cdu_gc.panel_rect.width /363.0; //was: 343.0
+			scaley = (double)cdu_gc.panel_rect.height/289.0;
+			border_x = (double)cdu_gc.border_left;
+			border_y = (double)cdu_gc.border_top;
+
+			drawDisplayLines(g2);
+
+		} else {
+			String str_title = "POWER OFF";
+			g2.setColor(cdu_gc.ecam_caution_color);
+			g2.setFont(cdu_gc.font_xl);
+			g2.drawString(str_title, cdu_gc.cdu_middle_x - cdu_gc.get_text_width(g2, cdu_gc.font_xl, str_title), cdu_gc.cdu_first_line);
+		}
+
+	}
+
+	private void drawFullPanel(Graphics2D g2) {
+		scalex = (double)cdu_gc.panel_rect.width /image.getWidth();
+		scaley = (double)cdu_gc.panel_rect.height/image.getHeight();
+		border = (double)cdu_gc.border;
+
+		AffineTransform orig = g2.getTransform();
+		g2.translate(border, border);
+		g2.scale(scalex, scaley);
+
+		g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g2.setRenderingHint(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_QUALITY);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+
+		g2.drawImage(image, null, 0, 0);
+		
+		int stat = QpacMcduData.getStatus(avionics.get_cdu_side());
+		
+        if((stat & 1) == 1) {
+            g2.drawImage(exec_img,null, 383, 397);
+        }
+        if((stat & 2) == 2) {
+            g2.drawImage(msg_img,null,435, 541);
+        }
+        
+		g2.setTransform(orig);
+		if ( cdu_gc.powered ) {
+			drawDisplayLines(g2);
+		}
+		g2.setTransform(orig);
+		// for debugging
+		if ( drawregions ) {
+			g2.setColor(cdu_gc.dim_markings_color);
+			for(ClickRegion r2 : regions){
+				r2.draw(g2, scalex, scaley, border, border);
+			}
+		}
+	}
+
+	private void decodeColor(Graphics2D g2, char color_code) {
+		switch (color_code) {
+		case 'r' : g2.setColor(cdu_gc.ecam_warning_color); reverse=false; break;
+		case 'b' : g2.setColor(cdu_gc.ecam_action_color); reverse=false; break;
+		case 'w' : g2.setColor(cdu_gc.ecam_markings_color); reverse=false; break;
+		case 'y' : g2.setColor(cdu_gc.ecam_reference_color); reverse=false; break;
+		case 'm' : g2.setColor(cdu_gc.ecam_special_color); reverse=false; break;
+		case 'a' : g2.setColor(cdu_gc.ecam_caution_color); reverse=false; break;
+		case 'g' : g2.setColor(cdu_gc.ecam_normal_color); reverse=false; break;
+		case 'n' : g2.setColor(Color.black); reverse=false; break; 
+		case 'R' : g2.setColor(cdu_gc.ecam_warning_color); reverse=true; break;
+		case 'B' : g2.setColor(cdu_gc.ecam_action_color); reverse=true; break;
+		case 'W' : g2.setColor(cdu_gc.ecam_markings_color); reverse=true; break;
+		case 'Y' : g2.setColor(cdu_gc.ecam_reference_color); reverse=true; break;
+		case 'M' : g2.setColor(cdu_gc.ecam_special_color); reverse=true; break;
+		case 'A' : g2.setColor(cdu_gc.ecam_caution_color); reverse=true; break;
+		case 'G' : g2.setColor(cdu_gc.ecam_normal_color); reverse=true; break;
+		case 'N' : g2.setColor(Color.black); reverse=true; break; 
+		default : g2.setColor(Color.GRAY); reverse=false; break;
+		}
+	}
+
+	private void decodeFont(Graphics2D g2, char font_code) {
+		switch (font_code) {
+		case 'l' : g2.setFont(cdu_gc.cdu_24_normal_font); break;
+		case 's' : g2.setFont(cdu_gc.cdu_24_small_font); break;
+		default : g2.setFont(cdu_gc.cdu_24_normal_font); break;
+		}
+	}
+
+	private String translateCduLine(String str){
+		String result = "";
+		char c;
+		for (int i=0; i<str.length(); i++) {
+			switch ( str.charAt(i) ) {
+			case '`' : c = '°'; break;
+			case '|' : c = 'Δ'; break;
+			case '*' : c = '⎕'; break;
+			case '0' : c = 'O'; break;
+			case 0x1C : c = '←'; break;
+			case 0x1D : c = '↑'; break;
+			case 0x1E : c = '→'; break;
+			case 0x1F : c = '↓'; break;
+			default : c = str.charAt(i); 
+			}
+			result += c;
+		}
+		return result;
+	}
+
+	private void drawDisplayLines(Graphics2D g2) {
+		int cdu_side = avionics.get_cdu_side();
+
+		for(int i=0; i < 14; i++) {        
+			int x = 0;
+			List<CduLine> l = QpacMcduData.decodeLine(QpacMcduData.getLine(cdu_side,i));
+			for(CduLine o : l){                    
+				x = (int) Math.round( cdu_gc.cdu_screen_topleft_x + o.pos * cdu_gc.cdu_25_digit_width);
+				decodeColor(g2, o.color);
+				if (reverse) {
+					int text_width=cdu_gc.get_text_width(g2, cdu_gc.cdu_24_normal_font, o.text);
+					g2.fillRect(x, cdu_gc.cdu_xfmc_line[i], text_width, cdu_gc.line_height_fixed_xl);
+					g2.setColor(Color.black);
+				}				
+				decodeFont(g2, o.font);
+				g2.drawString(translateCduLine(o.text), x, cdu_gc.cdu_xfmc_line[i]);
+				
+			}    
+		}
+	}
+
+	public void mousePressed(Graphics2D g2, MouseEvent e) {
+	}
+
+	public void keyPressed(KeyEvent k) {
+		
+	}
+		
+
+}

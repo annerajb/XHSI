@@ -352,6 +352,10 @@ public class XPlaneAvionics implements Avionics, Observer {
         }
 
     }
+    
+    public int get_fms_type() {
+        return (int)sim_data.get_sim_float(XPlaneSimDataRepository.XHSI_FMS_TYPE);
+    };    
 
     public int get_clock_style() {
       return xhsi_preferences.get_preference(XHSIPreferences.PREF_CLOCK_DISPLAY_DIGITAL).equals("true") ? 1 : 0;
