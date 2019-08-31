@@ -1,3 +1,21 @@
+/*
+ * commands.c
+ *
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -20,6 +38,7 @@
 #include "datarefs.h"
 #include "datarefs_qpac.h"
 #include "datarefs_x737.h"
+#include "commands.h"
 
 
 #define UP -99
@@ -723,6 +742,9 @@ XPLMCommandRef x737_vs_toggle;
 XPLMCommandRef sim_annunciator_clear_master_warning;
 XPLMCommandRef sim_annunciator_clear_master_caution;
 XPLMCommandRef sim_annunciator_clear_master_accept;
+
+// FMS Keys
+XPLMCommandRef sim_fms[SIM_FMS_KEY_MAX];
 
 char debug_string[80];
 
@@ -4254,6 +4276,189 @@ void registerCommands(void) {
     sim_annunciator_clear_master_warning = XPLMFindCommand("sim/annunciator/clear_master_warning");
     sim_annunciator_clear_master_caution = XPLMFindCommand("sim/annunciator/clear_master_caution");
     sim_annunciator_clear_master_accept  = XPLMFindCommand("sim/annunciator/clear_master_accept");
+
+    // CDU Keyboard
+
+    /*
+     * CDU 1 buttons
+     */
+
+    sim_fms[SIM_FMS1_LS_1L] = XPLMFindCommand("sim/FMS/ls_1l");
+    sim_fms[SIM_FMS1_LS_2L] = XPLMFindCommand("sim/FMS/ls_2l");
+    sim_fms[SIM_FMS1_LS_3L] = XPLMFindCommand("sim/FMS/ls_3l");
+    sim_fms[SIM_FMS1_LS_4L] = XPLMFindCommand("sim/FMS/ls_4l");
+    sim_fms[SIM_FMS1_LS_5L] = XPLMFindCommand("sim/FMS/ls_5l");
+    sim_fms[SIM_FMS1_LS_6L] = XPLMFindCommand("sim/FMS/ls_6l");
+    sim_fms[SIM_FMS1_LS_1R] = XPLMFindCommand("sim/FMS/ls_1r");
+    sim_fms[SIM_FMS1_LS_2R] = XPLMFindCommand("sim/FMS/ls_2r");
+    sim_fms[SIM_FMS1_LS_3R] = XPLMFindCommand("sim/FMS/ls_3r");
+    sim_fms[SIM_FMS1_LS_4R] = XPLMFindCommand("sim/FMS/ls_4r");
+    sim_fms[SIM_FMS1_LS_5R] = XPLMFindCommand("sim/FMS/ls_5r");
+    sim_fms[SIM_FMS1_LS_6R] = XPLMFindCommand("sim/FMS/ls_6r");
+
+    // CDU Pages
+    sim_fms[SIM_FMS1_INIT] = XPLMFindCommand("sim/FMS/index");
+    sim_fms[SIM_FMS1_RTE] = XPLMFindCommand("sim/FMS/fpln");
+    sim_fms[SIM_FMS1_CLB] = XPLMFindCommand("sim/FMS/clb");
+    sim_fms[SIM_FMS1_CRZ] = XPLMFindCommand("sim/FMS/crz");
+    sim_fms[SIM_FMS1_DES] = XPLMFindCommand("sim/FMS/des");
+    sim_fms[SIM_FMS1_DIR_INTC] = XPLMFindCommand("sim/FMS/dir_intc");
+    sim_fms[SIM_FMS1_LEGS] = XPLMFindCommand("sim/FMS/legs");
+    sim_fms[SIM_FMS1_DEP_ARR] = XPLMFindCommand("sim/FMS/dep_arr");
+    sim_fms[SIM_FMS1_HOLD] = XPLMFindCommand("sim/FMS/hold");
+    sim_fms[SIM_FMS1_PROG] = XPLMFindCommand("sim/FMS/prog");
+    sim_fms[SIM_FMS1_EXEC] = XPLMFindCommand("sim/FMS/exec");
+    sim_fms[SIM_FMS1_FIX] = XPLMFindCommand("sim/FMS/fix");
+    sim_fms[SIM_FMS1_PREV_PAGE] = XPLMFindCommand("sim/FMS/prev");
+    sim_fms[SIM_FMS1_NEXT_PAGE] = XPLMFindCommand("sim/FMS/next");
+    // sim_fms[SIM_FMS1_PERF] = XPLMFindCommand("sim/FMS/fmc1_n1_lim");
+
+
+    sim_fms[SIM_FMS1_BACK] = XPLMFindCommand("sim/FMS/key_back");
+    sim_fms[SIM_FMS1_DEL] = XPLMFindCommand("sim/FMS/key_delete");
+    sim_fms[SIM_FMS1_KEY_CLR] = XPLMFindCommand("sim/FMS/key_clear");
+
+    sim_fms[SIM_FMS1_SPACE] = XPLMFindCommand("sim/FMS/key_space");
+    sim_fms[SIM_FMS1_PLUS_M] = XPLMFindCommand("sim/FMS/key_minus");
+    sim_fms[SIM_FMS1_DOT] = XPLMFindCommand("sim/FMS/key_period");
+    sim_fms[SIM_FMS1_SLASH] = XPLMFindCommand("sim/FMS/key_slash");
+
+    sim_fms[SIM_FMS1_0] = XPLMFindCommand("sim/FMS/key_0");
+    sim_fms[SIM_FMS1_1] = XPLMFindCommand("sim/FMS/key_1");
+    sim_fms[SIM_FMS1_2] = XPLMFindCommand("sim/FMS/key_2");
+    sim_fms[SIM_FMS1_3] = XPLMFindCommand("sim/FMS/key_3");
+    sim_fms[SIM_FMS1_4] = XPLMFindCommand("sim/FMS/key_4");
+    sim_fms[SIM_FMS1_5] = XPLMFindCommand("sim/FMS/key_5");
+    sim_fms[SIM_FMS1_6] = XPLMFindCommand("sim/FMS/key_6");
+    sim_fms[SIM_FMS1_7] = XPLMFindCommand("sim/FMS/key_7");
+    sim_fms[SIM_FMS1_8] = XPLMFindCommand("sim/FMS/key_8");
+    sim_fms[SIM_FMS1_9] = XPLMFindCommand("sim/FMS/key_9");
+    sim_fms[SIM_FMS1_A] = XPLMFindCommand("sim/FMS/key_A");
+    sim_fms[SIM_FMS1_B] = XPLMFindCommand("sim/FMS/key_B");
+    sim_fms[SIM_FMS1_C] = XPLMFindCommand("sim/FMS/key_C");
+    sim_fms[SIM_FMS1_D] = XPLMFindCommand("sim/FMS/key_D");
+    sim_fms[SIM_FMS1_E] = XPLMFindCommand("sim/FMS/key_E");
+    sim_fms[SIM_FMS1_F] = XPLMFindCommand("sim/FMS/key_F");
+    sim_fms[SIM_FMS1_G] = XPLMFindCommand("sim/FMS/key_G");
+    sim_fms[SIM_FMS1_H] = XPLMFindCommand("sim/FMS/key_H");
+    sim_fms[SIM_FMS1_I] = XPLMFindCommand("sim/FMS/key_I");
+    sim_fms[SIM_FMS1_J] = XPLMFindCommand("sim/FMS/key_J");
+    sim_fms[SIM_FMS1_K] = XPLMFindCommand("sim/FMS/key_K");
+    sim_fms[SIM_FMS1_L] = XPLMFindCommand("sim/FMS/key_L");
+    sim_fms[SIM_FMS1_M] = XPLMFindCommand("sim/FMS/key_M");
+    sim_fms[SIM_FMS1_N] = XPLMFindCommand("sim/FMS/key_N");
+    sim_fms[SIM_FMS1_O] = XPLMFindCommand("sim/FMS/key_O");
+    sim_fms[SIM_FMS1_P] = XPLMFindCommand("sim/FMS/key_P");
+    sim_fms[SIM_FMS1_Q] = XPLMFindCommand("sim/FMS/key_Q");
+    sim_fms[SIM_FMS1_R] = XPLMFindCommand("sim/FMS/key_R");
+    sim_fms[SIM_FMS1_S] = XPLMFindCommand("sim/FMS/key_S");
+    sim_fms[SIM_FMS1_T] = XPLMFindCommand("sim/FMS/key_T");
+    sim_fms[SIM_FMS1_U] = XPLMFindCommand("sim/FMS/key_U");
+    sim_fms[SIM_FMS1_V] = XPLMFindCommand("sim/FMS/key_V");
+    sim_fms[SIM_FMS1_W] = XPLMFindCommand("sim/FMS/key_W");
+    sim_fms[SIM_FMS1_X] = XPLMFindCommand("sim/FMS/key_X");
+    sim_fms[SIM_FMS1_Y] = XPLMFindCommand("sim/FMS/key_Y");
+    sim_fms[SIM_FMS1_Z] = XPLMFindCommand("sim/FMS/key_Z");
+
+    sim_fms[SIM_FMS1_CDU_POPUP] = XPLMFindCommand("sim/FMS/CDU_popup");
+    sim_fms[SIM_FMS1_CDU_POPOUT] = XPLMFindCommand("sim/FMS/CDU_popout");
+
+    // Exists only for FMS1
+    sim_fms[SIM_FMS1_CLEAR] = XPLMFindCommand("sim/FMS/clear");
+    sim_fms[SIM_FMS1_DIRECT] = XPLMFindCommand("sim/FMS/direct");
+    sim_fms[SIM_FMS1_SIGN] = XPLMFindCommand("sim/FMS/sign");
+    sim_fms[SIM_FMS1_TYPE_APT] = XPLMFindCommand("sim/FMS/type_apt");
+    sim_fms[SIM_FMS1_TYPE_VOR] = XPLMFindCommand("sim/FMS/type_vor");
+    sim_fms[SIM_FMS1_TYPE_NDB] = XPLMFindCommand("sim/FMS/type_ndb");
+    sim_fms[SIM_FMS1_TYPE_FIX] = XPLMFindCommand("sim/FMS/type_fix");
+    sim_fms[SIM_FMS1_TYPE_LATLON] = XPLMFindCommand("sim/FMS/type_latlon");
+    sim_fms[SIM_FMS1_FIX_NEXT] = XPLMFindCommand("sim/FMS/fix_next");
+    sim_fms[SIM_FMS1_FIX_PREV] = XPLMFindCommand("sim/FMS/fix_prev");
+    sim_fms[SIM_FMS1_KEY_LOAD] = XPLMFindCommand("sim/FMS/key_load");
+    sim_fms[SIM_FMS1_KEY_SAVE] = XPLMFindCommand("sim/FMS/key_save");
+
+    /*
+     * CDU 2 buttons
+     */
+
+    sim_fms[SIM_FMS2_LS_1L] = XPLMFindCommand("sim/FMS2/ls_1l");
+    sim_fms[SIM_FMS2_LS_2L] = XPLMFindCommand("sim/FMS2/ls_2l");
+    sim_fms[SIM_FMS2_LS_3L] = XPLMFindCommand("sim/FMS2/ls_3l");
+    sim_fms[SIM_FMS2_LS_4L] = XPLMFindCommand("sim/FMS2/ls_4l");
+    sim_fms[SIM_FMS2_LS_5L] = XPLMFindCommand("sim/FMS2/ls_5l");
+    sim_fms[SIM_FMS2_LS_6L] = XPLMFindCommand("sim/FMS2/ls_6l");
+    sim_fms[SIM_FMS2_LS_1R] = XPLMFindCommand("sim/FMS2/ls_1r");
+    sim_fms[SIM_FMS2_LS_2R] = XPLMFindCommand("sim/FMS2/ls_2r");
+    sim_fms[SIM_FMS2_LS_3R] = XPLMFindCommand("sim/FMS2/ls_3r");
+    sim_fms[SIM_FMS2_LS_4R] = XPLMFindCommand("sim/FMS2/ls_4r");
+    sim_fms[SIM_FMS2_LS_5R] = XPLMFindCommand("sim/FMS2/ls_5r");
+    sim_fms[SIM_FMS2_LS_6R] = XPLMFindCommand("sim/FMS2/ls_6r");
+
+    sim_fms[SIM_FMS2_INIT] = XPLMFindCommand("sim/FMS2/index");
+    sim_fms[SIM_FMS2_RTE] = XPLMFindCommand("sim/FMS2/fpln");
+    sim_fms[SIM_FMS2_CLB] = XPLMFindCommand("sim/FMS2/clb");
+    sim_fms[SIM_FMS2_CRZ] = XPLMFindCommand("sim/FMS2/crz");
+    sim_fms[SIM_FMS2_DES] = XPLMFindCommand("sim/FMS2/des");
+
+    sim_fms[SIM_FMS2_DIR_INTC] = XPLMFindCommand("sim/FMS2/dir_intc");
+    sim_fms[SIM_FMS2_LEGS] = XPLMFindCommand("sim/FMS2/legs");
+    sim_fms[SIM_FMS2_DEP_ARR] = XPLMFindCommand("sim/FMS2/dep_arr");
+    sim_fms[SIM_FMS2_HOLD] = XPLMFindCommand("sim/FMS2/hold");
+    sim_fms[SIM_FMS2_PROG] = XPLMFindCommand("sim/FMS2/prog");
+    sim_fms[SIM_FMS2_EXEC] = XPLMFindCommand("sim/FMS2/exec");
+
+    sim_fms[SIM_FMS2_PERF] = XPLMFindCommand("sim/FMS2/fmc2_n1_lim");
+    sim_fms[SIM_FMS2_FIX] = XPLMFindCommand("sim/FMS2/fix");
+    sim_fms[SIM_FMS2_PREV_PAGE] = XPLMFindCommand("sim/FMS2/prev");
+    sim_fms[SIM_FMS2_NEXT_PAGE] = XPLMFindCommand("sim/FMS2/next");
+
+    sim_fms[SIM_FMS2_BACK] = XPLMFindCommand("sim/FMS2/key_back");
+    sim_fms[SIM_FMS2_DEL] = XPLMFindCommand("sim/FMS2/key_delete");
+    sim_fms[SIM_FMS2_CLR] = XPLMFindCommand("sim/FMS2/key_clear");
+    sim_fms[SIM_FMS2_SPACE] = XPLMFindCommand("sim/FMS2/key_space");
+    sim_fms[SIM_FMS2_PLUS_M] = XPLMFindCommand("sim/FMS2/key_minus");
+    sim_fms[SIM_FMS2_DOT] = XPLMFindCommand("sim/FMS2/key_period");
+    sim_fms[SIM_FMS2_SLASH] = XPLMFindCommand("sim/FMS2/key_slash");
+
+    sim_fms[SIM_FMS2_0] = XPLMFindCommand("sim/FMS2/key_0");
+    sim_fms[SIM_FMS2_1] = XPLMFindCommand("sim/FMS2/key_1");
+    sim_fms[SIM_FMS2_2] = XPLMFindCommand("sim/FMS2/key_2");
+    sim_fms[SIM_FMS2_3] = XPLMFindCommand("sim/FMS2/key_3");
+    sim_fms[SIM_FMS2_4] = XPLMFindCommand("sim/FMS2/key_4");
+    sim_fms[SIM_FMS2_5] = XPLMFindCommand("sim/FMS2/key_5");
+    sim_fms[SIM_FMS2_6] = XPLMFindCommand("sim/FMS2/key_6");
+    sim_fms[SIM_FMS2_7] = XPLMFindCommand("sim/FMS2/key_7");
+    sim_fms[SIM_FMS2_8] = XPLMFindCommand("sim/FMS2/key_8");
+    sim_fms[SIM_FMS2_9] = XPLMFindCommand("sim/FMS2/key_9");
+    sim_fms[SIM_FMS2_A] = XPLMFindCommand("sim/FMS2/key_A");
+    sim_fms[SIM_FMS2_B] = XPLMFindCommand("sim/FMS2/key_B");
+    sim_fms[SIM_FMS2_C] = XPLMFindCommand("sim/FMS2/key_C");
+    sim_fms[SIM_FMS2_D] = XPLMFindCommand("sim/FMS2/key_D");
+    sim_fms[SIM_FMS2_E] = XPLMFindCommand("sim/FMS2/key_E");
+    sim_fms[SIM_FMS2_F] = XPLMFindCommand("sim/FMS2/key_F");
+    sim_fms[SIM_FMS2_G] = XPLMFindCommand("sim/FMS2/key_G");
+    sim_fms[SIM_FMS2_H] = XPLMFindCommand("sim/FMS2/key_H");
+    sim_fms[SIM_FMS2_I] = XPLMFindCommand("sim/FMS2/key_I");
+    sim_fms[SIM_FMS2_J] = XPLMFindCommand("sim/FMS2/key_J");
+    sim_fms[SIM_FMS2_K] = XPLMFindCommand("sim/FMS2/key_K");
+    sim_fms[SIM_FMS2_L] = XPLMFindCommand("sim/FMS2/key_L");
+    sim_fms[SIM_FMS2_M] = XPLMFindCommand("sim/FMS2/key_M");
+    sim_fms[SIM_FMS2_N] = XPLMFindCommand("sim/FMS2/key_N");
+    sim_fms[SIM_FMS2_O] = XPLMFindCommand("sim/FMS2/key_O");
+    sim_fms[SIM_FMS2_P] = XPLMFindCommand("sim/FMS2/key_P");
+    sim_fms[SIM_FMS2_Q] = XPLMFindCommand("sim/FMS2/key_Q");
+    sim_fms[SIM_FMS2_R] = XPLMFindCommand("sim/FMS2/key_R");
+    sim_fms[SIM_FMS2_S] = XPLMFindCommand("sim/FMS2/key_S");
+    sim_fms[SIM_FMS2_T] = XPLMFindCommand("sim/FMS2/key_T");
+    sim_fms[SIM_FMS2_U] = XPLMFindCommand("sim/FMS2/key_U");
+    sim_fms[SIM_FMS2_V] = XPLMFindCommand("sim/FMS2/key_V");
+    sim_fms[SIM_FMS2_W] = XPLMFindCommand("sim/FMS2/key_W");
+    sim_fms[SIM_FMS2_X] = XPLMFindCommand("sim/FMS2/key_X");
+    sim_fms[SIM_FMS2_Y] = XPLMFindCommand("sim/FMS2/key_Y");
+    sim_fms[SIM_FMS2_Z] = XPLMFindCommand("sim/FMS2/key_Z");
+
+    sim_fms[SIM_FMS2_CDU_POPUP] = XPLMFindCommand("sim/FMS2/CDU_popup");
+    sim_fms[SIM_FMS2_CDU_POPOUT] = XPLMFindCommand("sim/FMS2/CDU_popout");
 
     XPLMDebugString("XHSI: custom commands created and custom command handlers registered\n");
 
