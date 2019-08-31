@@ -35,6 +35,7 @@ import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.CduLine;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.QpacMcduData;
+import net.sourceforge.xhsi.model.xplane.XPlaneSimDataRepository;
 import net.sourceforge.xhsi.model.xplane.XPlaneUDPSender;
 
 
@@ -82,7 +84,198 @@ public class CDUXPlane11 extends CDUSubcomponent {
 
 	List<ClickRegion> regions;
 
+	// X-Plane Legacy FMS commands
 
+	// FMC1 KEYS
+	public static final int SIM_FMS1_LS_1L      = 0;
+	public static final int SIM_FMS1_LS_2L      = 1;
+	public static final int SIM_FMS1_LS_3L      = 2;
+	public static final int SIM_FMS1_LS_4L      = 3;
+	public static final int SIM_FMS1_LS_5L      = 4;
+	public static final int SIM_FMS1_LS_6L      = 5;
+	public static final int SIM_FMS1_LS_1R      = 6;
+	public static final int SIM_FMS1_LS_2R      = 7;
+	public static final int SIM_FMS1_LS_3R      = 8;
+	public static final int SIM_FMS1_LS_4R      = 9;
+	public static final int SIM_FMS1_LS_5R      = 10;
+	public static final int SIM_FMS1_LS_6R      = 11;
+
+	public static final int SIM_FMS1_INIT       = 12;
+	public static final int SIM_FMS1_RTE        = 13;
+	public static final int SIM_FMS1_DEP_ARR    = 14;
+	public static final int SIM_FMS1_AP         = 15;
+	public static final int SIM_FMS1_VNAV       = 16;
+
+	public static final int SIM_FMS1_FIX        = 17;
+	public static final int SIM_FMS1_LEGS       = 18;
+	public static final int SIM_FMS1_HOLD       = 19;
+	public static final int SIM_FMS1_PERF       = 20;
+	public static final int SIM_FMS1_PROG       = 21;
+	public static final int SIM_FMS1_EXEC       = 22;
+	public static final int SIM_FMS1_DIR_INTC   = 23;
+
+	public static final int SIM_FMS1_PREV_PAGE  = 25;
+	public static final int SIM_FMS1_NEXT_PAGE  = 26;
+
+	public static final int SIM_FMS1_A          = 27;
+	public static final int SIM_FMS1_B          = 28;
+	public static final int SIM_FMS1_C          = 29;
+	public static final int SIM_FMS1_D          = 30;
+	public static final int SIM_FMS1_E          = 31;
+	public static final int SIM_FMS1_F          = 32;
+	public static final int SIM_FMS1_G          = 33;
+	public static final int SIM_FMS1_H          = 34;
+	public static final int SIM_FMS1_I          = 35;
+	public static final int SIM_FMS1_J          = 36;
+	public static final int SIM_FMS1_K          = 37;
+	public static final int SIM_FMS1_L          = 38;
+	public static final int SIM_FMS1_M          = 39;
+	public static final int SIM_FMS1_N          = 40;
+	public static final int SIM_FMS1_O          = 41;
+	public static final int SIM_FMS1_P          = 42;
+	public static final int SIM_FMS1_Q          = 43;
+	public static final int SIM_FMS1_R          = 44;
+	public static final int SIM_FMS1_S          = 45;
+	public static final int SIM_FMS1_T          = 46;
+	public static final int SIM_FMS1_U          = 47;
+	public static final int SIM_FMS1_V          = 48;
+	public static final int SIM_FMS1_W          = 49;
+	public static final int SIM_FMS1_X          = 50;
+	public static final int SIM_FMS1_Y          = 51;
+	public static final int SIM_FMS1_Z          = 52;
+
+	public static final int SIM_FMS1_BACK       = 53;
+	public static final int SIM_FMS1_DEL        = 54;
+	public static final int SIM_FMS1_SLASH      = 55;
+
+	public static final int SIM_FMS1_0          = 56;
+	public static final int SIM_FMS1_1          = 57;
+	public static final int SIM_FMS1_2          = 58;
+	public static final int SIM_FMS1_3          = 59;
+	public static final int SIM_FMS1_4          = 60;
+	public static final int SIM_FMS1_5          = 61;
+	public static final int SIM_FMS1_6          = 62;
+	public static final int SIM_FMS1_7          = 63;
+	public static final int SIM_FMS1_8          = 64;
+	public static final int SIM_FMS1_9          = 65;
+	public static final int SIM_FMS1_DOT        = 66;
+	public static final int SIM_FMS1_KEY_CLR    = 67;
+	public static final int SIM_FMS1_PLUS_M     = 68;
+	public static final int SIM_FMS1_SPACE      = 69;
+
+	public static final int SIM_FMS1_CLB        = 70;
+	public static final int SIM_FMS1_CRZ        = 71;
+	public static final int SIM_FMS1_DES        = 72;
+	public static final int SIM_FMS1_FMC_COMM   = 73;
+	public static final int SIM_FMS1_ATC        = 74;
+	public static final int SIM_FMS1_BRT        = 75;
+
+	public static final int SIM_FMS1_CDU_POPUP  = 76;
+	public static final int SIM_FMS1_CDU_POPOUT = 77;
+
+	// Exists only for FMS1
+	public static final int SIM_FMS1_CLEAR      = 76;
+	public static final int SIM_FMS1_DIRECT     = 77;
+	public static final int SIM_FMS1_SIGN       = 78;
+	public static final int SIM_FMS1_TYPE_APT   = 79;
+	public static final int SIM_FMS1_TYPE_VOR   = 80;
+	public static final int SIM_FMS1_TYPE_NDB   = 81;
+	public static final int SIM_FMS1_TYPE_FIX   = 82;
+	public static final int SIM_FMS1_TYPE_LATLON = 83;
+	public static final int SIM_FMS1_FIX_NEXT   = 84;
+	public static final int SIM_FMS1_FIX_PREV   = 85;
+	public static final int SIM_FMS1_KEY_LOAD   = 86;
+	public static final int SIM_FMS1_KEY_SAVE   = 87;
+
+	// FMC2 KEYS
+	public static final int SIM_FMS2_LS_1L      = 90;
+	public static final int SIM_FMS2_LS_2L      = 91;
+	public static final int SIM_FMS2_LS_3L      = 92;
+	public static final int SIM_FMS2_LS_4L      = 93;
+	public static final int SIM_FMS2_LS_5L      = 94;
+	public static final int SIM_FMS2_LS_6L      = 95;
+	public static final int SIM_FMS2_LS_1R      = 96;
+	public static final int SIM_FMS2_LS_2R      = 97;
+	public static final int SIM_FMS2_LS_3R      = 98;
+	public static final int SIM_FMS2_LS_4R      = 99;
+	public static final int SIM_FMS2_LS_5R      = 100;
+	public static final int SIM_FMS2_LS_6R      = 101;
+
+	public static final int SIM_FMS2_INIT       = 102;
+	public static final int SIM_FMS2_RTE        = 103;
+	public static final int SIM_FMS2_DEP_ARR    = 104;
+	public static final int SIM_FMS2_AP         = 105;
+	public static final int SIM_FMS2_VNAV       = 106;
+
+	public static final int SIM_FMS2_FIX        = 107;
+	public static final int SIM_FMS2_LEGS       = 108;
+	public static final int SIM_FMS2_HOLD       = 109;
+	public static final int SIM_FMS2_PERF       = 110;
+	public static final int SIM_FMS2_PROG       = 111;
+	public static final int SIM_FMS2_EXEC       = 112;
+	public static final int SIM_FMS2_DIR_INTC   = 113;
+
+	public static final int SIM_FMS2_PREV_PAGE  = 115;
+	public static final int SIM_FMS2_NEXT_PAGE  = 116;
+
+	public static final int SIM_FMS2_A          = 117;
+	public static final int SIM_FMS2_B          = 118;
+	public static final int SIM_FMS2_C          = 119;
+	public static final int SIM_FMS2_D          = 120;
+	public static final int SIM_FMS2_E          = 121;
+	public static final int SIM_FMS2_F          = 122;
+	public static final int SIM_FMS2_G          = 123;
+	public static final int SIM_FMS2_H          = 124;
+	public static final int SIM_FMS2_I          = 125;
+	public static final int SIM_FMS2_J          = 126;
+	public static final int SIM_FMS2_K          = 127;
+	public static final int SIM_FMS2_L          = 128;
+	public static final int SIM_FMS2_M          = 129;
+	public static final int SIM_FMS2_N          = 130;
+	public static final int SIM_FMS2_O          = 131;
+	public static final int SIM_FMS2_P          = 132;
+	public static final int SIM_FMS2_Q          = 133;
+	public static final int SIM_FMS2_R          = 134;
+	public static final int SIM_FMS2_S          = 135;
+	public static final int SIM_FMS2_T          = 136;
+	public static final int SIM_FMS2_U          = 137;
+	public static final int SIM_FMS2_V          = 138;
+	public static final int SIM_FMS2_W          = 139;
+	public static final int SIM_FMS2_X          = 140;
+	public static final int SIM_FMS2_Y          = 141;
+	public static final int SIM_FMS2_Z          = 142;
+
+	public static final int SIM_FMS2_BACK       = 143;
+	public static final int SIM_FMS2_DEL        = 144;
+	public static final int SIM_FMS2_SLASH      = 145;
+
+	public static final int SIM_FMS2_0          = 146;
+	public static final int SIM_FMS2_1          = 147;
+	public static final int SIM_FMS2_2          = 148;
+	public static final int SIM_FMS2_3          = 149;
+	public static final int SIM_FMS2_4          = 150;
+	public static final int SIM_FMS2_5          = 151;
+	public static final int SIM_FMS2_6          = 152;
+	public static final int SIM_FMS2_7          = 153;
+	public static final int SIM_FMS2_8          = 154;
+	public static final int SIM_FMS2_9          = 155;
+	public static final int SIM_FMS2_DOT        = 156;
+	public static final int SIM_FMS2_CLR        = 157;
+	public static final int SIM_FMS2_PLUS_M     = 158;
+	public static final int SIM_FMS2_SPACE      = 159;
+
+	public static final int SIM_FMS2_CLB        = 160;
+	public static final int SIM_FMS2_CRZ        = 161;
+	public static final int SIM_FMS2_DES        = 162;
+	public static final int SIM_FMS2_FMC_COMM   = 163;
+	public static final int SIM_FMS2_ATC        = 164;
+	public static final int SIM_FMS2_BRT        = 165;
+
+	public static final int SIM_FMS2_CDU_POPUP  = 166;
+	public static final int SIM_FMS2_CDU_POPOUT = 167;
+
+	// END
+	public static final int SIM_FMS_KEY_MAX     = 170;
 
 	public CDUXPlane11(ModelFactory model_factory, CDUGraphicsConfig cdu_gc, Component parent_component) {
 		super(model_factory, cdu_gc, parent_component);
@@ -284,10 +477,85 @@ public class CDUXPlane11 extends CDUSubcomponent {
 	}
 
 	public void mousePressed(Graphics2D g2, MouseEvent e) {
+		Point true_click = e.getPoint();
+		AffineTransform current_transform = g2.getTransform();
+		try {
+			current_transform.invert();
+			current_transform.transform(e.getPoint(), true_click);
+		} catch (NoninvertibleTransformException e1) {
+			e1.printStackTrace();
+		}
+
+		if ( ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY) && (!this.avionics.is_qpac() && !this.avionics.is_jar_a320neo() 
+    			&& !this.avionics.is_zibo_mod_737() && (this.avionics.get_fms_type() > 0)) ) )  {
+			for(ClickRegion r : regions){
+				int w = r.check(true_click, scalex, scaley, border, border);
+				if(w > -1) {    				
+					int mcdu_shift=avionics.get_cdu_side()*90;
+					udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_FMS_KEY_PRESS, (float) (w+mcdu_shift) );
+				}
+			}
+		}
 	}
 
 	public void keyPressed(KeyEvent k) {
-		
+		if ( ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY) && (!this.avionics.is_qpac() && !this.avionics.is_jar_a320neo() 
+    			&& !this.avionics.is_zibo_mod_737() && (this.avionics.get_fms_type() > 0)) ) ) {
+			char key = k.getKeyChar();
+			int w = -1;
+			// Test KeyChar
+			if (key >= 'a' && key <= 'z') {
+				w = SIM_FMS1_A + (key - 'a'); 
+			} else if (key >= 'A' && key <= 'Z') {
+				w = SIM_FMS1_A + (key - 'A');
+			} else if (key >= '0' && key <= '9') { 
+				w = SIM_FMS1_0+ (key - '0'); 
+			} else 
+				switch (key) {
+				case '.' : w = SIM_FMS1_DOT; break;
+				case '/' : w = SIM_FMS1_SLASH; break;    		
+				case '+' : w = SIM_FMS1_PLUS_M; break;
+				// case '*' : w = Z737_KEY_FMC1_OVERFL; break;
+				case 127 : w = SIM_FMS1_KEY_CLR; break; // DEL -> CLEAR
+				case 8   : w = SIM_FMS1_DEL; break; // BackSpace
+				case ' ' : w = SIM_FMS1_SPACE; break; 
+				case 27  : w = SIM_FMS1_DIR_INTC; break; // ESCAPE -> MCDU_MENU
+				}
+			// Test KeyCodes
+			if (w == -1.0f) 
+				switch (k.getKeyCode()) {
+				case KeyEvent.VK_F1 : w = SIM_FMS1_LS_1L; break;
+				case KeyEvent.VK_F2 : w = SIM_FMS1_LS_2L; break;
+				case KeyEvent.VK_F3 : w = SIM_FMS1_LS_3L; break;
+				case KeyEvent.VK_F4 : w = SIM_FMS1_LS_4L; break;
+				case KeyEvent.VK_F5 : w = SIM_FMS1_LS_5L; break;
+				case KeyEvent.VK_F6 : w = SIM_FMS1_LS_6L; break;
+				case KeyEvent.VK_F7 : w = SIM_FMS1_LS_1R; break;
+				case KeyEvent.VK_F8 : w = SIM_FMS1_LS_2R; break;
+				case KeyEvent.VK_F9 : w = SIM_FMS1_LS_3R; break;
+				case KeyEvent.VK_F10 : w = SIM_FMS1_LS_4R; break;
+				case KeyEvent.VK_F11 : w = SIM_FMS1_LS_5R; break;
+				case KeyEvent.VK_F12 : w = SIM_FMS1_LS_6R; break;
+				case KeyEvent.VK_UP : w = SIM_FMS1_PREV_PAGE; break;
+				case KeyEvent.VK_DOWN : w = SIM_FMS1_NEXT_PAGE; break;
+				case KeyEvent.VK_LEFT : w = SIM_FMS1_PREV_PAGE; break;
+				case KeyEvent.VK_RIGHT : w = SIM_FMS1_NEXT_PAGE; break; 
+
+				case KeyEvent.VK_PAGE_UP : w = SIM_FMS1_PERF; break;
+				case KeyEvent.VK_PAGE_DOWN : w = SIM_FMS1_PROG; break;
+				case KeyEvent.VK_HOME : w = SIM_FMS1_INIT; break;
+				case KeyEvent.VK_END : w = SIM_FMS1_LEGS; break; 
+				case KeyEvent.VK_INSERT : w = SIM_FMS1_RTE; break;
+				case KeyEvent.VK_SCROLL_LOCK : w = SIM_FMS1_DEP_ARR; break;		
+				case KeyEvent.VK_PAUSE : w = SIM_FMS1_HOLD; break;
+				case KeyEvent.VK_ENTER : w = SIM_FMS1_EXEC; break;
+				}
+
+			if (w > -0.5f) {
+				int mcdu_shift=avionics.get_cdu_side()*90;
+				udp_sender.sendDataPoint( XPlaneSimDataRepository.SIM_FMS_KEY_PRESS, (float) (w+mcdu_shift) );
+			}
+		}  
 	}
 		
 

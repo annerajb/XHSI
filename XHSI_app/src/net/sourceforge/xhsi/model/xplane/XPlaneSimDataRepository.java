@@ -189,6 +189,7 @@ public class XPlaneSimDataRepository implements SimDataRepository {
     public static final int SIM_COCKPIT_RADIOS_TRANSPONDER_ID = 182;
 
     // FMS [ comes with X-Plane 11.35 ]
+    public static final int SIM_FMS_KEY_PRESS = 183;
     public static final int XHSI_FMS_TYPE = 184;  // 0:Legacy XP10  1:XP11 737-800  2 and more: reserved
 
     // RTU
