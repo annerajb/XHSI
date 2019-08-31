@@ -4447,6 +4447,10 @@ void writeDataRef(int id, float value) {
             }
             break;
 
+        // X-Plane Legacy FMS
+        case SIM_FMS_KEY_PRESS :
+        	if ((int)value < SIM_FMS_KEY_MAX) XPLMCommandOnce(sim_fms[(int)value]);
+            break;
 
         // X-FMC
         case XFMC_KEYPATH :
