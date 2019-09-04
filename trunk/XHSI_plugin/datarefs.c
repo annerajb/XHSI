@@ -614,6 +614,7 @@ XPLMDataRef fms_cdu2_style[XP11_FMS_LINES];
 int xp11_cdu_ready = 0;
 int xp11_fms_type = 0;
 
+
 /*
  * END of datarefs not yet exported
  */
@@ -4449,12 +4450,16 @@ void writeDataRef(int id, float value) {
 
         // X-Plane Legacy FMS
         case SIM_FMS_KEY_PRESS :
-        	if ((int)value < SIM_FMS_KEY_MAX) XPLMCommandOnce(sim_fms[(int)value]);
+        	if ((int)value < SIM_FMS_KEY_MAX) {
+        		XPLMCommandOnce(sim_fms[(int)value]);
+        		xp11_fms_keypressed++;
+        	}
             break;
 
         // X-FMC
         case XFMC_KEYPATH :
             XPLMSetDatai(xfmc_keypath_ref, (int)value);
+            xfmc_keypressed++;
             break;
 
         // radio freqs

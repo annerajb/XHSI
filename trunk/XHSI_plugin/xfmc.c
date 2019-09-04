@@ -28,8 +28,8 @@ XPLMDataRef xfmc_status_ref;
 
 struct XfmcLinesDataPacket xfmcPacket;
 
-float xfmc_delay;
-
+int xfmc_keypressed=0;
+int xfmc_msg_count=0;
 
 void findXfmcDataRefs(void) {
     int         i;
@@ -82,29 +82,31 @@ float sendXfmcCallback(
 	int i;
 	int packet_size;
 
+	xfmc_msg_count++;
 
-	xfmc_delay = adc_data_delay * 2.0f;
+	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open && (xfmcPluginId != XPLM_NO_PLUGIN_ID) ) {
+		if ( (xfmc_keypressed > 0) || (xfmc_msg_count > XFMC_MAX_MSG_COUNT) )  {
 
-	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open && (xfmcPluginId != XPLM_NO_PLUGIN_ID))  {
+			xfmc_msg_count=0;
+			if (xfmc_keypressed>0) xfmc_keypressed--;
 
-		packet_size = createXfmcPacket();
+			packet_size = createXfmcPacket();
 
-        if ( packet_size > 0 ) {
-            for (i=0; i<NUM_DEST; i++) {
-                if (dest_enable[i]) {
-                    if (sendto(sockfd, (const char*)&xfmcPacket, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr)) == -1) {
-                        XPLMDebugString("XHSI: caught error while sending XFMC packet! (");
-                        XPLMDebugString((char * const) strerror(GET_ERRNO));
-                        XPLMDebugString(")\n");
-                    }
-                }
-            }
-            return xfmc_delay;
-        } else {
-            return xfmc_delay;
-        }
-
+			if ( packet_size > 0 ) {
+				for (i=0; i<NUM_DEST; i++) {
+					if (dest_enable[i]) {
+						if (sendto(sockfd, (const char*)&xfmcPacket, packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr)) == -1) {
+							XPLMDebugString("XHSI: caught error while sending XFMC packet! (");
+							XPLMDebugString((char * const) strerror(GET_ERRNO));
+							XPLMDebugString(")\n");
+						}
+					}
+				}
+			}
+		}
+		return cdu_data_delay;
 	} else {
+		// XFMC is not ready
 		return 10.0f;
 	}
 
