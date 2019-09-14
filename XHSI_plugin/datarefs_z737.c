@@ -3650,6 +3650,115 @@ int getZiboFMCString(char buffer[], XPLMDataRef fmcDataRef) {
     return (datalen > 0) ? (int)strlen(buffer) : 0;
 }
 
+void encodeZibo737CduTitleLine(int cdu_id, char *encoded_string) {
+	int j;
+	int p;
+	char color = 'u';
+	int small_len, white_len, inverted_len;
+	int space = 0;
+	char inverted_buffer[Z737_CDU_BUF_LEN];
+	char white_buffer[Z737_CDU_BUF_LEN];
+	char small_buffer[Z737_CDU_BUF_LEN];
+
+	/*
+	 *  Page title
+	 */
+	if (cdu_id) {
+		white_len =    getZiboFMCString(white_buffer,    z737_fmc2_title_white);
+		small_len =    getZiboFMCString(small_buffer,    z737_fmc2_title_small);
+		inverted_len = getZiboFMCString(inverted_buffer, z737_fmc2_title_inverted);
+	} else {
+		white_len =    getZiboFMCString(white_buffer,    z737_fmc1_title_white);
+		small_len =    getZiboFMCString(small_buffer,    z737_fmc1_title_small);
+		inverted_len = getZiboFMCString(inverted_buffer, z737_fmc1_title_inverted);
+	}
+
+	color = 'u';
+	memset( encoded_string, '\0', Z737_CDU_BUF_LEN );
+	// encoded_string[0] = 0;
+	space=0;
+	for (j=0,p=0; (j<45) && (p<(Z737_CDU_BUF_LEN-9)); j++) {
+		if ((j < white_len) && (white_buffer[j] != ' ') ) {
+			if (color != 'W') {
+				color = 'W';
+				space=0;
+				if (p>0) { encoded_string[p++] = ';'; }
+				encoded_string[p++] = 'l';
+				encoded_string[p++] = 'w';
+				encoded_string[p++] = '0' + j/10;
+				encoded_string[p++] = '0' + j%10;
+			}
+			if (white_buffer[j] < ' ') white_buffer[j] = '?';
+			encoded_string[p++]= white_buffer[j];
+		} else if ((j < small_len) && (small_buffer[j] != ' ') ) {
+			if (color != 'w') {
+				color = 'w';
+				space=0;
+				if (p>0) { encoded_string[p++] = ';'; }
+				encoded_string[p++] = 's';
+				encoded_string[p++] = 'w';
+				encoded_string[p++] = '0' + j/10;
+				encoded_string[p++] = '0' + j%10;
+			}
+			if (small_buffer[j] < ' ') small_buffer[j] = '?';
+			encoded_string[p++]= small_buffer[j];
+		} else if ((j < inverted_len) && (inverted_buffer[j] != ' ') ) {
+			if (color != 'I') {
+				color = 'I';
+				space=0;
+				if (p>0) { encoded_string[p++] = ';'; }
+				encoded_string[p++] = 'l';
+				encoded_string[p++] = 'i';
+				encoded_string[p++] = '0' + j/10;
+				encoded_string[p++] = '0' + j%10;
+			}
+			if (inverted_buffer[j] < ' ') inverted_buffer[j] = '?';
+			encoded_string[p++]= inverted_buffer[j];
+		} else if (( (j < white_len) || (j<small_len) || (j<inverted_len) )
+				&& (space<2) ) {
+			encoded_string[p++]=' ';
+			space++;
+		} else if (space>1) {
+			color = 'u';
+		} else {
+			// color = 'u';
+			break;
+		}
+
+	}
+	encoded_string[p] = 0;
+}
+
+void encodeZibo737CduScratchPadLine(int cdu_id, char *encoded_string) {
+	int p;
+	int white_len, inverted_len;
+	char inverted_buffer[Z737_CDU_BUF_LEN];
+	char white_buffer[Z737_CDU_BUF_LEN];
+
+	if (cdu_id) {
+		inverted_len =  getZiboFMCString(inverted_buffer,  z737_fmc2_scratch_inverted);
+		white_len =   getZiboFMCString(white_buffer,   z737_fmc2_scratch_white);
+	} else {
+		inverted_len =  getZiboFMCString(inverted_buffer,  z737_fmc1_scratch_inverted);
+		white_len =   getZiboFMCString(white_buffer,   z737_fmc1_scratch_white);
+	}
+
+	memset( encoded_string, '\0', Z737_CDU_BUF_LEN );
+	p=0;
+	if ((white_len>0) && (white_buffer[0] > 32)) {
+		encoded_string[p++] = 'l';
+		encoded_string[p++] = 'w';
+		encoded_string[p++] = '0';
+		encoded_string[p++] = '0';
+		strcpy(&encoded_string[p], white_buffer);
+	} else if ((inverted_len>0) && (inverted_buffer[0] > 32)) {
+		encoded_string[p++] = 'l';
+		encoded_string[p++] = 'i';
+		encoded_string[p++] = '0';
+		encoded_string[p++] = '0';
+		strcpy(&encoded_string[p], inverted_buffer);
+	}
+}
 
 /**
  * cdu_id should be 0 for left, 1 for right. Any value different from 0 is treated as right
@@ -3693,256 +3802,201 @@ int createZibo737CduPacket(int cdu_id) {
    // Line count (0 to 13)
    l=0;
 
+
    /*
     *  Page title
     */
-   if (cdu_id) {
-	   white_len =    getZiboFMCString(white_buffer,    z737_fmc2_title_white);
-	   small_len =    getZiboFMCString(small_buffer,    z737_fmc2_title_small);
-	   inverted_len = getZiboFMCString(inverted_buffer, z737_fmc2_title_inverted);
-   } else {
-	   white_len =    getZiboFMCString(white_buffer,    z737_fmc1_title_white);
-	   small_len =    getZiboFMCString(small_buffer,    z737_fmc1_title_small);
-	   inverted_len = getZiboFMCString(inverted_buffer, z737_fmc1_title_inverted);
-   }
 
-   color = 'u';
-   memset( encoded_string, '\0', Z737_CDU_BUF_LEN );
-   // encoded_string[0] = 0;
-   space=0;
-   for (j=0,p=0; (j<45) && (p<(Z737_CDU_BUF_LEN-9)); j++) {
-  	 if ((j < white_len) && (white_buffer[j] != ' ') ) {
-  		 if (color != 'W') {
-  			 color = 'W';
-				 space=0;
-  			 if (p>0) { encoded_string[p++] = ';'; }
-  			 encoded_string[p++] = 'l';
-  			 encoded_string[p++] = 'w';
-  			 encoded_string[p++] = '0' + j/10;
-  			 encoded_string[p++] = '0' + j%10;
-  		 }
-  		 if (white_buffer[j] < ' ') white_buffer[j] = '?';
-  		 encoded_string[p++]= white_buffer[j];
-  	 } else if ((j < small_len) && (small_buffer[j] != ' ') ) {
-  		 if (color != 'w') {
-  			 color = 'w';
-				 space=0;
-  			 if (p>0) { encoded_string[p++] = ';'; }
-  			 encoded_string[p++] = 's';
-  			 encoded_string[p++] = 'w';
-  			 encoded_string[p++] = '0' + j/10;
-  			 encoded_string[p++] = '0' + j%10;
-  		 }
-  		 if (small_buffer[j] < ' ') small_buffer[j] = '?';
-  		 encoded_string[p++]= small_buffer[j];
-  	 } else if ((j < inverted_len) && (inverted_buffer[j] != ' ') ) {
-  		 if (color != 'I') {
-  			 color = 'I';
-				 space=0;
-  			 if (p>0) { encoded_string[p++] = ';'; }
-  			 encoded_string[p++] = 'l';
-  			 encoded_string[p++] = 'i';
-  			 encoded_string[p++] = '0' + j/10;
-  			 encoded_string[p++] = '0' + j%10;
-  		 }
-  		 if (inverted_buffer[j] < ' ') inverted_buffer[j] = '?';
-  		 encoded_string[p++]= inverted_buffer[j];
-  	 } else if (( (j < white_len) || (j<small_len) || (j<inverted_len) )
-  			  && (space<2) ) {
-  		 encoded_string[p++]=' ';
-  		 space++;
-  	 } else if (space>1) {
-  		 color = 'u';
-  	 } else {
-  	 	 // color = 'u';
-  		 break;
-  	 }
-
-   }
-   encoded_string[p] = 0;
-
-   strcpy(zibo737CduMsgPacket.lines[l].linestr,encoded_string);
+   encodeZibo737CduTitleLine(cdu_id, zibo737CduMsgPacket.lines[l].linestr);
    zibo737CduMsgPacket.lines[l].len = custom_htoni((int)strlen(zibo737CduMsgPacket.lines[l].linestr));
    zibo737CduMsgPacket.lines[l].lineno = custom_htoni(l);
    l++;
 
+   /*
+    * Label & content lines
+    */
+
    for(i=0; i<Z737_FMC_LINES; i++){
 
 	   if (cdu_id) {
-		     label_len =     getZiboFMCString(label_buffer,    z737_fmc2_label_white[i]);
-	    	 white_len =     getZiboFMCString(white_buffer,    z737_fmc2_content_white[i]);
-		     small_len =     getZiboFMCString(small_buffer,    z737_fmc2_content_small[i]);
-	    	 inverted_len =  getZiboFMCString(inverted_buffer, z737_fmc2_content_inverted[i]);
-	    	 magenta_len =   getZiboFMCString(magenta_buffer,  z737_fmc2_content_magenta[i]);
-	    	 green_len =     getZiboFMCString(green_buffer,    z737_fmc2_content_green[i]);
+		   label_len =     getZiboFMCString(label_buffer,    z737_fmc2_label_white[i]);
+		   white_len =     getZiboFMCString(white_buffer,    z737_fmc2_content_white[i]);
+		   small_len =     getZiboFMCString(small_buffer,    z737_fmc2_content_small[i]);
+		   inverted_len =  getZiboFMCString(inverted_buffer, z737_fmc2_content_inverted[i]);
+		   magenta_len =   getZiboFMCString(magenta_buffer,  z737_fmc2_content_magenta[i]);
+		   green_len =     getZiboFMCString(green_buffer,    z737_fmc2_content_green[i]);
 	   } else {
-		     label_len =     getZiboFMCString(label_buffer,    z737_fmc1_label_white[i]);
-	    	 white_len =     getZiboFMCString(white_buffer,    z737_fmc1_content_white[i]);
-	    	 small_len =     getZiboFMCString(small_buffer,    z737_fmc1_content_small[i]);
-	    	 inverted_len =  getZiboFMCString(inverted_buffer, z737_fmc1_content_inverted[i]);
-	    	 magenta_len =   getZiboFMCString(magenta_buffer,  z737_fmc1_content_magenta[i]);
-	    	 green_len =     getZiboFMCString(green_buffer,    z737_fmc1_content_green[i]);
+		   label_len =     getZiboFMCString(label_buffer,    z737_fmc1_label_white[i]);
+		   white_len =     getZiboFMCString(white_buffer,    z737_fmc1_content_white[i]);
+		   small_len =     getZiboFMCString(small_buffer,    z737_fmc1_content_small[i]);
+		   inverted_len =  getZiboFMCString(inverted_buffer, z737_fmc1_content_inverted[i]);
+		   magenta_len =   getZiboFMCString(magenta_buffer,  z737_fmc1_content_magenta[i]);
+		   green_len =     getZiboFMCString(green_buffer,    z737_fmc1_content_green[i]);
 	   }
 
-	 /*
-	  * Label line
-	  */
-     color = 'u';
-     memset( encoded_string, '\0', Z737_CDU_BUF_LEN );
-     // encoded_string[0] = 0;
-     space = 0;
+	   /*
+	    * Label line
+	    */
+	   color = 'u';
+	   memset( encoded_string, '\0', Z737_CDU_BUF_LEN );
+	   // encoded_string[0] = 0;
+	   space = 0;
 
-     for (j=0,p=0; (j<45) && (p<(Z737_CDU_BUF_LEN-9)); j++) {
-    	 if ((j < label_len) && (label_buffer[j] > 32)) {
-    		 if (color != 'w') {
-    			 color = 'w';
-				 space = 0;
-    			 if (p>0) { encoded_string[p++] = ';'; }
-    			 encoded_string[p++] = 's';
-    			 encoded_string[p++] = color;
-    			 encoded_string[p++] = '0' + j/10;
-    			 encoded_string[p++] = '0' + j%10;
-    		 }
-    		 encoded_string[p++] = label_buffer[j];
-    	 } else if (((j < label_len)) && (space<2) ) {
-    		 encoded_string[p++] = ' ';
-    		 space++;
-    	 } else if (space>1) {
-    		 color = 'u';
-    	 } else {
-    	 	 // color = 'u';
-    		 break;
-    	 }
-     }
+	   for (j=0,p=0; (j<45) && (p<(Z737_CDU_BUF_LEN-9)); j++) {
+		   if ((j < label_len) && (label_buffer[j] > 32)) {
+			   if (color != 'w') {
+				   color = 'w';
+				   space = 0;
+				   if (p>0) { encoded_string[p++] = ';'; }
+				   encoded_string[p++] = 's';
+				   encoded_string[p++] = color;
+				   encoded_string[p++] = '0' + j/10;
+				   encoded_string[p++] = '0' + j%10;
+			   }
+			   encoded_string[p++] = label_buffer[j];
+		   } else if (((j < label_len)) && (space<2) ) {
+			   encoded_string[p++] = ' ';
+			   space++;
+		   } else if (space>1) {
+			   color = 'u';
+		   } else {
+			   // color = 'u';
+			   break;
+		   }
+	   }
 
-     encoded_string[p] = 0;
+	   encoded_string[p] = 0;
 
-     strcpy(zibo737CduMsgPacket.lines[l].linestr,encoded_string);
-     zibo737CduMsgPacket.lines[l].len = custom_htoni(p);
-     zibo737CduMsgPacket.lines[l].lineno = custom_htoni(l);
-     l++;
+	   strcpy(zibo737CduMsgPacket.lines[l].linestr,encoded_string);
+	   zibo737CduMsgPacket.lines[l].len = custom_htoni(p);
+	   zibo737CduMsgPacket.lines[l].lineno = custom_htoni(l);
+	   l++;
 
 
-	 /*
-	  * Content line
-	  */
+	   /*
+	    * Content line
+	    */
 
-     color = 'u';
-     memset( encoded_string, '\0', Z737_CDU_BUF_LEN );
-     // encoded_string[0] = 0;
-     space=0;
-     for (j=0,p=0; (j<45) && (p<(Z737_CDU_BUF_LEN-9)); j++) {
-    	 if ((j < white_len) && (white_buffer[j] != ' ') ) {
-    		 if (color != 'W') {
-    			 color = 'W';
-				 space = 0;
-    			 if (p>0) { encoded_string[p++] = ';'; }
-    			 encoded_string[p++] = 'l';
-    			 encoded_string[p++] = 'w';
-    			 encoded_string[p++] = '0' + j/10;
-    			 encoded_string[p++] = '0' + j%10;
-    		 }
-    		 if (white_buffer[j] < ' ') white_buffer[j] = '?';
-    		 encoded_string[p++] = white_buffer[j];
-    	 } else if ((j < small_len) && (small_buffer[j] != ' ') ) {
-    		 if (color != 'w') {
-    			 color = 'w';
-				 space = 0;
-    			 if (p>0) { encoded_string[p++] = ';'; }
-    			 encoded_string[p++] = 's';
-    			 encoded_string[p++] = 'w';
-    			 encoded_string[p++] = '0' + j/10;
-    			 encoded_string[p++] = '0' + j%10;
-    		 }
-    		 if (small_buffer[j] < ' ') small_buffer[j] = '?';
-    		 encoded_string[p++] = small_buffer[j];
-    	 }  else if ((j < inverted_len) && (inverted_buffer[j] != ' ') ) {
-    		 if (color != 'I') {
-    			 color = 'I';
-				 space = 0;
-    			 if (p>0) { encoded_string[p++] = ';'; }
-    			 encoded_string[p++] = 'l';
-    			 encoded_string[p++] = 'i';
-    			 encoded_string[p++] = '0' + j/10;
-    			 encoded_string[p++] = '0' + j%10;
-    		 }
-    		 if (inverted_buffer[j] < ' ') inverted_buffer[j] = '?';
-    		 encoded_string[p++] = inverted_buffer[j];
-    	 } else if ((j < magenta_len) && (magenta_buffer[j] != ' ') ) {
-    		 if (color != 'M') {
-    			 color = 'M';
-				 space = 0;
-    			 if (p>0) { encoded_string[p++] = ';'; }
-    			 encoded_string[p++] = 'l';
-    			 encoded_string[p++] = 'm';
-    			 encoded_string[p++] = '0' + j/10;
-    			 encoded_string[p++] = '0' + j%10;
-    		 }
-    		 if (magenta_buffer[j] < ' ') magenta_buffer[j] = '?';
-    		 encoded_string[p++] = magenta_buffer[j];
-    	 } else if ((j < green_len) && (green_buffer[j] != ' ') ) {
-    		 if (color != 'G') {
-    			 color = 'G';
-				 space = 0;
-    			 if (p>0) { encoded_string[p++] = ';'; }
-    			 encoded_string[p++] = 'l';
-    			 encoded_string[p++] = 'g';
-    			 encoded_string[p++] = '0' + j/10;
-    			 encoded_string[p++] = '0' + j%10;
-    		 }
-    		 if (green_buffer[j] < ' ') green_buffer[j] = '?';
-    		 encoded_string[p++] = green_buffer[j];
-    	 } else if (( (j < white_len) || (j<small_len) || (j<inverted_len) || (j<magenta_len) || (j<green_len))
-    			  && (space<2) ) {
-    		 encoded_string[p++]=' ';
-    		 space++;
-    	 } else if (space>1) {
-    		 color = 'u';
-    	 } else {
-    	 	 // color = 'u';
-    		 break;
-    	 }
+	   color = 'u';
+	   memset( encoded_string, '\0', Z737_CDU_BUF_LEN );
+	   // encoded_string[0] = 0;
+	   space=0;
+	   for (j=0,p=0; (j<45) && (p<(Z737_CDU_BUF_LEN-9)); j++) {
+		   if ((j < white_len) && (white_buffer[j] != ' ') ) {
+			   if (color != 'W') {
+				   color = 'W';
+				   space = 0;
+				   if (p>0) { encoded_string[p++] = ';'; }
+				   encoded_string[p++] = 'l';
+				   encoded_string[p++] = 'w';
+				   encoded_string[p++] = '0' + j/10;
+				   encoded_string[p++] = '0' + j%10;
+			   }
+			   if (white_buffer[j] < ' ') white_buffer[j] = '?';
+			   encoded_string[p++] = white_buffer[j];
+		   } else if ((j < small_len) && (small_buffer[j] != ' ') ) {
+			   if (color != 'w') {
+				   color = 'w';
+				   space = 0;
+				   if (p>0) { encoded_string[p++] = ';'; }
+				   encoded_string[p++] = 's';
+				   encoded_string[p++] = 'w';
+				   encoded_string[p++] = '0' + j/10;
+				   encoded_string[p++] = '0' + j%10;
+			   }
+			   if (small_buffer[j] < ' ') small_buffer[j] = '?';
+			   encoded_string[p++] = small_buffer[j];
+		   }  else if ((j < inverted_len) && (inverted_buffer[j] != ' ') ) {
+			   if (color != 'I') {
+				   color = 'I';
+				   space = 0;
+				   if (p>0) { encoded_string[p++] = ';'; }
+				   encoded_string[p++] = 'l';
+				   encoded_string[p++] = 'i';
+				   encoded_string[p++] = '0' + j/10;
+				   encoded_string[p++] = '0' + j%10;
+			   }
+			   if (inverted_buffer[j] < ' ') inverted_buffer[j] = '?';
+			   encoded_string[p++] = inverted_buffer[j];
+		   } else if ((j < magenta_len) && (magenta_buffer[j] != ' ') ) {
+			   if (color != 'M') {
+				   color = 'M';
+				   space = 0;
+				   if (p>0) { encoded_string[p++] = ';'; }
+				   encoded_string[p++] = 'l';
+				   encoded_string[p++] = 'm';
+				   encoded_string[p++] = '0' + j/10;
+				   encoded_string[p++] = '0' + j%10;
+			   }
+			   if (magenta_buffer[j] < ' ') magenta_buffer[j] = '?';
+			   encoded_string[p++] = magenta_buffer[j];
+		   } else if ((j < green_len) && (green_buffer[j] != ' ') ) {
+			   if (color != 'G') {
+				   color = 'G';
+				   space = 0;
+				   if (p>0) { encoded_string[p++] = ';'; }
+				   encoded_string[p++] = 'l';
+				   encoded_string[p++] = 'g';
+				   encoded_string[p++] = '0' + j/10;
+				   encoded_string[p++] = '0' + j%10;
+			   }
+			   if (green_buffer[j] < ' ') green_buffer[j] = '?';
+			   encoded_string[p++] = green_buffer[j];
+		   } else if (( (j < white_len) || (j<small_len) || (j<inverted_len) || (j<magenta_len) || (j<green_len))
+				   && (space<2) ) {
+			   encoded_string[p++]=' ';
+			   space++;
+		   } else if (space>1) {
+			   color = 'u';
+		   } else {
+			   // color = 'u';
+			   break;
+		   }
 
-     }
-     encoded_string[p] = 0;
-     strcpy(zibo737CduMsgPacket.lines[l].linestr,encoded_string);
-     zibo737CduMsgPacket.lines[l].len = custom_htoni(p);
-     zibo737CduMsgPacket.lines[l].lineno = custom_htoni(l);
-     l++;
+	   }
+	   encoded_string[p] = 0;
+	   strcpy(zibo737CduMsgPacket.lines[l].linestr,encoded_string);
+	   zibo737CduMsgPacket.lines[l].len = custom_htoni(p);
+	   zibo737CduMsgPacket.lines[l].lineno = custom_htoni(l);
+	   l++;
 
    }
 
-   // Scratch pad line
+   /*
+    * Scratch pad line
+    */
+
+   encodeZibo737CduScratchPadLine(cdu_id, zibo737CduMsgPacket.lines[l].linestr);
    zibo737CduMsgPacket.lines[l].lineno = custom_htoni(l);
-   if (cdu_id) {
-	   inverted_len =  getZiboFMCString(inverted_buffer,  z737_fmc2_scratch_inverted);
-	   white_len =   getZiboFMCString(white_buffer,   z737_fmc2_scratch_white);
-   } else {
-	   inverted_len =  getZiboFMCString(inverted_buffer,  z737_fmc1_scratch_inverted);
-	   white_len =   getZiboFMCString(white_buffer,   z737_fmc1_scratch_white);
-   }
-
-   color = 'u';
-   memset( encoded_string, '\0', Z737_CDU_BUF_LEN );
-   // encoded_string[0] = 0;
-   p=0;
-   if ((white_len>0) && (white_buffer[0] > 32)) {
-	   encoded_string[p++] = 'l';
-	   encoded_string[p++] = 'w';
-	   encoded_string[p++] = '0';
-	   encoded_string[p++] = '0';
-	   strcpy(&encoded_string[p], white_buffer);
-   } else if ((inverted_len>0) && (inverted_buffer[0] > 32)) {
-	   encoded_string[p++] = 'l';
-	   encoded_string[p++] = 'i';
-	   encoded_string[p++] = '0';
-	   encoded_string[p++] = '0';
-	   strcpy(&encoded_string[p], inverted_buffer);
-   }
-   strcpy(zibo737CduMsgPacket.lines[l].linestr, encoded_string);
    zibo737CduMsgPacket.lines[l].len = custom_htoni((int)strlen(zibo737CduMsgPacket.lines[l].linestr));
 
    return 4 + 4 + Z737_CDU_LINES * 88;
+}
+
+int isZibo737CduUpdated(int cdu_pilot, int cdu_copilot) {
+	char cdu1_title_line[Z737_CDU_BUF_LEN];
+	char cdu1_scratch_line[Z737_CDU_BUF_LEN];
+	char cdu2_title_line[Z737_CDU_BUF_LEN];
+	char cdu2_scratch_line[Z737_CDU_BUF_LEN];
+	int result;
+
+	// Get current title and scratch lines
+	encodeZibo737CduTitleLine(0, cdu1_title_line);
+	encodeZibo737CduScratchPadLine(0, cdu1_scratch_line);
+	encodeZibo737CduTitleLine(1, cdu2_title_line);
+	encodeZibo737CduScratchPadLine(1, cdu2_scratch_line);
+
+	// Compare with stored version
+	result = 0;
+	if (cdu_pilot == 0 || cdu_copilot == 0) {
+		result |= strncmp(cdu1_title_line,zibo737Cdu1PreviousMsgPacket.lines[0].linestr,Z737_CDU_BUF_LEN);
+		result |= strncmp(cdu1_scratch_line,zibo737Cdu1PreviousMsgPacket.lines[13].linestr,Z737_CDU_BUF_LEN);
+	}
+	if (cdu_pilot == 1 || cdu_copilot == 1) {
+		result |= strncmp(cdu2_title_line,zibo737Cdu2PreviousMsgPacket.lines[0].linestr,Z737_CDU_BUF_LEN);
+		result |= strncmp(cdu2_scratch_line,zibo737Cdu2PreviousMsgPacket.lines[13].linestr,Z737_CDU_BUF_LEN);
+	}
+	return result;
 }
 
 float sendZibo737MsgCallback(
@@ -3953,51 +4007,58 @@ float sendZibo737MsgCallback(
 
 	int i;
 	int cdu_packet_size;
-
-
-	// TODO: Store previous packet / Send if different
+	int cdu_pilot;
+	int cdu_copilot;
+	int data_changed;
 
 	z737_msg_count++;
 
-	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open && z737_cdu_ready && (z737_fmc_keypressed>0 || z737_msg_count> Z737_MAX_MSG_COUNT))  {
-		z737_msg_count=0;
-		if (z737_fmc_keypressed>0) z737_fmc_keypressed--;
+	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open && z737_cdu_ready) {
+		cdu_pilot = XPLMGetDatai(cdu_pilot_side);
+		cdu_copilot = XPLMGetDatai(cdu_copilot_side);
+		data_changed = isZibo737CduUpdated(cdu_pilot,cdu_copilot);
+		if (data_changed || (z737_fmc_keypressed > 0) || (z737_msg_count > Z737_MAX_MSG_COUNT))  {
 
-		cdu_packet_size = createZibo737CduPacket(XPLMGetDatai(cdu_pilot_side));
-		if ( cdu_packet_size > 0 ) {
-			for (i=0; i<NUM_DEST; i++) {
-				if (dest_enable[i]) {
-					if (sendto(sockfd, (const char*)&zibo737CduMsgPacket, cdu_packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr)) == -1) {
-						XPLMDebugString("XHSI: caught error while sending Zibo737McduMsg left CDU packet! (");
-						XPLMDebugString((char * const) strerror(GET_ERRNO));
-						XPLMDebugString(")\n");
-					}
-				}
-			}
-			if (XPLMGetDatai(cdu_pilot_side)==0)
-				zibo737Cdu1PreviousMsgPacket = zibo737CduMsgPacket;
-			else
-				zibo737Cdu2PreviousMsgPacket = zibo737CduMsgPacket;
-		}
-		if (XPLMGetDatai(cdu_pilot_side) != XPLMGetDatai(cdu_copilot_side)) {
-			cdu_packet_size = createZibo737CduPacket(XPLMGetDatai(cdu_copilot_side));
+			z737_msg_count=0;
+			if (z737_fmc_keypressed>0) z737_fmc_keypressed--;
+
+			cdu_packet_size = createZibo737CduPacket(cdu_pilot);
 			if ( cdu_packet_size > 0 ) {
 				for (i=0; i<NUM_DEST; i++) {
 					if (dest_enable[i]) {
 						if (sendto(sockfd, (const char*)&zibo737CduMsgPacket, cdu_packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr)) == -1) {
-							XPLMDebugString("XHSI: caught error while sending Zibo737McduMsg right CDU packet! (");
+							XPLMDebugString("XHSI: caught error while sending Zibo737McduMsg left CDU packet! (");
 							XPLMDebugString((char * const) strerror(GET_ERRNO));
 							XPLMDebugString(")\n");
 						}
 					}
 				}
+				if (cdu_pilot==0)
+					zibo737Cdu1PreviousMsgPacket = zibo737CduMsgPacket;
+				else
+					zibo737Cdu2PreviousMsgPacket = zibo737CduMsgPacket;
 			}
-			if (XPLMGetDatai(cdu_copilot_side)==0)
-				zibo737Cdu1PreviousMsgPacket = zibo737CduMsgPacket;
-			else
-				zibo737Cdu2PreviousMsgPacket = zibo737CduMsgPacket;
-		}
 
+
+			if (cdu_pilot != cdu_copilot) {
+				cdu_packet_size = createZibo737CduPacket(cdu_copilot);
+				if ( cdu_packet_size > 0 ) {
+					for (i=0; i<NUM_DEST; i++) {
+						if (dest_enable[i]) {
+							if (sendto(sockfd, (const char*)&zibo737CduMsgPacket, cdu_packet_size, 0, (struct sockaddr *)&dest_sockaddr[i], sizeof(struct sockaddr)) == -1) {
+								XPLMDebugString("XHSI: caught error while sending Zibo737McduMsg right CDU packet! (");
+								XPLMDebugString((char * const) strerror(GET_ERRNO));
+								XPLMDebugString(")\n");
+							}
+						}
+					}
+				}
+				if (cdu_copilot==0)
+					zibo737Cdu1PreviousMsgPacket = zibo737CduMsgPacket;
+				else
+					zibo737Cdu2PreviousMsgPacket = zibo737CduMsgPacket;
+			}
+		}
         return cdu_data_delay;
 
 	} else {
