@@ -174,9 +174,25 @@ char getXP11FMSFontCode(int style_code) {
 	return (style_code & 0x80) != 0 ? 'l' : 's' ;
 }
 
+/**
+ * XHSI QPAM packet color code
+ * n: Black (n is for French translation NOIR)
+ * b: Blue
+ * y: Yellow
+ * m: magenta
+ * a: amber
+ * g: green
+ * r: red
+ * c: cyan - not yet implemented
+ * Color code in lower case : normal color
+ * Color code in upper case : reverse video color (text color will be black)
+ */
 char getXP11FMSColorCode(int style_code) {
-	// TODO: remove 32 if Reverse video
-	return color_codes[style_code & 0x0F];
+	int reverse_video = (style_code >> 6) & 0x01;
+	char color_code =color_codes[style_code & 0x0F];
+	// remove 32 if Reverse video - i.e. convert in upper case
+	if (reverse_video) color_code -= 32;
+	return color_code;
 }
 
 /*
@@ -190,19 +206,62 @@ char getXP11FMSColorCode(int style_code) {
  *    BLACK(0),CYAN(1),RED(2),YELLOW(3),GREEN(4),MAGENTA(5),AMBER(6),WHITE(7).
  */
 
+int encodeXP11CduLine(int cdu_id, int line, char *encoded_string) {
+	int j;
+	int p;
+	char style;
+	int text_len, style_len;
+	int space = 0;
+	char text_buffer[XP11_CDU_BUF_LEN];
+	char style_buffer[XP11_CDU_BUF_LEN];
+
+	// Ensure both buffers are filled with 0
+	memset( encoded_string, '\0', XP11_CDU_BUF_LEN );
+	memset( style_buffer, '\0', XP11_CDU_LINE_WIDTH );
+
+	if (cdu_id) {
+		text_len = getXP11FMSString(text_buffer, fms_cdu2_text[line]);
+		style_len = XPLMGetDatab(fms_cdu2_style[line],style_buffer,0,XP11_CDU_LINE_WIDTH);
+	} else {
+		text_len = getXP11FMSString(text_buffer, fms_cdu1_text[line]);
+		style_len = XPLMGetDatab(fms_cdu1_style[line],style_buffer,0,XP11_CDU_LINE_WIDTH);
+	}
+
+	style = 0xFF;
+	space=0;
+
+	for (j=0,p=0; (j<45) && (p<(XP11_CDU_BUF_LEN-9)); j++) {
+		if ((j < text_len) && (text_buffer[j] != ' ') ) {
+			if (style != style_buffer[j]) {
+				style = style_buffer[j];
+				space = 0;
+				if (p>0) { encoded_string[p++] = ';'; }
+				encoded_string[p++] = getXP11FMSFontCode(style);
+				encoded_string[p++] = getXP11FMSColorCode(style);
+				encoded_string[p++] = '0' + j/10;
+				encoded_string[p++] = '0' + j%10;
+			}
+			// if (text_buffer[j] < ' ') text_buffer[j] = '?';
+			encoded_string[p++] = text_buffer[j];
+		} else if ( (j < text_len)  && (space<2) ) {
+			encoded_string[p++]=' ';
+			space++;
+		} else if (space>1) {
+			style = 0xFF;
+		} else {
+			// color = 'u';
+			break;
+		}
+
+	}
+	encoded_string[p] = 0;
+	return p;
+}
+
 int createXP11CduPacket(int cdu_id) {
-
-   int i,l;
-   int j;
-   int p;
-   char style;
-   int text_len, style_len;
-   int space = 0;
+   int i;
    int status = 0;
-   char text_buffer[XP11_CDU_BUF_LEN];
-   char style_buffer[XP11_CDU_BUF_LEN];
-
-   char encoded_string[XP11_CDU_BUF_LEN];
+   int line_len;
 
    /*
     * Packet header
@@ -213,58 +272,39 @@ int createXP11CduPacket(int cdu_id) {
    xp11CduMsgPacket.side = custom_htoni(cdu_id);
    xp11CduMsgPacket.status = custom_htoni(status);
 
-   // Line count (0 to 16)
-   l=0;
-
    for(i=0; i<XP11_FMS_LINES; i++){
-	   memset( style_buffer, '\0', XP11_CDU_LINE_WIDTH );
-	   if (cdu_id) {
-		   text_len = getXP11FMSString(text_buffer, fms_cdu2_text[i]);
-		   style_len = XPLMGetDatab(fms_cdu2_style[i],style_buffer,0,XP11_CDU_LINE_WIDTH);
-	   } else {
-		   text_len = getXP11FMSString(text_buffer, fms_cdu1_text[i]);
-		   style_len = XPLMGetDatab(fms_cdu1_style[i],style_buffer,0,XP11_CDU_LINE_WIDTH);
-	   }
-
-
-     style = 0xFF;
-     memset( encoded_string, '\0', XP11_CDU_BUF_LEN );
-     // encoded_string[0] = 0;
-     space=0;
-     for (j=0,p=0; (j<45) && (p<(XP11_CDU_BUF_LEN-9)); j++) {
-    	 if ((j < text_len) && (text_buffer[j] != ' ') ) {
-    		 if (style != style_buffer[j]) {
-    			 style = style_buffer[j];
-				 space = 0;
-    			 if (p>0) { encoded_string[p++] = ';'; }
-    			 encoded_string[p++] = getXP11FMSFontCode(style);
-    			 encoded_string[p++] = getXP11FMSColorCode(style);
-    			 encoded_string[p++] = '0' + j/10;
-    			 encoded_string[p++] = '0' + j%10;
-    		 }
-    		 // if (text_buffer[j] < ' ') text_buffer[j] = '?';
-    		 encoded_string[p++] = text_buffer[j];
-    	 } else if ( (j < text_len)  && (space<2) ) {
-    		 encoded_string[p++]=' ';
-    		 space++;
-    	 } else if (space>1) {
-    		 style = 0xFF;
-    	 } else {
-    	 	 // color = 'u';
-    		 break;
-    	 }
-
-     }
-     encoded_string[p] = 0;
-     // memcpy(&(xp11CduMsgPacket.lines[l].linestr[48]),style_buffer,24);
-     strcpy(xp11CduMsgPacket.lines[l].linestr,encoded_string);
-     xp11CduMsgPacket.lines[l].len = custom_htoni(p);
-     xp11CduMsgPacket.lines[l].lineno = custom_htoni(l);
-     l++;
-
+	   line_len=encodeXP11CduLine(cdu_id, i, xp11CduMsgPacket.lines[i].linestr);
+     xp11CduMsgPacket.lines[i].len = custom_htoni(line_len);
+     xp11CduMsgPacket.lines[i].lineno = custom_htoni(i);
    }
 
    return 4 + 4 + XP11_FMS_LINES * 88;
+}
+
+int isXP11CduUpdated(int cdu_pilot, int cdu_copilot) {
+	char cdu1_title_line[XP11_CDU_BUF_LEN];
+	char cdu1_scratch_line[XP11_CDU_BUF_LEN];
+	char cdu2_title_line[XP11_CDU_BUF_LEN];
+	char cdu2_scratch_line[XP11_CDU_BUF_LEN];
+	int result = 0;
+
+	if (cdu_pilot == 0 || cdu_copilot == 0) {
+		// Get current title and scratch lines
+		encodeXP11CduLine(0, 0, cdu1_title_line);
+		encodeXP11CduLine(0, 13, cdu1_scratch_line);
+		// Compare with stored version
+		result |= strncmp(cdu1_title_line,xp11Cdu1PreviousMsgPacket.lines[0].linestr,XP11_CDU_BUF_LEN);
+		result |= strncmp(cdu1_scratch_line,xp11Cdu1PreviousMsgPacket.lines[13].linestr,XP11_CDU_BUF_LEN);
+	}
+	if (cdu_pilot == 1 || cdu_copilot == 1) {
+		// Get current title and scratch lines
+		encodeXP11CduLine(1, 0, cdu2_title_line);
+		encodeXP11CduLine(1, 13, cdu2_scratch_line);
+		// Compare with stored version
+		result |= strncmp(cdu2_title_line,xp11Cdu2PreviousMsgPacket.lines[0].linestr,XP11_CDU_BUF_LEN);
+		result |= strncmp(cdu2_scratch_line,xp11Cdu2PreviousMsgPacket.lines[13].linestr,XP11_CDU_BUF_LEN);
+	}
+	return result;
 }
 
 float sendXP11CduMsgCallback(
@@ -275,15 +315,20 @@ float sendXP11CduMsgCallback(
 
 	int i;
 	int cdu_packet_size;
-
-
-	// TODO: Store previous packet / Send if different
+	int cdu_pilot;
+	int cdu_copilot;
+	int data_changed;
 
 	xp11_cdu_msg_count++;
 
 	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open && xp11_cdu_ready
 			&& !qpac_mcdu_ready && !z737_cdu_ready && !jar_a320_mcdu_ready ) {
-		if ((xp11_fms_keypressed>0 || xp11_cdu_msg_count> XP11_CDU_MAX_MSG_COUNT))  {
+
+		cdu_pilot = XPLMGetDatai(cdu_pilot_side);
+		cdu_copilot = XPLMGetDatai(cdu_copilot_side);
+		data_changed = isXP11CduUpdated(cdu_pilot,cdu_copilot);
+
+		if ( data_changed || (xp11_fms_keypressed > 0) || (xp11_cdu_msg_count > XP11_CDU_MAX_MSG_COUNT))  {
 			xp11_cdu_msg_count=0;
 			if (xp11_fms_keypressed>0) xp11_fms_keypressed--;
 
