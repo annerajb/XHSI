@@ -202,6 +202,7 @@ public class CDUJarDesign extends CDUSubcomponent {
 
     public void paint(Graphics2D g2) {
     	if ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY) && this.avionics.is_jar_a320neo() ) {
+    		QpacMcduData.updated = false;
     		if ( this.preferences.cdu_display_only() ) {
     			drawDisplayOnly(g2);
     		} else {

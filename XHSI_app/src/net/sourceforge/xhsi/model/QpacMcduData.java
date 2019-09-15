@@ -36,7 +36,7 @@ public class QpacMcduData {
 	
 	private static QpacMcduData instance = null;
 	
-	public boolean updated = false;
+	static public boolean updated = false;
 	
 	static List qpacMcdu1Lines = new ArrayList();
 	static List qpacMcdu2Lines = new ArrayList();
@@ -111,8 +111,9 @@ public class QpacMcduData {
 	 * Compressed output format:
 	 * -------------------------
 	 * f,c,pp,”text1 “;f,c,pp,”text2”;f,c,pp,”text3”; etc etc
-	 * f : (1 char) font s=small, l=large
-	 * c : (1 char) color r=red, b=blue, m=magenta, y=yellow, g=green, a=amber, w=white
+	 * f : (1 char) font s=small, l=large, S=small underline, L=large underline
+	 * c : (1 char) color n=black, r=red, b=blue, m=magenta, y=yellow, g=green, a=amber, w=white
+	 *              N, R, B, M, Y, G, A, W are reversed video colors with black ink
 	 * pp : (2 char) column position of embedded string
 	 * text : string to be displayed
 	 *

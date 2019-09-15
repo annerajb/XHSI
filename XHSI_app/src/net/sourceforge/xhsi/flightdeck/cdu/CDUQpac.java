@@ -148,7 +148,7 @@ public class CDUQpac extends CDUSubcomponent {
         
         udp_sender = XPlaneUDPSender.get_instance();
         
-        qpac_mcdu_data = QpacMcduData.getInstance();
+        // qpac_mcdu_data = QpacMcduData.getInstance();
 
         qpac_regions = new ArrayList<ClickRegion>();
         
@@ -235,6 +235,7 @@ public class CDUQpac extends CDUSubcomponent {
     public void paint(Graphics2D g2) {
     	if ( (cdu_gc.cdu_source == Avionics.CDU_SOURCE_AIRCRAFT_OR_DUMMY) && (this.avionics.is_qpac()  )
     			) {
+    		QpacMcduData.updated = false;
     		int mcdu_side = avionics.get_cdu_side();
     		if ( this.preferences.cdu_display_only() ) {
     			drawDisplayOnly(g2,mcdu_side);
@@ -359,8 +360,7 @@ public class CDUQpac extends CDUSubcomponent {
                     decodeFont(g2, o.font );
                     g2.drawString(translateCduLine(o.text), x, cdu_gc.cdu_line[i]);
             }    
-        }
-        qpac_mcdu_data.updated = false;
+        }        
     }
 
     
