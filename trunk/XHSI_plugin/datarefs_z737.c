@@ -3978,21 +3978,21 @@ int isZibo737CduUpdated(int cdu_pilot, int cdu_copilot) {
 	char cdu1_scratch_line[Z737_CDU_BUF_LEN];
 	char cdu2_title_line[Z737_CDU_BUF_LEN];
 	char cdu2_scratch_line[Z737_CDU_BUF_LEN];
-	int result;
+	int result=0;
 
-	// Get current title and scratch lines
-	encodeZibo737CduTitleLine(0, cdu1_title_line);
-	encodeZibo737CduScratchPadLine(0, cdu1_scratch_line);
-	encodeZibo737CduTitleLine(1, cdu2_title_line);
-	encodeZibo737CduScratchPadLine(1, cdu2_scratch_line);
-
-	// Compare with stored version
-	result = 0;
 	if (cdu_pilot == 0 || cdu_copilot == 0) {
+		// Get current title and scratch lines
+		encodeZibo737CduTitleLine(0, cdu1_title_line);
+		encodeZibo737CduScratchPadLine(0, cdu1_scratch_line);
+		// Compare with stored version
 		result |= strncmp(cdu1_title_line,zibo737Cdu1PreviousMsgPacket.lines[0].linestr,Z737_CDU_BUF_LEN);
 		result |= strncmp(cdu1_scratch_line,zibo737Cdu1PreviousMsgPacket.lines[13].linestr,Z737_CDU_BUF_LEN);
 	}
 	if (cdu_pilot == 1 || cdu_copilot == 1) {
+		// Get current title and scratch lines
+		encodeZibo737CduTitleLine(1, cdu2_title_line);
+		encodeZibo737CduScratchPadLine(1, cdu2_scratch_line);
+		// Compare with stored version
 		result |= strncmp(cdu2_title_line,zibo737Cdu2PreviousMsgPacket.lines[0].linestr,Z737_CDU_BUF_LEN);
 		result |= strncmp(cdu2_scratch_line,zibo737Cdu2PreviousMsgPacket.lines[13].linestr,Z737_CDU_BUF_LEN);
 	}

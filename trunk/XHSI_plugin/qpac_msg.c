@@ -501,6 +501,111 @@ char special_color(char c) {
 	if (c>='0' && c <= 'F') return sc_color[c-'0']; else return 'a';
 }
 
+void encodeQpacMcduTitleLine(int mcdu_id, char *encoded_string) {
+	int datalen = 0;
+	int p;
+	int blue_len, green_len, white_len, yellow_len;
+	char yellow_buffer[MCDU_BUF_LEN];
+	char white_buffer[MCDU_BUF_LEN];
+	char blue_buffer[MCDU_BUF_LEN];
+	char green_buffer[MCDU_BUF_LEN];
+
+	// Page title
+	if (mcdu_id) {
+		datalen = XPLMGetDatab(qpac_mcdu2_title_yellow,yellow_buffer,0,sizeof(yellow_buffer));
+		yellow_len = (datalen > 0) ? (int)strlen(yellow_buffer) : 0;
+		datalen = XPLMGetDatab(qpac_mcdu2_title_white,white_buffer,0,sizeof(white_buffer));
+		white_len = (datalen > 0) ? (int)strlen(white_buffer) : 0;
+		datalen = XPLMGetDatab(qpac_mcdu2_title_blue,blue_buffer,0,sizeof(blue_buffer));
+		blue_len = (datalen > 0) ? (int)strlen(blue_buffer) : 0;
+		datalen = XPLMGetDatab(qpac_mcdu2_title_green,green_buffer,0,sizeof(green_buffer));
+		green_len = (datalen > 0) ? (int)strlen(green_buffer) : 0;
+	} else {
+		datalen = XPLMGetDatab(qpac_mcdu1_title_yellow,yellow_buffer,0,sizeof(yellow_buffer));
+		yellow_len = (datalen > 0) ? (int)strlen(yellow_buffer) : 0;
+		datalen = XPLMGetDatab(qpac_mcdu1_title_white,white_buffer,0,sizeof(white_buffer));
+		white_len = (datalen > 0) ? (int)strlen(white_buffer) : 0;
+		datalen = XPLMGetDatab(qpac_mcdu1_title_blue,blue_buffer,0,sizeof(blue_buffer));
+		blue_len = (datalen > 0) ? (int)strlen(blue_buffer) : 0;
+		datalen = XPLMGetDatab(qpac_mcdu1_title_green,green_buffer,0,sizeof(green_buffer));
+		green_len = (datalen > 0) ? (int)strlen(green_buffer) : 0;
+	}
+
+	memset( encoded_string, '\0', MCDU_BUF_LEN );
+	p=0;
+	if (green_len>0)  {
+		encoded_string[p++] = 'l';
+		encoded_string[p++] = 'g';
+		encoded_string[p++] = '0';
+		encoded_string[p++] = '0';
+		strcpy(&encoded_string[p], green_buffer);
+	} else if (yellow_len>0) {
+		encoded_string[p++] = 'l';
+		encoded_string[p++] = 'y';
+		encoded_string[p++] = '0';
+		encoded_string[p++] = '0';
+		strcpy(&encoded_string[p], yellow_buffer);
+	} else if (white_len>0) {
+		encoded_string[p++] = 'l';
+		encoded_string[p++] = 'w';
+		encoded_string[p++] = '0';
+		encoded_string[p++] = '0';
+		strcpy(&encoded_string[p], white_buffer);
+	} else if (blue_len>0) {
+		encoded_string[p++] = 'l';
+		encoded_string[p++] = 'g';
+		encoded_string[p++] = '0';
+		encoded_string[p++] = '0';
+		strcpy(&encoded_string[p], blue_buffer);
+	}
+}
+
+void encodeQpacMcduScratchPadLine(int mcdu_id, char *encoded_string) {
+	int datalen = 0;
+	int p;
+	int amber_len, white_len, yellow_len;
+	char yellow_buffer[MCDU_BUF_LEN];
+	char white_buffer[MCDU_BUF_LEN];
+	char amber_buffer[MCDU_BUF_LEN];
+
+	if (mcdu_id) {
+		datalen = XPLMGetDatab(qpac_mcdu2_scratch_yellow,yellow_buffer,0,sizeof(yellow_buffer));
+		yellow_len = (datalen > 0) ? (int)strlen(yellow_buffer) : 0;
+		datalen = XPLMGetDatab(qpac_mcdu2_scratch_white,white_buffer,0,sizeof(white_buffer));
+		white_len = (datalen > 0) ? (int)strlen(white_buffer) : 0;
+		datalen = XPLMGetDatab(qpac_mcdu2_scratch_amber,amber_buffer,0,sizeof(amber_buffer));
+		amber_len = (datalen > 0) ? (int)strlen(amber_buffer) : 0;
+	} else {
+		datalen = XPLMGetDatab(qpac_mcdu1_scratch_yellow,yellow_buffer,0,sizeof(yellow_buffer));
+		yellow_len = (datalen > 0) ? (int)strlen(yellow_buffer) : 0;
+		datalen = XPLMGetDatab(qpac_mcdu1_scratch_white,white_buffer,0,sizeof(white_buffer));
+		white_len = (datalen > 0) ? (int)strlen(white_buffer) : 0;
+		datalen = XPLMGetDatab(qpac_mcdu1_scratch_amber,amber_buffer,0,sizeof(amber_buffer));
+		amber_len = (datalen > 0) ? (int)strlen(amber_buffer) : 0;
+	}
+
+	memset( encoded_string, '\0', MCDU_BUF_LEN );
+	p=0;
+	if ((white_len>0) && (white_buffer[0] > 32)) {
+		encoded_string[p++] = 'l';
+		encoded_string[p++] = 'w';
+		encoded_string[p++] = '0';
+		encoded_string[p++] = '0';
+		strcpy(&encoded_string[p], white_buffer);
+	} else if ((yellow_len>0) && (yellow_buffer[0] > 32)) {
+		encoded_string[p++] = 'l';
+		encoded_string[p++] = 'y';
+		encoded_string[p++] = '0';
+		encoded_string[p++] = '0';
+		strcpy(&encoded_string[p], yellow_buffer);
+	} else if ((amber_len>0) && (amber_buffer[0] > 32)) {
+		encoded_string[p++] = 'l';
+		encoded_string[p++] = 'a';
+		encoded_string[p++] = '0';
+		encoded_string[p++] = '0';
+		strcpy(&encoded_string[p], amber_buffer);
+	}
+}
 
 /**
  * mcdu_id should be 0 for left, 1 for right. Any value different from 0 is treated as right
@@ -538,6 +643,7 @@ int createQpacMcduPacket(int mcdu_id) {
 
    l=0;
    // Page title
+   /*
    if (mcdu_id) {
 	   datalen = XPLMGetDatab(qpac_mcdu2_title_yellow,yellow_buffer,0,sizeof(yellow_buffer));
 	   yellow_len = (datalen > 0) ? (int)strlen(yellow_buffer) : 0;
@@ -587,6 +693,8 @@ int createQpacMcduPacket(int mcdu_id) {
    }
 
    strcpy(qpacMcduMsgPacket.lines[l].linestr,encoded_string);
+   */
+   encodeQpacMcduTitleLine(mcdu_id, qpacMcduMsgPacket.lines[l].linestr);
    qpacMcduMsgPacket.lines[l].len = custom_htoni((int)strlen(qpacMcduMsgPacket.lines[l].linestr));
    qpacMcduMsgPacket.lines[l].lineno = custom_htoni(l);
    l++;
@@ -982,7 +1090,7 @@ int createQpacMcduPacket(int mcdu_id) {
    }
 
    // Scratch pad line
-   qpacMcduMsgPacket.lines[l].lineno = custom_htoni(l);
+   /*
    if (mcdu_id) {
 	   XPLMGetDatab(qpac_mcdu2_scratch_yellow,yellow_buffer,0,sizeof(yellow_buffer));
 	   yellow_len = (datalen > 0) ? (int)strlen(yellow_buffer) : 0;
@@ -1022,6 +1130,10 @@ int createQpacMcduPacket(int mcdu_id) {
 	   strcpy(&encoded_string[p], amber_buffer);
    }
    strcpy(qpacMcduMsgPacket.lines[l].linestr, encoded_string);
+
+   */
+   encodeQpacMcduScratchPadLine(mcdu_id, qpacMcduMsgPacket.lines[l].linestr);
+   qpacMcduMsgPacket.lines[l].lineno = custom_htoni(l);
    qpacMcduMsgPacket.lines[l].len = custom_htoni((int)strlen(qpacMcduMsgPacket.lines[l].linestr));
 
    /*
@@ -1035,6 +1147,32 @@ int createQpacMcduPacket(int mcdu_id) {
 
 }
 
+int isQpacMcduUpdated(int mcdu_pilot, int mcdu_copilot) {
+	char mcdu1_title_line[MCDU_BUF_LEN];
+	char mcdu1_scratch_line[MCDU_BUF_LEN];
+	char mcdu2_title_line[MCDU_BUF_LEN];
+	char mcdu2_scratch_line[MCDU_BUF_LEN];
+	int result=0;
+
+	if (mcdu_pilot == 0 || mcdu_copilot == 0) {
+		// Get current title and scratch lines
+		encodeQpacMcduTitleLine(0, mcdu1_title_line);
+		encodeQpacMcduScratchPadLine(0, mcdu1_scratch_line);
+		// Compare with stored version
+		result |= strncmp(mcdu1_title_line,qpacMcdu1PreviousMsgPacket.lines[0].linestr,MCDU_BUF_LEN);
+		result |= strncmp(mcdu1_scratch_line,qpacMcdu1PreviousMsgPacket.lines[13].linestr,MCDU_BUF_LEN);
+	}
+	if (mcdu_pilot == 1 || mcdu_copilot == 1) {
+		// Get current title and scratch lines
+		encodeQpacMcduTitleLine(1, mcdu2_title_line);
+		encodeQpacMcduScratchPadLine(1, mcdu2_scratch_line);
+		// Compare with stored version
+		result |= strncmp(mcdu2_title_line,qpacMcdu2PreviousMsgPacket.lines[0].linestr,MCDU_BUF_LEN);
+		result |= strncmp(mcdu2_scratch_line,qpacMcdu2PreviousMsgPacket.lines[13].linestr,MCDU_BUF_LEN);
+	}
+	return result;
+}
+
 
 float sendQpacMsgCallback(
 									float	inElapsedSinceLastCall,
@@ -1045,14 +1183,18 @@ float sendQpacMsgCallback(
 	int i;
 	int mcdu_packet_size;
 	int ewd_packet_size;
+	int mcdu_pilot;
+	int mcdu_copilot;
+	int data_changed;
 
-
-	// TODO: Store previous packet / Send if different
 	qpac_mcdu_msg_count++;
 
 	if (xhsi_plugin_enabled && xhsi_send_enabled && xhsi_socket_open && qpac_ewd_ready)  {
+		mcdu_pilot = XPLMGetDatai(cdu_pilot_side);
+		mcdu_copilot = XPLMGetDatai(cdu_copilot_side);
+		data_changed = isQpacMcduUpdated(mcdu_pilot,mcdu_copilot);
 
-		if (qpac_mcdu_ready && (qpac_mcdu_keypressed>0 || qpac_mcdu_msg_count> QPAC_MAX_MCDU_MSG_COUNT)) {
+		if (qpac_mcdu_ready && (data_changed || qpac_mcdu_keypressed>0 || qpac_mcdu_msg_count> QPAC_MAX_MCDU_MSG_COUNT)) {
 			qpac_mcdu_msg_count=0;
 			if (qpac_mcdu_keypressed>0) qpac_mcdu_keypressed--;
 

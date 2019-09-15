@@ -16,7 +16,6 @@
 // CDU TEXT LINE is UTF-8 encoded, may be up to 48 bytes
 #define XP11_CDU_TEXT_LINE_WIDTH 48
 #define XP11_CDU_LINE_WIDTH 24
-#define XP11_CDU_BUF_LEN 80
 
 extern int xp11_cdu_msg_count;
 extern int xp11_fms_keypressed;

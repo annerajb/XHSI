@@ -9,7 +9,7 @@
 
 // Default rate is 15 Callbacks par second
 // Send CDU Message 2 times per second
-#define Z737_MAX_MSG_COUNT 25
+#define Z737_MAX_MSG_COUNT 7
 
 // global vars
 
