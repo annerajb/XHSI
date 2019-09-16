@@ -104,7 +104,7 @@ public class CDUXPlane11 extends CDUSubcomponent {
 	public static final int SIM_FMS1_RTE        = 13;
 	public static final int SIM_FMS1_DEP_ARR    = 14;
 	public static final int SIM_FMS1_AP         = 15;
-	public static final int SIM_FMS1_VNAV       = 16;
+	public static final int SIM_FMS1_NAVRAD     = 16;
 
 	public static final int SIM_FMS1_FIX        = 17;
 	public static final int SIM_FMS1_LEGS       = 18;
@@ -205,7 +205,7 @@ public class CDUXPlane11 extends CDUSubcomponent {
 	public static final int SIM_FMS2_RTE        = 103;
 	public static final int SIM_FMS2_DEP_ARR    = 104;
 	public static final int SIM_FMS2_AP         = 105;
-	public static final int SIM_FMS2_VNAV       = 106;
+	public static final int SIM_FMS2_NAVRAD     = 106;
 
 	public static final int SIM_FMS2_FIX        = 107;
 	public static final int SIM_FMS2_LEGS       = 108;
@@ -282,7 +282,7 @@ public class CDUXPlane11 extends CDUSubcomponent {
 
 
 		try {
-			image = ImageIO.read(this.getClass().getResourceAsStream("img/z737cdu_800x480.png"));
+			image = ImageIO.read(this.getClass().getResourceAsStream("img/b737_800_cdu_800x480.png"));
 			msg_img = ImageIO.read(this.getClass().getResourceAsStream("img/z737cdu_msg.png"));
 			exec_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_exec_litv_m.png"));
 		} catch (IOException ioe){}
@@ -318,9 +318,9 @@ public class CDUXPlane11 extends CDUSubcomponent {
 		regions.add(new ClickRegion(new Point(52, 348), new Point(436, 452), 6, 2, 
 				new int[][] {{12, 13, 70, 71, 72, -1}, {23, 18, 14, 19, 21, 22}} ));
 
-		// MENU, NAV RAD, PREV PAGE, NEXT PAGE
+		// FIX, NAV RAD, PREV PAGE, NEXT PAGE
 		regions.add(new ClickRegion(new Point(52, 454), new Point(180, 554), 2, 2, 
-				new int[][] {{20, 17}, {25, 26}} ));
+				new int[][] {{17, 16}, {25, 26}} ));
 
 		udp_sender = XPlaneUDPSender.get_instance();
 
@@ -517,8 +517,8 @@ public class CDUXPlane11 extends CDUSubcomponent {
 				case '/' : w = SIM_FMS1_SLASH; break;    		
 				case '+' : w = SIM_FMS1_PLUS_M; break;
 				// case '*' : w = Z737_KEY_FMC1_OVERFL; break;
-				case 127 : w = SIM_FMS1_KEY_CLR; break; // DEL -> CLEAR
-				case 8   : w = SIM_FMS1_DEL; break; // BackSpace
+				case 127 : w = SIM_FMS1_DEL; break;
+				case 8   : w = SIM_FMS1_KEY_CLR;; break;
 				case ' ' : w = SIM_FMS1_SPACE; break; 
 				case 27  : w = SIM_FMS1_DIR_INTC; break; // ESCAPE -> MCDU_MENU
 				}
@@ -542,7 +542,7 @@ public class CDUXPlane11 extends CDUSubcomponent {
 				case KeyEvent.VK_LEFT : w = SIM_FMS1_PREV_PAGE; break;
 				case KeyEvent.VK_RIGHT : w = SIM_FMS1_NEXT_PAGE; break; 
 
-				case KeyEvent.VK_PAGE_UP : w = SIM_FMS1_PERF; break;
+				case KeyEvent.VK_PAGE_UP : w = SIM_FMS1_NAVRAD; break;
 				case KeyEvent.VK_PAGE_DOWN : w = SIM_FMS1_PROG; break;
 				case KeyEvent.VK_HOME : w = SIM_FMS1_INIT; break;
 				case KeyEvent.VK_END : w = SIM_FMS1_LEGS; break; 
