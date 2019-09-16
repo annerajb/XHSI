@@ -4309,6 +4309,7 @@ void registerCommands(void) {
     sim_fms[SIM_FMS1_PROG] = XPLMFindCommand("sim/FMS/prog");
     sim_fms[SIM_FMS1_EXEC] = XPLMFindCommand("sim/FMS/exec");
     sim_fms[SIM_FMS1_FIX] = XPLMFindCommand("sim/FMS/fix");
+    sim_fms[SIM_FMS1_NAVRAD] = XPLMFindCommand("sim/FMS/navrad");
     sim_fms[SIM_FMS1_PREV_PAGE] = XPLMFindCommand("sim/FMS/prev");
     sim_fms[SIM_FMS1_NEXT_PAGE] = XPLMFindCommand("sim/FMS/next");
     // sim_fms[SIM_FMS1_PERF] = XPLMFindCommand("sim/FMS/fmc1_n1_lim");
@@ -4409,6 +4410,7 @@ void registerCommands(void) {
 
     sim_fms[SIM_FMS2_PERF] = XPLMFindCommand("sim/FMS2/fmc2_n1_lim");
     sim_fms[SIM_FMS2_FIX] = XPLMFindCommand("sim/FMS2/fix");
+    sim_fms[SIM_FMS2_NAVRAD] = XPLMFindCommand("sim/FMS2/navrad");
     sim_fms[SIM_FMS2_PREV_PAGE] = XPLMFindCommand("sim/FMS2/prev");
     sim_fms[SIM_FMS2_NEXT_PAGE] = XPLMFindCommand("sim/FMS2/next");
 
