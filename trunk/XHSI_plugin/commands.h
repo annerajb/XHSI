@@ -109,7 +109,7 @@ extern XPLMCommandRef sim_annunciator_clear_master_accept;
 #define SIM_FMS1_RTE        13
 #define SIM_FMS1_DEP_ARR    14
 #define SIM_FMS1_AP         15
-#define SIM_FMS1_VNAV       16
+#define SIM_FMS1_NAVRAD     16
 
 #define SIM_FMS1_FIX        17
 #define SIM_FMS1_LEGS       18
@@ -210,7 +210,7 @@ extern XPLMCommandRef sim_annunciator_clear_master_accept;
 #define SIM_FMS2_RTE        103
 #define SIM_FMS2_DEP_ARR    104
 #define SIM_FMS2_AP         105
-#define SIM_FMS2_VNAV       106
+#define SIM_FMS2_NAVRAD     106
 
 #define SIM_FMS2_FIX        107
 #define SIM_FMS2_LEGS       108
