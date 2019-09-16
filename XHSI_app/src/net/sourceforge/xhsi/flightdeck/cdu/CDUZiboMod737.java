@@ -396,8 +396,8 @@ public class CDUZiboMod737 extends CDUSubcomponent {
 				case '/' : w = Z737_KEY_FMC1_SLASH; break;    		
 				case '+' : w = Z737_KEY_FMC1_PLUS_M; break;
 				// case '*' : w = Z737_KEY_FMC1_OVERFL; break;
-				case 127 : w = Z737_KEY_FMC1_CLR; break; // DEL -> CLEAR
-				case 8   : w = Z737_KEY_FMC1_DEL; break; // BackSpace
+				case 127 : w = Z737_KEY_FMC1_DEL; break; 
+				case 8   : w = Z737_KEY_FMC1_CLR; break;  
 				case ' ' : w = Z737_KEY_FMC1_SPACE; break; 
 				case 27  : w = Z737_KEY_FMC1_MENU; break; // ESCAPE -> MCDU_MENU
 				}
