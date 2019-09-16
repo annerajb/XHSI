@@ -1209,7 +1209,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         cons.gridwidth = 1;
         cons.gridy = dialog_line;
         cons.anchor = GridBagConstraints.EAST;
-        graphics_panel.add(new JLabel("Instruments font", JLabel.TRAILING), cons);
+        graphics_panel.add(new JLabel("CDU font", JLabel.TRAILING), cons);
         
         cons.gridx = 2;
         cons.gridwidth = 1;
