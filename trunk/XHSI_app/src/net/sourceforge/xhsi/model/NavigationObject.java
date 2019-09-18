@@ -32,6 +32,8 @@ public class NavigationObject {
 	public float lat;
 	public float lon;
 	
+	public static int NO_TYPE_HELIPORT = 6;
+	public static int NO_TYPE_HELIPAD = 5;
 	public static int NO_TYPE_RUNWAY = 4;
 	public static int NO_TYPE_AIRPORT = 3;
 	public static int NO_TYPE_FIX = 2;

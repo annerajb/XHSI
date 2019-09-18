@@ -49,6 +49,8 @@ import net.sourceforge.xhsi.model.Avionics;
 import net.sourceforge.xhsi.model.CoordinateSystem;
 import net.sourceforge.xhsi.model.FMSEntry;
 import net.sourceforge.xhsi.model.Fix;
+import net.sourceforge.xhsi.model.Helipad;
+import net.sourceforge.xhsi.model.Heliport;
 import net.sourceforge.xhsi.model.Localizer;
 import net.sourceforge.xhsi.model.ModelFactory;
 import net.sourceforge.xhsi.model.NavigationObject;
@@ -844,8 +846,24 @@ public class MovingMap extends NDSubcomponent {
                                 NavigationObject.NO_TYPE_AIRPORT,
                                 nor.get_nav_objects(NavigationObject.NO_TYPE_AIRPORT, lat, lon)
                             );
-
                     }
+                    
+                    if ( avionics.efis_shows_arpt() && ((nd_gc.map_range <= 80)||nd_gc.map_zoomin) ) {
+                        draw_nav_objects(
+                                g2,
+                                NavigationObject.NO_TYPE_HELIPORT,
+                                nor.get_nav_objects(NavigationObject.NO_TYPE_HELIPORT, lat, lon)
+                            );
+                    }
+                    
+                    if ( avionics.efis_shows_arpt() && ((nd_gc.map_range <= 80)||nd_gc.map_zoomin) ) {
+                        draw_nav_objects(
+                                g2,
+                                NavigationObject.NO_TYPE_HELIPAD,
+                                nor.get_nav_objects(NavigationObject.NO_TYPE_HELIPAD, lat, lon)
+                            );
+                    }
+
                 }
             }
 
@@ -1286,6 +1304,14 @@ public class MovingMap extends NDSubcomponent {
                         //drawTestAirport(g2, bad_proj.getX(), bad_proj.getY(), (Airport)navobj, ""+((Airport)navobj).elev);
                     }
                         
+                } else if (type == NavigationObject.NO_TYPE_HELIPORT) {
+                	
+                    drawHeliport(g2, x, y, (Heliport)navobj, ""+((Heliport)navobj).elev);
+                        
+                } else if (type == NavigationObject.NO_TYPE_HELIPAD) {
+                	
+                    drawHelipad(g2, x, y, (Helipad)navobj);
+                        
                 } else if ( type == NavigationObject.NO_TYPE_RUNWAY )
                     
                     drawRunway(g2, x, y, (Runway)navobj);
@@ -1574,7 +1600,19 @@ public class MovingMap extends NDSubcomponent {
     	g2.setTransform(original_at);
     }
 
-
+    private void drawHeliport(Graphics2D g2, int x, int y, Heliport heliport, String elev) {
+    	AffineTransform original_at = g2.getTransform();
+    	g2.rotate(Math.toRadians(this.map_up), x, y);
+    	g2.setColor(nd_gc.arpt_color);
+    	g2.drawImage( nd_gc.airport_symbol_img , x-nd_gc.airport_shift_x,y-nd_gc.airport_shift_y, null);    	
+    	g2.setFont(nd_gc.navaid_font);
+    	g2.drawString(heliport.icao_code, x + nd_gc.airport_name_x, y + nd_gc.airport_name_y );
+    	if ( this.avionics.efis_shows_data() && this.preferences.get_nd_navaid_frequencies() ) {
+    		g2.setFont(nd_gc.data_font);
+    		g2.drawString(elev, x + nd_gc.airport_name_x, y + nd_gc.airport_data_y);
+    	}
+    	g2.setTransform(original_at);
+    }
 //    private void drawTestAirport(Graphics2D g2, int x, int y, Airport airport, String elev) {
 //            int c9 = Math.round(9.0f*nd_gc.scaling_factor);
 //            int x12 = Math.round(12.0f*nd_gc.scaling_factor);
@@ -1631,7 +1669,52 @@ public class MovingMap extends NDSubcomponent {
 
     }
 
+    private void drawHelipad(Graphics2D g2, int x, int y, Helipad helipad) {
 
+        if ( ! helipad.name.equals(this.active_chart_str) ) {
+
+            //OK, this helipad is not part of an already drawn airport chart
+        	/*
+            Graphics g = (Graphics) g2;
+            AffineTransform original_at = g2.getTransform();
+            g2.rotate( Math.toRadians( (double) 0 ), x, y );
+            // Stroke original_stroke = g2.getStroke();
+            float w = helipad.width / 10.0f * nd_gc.scaling_factor;
+            int d = Math.round(w/2);
+            d = 1;
+            // g2.setStroke(new BasicStroke(w));
+            if ( (helipad.surface==Runway.RWY_ASPHALT) || (helipad.surface==Runway.RWY_CONCRETE) )
+                g.setColor(nd_gc.hard_color);
+            else if (helipad.surface==Runway.RWY_GRASS)
+                g.setColor(nd_gc.grass_color);
+            else if ( (helipad.surface==Runway.RWY_DIRT) || (helipad.surface==Runway.RWY_GRAVEL) || (helipad.surface==Runway.RWY_DRY_LAKEBED) )
+                g.setColor(nd_gc.sand_color);
+            else if (helipad.surface==Runway.RWY_SNOW)
+                g.setColor(nd_gc.snow_color);
+            else
+                g.setColor(nd_gc.hard_color);
+
+            map_projection.setPoint(helipad.lat, helipad.lon);
+            int hx = map_projection.getX();
+            int hy = map_projection.getY();
+
+            g.drawOval(hx-d, hy-d, hx+d, hy+d);
+            
+            // g2.setStroke(original_stroke);
+            g2.setTransform(original_at);
+        	 */
+        	
+        	AffineTransform original_at = g2.getTransform();
+        	g2.rotate(Math.toRadians(this.map_up), x, y);
+        	g2.setColor(nd_gc.arpt_color);
+        	g2.drawImage( nd_gc.airport_symbol_img , x-nd_gc.airport_shift_x,y-nd_gc.airport_shift_y, null);    	
+        	g2.setFont(nd_gc.navaid_font);
+        	g2.drawString(helipad.pad_identifier, x + nd_gc.airport_name_x, y + nd_gc.airport_name_y );
+        	g2.setTransform(original_at);
+        }
+
+    }
+    
     private void draw_FMS_entry(Graphics2D g2, FMSEntry entry, FMSEntry next_entry, boolean inactive, boolean fms_nav) {
 
 //        DecimalFormat eta_hours_formatter = new DecimalFormat("00");

@@ -39,8 +39,11 @@ public class NavigationObjectRepository {
     private ArrayList fixes[][];
     private ArrayList arpts[][];
     private ArrayList rwys[][];
+    private ArrayList helipads[][];
+    private ArrayList hlpts[][];
     private HashMap frequencies;
     private HashMap airports;
+    private HashMap heliports;
 
     private static final Logger logger = Logger.getLogger("net.sourceforge.xhsi");
 
@@ -67,8 +70,11 @@ public class NavigationObjectRepository {
         fixes = new ArrayList[181][361];
         arpts = new ArrayList[181][361];
         rwys = new ArrayList[181][361];
+        helipads = new ArrayList[181][361];
+        hlpts = new ArrayList[181][361];
         frequencies = new HashMap();
         airports = new HashMap();
+        heliports = new HashMap();
 
         for (int lat=0;lat<181;lat++) {
             for (int lon=0;lon<361;lon++) {
@@ -78,6 +84,8 @@ public class NavigationObjectRepository {
                 fixes[lat][lon] = new ArrayList();
                 arpts[lat][lon] = new ArrayList();
                 rwys[lat][lon] = new ArrayList();
+                helipads[lat][lon] = new ArrayList();
+                hlpts[lat][lon] = new ArrayList();
             }
         }
 
@@ -95,6 +103,10 @@ public class NavigationObjectRepository {
             return this.arpts[get_lat_index(lat)][get_lon_index(lon)];
         } else if (type == NavigationObject.NO_TYPE_RUNWAY) {
             return this.rwys[get_lat_index(lat)][get_lon_index(lon)];
+        } else if (type == NavigationObject.NO_TYPE_HELIPORT) {
+            return this.hlpts[get_lat_index(lat)][get_lon_index(lon)];
+        } else if (type == NavigationObject.NO_TYPE_HELIPAD) {
+            return this.helipads[get_lat_index(lat)][get_lon_index(lon)];
         } else {
             return new ArrayList();
         }
@@ -128,8 +140,17 @@ public class NavigationObjectRepository {
 //            } else {
 //                logger.warning("NOT storing a duplicate Airport in the ArrayList for: " + arpt_str);
             }
+        } else if (nav_object instanceof Heliport) {
+            String arpt_str = ((Heliport)nav_object).icao_code;
+            if ( get_airport( arpt_str ) == null ) {
+                // OK, it's not a duplicate
+                get_nav_objects(NavigationObject.NO_TYPE_HELIPORT, nav_object).add(nav_object);
+                add_hlpt(nav_object);
+            }
         } else if (nav_object instanceof Runway) {
             get_nav_objects(NavigationObject.NO_TYPE_RUNWAY, nav_object).add(nav_object);
+        } else if (nav_object instanceof Helipad) {
+            get_nav_objects(NavigationObject.NO_TYPE_HELIPAD, nav_object).add(nav_object);
         }
 
         if (nav_object instanceof RadioNavigationObject) {
@@ -169,7 +190,14 @@ public class NavigationObjectRepository {
 
     }
 
-
+    private void add_hlpt(NavigationObject hlpt_object) {
+        String hlpt_str = ((Heliport)hlpt_object).icao_code;
+        if ( ! this.heliports.containsKey(hlpt_str) ) {
+            // OK, it's not a duplicate
+            this.heliports.put(hlpt_str, hlpt_object);
+        }
+    }
+    
     private ArrayList get_nav_objects_by_freq(float freq) {
 
         Float freq_key = new Float(freq);
