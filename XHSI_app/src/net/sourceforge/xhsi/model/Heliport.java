@@ -1,7 +1,7 @@
 /**
-* Airport.java
+* Heliport.java
 * 
-* Model class for an airport
+* Model class for an heliport
 * 
 * Copyright (C) 2007  Georg Gruetter (gruetter@gmail.com)
 * Copyright (C) 2009  Marc Rogiers (marrog.123@gmail.com)
@@ -25,32 +25,26 @@ package net.sourceforge.xhsi.model;
 
 import java.util.ArrayList;
 
-
-public class Airport extends NavigationObject {
+public class Heliport extends NavigationObject {
 
 	public String icao_code;
-        public ArrayList<Runway> runways;
-        public ArrayList<Helipad> helipads;
-        public float longest;
-        public int elev;
-        public ArrayList<ComRadio> com_radios;
+	public ArrayList<Helipad> helipads;
+	public int elev;
+	public ArrayList<ComRadio> com_radios;
 	
-	public Airport(String name, String icao_code, 
+	public Heliport(String name, String icao_code, 
 			float lat, float lon, 
-			ArrayList<Runway> runways,
 			ArrayList<Helipad> helipads,
-			float longest, int elev, 
+			int elev, 
 			ArrayList<ComRadio> com_radios) {
 		super(name, lat, lon);
 		this.icao_code = icao_code.trim();
-		this.runways = runways;
-		this.longest = longest;
+		this.helipads = helipads;
 		this.elev = elev;
 		this.com_radios = com_radios;
 	}
 	
 	public String toString() {
-		return "Airport '" + this.name + "' @ (" + this.lat + "," + this.lon + ")";
+		return "Heliport '" + this.name + "' @ (" + this.lat + "," + this.lon + ")";
 	}	
 }
-

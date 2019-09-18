@@ -39,6 +39,8 @@ import net.sourceforge.xhsi.model.Airport;
 import net.sourceforge.xhsi.model.ComRadio;
 import net.sourceforge.xhsi.model.CoordinateSystem;
 import net.sourceforge.xhsi.model.Fix;
+import net.sourceforge.xhsi.model.Helipad;
+import net.sourceforge.xhsi.model.Heliport;
 import net.sourceforge.xhsi.model.Localizer;
 import net.sourceforge.xhsi.model.NavigationObjectRepository;
 import net.sourceforge.xhsi.model.RadioNavigationObject;
@@ -110,6 +112,8 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                         } // else logger.warning("No custom apt.dat found at " + custom_apt_dat.getPath());
                     }
                 }
+                //  ressource leak fix
+                reader.close();
             }
 
             if (this.progressObserver != null) {
@@ -187,8 +191,10 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
         String[] tokens;
         String airport_icao_code = "";
         String airport_name = "";
+        boolean is_heliport=false;
         boolean current_airport_saved = true; // this is a trick to say that there is no previous airport when starting to read the first 
-        ArrayList runways = new ArrayList();
+        ArrayList<Runway> runways = new ArrayList<Runway>();
+        ArrayList<Helipad> helipads = new ArrayList<Helipad>();
         float width;
         int surface;
         String rwy_num1;
@@ -232,7 +238,9 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                             tokens = line.split("\\s+",6);
                             info_type = Integer.parseInt(tokens[0]);
                         }
-                        if (info_type == 1) {
+                        if (info_type == 1 || info_type == 17) {
+                        	// TODO: type 16 : Seaplane base
+                        	// TODO: type 17 : heliport
                             // hold it, save the previous airport before proceeding with this one...
                             if ( ! current_airport_saved ) {
                                 // when this is the first airport that whe read, there is no previous airport
@@ -261,7 +269,11 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                                     arp_lat = lat_sum / rwy_count;
                                     arp_lon = lon_sum / rwy_count;
                                 }
-                                nor.add_nav_object(new Airport(airport_name, airport_icao_code, arp_lat, arp_lon, runways, longest, elev, comms));
+                                if (is_heliport) {
+                                    nor.add_nav_object(new Heliport(airport_name, airport_icao_code, arp_lat, arp_lon, helipads, elev, comms));                               	
+                                } else {
+                                	nor.add_nav_object(new Airport(airport_name, airport_icao_code, arp_lat, arp_lon, runways, helipads, longest, elev, comms));
+                                }
                             }
                             // process the new airport header
                             //elev = Integer.parseInt(line.substring(5, 10).trim());
@@ -271,7 +283,8 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                             //airport_name = line.substring(20);
                             airport_name = tokens[5];
                             current_airport_saved = false;
-                            runways = new ArrayList();
+                            runways = new ArrayList<Runway>();
+                            helipads = new ArrayList<Helipad>();
                             arp_lat = 0;
                             arp_lon = 0;
                             longest = 0;
@@ -283,6 +296,7 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                             hard_lon_sum = 0;
                             tower = false;
                             comms = new ArrayList<ComRadio>();
+                            is_heliport = (info_type == 17);
                             // we dont't save this airport right away, we collect information about the runways first
                         } else if (info_type == 100) {
                             // a runway
@@ -316,6 +330,21 @@ public class AptNavXP900DatNavigationObjectBuilder implements PreferencesObserve
                             }
                             //lat = lat_sum / rwy_count;
                             //lon = lon_sum / rwy_count;
+                        } else if (info_type == 102) {
+                            // an helipad
+                            // we need more tokens
+                        	// 102 H1  35.59011673 -117.63945737   0.00 24.40 24.40 5 0 0 0.00 1
+                        	// 102 <designator> <lat> <lon> <orientation> <length> <width> <surface code> <marking> <shoulder surface type> <smoothnesse> <edge lighting>
+                            tokens = line.split("\\s+",13);
+                            rwy_num1 = tokens[1];
+                            lat = Float.parseFloat(tokens[2]);
+                            lon = Float.parseFloat(tokens[3]);
+                            length = Float.parseFloat(tokens[5]);
+                            width = Float.parseFloat(tokens[6]);
+                            surface = Integer.parseInt(tokens[7]);
+                            Helipad new_helipad = new Helipad(airport_icao_code, length, width, surface, rwy_num1, lat, lon);
+                            nor.add_nav_object(new_helipad);                            
+                            helipads.add(new_helipad);                            
                         } else if (info_type == 14) {
                             // if defined in the file, the tower position can be used as the ARP
                             tower = true;
