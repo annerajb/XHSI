@@ -176,9 +176,9 @@ public class CDUZiboMod737 extends CDUSubcomponent {
 
 
 		try {
-			image = ImageIO.read(this.getClass().getResourceAsStream("img/z737cdu_800x480.png"));
-			msg_img = ImageIO.read(this.getClass().getResourceAsStream("img/z737cdu_msg.png"));
-			exec_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_exec_litv_m.png"));
+			image = ImageIO.read(net.sourceforge.xhsi.XHSI.class.getClassLoader().getResourceAsStream("img/z737cdu_800x480.png"));
+			msg_img = ImageIO.read(net.sourceforge.xhsi.XHSI.class.getClassLoader().getResourceAsStream("img/z737cdu_msg.png"));
+			exec_img = ImageIO.read(net.sourceforge.xhsi.XHSI.class.getClassLoader().getResourceAsStream("img/xfmc_2_exec_litv_m.png"));
 		} catch (IOException ioe){}
 
 		// Andale Mono is one of the Core Webfonts, Lucida Console is not! https://en.wikipedia.org/wiki/Core_fonts_for_the_Web

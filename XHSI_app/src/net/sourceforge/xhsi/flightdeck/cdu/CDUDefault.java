@@ -97,7 +97,7 @@ public class CDUDefault extends CDUSubcomponent {
         super(model_factory, cdu_gc, parent_component);
         
         try {
-        	image = ImageIO.read(this.getClass().getResourceAsStream("img/mcdu_a320_800x480.png"));      	
+        	image = ImageIO.read(net.sourceforge.xhsi.XHSI.class.getClassLoader().getResourceAsStream("img/mcdu_a320_800x480.png"));      	
         } catch (IOException ioe){}
         
         this.aircraft = this.model_factory.get_aircraft_instance();

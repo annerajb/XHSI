@@ -5,7 +5,7 @@
 * elements of the CDU inside XHSI. CDUComponent also creates and updates CDUGraphicsConfig
 * which is used by all CDU XHSI elements to determine positions and sizes.
 * 
-* This component is notified when new data packets from the flightsimulator
+* This componen t is notified when new data packets from the flightsimulator
 * have been received and performs a repaint. This component is also triggered
 * by UIHeartbeat to detect situations without reception.
 * 

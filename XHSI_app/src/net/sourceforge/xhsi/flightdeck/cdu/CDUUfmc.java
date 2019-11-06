@@ -93,12 +93,12 @@ public class CDUUfmc extends CDUSubcomponent {
         super(model_factory, cdu_gc, parent_component);
         
         try {
-        	image = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_800x480.png"));
-		ap_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_ap_litv_m.png"));
-		athr_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_athr_litv_m.png"));
-		exec_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_exec_litv_m.png"));
-		lnav_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_lnav_litv_m.png"));
-		vnav_img = ImageIO.read(this.getClass().getResourceAsStream("img/xfmc_2_vnav_litv_m.png"));
+        	image = ImageIO.read(net.sourceforge.xhsi.XHSI.class.getClassLoader().getResourceAsStream("img/xfmc_2_800x480.png"));
+		ap_img = ImageIO.read(net.sourceforge.xhsi.XHSI.class.getClassLoader().getResourceAsStream("img/xfmc_2_ap_litv_m.png"));
+		athr_img = ImageIO.read(net.sourceforge.xhsi.XHSI.class.getClassLoader().getResourceAsStream("img/xfmc_2_athr_litv_m.png"));
+		exec_img = ImageIO.read(net.sourceforge.xhsi.XHSI.class.getClassLoader().getResourceAsStream("img/xfmc_2_exec_litv_m.png"));
+		lnav_img = ImageIO.read(net.sourceforge.xhsi.XHSI.class.getClassLoader().getResourceAsStream("img/xfmc_2_lnav_litv_m.png"));
+		vnav_img = ImageIO.read(net.sourceforge.xhsi.XHSI.class.getClassLoader().getResourceAsStream("img/xfmc_2_vnav_litv_m.png"));
         	
         } catch (IOException ioe){}
         

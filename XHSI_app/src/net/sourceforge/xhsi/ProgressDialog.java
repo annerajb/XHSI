@@ -62,7 +62,7 @@ public class ProgressDialog extends JDialog implements ProgressObserver {
         Container content_pane = this.getContentPane();
         content_pane.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 10));
 
-        content_pane.add(new JLabel(new ImageIcon(getClass().getResource("XHSI_logo64.png"))));
+        content_pane.add(new JLabel(new ImageIcon(this.getClass().getClassLoader().getResource("XHSI_logo64.png"))));
         content_pane.add(this.progress_bar);
 
         this.setLocation( owner_frame.getX() + owner_frame.getWidth()/2 - ProgressDialog.WIDTH/2 - 32, owner_frame.getY() + owner_frame.getHeight() );
