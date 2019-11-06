@@ -7,4 +7,4 @@ jdk: oraclejdk8
 
 script:
   - cd XHSI_app
-  - ./gradlew build msi jar
+  - ./gradlew build jar
