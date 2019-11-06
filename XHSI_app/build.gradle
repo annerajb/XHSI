@@ -37,10 +37,18 @@ jar {
   }
 }
 setupBuilder {
+    desktopStarter {
+        displayName = 'XHSI'
+        executable = 'XHSI.jar'
+    }
+
     vendor = 'Anner J. Bonilla'
-    application = "XSHI Arma"
+    application = "XHSI Arma"
     description = "Glass Display for Xplane and Arma"
-    appIdentifier = "com.annerbonilla.xshi"
+    appIdentifier = "com.annerbonilla.xhsi"
+    dmg {
+      backgroundImage = "res/.VolumeIcon.icns"
+    }
     version = '0.0.2'
     mainClass = mainClassName
     mainJar = "XSHI.jar"
@@ -50,7 +58,7 @@ setupBuilder {
 //    }
     //licenseFile = 'license.txt'
     // icons in different sizes for different usage. you can also use a single *.ico or *.icns file
-    icons = ['XHSI_logo32.png', 'XHSI_logo64.png']
+    icons = ['res/.VolumeIcon.icns','res/XHSI_logo32.icns','XHSI_logo32.png', 'XHSI_logo64.png']
     // all files for all platforms
     from jar.outputs
     bundleJre = 1.8
