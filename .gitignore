@@ -1,3 +1,5 @@
 *.class
 XHSI_app/build/
 XHSI_app/.gradle/
+XHSI_app/XHSI.log
+XHSI_app/XHSI.properties
