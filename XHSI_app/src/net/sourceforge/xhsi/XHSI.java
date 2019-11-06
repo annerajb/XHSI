@@ -89,7 +89,7 @@ public class XHSI implements ActionListener {
 
     public enum Mode { REPLAY, LIVE, RECORD }
 
-    private Image logo_image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("XHSI_logo32.png"));
+    private Image logo_image = Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("XHSI_logo32.png"));
 
     // menu item commands must be unique...
     public static final String ACTION_QUIT  = "Quit";

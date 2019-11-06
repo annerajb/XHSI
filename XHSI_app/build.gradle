@@ -1,0 +1,64 @@
+plugins {
+  id "de.inetsoftware.setupbuilder" version "4.8.6"
+}
+apply plugin: 'java'
+apply plugin: 'jacoco'
+apply plugin: 'application'
+apply from: "https://raw.githubusercontent.com/i-net-software/SetupBuilder/master/scripts/SetupBuilderVersion.gradle"
+
+
+
+mainClassName = 'net.sourceforge.xhsi.XHSI'
+
+repositories {
+    jcenter()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/']
+        }
+        resources {
+            srcDirs = ['res/']
+        }
+    }
+}
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
+compileJava.options.encoding = 'UTF-8'
+jar {
+  manifest {
+    attributes(
+      'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+      'Main-Class': mainClassName
+    )
+  }
+}
+setupBuilder {
+    vendor = 'Anner J. Bonilla'
+    application = "XSHI Arma"
+    description = "Glass Display for Xplane and Arma"
+    appIdentifier = "com.annerbonilla.xshi"
+    version = '0.0.2'
+    mainClass = mainClassName
+    mainJar = "XSHI.jar"
+//    runAfter {
+//        mainClass = mainClassName
+//        mainJar = 'XSHI.jar'
+//    }
+    //licenseFile = 'license.txt'
+    // icons in different sizes for different usage. you can also use a single *.ico or *.icns file
+    icons = ['XHSI_logo32.png', 'XHSI_logo64.png']
+    // all files for all platforms
+    from jar.outputs
+    bundleJre = 1.8
+}
+//msi {
+//    // files only for the Windows platform
+//    from( 'windows' ) {
+//        include 'foo.exe'
+//        rename { 'bar.exe' }
+//    }
+//}
