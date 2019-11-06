@@ -125,12 +125,12 @@ public class XHSI implements ActionListener {
         handler.setFilter(null);
         logger.addHandler(handler);
 
-        // TODO : check if XHSI.log is writable
-        handler = new FileHandler("XHSI.log");
-        handler.setLevel(Level.ALL);
-        handler.setFormatter(new XHSILogFormatter());
-        handler.setFilter(null);
-        logger.addHandler(handler);
+//        // TODO : check if XHSI.log is writable
+//        handler = new FileHandler("XHSI.log");
+//        handler.setLevel(Level.ALL);
+//        handler.setFormatter(new XHSILogFormatter());
+//        handler.setFilter(null);
+//        logger.addHandler(handler);
 
         logger.setLevel(Level.ALL);
         logger.setUseParentHandlers(false);

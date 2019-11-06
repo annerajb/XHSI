@@ -38,9 +38,8 @@ jar {
 }
 setupBuilder {
     desktopStarter {
-        location = StartMenu
+        location = "StartMenu"
         displayName = 'XHSI'
-        executable = 'XHSI.jar'
     }
 
     vendor = 'Anner J. Bonilla'
@@ -55,21 +54,10 @@ setupBuilder {
     version = '0.0.2'
     mainClass = mainClassName
     mainJar = "XSHI.jar"
-//    runAfter {
-//        mainClass = mainClassName
-//        mainJar = 'XSHI.jar'
-//    }
-    //licenseFile = 'license.txt'
-    // icons in different sizes for different usage. you can also use a single *.ico or *.icns file
-    icons = ['res/XHSI_logo32.icns','XHSI_logo32.png', 'XHSI_logo64.png']
-    // all files for all platforms
+
+    icons = ['res/icon.ico','res/XHSI_logo32.icns','XHSI_logo32.png', 'XHSI_logo64.png']
+
+    
     from jar.outputs
     bundleJre = 1.8
 }
-//msi {
-//    // files only for the Windows platform
-//    from( 'windows' ) {
-//        include 'foo.exe'
-//        rename { 'bar.exe' }
-//    }
-//}
