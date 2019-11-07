@@ -16,4 +16,5 @@ deploy:
   file: XHSI_app/build/lib/XSHI.jar
   on:
     repo: annerajb/XHSI
-    branch: feature/package
+    all_branches: true
+    condition: $TRAVIS_BRANCH =~ ^(master|develop)$
