@@ -14,7 +14,7 @@ deploy:
   file_glob: true
   api_key:
     secure: eZT66ACnbW5PR7yLMnsr1sAaiAnDovDxAgSDW3+kv6K2PZ18e/uBi2kXhvlSJyUWo4Co2Hlx3rfg9wNgZKyCcDfHSTs175Q0RwWS+50JeTBGqP3JYSTcwhi02SHfeXDxxMHVPvYYBubNipem8Px39smZ1YYlPqCxceQNTHL6wguAfhN1UWABdXOtnA2WAvEbHx/0PoH99hFn8fYQjTiimnMUPYVBMNkMFrjBmwgUDGIFLz0F0doCpBWQU5vlTbFAWCnb+4rUJCJaNGNW6wr1y4s8/lfhq8CmtSuSgr3vpl0Vf/N0gMTWSOOtZYIecc2IKwz0hPOH1AGIM98na6DkWFo33OjWkDy/X9W4eHcUdVyatoIhWw/WeCgJ5BExeePaeN1pE4oyyvTYlU0YAq7f729nw2uD3HfaMYzpfpFyYZI2sLgFGj/Kf+x+j2x3Sp/j6QTnIll7PxlY+A1g49/uWaxY1psSvcnRvq4arwk+6NZLsCzjMxvmobEaIAN64A1mY3xEIxnUGsC82MUfrZfPXJWJqJZARkX+R7JtD3+1o0dNcUsduamHRkFTRjyg2Eq3soyWBjjrm1HY0y3l47AaNj+Dpz85kKiABbD076MJ7Lueokg81TbwaKUbF0lCsH2l0W+Bs4tzv/53EEdr9pwbLCQOnIGbN3UQz07ed9aVfz8=
-  file: build/*
+  file: build/libs/*.jar
   on:
     repo: annerajb/XHSI
     all_branches: true
