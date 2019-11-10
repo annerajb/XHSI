@@ -11,7 +11,7 @@ jdk: oraclejdk8
 script:
 - cd XHSI_app
 - "./gradlew build jar"
-- - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./gradlew dmg          ; fi
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./gradlew dmg          ; fi
 
 deploy:
   provider: releases
